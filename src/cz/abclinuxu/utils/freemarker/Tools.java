@@ -490,31 +490,22 @@ public class Tools implements Configurable {
     }
 
     /**
-     * Creates a List of users, which are in user's blacklist
-     * @param user
-     * @return list of Users
+     * Creates list of users, that selected user blocks.
+     * @param user user whose blacklist shall be fetched
+     * @param onlyUsers true if only registered users (not anonymous visitors withou account) shall be returned
+     * @return set of integers containing user id and strings containing names of anonymous visitors
      */
-    public List getUsersBlacklist(User user) {
-        List nodes = xpaths(user.getData(), "/data/settings/blacklist/uid");
-        List blacklist = new ArrayList(nodes.size());
-        for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
-            String value = (String) iter.next();
-            blacklist.add(new User(new Integer(value)));
-        }
-        return blacklist;
-    }
-
-    /**
-     * Creates a List of ids (integer) of users, that are in user's blacklist
-     * @param user
-     * @return set of integers
-     */
-    public static Set getUsersBlacklistOnlyIds(User user) {
-        List nodes = xpaths(user.getData(), "/data/settings/blacklist/uid");
-        Set blacklist = new HashSet(nodes.size());
-        for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
-            String value = (String) iter.next();
-            blacklist.add(new Integer(value));
+    public static Set getBlacklist(User user, boolean onlyUsers) {
+        Element elementBlacklist = (Element) user.getData().selectSingleNode("/data/settings/blacklist");
+        Set blacklist = new HashSet(elementBlacklist.elements().size());
+        for ( Iterator iter = elementBlacklist.elements().iterator(); iter.hasNext(); ) {
+            Element element = (Element) iter.next();
+            if (element.getName().equals("uid")) {
+                blacklist.add(new Integer(element.getText()));
+                continue;
+            }
+            if (! onlyUsers)
+                blacklist.add(element.getText());
         }
         return blacklist;
     }
@@ -530,7 +521,7 @@ public class Tools implements Configurable {
         if (aUser == null || ! (aUser instanceof User))
             return relations;
 
-        Set blocked = getUsersBlacklistOnlyIds((User)aUser);
+        Set blocked = getBlacklist((User)aUser, true);
         List result = new ArrayList(relations.size());
         Relation relation; Item story;
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
@@ -1242,7 +1233,7 @@ public class Tools implements Configurable {
         if (item.getChildren().size()==0)
             return discussion;
 
-        Relation child = (Relation) item.getChildren().get(0);
+        Relation child = item.getChildren().get(0);
         Record record = (Record) child.getChild();
         if (!record.isInitialized())
             record = (Record) persistence.findById(record);
@@ -1254,7 +1245,7 @@ public class Tools implements Configurable {
         discussion.init(dizRecord);
         if (user != null) {
             SQLTool sqlTool = SQLTool.getInstance();
-            discussion.setBlacklist(getUsersBlacklistOnlyIds(user));
+            discussion.setBlacklist(getBlacklist(user, false));
             Integer lastSeen = user.getLastSeenComment(obj.getId());
             if (lastSeen != null)
                 discussion.setUnreadComments(lastSeen);

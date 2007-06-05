@@ -212,7 +212,7 @@ public class User extends CommonObject {
     public void storeLastSeenComment(int discussion, int lastComment) {
         if (lastSeenDiscussions == null)
             createLastSeenCommentsMap();
-        lastSeenDiscussions.put(new Integer(discussion), new Integer(lastComment));
+        lastSeenDiscussions.put(discussion, lastComment);
     }
 
     /**
@@ -223,7 +223,7 @@ public class User extends CommonObject {
     public Integer getLastSeenComment(int discussion) {
         if (lastSeenDiscussions == null)
             return null;
-        return (Integer) lastSeenDiscussions.get(new Integer(discussion));
+        return (Integer) lastSeenDiscussions.get(discussion);
     }
 
     /**
@@ -262,7 +262,7 @@ public class User extends CommonObject {
     public String toString() {
         StringBuffer sb = new StringBuffer("User: id=");
         sb.append(id);
-        if ( name!=null ) sb.append(",name="+name);
+        if ( name!=null ) sb.append(",name=").append(name);
         return sb.toString();
     }
 

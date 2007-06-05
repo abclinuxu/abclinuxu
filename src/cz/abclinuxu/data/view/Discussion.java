@@ -127,7 +127,7 @@ public class Discussion {
         if (! getHasUnreadComments())
             return;
 
-        int lastId = lastRead.intValue();
+        int lastId = lastRead;
         int unreadSize = size - lastId;
         if (unreadSize <= 0)
             unreadSize = 10;
@@ -139,7 +139,7 @@ public class Discussion {
             if (current.getChildren() != null)
                 stack.addAll(0, current.getChildren());
             if (current.getId() > lastId)
-                unreadComments.add(new Integer(current.getId()));
+                unreadComments.add(current.getId());
         }
     }
 
@@ -147,14 +147,14 @@ public class Discussion {
      * @return true if user has seen this discussion and there are unread comments
      */
     public boolean getHasUnreadComments() {
-        return lastRead != null && greatestId > lastRead.intValue();
+        return lastRead != null && greatestId > lastRead;
     }
 
     /**
      * @return true if user has seen this discussion and this comment is new for him
      */
     public boolean isUnread(Comment comment) {
-        return lastRead != null && comment.getId() > lastRead.intValue();
+        return lastRead != null && comment.getId() > lastRead;
     }
 
     /**
@@ -172,7 +172,7 @@ public class Discussion {
     public Integer getNextUnread(Comment comment) {
         if (unreadComments == null || lastRead == null)
             return null;
-        int position = unreadComments.indexOf(new Integer(comment.getId()));
+        int position = unreadComments.indexOf(comment.getId());
         if (position < 0 || (position + 1 == unreadComments.size()))
             return null;
         return (Integer) unreadComments.get(position+1);
@@ -206,11 +206,13 @@ public class Discussion {
      * @return true if user does not wish to see it
      */
     public boolean isBlacklisted(Comment comment) {
-        if (comment.getAuthor() == null)
-            return false;
         if (blacklist == null)
             return false;
-        return blacklist.contains(comment.getAuthor());
+        Integer author = comment.getAuthor();
+        if (author == null)
+            return blacklist.contains(comment.getAnonymName());
+        else
+            return blacklist.contains(author);
     }
 
     /**

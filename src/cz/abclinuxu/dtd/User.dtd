@@ -44,8 +44,9 @@ verze 2.0
 <!ELEMENT blog (#PCDATA)> <!-- integer, cislo blogu -->
 <!ATTLIST blog name (#PCDATA) #REQUIRED> <!-- name of blog, part of URL -->
 <!ELEMENT css (#PCDATA)> <!-- URL of CSS to be used instead of default one -->
-<!ELEMENT blacklist (uid*)> <!-- Container of users in blacklist -->
-<!ELEMENT uid (#PCDATA)> <!-- ID of a user in blacklist -->
+<!ELEMENT blacklist (uid*,name*)> <!-- Container of users in blacklist -->
+<!ELEMENT uid (#PCDATA)> <!-- ID of a blocked user in blacklist -->
+<!ELEMENT name (#PCDATA)> <!-- name of anonym visitor blocked in blacklist -->
 
 <!ELEMENT system (registration_date?,last_login_date?,group?, author_id?)>
 <!ELEMENT registration_date (#PCDATA)> <!-- ISO format, kdy se zaregistroval -->

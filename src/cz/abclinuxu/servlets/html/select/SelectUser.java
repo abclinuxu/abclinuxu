@@ -37,12 +37,14 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Collections;
 
 /**
  * Used to find the user.
  */
 public class SelectUser implements AbcAction {
     public static final String PARAM_ACTION = "sAction";
+    public static final String PARAM_TARGET_PARAM = "sParam";
     public static final String PARAM_URL = "url";
     public static final String PARAM_USER = "uid";
     public static final String PARAM_LOGIN = "login";
@@ -107,7 +109,7 @@ public class SelectUser implements AbcAction {
         canContinue &= setName(params, searched, env);
         canContinue &= setLogin(params, searched, env);
         canContinue &= setEmail(params, searched, env);
-	canContinue &= setCity(params,searched, env);
+    	canContinue &= setCity(params,searched, env);
 
         if ( !canContinue )
             return actionShowForm(request,env,params);
@@ -117,16 +119,13 @@ public class SelectUser implements AbcAction {
             return actionShowForm(request, env, params);
         }
 
-        List list = new ArrayList(1);
-        list.add(searched);
-        List found = persistence.findByExample(list, null);
-
-        if ( found.size()==0 ) {
+        List found = persistence.findByExample(Collections.singletonList(searched), null);
+        if (found.size() == 0) {
             ServletUtils.addMessage("Nenalezen žádný uživatel!", env, null);
             return actionShowForm(request, env, params);
         }
 
-        int i = 0, j = from+pageSize;
+        int i = 0, j = from + pageSize;
         List result = new ArrayList(pageSize);
         for ( Iterator iter = found.iterator(); iter.hasNext(); i++ ) {
             User user = (User) iter.next();
@@ -149,10 +148,11 @@ public class SelectUser implements AbcAction {
 
     protected String actionRedirect(HttpServletRequest request, HttpServletResponse response, Map env, Map params) throws Exception {
         String url = (String) params.remove(PARAM_URL);
+        params.remove(PARAM_TARGET_PARAM);
         params.remove(PARAM_EMAIL);
         params.remove(PARAM_LOGIN);
         params.remove(PARAM_CITY);
-	params.remove(PARAM_NAME);
+	    params.remove(PARAM_NAME);
         params.remove(PARAM_FROM);
         params.remove(SUBMIT_PREVIOUS_PAGE);
         params.remove(SUBMIT_NEXT_PAGE);

@@ -109,6 +109,7 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_FOUND_PAGE_SIZE = "search";
     public static final String PARAM_FORUM_PAGE_SIZE = "forum";
     public static final String PARAM_BLACKLIST_USER = "bUid";
+    public static final String PARAM_BLACKLIST_NAME = "bName";
     public static final String PARAM_SUBSCRIBE_MONTHLY = "monthly";
     public static final String PARAM_SUBSCRIBE_WEEKLY = "weekly";
     public static final String PARAM_SUBSCRIBE_FORUM = "forum";
@@ -183,7 +184,7 @@ public class EditUser implements AbcAction, Configurable {
 
         User managed = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
         User user = (User) env.get(Constants.VAR_USER);
-        if ( managed==null )
+        if (managed == null)
             managed = user;
         else
             managed = (User) PersistenceFactory.getPersistance().findById(managed);
@@ -776,7 +777,7 @@ public class EditUser implements AbcAction, Configurable {
         if (managed.getId() == sessionUser.getId())
             sessionUser.synchronizeWith(managed);
 
-    	ServletUtils.addMessage("Autor byl přidán na seznam blokovaných uživatelů.", env, request.getSession());
+    	ServletUtils.addMessage("Uživatel byl přidán na seznam blokovaných uživatelů.", env, request.getSession());
         urlUtils.redirect(response, url);
         return null;
     }
@@ -806,7 +807,7 @@ public class EditUser implements AbcAction, Configurable {
         if (managed.getId() == sessionUser.getId())
             sessionUser.synchronizeWith(managed);
 
-        ServletUtils.addMessage("Autor byl odstraněn ze seznamu blokovaných uživatelů.", env, request.getSession());
+        ServletUtils.addMessage("Uživatel byl odstraněn ze seznamu blokovaných uživatelů.", env, request.getSession());
         urlUtils.redirect(response, url);
         return null;
     }
@@ -1650,18 +1651,31 @@ public class EditUser implements AbcAction, Configurable {
      * @return false, if there is a major error.
      */
     private boolean addToBlacklist(Map params, User user, Map env) {
+        boolean paramFound = false;
+        Element blacklist = DocumentHelper.makeElement(user.getData(), "/data/settings/blacklist");
+
         String uid = (String) params.get(PARAM_BLACKLIST_USER);
-        if ( uid==null ) {
-            ServletUtils.addError(PARAM_BLACKLIST_USER, "Chybí parametr "+PARAM_BLACKLIST_USER+"!", env, null);
-            return false;
+        if (uid != null) {
+            paramFound = true;
+            Node node = blacklist.selectSingleNode("uid[text()=\"" + uid + "\"]");
+            if (node != null)
+                return true;
+            blacklist.addElement("uid").setText(uid);
         }
 
-        Element blacklist = DocumentHelper.makeElement(user.getData(), "/data/settings/blacklist");
-        Node node = blacklist.selectSingleNode("uid[text()=\"" + uid + "\"]");
-        if (node != null)
-            return true;
+        String name = (String) params.get(PARAM_BLACKLIST_NAME);
+        if (name != null) {
+            paramFound = true;
+            Node node = blacklist.selectSingleNode("name[text()=\"" + uid + "\"]");
+            if (node != null)
+                return true;
+            blacklist.addElement("name").setText(name);
+        }
 
-        blacklist.addElement("uid").setText(uid);
+        if (! paramFound) {
+            ServletUtils.addError(PARAM_BLACKLIST_USER, "Chybí parametr " + PARAM_BLACKLIST_USER + "!", env, null);
+            return false;
+        }
         return true;
     }
 
@@ -1672,24 +1686,29 @@ public class EditUser implements AbcAction, Configurable {
      * @return false, if there is a major error.
      */
     private boolean removeFromBlacklist(Map params, User user, Map env) {
-        List ids = null;
-        Object o = params.get(PARAM_BLACKLIST_USER);
-        if (o instanceof String) {
-            ids = Collections.singletonList(o);
-        } else if (o instanceof List)
-            ids = (List) o;
-
-        if ( ids==null || ids.size()==0 ) {
-            ServletUtils.addError(PARAM_BLACKLIST_USER, "Nevybral jste žádného uživatele!", env, null);
-            return false;
-        }
-
+        boolean paramFound = false;
+        List uids = Tools.asList(params.get(PARAM_BLACKLIST_USER));
         Element blacklist = (Element) user.getData().selectSingleNode("/data/settings/blacklist");
-        for (Iterator iter = ids.iterator(); iter.hasNext();) {
+        for (Iterator iter = uids.iterator(); iter.hasNext();) {
+            paramFound = true;
             String s = (String) iter.next();
             Node node = blacklist.selectSingleNode("uid[text()=\"" + s + "\"]");
             if (node != null)
                 node.detach();
+        }
+
+        List names = Tools.asList(params.get(PARAM_BLACKLIST_NAME));
+        for (Iterator iter = names.iterator(); iter.hasNext();) {
+            paramFound = true;
+            String s = (String) iter.next();
+            Node node = blacklist.selectSingleNode("name[text()=\"" + s + "\"]");
+            if (node != null)
+                node.detach();
+        }
+
+        if (! paramFound) {
+            ServletUtils.addError(PARAM_BLACKLIST_USER, "Nevybral jste žádného uživatele.", env, null);
+            return false;
         }
         return true;
     }

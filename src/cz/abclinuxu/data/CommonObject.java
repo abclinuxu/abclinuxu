@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Collection;
 
 import cz.abclinuxu.utils.Misc;
 
@@ -93,12 +92,13 @@ public class CommonObject extends GenericObject implements XMLContainer {
     /**
      * Finds all string values associated with properties.
      * The returned set is unmodifiable. This method never returns null.
+     * @param type property identifier
      * @return Set of String values associated with given property
      */
     public Set<String> getProperty(String type) {
         if (properties == null)
             return Collections.emptySet();
-        Set<String> result = (Set<String>) properties.get(type);
+        Set<String> result = properties.get(type);
         if (result == null)
             return Collections.emptySet();
         else
@@ -115,12 +115,12 @@ public class CommonObject extends GenericObject implements XMLContainer {
     public Integer getIntProperty(String type) {
         if (properties == null)
             return null;
-        Set set = (Set) properties.get(type);
+        Set set = properties.get(type);
         if (set == null || set.size() == 0)
             return null;
         String value = (String) set.iterator().next();
         int result = Misc.parseInt(value, -1);
-        return (result != -1) ? Integer.valueOf(result) : null;
+        return (result != -1) ? result : null;
     }
 
     /**
@@ -132,21 +132,22 @@ public class CommonObject extends GenericObject implements XMLContainer {
     public String getSingleProperty(String type) {
         if (properties == null)
             return null;
-        Set set = (Set) properties.get(type);
+        Set set = properties.get(type);
         if (set == null || set.size() == 0)
             return null;
         return (String) set.iterator().next();
     }
 
     /**
-     * Adds specified binding to map of all properties
+     * Adds specified property value to map of all properties.
+     * Properties must be synchronized with persistence storage using specific Persistence methods.
      * @param property name of key
      * @param value    value to be bound to property
      */
     public void addProperty(String property, String value) {
         if (properties == null)
             properties = new HashMap<String, Set<String>>();
-        Set<String> set = (Set<String>) properties.get(property);
+        Set<String> set = properties.get(property);
         if (set == null) {
             set = new HashSet<String>();
             properties.put(property, set);
@@ -156,6 +157,7 @@ public class CommonObject extends GenericObject implements XMLContainer {
 
     /**
      * Set specified binding to map of all properties. Previous bindings will be discarded.
+     * Properties must be synchronized with persistence storage using specific Persistence methods.
      * @param property name of key
      * @param values   values to be bound to property
      */
@@ -167,17 +169,19 @@ public class CommonObject extends GenericObject implements XMLContainer {
 
     /**
      * Removes all bindings to specified property.
+     * Properties must be synchronized with persistence storage using specific Persistence methods.
      * @param property name of key
      * @return Set of previous bindings or null, if there were no values associated with given property
      */
     public Set<String> removeProperty(String property) {
         if (properties == null)
             return null;
-        return (Set<String>) properties.remove(property);
+        return properties.remove(property);
     }
 
     /**
-     * Removes all properties.
+     * Removes all properties from object.
+     * Properties must be synchronized with persistence storage using specific Persistence methods.
      * @return original properties
      */
     public Map<String, Set<String>> clearProperties() {
@@ -211,7 +215,7 @@ public class CommonObject extends GenericObject implements XMLContainer {
         if (properties != null) {
             clone.properties = new HashMap<String, Set<String>>();
             for (Map.Entry<String, Set<String>> entry : properties.entrySet()) {
-                clone.properties.put(entry.getKey(), new HashSet<String>((Collection) entry.getValue()));
+                clone.properties.put(entry.getKey(), new HashSet<String>(entry.getValue()));
             }
         }
         return clone;

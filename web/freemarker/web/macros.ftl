@@ -160,12 +160,13 @@
                 <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}" title="Žádost o přesun diskuse, stížnost na komentář">Admin</a> |
                 <a href="#${comment.id}" title="Přímá adresa na tento komentář">Link</a> |
                 <#if (comment.parent?exists)><a href="#${comment.parent}" title="Odkaz na komentář o jednu úroveň výše">Výše</a> |</#if>
-                <#if comment.author?exists>
-                    <#if blacklisted><#local action="fromBlacklist", title="Neblokovat", hint="Odstraní autora ze seznamu blokovaných uživatelů">
-                    <#else><#local action="toBlacklist", title="Blokovat", hint="Přidá autora na seznam blokovaných uživatelů"></#if>
-                    <#if USER?exists><#local myId=USER.id></#if>
-                    <a href="${URL.noPrefix("/EditUser/"+myId?if_exists+"?action="+action+"&amp;bUid="+who.id+TOOL.ticket(USER?if_exists, false)+"&amp;url="+URL.prefix+"/show/"+diz.relationId+"#"+comment.id)}" title="${hint}">${title}</a> |
+                <#if comment.author?exists><#local blockTarget="bUid=" + who.id><#else><#local blockTarget="bName=" + comment.anonymName?url></#if>
+                <#if blacklisted>
+                    <#local blockUrl="/EditUser?action=fromBlacklist&amp;"+blockTarget, title="Neblokovat", hint="Odstraní autora ze seznamu blokovaných uživatelů">
+                <#else>
+                    <#local blockUrl="/EditUser?action=toBlacklist&amp;"+blockTarget, title="Blokovat", hint="Přidá autora na seznam blokovaných uživatelů">
                 </#if>
+                <a href="${URL.noPrefix(blockUrl+TOOL.ticket(USER?if_exists, false)+"&amp;url="+URL.prefix+"/show/"+diz.relationId+"#"+comment.id)}" title="${hint}">${title}</a> |
                 <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle1" title="Schová nebo rozbalí celé vlákno" class="ds_control_sbalit3"><#if ! blacklisted>Sbalit<#else>Rozbalit</#if></a>
             </div>
         <#elseif USER?exists && USER.hasRole("discussion admin")>

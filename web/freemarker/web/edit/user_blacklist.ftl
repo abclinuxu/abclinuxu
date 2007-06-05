@@ -3,32 +3,40 @@
 <h1>Seznam blokovaných uživatelů</h1>
 
 <p>
-Může se stát, že mezi čtenáři se objeví troll, který
-jen uráží a provokuje. Pokud jej zařadíte na tento seznam,
-texty jeho komentářů i případné reakce budou schovány.
-Možnost si je přečíst zůstane zachována.
+    Pokud vás některý uživatel abclinuxu vytáčí a nechcete si jeho výplody
+    kazit náladu, máte možnost zařadit si jej na tento seznam blokovaných
+    uživatelů. Jeho komentáře budou zobrazeny miniaturním písmem, takže
+    je nejspíše přehlédnete, navíc jejich obsah a případné reakce budou
+    schovány úplně. Jeho zápisky z blogu budou úplně odfiltrovány.
+    <a href="${URL.noPrefix("/SelectUser/?sAction=form&amp;sParam=bUid&amp;url=/EditUser${USER.id}?action=toBlacklist")}">Blokovat</a>
 </p>
 
 <@lib.showMessages/>
 
-<#assign blacklist=TOOL.getUsersBlacklist(MANAGED)>
+<#assign blacklist=TOOL.getBlacklist(MANAGED, false)>
 <#if (blacklist?size > 0)>
     <p>Na vašem seznamu jsou tito uživatelé:</p>
-     <form action="${URL.noPrefix("/EditUser"+MANAGED.id+"?action=fromBlacklist")}" method="POST">
-      <#list blacklist as who_>
-       <#assign who = TOOL.createUser(who_.id)>
-       <div>
-        <input type="checkbox" name="bUid" value="${who.id}">
-        <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
-       </div>
-      </#list>
-
-      <p>
-          <input name="submit" type="submit" value="Odstranit ze seznamu">
-      </p>
-     </form>
+    <form action="${URL.noPrefix("/EditUser"+MANAGED.id+"?action=fromBlacklist")}" method="POST">
+        <ul>
+            <#list blacklist as who_>
+                <li>
+                <#if who_?is_string>
+                    <input type="checkbox" name="bName" value="${who_}"> ${who_}
+                <#else>
+                    <#assign who = TOOL.createUser(who_)>
+                    <input type="checkbox" name="bUid" value="${who.id}">
+                    <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
+                </#if>
+                </li>
+            </#list>
+        </ul>
+        <p>
+            <input type="hidden" name="ticket" value="${USER.getSingleProperty('ticket')}">
+            <input name="submit" type="submit" value="Odstranit ze seznamu">
+        </p>
+    </form>
 <#else>
-    <p>Váš seznam je prázdný.</p>
+    <p>Nikoho neblokujete.</p>
 </#if>
 
 
