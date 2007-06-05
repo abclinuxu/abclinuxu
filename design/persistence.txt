@@ -1,0 +1,23 @@
+Prace s databazi probiha skrze tridu Persistence. Nejdrive pouzijete
+PersistenceFactory.getPersistence(), ktera vam vrati defaultni implementaci
+rozhrani Persistence. GenericObject a jeho potomky ulozite do databaze
+pres metodu create(), pomoci metody update() ulozite zmeny v tomto objektu
+a remove() slouzi pro mazani. Pozor, remove() je rekurzivni, takze kdyz
+odstranite objekt, budou smazany i jeho potomci a jejich potomci (vyjma
+pripadu, ze na ne existuje vice relaci).
+
+Obecne plati, ze se s objektem ulozi vsechny jeho souvisejici data (tim nemyslim
+child relation), napriklad Custom objekt pro GenericDataObject, PollChoice pro
+Poll atd, Properties pro CommonObject.
+
+Vyjimky:
+
+1) RowComment se ulozi jen tehdy, ma-li rowId roven nule nebo nastaven priznak
+ _dirty.
+
+Vlastnosti z CommonObjectProperties se nahravaji, aktualizuji i mazou spolu s objektem.
+Nicmene je mozne s nimi pracovat rucne pomoci Persistence.setProperty(), addPropertyValue() atd.
+To ale nezbavuji vyvojare povinnosti synchronizovat stav objektu pres CommonObject.addProperty() atd.
+
+Dale existuje trida SQLTool, ktera obsahuje spousty jednoucelovych metod,
+typicky pro hledani dat podle urciteho kriteria.
