@@ -497,6 +497,9 @@ public class Tools implements Configurable {
      */
     public static Set getBlacklist(User user, boolean onlyUsers) {
         Element elementBlacklist = (Element) user.getData().selectSingleNode("/data/settings/blacklist");
+        if (elementBlacklist == null)
+            return Collections.emptySet();
+
         Set blacklist = new HashSet(elementBlacklist.elements().size());
         for ( Iterator iter = elementBlacklist.elements().iterator(); iter.hasNext(); ) {
             Element element = (Element) iter.next();
