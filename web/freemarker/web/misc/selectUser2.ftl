@@ -10,7 +10,7 @@
  <ol start="${USERS.currentPage.row+1}">
   <#list USERS.data as user>
    <li>
-    <input type="radio" name="uid" value="${user.id}" <#if user_index==0>checked</#if>>
+    <input type="radio" name="${PARAMS.sParam?default("uid")}" value="${user.id}" <#if user_index==0>checked</#if>>
     <a href="/Profile/${user.id}">${user.name}</a>
    </li>
   </#list>
@@ -23,7 +23,9 @@
   <input type="submit" name="next" value="Následujících ${USERS.pageSize} uživatelů">
  </#if>
  ${SAVED_PARAMS?if_exists}
- <input type="hidden" NAME="ticket" VALUE="${USER.getSingleProperty('ticket')}">
+<#if USER?exists>
+    <input type="hidden" NAME="ticket" VALUE="${USER.getSingleProperty('ticket')}">
+</#if>
  <input type="hidden" name="from" value="${USERS.currentPage.row}">
  <input type="hidden" name="sAction" value="redirect">
 </form>

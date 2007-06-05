@@ -239,7 +239,13 @@ public class ViewUser implements AbcAction {
         data.put(EmailSender.KEY_TEMPLATE, "/mail/password.ftl");
         EmailSender.sendEmail(data);
 
-        ServletUtils.addMessage("Heslo bylo odesláno na adresu "+user.getEmail()+".", env, request.getSession());
+        String email = user.getEmail();
+        int position = email.indexOf("@");
+        if (position != -1 && position < email.length()) {
+            email = email.substring(0, position + 2).concat("<chráněno>");
+        }
+
+        ServletUtils.addMessage("Heslo bylo odesláno na adresu " + email + ".", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/");
         return null;
