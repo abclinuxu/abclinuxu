@@ -77,7 +77,8 @@ public class VariableFetcher extends TimerTask implements Configurable {
     List freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
     List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds;
     String indexFeeds, templateFeeds;
-    Map defaultSizes, maxSizes, counter, feedLinks;
+    Map defaultSizes, maxSizes, counter;
+    Map<Server, List<Link>> feedLinks;
     SectionTreeCache forumTree, faqTree, softwareTree, hardwareTree, articleTree;
     Relation currentPoll;
     int sectionCacheFrequency;
@@ -257,6 +258,21 @@ public class VariableFetcher extends TimerTask implements Configurable {
     }
 
     /**
+     * Gets newest links for specified server.
+     * @param id id of server
+     * @param linksCount maximum number of links
+     * @return list of links or empty list, if the server is not found
+     */
+    public List<Link> getFeed(int id, int linksCount) {
+        Server server = new Server(id);
+        List<Link> links = feedLinks.get(server);
+        if (links == null) // unmaintained
+            return Collections.emptyList();
+
+        return getSubList(links, linksCount);
+    }
+
+    /**
      * Current open poll relation.
      */
     public Relation getCurrentPoll() {
@@ -348,15 +364,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * @param subListSize
      * @return sublist of list with specified size.
      */
-    private List getSubList(List list, int subListSize) {
-        if (subListSize==0 || list==null || list.size()==0)
-            return Collections.EMPTY_LIST;
-        if (list.size()<subListSize)
+    private <T> List<T> getSubList(List list, int subListSize) {
+        if (subListSize == 0 || list == null || list.isEmpty())
+            return Collections.emptyList();
+        if (list.size() < subListSize)
             return list;
-        List subList = new ArrayList(subListSize); // todo proc nepouzit list.sublist(0,subListSze)?
-        for (int i=0; i<subListSize; i++)
-            subList.add(list.get(i));
-        return subList;
+        return list.subList(0, subListSize);
     }
 
     /**
@@ -423,9 +436,8 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     private void refreshFeedLinks() {
         try {
-            Map feeds = UpdateLinks.getMaintainedFeeds();
-            for (Object o : feeds.values()) {
-                List links = (List) o;
+            Map<Server, List<Link>> feeds = UpdateLinks.getMaintainedFeeds();
+            for (List links : feeds.values()) {
                 Sorters2.byDate(links, Sorters2.DESCENDING);
             }
             feedLinks = feeds;
@@ -590,13 +602,13 @@ public class VariableFetcher extends TimerTask implements Configurable {
         }
     }
 
-    private Map getSelectedFeeds(String servers, int size) {
+    private Map<Server, List<Link>> getSelectedFeeds(String servers, int size) {
         Persistence persistence = PersistenceFactory.getPersistance();
         StringTokenizer stk = new StringTokenizer(servers, ",");
         String tmp;
         int id;
         Server server;
-        Map result = new LinkedHashMap(25, 0.99f);
+        Map<Server, List<Link>> result = new LinkedHashMap<Server, List<Link>>(25, 0.99f);
         List links;
         while (stk.hasMoreTokens()) {
             tmp = stk.nextToken();
@@ -607,7 +619,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             }
 
             server = (Server) persistence.findById(new Server(id));
-            links = (List) feedLinks.get(server);
+            links = feedLinks.get(server);
             if (links == null) // unmaintained
                 continue;
 

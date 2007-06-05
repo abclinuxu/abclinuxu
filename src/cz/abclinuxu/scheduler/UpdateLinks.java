@@ -303,7 +303,7 @@ public class UpdateLinks extends TimerTask implements Configurable {
      * Finds fresh list of links of maintained feeds.
      * @return list of Servers, their children are Links
      */
-    public static Map getMaintainedFeeds() {
+    public static Map<Server, List<Link>> getMaintainedFeeds() {
         List servers = new ArrayList(definitions.size());
         for (Iterator iter = definitions.keySet().iterator(); iter.hasNext();) {
             Integer id = (Integer) iter.next();
@@ -312,7 +312,7 @@ public class UpdateLinks extends TimerTask implements Configurable {
         servers = Tools.syncList(servers);
         Nursery.getInstance().initChildren(servers);
 
-        Map result = new HashMap(definitions.size() + 1, 1.0f);
+        Map<Server, List<Link>> result = new HashMap(definitions.size() + 1, 1.0f);
         List<Link> allLinks = new ArrayList<Link>(definitions.size() * 5);
         for (Iterator iter = servers.iterator(); iter.hasNext();) {
             Server server = (Server) iter.next();
