@@ -96,7 +96,7 @@ public class EditDictionary implements AbcAction {
             return FMTemplateSelector.select("Dictionary", "add", env, request);
 
         if ( action.equals(ACTION_ADD_STEP2) ) {
-            ActionProtector.ensureContract(request, EditDictionary.class, true, true, true, false);
+            ActionProtector.ensureContract(request, EditDictionary.class, true, false, true, false);
             return actionAddStep2(request, response, env, true);
         }
 
