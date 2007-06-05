@@ -55,7 +55,7 @@ public class FMUtils implements Configurable {
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
-        configurator.configureMe(new FMUtils());
+        configurator.configureAndRememberMe(new FMUtils());
     }
 
     static String templatesDir;
