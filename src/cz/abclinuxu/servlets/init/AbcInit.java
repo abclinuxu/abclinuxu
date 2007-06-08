@@ -98,7 +98,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         fetcher.run();
 
         String path = getServletContext().getRealPath("/")+"/";
-        configureFreeMarker(path);
+        configureFreeMarker();
         tmp = getInitParameter("TEMPLATES");
         try {
             FMTemplateSelector.initialize(path+tmp);
@@ -392,7 +392,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     /**
      * set ups freemarker
      */
-    void configureFreeMarker(String path) {
+    public void configureFreeMarker() {
         log.info("Inicializuji FreeMarker");
         Configuration cfg = FMUtils.getConfiguration();
 

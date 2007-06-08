@@ -124,8 +124,9 @@ public class AdminServlet implements AbcAction {
         Nursery.getInstance().clearCache();
         PersistenceFactory.getPersistance().clearCache();
         TemplateSelector.initialize(null);
-        ConfigurationManager.reconfigureAll();
         FMUtils.getConfiguration().clearTemplateCache();
+        ConfigurationManager.reconfigureAll();
+        AbcInit.getInstance().configureFreeMarker();
 	    DateTool.calculateTodayTimes();
         VariableFetcher.getInstance().run(); // refresh variables
 
