@@ -490,11 +490,23 @@
         <action name="software" content="/show/switem.ftl">
             <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy"/>
         </action>
+        <action name="sw_users" content="/show/sw_users.ftl">
+            <var name="TITLE" value='Seznam uživatelů ${TOOL.xpath(ITEM,"data/name")}' type="Lazy"/>
+        </action>
+        <action name="sw_users" content="/show/sw_users.ftl">
+            <var name="TITLE" value='Seznam uživatelů ${TOOL.xpath(ITEM,"data/name")}' type="Lazy"/>
+        </action>
         <action name="alternatives" content="/show/sw_alternatives.ftl">
             <var name="TITLE" value="Seznam alternativ pro aplikace z MS Windows"/>
         </action>
+        <action name="sw_stats" content="/show/sw_stats.ftl">
+            <var name="TITLE" value="Žebříčky katalogu softwaru"/>
+        </action>
         <action name="alternative" content="/show/sw_alternative.ftl">
             <var name="TITLE" value='Alternativy pro ${SOFTWARE}' type="Lazy"/>
+        </action>
+        <action name="sw_stats" content="/show/sw_stats.ftl">
+            <var name="TITLE" value="Top 10 nejpoužívanějšího softwaru"/>
         </action>
     </servlet>
 

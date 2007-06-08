@@ -121,6 +121,17 @@
     </ul>
 </#if>
 
+<#if SOFTWARE?size gt 0>
+    <p>Používám tento software:</p>
+    <ul>
+        <#list SOFTWARE as sw>
+            <li>
+                <a href="${sw.url}">${TOOL.xpath(sw.child, "/data/name")}</a>
+            </li>
+        </#list>
+    </ul>
+</#if>
+
 <p><a href="/muj_obsah/${PROFILE.id}" rel="nofollow">Seznam příspěvků na abclinuxu.cz</a><br>
 (články, komentáře, dotazy, zprávičky, softwarové a hardwarové záznamy, pojmy ve slovníku a texty v učebnici)</p>
 <br>

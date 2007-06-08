@@ -16,6 +16,11 @@ values: entered by users
 mapping: 1:n
 purpose: name of software from Windows having same purpose
 
+name: used_by
+values: user IDs
+mapping: 1:n
+purpose: user is using this software
+
 ITEM.BLOG
 =========
 

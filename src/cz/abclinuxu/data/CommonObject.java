@@ -180,6 +180,21 @@ public class CommonObject extends GenericObject implements XMLContainer {
     }
 
     /**
+     * Removes given binding to specified property.
+     * Properties must be synchronized with persistence storage using specific Persistence methods.
+     * @param property name of key
+     * @return Set of previous bindings or null, if there were no values associated with given property
+     */
+    public boolean removePropertyValue(String property, String  value) {
+        if (properties == null)
+            return false;
+        Set<String> values = properties.get(property);
+        if (values == null)
+            return false;
+        return values.remove(value);
+    }
+
+    /**
      * Removes all properties from object.
      * Properties must be synchronized with persistence storage using specific Persistence methods.
      * @return original properties

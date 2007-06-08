@@ -27,7 +27,7 @@
             </tr>
         </#if>
 
-        <#local url = TOOL.xpath(software, "/data/url[@useType='homepage']")?if_exists>
+        <#local url = TOOL.xpath(software, "/data/url[@useType='homepage']")?default("UNDFEFINED")>
     	<#if url != "UNDFEFINED">
             <tr>
 	        	<td>Domovská stránka:</td>
@@ -62,11 +62,36 @@
             </tr>
         </#if>
 
-        <tr>
-            <td colspan="2">
-                <@lib.showRating RELATION, true, "rating"/>
-            </td>
-        </tr>
+        <#if software.id != 0>
+            <#local usedBy = software.getProperty("used_by")>
+            <tr>
+                <td>
+                    Počet uživatelů:
+                </td>
+                <td>
+                    <a href="?action=users" title="Seznam uživatelů abclinuxu, kteří se označili za uživatele">${usedBy?size}</a>
+                    <div class="zh-box">
+                        <form action="${"/software/edit/"+RELATION.id}">
+                            <#if USER?exists && usedBy.contains(""+USER.id)>
+                                <input type="submit" value="Odebrat se">
+                            <#else>
+                                <input type="submit" value="Přidat se">
+                            </#if>
+                            <input type="hidden" name="action" value="user_of">
+                            <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER?if_exists)}">
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </#if>
+
+        <#if software.id != 0>
+            <tr>
+                <td colspan="2">
+                    <@lib.showRating RELATION, true, "rating"/>
+                </td>
+            </tr>
+        </#if>
 
     </table>
 

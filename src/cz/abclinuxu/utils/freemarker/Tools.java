@@ -1137,6 +1137,18 @@ public class Tools implements Configurable {
      * @return ticket uri parameter if user is logged in, empty string otherwise
      */
     public String ticket(Object aUser, boolean firstParam) {
+        String ticket = ticketValue(aUser);
+        if (ticket == null || ticket.length() == 0)
+            return "";
+
+        return ((firstParam) ? "?" : "&amp;") + ActionProtector.PARAM_TICKET + "=" + ticket;
+    }
+
+    /**
+     * @param aUser instance of User if user is logged in
+     * @return value of user's ticket if user is logged in, empty string otherwise
+     */
+    public String ticketValue(Object aUser) {
         if (aUser == null || ! (aUser instanceof User))
             return "";
 
@@ -1144,8 +1156,7 @@ public class Tools implements Configurable {
         String ticket = user.getSingleProperty(Constants.PROPERTY_TICKET);
         if (ticket == null)
             return "";
-
-        return ((firstParam) ? "?" : "&amp;") + ActionProtector.PARAM_TICKET + "=" + ticket;
+        return ticket;
     }
 
     /**

@@ -31,6 +31,7 @@ import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -74,6 +75,7 @@ public class ViewSoftware implements AbcAction {
     public static final String PARAM_NAME = "name";
 
     public static final String ACTION_FILTER = "filter";
+    public static final String ACTION_USERS = "users";
 
     public static final String VAR_FILTERS = "FILTERS";
     public static final String VAR_PARENTS = "PARENTS";
@@ -87,6 +89,12 @@ public class ViewSoftware implements AbcAction {
     public static final String VAR_TREE_DEPTH = "DEPTH";
     public static final String VAR_SOFTWARE_NAME = "SOFTWARE";
     public static final String VAR_ALTERNATIVES = "ALTERNATIVES";
+    public static final String VAR_TOP_USED = "TOP_USED";
+    public static final String VAR_TOP_VISITED = "TOP_VISITED";
+    public static final String VAR_LAST_ADDED = "LAST_ADDED";
+    public static final String VAR_LAST_UPDATED = "LAST_UPDATED";
+
+    public static final String URI_TOP10 = "/software/zebricky";
 
     static Pattern reAlternatives;
     static {
@@ -99,6 +107,8 @@ public class ViewSoftware implements AbcAction {
         HttpSession session = request.getSession();
 
         String uri = (String) env.get(Constants.VAR_REQUEST_URI);
+        if (uri.startsWith(URI_TOP10))
+            return processStatistics(request, env);
         Matcher matcher = reAlternatives.matcher(uri);
         if (matcher.find()) {
             String name = matcher.group(2);
@@ -136,10 +146,11 @@ public class ViewSoftware implements AbcAction {
             session.setAttribute(VAR_FILTERS, filters);
         }
 
-        if (relation.getChild() instanceof Category) {
+        if (relation.getChild() instanceof Category)
             return processSection(request, relation, env);
-        } else
-            return processItem(request, relation, env);
+        if (ACTION_USERS.equals(action))
+            return processItemUsers(request, relation, env);
+        return processItem(request, relation, env);
     }
 
     private String processAlternatives(HttpServletRequest request, Map env) {
@@ -213,8 +224,6 @@ public class ViewSoftware implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Item item = (Item) relation.getChild();
-
-        Tools.sync(item);
         env.put(VAR_ITEM, item);
         ReadRecorder.log(item, Constants.COUNTER_READ, env);
 
@@ -233,5 +242,49 @@ public class ViewSoftware implements AbcAction {
             Misc.loadRelationRevision(item, relation.getId(), revision);
 
         return FMTemplateSelector.select("ViewSoftware", "software", env, request);
+    }
+
+    /**
+     * Generates list of software's users.
+     */
+    public static String processItemUsers(HttpServletRequest request, Relation relation, Map env) throws Exception {
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Item item = (Item) relation.getChild();
+        env.put(VAR_ITEM, item);
+
+        List parents = persistence.findParents(relation);
+        env.put(ShowObject.VAR_PARENTS, parents);
+
+        return FMTemplateSelector.select("ViewSoftware", "sw_users", env, request);
+    }
+
+    /**
+     * Generates list of the most used software.
+     */
+    public static String processStatistics(HttpServletRequest request, Map env) throws Exception {
+        SQLTool sqlTool = SQLTool.getInstance();
+
+        LimitQualifier limitQualifier = new LimitQualifier(0, 10);
+        Qualifier[] limitQualifiers = new Qualifier[] {limitQualifier};
+        List<Relation> mostUsed = sqlTool.getTopUsedRelations(limitQualifiers);
+        Tools.syncList(mostUsed);
+        env.put(VAR_TOP_USED, mostUsed);
+
+        List<Relation> mostVisited = sqlTool.getTopCountedRelations(Item.SOFTWARE, Constants.COUNTER_VISIT, limitQualifiers);
+        Tools.syncList(mostVisited);
+        env.put(VAR_TOP_VISITED, mostVisited);
+
+        Qualifier[] newestAddedQualifiers = new Qualifier[] {Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, limitQualifier};
+        List<Relation> lastAdded = sqlTool.findItemRelationsWithType(Item.SOFTWARE, newestAddedQualifiers);
+        Tools.syncList(lastAdded);
+        env.put(VAR_LAST_ADDED, lastAdded);
+
+        Qualifier notCreated = new CompareCondition(Field.UPDATED, Operation.NOT_EQUAL, Field.CREATED);
+        Qualifier[] newestUpdatedQualifiers = new Qualifier[] {notCreated, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, limitQualifier};
+        List<Relation> lastUpdated = sqlTool.findItemRelationsWithType(Item.SOFTWARE, newestUpdatedQualifiers);
+        Tools.syncList(lastUpdated);
+        env.put(VAR_LAST_UPDATED, lastUpdated);
+
+        return FMTemplateSelector.select("ViewSoftware", "sw_stats", env, request);
     }
 }

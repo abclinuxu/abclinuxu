@@ -24,6 +24,7 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -60,6 +61,8 @@ import java.util.Iterator;
 import java.util.prefs.Preferences;
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.util.Date;
+import java.util.Set;
 
 /**
  * This class is responsible for adding and
@@ -93,6 +96,7 @@ public class EditSoftware implements AbcAction, Configurable {
     public static final String ACTION_ADD_STEP2 = "add2";
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
+    public static final String ACTION_I_USE = "user_of";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -127,6 +131,11 @@ public class EditSoftware implements AbcAction, Configurable {
         if (ACTION_EDIT_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditSoftware.class, true, true, true, false);
             return actionEditStep2(request, response, env);
+        }
+
+        if (ACTION_I_USE.equals(action)) {
+            ActionProtector.ensureContract(request, EditSoftware.class, true, false, false, true);
+            return actionIUse(request, response, env);
         }
 
         throw new MissingArgumentException("Chybí parametr action!");
@@ -279,6 +288,30 @@ public class EditSoftware implements AbcAction, Configurable {
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+        return null;
+    }
+
+    public String actionIUse(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        User user = (User) env.get(Constants.VAR_USER);
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Set<String> users = item.getProperty(Constants.PROPERTY_USED_BY);
+
+        // see whether user wants to remove or add himself
+        String userid = Integer.toString(user.getId());
+        if (! users.contains(userid))
+            item.addProperty(Constants.PROPERTY_USED_BY, userid);
+        else
+            item.removePropertyValue(Constants.PROPERTY_USED_BY, userid);
+
+        Date originalUpdated = item.getUpdated();
+        persistence.update(item);
+        SQLTool.getInstance().setUpdatedTimestamp(item, originalUpdated);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+
         return null;
     }
 

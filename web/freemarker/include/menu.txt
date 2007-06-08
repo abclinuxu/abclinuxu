@@ -37,6 +37,7 @@
     <li><a href="/software/system">Systém</a></li>
     <li><a href="/software/vzdelavani">Vzdělávání</a></li>
     <li><a href="/software/veda">Věda</a></li>
+    <li><a href="/software/zebricky">Žebříčky</a></li>
   </ul></li>
 <li><a href="/clanky">Články</a>
   <ul>

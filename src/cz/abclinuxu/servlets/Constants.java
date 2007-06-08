@@ -208,6 +208,7 @@ public interface Constants {
     String PROPERTY_USER = "user";
     String PROPERTY_SCORE = "score";
     String PROPERTY_TICKET = "ticket";
+    String PROPERTY_USED_BY = "used_by";
 
     // see EditRelated and Item.dtd
     String RELATED_ARTICLE = "article";

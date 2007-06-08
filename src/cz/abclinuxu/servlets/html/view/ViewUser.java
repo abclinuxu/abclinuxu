@@ -46,6 +46,7 @@ public class ViewUser implements AbcAction {
     public static final String VAR_PROFILE = "PROFILE";
     public static final String VAR_COUNTS = "COUNTS";
     public static final String VAR_AUTHOR = "AUTHOR";
+    public static final String VAR_SOFTWARE = "SOFTWARE";
 
     public static final String PARAM_USER = "userId";
     public static final String PARAM_USER_SHORT = "uid";
@@ -140,6 +141,12 @@ public class ViewUser implements AbcAction {
             Tools.syncList(stories);
             env.put(ViewBlog.VAR_STORIES, stories);
         }
+
+        SQLTool sqlTool = SQLTool.getInstance();
+        Set<String> property = Collections.singleton(Integer.toString(user.getId()));
+        Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_USED_BY, property);
+        List<Relation> softwares = sqlTool.findItemRelationsWithTypeWithFilters(Item.SOFTWARE, null, filters);
+        env.put(VAR_SOFTWARE, softwares);
 
         return FMTemplateSelector.select("ViewUser","profile",env,request);
     }

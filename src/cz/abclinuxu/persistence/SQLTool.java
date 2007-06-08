@@ -106,6 +106,8 @@ public final class SQLTool implements Configurable {
     public static final String USERS_COUNT_ARTICLES = "users.count.articles";
     public static final String USERS_COUNT_WIKI_RECORDS = "users.count.wiki.records";
     public static final String USERS_COUNT_NEWS = "users.count.news";
+    public static final String TOP_USED_RELATIONS = "top.used.relations";
+    public static final String TOP_COUNTED_RELATIONS = "top.counted.relations";
 
     private static SQLTool singleton;
     static {
@@ -370,6 +372,36 @@ public final class SQLTool implements Configurable {
         fieldMapping.put(Field.UPPER, "R");
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations to objects that have most often the property Constants.PROPERTY_USED_BY set.
+     * @param qualifiers additional qualifiers
+     * @return List of initialized relations
+     */
+    public List<Relation> getTopUsedRelations(Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer((String) sql.get(TOP_USED_RELATIONS));
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params, "V", null);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations to items that have biggest value of specified counter.
+     * @param itemType type of item
+     * @param counterType type of counter
+     * @param qualifiers additional qualifiers
+     * @return List of initialized relations
+     */
+    public List<Relation> getTopCountedRelations(int itemType, String counterType, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer((String) sql.get(TOP_COUNTED_RELATIONS));
+        List params = new ArrayList();
+        params.add(counterType);
+        params.add(itemType);
+        appendQualifiers(sb, qualifiers, params, "P", null);
+        return loadRelations(sb.toString(), params);
     }
 
     /**
@@ -1769,6 +1801,8 @@ public final class SQLTool implements Configurable {
         store(USERS_COUNT_ARTICLES, prefs);
         store(USERS_COUNT_WIKI_RECORDS, prefs);
         store(USERS_COUNT_NEWS, prefs);
+        store(TOP_USED_RELATIONS, prefs);
+        store(TOP_COUNTED_RELATIONS, prefs);
     }
 
     /**
@@ -1864,12 +1898,49 @@ public final class SQLTool implements Configurable {
         if (where < sb.length())
             sb.append(" and "); // probably there was at least one condition after where
 
-        Field field = condition.getField();
-        String tableNick = defaultTableNick;
+        appendField(condition.getField(), fieldMapping, defaultTableNick, sb);
+
+        Operation operation = condition.getOperation();
+        if (operation==Operation.GREATER)
+            sb.append(">");
+        else if (operation==Operation.GREATER_OR_EQUAL)
+            sb.append(">=");
+        else if (operation==Operation.SMALLER)
+            sb.append("<");
+        else if (operation==Operation.SMALLER_OR_EQUAL)
+            sb.append("<=");
+        else if (operation==Operation.EQUAL)
+            sb.append("=");
+        else if (operation==Operation.NOT_EQUAL)
+            sb.append("!=");
+        else if (operation==Operation.LIKE)
+            sb.append(" like ");
+        else if (operation instanceof OperationIn)
+            sb.append(" in " + Misc.getInCondition(((OperationIn)operation).getCount()));
+
+        Object value = condition.getValue();
+        if (value instanceof Field) {
+            appendField((Field) condition.getValue(), fieldMapping, defaultTableNick, sb);
+        } else if (value instanceof Collection) {
+            for (Iterator iter = ((Collection) value).iterator(); iter.hasNext();) {
+                Object o = iter.next();
+                if (o instanceof Date)
+                    o = new java.sql.Date(((Date) o).getTime());
+                params.add(o);
+            }
+        } else {
+            sb.append("? ");
+            if (value instanceof Date)
+                value = new java.sql.Date(((Date)value).getTime());
+            params.add(value);
+        }
+    }
+
+    private void appendField(Field field, Map fieldMapping, String defaultTableNick, StringBuffer sb) {
         if (fieldMapping.containsKey(field))
-            tableNick = (String) fieldMapping.get(field);
-        if (tableNick != null) {
-            sb.append(tableNick);
+            defaultTableNick = (String) fieldMapping.get(field);
+        if (defaultTableNick != null) {
+            sb.append(defaultTableNick);
             sb.append(".");
         }
 
@@ -1899,38 +1970,5 @@ public final class SQLTool implements Configurable {
             sb.append("potomek");
         else if (field==Field.DATA)
             sb.append("data");
-
-        Operation operation = condition.getOperation();
-        if (operation==Operation.GREATER)
-            sb.append(">");
-        else if (operation==Operation.GREATER_OR_EQUAL)
-            sb.append(">=");
-        else if (operation==Operation.SMALLER)
-            sb.append("<");
-        else if (operation==Operation.SMALLER_OR_EQUAL)
-            sb.append("<=");
-        else if (operation==Operation.EQUAL)
-            sb.append("=");
-        else if (operation==Operation.NOT_EQUAL)
-            sb.append("!=");
-        else if (operation==Operation.LIKE)
-            sb.append(" like ");
-        else if (operation instanceof OperationIn)
-            sb.append(" in " + Misc.getInCondition(((OperationIn)operation).getCount()));
-
-        Object value = condition.getValue();
-        if (value instanceof Collection) {
-            for (Iterator iter = ((Collection) value).iterator(); iter.hasNext();) {
-                Object o = iter.next();
-                if (o instanceof Date)
-                    o = new java.sql.Date(((Date) o).getTime());
-                params.add(o);
-            }
-        } else {
-            sb.append("? ");
-            if (value instanceof Date)
-                value = new java.sql.Date(((Date)value).getTime());
-            params.add(value);
-        }
     }
 }

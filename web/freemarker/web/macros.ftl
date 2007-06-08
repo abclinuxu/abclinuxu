@@ -40,13 +40,13 @@
 </#macro>
 
 <#macro showSoftwareList(items)>
-<#local visits = TOOL.getRelationCountersValue(items,"visit"), reads = TOOL.getRelationCountersValue(items,"read")>
+<#local visits = TOOL.getRelationCountersValue(items,"visit")>
 <table class="sw-polozky">
   <thead>
     <tr>
       <td class="td-nazev">Jméno</td>
       <td class="td-meta">Hodnocení</td>
-      <!--<td class="td03">Přečteno</td>-->
+      <td class="td-meta">Uživatelů</td>
       <td class="td-meta">Navštíveno</td>
       <td class="td-datum">Poslední úprava</td>
     </tr>
@@ -56,7 +56,7 @@
     <tr>
       <td><a href="${software.url}" title="${TOOL.childName(software)}">${TOOL.childName(software)}</a></td>
       <td class="td-meta"><@showShortRating software, "", false /></td>
-      <!--<td class="td03"><@showCounter software.child, reads, "read" />&times;</td>-->
+      <td class="td-meta">${software.child.getProperty("used_by")?size}</td>
       <td class="td-meta"><@showCounter software.child, visits, "visit" />&times;</td>
       <td class="td-datum">${DATE.show(software.child.updated, "SMART")}</td>
     </tr>
