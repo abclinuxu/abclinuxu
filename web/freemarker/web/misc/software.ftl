@@ -69,18 +69,16 @@
                     Počet uživatelů:
                 </td>
                 <td>
-                    <a href="?action=users" title="Seznam uživatelů abclinuxu, kteří se označili za uživatele">${usedBy?size}</a>
-                    <div class="zh-box">
-                        <form action="${"/software/edit/"+RELATION.id}">
-                            <#if USER?exists && usedBy.contains(""+USER.id)>
-                                <input type="submit" value="Odebrat se">
-                            <#else>
-                                <input type="submit" value="Přidat se">
-                            </#if>
-                            <input type="hidden" name="action" value="user_of">
-                            <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER?if_exists)}">
-                        </form>
-                    </div>
+                   <form action="${"/software/edit/"+RELATION.id}">
+                      <a href="?action=users" title="Seznam uživatelů abclinuxu, kteří se označili za uživatele softwaru">${usedBy?size}</a> &nbsp;
+                      <#if USER?exists && usedBy.contains(""+USER.id)>
+                         <input type="submit" value="Odebrat se">
+                      <#else>
+                         <input type="submit" value="Přidat se">
+                      </#if>
+                      <input type="hidden" name="action" value="user_of">
+                      <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER?if_exists)}">
+                   </form>
                 </td>
             </tr>
         </#if>
