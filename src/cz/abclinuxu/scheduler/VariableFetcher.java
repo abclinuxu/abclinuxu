@@ -364,7 +364,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * @param subListSize
      * @return sublist of list with specified size.
      */
-    private <T> List<T> getSubList(List list, int subListSize) {
+    private <T> List<T> getSubList(List<T> list, int subListSize) {
         if (subListSize == 0 || list == null || list.isEmpty())
             return Collections.emptyList();
         if (list.size() < subListSize)

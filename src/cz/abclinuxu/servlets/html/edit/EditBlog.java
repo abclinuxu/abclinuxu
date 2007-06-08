@@ -32,6 +32,7 @@ import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.parser.safehtml.BlogHTMLGuard;
@@ -50,6 +51,7 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.scheduler.VariableFetcher;
+import cz.abclinuxu.utils.email.EmailSender;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -121,6 +123,7 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String ACTION_MOVE_LINK_UP = "mvLinkUp";
     public static final String ACTION_MOVE_LINK_DOWN = "mvLinkDown";
     public static final String ACTION_TOGGLE_DIGEST = "toggleDigest";
+    public static final String ACTION_TOGGLE_BAN = "toggleBlogBan";
 
     public static final String VAR_BLOG = "BLOG";
     public static final String VAR_BLOG_RELATION = "REL_BLOG";
@@ -194,6 +197,13 @@ public class EditBlog implements AbcAction, Configurable {
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             ActionProtector.ensureContract(request, EditBlog.class, true, false, false, true);
             return actionToggleStoryDigest(response, blog, env);
+        }
+
+        if ( ACTION_TOGGLE_BAN.equals(action) ) {
+            if ( ! user.hasRole(Roles.BLOG_DIGEST_ADMIN) )
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            ActionProtector.ensureContract(request, EditBlog.class, true, false, false, true);
+            return actionToggleStoryBan(response, blog, env);
         }
 
         if ( user.getId()!=blog.getOwner() && !user.hasRole(Roles.ROOT) )
@@ -397,6 +407,7 @@ public class EditBlog implements AbcAction, Configurable {
             persistence.update(blog);
             FeedGenerator.updateBlog(blog);
             VariableFetcher.getInstance().refreshStories();
+            sendDigestMessage(relation);
         } else {
             Element unpublished = DocumentHelper.makeElement(blog.getData(), "/data/unpublished");
             unpublished.addElement("rid").setText(Integer.toString(relation.getId()));
@@ -479,6 +490,7 @@ public class EditBlog implements AbcAction, Configurable {
             if (unpublishedStory!=null)
                 unpublishedStory.detach();
             persistence.update(blog);
+            sendDigestMessage(relation);
         }
 
         FeedGenerator.updateBlog(blog);
@@ -506,6 +518,37 @@ public class EditBlog implements AbcAction, Configurable {
         } else {
             story.removeProperty(Constants.PROPERTY_BLOG_DIGEST);
             AdminLogger.logEvent(user, "odebral z digestu zapis " + Tools.childName(story));
+        }
+
+        Date originalUpdated = story.getUpdated();
+        persistence.update(story);
+        SQLTool.getInstance().setUpdatedTimestamp(story, originalUpdated);
+
+        FeedGenerator.updateBlogDigest();
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(),story.getCreated(),relation.getId()));
+        return null;
+    }
+
+    /**
+     * Toggles flag whether the story is inappropriate for public or not.
+     * @return null, redirect
+     */
+    private String actionToggleStoryBan(HttpServletResponse response, Category blog, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_STORY);
+        Item story = (Item) relation.getChild();
+
+        Set set = story.getProperty(Constants.PROPERTY_BANNED_BLOG);
+        if (set.isEmpty()) {
+            story.addProperty(Constants.PROPERTY_BANNED_BLOG, "yes");
+            story.removeProperty(Constants.PROPERTY_BLOG_DIGEST); // digest & ban at once doesn't make sense
+            AdminLogger.logEvent(user, "oznacil jako nevhodny zapis "+Tools.childName(story));
+        } else {
+            story.removeProperty(Constants.PROPERTY_BANNED_BLOG);
+            AdminLogger.logEvent(user, "zrusil oznaceni jako nevhodny zapisu " + Tools.childName(story));
         }
 
         Date originalUpdated = story.getUpdated();
@@ -1442,6 +1485,22 @@ public class EditBlog implements AbcAction, Configurable {
             }
         }
         return false;
+    }
+
+    void sendDigestMessage(Relation relation) {
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Category blog = (Category) relation.getParent();
+        Item story = (Item) relation.getChild();
+        Map data = new HashMap();
+
+        String title = Tools.xpath(story, "/data/name");
+        data.put(VAR_RELATION, relation);
+        data.put(EmailSender.KEY_TO, AbcConfig.getBlogWatchEmail());
+        data.put(EmailSender.KEY_SUBJECT, title);
+        data.put(EmailSender.KEY_TEMPLATE, "/mail/blogdigest.ftl");
+        data.put("URL", Tools.getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId()));
+        data.put("AUTHOR", persistence.findById(new User(story.getOwner())));
+        EmailSender.sendEmail(data);
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {

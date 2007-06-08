@@ -456,9 +456,14 @@ public class FeedGenerator implements Configurable {
             for (Iterator iter = stories.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 blog = (Category) persistence.findById(found.getParent());
-                User author = (User) persistence.findById(new User(blog.getOwner()));
-                entry = getStorySyndicate(blog, found, author);
-                entries.add(entry);
+
+                // remove banned blog stories
+                Item story = (Item) found.getChild();
+                if(story.getSingleProperty(Constants.PROPERTY_BANNED_BLOG) == null) {
+                    User author = (User) persistence.findById(new User(blog.getOwner()));
+                    entry = getStorySyndicate(blog, found, author);
+                    entries.add(entry);
+                }
             }
 
             String path = AbcConfig.calculateDeployedPath(fileBlog);

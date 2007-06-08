@@ -107,8 +107,13 @@
     <ul>
     <#if USER?exists>
         <#if USER.hasRole("blog digest admin")>
-            <#if (ITEM.getProperty("digest")?size > 0)><#assign digestMsg='Odstranit z digestu'><#else><#assign digestMsg='Přidat do digestu'></#if>
-            <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=toggleDigest"+TOOL.ticket(USER, false))}">${digestMsg}</a></li>
+            <#if (ITEM.getProperty("banned_blog")?size > 0)><#assign banMsg='Není nevhodný pro HP'>
+            <#else>
+             <#assign banMsg='Nevhodný pro HP'>
+             <#if (ITEM.getProperty("digest")?size > 0)><#assign digestMsg='Odstranit z digestu'><#else><#assign digestMsg='Přidat do digestu'></#if>
+             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=toggleDigest"+TOOL.ticket(USER, false))}">${digestMsg}</a></li>
+            </#if>
+            <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=toggleBlogBan"+TOOL.ticket(USER, false))}">${banMsg}</a></li>
         </#if>
         <#if USER.id==BLOG.owner || USER.hasRole("root")>
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zápis</a></li>

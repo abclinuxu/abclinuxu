@@ -204,6 +204,7 @@ public interface Constants {
     String PROPERTY_ALTERNATIVE_SOFTWARE = "alternative";
     String PROPERTY_LICENSE = "license";
     String PROPERTY_BLOG_DIGEST = "digest";
+    String PROPERTY_BANNED_BLOG = "banned_blog";
     String PROPERTY_AUTHOR = "author";
     String PROPERTY_USER = "user";
     String PROPERTY_SCORE = "score";

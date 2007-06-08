@@ -84,6 +84,7 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
   <ul>
   <#assign STORIES=VARS.getFreshStories(USER?if_exists)>
   <#assign STORIES=TOOL.filterRelationsOfBlockedUsers(STORIES,USER?if_exists)>
+  <#assign STORIES=TOOL.filterBannedStories(STORIES,USER?if_exists)>
   <#list STORIES as relation>
      <li>
      <#assign story=relation.child, blog=relation.parent>

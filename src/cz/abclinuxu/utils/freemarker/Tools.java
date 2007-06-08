@@ -525,12 +525,41 @@ public class Tools implements Configurable {
             return relations;
 
         Set blocked = getBlacklist((User)aUser, true);
+        if (blocked.isEmpty())
+            return relations;
+
         List result = new ArrayList(relations.size());
         Relation relation; Item story;
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             relation = (Relation) iter.next();
             story = (Item) relation.getChild();
             if (! blocked.contains(new Integer(story.getOwner())))
+                result.add(relation);
+        }
+        return result;
+    }
+
+    /**
+     * Unless user requests to see all stories, filter out stories marked as inappropirate for home page.
+     * @param relations initialized Item relations
+     * @param aUser typically User instance
+     * @return relations not banned by blog administrator
+     */
+    public static List filterBannedStories(List relations, Object aUser) {
+        if (aUser != null && aUser instanceof User) {
+            User user = (User) aUser;
+            Element element = (Element) user.getData().selectSingleNode("/data/settings/hp_all_stories");
+            if (element != null && "yes".equals(element.getText()))
+                return relations;
+        }
+
+        List result = new ArrayList(relations.size());
+        Relation relation;
+        Item story;
+        for (Iterator iter = relations.iterator(); iter.hasNext();) {
+            relation = (Relation) iter.next();
+            story = (Item) relation.getChild();
+            if (story.getSingleProperty(Constants.PROPERTY_BANNED_BLOG) == null)
                 result.add(relation);
         }
         return result;

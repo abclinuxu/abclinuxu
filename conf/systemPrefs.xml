@@ -36,6 +36,7 @@
                                     <entry key="bazaar.page.size" value="40"/>
                                     <entry key="watched.discussions.limit" value="75"/>
                                     <entry key="maintainance.mode" value="false"/>
+                                    <entry key="mail.blog.watch" value="digest@abclinuxu.cz"/>
                                 </map>
                             </node>
                         </node>

@@ -162,9 +162,27 @@
   </tr>
 
   <tr>
+   <td class="required">Zobrazovat všechny zápisky</td>
+   <td>
+    <select name="bannedStories" tabindex="10">
+     <#assign bannedStories=PARAMS.bannedStories?default("no")>
+     <option value="yes" <#if bannedStories=="yes">SELECTED</#if>>ano</option>
+     <option value="no" <#if bannedStories=="no">SELECTED</#if>>ne</option>
+    </select>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2">
+    Administrátoři mohou zakázat zobrazování některého zápisku z blogu na titulní stránce. Typicky se
+    to děje u provokací, urážek nebo tapetování. Toto nastavení způsobí, že na titulní stránce uvidíte
+    všechny zápisky.
+   </td>
+  </tr>
+
+  <tr>
    <td class="required">Velikost stránky při hledání</td>
    <td>
-    <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="10">
+    <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="11">
     <div class="error">${ERRORS.search?if_exists}</div>
    </td>
   </tr>
@@ -175,7 +193,7 @@
   <tr>
    <td class="required">Velikost stránky diskusního fóra</td>
    <td>
-    <input type="text" name="forum" value="${PARAMS.forum?if_exists}" size="3" tabindex="11">
+    <input type="text" name="forum" value="${PARAMS.forum?if_exists}" size="3" tabindex="12">
     <div class="error">${ERRORS.forum?if_exists}</div>
    </td>
   </tr>
@@ -186,10 +204,10 @@
   <tr>
    <td class="required">Zobrazovat rozcestník</td>
    <td>
-    <select name="guidepost" tabindex="12">
+    <select name="guidepost" tabindex="13">
      <#assign guidepost=PARAMS.guidepost?default("yes")>
      <option value="yes" <#if guidepost=="yes">SELECTED</#if>>ano</option>
-     <option value="no"<#if guidepost=="no">SELECTED</#if>>ne</option>
+     <option value="no" <#if guidepost=="no">SELECTED</#if>>ne</option>
     </select>
    </td>
   </tr>

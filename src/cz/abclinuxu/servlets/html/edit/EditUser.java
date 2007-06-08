@@ -101,6 +101,7 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_EMOTICONS = "emoticons";
     public static final String PARAM_SIGNATURES = "signatures";
     public static final String PARAM_AVATARS = "avatars";
+    public static final String PARAM_DISPLAY_BANNED_STORIES = "bannedStories";
     public static final String PARAM_SIGNATURE = "signature";
     public static final String PARAM_COOKIE_VALIDITY = "cookieValid";
     public static final String PARAM_DISCUSSIONS_COUNT = "discussions";
@@ -618,6 +619,9 @@ public class EditUser implements AbcAction, Configurable {
         node = document.selectSingleNode("/data/settings/avatars");
         if ( node!=null )
             params.put(PARAM_AVATARS, node.getText());
+        node = document.selectSingleNode("/data/settings/hp_all_stories");
+        if ( node!=null )
+            params.put(PARAM_DISPLAY_BANNED_STORIES, node.getText());
 
         node = document.selectSingleNode("/data/settings/guidepost");
         if ( node!=null )
@@ -700,6 +704,7 @@ public class EditUser implements AbcAction, Configurable {
         canContinue &= setCookieValidity(params, managed);
         canContinue &= setEmoticons(params, managed);
         canContinue &= setSignatures(params, managed);
+        canContinue &= setBannedStories(params, managed);
         canContinue &= setAvatars(params, managed);
         canContinue &= setGuidepost(params, managed);
         canContinue &= setDiscussionsSizeLimit(params, managed, env);
@@ -1557,6 +1562,20 @@ public class EditUser implements AbcAction, Configurable {
         return true;
     }
 
+    /** Updates banned blogs view settings from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setBannedStories(Map params, User user) {
+        String showBanned = (String) params.get(PARAM_DISPLAY_BANNED_STORIES);
+        Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/hp_all_stories");
+        String value = ("yes".equals(showBanned))? "yes":"no";
+        element.setText(value);
+        return true;
+    }
+
+    /**
     /**
      * Updates guidepost from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters

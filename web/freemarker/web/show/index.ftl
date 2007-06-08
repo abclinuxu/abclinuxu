@@ -123,6 +123,7 @@
 
 <#assign STORIES=VARS.getFreshStories(USER?if_exists)>
 <#assign STORIES=TOOL.filterRelationsOfBlockedUsers(STORIES,USER?if_exists)>
+<#assign STORIES=TOOL.filterBannedStories(STORIES,USER?if_exists)>
 <#if (STORIES?size>0) >
   <#assign half = STORIES?size/2 >
   <#if STORIES?size%2==1><#assign half=half+1></#if>

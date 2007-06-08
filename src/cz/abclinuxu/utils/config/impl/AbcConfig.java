@@ -53,8 +53,9 @@ public class AbcConfig implements Configurable {
     public static final String PREF_WATCHED_DISCUSSION_LIMIT = "watched.discussions.limit";
     public static final String PREF_MAINTAINANCE_MODE = "maintainance.mode";
     public static final String PREF_TICKET_LENGTH = "user.ticket.length";
+    public static final String PREF_MAILING_LIST_BLOG_WATCH = "mail.blog.watch";
 
-    static String deployPath, domain, hostname;
+    static String deployPath, domain, hostname, blogWatchEmail;
     static int viewUserPageSize, sectionArticleCount, seriesArticleCount, bazaarPageSize;
     static int articleSectionArticlesCount, authorArticlesPageSize, searchResultsCount, faqSectionCount;
     static int maxWatchedDiscussions, ticketLength;
@@ -80,6 +81,7 @@ public class AbcConfig implements Configurable {
         maxWatchedDiscussions = prefs.getInt(PREF_WATCHED_DISCUSSION_LIMIT, 50);
         ticketLength = prefs.getInt(PREF_TICKET_LENGTH, 10);
         maintainanceMode = prefs.getBoolean(PREF_MAINTAINANCE_MODE, false);
+        blogWatchEmail = prefs.get(PREF_MAILING_LIST_BLOG_WATCH, null);
     }
 
     /**
@@ -120,6 +122,13 @@ public class AbcConfig implements Configurable {
         if ( path.startsWith(File.separator) )
             return path;
         return deployPath.concat(path);
+    }
+
+    /**
+     * @return email address of mailing list of administrators that bans stories inappropriate for home page
+     */
+    public static String getBlogWatchEmail() {
+        return blogWatchEmail;
     }
 
     /**
