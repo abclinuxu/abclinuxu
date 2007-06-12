@@ -80,12 +80,22 @@
     </#list>
 </table>
 
-<h2>Kontakt</h2>
+<h2>Kontakt na Obchodní oddělení</h2>
 
 <p class="kontakt">
-    Tel: +420<span>267</span>108<span>384</span><br />
-    ICQ: 34043399<a href="http://www.icq.com/whitepages/wwp.php?uin=34043399"><img src="http://status.icq.com/online.gif?icq=34043399&amp;img=5" alt="ICQ Status" /></a><br />
-    Skype: Saki<a href="skype:Saki?call"><img src="http://download.skype.com/share/skypebuttons/buttons/call_blue_transparent_70x23.png" style="border: none;" width="70" height="23" alt="Call me!" /></a>
+<strong>ICQ:</strong> 351447985 <a href="http://www.icq.com/whitepages/wwp.php?uin=351447985" onclick="javascript:window.open(this.href, 'width=640, height=480, resizable=yes');return false;"><img src="http://status.icq.com/online.gif?icq=351447985&amp;img=5" style="margin-bottom:-5px" alt="ICQ Status" /></a>
+<br />
+<strong>Skype:</strong> sfrudolf <script type="text/javascript" src="http://download.skype.com/share/skypebuttons/js/skypeCheck.js"></script><a href="skype:sfrudolf?call"><img src="http://mystatus.skype.com/smallicon/sfrudolf" style="border: medium none ;" alt="Skype status" height="16" width="16" /></a>
+<br />
+<strong>Jabber:</strong> sfrudolf@jabber.cz
+<br />
+<br />
+<strong>ICQ:</strong> 34043399 <a href="http://www.icq.com/whitepages/wwp.php?uin=34043399" onclick="javascript:window.open(this.href, 'width=640, height=480, resizable=yes');return false;"><img src="http://status.icq.com/online.gif?icq=34043399&amp;img=5" style="margin-bottom:-5px" alt="ICQ Status" /></a>
+<br />
+<strong>Skype:</strong> Saki <script type="text/javascript" src="http://download.skype.com/share/skypebuttons/js/skypeCheck.js"></script><a href="skype:saki?call"><img src="http://mystatus.skype.com/smallicon/saki" style="border: medium none ;" alt="Skype status" height="16" width="16" /></a>
+<br />
+<br />
+<strong>Tel.:</strong> +420<span>267</span>108<span>384</span>
 </p>
 
 <p style="font-size:85%;font-style: italic;">
