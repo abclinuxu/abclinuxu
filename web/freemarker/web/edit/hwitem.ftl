@@ -118,7 +118,7 @@
         <tr>
             <td>Technické parametry</td>
             <td>
-                <textarea name="params" class="siroka" rows="12" tabindex="9" class="wide">${PARAMS.params?if_exists?html}</textarea>
+                <textarea name="params" class="siroka" rows="14" tabindex="9" class="wide">${PARAMS.params?if_exists?html}</textarea>
                 <div class="error">${ERRORS.params?if_exists}</div>
             </td>
         </tr>
@@ -134,7 +134,7 @@
         <tr>
             <td>Poznámka</td>
             <td>
-                <textarea name="note" class="siroka" rows="10" tabindex="11" class="wide">${PARAMS.note?if_exists?html}</textarea>
+                <textarea name="note" class="siroka" rows="16" tabindex="11" class="wide">${PARAMS.note?if_exists?html}</textarea>
                 <div class="error">${ERRORS.note?if_exists}</div>
             </td>
         </tr>
