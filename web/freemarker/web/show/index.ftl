@@ -74,6 +74,9 @@
     <#list ARTICLES as rel>
         <@lib.showArticle rel, "CZ_DM", "CZ_SHORT"/>
         <hr />
+        <#if rel_index==1>
+          <@lib.advertisement id="itbiz-box" />
+        </#if>
     </#list>
 
     <div class="st_vpravo">
