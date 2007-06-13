@@ -406,3 +406,15 @@ a.selected:hover {
 
 .ad_active { color: green; }
 .ad_inactive { color: red; }
+
+.itbiz { border-color: #cfe8ff;
+         background-image: url('/images/site2/itbiz-top-bg.gif'); }
+.itbiz a { color: black;
+           text-decoration: none; }
+.itbiz a:hover { text-decoration: underline;
+                 background-color: transparent; }
+.itbiz a.logo { background-image: url('/images/site2/itbiz-logo60x22.png'); }
+.itbiz .logo-it { color: #18286c; }
+.itbiz .logo-biz { color: #bc1d12; }
+.itbiz .header a:hover { text-decoration: none; }
+.itbiz a img:hover { background-color: transparent; }

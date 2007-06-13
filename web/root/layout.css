@@ -951,6 +951,20 @@ table.swdetail {
 	float: right;
 }
 
-.arbo-sky {
-	clear: right;
-}
+.arbo-sky { clear: right; }
+
+.itbiz { margin: 0.5em 290px 0.5em 20px;
+         border-style: solid;
+         border-width: 0 1px 1px 1px;
+         background: top repeat-x;
+         font-size: 90%;
+         padding: 0.5em; }
+.itbiz .header { font-weight:bold;
+                 font-size: larger; }
+.itbiz .logo { float: right;
+               width: 60px;
+               height: 22px;
+               background: no-repeat; }
+ .itbiz .list { margin: 0;
+                padding-left: 1.3em;
+                list-style-type: circle; }
