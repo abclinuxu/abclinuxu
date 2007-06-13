@@ -232,3 +232,9 @@ CREATE TABLE hledano (
  retezec VARCHAR(255) PRIMARY KEY,               -- dotaz do fulltextoveho hledani
  pocet INT(6) NOT NULL DEFAULT 0                 -- kolikrat bylo hledano (bez kliku na dalsi stranky vysledku)
 ) collate utf8_bin;
+
+CREATE TABLE konstanty (
+  tabulka char(1)  default NULL,
+  typ int(4) default NULL,
+  popis varchar(255) default NULL
+);
