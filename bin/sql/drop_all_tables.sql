@@ -4,6 +4,7 @@ drop table if exists citac;
 drop table if exists hledano;
 drop table if exists kategorie;
 drop table if exists komentar;
+drop table if exists konstanty;
 drop table if exists objekt;
 drop table if exists odkaz;
 drop table if exists polozka;
