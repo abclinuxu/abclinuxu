@@ -44,12 +44,10 @@ soubory v source/conf.
 
 5\ nakonfigurujte jetty
 
-a) nastavte spravne promennou $JETTY_HOME v bin/jetty.sh
-
-b) nastavte spravne cestu k adresari deploy v etc/abc.xml
-uvnitr elementu addWebApplication
+Nastavte spravne promennou $JETTY_HOME v bin/jetty.sh.
 
 6\ spustte jetty
+
 cd jetty/bin
 ./jetty.sh run
 
