@@ -55,7 +55,7 @@ public interface Versioning {
      * @return list of VersionInfo objects. When the list is empty, then there is no
      * version of specified document.
      */
-    public List getHistory(int relation);
+    public List<VersionInfo> getHistory(int relation);
 
     /**
      * Removes all information for given document from versioning repository.

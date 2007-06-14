@@ -146,7 +146,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
      * @return list of VersionInfo objects. When the list is empty, then there is no
      *         version of specified document.
      */
-    public List getHistory(int relation) {
+    public List<VersionInfo> getHistory(int relation) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
         Connection con = null;
         PreparedStatement statement = null;
@@ -157,7 +157,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
             statement.setInt(1, relation);
             resultSet = statement.executeQuery();
 
-            List history = new ArrayList();
+            List<VersionInfo> history = new ArrayList<VersionInfo>();
             while (resultSet.next()) {
                 VersionInfo info = new VersionInfo();
                 info.setVersion(resultSet.getInt(1));
