@@ -427,9 +427,10 @@ a.selected:hover {
          background-color: black; }
 .itbiz a { color: white;
            text-decoration: none; }
-.itbiz a:hover { text-decoration: underline;
+.itbiz a:hover { color: white;
+                 text-decoration: underline;
                  background-color: transparent; }
-.itbiz a.logo { background-image: url('/images/site2/itbiz-logo-dark60x22.png'); }
+.itbiz a.logo { background-image: url('/images/site2/itbiz-logo-dark60x18.png'); }
 .itbiz .logo-it { color: #0000ff; }
 .itbiz .logo-biz { color: #ff0000; }
 .itbiz .header a:hover { text-decoration: none; }

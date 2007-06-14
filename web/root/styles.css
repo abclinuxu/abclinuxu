@@ -379,13 +379,8 @@ a.selected:hover {
 }
 
 /*     treemenu     */
-.treeview li {
-	background-image: url("/images/site2/menu-link.gif");
-}
-
-.treeview li.submenu {
-	background-image: url("/images/site2/menu-closed.gif");
-}
+.treeview li { background-image: url("/images/site2/menu-link.gif"); }
+.treeview li.submenu { background-image: url("/images/site2/menu-closed.gif"); }
 
 .skoleni table { border-bottom-color: black; }
 .skoleni table td { background-color: #E6E6E6; }
@@ -413,7 +408,7 @@ a.selected:hover {
            text-decoration: none; }
 .itbiz a:hover { text-decoration: underline;
                  background-color: transparent; }
-.itbiz a.logo { background-image: url('/images/site2/itbiz-logo60x22.png'); }
+.itbiz a.logo { background-image: url('/images/site2/itbiz-logo60x18.png'); }
 .itbiz .logo-it { color: #18286c; }
 .itbiz .logo-biz { color: #bc1d12; }
 .itbiz .header a:hover { text-decoration: none; }
