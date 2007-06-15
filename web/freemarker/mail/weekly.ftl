@@ -34,22 +34,7 @@ Prehled zpravicek
 </#list>
 
 
-<#if JOBS?size gt 0>
-Nove nabidky zamestnani
-=======================
-
-Prehled novych IT a linuxovych pracovnich pozic ze serveru www.praceabc.cz.
-
-<#list JOBS as job>
-${job.title}
-Region: ${job.region}, Kategorie: ${job.category}<#if job.itJob>, IT</#if><#if job.linuxJob>, Linux</#if>
-http://www.praceabc.cz/www/detail.php?id=${job.id}
-
- ---------------------
-
-</#list>
-</#if>
-
-Pokud si jiz neprejete zasilat tyto emaily, zmente si nastaveni na adrese
+Pokud si jiz neprejete zasilat tyto emaily,
+zmente si nastaveni na adrese:
 http://www.abclinuxu.cz/EditUser/${USER.id}?action=subscribe
 Vase prihlasovaci jmeno je ${USER.login}.
