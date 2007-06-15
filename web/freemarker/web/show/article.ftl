@@ -148,6 +148,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
 <#flush>
 
 <@lib.advertisement id="sun-box" />
+<@lib.advertisement id="bsupport-box" />
 
 <#if CHILDREN.discussion?exists>
     <h3>Komentáře</h3>
