@@ -43,7 +43,7 @@
         <tr>
             <td width="90">Reklamní kód</td>
             <td>
-                <textarea name="code" rows="5" class="siroka" tabindex="3">${PARAMS.code?if_exists?html}</textarea>
+                <textarea name="code" rows="15" class="siroka" tabindex="3">${PARAMS.code?if_exists?html}</textarea>
                 <div class="error">${ERRORS.code?if_exists}</div>
             </td>
         </tr>
