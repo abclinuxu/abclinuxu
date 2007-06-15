@@ -395,6 +395,11 @@ a.selected:hover {
 
 .sun-box a { color: white; }
 .sun-box a:hover { background-color: #E97D19; }
+.bsupport-box { border-color: #ff0000;
+                color: #ff0000; }
+.bsupport-box a { color: #ff0000; }
+.bsupport-box a:hover { background-color: #ff0000;
+                        color: white; }
 
 .arbo-sky,
 .arbo-sq { background-color: white; }

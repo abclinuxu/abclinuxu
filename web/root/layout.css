@@ -940,10 +940,13 @@ table.swdetail {
 	font-size: small;
 	clear: right;
 }
-
-.sun-box p {
-	padding: 0.3em 0 0.5em 0.5em;
-}
+.sun-box p { padding: 0.3em 0 0.5em 0.5em; }
+.bsupport-box { border-width: 1px;
+                border-style: dotted;
+                font-size: small;
+                padding: 0.3em; }
+.bsupport-box a { text-decoration: none; }
+.bsupport-box a:hover { text-decoration: underline; }
 
 .arbo-sky,
 .arbo-sq {
