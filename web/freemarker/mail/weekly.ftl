@@ -19,23 +19,6 @@ Prehled clanku
 </#list>
 
 
-Reklama
-=======
-
-DataScript s.r.o. jako odborna vzdelavaci a treninkova
-spolecnost je certifikovanym Red Hat Training Partnerem.
-V ramci sve cinnosti poskytuje skoleni a certifikace
-pro dosazeni kvalifikaci Red Hat Certified Technician
-(RHCT) a Red Hat Certified Engineer (RHCE).
-
-Skoleni a certifikace Red Hat jsou dlouhodobe povazovana
-za jednoznacne nejlepsi a nejprinosnejsi pro praxi v cele
-oblasti Linuxu.
-
-http://www.abclinuxu.cz/skoleni/red-hat
-
-
-
 Prehled zpravicek
 =================
 
