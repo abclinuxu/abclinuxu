@@ -53,7 +53,7 @@
     </p>
 
  <@lib.advertisement id="sun-box" />
- <@lib.advertisement id="arbo-sky" />
+ <@lib.advertisement id="bsupport-box" />
  <@lib.advertisement id="gg-ds-otazka" />
 
  <#if DIZ.size==0>
