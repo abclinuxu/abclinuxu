@@ -68,13 +68,17 @@
       <#assign clanek=relation.child, tmp=TOOL.groupByType(clanek.children, "Item"),
                url=relation.url?default("/clanky/show/"+relation.id),
                rating=TOOL.ratingFor(relation.child.data)?default("UNDEF")>
-      <#if tmp.discussion?exists><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
       <tr>
         <td><a href="${url}">${TOOL.xpath(clanek,"data/name")}</a></td>
         <td class="td-datum">${DATE.show(clanek.created, "SMART_DMY")}</td>
         <td class="td-meta td-right"><@lib.showCounter clanek, .globals["CITACE"]?if_exists, "read" />&times;</td>
         <td class="td-meta td-right">
-          <a href="${diz.url?default("/clanky/show/"+diz.relationId)}">${diz.responseCount}<@lib.markNewComments diz/></a>
+          <#if tmp.discussion?exists>
+              <#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])>
+              <#if (diz.responseCount > 0)>
+                  <a href="${diz.url?default("/clanky/show/"+diz.relationId)}">${diz.responseCount}<@lib.markNewComments diz/></a>
+              </#if>
+          </#if>
         </td>
         <td class="td-meta"><#if rating!="UNDEF">${rating.percent} %</#if></td>
         <td class="td-meta td-right"><#if rating!="UNDEF">${rating.count}</#if></td>
