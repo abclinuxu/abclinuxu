@@ -359,7 +359,8 @@ public class EditDiscussion implements AbcAction {
         if (daysCreated > 20 && daysUpdated > 2) {
             if (Tools.isQuestion(relation))
                 ServletUtils.addMessage("Pozor, chystáte se komentovat " + daysCreated + " dní starý dotaz. " +
-                        "Pokud nemáte řešení tohoto problému, ale naopak se chcete na něco zeptat, položte raději nový dotaz,", env, null);
+                        "Pokud se nechystáte vložit či doplnit řešení tohoto dotazu, ale naopak se chcete na něco zeptat, " +
+                        "položte raději nový dotaz.", env, null);
             else
                 ServletUtils.addMessage("Pozor, chystáte se komentovat " + daysCreated + " dní starou diskusi.", env, null);
         }
