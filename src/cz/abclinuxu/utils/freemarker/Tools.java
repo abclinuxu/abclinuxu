@@ -1743,4 +1743,14 @@ public class Tools implements Configurable {
 
         return authors;
     }
+
+    /**
+     * Decides if item is question in forum or not
+     * @param relation relation containing item
+     * @return true if it is question
+     */
+    public static boolean isQuestion(Relation relation) {
+        Item item = (Item) relation.getChild();
+        return item.getType() == Item.DISCUSSION && item.getData().selectSingleNode("/data/title") != null;
+    }
 }

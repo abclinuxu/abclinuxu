@@ -37,6 +37,8 @@
                                     <entry key="watched.discussions.limit" value="75"/>
                                     <entry key="maintainance.mode" value="false"/>
                                     <entry key="mail.blog.watch" value="digest@abclinuxu.cz"/>
+                                    <entry key="warn.old.diz.created.days" value="30" />
+                                    <entry key="warn.old.diz.commented.days" value="3" />
                                 </map>
                             </node>
                         </node>

@@ -54,11 +54,13 @@ public class AbcConfig implements Configurable {
     public static final String PREF_MAINTAINANCE_MODE = "maintainance.mode";
     public static final String PREF_TICKET_LENGTH = "user.ticket.length";
     public static final String PREF_MAILING_LIST_BLOG_WATCH = "mail.blog.watch";
+    public static final String PREF_WARN_OLD_DISCUSSION_CREATED = "warn.old.diz.created.days";
+    public static final String PREF_WARN_OLD_DISCUSSION_COMMENTED = "warn.old.diz.commented.days";
 
     static String deployPath, domain, hostname, blogWatchEmail;
     static int viewUserPageSize, sectionArticleCount, seriesArticleCount, bazaarPageSize;
     static int articleSectionArticlesCount, authorArticlesPageSize, searchResultsCount, faqSectionCount;
-    static int maxWatchedDiscussions, ticketLength;
+    static int maxWatchedDiscussions, ticketLength, oldDiscussionAge, oldDiscussionSleep;
     static boolean maintainanceMode;
 
     /**
@@ -80,6 +82,8 @@ public class AbcConfig implements Configurable {
         bazaarPageSize = prefs.getInt(PREF_BAZAAR_PAGE_SIZE, 20);
         maxWatchedDiscussions = prefs.getInt(PREF_WATCHED_DISCUSSION_LIMIT, 50);
         ticketLength = prefs.getInt(PREF_TICKET_LENGTH, 10);
+        oldDiscussionAge = prefs.getInt(PREF_WARN_OLD_DISCUSSION_CREATED, 30);
+        oldDiscussionSleep = prefs.getInt(PREF_WARN_OLD_DISCUSSION_COMMENTED, 10);
         maintainanceMode = prefs.getBoolean(PREF_MAINTAINANCE_MODE, false);
         blogWatchEmail = prefs.get(PREF_MAILING_LIST_BLOG_WATCH, null);
     }
@@ -200,6 +204,20 @@ public class AbcConfig implements Configurable {
      */
     public static int getTicketLength() {
         return ticketLength;
+    }
+
+    /**
+     * @return number of days since creating a discussion to be considered as old
+     */
+    public static int getOldDiscussionAge() {
+        return oldDiscussionAge;
+    }
+
+    /**
+     * @return number of days since last comment in old discussion
+     */
+    public static int getOldDiscussionSleep() {
+        return oldDiscussionSleep;
     }
 
     /**

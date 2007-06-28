@@ -50,6 +50,8 @@ import cz.abclinuxu.scheduler.VariableFetcher;
 
 import org.dom4j.*;
 import org.htmlparser.util.ParserException;
+import org.joda.time.Days;
+import org.joda.time.DateTime;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -350,6 +352,17 @@ public class EditDiscussion implements AbcAction {
         Element element = (Element) discussion.getData().selectSingleNode(xpath);
         if ( element!=null )
             return ServletUtils.showErrorPage("Diskuse byla zmrazena - není možné přidat další komentář!", env, request);
+
+        DateTime now = new DateTime();
+        int daysCreated = Days.daysBetween(new DateTime(discussion.getCreated()), now).getDays();
+        int daysUpdated = Days.daysBetween(new DateTime(discussion.getUpdated()), now).getDays();
+        if (daysCreated > 20 && daysUpdated > 2) {
+            if (Tools.isQuestion(relation))
+                ServletUtils.addMessage("Pozor, chystáte se komentovat " + daysCreated + " dní starý dotaz. " +
+                        "Pokud nemáte řešení tohoto problému, ale naopak se chcete na něco zeptat, položte raději nový dotaz,", env, null);
+            else
+                ServletUtils.addMessage("Pozor, chystáte se komentovat " + daysCreated + " dní starou diskusi.", env, null);
+        }
 
         // display discussed comment, only if it has title
         Comment parentThread = getDiscussedComment(params, discussion, persistence);
