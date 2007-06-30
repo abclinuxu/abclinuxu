@@ -31,6 +31,7 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -158,8 +159,11 @@ public class ShowObject implements AbcAction {
                 env.put(EditNews.VAR_CATEGORY, NewsCategories.get(item.getSubType()));
                 return FMTemplateSelector.select("ShowObject", "news", env, request);
             }
-            case Item.DISCUSSION:
+            case Item.DISCUSSION: {
+                if (Tools.isQuestion(relation))
+                    ReadRecorder.log(item, Constants.COUNTER_READ, env);
                 return FMTemplateSelector.select("ShowObject", "discussion", env, request);
+            }
             case Item.HARDWARE:
                 return FMTemplateSelector.select("ShowObject", "hardware", env, request);
             case Item.DRIVER:

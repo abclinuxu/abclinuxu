@@ -1,5 +1,5 @@
 <#assign DIZ = TOOL.createDiscussionTree(ITEM,USER?if_exists,RELATION.id,true)>
-<#assign is_question=TOOL.xpath(ITEM,"data/title")?exists>
+<#assign is_question=TOOL.isQuestion(RELATION)>
 <#if DIZ.monitored>
     <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj">
 </#if>
@@ -30,6 +30,10 @@
         <a class="info" href="#">?<span class="tooltip">Kliknutím na příslušný odkaz zvolte, jestli otázka <i>byla</i> nebo <i>nebyla</i> vyřešena.</span></a>,
    </#if>
    <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print" rel="nofollow">Tisk</a>
+   <#if is_question>
+       <br />
+       <b>Přečteno:</b> ${TOOL.getCounterValue(ITEM, "read")}&times;
+   </#if>
    <#if USER?exists && (USER.hasRole("discussion admin") || USER.hasRole("move relation"))>
      <br />
      <b>Admin:</b>
