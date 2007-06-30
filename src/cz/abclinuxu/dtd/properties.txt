@@ -45,7 +45,7 @@ purpose: defines author(s) of that article
 ITEM.AUTHOR
 ============
 
-name: uid
+name: user
 value: id of user
 mapping: 1:1
 purpose: defines relationship between author and user

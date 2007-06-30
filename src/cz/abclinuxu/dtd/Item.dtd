@@ -176,11 +176,11 @@
 <!ELEMENT firstname (#PCDATA)> <!-- First name(s) of the author -->
 <!ELEMENT surname (#PCDATA)> <!-- Surname of the author -->
 <!ELEMENT nickname (#PCDATA)> <!-- Nickname of the author -->
-<!ELEMENT birthNumber (#PCDATA)> <!-- authors birth number -->
-<!ELEMENT accountNumber (#PCDATA)> <!-- authors account number -->
-<!ELEMENT email (#PCDATA)> <!-- authors e-mail -->
-<!ELEMENT phone (#PCDATA)> <!-- authors phone number -->
-<!ELEMENT address (#PCDATA)> <!-- authors home address -->
+<!ELEMENT birthNumber (#PCDATA)> <!-- author's birth number -->
+<!ELEMENT accountNumber (#PCDATA)> <!-- author's bank account number -->
+<!ELEMENT email (#PCDATA)> <!-- author's e-mail -->
+<!ELEMENT phone (#PCDATA)> <!-- author's phone number -->
+<!ELEMENT address (#PCDATA)> <!-- author's home address -->
 
 <!-- Item.TRIVIA -->
 <!ELEMENT data (title, description, difficulty, stats, question+)>

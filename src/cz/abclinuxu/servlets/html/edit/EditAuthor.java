@@ -23,7 +23,6 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
@@ -81,7 +80,7 @@ public class EditAuthor implements AbcAction {
         String action = (String) params.get(PARAM_ACTION);
 
         if (action == null)
-            throw new MissingArgumentException("ChybĂ­ parametr action!");
+            throw new MissingArgumentException("Chybí parametr action!");
 
         // check permissions
         if (user == null)
@@ -100,7 +99,7 @@ public class EditAuthor implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if ( relation==null )
-            throw new MissingArgumentException("ChybĂ­ parametr relationId!");
+            throw new MissingArgumentException("Chybí parametr relationId!");
 
         persistence.synchronize(relation);
         persistence.synchronize(relation.getChild());
@@ -114,7 +113,7 @@ public class EditAuthor implements AbcAction {
             return actionEditStep2(request, response, env);
         }
 
-        throw new MissingArgumentException("ChybĂ­ parametr action!");
+        throw new MissingArgumentException("Chybí parametr action!");
     }
 
     public String actionAddStep1(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -137,7 +136,7 @@ public class EditAuthor implements AbcAction {
         canContinue &= setFirstname(params, root);
         canContinue &= setNickname(params, root);
         canContinue &= setBirthNumber(params, root);
-        canContinue &= setUserId(params, root);
+        canContinue &= setUserId(params, item);
         canContinue &= setAccountNumber(params, root);
         canContinue &= setEmail(params, root);
         canContinue &= setPhone(params, root);
@@ -188,9 +187,9 @@ public class EditAuthor implements AbcAction {
         node = root.element("birthNumber");
         if (node != null)
             params.put(PARAM_BIRTH_NUMBER, node.getText());
-        node = root.element("uid");
-        if (node != null)
-            params.put(PARAM_UID, node.getText());
+        Integer user = item.getIntProperty(Constants.PROPERTY_USER);
+        if (user != null)
+            params.put(PARAM_UID, user);
         node = root.element("accountNumber");
         if (node != null)
             params.put(PARAM_ACCOUNT_NUMBER, node.getText());
@@ -221,7 +220,7 @@ public class EditAuthor implements AbcAction {
         canContinue &= setSurname(params, root, env);
         canContinue &= setFirstname(params, root);
         canContinue &= setNickname(params, root);
-        canContinue &= setUserId(params, root);
+        canContinue &= setUserId(params, item);
         canContinue &= setBirthNumber(params, root);
         canContinue &= setAccountNumber(params, root);
         canContinue &= setEmail(params, root);
@@ -302,7 +301,7 @@ public class EditAuthor implements AbcAction {
             DocumentHelper.makeElement(root, "surname").setText(tmp);
             return true;
         } else {
-            ServletUtils.addError(PARAM_SURNAME, "Zadejte pĹĂ­jmenĂ­!", env, null);
+            ServletUtils.addError(PARAM_SURNAME, "Zadejte příjmení!", env, null);
             return false;
         }
     }
@@ -402,38 +401,18 @@ public class EditAuthor implements AbcAction {
     /**
      * Updates user id from parameters. Changes are not synchronized with persistance.
      * @param params map holding request's parameters
-     * @param root root element to be updated
+     * @param item author's item to be updated
      * @return false, if there is a major error.
      */
-    private boolean setUserId(Map params, Element root) {
+    private boolean setUserId(Map params, Item item) {
         String tmp = (String) params.get(PARAM_UID);
-        Element element = root.element("uid");
-        if (Misc.empty(tmp)) {
-            if (element != null) {
-                int id = Misc.parseInt(element.getText(), 0);
-                element.detach();
-
-                Persistence persistence = PersistenceFactory.getPersistance();
-                try {
-                    User associatedUser = (User) persistence.findById(new User(id));
-                    Document document = associatedUser.getData();
-                    element = (Element) document.selectSingleNode("/system/author_id");
-                    if (element != null) {
-                        element.detach();
-                        persistence.update(associatedUser);
-                    }
-                } catch (NotFoundException e) {
-                    // user has been probably deleted
-                }
-            }
-            return true;
+        if (Misc.empty(tmp))
+            item.removeProperty(Constants.PROPERTY_USER);
+        else {
+            tmp = Misc.filterDangerousCharacters(tmp);
+            item.addProperty(Constants.PROPERTY_USER, tmp);
         }
 
-        if (element == null)
-            element = DocumentHelper.makeElement(root, "uid");
-
-        tmp = Misc.filterDangerousCharacters(tmp);
-        element.setText(tmp);
         return true;
     }
 
