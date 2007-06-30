@@ -46,6 +46,8 @@ import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -170,8 +172,17 @@ public class EditAdvertisement implements AbcAction, Configurable {
         Element element = (Element) item.getData().selectSingleNode("//advertisement");
         if (element != null) {
             List list = element.elements("position");
-            if (list.size() > 0)
+            if (list.size() > 0) {
+                list = new ArrayList(list);
+                Collections.sort(list, new Comparator() {
+                    public int compare(Object o, Object o1) {
+                        String name1 = ((Element)o).elementText("name").toLowerCase();
+                        String name2 = ((Element)o1).elementText("name").toLowerCase();
+                        return name1.compareTo(name2);
+                    }
+                });
                 env.put(VAR_POSITIONS, list);
+            }
         }
         return FMTemplateSelector.select("EditAdvertisement", "main", env, request);
     }
