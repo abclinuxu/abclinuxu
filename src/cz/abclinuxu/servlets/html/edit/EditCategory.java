@@ -28,12 +28,13 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 
@@ -41,6 +42,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
+import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,7 +56,6 @@ public class EditCategory implements AbcAction {
 
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_RELATION_SHORT = "rid";
-    public static final String PARAM_CATEGORY = "categoryId";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_OPEN = "open";
     public static final String PARAM_TYPE = "type";
@@ -78,19 +79,14 @@ public class EditCategory implements AbcAction {
         if (ServletUtils.handleMaintainance(request, env))
             response.sendRedirect(response.encodeRedirectURL("/"));
 
-        Category category = (Category) InstanceUtils.instantiateParam(PARAM_CATEGORY,Category.class,params, request);
-        if ( category!=null ) {
-            category = (Category) persistence.findById(category).clone();
-            env.put(VAR_CATEGORY,category);
-        }
-
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
-        if ( relation!=null ) {
-            relation = (Relation) persistence.findById(relation);
-            category = (Category) persistence.findById(relation.getChild()).clone();
-            env.put(VAR_RELATION,relation);
-            env.put(VAR_CATEGORY,category);
-        }
+        if (relation == null)
+            throw new MissingArgumentException("Chybí parametr relationId!");
+
+        relation = (Relation) persistence.findById(relation);
+        Category category = (Category) persistence.findById(relation.getChild()).clone();
+        env.put(VAR_RELATION, relation);
+        env.put(VAR_CATEGORY, category);
 
         // check permissions
         if ( user==null )
@@ -98,8 +94,10 @@ public class EditCategory implements AbcAction {
         if ( !user.hasRole(Roles.CATEGORY_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        if ( ACTION_ADD.equals(action) )
+        if ( ACTION_ADD.equals(action) ) {
+            setTypeParam(params, category);
             return FMTemplateSelector.select("EditCategory", "add", env, request);
+        }
 
         if ( ACTION_ADD_STEP2.equals(action) ) {
             ActionProtector.ensureContract(request, EditCategory.class, true, true, true, false);
@@ -117,8 +115,6 @@ public class EditCategory implements AbcAction {
         throw new MissingArgumentException("Chybí parametr action!");
     }
 
-    // TODO prevest na settery, jako je to v ostatnich akcich
-
     /**
      * Creates new category
      */
@@ -126,61 +122,36 @@ public class EditCategory implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
 
-        String name = (String) params.get(PARAM_NAME);
-        String note = (String) params.get(PARAM_NOTE);
-
-        if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(PARAM_NAME,"Zadejte jméno sekce!",env, null);
-            return FMTemplateSelector.select("EditCategory","add",env,request);
-        }
-
-        Relation upperRelation = (Relation) env.get(VAR_RELATION);
-        Category upperCategory = (Category) env.get(VAR_CATEGORY);
+        Relation upper = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Document document = DocumentHelper.createDocument();
-        Element root = document.addElement("data");
-        root.addElement("name").addText(name);
-        if ( note!=null && note.length()>0 ) {
-            Element element = root.addElement("note");
-            element.addText(note);
-            Format format = FormatDetector.detect(note);
-            element.addAttribute("format", Integer.toString(format.getId()));
-        }
-        document.setRootElement(root);
-
         Category category = new Category();
-
-        boolean canContinue = setType(params, category, env);
-        canContinue &= setOpen(params, document);
-        if (!canContinue)
-            return FMTemplateSelector.select("EditCategory", "add", env, request);
-
+        Document document = DocumentHelper.createDocument();
+        document.addElement("data");
         category.setData(document);
         category.setOwner(user.getId());
+
+        boolean canContinue = setName(params, document, env);
+        canContinue &= setDescription(params, document, env);
+        canContinue &= setType(params, category, env);
+        canContinue &= setOpen(params, document);
+        if (! canContinue)
+            return FMTemplateSelector.select("EditCategory", "add", env, request);
+
+        persistence.create(category);
         Relation relation = null;
+        relation = new Relation(upper.getChild(), category, upper.getId());
 
-        try {
-            persistence.create(category);
-            int upper = (upperRelation!=null)? upperRelation.getId():0;
-            relation = new Relation(upperCategory,category,upper);
-
-            if ( upperRelation!=null ) {
-                String upperUrl = upperRelation.getUrl();
-                if ( upperUrl!=null ) {
-                    String url = upperUrl + "/" + URLManager.enforceRelativeURL(name);
-                    url = URLManager.protectFromDuplicates(url);
-                    if (url!=null)
-                        relation.setUrl(url);
-                }
-            }
-
-            persistence.create(relation);
-            relation.getParent().addChildRelation(relation);
-        } catch (PersistenceException e) {
-            ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);
-            return FMTemplateSelector.select("EditCategory","add",env,request);
+        String upperUrl = upper.getUrl();
+        if (upperUrl != null) {
+            String name = document.selectSingleNode("/data/name").getName();
+            String url = upperUrl + "/" + URLManager.enforceRelativeURL(name);
+            url = URLManager.protectFromDuplicates(url);
+            relation.setUrl(url);
         }
+
+        persistence.create(relation);
+        relation.getParent().addChildRelation(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
@@ -195,34 +166,15 @@ public class EditCategory implements AbcAction {
         Category category = (Category) env.get(VAR_CATEGORY);
         Document document = category.getData();
         Node node = document.selectSingleNode("data/name");
-        if (node!=null) params.put(PARAM_NAME,node.getText());
+        if (node != null)
+            params.put(PARAM_NAME, node.getText());
         node = document.selectSingleNode("data/note");
-        if (node!=null) params.put(PARAM_NOTE,node.getText());
+        if (node != null)
+            params.put(PARAM_NOTE, node.getText());
         node = document.selectSingleNode("data/writeable");
-        if (node!=null) params.put(PARAM_OPEN, node.getText());
-
-        switch (category.getType()) {
-            case Category.SOFTWARE_SECTION:
-                params.put(PARAM_TYPE, "software");
-                break;
-            case Category.HARDWARE_SECTION:
-                params.put(PARAM_TYPE, "hardware");
-                break;
-            case Category.FORUM:
-                params.put(PARAM_TYPE, "forum");
-                break;
-            case Category.BLOG:
-                params.put(PARAM_TYPE, "blog");
-                break;
-            case Category.SECTION:
-                params.put(PARAM_TYPE, "section");
-                break;
-            case Category.FAQ:
-                params.put(PARAM_TYPE, "faq");
-                break;
-            default:
-                params.put(PARAM_TYPE, "generic");
-        }
+        if (node != null)
+            params.put(PARAM_OPEN, node.getText());
+        setTypeParam(params, category);
 
         return FMTemplateSelector.select("EditCategory","edit",env,request);
     }
@@ -237,19 +189,12 @@ public class EditCategory implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
         Category category = (Category) env.get(VAR_CATEGORY);
         Document document = category.getData();
-        Element node = DocumentHelper.makeElement(document,"data/name");
-        String tmp = (String) params.get(PARAM_NAME);
-        node.setText(tmp);
 
-        node = DocumentHelper.makeElement(document,"data/note");
-        tmp = (String) params.get(PARAM_NOTE);
-        node.setText(tmp);
-        Format format = FormatDetector.detect(tmp);
-        node.addAttribute("format", Integer.toString(format.getId()));
-
-        boolean canContinue = setType(params, category, env);
+        boolean canContinue = setName(params, document, env);
+        canContinue &= setDescription(params, document, env);
+        canContinue &= setType(params, category, env);
         canContinue &= setOpen(params, document);
-        if (!canContinue)
+        if (! canContinue)
             return FMTemplateSelector.select("EditCategory", "edit", env, request);
 
         persistence.update(category);
@@ -264,6 +209,58 @@ public class EditCategory implements AbcAction {
 
     // setters
 
+
+    /**
+     * Updates name of category from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param document Document of discussion to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setName(Map params, Document document, Map env) {
+        String tmp = (String) params.get(PARAM_NAME);
+        tmp = Misc.filterDangerousCharacters(tmp);
+        if (tmp != null && tmp.length() > 0) {
+            DocumentHelper.makeElement(document, "data/name").setText(tmp);
+        } else {
+            ServletUtils.addError(PARAM_NAME, "Zadejte jméno sekce!", env, null);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Updates driver's note from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param document Document of discussion to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setDescription(Map params, Document document, Map env) {
+        String tmp = (String) params.get(PARAM_NOTE);
+        tmp = Misc.filterDangerousCharacters(tmp);
+        if (tmp != null && tmp.length() > 0) {
+            try {
+                SafeHTMLGuard.check(tmp);
+            } catch (ParserException e) {
+                log.error("ParseException on '" + tmp + "'", e);
+                ServletUtils.addError(PARAM_NOTE, e.getMessage(), env, null);
+                return false;
+            } catch (Exception e) {
+                ServletUtils.addError(PARAM_NOTE, e.getMessage(), env, null);
+                return false;
+            }
+            Element element = DocumentHelper.makeElement(document, "data/note");
+            element.setText(tmp);
+            Format format = FormatDetector.detect(tmp);
+            element.addAttribute("format", Integer.toString(format.getId()));
+        } else {
+            Element element = document.getRootElement().element("note");
+            if (element != null)
+                element.detach();
+        }
+        return true;
+    }
 
     /**
      * Updates type from parameters. Changes are not synchronized with persistence.
@@ -293,6 +290,31 @@ public class EditCategory implements AbcAction {
             category.setType(Category.FAQ);
 
         return true;
+    }
+
+    private void setTypeParam(Map params, Category category) {
+        switch (category.getType()) {
+            case Category.SOFTWARE_SECTION:
+                params.put(PARAM_TYPE, "software");
+                break;
+            case Category.HARDWARE_SECTION:
+                params.put(PARAM_TYPE, "hardware");
+                break;
+            case Category.FORUM:
+                params.put(PARAM_TYPE, "forum");
+                break;
+            case Category.BLOG:
+                params.put(PARAM_TYPE, "blog");
+                break;
+            case Category.SECTION:
+                params.put(PARAM_TYPE, "section");
+                break;
+            case Category.FAQ:
+                params.put(PARAM_TYPE, "faq");
+                break;
+            default:
+                params.put(PARAM_TYPE, "generic");
+        }
     }
 
     /**

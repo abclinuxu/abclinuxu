@@ -29,7 +29,7 @@
     <tr>
         <td width="120">Otevřená</td>
         <td>
-            <input type="checkbox" name="open" value="true"<#if PARAMS.open?default("true")=="true"> checked</#if> tabindex="3">
+            <input type="checkbox" name="open" value="true"<#if PARAMS.open?default("")=="true"> checked</#if> tabindex="3">
         </td>
     </tr>
   <tr>
@@ -47,7 +47,6 @@
 
  <input type="hidden" name="action" value="edit2">
  <input type="hidden" name="rid" value="${PARAMS.rid}">
- <input type="hidden" name="categoryId" value="${PARAMS.categoryId}">
  <input type="hidden" name="url" value="${URL.make("/EditCategory")}">
 </form>
 

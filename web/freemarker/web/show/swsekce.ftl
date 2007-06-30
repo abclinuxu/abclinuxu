@@ -14,8 +14,8 @@
             <#if USER?exists && USER.hasRole("category admin")>
                 <hr />
                 <li>
-                    <a href="${URL.noPrefix("/EditCategory?action=edit&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">edit</a>,
-                    <a href="${URL.noPrefix("/EditCategory?action=add&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">mkdir</a>,
+                    <a href="${URL.noPrefix("/EditCategory/"+RELATION.id+"?action=add")}">mkdir</a>,
+                    <a href="${URL.noPrefix("/EditCategory/"+RELATION.id+"?action=edit")}">edit</a>,
                     <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix="+URL.prefix)}">rmdir</a>
                 </li>
             </#if>
