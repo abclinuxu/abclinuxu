@@ -73,7 +73,7 @@
    <@lib.showThread thread, 0, DIZ, !DIZ.frozen />
 </#list>
 
-<#if (!DIZ.frozen && DIZ.size>3)>
+<#if (!DIZ.frozen)>
     <p>
         <a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+ITEM.id+"&amp;rid="+RELATION.id)}" rel="nofollow">
         Založit nové vlákno</a> &#8226;
