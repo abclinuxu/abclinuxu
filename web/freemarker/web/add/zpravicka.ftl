@@ -21,8 +21,8 @@ jako dotazy, žádosti o pomoc či předem nedomluvené reklamy.
 
 <p>Povolenými HTML značkami jsou odkaz (A), URL musí být absolutní
 (začínat http://) a ACRONYM. Obsah vždy pište s háčky a čárkami.
-Zprávička by měla mít alespoň dvě věty a obsahovat takové podrobnosti,
-aby dávala smysl, aniž by člověk musel navštívit zmíněná URL.
+<b>Zprávička by měla mít alespoň dvě věty a obsahovat takové podrobnosti,
+aby dávala smysl, aniž by člověk musel navštívit zmíněná URL.</b>
 Titulek by měl krátce popsat hlavní téma zprávičky, bude použit v RSS
 a vygeneruje se z něj URL (ve výpisu zpráviček však zobrazen nebude).</p>
 
