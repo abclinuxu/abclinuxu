@@ -141,7 +141,8 @@ public class EditDriver implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         // commit new version
-        Misc.commitRelationRevision(driver, relation.getId(), user);
+        String descr = "Počáteční revize dokumentu";
+        Misc.commitRelationRevision(driver, relation.getId(), user, descr);
 
         FeedGenerator.updateDrivers();
         VariableFetcher.getInstance().refreshDrivers();
@@ -199,6 +200,8 @@ public class EditDriver implements AbcAction {
         canContinue &= setURL(params, document, env);
         canContinue &= setNote(params, document, env);
         canContinue &= ServletUtils.checkNoChange(driver, origItem, env);
+        String changesDescription = Misc.getRevisionString(params, env);
+        canContinue &= !Constants.ERROR.equals(changesDescription);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null )
             return FMTemplateSelector.select("EditDriver", "edit", env, request);
@@ -207,7 +210,7 @@ public class EditDriver implements AbcAction {
         persistence.update(driver);
 
         // commit new version
-        Misc.commitRelationRevision(driver, relation.getId(), user);
+        Misc.commitRelationRevision(driver, relation.getId(), user, changesDescription);
 
         String url = relation.getUrl();
         if (url==null)

@@ -204,7 +204,8 @@ CREATE TABLE verze (
  kdo INT(6) NOT NULL,                            -- identifikator uzivatele
  kdy DATETIME NOT NULL,                          -- cas pridani
  obsah TEXT NULL,                                -- obsah dokumentu
- zmena TEXT NULL                                 -- diff oproti minule verzi
+ zmena TEXT NULL,                                -- diff oproti minule verzi
+ popis VARCHAR(255) NULL                         -- popis teto zmeny
 );
 ALTER TABLE verze ADD UNIQUE INDEX in_relace_verze (relace,verze);
 

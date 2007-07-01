@@ -349,8 +349,8 @@
                         <node name="MysqlVersioningProvider">
                             <map>
                                 <entry key="sql.find.latest.version" value="select max(verze) from verze where relace=?"/>
-                                <entry key="sql.find.all.versions" value="select verze,kdo,kdy from verze where relace=? order by kdy desc"/>
-                                <entry key="sql.insert.version" value="insert into verze (relace,verze,kdo,kdy,obsah,zmena) values (?,?,?,?,?,NULL)"/>
+                                <entry key="sql.find.all.versions" value="select verze,kdo,kdy,popis from verze where relace=? order by kdy desc"/>
+                                <entry key="sql.insert.version" value="insert into verze (relace,verze,kdo,kdy,obsah,zmena,popis) values (?,?,?,?,?,NULL,?)"/>
                                 <entry key="sql.fetch.document" value="select verze,kdo,kdy,obsah,zmena from verze where relace=? and verze=?"/>
                                 <entry key="sql.purge.document" value="delete from verze where relace=?"/>
                             </map>

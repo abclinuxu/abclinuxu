@@ -199,7 +199,8 @@ public class EditSoftware implements AbcAction, Configurable {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        String descr = "Počáteční revize dokumentu";
+        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         // refresh RSS
         FeedGenerator.updateSoftware();
@@ -263,6 +264,8 @@ public class EditSoftware implements AbcAction, Configurable {
         canContinue &= setUrl(params, PARAM_DOWNLOAD_URL, root);
         canContinue &= checkRssUrl(params, env);
         canContinue &= ServletUtils.checkNoChange(item, origItem, env);
+        String changesDescription = Misc.getRevisionString(params, env);
+        canContinue &= !Constants.ERROR.equals(changesDescription);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -276,7 +279,7 @@ public class EditSoftware implements AbcAction, Configurable {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        Misc.commitRelationRevision(item, relation.getId(), user, changesDescription);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();

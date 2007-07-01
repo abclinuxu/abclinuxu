@@ -73,6 +73,13 @@ ovladače.</p>
    </td>
   </tr>
   <tr>
+   <td>Popis této změny</td>
+   <td>
+    <input tabindex="5" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists}">
+    <div class="error">${ERRORS.rev_descr?if_exists}</div>
+   </td>
+  </tr>
+  <tr>
    <td colspan="2" align="center">
     <input type="submit" name="preview" value="Náhled">
     <input type="submit" name="submit" value="Dokonči">

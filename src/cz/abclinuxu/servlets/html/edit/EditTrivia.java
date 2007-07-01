@@ -155,7 +155,8 @@ public class EditTrivia implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        String descr = "Počáteční revize dokumentu";
+        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
@@ -224,6 +225,8 @@ public class EditTrivia implements AbcAction {
         canContinue &= setDescription(params, root, env);
         canContinue &= setDifficulty(params, root, env);
         canContinue &= setQuestions(params, root, env);
+        String changesDescription = Misc.getRevisionString(params, env);
+        canContinue &= !Constants.ERROR.equals(changesDescription);
 
         if (!canContinue)
             return FMTemplateSelector.select("EditTrivia", "edit", env, request);
@@ -231,7 +234,7 @@ public class EditTrivia implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        Misc.commitRelationRevision(item, relation.getId(), user, changesDescription);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, upper.getUrl());

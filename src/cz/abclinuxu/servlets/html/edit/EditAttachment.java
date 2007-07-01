@@ -155,7 +155,7 @@ public class EditAttachment implements AbcAction {
 
         // commit new version
         if (item.getType() != Item.BLOG && item.getType() != Item.UNPUBLISHED_BLOG)
-            Misc.commitRelationRevision(item, relation.getId(), user);
+            Misc.commitRelationRevision(item, relation.getId(), user, "Přidán screenshot");
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
@@ -216,7 +216,7 @@ public class EditAttachment implements AbcAction {
 
         // commit new version
         if (item.getType() != Item.BLOG && item.getType() != Item.UNPUBLISHED_BLOG)
-            Misc.commitRelationRevision(item, relation.getId(), user);
+            Misc.commitRelationRevision(item, relation.getId(), user, "Odstraněn screenshot");
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));

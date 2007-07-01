@@ -36,9 +36,10 @@ public interface Versioning {
      * @param document document to be stored
      * @param relation relation id for this document
      * @param user identifier of the user who commited this version
+     * @param descr description of commited changes
      * @return information about this version
      */
-    public VersionInfo commit(String document, int relation, int user);
+    public VersionInfo commit(String document, int relation, int user, String descr);
 
     /**
      * Loads document identified by path in selected version.

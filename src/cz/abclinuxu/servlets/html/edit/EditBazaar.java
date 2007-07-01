@@ -166,7 +166,8 @@ public class EditBazaar implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         // commit new version
-        Misc.commitRelationRevision(ad, relation.getId(), user);
+        String descr = "Počáteční revize dokumentu";
+        Misc.commitRelationRevision(ad, relation.getId(), user, descr);
 
         EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
@@ -227,6 +228,8 @@ public class EditBazaar implements AbcAction {
         canContinue &= setType(params, ad, env);
         canContinue &= setPrice(params, document, env);
         canContinue &= setContact(params, document, env);
+        String changesDescription = Misc.getRevisionString(params, env);
+        canContinue &= !Constants.ERROR.equals(changesDescription);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -239,7 +242,7 @@ public class EditBazaar implements AbcAction {
         persistence.update(ad);
 
         // commit new version
-        Misc.commitRelationRevision(ad, relation.getId(), user);
+        Misc.commitRelationRevision(ad, relation.getId(), user, changesDescription);
 
         FeedGenerator.updateBazaar();
         VariableFetcher.getInstance().refreshBazaar();

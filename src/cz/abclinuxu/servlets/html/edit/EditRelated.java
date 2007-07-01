@@ -144,7 +144,8 @@ public class EditRelated implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        String descr = "Přidán související dokument";
+        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -197,7 +198,8 @@ public class EditRelated implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        String descr = "Upraveny související dokumenty";
+        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/EditRelated/" + relation.getId());
@@ -260,7 +262,8 @@ public class EditRelated implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        String descr = "Odstraněny související dokumenty";
+        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/EditRelated/"+relation.getId());

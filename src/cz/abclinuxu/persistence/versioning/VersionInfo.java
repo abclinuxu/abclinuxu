@@ -28,6 +28,7 @@ public class VersionInfo {
     private int version;
     private int user;
     private Date commited;
+    private String description;
 
     /**
      * @return version
@@ -53,6 +54,17 @@ public class VersionInfo {
 
     public void setUser(int user) {
         this.user = user;
+    }
+
+    /**
+     * @return description (comment) of the changes
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**

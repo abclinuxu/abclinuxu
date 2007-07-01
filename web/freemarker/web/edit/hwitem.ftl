@@ -140,14 +140,22 @@
         </tr>
 
         <tr>
+            <td>Popis této změny</td>
+            <td>
+                <input tabindex="12" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists}">
+                <div class="error">${ERRORS.rev_descr?if_exists}</div>
+            </td>
+        </tr>
+
+        <tr>
             <td width="120">&nbsp;</td>
             <td>
                 <#if PREVIEW?exists>
-                    <input tabindex="12" type="submit" name="preview" value="Zopakuj náhled">
+                    <input tabindex="13" type="submit" name="preview" value="Zopakuj náhled">
                 <#else>
-                    <input tabindex="12" type="submit" name="preview" value="Náhled">
+                    <input tabindex="13" type="submit" name="preview" value="Náhled">
                 </#if>
-                <input tabindex="13" type="submit" name="finish" value="Dokonči">
+                <input tabindex="14" type="submit" name="finish" value="Dokonči">
             </td>
         </tr>
     </table>

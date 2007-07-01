@@ -18,6 +18,7 @@ v prvním sloupečku.
             <th>Verze</th>
             <th>Autor</th>
             <th>Datum</th>
+            <th>Popis změn</th>
         </tr>
         <#list HISTORY as info>
             <tr>
@@ -29,6 +30,7 @@ v prvním sloupečku.
                     <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
                 </td>
                 <td align="right">${DATE.show(info.commited,"CZ_FULL")}</td>
+                <td>${info.description?if_exists}</td>
             </tr>
         </#list>
     </table>

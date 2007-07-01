@@ -135,7 +135,8 @@ public class EditDictionary implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        String descr = "Počáteční revize dokumentu";
+        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         FeedGenerator.updateDictionary();
         VariableFetcher.getInstance().refreshDictionary();
@@ -178,6 +179,8 @@ public class EditDictionary implements AbcAction {
         canContinue &= setName(params, item, root, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= ServletUtils.checkNoChange(item, origItem, env);
+        String changesDescription = Misc.getRevisionString(params, env);
+        canContinue &= !Constants.ERROR.equals(changesDescription);
 
         if ( !canContinue || params.get(PARAM_PREVIEW) != null)
             return FMTemplateSelector.select("Dictionary", "edit", env, request);
@@ -185,7 +188,7 @@ public class EditDictionary implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        Misc.commitRelationRevision(item, relation.getId(), user, changesDescription);
 
         // run monitor
         String url = "http://www.abclinuxu.cz"+relation.getUrl();

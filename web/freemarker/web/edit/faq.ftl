@@ -45,9 +45,16 @@ vrátit zpět.</p>
             </td>
         </tr>
         <tr>
+            <td>Popis této změny</td>
+            <td>
+                <input tabindex="3" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists}">
+                <div class="error">${ERRORS.rev_descr?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
             <td colspan="2" align="center">
-                <input tabindex="3" type="submit" name="preview" value="Náhled">
-                <input tabindex="4" type="submit" name="submit" value="Dokonči">
+                <input tabindex="4" type="submit" name="preview" value="Náhled">
+                <input tabindex="5" type="submit" name="submit" value="Dokonči">
             </td>
         </tr>
     </table>

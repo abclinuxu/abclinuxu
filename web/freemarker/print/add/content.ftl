@@ -70,6 +70,13 @@ pak však potřebuje podporu programátora, který připraví data.</p>
    </td>
   </tr>
   <tr>
+   <td>Popis změn (nepovinné)</td>
+   <td>
+    <input tabindex="5" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?default('Počáteční revize dokumentu')}">
+    <div class="error">${ERRORS.rev_descr?if_exists}</div>
+   </td>
+  </tr>
+  <tr>
    <td width="90">&nbsp;</td>
    <td>
      <input tabindex="8" type="submit" name="preview" value="<#if PREVIEW?exists>Zopakuj náhled<#else>Náhled</#if>">

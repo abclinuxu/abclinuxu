@@ -175,7 +175,8 @@ public class EditHardware implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        String descr = "Počáteční revize dokumentu";
+        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         // refresh RSS
         FeedGenerator.updateHardware();
@@ -252,6 +253,8 @@ public class EditHardware implements AbcAction {
         canContinue &= setSetup(params, root, env);
         canContinue &= setNote(params, root, env);
         canContinue &= ServletUtils.checkNoChange(item, origItem, env);
+        String changesDescription = Misc.getRevisionString(params, env);
+        canContinue &= ! Constants.ERROR.equals(changesDescription);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -265,7 +268,7 @@ public class EditHardware implements AbcAction {
         FeedGenerator.updateHardware();
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        Misc.commitRelationRevision(item, relation.getId(), user, changesDescription);
 
         // run monitor
         String url = relation.getUrl();

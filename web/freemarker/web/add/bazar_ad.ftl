@@ -91,6 +91,15 @@
                 <div class="error">${ERRORS.text?if_exists}</div>
             </td>
         </tr>
+        <#if PARAMS.action=="edit" || PARAMS.action="edit2" >
+            <tr>
+                <td>Popis této změny</td>
+                <td>
+                    <input tabindex="5" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists}">
+                    <div class="error">${ERRORS.rev_descr?if_exists}</div>
+                </td>
+            </tr>
+        </#if>
         <tr>
             <td colspan="2" align="center">
                 <input tabindex="7" type="submit" name="preview" value="Náhled">

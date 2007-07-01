@@ -161,7 +161,8 @@ public class EditFaq implements AbcAction {
         persistence.create(relation);
 
         // commit new version
-        Misc.commitRelationRevision(faq, relation.getId(), user);
+        String descr = "Počáteční revize dokumentu";
+        Misc.commitRelationRevision(faq, relation.getId(), user, descr);
 
         // refresh RSS
         FeedGenerator.updateFAQ();
@@ -210,6 +211,8 @@ public class EditFaq implements AbcAction {
         canContinue &= setQuestion(params, faq, root, env);
         canContinue &= setText(params, root, env);
         canContinue &= ServletUtils.checkNoChange(faq, origItem, env);
+        String changesDescription = Misc.getRevisionString(params, env);
+        canContinue &= ! Constants.ERROR.equals(changesDescription);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -222,7 +225,7 @@ public class EditFaq implements AbcAction {
         persistence.update(faq);
 
         // commit new version
-        Misc.commitRelationRevision(faq, relation.getId(), user);
+        Misc.commitRelationRevision(faq, relation.getId(), user, changesDescription);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();

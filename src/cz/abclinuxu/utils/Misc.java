@@ -27,6 +27,7 @@ import cz.abclinuxu.persistence.versioning.VersionedDocument;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.html.view.ShowForum;
 
 import java.util.*;
@@ -48,9 +49,10 @@ public class Misc {
      * @param obj object to be stored as new revision in versioning
      * @param relationId identifies data
      * @param user user who created this version
+     * @param descr description of commited changes
      * @return VersionInfo
      */
-    public static VersionInfo commitRelationRevision(GenericDataObject obj, int relationId, User user) {
+    public static VersionInfo commitRelationRevision(GenericDataObject obj, int relationId, User user, String descr) {
         Element copy = obj.getData().getRootElement().createCopy();
 
         // we do not store monitor element in versioning
@@ -72,7 +74,7 @@ public class Misc {
         }
 
         Versioning versioning = VersioningFactory.getVersioning();
-        return versioning.commit(copy.asXML(), relationId, user.getId());
+        return versioning.commit(copy.asXML(), relationId, user.getId(), descr);
     }
 
     /**
@@ -127,6 +129,23 @@ public class Misc {
     public static void purgeRelationRevisions(int relationId) {
         Versioning versioning = VersioningFactory.getVersioning();
         versioning.purge(relationId);
+    }
+
+    /**
+     * Retrieves description of changes, that current user made.
+     * @return changes description, null if none provided or Constants.ERROR if there is an error.
+     */
+    public static String getRevisionString(Map params, Map env) {
+        String description = (String) params.get(Constants.PARAM_REVISION_DESCRIPTION);
+        description = Misc.filterDangerousCharacters(description);
+        if (description == null || description.length() == 0)
+            return null;
+
+        if (description.indexOf("<") != -1) {
+            ServletUtils.addError(Constants.PARAM_REVISION_DESCRIPTION, "Použití HTML značek je zakázáno!", env, null);
+            return Constants.ERROR;
+        }
+        return description;
     }
 
     /**

@@ -390,6 +390,13 @@
                 </table>
             </td>
         </tr>
+        <tr>
+            <td>Popis změn (nepovinné)</td>
+            <td>
+                <input tabindex="5" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?default('Počáteční revize dokumentu')}">
+                <div class="error">${ERRORS.rev_descr?if_exists}</div>
+            </td>
+        </tr>
     </table>
 
     <input type="submit" value="Dokončit">

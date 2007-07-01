@@ -60,9 +60,10 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
      * @param document document to be stored
      * @param relation relation id for this document
      * @param user     identifier of the user who commited this version
+     * @param descr    description of commited changes
      * @return information about this version
      */
-    public VersionInfo commit(String document, int relation, int user) {
+    public VersionInfo commit(String document, int relation, int user, String descr) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
         Connection con = null;
         PreparedStatement statement = null;
@@ -91,12 +92,14 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
             statement.setInt(3, user);
             statement.setTimestamp(4, new Timestamp(commited.getTime()));
             statement.setString(5, document);
+            statement.setString(6, descr);
             statement.executeUpdate();
 
             VersionInfo info = new VersionInfo();
             info.setVersion(version);
             info.setUser(user);
             info.setCommited(commited);
+            info.setDescription(descr);
             return info;
         } catch (SQLException e) {
             throw new PersistenceException("SQL error", e);
@@ -163,6 +166,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
                 info.setVersion(resultSet.getInt(1));
                 info.setUser(resultSet.getInt(2));
                 info.setCommited(new Date(resultSet.getTimestamp(3).getTime()));
+                info.setDescription(resultSet.getString(4));
                 history.add(info);
             }
 

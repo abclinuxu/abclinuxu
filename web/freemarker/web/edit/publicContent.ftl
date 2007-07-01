@@ -42,14 +42,21 @@ změny zpět.</p>
         <a href="javascript:insertAtCursor(document.form.content, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
     </div>
     <div class="error">${ERRORS.content?if_exists}</div>
-    <textarea name="content" class="siroka" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
+    <textarea name="content" class="siroka" rows="30" tabindex="2">${PARAMS.content?if_exists?html}</textarea>
+   </td>
+  </tr>
+  <tr>
+   <td>Popis této změny</td>
+   <td>
+    <input tabindex="3" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists}">
+    <div class="error">${ERRORS.rev_descr?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td width="90">&nbsp;</td>
    <td>
-     <input tabindex="8" type="submit" name="preview" value="<#if PREVIEW?exists>Zopakuj náhled<#else>Náhled</#if>">
-     <input tabindex="9" type="submit" name="finish" value="Dokonči">
+     <input tabindex="4" type="submit" name="preview" value="<#if PREVIEW?exists>Zopakuj náhled<#else>Náhled</#if>">
+     <input tabindex="5" type="submit" name="finish" value="Dokonči">
    </td>
   </tr>
  </table>

@@ -164,8 +164,13 @@ public interface Constants {
     /** environment map */
     String VAR_ENVIRONMENT = "ENV";
 
+    /** parameter holding description of changes */
+    String PARAM_REVISION_DESCRIPTION = "rev_descr";
+
     /** error, that is not related to specific form field */
     String ERROR_GENERIC = "generic";
+
+    String ERROR = "ERROR";
 
     int USER_REDAKCE = 5473;
 

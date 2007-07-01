@@ -193,7 +193,8 @@ public class EditContent implements AbcAction {
         persistence.create(relation);
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        String descr = "Počáteční revize dokumentu";
+        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -241,6 +242,8 @@ public class EditContent implements AbcAction {
         canContinue &= setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setDerivedURL(item, relation, parentRelation);
+        String changesDescription = Misc.getRevisionString(params, env);
+        canContinue &= !Constants.ERROR.equals(changesDescription);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -255,7 +258,8 @@ public class EditContent implements AbcAction {
         persistence.create(relation);
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        String descr = "Počáteční revize dokumentu";
+        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         if (toc!=null) {
             Element element = (Element) toc.getData().selectSingleNode("//node[@rid="+parentRelation.getId()+"]");
@@ -300,6 +304,8 @@ public class EditContent implements AbcAction {
         canContinue &= setContent(params, item, env);
         canContinue &= checkStartTime(params, item, env);
         canContinue &= ServletUtils.checkNoChange(item, origItem, env);
+        String changesDescription = Misc.getRevisionString(params, env);
+        canContinue &= !Constants.ERROR.equals(changesDescription);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -313,7 +319,7 @@ public class EditContent implements AbcAction {
         persistence.update(relation);
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        Misc.commitRelationRevision(item, relation.getId(), user, changesDescription);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
@@ -364,6 +370,8 @@ public class EditContent implements AbcAction {
         canContinue &= setClass(params, item);
         canContinue &= checkStartTime(params, item, env);
         canContinue &= ServletUtils.checkNoChange(item, origItem, env);
+        String changesDescription = Misc.getRevisionString(params, env);
+        canContinue &= !Constants.ERROR.equals(changesDescription);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -377,7 +385,7 @@ public class EditContent implements AbcAction {
         persistence.update(relation);
 
         // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user);
+        Misc.commitRelationRevision(item, relation.getId(), user, changesDescription);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
