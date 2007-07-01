@@ -8,7 +8,7 @@
     uživatelů. Jeho komentáře budou zobrazeny miniaturním písmem, takže
     je nejspíše přehlédnete, navíc jejich obsah a případné reakce budou
     schovány úplně. Jeho zápisky z blogu budou úplně odfiltrovány.
-    <a href="${URL.noPrefix("/SelectUser/?sAction=form&amp;sParam=bUid&amp;url=/EditUser${USER.id}?action=toBlacklist")}">Blokovat</a>
+    <a href="${URL.noPrefix("/SelectUser/?sAction=form&amp;sParam=bUid&amp;url=/EditUser${USER.id}?action=toBlacklist")}">Přidat uživatele do seznamu</a>
 </p>
 
 <@lib.showMessages/>
