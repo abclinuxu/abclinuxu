@@ -165,7 +165,10 @@
 
         <#if PARAMS.action=="edit" || PARAMS.action="edit2" >
             <tr>
-                <td>Popis této změny</td>
+                <td>
+                    Popis změny
+                    <a class="info" href="#">?<span class="tooltip">Text bude zobrazen v historii dokumentu</span></a>
+                </td>
                 <td>
                     <input tabindex="7" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists}">
                     <div class="error">${ERRORS.rev_descr?if_exists}</div>
