@@ -170,7 +170,7 @@
                     <a class="info" href="#">?<span class="tooltip">Text bude zobrazen v historii dokumentu</span></a>
                 </td>
                 <td>
-                    <input tabindex="7" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists}">
+                    <input tabindex="7" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists?html}">
                     <div class="error">${ERRORS.rev_descr?if_exists}</div>
                 </td>
             </tr>

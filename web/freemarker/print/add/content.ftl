@@ -69,13 +69,18 @@ pak však potřebuje podporu programátora, který připraví data.</p>
     <div class="error">${ERRORS.content?if_exists}</div>
    </td>
   </tr>
-  <tr>
-   <td>Popis změn (nepovinné)</td>
-   <td>
-    <input tabindex="5" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?default('Počáteční revize dokumentu')}">
-    <div class="error">${ERRORS.rev_descr?if_exists}</div>
-   </td>
-  </tr>
+    <#if PARAMS.action=="edit" || PARAMS.action="edit2" >
+        <tr>
+            <td>
+                Popis změny
+                <a class="info" href="#">?<span class="tooltip">Text bude zobrazen v historii dokumentu</span></a>
+            </td>
+            <td>
+                <input tabindex="6" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists?html}">
+                <div class="error">${ERRORS.rev_descr?if_exists}</div>
+            </td>
+        </tr>
+    </#if>
   <tr>
    <td width="90">&nbsp;</td>
    <td>
