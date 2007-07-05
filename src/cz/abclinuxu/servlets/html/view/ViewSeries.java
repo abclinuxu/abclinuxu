@@ -91,18 +91,21 @@ public class ViewSeries implements AbcAction {
 
         Item series = (Item) relation.getChild();
         List articlesElements = series.getData().getRootElement().elements("article");
+        articlesElements = new ArrayList(articlesElements);
+        Collections.reverse(articlesElements);
+
         int size = articlesElements.size();
         if (from > 0 || count < size) {
             if (from > size)
                 from = size - 1;
             if (from + count > size)
                 count = size - from;
-            articlesElements = articlesElements.subList(from, count);
+            articlesElements = articlesElements.subList(from, from + count);
         }
 
         List<Relation> articles = new ArrayList<Relation>(count);
-        for (ListIterator iter = articlesElements.listIterator(articlesElements.size()); iter.hasPrevious();) {
-            Element element = (Element) iter.previous();
+        for (Iterator iter = articlesElements.iterator(); iter.hasNext();) {
+            Element element = (Element) iter.next();
             int rid = Misc.parseInt(element.getText(), 0);
             articles.add(new Relation(rid));
         }
