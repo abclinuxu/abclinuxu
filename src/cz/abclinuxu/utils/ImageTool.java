@@ -108,7 +108,7 @@ public class ImageTool {
         else
             ratio = hratio;
 
-        if (ratio > 1)
+        if (ratio >= 1)
             return null;
 
         AffineTransform tx = new AffineTransform();
