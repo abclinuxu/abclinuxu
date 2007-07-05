@@ -44,6 +44,7 @@ import org.dom4j.Node;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Collections;
 
 /**
  * This class is responsible for adding and
@@ -410,7 +411,7 @@ public class EditAuthor implements AbcAction {
             item.removeProperty(Constants.PROPERTY_USER);
         else {
             tmp = Misc.filterDangerousCharacters(tmp);
-            item.addProperty(Constants.PROPERTY_USER, tmp);
+            item.setProperty(Constants.PROPERTY_USER, Collections.singleton(tmp));
         }
 
         return true;
