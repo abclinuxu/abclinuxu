@@ -307,7 +307,7 @@ public class Tools implements Configurable {
 
         if (child instanceof Item) {
             Item item = (Item) child;
-            if (item.getType() == Item.BLOG) {
+            if (item.getType() == Item.BLOG || item.getType() == Item.UNPUBLISHED_BLOG) {
                 Category blog = (Category) relation.getParent();
                 sync(blog);
                 return urlUtils.noPrefix(getUrlForBlogStory(blog.getSubType(), item.getCreated(), relation.getId()));
