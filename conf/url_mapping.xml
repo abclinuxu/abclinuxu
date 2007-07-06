@@ -261,8 +261,8 @@
         </mapping>
         <mapping>
             <pattern input="host">abclinuxu.sk</pattern>
-            <regexp>.*</regexp>
-            <replacement>http://www.abclinuxu.cz/</replacement>
+            <regexp>abclinuxu.sk</regexp>
+            <replacement>abclinuxu.cz</replacement>
         </mapping>
         <mapping>
             <pattern input="host">palirna</pattern>
