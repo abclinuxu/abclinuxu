@@ -194,17 +194,19 @@
 </#macro>
 
 <#macro showCensored(comment dizId relId)>
-    <p class="cenzura">
+    <div class="cenzura">
         <#assign admin = TOOL.xpath(comment.data,"//censored/@admin")?default("5473")>
-        Náš <a href="/Profile/${admin}">administrátor</a>
-        shledal tento příspěvek závadným nebo nevyhovujícím zaměření portálu.
+        Náš <a href="/Profile/${admin}">administrátor</a> shledal tento komentář
+        <a href="/faq/abclinuxu.cz/proc-je-komentar-oznacen-jako-zavadny">závadným</a>.
         <#assign message = TOOL.xpath(comment.data,"//censored")?default("")>
-        <#if message?has_content><br>${message}</#if>
-        <br><a href="${URL.make("/show?action=censored&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Zobrazit</a> příspěvek
-    </p>
-    <#if USER?exists && USER.hasRole("discussion admin")>
-        <a href="${URL.make("/EditDiscussion?action=censore&amp;rid="+relId+"&amp;dizId="+dizId+"&amp;threadId="+comment.id+TOOL.ticket(USER?if_exists, false))}">Odvolat cenzuru</a>
-    </#if>
+        <#if message?has_content>
+            <p class="cenzura_duvod">${message}</p>
+        </#if>
+        <a href="${URL.make("/show?action=censored&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Zobrazit komentář</a>
+        <#if USER?exists && USER.hasRole("discussion admin")>
+            <a href="${URL.make("/EditDiscussion?action=censore&amp;rid="+relId+"&amp;dizId="+dizId+"&amp;threadId="+comment.id+TOOL.ticket(USER?if_exists, false))}">Odvolat cenzuru</a>
+        </#if>
+    </div>
 </#macro>
 
 <#macro showDiscussion(relation)>
