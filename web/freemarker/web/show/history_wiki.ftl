@@ -22,8 +22,7 @@
             <td><input type="text" size="3" value="${FOUND.pageSize}" name="count" tabindex="2"></td>
             <td>
                 <select name="orderBy" tabindex="3">
-                <option value="update">data poslední změny</option>
-                <option value="create">data vytvoření</option>
+                    <option value="update">data poslední změny</option>
                 </select>
             </td>
             <td>
