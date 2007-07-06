@@ -30,10 +30,6 @@
         <a class="info" href="#">?<span class="tooltip">Kliknutím na příslušný odkaz zvolte, jestli otázka <i>byla</i> nebo <i>nebyla</i> vyřešena.</span></a>,
    </#if>
    <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print" rel="nofollow">Tisk</a>
-   <#if is_question>
-       <br />
-       <b>Přečteno:</b> ${TOOL.getCounterValue(ITEM, "read")}&times;
-   </#if>
    <#if USER?exists && (USER.hasRole("discussion admin") || USER.hasRole("move relation"))>
      <br />
      <b>Admin:</b>
@@ -49,7 +45,10 @@
 
 <#if is_question>
  <h1>Otázka</h1>
- <@lib.showThread TOOL.createComment(ITEM), 0, DIZ, !DIZ.frozen />
+ <@lib.showThread TOOL.createComment(ITEM), 0, DIZ, !DIZ.frozen>
+     <br>
+     Přečteno: ${TOOL.getCounterValue(ITEM, "read")}&times;
+ </@lib.showThread>
 
     <p class="questionToFaq">
         Už jste tuto otázku viděli? Ptají se na ni čtenáři často? Pak by asi bylo vhodné

@@ -152,6 +152,7 @@
             <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle2" class="ds_control_sbalit2" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
         </#if>
         ${comment.title?if_exists}
+        <#nested>
         <#if showControls>
             <div id="comment${comment.id}_controls"<#if blacklisted> class="ds_controls_blacklisted"</#if>>
                 <#local nextUnread = diz.getNextUnread(comment)?default("UNDEF")>
