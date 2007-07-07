@@ -53,7 +53,7 @@ public class EditMonitor implements AbcAction {
      * Reverts current monitor state for the user on this document.
      */
     protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
         GenericDataObject content = (GenericDataObject) persistence.findById(relation.getChild());
         User user = (User) env.get(Constants.VAR_USER);

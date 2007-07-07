@@ -85,7 +85,7 @@ public class EditSurvey implements AbcAction {
             return actionAddStep2(request, response, env);
         }
 
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Item item = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY, Item.class, params, request);
         if ( item == null )
             return ServletUtils.showErrorPage("Chybí parametr surveyId!",env,request);
@@ -138,7 +138,7 @@ public class EditSurvey implements AbcAction {
         if ( !canContinue )
             return FMTemplateSelector.select("EditSurvey", "add", env, request);
 
-        PersistenceFactory.getPersistance().create(survey);
+        PersistenceFactory.getPersistence().create(survey);
         ServletUtils.addMessage("Anketa byla úspěšně vytvořena s číslem "+survey.getId(),env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -186,7 +186,7 @@ public class EditSurvey implements AbcAction {
         if ( !canContinue )
             return FMTemplateSelector.select("EditSurvey", "edit", env, request);
 
-        PersistenceFactory.getPersistance().update(survey);
+        PersistenceFactory.getPersistence().update(survey);
         ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);

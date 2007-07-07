@@ -67,7 +67,7 @@ public class ViewUser implements AbcAction {
      * @return name of template to be executed or null
      */
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 
@@ -118,7 +118,7 @@ public class ViewUser implements AbcAction {
      * shows profile for selected user
      */
     protected String handleProfile(HttpServletRequest request, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(VAR_PROFILE);
 
         Element settingsBlog = (Element) user.getData().selectSingleNode("/data/settings/blog");
@@ -162,7 +162,7 @@ public class ViewUser implements AbcAction {
      * shows numbers of objects
      */
     protected String handleMyObjects(HttpServletRequest request, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         SQLTool sqlTool = SQLTool.getInstance();
         User user = (User) env.get(VAR_PROFILE);
 

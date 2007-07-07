@@ -113,7 +113,7 @@ public class EditDictionary implements AbcAction {
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
 
         Document documentItem = DocumentHelper.createDocument();
@@ -165,7 +165,7 @@ public class EditDictionary implements AbcAction {
 
     protected String actionEdit2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 

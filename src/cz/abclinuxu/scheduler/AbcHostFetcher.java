@@ -91,7 +91,7 @@ public class AbcHostFetcher extends TimerTask implements Configurable {
 //            FMUtils.executeTemplate("/include/misc/generate_hosting.ftl", env, new File("/home/literakl/hosting.html"));
             String result = FMUtils.executeTemplate("/include/misc/generate_hosting.ftl", env);
 
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
             Item hostingItem = (Item) persistence.findById(new Item(targetItemId));
             Element contentElement = hostingItem.getData().getRootElement().element("content");
             contentElement.setText(result);

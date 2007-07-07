@@ -118,7 +118,7 @@ public class EditTrivia implements AbcAction {
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation upper = (Relation) persistence.findById(new Relation(Constants.REL_TRIVIA));
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -211,7 +211,7 @@ public class EditTrivia implements AbcAction {
 
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation upper = (Relation) persistence.findById(new Relation(Constants.REL_TRIVIA));
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);

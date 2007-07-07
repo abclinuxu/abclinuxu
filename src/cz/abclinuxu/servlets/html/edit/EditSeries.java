@@ -74,7 +74,7 @@ public class EditSeries implements AbcAction {
     public static final String ACTION_REMOVE_ARTICLE = "rmArticle";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
@@ -148,7 +148,7 @@ public class EditSeries implements AbcAction {
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
 
         Document document = DocumentHelper.createDocument();
@@ -201,7 +201,7 @@ public class EditSeries implements AbcAction {
 
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
 
         Item item = (Item) relation.getChild().clone();
@@ -223,7 +223,7 @@ public class EditSeries implements AbcAction {
     }
 
     protected String actionRemove(HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation seriesRelation = (Relation) env.get(VAR_RELATION);
 
         Item seriesItem = (Item) seriesRelation.getChild().clone();
@@ -252,7 +252,7 @@ public class EditSeries implements AbcAction {
     }
 
     private String actionAttachArticleStep1(HttpServletRequest request, Map env) {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Category category = (Category) persistence.findById(new Category(Constants.CAT_SERIES));
         List<Relation> series = category.getChildren();
         Sorters2.byName(series);
@@ -262,7 +262,7 @@ public class EditSeries implements AbcAction {
 
     public static String actionAttachArticleStep2(HttpServletResponse response, Map env, boolean noRedirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation seriesRelation = (Relation) env.get(VAR_RELATION);
 
         Item seriesItem = (Item) seriesRelation.getChild().clone();
@@ -330,7 +330,7 @@ public class EditSeries implements AbcAction {
 
     public String actionAttachArticlesUrlsStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         List articleRelations = new ArrayList();
 
         String domain = AbcConfig.getDomain();
@@ -375,7 +375,7 @@ public class EditSeries implements AbcAction {
 
     private String actionRemoveArticle(HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation seriesRelation = (Relation) env.get(VAR_RELATION);
 
         Item seriesItem = (Item) seriesRelation.getChild().clone();

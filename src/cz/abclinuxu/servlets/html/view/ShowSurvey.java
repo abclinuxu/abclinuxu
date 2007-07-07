@@ -69,7 +69,7 @@ public class ShowSurvey implements AbcAction {
     public static final int SURVEY_PREFIX = 30000000;
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 

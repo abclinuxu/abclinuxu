@@ -67,7 +67,7 @@ public class Tools implements Configurable {
     public static final String PREF_REPLACEMENT_VLNKA = "REPLACEMENT_VLNKA";
     public static final String PREF_REGEXP_AMPERSAND = "RE_AMPERSAND";
 
-    static Persistence persistence = PersistenceFactory.getPersistance();
+    static Persistence persistence = PersistenceFactory.getPersistence();
     static REProgram reRemoveTags, reVlnka, lineBreak;
     static Pattern reAmpersand;
     static String vlnkaReplacement;
@@ -175,7 +175,7 @@ public class Tools implements Configurable {
      * @return name of child
      */
     public static String childName(Number relationId) {
-        Relation relation = (Relation) PersistenceFactory.getPersistance().findById(new Relation(relationId.intValue()));
+        Relation relation = (Relation) PersistenceFactory.getPersistence().findById(new Relation(relationId.intValue()));
         return childName(relation);
     }
 
@@ -185,7 +185,7 @@ public class Tools implements Configurable {
      */
     public static String childName(String relationId) {
         int id = Integer.parseInt(relationId);
-        Relation relation = (Relation) PersistenceFactory.getPersistance().findById(new Relation(id));
+        Relation relation = (Relation) PersistenceFactory.getPersistence().findById(new Relation(id));
         return childName(relation);
     }
 
@@ -381,7 +381,7 @@ public class Tools implements Configurable {
      *
      * @return integer
      */
-    public Integer getMonitorCount(Document document) {
+    public static Integer getMonitorCount(Document document) {
         Object value = document.selectObject("count(//monitor/id)");
         return ((Double) value).intValue();
     }
@@ -1250,7 +1250,7 @@ public class Tools implements Configurable {
      * @param rid relation id of this discussion
      * @param saveLast if true and maybeUser is instance of User, then latest comment id will be saved
      */
-    public Discussion createDiscussionTree(GenericObject obj, Object maybeUser, int rid, boolean saveLast) throws PersistenceException {
+    public static Discussion createDiscussionTree(GenericObject obj, Object maybeUser, int rid, boolean saveLast) throws PersistenceException {
         if (!obj.isInitialized())
             obj = persistence.findById(obj);
         if ( !InstanceUtils.checkType(obj, Item.class, Item.DISCUSSION) )
@@ -1284,9 +1284,9 @@ public class Tools implements Configurable {
         DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
         if (dizRecord.getThreads().size() == 0)
             return discussion;
-
         discussion.init(dizRecord);
-        if (user != null) {
+
+        if (user != null && saveLast) {
             SQLTool sqlTool = SQLTool.getInstance();
             discussion.setBlacklist(getBlacklist(user, false));
             Integer lastSeen = user.getLastSeenComment(obj.getId());
@@ -1449,7 +1449,7 @@ public class Tools implements Configurable {
      * @param item question
      * @return Comment instance
      */
-    public Comment createComment(Item item) {
+    public static Comment createComment(Item item) {
         return new ItemComment(item);
     }
 
@@ -1750,7 +1750,15 @@ public class Tools implements Configurable {
      * @return true if it is question
      */
     public static boolean isQuestion(Relation relation) {
-        Item item = (Item) relation.getChild();
+        return isQuestion((Item) relation.getChild());
+    }
+
+    /**
+     * Decides if item is question in forum or not
+     * @param item discussion item
+     * @return true if it is question
+     */
+    public static boolean isQuestion(Item item) {
         return item.getType() == Item.DISCUSSION && item.getData().selectSingleNode("/data/title") != null;
     }
 }

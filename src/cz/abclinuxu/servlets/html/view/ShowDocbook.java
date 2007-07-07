@@ -71,7 +71,7 @@ public class ShowDocbook implements AbcAction {
 
     protected synchronized void printDocbook(Writer writer, Relation relation) throws Exception {
         this.writer = writer;
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         relation = (Relation) persistence.findById(relation);
         Item article = (Item) persistence.findById(relation.getChild());
         Document doc = article.getData();

@@ -34,7 +34,7 @@ import cz.abclinuxu.data.User;
  */
 public class TestXPathSpeed {
     public static void main(String[] args) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         User user = null; Document data = null; Node node = null; int total = 1000;
         List users = new ArrayList(total);
         for (int i=1; users.size()<total; i++) {

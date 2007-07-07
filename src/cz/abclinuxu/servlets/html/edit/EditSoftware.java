@@ -155,7 +155,7 @@ public class EditSoftware implements AbcAction, Configurable {
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation upper = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -244,7 +244,7 @@ public class EditSoftware implements AbcAction, Configurable {
 
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
         env.put(VAR_EDIT_MODE, Boolean.TRUE);
@@ -298,7 +298,7 @@ public class EditSoftware implements AbcAction, Configurable {
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
         User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Set<String> users = item.getProperty(Constants.PROPERTY_USED_BY);
 
         // see whether user wants to remove or add himself
@@ -462,7 +462,7 @@ public class EditSoftware implements AbcAction, Configurable {
      * @param relationId id of relation for this item
      */
     private void setRssUrl(Map params, Item item, int relationId) {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Item dynamicConfig = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
         dynamicConfig = (Item) dynamicConfig.clone();
         Element configRoot = dynamicConfig.getData().getRootElement();

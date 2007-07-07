@@ -90,7 +90,7 @@ public class SelectUser implements AbcAction {
     }
 
     protected String actionShowFoundUsers(HttpServletRequest request, Map env, Map params) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int pageSize = AbcConfig.getViewUserPageSize();

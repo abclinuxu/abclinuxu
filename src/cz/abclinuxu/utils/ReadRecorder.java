@@ -38,7 +38,7 @@ public class ReadRecorder {
         if (bot != null && bot.booleanValue()) // not interested in spiders and various bots
             return;
 
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         persistence.incrementCounter(obj, type);
     }
 }

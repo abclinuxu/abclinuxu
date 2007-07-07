@@ -93,7 +93,7 @@ public class ViewBazaar implements AbcAction {
      * Processes section with advertisements.
      */
     public static String processSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
 

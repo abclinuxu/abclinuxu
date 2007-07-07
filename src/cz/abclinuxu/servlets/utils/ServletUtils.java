@@ -190,7 +190,7 @@ public class ServletUtils implements Configurable {
             return;
         }
 
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         String login = (String) params.get(PARAM_LOG_USER);
         if ( ! Misc.empty(login) ) {
             Integer id = SQLTool.getInstance().getUserByLogin(login);
@@ -388,7 +388,7 @@ public class ServletUtils implements Configurable {
                 now = Constants.isoFormat.format(new Date());
             }
             DocumentHelper.makeElement(user.getData(), "data/system/last_login_date").setText(now);
-            PersistenceFactory.getPersistance().update(user); // session bug here
+            PersistenceFactory.getPersistence().update(user); // session bug here
         }
 
         int limit = AbcConfig.getMaxWatchedDiscussionLimit();

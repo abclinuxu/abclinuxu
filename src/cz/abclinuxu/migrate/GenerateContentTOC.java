@@ -51,7 +51,7 @@ public class GenerateContentTOC {
         if (rid==-1)
             exitWithHelp("Usage: GenerateContentTOC 1234\n where 1234 is relation id of toplevel document");
 
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         SQLTool sqlTool = SQLTool.getInstance();
 
         Relation top = (Relation) persistence.findById(new Relation(rid));

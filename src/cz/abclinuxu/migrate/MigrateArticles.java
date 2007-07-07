@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MigrateArticles {
-    private Persistence persistence = PersistenceFactory.getPersistance();
+    private Persistence persistence = PersistenceFactory.getPersistence();
     private SQLTool sqlTool = SQLTool.getInstance();
     private Map authors;
     private User admin = new User(1);

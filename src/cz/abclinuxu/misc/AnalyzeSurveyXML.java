@@ -49,7 +49,7 @@ public class AnalyzeSurveyXML {
             System.exit(1);
         }
         int id = Integer.parseInt(args[0]);
-        Item survey = (Item) PersistenceFactory.getPersistance().findById(new Item(id));
+        Item survey = (Item) PersistenceFactory.getPersistence().findById(new Item(id));
         if (survey.getType()!=Item.SURVEY) {
             System.err.println("Tato polozka neni anketou!");
             System.exit(1);

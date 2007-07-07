@@ -134,7 +134,7 @@ public class EditBazaar implements AbcAction {
      */
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Item ad = new Item(0, Item.BAZAAR);
         Document document = DocumentHelper.createDocument();
@@ -188,7 +188,7 @@ public class EditBazaar implements AbcAction {
      * @return template to be rendered.
      */
     protected String actionEdit(HttpServletRequest request, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item ad = (Item) persistence.findById(relation.getChild());
@@ -218,7 +218,7 @@ public class EditBazaar implements AbcAction {
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         User user = (User) env.get(Constants.VAR_USER);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item ad = (Item) persistence.findById(relation.getChild()).clone();
         Document document = ad.getData();
@@ -253,7 +253,7 @@ public class EditBazaar implements AbcAction {
     }
 
     protected String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
         Item item = (Item) relation.getChild();

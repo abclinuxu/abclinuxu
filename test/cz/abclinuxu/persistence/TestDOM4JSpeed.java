@@ -32,7 +32,7 @@ import java.util.List;
 public class TestDOM4JSpeed {
 
     public static void main(String[] args) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         List objects = persistence.findByCommand("select data from zaznam where cislo=6715"); // R: 10381
 //        List objects = persistence.findByCommand("select data from polozka where cislo=2999"); // R: 10323

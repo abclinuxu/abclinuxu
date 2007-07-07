@@ -50,6 +50,6 @@ public class Redirect extends HttpServlet {
             return;
 
         GenericObject obj = PersistenceMapping.createGenericObject(paramClass.charAt(0), id);
-        PersistenceFactory.getPersistance().incrementCounter(obj, Constants.COUNTER_VISIT);
+        PersistenceFactory.getPersistence().incrementCounter(obj, Constants.COUNTER_VISIT);
     }
 }

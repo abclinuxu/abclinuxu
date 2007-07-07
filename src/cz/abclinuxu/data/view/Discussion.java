@@ -24,7 +24,7 @@ import java.util.*;
  * Discussion is a container for comments.
  */
 public class Discussion {
-    private List threads;
+    private List<Comment> threads;
     private int size = 0;
     private int greatestId;
     private int id;
@@ -48,8 +48,11 @@ public class Discussion {
     /**
      * @return list of toplevel threads for this discussion
      */
-    public List getThreads() {
-        return (threads == null) ? Collections.EMPTY_LIST : threads;
+    public List<Comment> getThreads() {
+        if ((threads == null))
+            return Collections.emptyList();
+        else
+            return threads;
     }
 
     /**

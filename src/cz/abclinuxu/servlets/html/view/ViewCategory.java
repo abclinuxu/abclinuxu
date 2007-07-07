@@ -108,10 +108,10 @@ public class ViewCategory implements AbcAction {
     public static final String VAR_CATEGORIES = "CATEGORIES";
     public static final String VAR_TREE_DEPTH = "DEPTH";
 
-    static Persistence persistence = PersistenceFactory.getPersistance();
+    static Persistence persistence = PersistenceFactory.getPersistence();
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);

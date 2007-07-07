@@ -74,7 +74,7 @@ public class ViewGames implements AbcAction {
     }
 
     private String processSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         SQLTool sqlTool = SQLTool.getInstance();
 
         List<Relation> trivias = sqlTool.findItemRelationsWithType(Item.TRIVIA, null);
@@ -91,7 +91,7 @@ public class ViewGames implements AbcAction {
 
     public static String playTriviaGame(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Item game = (Item) relation.getChild();
         if (game.getType() != Item.TRIVIA)

@@ -40,7 +40,7 @@ public class RowComment extends Comment {
      * Creates new instance of Discussion.
      */
     public RowComment() {
-        children = new ArrayList(3);
+        children = new ArrayList<Comment>(3);
     }
 
     /**

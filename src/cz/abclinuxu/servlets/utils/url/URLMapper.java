@@ -158,7 +158,7 @@ public final class URLMapper implements Configurable {
 
     /**
      * Finds AbcAction for specified URL
-     * @param relativeUrl url staring with slash 
+     * @param relativeUrl url staring with slash
      * @return AbcAction for this URL or null if not found
      */
     public AbcAction findAction(String relativeUrl, Map env) {
@@ -210,7 +210,7 @@ public final class URLMapper implements Configurable {
         if (matcher.find()) {
             String found = matcher.group(1);
             int rid = Misc.parseInt(found, -1);
-            return (Relation) PersistenceFactory.getPersistance().findById(new Relation(rid));
+            return (Relation) PersistenceFactory.getPersistence().findById(new Relation(rid));
         }
         return loadCustomRelation(url);
     }
@@ -224,7 +224,7 @@ public final class URLMapper implements Configurable {
         CustomURLCache urlCache = CustomURLCache.getInstance();
         Relation relation = urlCache.get(url);
         if (relation != null) {
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
             return (Relation) persistence.findById(relation);
         }
 

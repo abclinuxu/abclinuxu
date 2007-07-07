@@ -37,7 +37,7 @@ import org.dom4j.DocumentHelper;
 public class UpgradeHardwareCategories {
 
     public static void main(String[] args) {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = new Relation(Constants.REL_HARDWARE);
         Category category;
         GenericObject obj;

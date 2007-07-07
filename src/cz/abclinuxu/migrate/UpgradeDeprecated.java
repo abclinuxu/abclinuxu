@@ -71,7 +71,7 @@ public class UpgradeDeprecated {
      * Finds all records, that contain deprecated URL and prints them to screen.
      */
     private static final void findAndPrint(List keys) throws Exception {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null; Statement statement = null; ResultSet resultSet = null;
         int total = 0;
         try {
@@ -122,7 +122,7 @@ public class UpgradeDeprecated {
      * Finds all records, that contain deprecated URL and upgrades them.
      */
     private static final void fixAndPrint(List keys) throws Exception {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null; Statement statement = null; PreparedStatement prepared = null; ResultSet resultSet = null;
         int total = 0, skipped = 0;
 
@@ -245,7 +245,7 @@ public class UpgradeDeprecated {
      * @return list of Integers
      */
     private static final List findAllRecords() throws Exception {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null; Statement statement = null; ResultSet resultSet = null;
         List result = new ArrayList();
         try {

@@ -111,7 +111,7 @@ public class EditArticle implements AbcAction {
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
@@ -206,7 +206,7 @@ public class EditArticle implements AbcAction {
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation upper = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -328,7 +328,7 @@ public class EditArticle implements AbcAction {
 
     protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
 
         Item item = (Item) relation.getChild();
@@ -381,7 +381,7 @@ public class EditArticle implements AbcAction {
         Element talk = (Element) document.selectSingleNode("/data/talk");
         if (talk == null) {
             talk = DocumentHelper.makeElement(document, "/data/talk");
-            PersistenceFactory.getPersistance().update(item);
+            PersistenceFactory.getPersistence().update(item);
         }
         env.put(VAR_TALK_XML, NodeModel.wrap((new DOMWriter().write(document))));
 
@@ -422,7 +422,7 @@ public class EditArticle implements AbcAction {
 
         boolean canContinue = setAddresses(params, item.getData(), env);
         if (canContinue)
-            PersistenceFactory.getPersistance().update(item);
+            PersistenceFactory.getPersistence().update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/edit/" + relation.getId()+"?action=showTalk");
@@ -439,7 +439,7 @@ public class EditArticle implements AbcAction {
 
         boolean canContinue = addTalkQuestion(params, item.getData(), env);
         if (canContinue)
-            PersistenceFactory.getPersistance().update(item);
+            PersistenceFactory.getPersistence().update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/edit/" + relation.getId()+"?action=showTalk");
@@ -459,7 +459,7 @@ public class EditArticle implements AbcAction {
             Element question = (Element) item.getData().selectSingleNode("/data/talk/question[@id="+id+"]");
             if (question!=null) {
                 question.detach();
-                PersistenceFactory.getPersistance().update(item);
+                PersistenceFactory.getPersistence().update(item);
             }
         }
 
@@ -585,7 +585,7 @@ public class EditArticle implements AbcAction {
 
         String renderedQuestion = FMUtils.executeTemplate("/include/misc/talk_question.ftl", renderEnv);
 
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         question.detach();
         persistence.update(item);
 
@@ -602,7 +602,7 @@ public class EditArticle implements AbcAction {
     }
 
     private String actionAttachArticleStep1(HttpServletRequest request, Map env) {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Category category = (Category) persistence.findById(new Category(Constants.CAT_SERIES));
         List<Relation> series = category.getChildren();
         Sorters2.byName(series);
@@ -611,7 +611,7 @@ public class EditArticle implements AbcAction {
     }
 
     public String actionAttachArticleStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) persistence.findById(relation.getChild()).clone();
@@ -1087,7 +1087,7 @@ public class EditArticle implements AbcAction {
      * @return list of all section relations sorted by name.
      */
     private List getSections() {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Category dir = (Category) persistence.findById(new Category(Constants.CAT_ARTICLES));
         List sections = Sorters2.byName(dir.getChildren());
         sections.remove(new Relation(4731));

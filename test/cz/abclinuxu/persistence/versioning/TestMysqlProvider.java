@@ -46,7 +46,7 @@ public class TestMysqlProvider extends TestCase {
         Document document = DocumentHelper.createDocument();
         document.addElement("a" + Integer.toString(relation)).setText("a");
 
-        VersionInfo info1 = api.commit(document.asXML(), relation, 1);
+        VersionInfo info1 = api.commit(document.asXML(), relation, 1, null);
         assertEquals(1, info1.getUser());
 
         VersionedDocument versionedDocument = api.load(relation, info1.getVersion());
@@ -58,7 +58,7 @@ public class TestMysqlProvider extends TestCase {
         assertEquals(info1, versions.get(0));
 
         document.getRootElement().setText("aa");
-        VersionInfo info2 = api.commit(document.asXML(), relation, 2);
+        VersionInfo info2 = api.commit(document.asXML(), relation, 2, null);
         assertEquals(2, info2.getUser());
 
         versionedDocument = api.load(relation, info2.getVersion());

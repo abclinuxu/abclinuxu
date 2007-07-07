@@ -188,7 +188,7 @@ public class EditUser implements AbcAction, Configurable {
         if (managed == null)
             managed = user;
         else
-            managed = (User) PersistenceFactory.getPersistance().findById(managed);
+            managed = (User) PersistenceFactory.getPersistence().findById(managed);
         env.put(VAR_MANAGED, managed);
 
         // registration doesn't require user to be logged in
@@ -322,7 +322,7 @@ public class EditUser implements AbcAction, Configurable {
     protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = new User();
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Document document = DocumentHelper.createDocument();
         DocumentHelper.makeElement(document, "/data/settings");
@@ -395,7 +395,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
@@ -437,7 +437,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
@@ -502,7 +502,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
@@ -567,7 +567,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
@@ -689,7 +689,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
@@ -737,7 +737,7 @@ public class EditUser implements AbcAction, Configurable {
     private void setDefaultValuesForEditSettings(Map env) {
         List maintainedServers = UpdateLinks.getMaintainedServers();
         List servers = new ArrayList(maintainedServers.size());
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         for (Iterator iter = maintainedServers.iterator(); iter.hasNext();) {
             Integer id = (Integer) iter.next();
             Server server = (Server) persistence.findById(new Server(id));
@@ -775,7 +775,7 @@ public class EditUser implements AbcAction, Configurable {
             return null;
         }
 
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         persistence.update(managed);
 
         User sessionUser = (User) env.get(Constants.VAR_USER);
@@ -805,7 +805,7 @@ public class EditUser implements AbcAction, Configurable {
             return null;
         }
 
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         persistence.update(managed);
 
         User sessionUser = (User) env.get(Constants.VAR_USER);
@@ -845,7 +845,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
@@ -883,7 +883,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         boolean canContinue = true;
         if ( ! user.hasRole(Roles.USER_ADMIN) )
@@ -917,7 +917,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         boolean canContinue = true;
         if ( ! user.hasRole(Roles.USER_ADMIN) )
@@ -980,7 +980,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         boolean canContinue = true;
         canContinue &= checkPassword(params, user, env);
@@ -1008,7 +1008,7 @@ public class EditUser implements AbcAction, Configurable {
     protected String actionInvalidateEmail(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         StringBuffer sb = new StringBuffer();
         int count = 0;
 
@@ -1049,7 +1049,7 @@ public class EditUser implements AbcAction, Configurable {
     protected String actionAddToGroup(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         int group = Misc.parseInt((String) params.get(EditGroup.PARAM_GROUP), 0);
         if (group==0)

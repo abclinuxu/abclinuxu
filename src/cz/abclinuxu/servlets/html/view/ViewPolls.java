@@ -70,7 +70,7 @@ public class ViewPolls implements AbcAction {
      * Displays selected poll.
      */
     public static String processPoll(Map env, Relation relation, HttpServletRequest request) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Poll poll = (Poll) persistence.findById(relation.getChild());
         env.put(VAR_POLL, poll);
 

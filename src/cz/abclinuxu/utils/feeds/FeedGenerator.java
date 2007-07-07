@@ -135,7 +135,7 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateDrivers() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setEncoding("UTF-8");
@@ -179,7 +179,7 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateDictionary() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setEncoding("UTF-8");
@@ -223,7 +223,7 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateHardware() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
@@ -271,7 +271,7 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateSoftware() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
@@ -398,7 +398,7 @@ public class FeedGenerator implements Configurable {
     public static void updateBlog(Category blog)  {
         try {
             SQLTool sqlTool = SQLTool.getInstance();
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
 
             if (blog!=null) {
                 User author = (User) persistence.findById(new User(blog.getOwner()));
@@ -482,7 +482,7 @@ public class FeedGenerator implements Configurable {
     public static void updateBlogDigest() {
         try {
             SQLTool sqlTool = SQLTool.getInstance();
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
@@ -530,7 +530,7 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateNews() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
             String title;
 
             SyndFeed feed = new SyndFeedImpl();
@@ -589,7 +589,7 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateFAQ() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
             String title, content, withoutTags;
 
             SyndFeed feed = new SyndFeedImpl();
@@ -801,7 +801,7 @@ public class FeedGenerator implements Configurable {
         if (Arrays.binarySearch(args, "bazaar") >= 0)
             updateBazaar();
         if (Arrays.binarySearch(args, "blogs") >= 0) {
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
             Relation top = (Relation) persistence.findById(new Relation(Constants.REL_BLOGS));
             List blogs = top.getChild().getChildren();
             for (Iterator iter = blogs.iterator(); iter.hasNext();) {

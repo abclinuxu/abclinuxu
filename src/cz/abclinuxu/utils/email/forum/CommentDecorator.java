@@ -70,7 +70,7 @@ public class CommentDecorator implements Configurable {
      */
     public static Map getEnvironment(Comment comment) {
         HashMap env = new HashMap();
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         HtmlToTextFormatter formatter = new HtmlToTextFormatter();
         Element root;
         String authorName = null;

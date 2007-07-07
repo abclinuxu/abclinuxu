@@ -90,7 +90,7 @@ public class ViewFaq implements AbcAction {
      * Processes section with FAQ.
      */
     public static String processSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
 
@@ -132,7 +132,7 @@ public class ViewFaq implements AbcAction {
      * todo zobrazit odkazy na nekolik dalsich otazek
      */
     public static String processQuestion(HttpServletRequest request, Relation relation, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         List parents = persistence.findParents(relation);

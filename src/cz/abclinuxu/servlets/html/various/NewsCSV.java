@@ -71,7 +71,7 @@ public class NewsCSV implements AbcAction, Configurable {
             return null;
         }
 
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         DateTool dateTool = new DateTool();
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, count)};
         List news = SQLTool.getInstance().findNewsRelations(qualifiers);

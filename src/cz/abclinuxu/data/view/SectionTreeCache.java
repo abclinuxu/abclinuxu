@@ -139,7 +139,7 @@ public class SectionTreeCache {
      */
     public void initialize() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
             log.debug("SectionTree cache (" + urlPrefix + ", " + id + ") initialization started");
             Category category = (Category) persistence.findById(new Category(id));
 

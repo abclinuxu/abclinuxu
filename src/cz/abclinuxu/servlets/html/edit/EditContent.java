@@ -90,7 +90,7 @@ public class EditContent implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation != null) {
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
             relation = (Relation) persistence.findById(relation);
             persistence.synchronize(relation.getChild());
             env.put(VAR_RELATION, relation);
@@ -161,7 +161,7 @@ public class EditContent implements AbcAction {
 
     protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation parentRelation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -207,7 +207,7 @@ public class EditContent implements AbcAction {
 
     protected String actionAddDerivedPageStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation parentRelation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -290,7 +290,7 @@ public class EditContent implements AbcAction {
     }
 
     protected String actionEditPublicContent2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -354,7 +354,7 @@ public class EditContent implements AbcAction {
     }
 
     protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -401,7 +401,7 @@ public class EditContent implements AbcAction {
      * Reverts public flag state for this document.
      */
     protected String actionAlterPublic(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item content = (Item) persistence.findById(relation.getChild());
 

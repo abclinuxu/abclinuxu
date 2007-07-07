@@ -15,7 +15,7 @@ public class TestDbUpgrade {
     private static final int TEST_CATEGORY = 507;
 
     public static void main(String[] args) {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Category category = (Category) persistence.findById(new Category(TEST_CATEGORY));
         Element element = (Element) category.getData().selectSingleNode("/data/note");
         String content;

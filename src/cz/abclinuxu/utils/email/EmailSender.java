@@ -171,7 +171,7 @@ public class EmailSender implements Configurable {
         if ( users.size()==0 )
             return 0;
 
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         String subject = (String) params.get(KEY_SUBJECT);
         Address sender = null;
         String senderName = (String) params.get(KEY_SENDER_NAME);

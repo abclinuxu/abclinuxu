@@ -247,7 +247,7 @@ public class EditRequest implements AbcAction, Configurable {
 
         req.setData(document);
 
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         persistence.create(req);
         Relation relation = new Relation(new Category(Constants.CAT_REQUESTS),req,Constants.REL_REQUESTS);
         persistence.create(relation);
@@ -259,7 +259,7 @@ public class EditRequest implements AbcAction, Configurable {
     }
 
     protected String actionDelete(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Relation relation = (Relation) env.get(VAR_REQUEST_RELATION);
         persistence.synchronize(relation);
@@ -274,7 +274,7 @@ public class EditRequest implements AbcAction, Configurable {
 
     protected String actionDeliver(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Relation relation = (Relation) env.get(VAR_REQUEST_RELATION);
         persistence.synchronize(relation);
@@ -324,7 +324,7 @@ public class EditRequest implements AbcAction, Configurable {
      */
     private String actionCommentTools(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation==null)
             throw new AbcException("Chybí číslo relace! Prosím kontaktujte nás, ať můžeme problém vyřešit.");
@@ -343,7 +343,7 @@ public class EditRequest implements AbcAction, Configurable {
      */
     private String actionSubmitComplaint(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
 
         relation = (Relation) persistence.findById(relation);
@@ -362,7 +362,7 @@ public class EditRequest implements AbcAction, Configurable {
     }
 
     private String actionChooseForum(HttpServletRequest request, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Category forum = (Category) persistence.findById(new Category(Constants.CAT_FORUM));
         List content = Tools.syncList(forum.getChildren());
 

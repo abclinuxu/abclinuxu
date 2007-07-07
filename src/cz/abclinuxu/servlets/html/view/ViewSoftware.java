@@ -177,7 +177,7 @@ public class ViewSoftware implements AbcAction {
      * Processes section with software items.
      */
     public static String processSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         SQLTool sqlTool = SQLTool.getInstance();
 
         Map<String, Set<String>> filters = (Map<String, Set<String>>) request.getSession().getAttribute(VAR_FILTERS);
@@ -221,7 +221,7 @@ public class ViewSoftware implements AbcAction {
      * Processes one software item.
      */
     public static String processItem(HttpServletRequest request, Relation relation, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Item item = (Item) relation.getChild();
         env.put(VAR_ITEM, item);
@@ -248,7 +248,7 @@ public class ViewSoftware implements AbcAction {
      * Generates list of software's users.
      */
     public static String processItemUsers(HttpServletRequest request, Relation relation, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Item item = (Item) relation.getChild();
         env.put(VAR_ITEM, item);
 

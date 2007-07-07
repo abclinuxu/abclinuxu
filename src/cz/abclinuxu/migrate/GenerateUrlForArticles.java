@@ -34,7 +34,7 @@ import java.util.List;
  * Generates URL for articles, if it was not been set yet.
  */
 public class GenerateUrlForArticles {
-    static Persistence persistence = PersistenceFactory.getPersistance();
+    static Persistence persistence = PersistenceFactory.getPersistence();
     static SQLTool sqlTool = SQLTool.getInstance();
 
     public static void main(String[] args) {

@@ -135,7 +135,7 @@ public final class SQLTool implements Configurable {
     private List<Relation>  loadRelations(String sql, List params) throws PersistenceException {
         if (log.isDebugEnabled())
             log.debug(sql);
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -171,7 +171,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if something goes wrong.
      */
     private List<Integer> loadUsers(String sql, List params) throws PersistenceException {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -204,7 +204,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if something goes wrong.
      */
     private Integer loadNumber(String sql, List params) throws PersistenceException {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -237,7 +237,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if something goes wrong.
      */
     private Date loadDate(String sql, List params) throws PersistenceException {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -271,7 +271,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if something goes wrong.
      */
     private List<Object[]> loadObjects(String sql, List params) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         List<Object[]> list = new LinkedList<Object[]>();
@@ -1065,7 +1065,7 @@ public final class SQLTool implements Configurable {
         List relations = findStandalonePollRelations(qualifiers);
         Relation relation = (Relation) relations.get(0);
 
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Poll poll = (Poll) persistence.findById(relation.getChild());
         if (poll.isClosed())
             return null;
@@ -1077,7 +1077,7 @@ public final class SQLTool implements Configurable {
      * Finds maximum id between users.
      */
     public int getMaximumUserId() {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         Statement statement = null;
         ResultSet resultSet = null;
@@ -1103,7 +1103,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if object doesn't contain such property.
      */
     public void setUpdatedTimestamp(GenericDataObject obj, Date date) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         obj.setUpdated(date);
         persistance.storeInCache(obj);
 
@@ -1130,7 +1130,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public List findItemsWithType(int type, int offset, int count) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -1165,7 +1165,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public List findRecordsWithType(int type, int offset, int count) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -1199,7 +1199,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public List findItemsWithTypeAndSubtype(int type, String subType) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -1309,7 +1309,7 @@ public final class SQLTool implements Configurable {
      * @param lastComment id of the comment that is currently displayed to the user
      */
     public void insertLastSeenComment(int userId, int discussion, int lastComment) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         try {
@@ -1334,7 +1334,7 @@ public final class SQLTool implements Configurable {
      * @return number of deleted discussions
      */
     public int deleteOldComments(int userId, int preserveCount) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -1369,7 +1369,7 @@ public final class SQLTool implements Configurable {
      * @param type optional type of the user action on given relation
      */
     public void insertUserAction(int userId, int rid, String type) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         try {
@@ -1408,7 +1408,7 @@ public final class SQLTool implements Configurable {
      * @param type   optional type of the user action on given relation
      */
     public void removeUserAction(int userId, int rid, String type) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         try {
@@ -1431,7 +1431,7 @@ public final class SQLTool implements Configurable {
      * @return map where section id is a key and number of children is a value
      */
     public Map<Integer, Integer> getItemsCountInSections(List categories) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         try {
@@ -1473,7 +1473,7 @@ public final class SQLTool implements Configurable {
      * is count of items in specified section and the second is relation id of last item.
      */
     public Map<Integer, Integer[]> getLastItemAndItemsCountInSections(List categories) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         try {
@@ -1513,7 +1513,7 @@ public final class SQLTool implements Configurable {
      * Records new page view in statistics for selected type of page.
      */
     public void recordPageView(String pageType, int count) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statementUpdate = null, statementInsert = null;
         try {
@@ -1574,7 +1574,7 @@ public final class SQLTool implements Configurable {
      * @param query normalized query string
      */
     public void recordSearchedQuery(String query) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statementUpdate = null, statementInsert = null;
         try {
@@ -1625,7 +1625,7 @@ public final class SQLTool implements Configurable {
      * @return List of Strings (no duplicates)
      */
     public List getPropertyValues(String type) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -1654,7 +1654,7 @@ public final class SQLTool implements Configurable {
      * @param values property values to be updated
      */
     public void setProperty(CommonObject obj, String type, Set values) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -1682,7 +1682,7 @@ public final class SQLTool implements Configurable {
      * @param rid relation id
      */
     public void insertOldAddress(String oldUrl, String newUrl, Integer rid) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         try {
@@ -1710,7 +1710,7 @@ public final class SQLTool implements Configurable {
      * @return null when not found, initialized Relation or String with new URL (absolute with or without host)
      */
     public Object findNewAddress(String oldUrl) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;

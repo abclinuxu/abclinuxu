@@ -250,7 +250,7 @@ public class Nursery implements Configurable {
             throw new ConfigurationException("Cannot instantiate cache " + className + "!", e);
         }
 
-        persistence = PersistenceFactory.getPersistance();
+        persistence = PersistenceFactory.getPersistence();
 
         // content of these sections shall not be loaded!
         noChildren = new HashMap();

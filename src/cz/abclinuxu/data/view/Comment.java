@@ -191,7 +191,7 @@ public abstract class Comment implements Cloneable, Comparable {
     /**
      * @return Child comments of this node.
      */
-    public List getChildren() {
+    public List<Comment> getChildren() {
         return (children != null) ? children : Collections.EMPTY_LIST;
     }
 

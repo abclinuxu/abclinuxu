@@ -120,7 +120,7 @@ public class InstanceUtils {
      * is initialized.
      */
     public static Relation findFirstChildRecordOfType(Item item, int recordType) {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Record record = null;
         for (Iterator iter = item.getChildren().iterator(); iter.hasNext();) {
             Relation rel = (Relation) iter.next();
@@ -140,7 +140,7 @@ public class InstanceUtils {
      * is initialized.
      */
     public static Relation findFirstChildItemOfType(GenericObject obj, int itemType) {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Item item = null;
         for (Iterator iter = obj.getChildren().iterator(); iter.hasNext();) {
             Relation rel = (Relation) iter.next();

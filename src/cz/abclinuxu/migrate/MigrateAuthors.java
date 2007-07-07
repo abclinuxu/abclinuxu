@@ -38,7 +38,7 @@ import org.dom4j.Element;
 public class MigrateAuthors {
     public static void main(String[] args) {
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         List<Relation> authors = sqlTool.findItemRelationsWithType(Item.AUTHOR, null);
         Tools.syncList(authors);
         for (Relation relation : authors) {

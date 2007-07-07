@@ -40,7 +40,7 @@ public class AddBlogName {
 
     public static void main(String[] args) {
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         List blogs = sqlTool.findCategoryRelationsWithType(Category.BLOG, null);
         for (Iterator iter = blogs.iterator(); iter.hasNext();) {

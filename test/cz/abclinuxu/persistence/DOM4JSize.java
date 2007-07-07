@@ -32,7 +32,7 @@ import java.io.IOException;
 public class DOM4JSize {
 
     public static void main(String[] args) throws IOException {
-        User user = (User) PersistenceFactory.getPersistance().findById(new User(1));
+        User user = (User) PersistenceFactory.getPersistence().findById(new User(1));
         String string = user.getDataAsString();
         Document document = user.getData();
 

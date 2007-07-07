@@ -122,7 +122,7 @@ public class AdminServlet implements AbcAction {
      */
     private String clearCache(HttpServletRequest request, Map env) throws Exception {
         Nursery.getInstance().clearCache();
-        PersistenceFactory.getPersistance().clearCache();
+        PersistenceFactory.getPersistence().clearCache();
         TemplateSelector.initialize(null);
         FMUtils.getConfiguration().clearTemplateCache();
         ConfigurationManager.reconfigureAll();
@@ -169,7 +169,7 @@ public class AdminServlet implements AbcAction {
         }
 
         int uid = Integer.parseInt(s);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) persistence.findById(new User(uid));
 
         env.put(Constants.VAR_USER, user);
@@ -186,7 +186,7 @@ public class AdminServlet implements AbcAction {
      * todo add other checks, e.g. jobs and threads
      */
     private String performCheck(HttpServletRequest request, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         try {
             persistence.findById(new Category(Constants.CAT_HARDWARE));
             env.put(VAR_DATABASE_STATE, Boolean.TRUE);

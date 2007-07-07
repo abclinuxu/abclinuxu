@@ -59,7 +59,7 @@ public class PoolMonitor extends TimerTask {
     public void run() {
         try {
             log.debug(getJobName()+" starts");
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
             Date now = new Date();
             boolean articlesUpdated = false, newsUpdated = false;
 

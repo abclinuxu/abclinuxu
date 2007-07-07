@@ -122,7 +122,7 @@ public class EditGroup implements AbcAction {
     protected String actionCreateGroup(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Item group = new Item(0, Item.GROUP);
         group.setData(DocumentHelper.createDocument());
@@ -150,7 +150,7 @@ public class EditGroup implements AbcAction {
      */
     protected String actionEditGroupStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params, request);
         if ( group==null )
@@ -172,7 +172,7 @@ public class EditGroup implements AbcAction {
     protected String actionEditGroupStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params, request);
         if ( group==null )
@@ -211,7 +211,7 @@ public class EditGroup implements AbcAction {
      */
     protected String actionShowUsers(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params, request);
         persistence.synchronize(group);
@@ -242,7 +242,7 @@ public class EditGroup implements AbcAction {
     protected String actionRemoveMembers(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User admin = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         int group = Misc.parseInt((String) params.get(EditGroup.PARAM_GROUP), 0);
         if ( group==0 )

@@ -44,7 +44,7 @@ public class ForumPool {
     public static void submitComment(Relation relation, int discussionId, int recordId, int threadId) {
         if (! (relation.getParent() instanceof Category) )
             return;
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Category parent = (Category) persistence.findById(relation.getParent());
         if (parent.getType()!=Category.FORUM)
             return;

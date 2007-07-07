@@ -367,7 +367,7 @@ public class InsertFormat {
         List list = new ArrayList(2000);
         int key;
 
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = persistance.getSQLConnection();
         Statement statement = con.createStatement();
         ResultSet rs = statement.executeQuery("select cislo from polozka where typ="+type);
@@ -383,7 +383,7 @@ public class InsertFormat {
         List list = new ArrayList(10000);
         int key;
 
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = persistance.getSQLConnection();
         Statement statement = con.createStatement();
         ResultSet rs = statement.executeQuery("select cislo from zaznam where typ="+type);
@@ -399,7 +399,7 @@ public class InsertFormat {
         List list = new ArrayList(500);
         int key;
 
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = persistance.getSQLConnection();
         Statement statement = con.createStatement();
         ResultSet rs = statement.executeQuery("select cislo from kategorie");

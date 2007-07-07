@@ -47,7 +47,7 @@ public class UpgradeDiscusssions {
 
     static Persistence persistence;
     static {
-        persistence = PersistenceFactory.getPersistance();
+        persistence = PersistenceFactory.getPersistence();
     }
     static int counter = 0;
 

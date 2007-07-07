@@ -63,7 +63,7 @@ public class ShowForum implements AbcAction {
     public static final String VAR_FORUM_SETTINGS = "SETTINGS";
     public static final String VAR_FORUM_VARIOUS = "VARIOUS";
 
-    static Persistence persistence = PersistenceFactory.getPersistance();
+    static Persistence persistence = PersistenceFactory.getPersistence();
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);

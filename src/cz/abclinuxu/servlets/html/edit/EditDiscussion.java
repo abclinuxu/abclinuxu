@@ -119,7 +119,7 @@ public class EditDiscussion implements AbcAction {
 // prepsat a overit kazdou jednotlivou funkci
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         String action = Misc.getString(params, PARAM_ACTION);
 
@@ -224,7 +224,7 @@ public class EditDiscussion implements AbcAction {
      * then opens form for adding new reaction.
      */
     protected String actionAddDiscussion(HttpServletRequest request, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -287,7 +287,7 @@ public class EditDiscussion implements AbcAction {
      */
     public String actionAddQuestion2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_RELATION);
@@ -338,7 +338,7 @@ public class EditDiscussion implements AbcAction {
      */
     protected String actionAddComment(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -389,7 +389,7 @@ public class EditDiscussion implements AbcAction {
     public synchronized String actionAddComment2(HttpServletRequest request, HttpServletResponse response,
                                                  Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
@@ -408,9 +408,10 @@ public class EditDiscussion implements AbcAction {
         DiscussionRecord dizRecord = null;
         Element root = DocumentHelper.createElement("data");
         RowComment comment = new RowComment(root);
-        List children = discussion.getChildren();
-        if ( children.size()>0 ) {
-            record = (Record) ((Relation)children.get(0)).getChild();
+        comment.set_dirty(true);
+        List<Relation> children = discussion.getChildren();
+        if (children.size() > 0) {
+            record = (Record) (children.get(0)).getChild();
             record = (Record) persistence.findById(record).clone();
             dizRecord = (DiscussionRecord) record.getCustom();
         } else {
@@ -519,7 +520,7 @@ public class EditDiscussion implements AbcAction {
 
     protected String actionSolved(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
@@ -546,7 +547,7 @@ public class EditDiscussion implements AbcAction {
      */
     protected synchronized String actionCensore(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -612,7 +613,7 @@ public class EditDiscussion implements AbcAction {
      */
     protected String actionEditComment(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
@@ -636,7 +637,7 @@ public class EditDiscussion implements AbcAction {
      * Adds new comment to selected discussion.
      */
     protected synchronized String actionEditComment2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -694,7 +695,7 @@ public class EditDiscussion implements AbcAction {
      */
     protected String actionRemoveComment(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
@@ -716,7 +717,7 @@ public class EditDiscussion implements AbcAction {
      */
     protected synchronized String actionRemoveComment2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
         Relation mainRelation = (Relation) env.get(VAR_RELATION);
@@ -791,7 +792,7 @@ public class EditDiscussion implements AbcAction {
      * Reverts current state of frozen attribute.
      */
     protected synchronized String actionAlterFreeze(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item discussion = (Item) persistence.findById(relation.getChild()).clone();
 
@@ -819,7 +820,7 @@ public class EditDiscussion implements AbcAction {
     }
 
     protected String actionMoveThread(HttpServletRequest request, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
@@ -832,7 +833,7 @@ public class EditDiscussion implements AbcAction {
     }
 
     protected synchronized String actionMoveThreadStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item discussion = (Item) persistence.findById(relation.getChild()).clone();
@@ -889,7 +890,7 @@ public class EditDiscussion implements AbcAction {
      * Moves selected thread one level up. Top level threads are not changed.
      */
     protected synchronized String actionDecreaseThreadLevel(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item discussion = (Item) persistence.findById(relation.getChild());
@@ -930,7 +931,7 @@ public class EditDiscussion implements AbcAction {
     }
 
     protected String actionToNewDiscussion1(HttpServletRequest request, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item discussion = (Item) persistence.findById(relation.getChild());
@@ -955,7 +956,7 @@ public class EditDiscussion implements AbcAction {
      */
     protected synchronized String actionToNewDiscussion2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
 

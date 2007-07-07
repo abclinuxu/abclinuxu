@@ -42,7 +42,7 @@ public class MakePathsRelative {
         try {
             reAbsoluteURL = new RE("(HREF|SRC)(=\")(http://(www.)?abclinuxu.cz)(/[^\"]+)", RE.MATCH_CASEINDEPENDENT);
 //            reAbsoluteURL = new RE("(HREF|SRC)(=\"http://(www.)?abclinuxu.cz)([^\"]+)(\")", RE.MATCH_CASEINDEPENDENT+RE.MATCH_SINGLELINE);
-            persistance = (MySqlPersistence) PersistenceFactory.getUncachedPersistance();
+            persistance = (MySqlPersistence) PersistenceFactory.getUncachedPersistence();
         } catch (RESyntaxException e) {
             log.error("regexp syntax troubles", e);
         }

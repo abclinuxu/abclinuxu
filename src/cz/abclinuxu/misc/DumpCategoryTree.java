@@ -34,7 +34,7 @@ import java.util.*;
  * discussion administrators.
  */
 public class DumpCategoryTree {
-    Persistence persistence = PersistenceFactory.getPersistance(PersistenceFactory.defaultUrl,EmptyCache.class);
+    Persistence persistence = PersistenceFactory.getPersistence(PersistenceFactory.defaultUrl,EmptyCache.class);
     HashMap map = new HashMap(1000);
 
     public void dumpTree(File parent, Relation relation) throws Exception {

@@ -87,7 +87,7 @@ public class Dump implements Configurable {
 
     public Dump() throws Exception {
         ConfigurationManager.getConfigurator().configureMe(this);
-        persistence = PersistenceFactory.getPersistance();
+        persistence = PersistenceFactory.getPersistence();
         persistence.setCache(new LRUCache(5000));
         sqlTool = SQLTool.getInstance();
         String templateURI = AbcConfig.calculateDeployedPath("WEB-INF/conf/templates.xml");

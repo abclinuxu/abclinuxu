@@ -78,10 +78,10 @@ public class ShowObject implements AbcAction {
     public static final String VAR_CHILDREN_MAP = "CHILDREN";
     public static final String VAR_THREAD = "THREAD";
 
-    Persistence persistence = PersistenceFactory.getPersistance();
+    Persistence persistence = PersistenceFactory.getPersistence();
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 
@@ -196,7 +196,7 @@ public class ShowObject implements AbcAction {
      */
     String processCensored(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Item diz = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if (diz==null)

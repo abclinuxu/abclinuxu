@@ -90,7 +90,7 @@ public class CreateIndex implements Configurable {
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
         configurator.configureMe(new CreateIndex());
-        persistence = PersistenceFactory.getPersistance();
+        persistence = PersistenceFactory.getPersistence();
         sqlTool = SQLTool.getInstance();
     }
 

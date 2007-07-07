@@ -103,9 +103,11 @@ public class MySqlPersistence implements Persistence {
                 }
 
                 int result = statement.executeUpdate();
-                if ( result==0 )
+                if (result == 0)
                     throw new PersistenceException("Nepodařilo se vložit "+obj+" do databáze!");
-                obj.setId(getAutoId(statement));
+
+                if (obj.getId() == 0)
+                    obj.setId(getAutoId(statement));
 
                 if (obj instanceof CommonObject) {
                     CommonObject commonObj = (CommonObject) obj;
@@ -117,7 +119,7 @@ public class MySqlPersistence implements Persistence {
 
             if (obj instanceof Record && ((Record) obj).getType() == Record.DISCUSSION) {
                 statement.close();
-                statement = con.prepareStatement("insert into komentar values (NULL,?,?,?,?,?,?)");
+                statement = con.prepareStatement("insert into komentar values (?,?,?,?,?,?,?)");
 
                 DiscussionRecord diz = (DiscussionRecord) ((Record)obj).getCustom();
                 for (Iterator iter = diz.getThreads().iterator(); iter.hasNext();) {
@@ -141,32 +143,34 @@ public class MySqlPersistence implements Persistence {
 
     /**
      * Recursively walks through the thread and persists any comment
-     * that has row id equal to zero (otherwise skips this comment).
+     * that is set as dirty (otherwise skips this comment).
      */
     private void storeComment(RowComment comment, PreparedStatement statement) throws SQLException {
-        if (comment.getRowId()==0) {
-            statement.setInt(1, comment.getRecord());
-            statement.setInt(2, comment.getId());
+        if (comment.is_dirty()) {
+            statement.setInt(1, comment.getRowId());
+            statement.setInt(2, comment.getRecord());
+            statement.setInt(3, comment.getId());
             if (comment.getParent() != null)
-                statement.setInt(3, comment.getParent().intValue());
+                statement.setInt(4, comment.getParent().intValue());
             else
-                statement.setNull(3, Types.INTEGER);
+                statement.setNull(4, Types.INTEGER);
 
             java.util.Date d = (comment.getCreated() != null) ? comment.getCreated() : new java.util.Date();
-            statement.setTimestamp(4, new Timestamp(d.getTime()));
+            statement.setTimestamp(5, new Timestamp(d.getTime()));
             comment.setCreated(d);
 
             if (comment.getAuthor() != null)
-                statement.setInt(5, comment.getAuthor().intValue());
+                statement.setInt(6, comment.getAuthor().intValue());
             else
-                statement.setNull(5, Types.INTEGER);
-            statement.setObject(6, comment.getDataAsString().getBytes());
+                statement.setNull(6, Types.INTEGER);
+            statement.setObject(7, comment.getDataAsString().getBytes());
 
             int result = statement.executeUpdate();
             if (result == 0)
                 throw new PersistenceException("Nepodařilo se vložit " + comment + " do databáze!");
-            int autoId = getAutoId(statement);
-            comment.setRowId(autoId);
+
+            if (comment.getId() == 0)
+                comment.setRowId(getAutoId(statement));
         }
 
         for (Iterator iter = comment.getChildren().iterator(); iter.hasNext();) {
@@ -853,14 +857,15 @@ public class MySqlPersistence implements Persistence {
     private void appendCreateParams(GenericObject obj, StringBuffer sb, List conditions ) {
         if (obj instanceof GenericDataObject) {
             GenericDataObject gdo = (GenericDataObject) obj;
-            sb.append("insert into ").append(getTable(obj)).append(" values(0,?,?,?,?,?,now())");
+            sb.append("insert into ").append(getTable(obj)).append(" values(?,?,?,?,?,?,now())");
             if ( !(obj instanceof Category) && gdo.getType()==0 ) {
                 log.warn("Type not set! "+obj.toString());
             }
-            conditions.add(new Integer(gdo.getType()));
+            conditions.add(gdo.getId());
+            conditions.add(gdo.getType());
             conditions.add(gdo.getSubType());
             conditions.add(gdo.getDataAsString().getBytes());
-            conditions.add(new Integer(gdo.getOwner()));
+            conditions.add(gdo.getOwner());
 
             java.util.Date d = ( gdo.getCreated()!=null ) ? gdo.getCreated() : new java.util.Date();
             conditions.add(new Timestamp(d.getTime()));
@@ -869,26 +874,29 @@ public class MySqlPersistence implements Persistence {
             gdo.setUpdated(new java.util.Date());
 
         } else if (obj instanceof Relation) {
-            sb.append("insert into relace values(0,?,?,?,?,?,?,?)");
+            sb.append("insert into relace values(?,?,?,?,?,?,?,?)");
             Relation relation = (Relation)obj;
-            conditions.add(new Integer(relation.getUpper()));
+            conditions.add(relation.getId());
+            conditions.add(relation.getUpper());
             conditions.add(PersistenceMapping.getGenericObjectType(relation.getParent()));
-            conditions.add(new Integer(relation.getParent().getId()));
+            conditions.add(relation.getParent().getId());
             conditions.add(PersistenceMapping.getGenericObjectType(relation.getChild()));
-            conditions.add(new Integer(relation.getChild().getId()));
+            conditions.add(relation.getChild().getId());
             conditions.add(relation.getUrl());
             String tmp = relation.getDataAsString();
             conditions.add((tmp!=null)? tmp.getBytes():null);
 
         } else if (obj instanceof Data) {
-            sb.append("insert into objekt values(0,?,?,?)");
+            sb.append("insert into objekt values(?,?,?,?)");
+            conditions.add(obj.getId());
             conditions.add(((Data)obj).getFormat());
             conditions.add(((Data)obj).getData());
-            conditions.add(new Integer(((Data)obj).getOwner()));
+            conditions.add(((Data)obj).getOwner());
 
         } else if (obj instanceof User) {
-            sb.append("insert into uzivatel values(0,?,?,?,?,?,?)");
+            sb.append("insert into uzivatel values(?,?,?,?,?,?,?)");
             User user = (User)obj;
+            conditions.add(user.getId());
             conditions.add(user.getLogin());
             conditions.add(user.getName());
             conditions.add(user.getEmail());
@@ -897,13 +905,14 @@ public class MySqlPersistence implements Persistence {
             conditions.add(user.getDataAsString().getBytes());
 
         } else if (obj instanceof Link) {
-            sb.append("insert into odkaz values(0,?,?,?,?,?,?)");
+            sb.append("insert into odkaz values(?,?,?,?,?,?,?)");
             Link link = (Link)obj;
-            conditions.add(new Integer(link.getServer()));
+            conditions.add(link.getId());
+            conditions.add(link.getServer());
             conditions.add(link.getText());
             conditions.add(link.getUrl());
             conditions.add(Boolean.valueOf(link.isFixed()));
-            conditions.add(new Integer(link.getOwner()));
+            conditions.add(link.getOwner());
             if (link.getUpdated() == null)
                 link.setUpdated(new java.util.Date());
             conditions.add(new Timestamp(link.getUpdated().getTime()));
@@ -1073,7 +1082,7 @@ public class MySqlPersistence implements Persistence {
                 throw new PersistenceException("Nepodařilo se vložit anketu do databáze!");
             }
 
-            if (poll.getId()==0)
+            if (poll.getId() == 0)
                 poll.setId(getAutoId(statement));
 
             for (i = 0; i < choices.length; i++) {

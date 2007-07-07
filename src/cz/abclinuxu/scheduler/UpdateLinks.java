@@ -101,7 +101,7 @@ public class UpdateLinks extends TimerTask implements Configurable {
     public void run() {
         if (log.isDebugEnabled()) log.debug("Starting task "+getJobName());
         try {
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
             ServerInfo definition;
             Server server;
             List servers = getMaintainedServers();

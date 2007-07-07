@@ -25,10 +25,10 @@ import java.util.*;
  * @since 19.2.2006
  */
 public class DiscussionRecord implements Cloneable {
-    private List threads;
+    private List<Comment> threads;
     private int maxCommentId;
     private int totalComments;
-    private List deletedComments;
+    private List<Integer> deletedComments;
 
     /**
      * Appends comment to the list of threads as new toplevel thread.
@@ -36,7 +36,7 @@ public class DiscussionRecord implements Cloneable {
      */
     public void addThread(Comment comment) {
         if (threads == null)
-            threads = new ArrayList(3);
+            threads = new ArrayList<Comment>(3);
         threads.add(comment);
     }
 
@@ -89,8 +89,11 @@ public class DiscussionRecord implements Cloneable {
     /**
      * @return list of toplevel threads for this discussion
      */
-    public List getThreads() {
-        return (threads == null) ? Collections.EMPTY_LIST : threads;
+    public List<Comment> getThreads() {
+        if ((threads == null))
+            return Collections.emptyList();
+        else
+            return threads;
     }
 
     /**
@@ -208,25 +211,28 @@ public class DiscussionRecord implements Cloneable {
      */
     public void addDeletedComment(int id) {
         if (deletedComments==null)
-            deletedComments = new ArrayList();
-        deletedComments.add(new Integer(id));
+            deletedComments = new ArrayList<Integer>();
+        deletedComments.add(id);
     }
 
     /**
      * @return list of row ids of comments that were deleted (Integer)
      */
-    public List getDeletedComments() {
-        return (deletedComments == null) ? Collections.EMPTY_LIST : deletedComments;
+    public List<Integer> getDeletedComments() {
+        if (deletedComments == null)
+            return Collections.emptyList();
+        else
+            return deletedComments;
     }
 
     public Object clone() {
         try {
             DiscussionRecord clone = (DiscussionRecord) super.clone();
             if (clone.threads != null) {
-                clone.threads = new ArrayList(threads.size());
+                clone.threads = new ArrayList<Comment>(threads.size());
                 for (Iterator iter = threads.iterator(); iter.hasNext();) {
                     Comment comment = (Comment) iter.next();
-                    clone.threads.add(comment.clone());
+                    clone.threads.add((Comment) comment.clone());
                 }
             }
             return clone;

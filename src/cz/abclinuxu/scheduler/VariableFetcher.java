@@ -279,7 +279,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         if (currentPoll == null)
             return null;
 
-        Relation relation = (Relation) PersistenceFactory.getPersistance().findById(currentPoll);
+        Relation relation = (Relation) PersistenceFactory.getPersistence().findById(currentPoll);
         Tools.sync(relation);
         return relation;
     }
@@ -582,7 +582,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     public void refreshSizes() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
             Category requests = (Category) persistence.findById(new Category(Constants.CAT_REQUESTS));
             counter.put("REQUESTS", requests.getChildren().size());
 
@@ -603,7 +603,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     }
 
     private Map<Server, List<Link>> getSelectedFeeds(String servers, int size) {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         StringTokenizer stk = new StringTokenizer(servers, ",");
         String tmp;
         int id;

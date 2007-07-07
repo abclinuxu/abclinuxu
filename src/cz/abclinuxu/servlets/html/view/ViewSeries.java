@@ -83,7 +83,7 @@ public class ViewSeries implements AbcAction {
     }
 
     private String processSeries(HttpServletRequest request, Relation relation, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int pageSize = Misc.getPageSize(AbcConfig.getSeriesArticleCount(), 100, env, null);

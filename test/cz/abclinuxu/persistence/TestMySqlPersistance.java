@@ -41,7 +41,7 @@ public class TestMySqlPersistance extends TestCase {
         super.setUp();
 //        persistence = new MySqlPersistance(PersistanceFactory.defaultTestUrl);
 //        persistence.setCache(new LRUCache());
-        persistence = PersistenceFactory.getPersistance(PersistenceFactory.defaultTestUrl, LRUCache.class);
+        persistence = PersistenceFactory.getPersistence(PersistenceFactory.defaultTestUrl, LRUCache.class);
     }
 
     protected void tearDown() throws Exception {

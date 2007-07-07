@@ -46,7 +46,7 @@ public class TestLocale {
         int id = Misc.parseInt(args[1], 0);
         String  xpath = args[2];
 
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         SQLTool sqlTool = SQLTool.getInstance();
 
         GenericDataObject gdo = (typeRecord)? (GenericDataObject) new Record(id) : new Item(id);

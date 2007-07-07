@@ -38,7 +38,7 @@ import java.util.HashMap;
  * @since 21.10.2006
  */
 public class GenerateUrlsForHardware {
-    static Persistence persistence = PersistenceFactory.getPersistance();
+    static Persistence persistence = PersistenceFactory.getPersistence();
     static SQLTool sqlTool = SQLTool.getInstance();
     static HashMap indexed = new HashMap(10000, 0.99f);
 

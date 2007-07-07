@@ -72,7 +72,7 @@ public class SelectRelation implements AbcAction {
      * Called, when we shall descend to another relation
      */
     protected String actionNext(HttpServletRequest request, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         String manual = request.getParameter(PARAM_ENTERED);
         String tmp = request.getParameter(PARAM_CURRENT);
 
@@ -130,7 +130,7 @@ public class SelectRelation implements AbcAction {
             }
         }
 
-        Relation current = (Relation) PersistenceFactory.getPersistance().findById(new Relation(result));
+        Relation current = (Relation) PersistenceFactory.getPersistence().findById(new Relation(result));
         env.put(VAR_CURRENT,current);
         return FMTemplateSelector.select("SelectRelation","step2",env,request);
     }

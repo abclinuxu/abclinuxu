@@ -92,7 +92,7 @@ public class Lottery implements Configurable {
      */
     private void filterProhibited(List relations, List prohibited) {
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
             Relation relation = (Relation) iter.next();
             Item news = (Item) persistence.findById(relation.getChild());
             Integer owner = new Integer(news.getOwner());
@@ -106,7 +106,7 @@ public class Lottery implements Configurable {
      * id of the user and the value is list of relations, which he owns.
      */
     private Map groupNewsByUser(List relations) {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map map = new HashMap(relations.size()+1,1.0f);
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
@@ -127,7 +127,7 @@ public class Lottery implements Configurable {
      * Prints HTML table of news
      */
     private void printNewsByUser(Map grouped) {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         System.out.println("<table border=\"0\">");
         for ( Iterator iter = grouped.keySet().iterator(); iter.hasNext(); ) {
             Integer key = (Integer) iter.next();
@@ -150,7 +150,7 @@ public class Lottery implements Configurable {
      * Randomly selects one news and prints the winner.
      */
     private void drawLotsOfNews(List listOfNews) {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         int i = new Random().nextInt(listOfNews.size());
         Relation relation = (Relation) listOfNews.get(i);
         Item news = (Item) persistence.findById(relation.getChild());

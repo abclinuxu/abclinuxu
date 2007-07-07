@@ -93,7 +93,7 @@ public class FixUrls {
 
     public FixUrls() throws Exception {
         dump = new Dump();
-        persistence = PersistenceFactory.getPersistance();
+        persistence = PersistenceFactory.getPersistence();
         reHref = new RE("(HREF|SRC)(=\")(/[^\"]+)(\")", RE.MATCH_CASEINDEPENDENT);
     }
 

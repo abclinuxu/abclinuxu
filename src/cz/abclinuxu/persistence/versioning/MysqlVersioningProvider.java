@@ -64,7 +64,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
      * @return information about this version
      */
     public VersionInfo commit(String document, int relation, int user, String descr) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -116,7 +116,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
      * @throws VersionNotFoundException Thrown when either document or specified version doesn't exist.
      */
     public VersionedDocument load(int relation, int version) throws VersionNotFoundException {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -150,7 +150,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
      *         version of specified document.
      */
     public List<VersionInfo> getHistory(int relation) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -184,7 +184,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
      * @return true if there were some revisions for specified document
      */
     public boolean purge(int relation) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         try {

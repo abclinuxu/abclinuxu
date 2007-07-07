@@ -19,7 +19,7 @@ import java.text.ParseException;
 public class FindCollidingUsers {
     public static void main(String[] args) throws Exception {
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         int max = sqlTool.getMaximumUserId();
         Map<String, List> logins = new HashMap<String, List>(max, 0.99f);

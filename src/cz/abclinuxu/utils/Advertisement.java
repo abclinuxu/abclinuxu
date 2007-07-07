@@ -58,7 +58,7 @@ public class Advertisement {
         if (user != null && user.getId() == -1) // not implemented now
             return "";
 
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
         Element position = (Element) item.getData().selectSingleNode("//advertisement/position[@id='" + id + "']");
         if (position == null)

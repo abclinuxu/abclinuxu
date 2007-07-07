@@ -94,7 +94,7 @@ public final class SubscribedUsers {
      */
     private void init() {
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         User user;
 
         log.info("Loading list of users, that subscribed email gate to forum.");

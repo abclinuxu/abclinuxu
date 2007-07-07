@@ -62,17 +62,17 @@ public class PersistenceFactory implements Configurable {
      * Get default persistence.
      * @return instance of object, which implements <code>Persistance</code>.
      */
-    public static Persistence getPersistance() {
-        if ( persistence!=null )
+    public static Persistence getPersistence() {
+        if (persistence != null)
             return persistence;
-        return getPersistance(defaultUrl, defaultCache);
+        return getPersistence(defaultUrl, defaultCache);
     }
 
     /**
      * Get persistence with direct connection to database using default cache..
      * @return instance of object, which implements <code>Persistance</code>.
      */
-    public static Persistence getUncachedPersistance() {
+    public static Persistence getUncachedPersistence() {
         Persistence persistence = new MySqlPersistence(directUrl);
         try {
             persistence.setCache((TransparentCache) defaultCache.newInstance());
@@ -88,10 +88,24 @@ public class PersistenceFactory implements Configurable {
      * it will be returned regardless on equality with parameters.
      * @return instance of object, which implements <code>Persistance</code> interface
      */
-    public static Persistence getPersistance(String url) {
-        if ( persistence!=null )
-            return persistence;
-        return getPersistance(url, defaultCache);
+    public static Persistence getPersistence(String url) {
+        return getPersistence(url, defaultCache);
+    }
+
+    /**
+     * Get persistence connected to specific url. If <code>url</code> is null,
+     * <code>defaultUrl</code> is used. New instance is always returned, default
+     * persistence is not set by this method.
+     * @return instance of object, which implements <code>Persistance</code> interface
+     */
+    public static Persistence getSpecificPersistence(String url) {
+        Persistence aPersistence = new MySqlPersistence(url);
+        try {
+            aPersistence.setCache((TransparentCache) defaultCache.newInstance());
+        } catch (Exception e) {
+            throw new PersistenceException("Cannot use Cache " + defaultCache.toString(), e);
+        }
+        return aPersistence;
     }
 
     /**
@@ -100,9 +114,7 @@ public class PersistenceFactory implements Configurable {
      * @return instance of object, which implements <code>Persistance</code>.
      */
     public static Persistence getPersistance(Class cache) {
-        if ( persistence!=null )
-            return persistence;
-        return getPersistance(defaultUrl, cache);
+        return getPersistence(defaultUrl, cache);
     }
 
     /**
@@ -112,10 +124,10 @@ public class PersistenceFactory implements Configurable {
      * regardless on equality with parameters.
      * @return instance of object, which implements <code>Persistance</code> interface
      */
-    public static synchronized Persistence getPersistance(String url, Class cache) {
-        if (persistence!=null)
+    public static synchronized Persistence getPersistence(String url, Class cache) {
+        if (persistence != null)
             return persistence;
-        if ( url==null )
+        if (url == null)
             url = defaultUrl;
 
         persistence = new MySqlPersistence(url);

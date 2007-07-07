@@ -67,7 +67,7 @@ public class FaqDecorator implements Decorator, Configurable {
 
         String name = (String) action.getProperty(PROPERTY_NAME);
         if ( name==null ) {
-            Persistence persistence = PersistenceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistence();
             Item driver = (Item) persistence.findById(action.object);
             name = driver.getData().selectSingleNode("/data/title").getText();
         }

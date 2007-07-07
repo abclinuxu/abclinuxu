@@ -70,7 +70,7 @@ public class ShowArticle implements AbcAction {
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params, request);
         if ( relation==null )
@@ -92,7 +92,7 @@ public class ShowArticle implements AbcAction {
     static String show(Map env, Item item, HttpServletRequest request) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Relation articleRelation = (Relation) env.get(VAR_RELATION);
         Map children = (Map) env.get(VAR_CHILDREN_MAP);

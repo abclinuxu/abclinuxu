@@ -68,7 +68,7 @@ public class EditGuestBook implements AbcAction {
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         String action = (String) params.get(PARAM_ACTION);
 
         if (ServletUtils.handleMaintainance(request, env))
@@ -109,7 +109,7 @@ public class EditGuestBook implements AbcAction {
     }
 
     private String actionGuestBookEntry(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -152,7 +152,7 @@ public class EditGuestBook implements AbcAction {
     }
 
     private String actionEditGuestBookEntryStep2(HttpServletRequest request, HttpServletResponse response, Relation relation, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 

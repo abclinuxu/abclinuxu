@@ -37,7 +37,7 @@ public class UpgradePoll {
     MySqlPersistence persistance;
 
     public UpgradePoll() {
-        persistance = (MySqlPersistence) PersistenceFactory.getPersistance(PersistenceFactory.directUrl);
+        persistance = (MySqlPersistence) PersistenceFactory.getPersistence(PersistenceFactory.directUrl);
     }
 
     void run() throws Exception {

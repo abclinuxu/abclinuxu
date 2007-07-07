@@ -90,7 +90,7 @@ public class ViewBlog implements AbcAction, Configurable {
     }
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
         Relation blogRelation = null, relation = null;
         int year, month, day, rid;
@@ -204,7 +204,7 @@ public class ViewBlog implements AbcAction, Configurable {
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
     public static String processStory(HttpServletRequest request, Relation relation, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Item story = (Item) relation.getChild();
         env.put(VAR_STORY, relation);
 
@@ -222,7 +222,7 @@ public class ViewBlog implements AbcAction, Configurable {
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
     protected String processArchive(HttpServletRequest request, Category blog, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation blogRelation = (Relation) env.get(VAR_BLOG_RELATION);
         List parents = persistence.findParents(blogRelation);
         env.put(ShowObject.VAR_PARENTS, parents);
@@ -235,7 +235,7 @@ public class ViewBlog implements AbcAction, Configurable {
     protected String processStories(HttpServletRequest request, Relation blogRelation, boolean summary, int year, int month, int day, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         Category blog = (Category) env.get(VAR_BLOG);
         int count = 0;
@@ -290,7 +290,7 @@ public class ViewBlog implements AbcAction, Configurable {
     protected String processBlogSpace(HttpServletRequest request, boolean summary, boolean digest, int year, int month, int day, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation;
         Item story;
@@ -365,7 +365,7 @@ public class ViewBlog implements AbcAction, Configurable {
      */
     protected String processBlogs(HttpServletRequest request, Map env) throws Exception {
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistence persistence = PersistenceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation;
         Category blog;
         User author;

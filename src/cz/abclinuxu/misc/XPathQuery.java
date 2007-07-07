@@ -56,7 +56,7 @@ public class XPathQuery {
         ResultSetMetaData metaData;
         int columns, i;
 
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = persistance.getSQLConnection();
         Statement statement = con.createStatement();
         ResultSet resultSet = statement.executeQuery(sql);
