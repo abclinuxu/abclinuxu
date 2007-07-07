@@ -1,16 +1,17 @@
 Strucny navod
 =============
 
-1\ nainstalujte
+
+1) nainstalujte
 
 Sun JDK 1.5
-Jakarta ant 1.6
-Mysql 4.1 ci novejsi
-Jetty 6.1.2 ci novejsi
+Jakarta Ant 1.6
+Mysql 4.1
+Jetty 6.1.4 ci novejsi
 
-Ant a jetty najdete v orezane verzi mezi ostatnimi soubory ke stazeni.
+Ant a jetty najdete v orezane verzi v adresari misc.
 
-2\ nastavte si databazi
+2) nastavte si databazi
 
 $ mysql
 CREATE DATABASE devel default character set utf8 collate utf8_czech_ci;
@@ -18,13 +19,13 @@ USE devel;
 GRANT ALL ON *.* TO 'you'@'localhost' IDENTIFIED BY 'password' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 
-$ bzcat devel_databaze.sql.bz2 | mysql -u you -p password devel
+$ bzcat misc/databaze.sql.bz2 | mysql -u you -p password password
 
 Ujistete se, ze databaze je pristupna pres TCPIP, v defaultnim
-nastaveni je zakazano (skip networking v konfiguraci ci spoustecim
-skriptu, podrobnosti v diskusich na abicku).
+nastaveni je to zakazano (skip networking v konfiguraci ci spoustecim
+skriptu, podrobnosti ve FAQ na abicku).
 
-3\ upravte si conf/conf_devel.properties
+3) upravte si conf/conf_devel.properties
 
 Dulezite je mit spravne vsechny cesty,
 adresare by mely existovat. Take nastavte
@@ -32,7 +33,7 @@ jmeno databaze, uzivatele a jeho heslo.
 Pod windows tento soubor zkopirujte o adresar
 vyse pod jmenem conf_deploy.properties
 
-4\ zkompilujte projekt
+4) zkompilujte projekt
 
 Spustte ant ve zdrojacich
 $ ant
@@ -42,16 +43,16 @@ ant je neprevede do konfiguracnich souboru. Pak je lepsi
 bud smazat adresar $DEPLOY/WEB-INF nebo touchnout vsechny
 soubory v source/conf.
 
-5\ nakonfigurujte jetty
+5) nakonfigurujte jetty
 
 Nastavte spravne promennou $JETTY_HOME v bin/jetty.sh.
 
-6\ spustte jetty
+6) spustte jetty
 
 cd jetty/bin
 ./jetty.sh run
 
-6\ otevrete prohlizec
+7) otevrete prohlizec
 
 http://localhost:8080
 
@@ -61,7 +62,7 @@ Slozitejsi veci
 V konfiguraku musite nastavit lokalni domenu,
 pokud chcete, aby se pouzivala detekce sablon
 podle jmena serveru. Napriklad pda.abclinuxu.cz
-znamena, ze se ma pouzit sablona pda. 
+znamena, ze se ma pouzit sablona pda.
 
 Je treba nastavit v DNS jmeno stroje dle sablon
 a v konfiguraku pak domenu, kde abicko zrovna bezi.
@@ -70,7 +71,7 @@ Napriklad doma, pak system rozpozna server pda.doma.
 Info
 ====
 
-Vice informaci najdete na adrese 
+Vice informaci najdete na adrese
 http://www.abclinuxu.cz/projekty/zdrojaky
 Uvitam vase pripominky k tomuto navodu,
 co vam delalo potize, co je treba lepe popsat.
