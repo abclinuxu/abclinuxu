@@ -18,20 +18,36 @@
  */
 package cz.abclinuxu.migrate;
 
-import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.Record;
+import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.Poll;
+import cz.abclinuxu.data.view.Discussion;
+import cz.abclinuxu.data.view.Comment;
+import cz.abclinuxu.data.view.RowComment;
+import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.impl.MySqlPersistence;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.html.edit.*;
-import cz.abclinuxu.servlets.html.view.ShowObject;
-import cz.abclinuxu.servlets.utils.url.URLManager;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.utils.freemarker.Tools;
+import org.dom4j.Document;
+import org.dom4j.Node;
 import org.dom4j.Element;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.SQLException;
+import java.sql.ResultSet;
 
 /**
  * This class has single purpose - fill database for developers with some data,
@@ -40,284 +56,257 @@ import java.util.*;
  * @since 7.11.2005
  */
 public class GenerateDevelDatabase {
-    static User user, admin;
-    static int ridArticle, ridDriver, ridHardware, ridSoftware, ridNews, ridQuestion, author;
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(GenerateDevelDatabase.class);
+
+    static Persistence persistence = PersistenceFactory.getPersistence();
+    static Persistence persistenceDevel = PersistenceFactory.getSpecificPersistence(PersistenceFactory.defaultDevelUrl);
+    Set copied = new HashSet(500);
 
     public static void main(String[] args) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance(PersistenceFactory.defaultDevelUrl);
-        admin = (User) persistence.findById(new User(1));
-        user = (User) persistence.findById(new User(2));
+        GenerateDevelDatabase app = new GenerateDevelDatabase();
+        app.dump(new Relation(185423)); // discussion in forum
+        app.dump(new Relation(184502)); // discussion in forum
+        app.dump(new Relation(185123)); // news
+        app.dump(new Relation(185127)); // news
+        app.dump(new Relation(182452)); // article
+        app.dump(new Relation(165259)); // series
+        app.dump(new Relation(95028)); // faq
+        app.dump(new Relation(175493)); // faq
+        app.dump(new Relation(107524)); // hardware
+        app.dump(new Relation(117428)); // hardware
+        app.dump(new Relation(136384)); // software
+        app.dump(new Relation(139058)); // software
+        app.dump(new Relation(60064)); // dictionary
+        app.dump(new Relation(68799)); // dictionary
+        app.dump(new Relation(100430)); // dictionary
+        app.dump(new Relation(3618)); // driver
+        app.dump(new Relation(8471)); // driver
+        app.dump(new Relation(157149)); // trivia
+        app.dump(new Relation(175886)); // advertisement in bazaar
+        app.dump(new Relation(72131)); // blog
+        app.dump(new Relation(110144)); // blog story
+        app.dump(new Relation(175086)); // blog story
+        app.dump(new Relation(184944)); // blog story
 
-        generateAuthors();
-        generateArticles(persistence);
-        generateNews(persistence);
-        generateHardwareItems(persistence);
-        generateSoftwareItems(persistence);
-        generateDrivers();
-        generateDiscussions(persistence);
-        generateBlogs(persistence);
-        generateDictionaryItems();
-        generatePoll(persistence);
-        generateFAQs(persistence);
+        Relation relation = (Relation) persistence.findById(new Relation(184564));
+        Poll poll = (Poll) relation.getChild();
+        poll.setClosed(false);
+        app.dump(relation);
+
+        List<User> wikiAuthors = new ArrayList<User>(100);
+
+        MySqlPersistence persistance = (MySqlPersistence) persistenceDevel;
+        Connection con = persistance.getSQLConnection();
+        Statement statement = con.createStatement();
+        try {
+            /* prenest vsechny sekce krome blogu */
+            statement.execute("insert into devel.kategorie select * from abc.kategorie where typ!=3");
+            statement.execute("insert into devel.relace select R.* from abc.relace R, abc.kategorie K where typ_potomka='K' and potomek=K.cislo and typ!=3");
+
+            /* prenest servery vcetne jejich odkazu */
+            statement.execute("insert into devel.server (cislo,jmeno,url) select cislo,jmeno,url from abc.server");
+            statement.execute("update devel.server set kontakt=''");
+            statement.execute("insert into devel.odkaz select * from abc.odkaz");
+            statement.execute("insert into devel.relace select * from abc.relace where typ_predka='S'");
+
+            /* dynamic RSS polozka */
+            statement.execute("insert into devel.polozka values(59516,0,NULL,'<data><title>Dynamicka konfigurace</title></data>',1,now(),NULL)");
+
+            /* konstanty data objektu */
+            statement.execute("insert into devel.konstanty select * from abc.konstanty");
+
+            /* prenest historii wiki dokumentu */
+            statement.execute("insert into devel.verze select V.* from abc.verze V, devel.relace R, devel.polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.cislo=V.relace");
+            ResultSet resultSet = statement.executeQuery("select kdo from devel.verze");
+            while (resultSet.next()) {
+                int id = resultSet.getInt(1);
+                wikiAuthors.add(new User(id));
+            }
+            persistance.releaseSQLResources(con, statement, resultSet);
+        } catch (SQLException e) {
+            log.error(e, e);
+        }
+
+        for (User user : wikiAuthors) {
+            app.dump(user);
+        }
     }
 
-    private static void generateHardwareItems(Persistence persistence) throws Exception {
-        Map map = new HashMap();
-        Map params = new HashMap();
-        map.put(Constants.VAR_PARAMS, params);
-        map.put(Constants.VAR_USER, user);
-
-        params.put(EditHardware.PARAM_NAME, "Askey");
-        params.put(EditHardware.PARAM_SETUP, "Plug n' pray");
-        params.put(EditHardware.PARAM_NOTE, "Poznámka");
-        params.put(EditHardware.PARAM_IDENTIFICATION, "Tí tá tá tá tí");
-        params.put(EditHardware.PARAM_TECHPARAM, "Kus drátu");
-        params.put(EditHardware.PARAM_DRIVER, "kernel");
-        params.put(EditHardware.PARAM_PRICE, "low");
-        map.put(EditHardware.VAR_RELATION, persistence.findById(new Relation(148)));
-
-        EditHardware servlet = new EditHardware();
-        servlet.actionAddStep2(null, null, map, false);
-        Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
-        ridHardware = created.getId();
+    private void dump(Relation relation) {
+        Tools.sync(relation);
+        save(relation);
+        GenericObject child = relation.getChild();
+        if (child instanceof Item)
+            dump((Item) child);
+        else if (child instanceof Record)
+            dump((Record) child);
+        else if (child instanceof Category)
+            dump((Category) child);
+        else if (child instanceof Poll)
+            dump((Poll) child);
     }
 
-    private static void generateSoftwareItems(Persistence persistence) throws Exception {
-        Map map = new HashMap();
-        Map params = new HashMap();
-        map.put(Constants.VAR_PARAMS, params);
-        map.put(Constants.VAR_USER, user);
-
-        params.put(EditSoftware.PARAM_NAME, "GIMP");
-        params.put(EditSoftware.PARAM_DESCRIPTION, "GIMP je GNU editor obrazku");
-        params.put(EditSoftware.PARAM_ALTERNATIVES, "Photoshop");
-        params.put(EditSoftware.PARAM_DOWNLOAD_URL, "http://www.gimp.cz");
-        params.put(EditSoftware.PARAM_HOME_PAGE, "http://www.gimp.cz");
-        params.put(EditSoftware.PARAM_LICENSES, "gpl");
-        params.put(EditSoftware.PARAM_RSS_URL, "http://gimp.org/~planet/www.gimp.org/news/index.rss20");
-        params.put(EditSoftware.PARAM_USER_INTERFACE, Arrays.asList("xwindows", "gtk"));
-        map.put(EditSoftware.VAR_RELATION, persistence.findById(new Relation(134745)));
-
-        EditSoftware servlet = new EditSoftware();
-        servlet.actionAddStep2(null, null, map, false);
-        Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
-        ridSoftware = created.getId();
+    private void dump(Item item) {
+        Tools.sync(item);
+        if (item.getType() == Item.DISCUSSION)
+            dumpDiscussion(item);
+        else if (item.getType() == Item.ARTICLE)
+            dumpArticle(item);
+        else if (item.getType() == Item.SERIES)
+            dumpSeries(item);
+        else if (item.getType() == Item.ROYALTIES)
+            dumpRoyalty(item);
+        save(item);
+        dumpOwner(item.getOwner());
+        dumpChildren(item.getChildren());
     }
 
-    private static void generateDiscussions(Persistence persistence) throws Exception {
-        Map map = new HashMap();
-        Map params = new HashMap();
-        map.put(Constants.VAR_PARAMS, params);
-        map.put(Constants.VAR_URL_UTILS, new UrlUtils(UrlUtils.PREFIX_CLANKY, null));
-
-        params.put(EditDiscussion.PARAM_TITLE, "Jak nainstalovat balíček do Mandrivy");
-        params.put(EditDiscussion.PARAM_TEXT, "Našel jsem balíček RPM se super aplikací, jak jej mám nainstalovat?");
-        params.put(EditDiscussion.PARAM_AUTHOR_ID, "2");
-        map.put(EditDiscussion.VAR_RELATION, persistence.findById(new Relation(49645)));
-
-        EditDiscussion servlet = new EditDiscussion();
-        servlet.actionAddQuestion2(null, null, map, false);
-        Relation relation = (Relation) map.get(EditDiscussion.VAR_RELATION);
-
-        params.clear();
-        params.put(EditDiscussion.PARAM_DISCUSSION, Integer.toString(relation.getChild().getId()));
-        params.put(EditDiscussion.PARAM_TITLE, "RTFM");
-        params.put(EditDiscussion.PARAM_TEXT, "man urpmi");
-        params.put(EditDiscussion.PARAM_AUTHOR, "chytrak");
-        map.put(EditDiscussion.VAR_RELATION, relation);
-
-        servlet.actionAddComment2(null, null, map, false);
-        Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
-        ridQuestion = created.getId();
+    private void dump(Record record) {
+        Tools.sync(record);
+        dumpOwner(record.getOwner());
+        save(record);
     }
 
-    private static void generateFAQs(Persistence persistence) throws Exception {
-        Map map = new HashMap();
-        Map params = new HashMap();
-        map.put(Constants.VAR_PARAMS, params);
-        map.put(Constants.VAR_USER, user);
-
-        map.put(EditFaq.VAR_RELATION, persistence.findById(new Relation(94480)));
-        params.put(EditFaq.PARAM_TITLE, "Zapnutí DMA");
-        params.put(EditFaq.PARAM_TEXT, "man hdparm");
-
-        EditFaq servlet = new EditFaq();
-        servlet.actionAddStep2(null, null, map, false);
-        Relation relation = (Relation) map.get(EditFaq.VAR_RELATION);
-
-        EditRelated servlet2 = new EditRelated();
-        params.put(EditRelated.VAR_RELATION, relation);
-        params.put(EditRelated.PARAM_URL, UrlUtils.PREFIX_CLANKY+"/"+ridArticle);
-        params.put(EditRelated.PARAM_TITLE, "první odkaz");
-        servlet2.actionAddStep2(null, null, map, false);
-
-        params.remove(EditRelated.PARAM_TITLE);
-        params.put(EditRelated.PARAM_URL, UrlUtils.PREFIX_DRIVERS+"/"+ridDriver);
-        servlet2.actionAddStep2(null, null, map, false);
-
-        params.put(EditRelated.PARAM_URL, UrlUtils.PREFIX_HARDWARE+"/"+ridHardware);
-        servlet2.actionAddStep2(null, null, map, false);
-
-        params.put(EditRelated.PARAM_URL, "http://www.linux.cz");
-        params.put(EditRelated.PARAM_TITLE, "oficialni stranky");
-        params.put(EditRelated.PARAM_DESCRIPTION, "ponekud chude, nemyslite?");
-        servlet2.actionAddStep2(null, null, map, false);
+    private void dump(User user) {
+        Tools.sync(user);
+        Element element = (Element) user.getData().selectSingleNode("/data/settings/blog");
+        if (element != null) {
+            int id = Integer.parseInt(element.getText());
+            dump(new Category(id));
+        }
+        save(user);
     }
 
-    private static void generateBlogs(Persistence persistence) throws Exception {
-        Map map = new HashMap();
-        Map params = new HashMap();
-        map.put(Constants.VAR_PARAMS, params);
-        map.put(Constants.VAR_USER, admin);
-
-        Relation blogRelation = (Relation) persistence.findById(new Relation(72131));
-        persistence.synchronize(blogRelation.getChild());
-        params.put(EditBlog.PARAM_TITLE, "Blogosféra");
-        params.put(EditBlog.PARAM_CONTENT, "Blogy jsou dobrý sluha, ale špatný pán.");
-
-        EditBlog servlet = new EditBlog();
-        servlet.actionAddStoryStep2(null, null, blogRelation, map, false);
-
-        params.put(EditBlog.PARAM_TITLE, "Řešení základní otázky");
-        params.put(EditBlog.PARAM_CONTENT, "Odpověď zní<break>Blue screen of death. Reboot your computer please.");
-        servlet.actionAddStoryStep2(null, null, blogRelation, map, false);
+    private void dump(Category category) {
+        Tools.sync(category);
+        save(category);
     }
 
-    private static void generateDictionaryItems() throws Exception {
-        Map map = new HashMap();
-        Map params = new HashMap();
-        map.put(Constants.VAR_PARAMS, params);
-        map.put(Constants.VAR_USER, user);
-
-        params.put(EditDictionary.PARAM_NAME, "GPL");
-        params.put(EditDictionary.PARAM_DESCRIPTION, "Svobodná licence která zaručuje všem uživatelům stejná práva.");
-
-        EditDictionary servlet = new EditDictionary();
-        servlet.actionAddStep2(null, null, map, false);
+    private void dump(Poll poll) {
+        Tools.sync(poll);
+        save(poll);
+        dumpChildren(poll.getChildren());
     }
 
-    private static void generateDrivers() throws Exception {
-        Map map = new HashMap();
-        Map params = new HashMap();
-        map.put(Constants.VAR_PARAMS, params);
-        map.put(Constants.VAR_USER, user);
-
-        params.put(EditDriver.PARAM_NAME, "Urychlovač");
-        params.put(EditDriver.PARAM_URL, "http://www.abclinuxu.cz");
-        params.put(EditDriver.PARAM_VERSION, "0.99");
-        params.put(EditDriver.PARAM_NOTE, "Změní váš počítač na namydlený blesk.");
-
-        EditDriver servlet = new EditDriver();
-        servlet.actionAddStep2(null, null, map, false);
-        Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
-        ridDriver = created.getId();
+    private void dumpArticle(Item item) {
+        Set<String> authors = item.getProperty(Constants.PROPERTY_AUTHOR);
+        for (String author : authors) {
+            int rid = Integer.parseInt(author);
+            dump(new Relation(rid));
+        }
     }
 
-    private static void generateNews(Persistence persistence) throws Exception {
-        Map map = new HashMap();
-        Map params = new HashMap();
-        map.put(Constants.VAR_PARAMS, params);
-        map.put(Constants.VAR_USER, user);
-
-        params.put(EditNews.PARAM_TITLE, "Abíčko je Open Source!");
-        params.put(EditNews.PARAM_CONTENT, "Uvolnil jsem zdrojáky Abíčka komunitě. Čas ukáže, zda to byl dobrý krok.");
-        params.put(EditNews.PARAM_CATEGORY, "INFO");
-
-        EditNews servlet = new EditNews();
-        servlet.actionAddStep2(null, null, map, false);
-
-        Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
-        ridNews = created.getId();
-
-        Item item = (Item) created.getChild();
-        Element element = (Element) item.getData().selectSingleNode("/data/title");
-        String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceRelativeURL(element.getTextTrim());
-        url = URLManager.protectFromDuplicates(url);
-
-        created.setUrl(url);
-        created.setParent(new Category(Constants.CAT_NEWS));
-        created.setUpper(Constants.REL_NEWS);
-        persistence.update(created);
-
+    private void dumpSeries(Item item) {
+        List list = item.getData().getRootElement().elements("article");
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            Element element = (Element) iter.next();
+            int rid = Integer.parseInt(element.getText());
+            dump(new Relation(rid));
+        }
     }
 
-    private static void generatePoll(Persistence persistence) throws Exception {
-        Map map = new HashMap();
-        Map params = new HashMap();
-        map.put(Constants.VAR_PARAMS, params);
-        map.put(Constants.VAR_USER, admin);
-
-        map.put(EditPoll.VAR_RELATION, persistence.findById(new Relation(Constants.REL_POLLS)));
-        params.put(EditPoll.PARAM_QUESTION, "Uvolnění zdrojáků abíčka je");
-        List choices = new ArrayList();
-        choices.add("kravina");
-        choices.add("zajímavé");
-        choices.add("bomba");
-        params.put(EditPoll.PARAM_CHOICES, choices);
-        params.put(EditPoll.PARAM_URL, "uvolneni-zdrojaku-abicka");
-
-        EditPoll servlet = new EditPoll();
-        servlet.actionAddStep2(null, null, map, false);
+    private void dumpRoyalty(Item item) {
+        item.getData().selectSingleNode("/data/amount").setText("333");
     }
 
-    private static void generateAuthors() throws Exception {
-        Map map = new HashMap();
-        Map params = new HashMap();
-        map.put(Constants.VAR_PARAMS, params);
-        map.put(Constants.VAR_USER, admin);
+    private void dumpDiscussion(Item item) {
+        Discussion discussion = Tools.createDiscussionTree(item, null, 0, false);
+        List<Comment> stack = new ArrayList<Comment>();
+        stack.addAll(discussion.getThreads());
+        if (Tools.isQuestion(item))
+            stack.add(Tools.createComment(item));
 
-        params.put(EditAuthor.PARAM_SURNAME, "Franta");
-        params.put(EditAuthor.PARAM_NAME, "Omáčka");
-
-        EditAuthor servlet = new EditAuthor();
-        servlet.actionAddStep2(null, null, map, false);
-        Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
-        author = created.getId();
+        while (! stack.isEmpty()) {
+            Comment comment = stack.remove(0);
+            stack.addAll(comment.getChildren());
+            if (comment instanceof RowComment)
+                ((RowComment)comment).set_dirty(true);
+            Integer author = comment.getAuthor();
+            if (author != null)
+                dump(new User(author));
+        }
     }
 
-    private static void generateArticles(Persistence persistence) throws Exception {
-        Map map = new HashMap();
-        Map params = new HashMap();
-        map.put(Constants.VAR_PARAMS, params);
-        map.put(Constants.VAR_USER, admin);
+    private void dumpChildren(List<Relation> children) {
+        for (Relation relation : children) {
+            dump(relation);
+        }
+    }
 
-        Relation articles = (Relation) persistence.findById(new Relation(4));
-        map.put(EditArticle.VAR_RELATION, articles);
-        map.put(Constants.VAR_USER, admin);
-        params.put(EditArticle.PARAM_TITLE, "Jaderné noviny 000");
-        params.put(EditArticle.PARAM_PEREX, "Jádro portováno do toastovače!");
-        params.put(EditArticle.PARAM_CONTENT, "Slavný kernel hacker a fanoušek Linuxu JXD naportoval kernel " +
-                "na toastovač. Až si příště budete dělat toasty, o optimální teplotu se bude starat Linuks.");
-        params.put(EditArticle.PARAM_AUTHORS, Integer.toString(author));
-        params.put(EditArticle.PARAM_PUBLISHED, Constants.isoFormat.format(new Date()));
+    private void dumpOwner(int uid) {
+        if (uid > 0)
+            dump(new User(uid));
+    }
 
-        EditArticle editArticle = new EditArticle();
-        editArticle.actionAddStep2(null, null, map, false);
+    /**
+     * Saves specified object into devel database.
+     * @param obj object to be copied
+     */
+    private void save(GenericObject obj) {
+        if (copied.contains(obj))
+            return;
 
-        Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
-        ridArticle = created.getId();
+        filterObject(obj);
+        try {
+            persistenceDevel.create(obj);
+            copied.add(obj.makeLightClone());
+            if (copied.size() % 50 != 0)
+                System.out.print("#");
+            else
+                System.out.println();
+        } catch (DuplicateKeyException e) {
+            // ignore, it is already there
+        }
+    }
 
-        articles = (Relation) persistence.findById(new Relation(14358));
-        map.put(EditArticle.VAR_RELATION, articles);
-        params.put(EditArticle.PARAM_TITLE, "Developerská databáze abclinuxu");
-        params.put(EditArticle.PARAM_PEREX, "Krátké info ohledně databáze pro vývoj abíčka.");
-        params.put(EditArticle.PARAM_CONTENT, "Databáze obsahuje dva uživatele - admin a user, oba mají heslo changeit. " +
-                "Dále je zde pár reprezentantů všech objektů, které se na abíčku vyskytují, abyste si mohli nerušeně " +
-                "hrát a zkoušet, jak co funguje.");
-        params.put(EditArticle.PARAM_AUTHORS, Integer.toString(author));
-        params.put(EditArticle.PARAM_PUBLISHED, Constants.isoFormat.format(new Date()));
-        editArticle.actionAddStep2(null, null, map, false);
+    /**
+     * Filter purpose is to remove any privacy and other information that shall not be transfered
+     * to devel database.
+     * @param obj object to be altered
+     */
+    private void filterObject(GenericObject obj) {
+        if (obj instanceof Item)
+            filterObject((Item) obj);
+        else if (obj instanceof User)
+            filterObject((User) obj);
+    }
 
-        Relation article = (Relation) map.get(EditArticle.VAR_RELATION);
-        Relation dizRelation = EditDiscussion.createEmptyDiscussion(article, user, persistence);
+    /**
+     * Filter purpose is to remove any privacy and other information that shall not be transfered
+     * to devel database. Here we remove private information from authors.
+     * @param item item to be altered
+     */
+    private void filterObject(Item item) {
+        if (item.getType() == Item.AUTHOR) {
+            Document data = item.getData();
+            removeNode(data, "/data/birthNumber");
+            removeNode(data, "/data/accountNumber");
+            removeNode(data, "/data/email");
+            removeNode(data, "/data/phone");
+            removeNode(data, "/data/address");
+        }
+    }
 
-        params.clear();
-        params.put(EditDiscussion.PARAM_DISCUSSION, Integer.toString(dizRelation.getChild().getId()));
-        params.put(EditDiscussion.PARAM_TITLE, "WTF?");
-        params.put(EditDiscussion.PARAM_TEXT, "I never expected this to happen ..");
-        params.put(EditDiscussion.PARAM_RELATION_SHORT, Integer.toString(dizRelation.getId()));
+    /**
+     * Filter purpose is to remove any privacy and other information that shall not be transfered
+     * to devel database. Here we remove email, password and ticket.
+     * @param user user to be altered
+     */
+    private void filterObject(User user) {
+        user.setEmail("x@x.com");
+        user.setPassword("xxx");
+        user.setProperty(Constants.PROPERTY_TICKET, Collections.singleton("xxx"));
+        user.setProperty(Constants.PROPERTY_SCORE, Collections.singleton("33"));
+    }
 
-        EditDiscussion editDiz = new EditDiscussion();
-        editDiz.actionAddComment2(null, null, map, false);
+    /**
+     * Removes node specified by xpath in given document.
+     * @param document document to be updated
+     * @param xpath xpath identifying the node
+     */
+    private void removeNode(Document document, String xpath) {
+        Node node = document.selectSingleNode(xpath);
+        if (node != null)
+            node.detach();
     }
 }
