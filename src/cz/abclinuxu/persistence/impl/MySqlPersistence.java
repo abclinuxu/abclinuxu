@@ -1800,7 +1800,7 @@ public class MySqlPersistence implements Persistence {
 
                 if (comment.getRowId() == 0) {
                     if (statement2 == null)
-                        statement2 = con.prepareStatement("insert into komentar values (NULL,?,?,?,?,?,?)");
+                        statement2 = con.prepareStatement("insert into komentar values (?,?,?,?,?,?,?)");
                     storeComment(comment, statement2);
                 } else if (comment.is_dirty()) {
                     if (statement3 == null)
