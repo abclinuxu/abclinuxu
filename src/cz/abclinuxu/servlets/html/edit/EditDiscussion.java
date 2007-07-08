@@ -408,7 +408,6 @@ public class EditDiscussion implements AbcAction {
         DiscussionRecord dizRecord = null;
         Element root = DocumentHelper.createElement("data");
         RowComment comment = new RowComment(root);
-        comment.set_dirty(true);
         List<Relation> children = discussion.getChildren();
         if (children.size() > 0) {
             record = (Record) (children.get(0)).getChild();

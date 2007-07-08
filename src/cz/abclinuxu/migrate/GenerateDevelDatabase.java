@@ -109,6 +109,9 @@ public class GenerateDevelDatabase {
             statement.execute("insert into devel.odkaz select * from abc.odkaz");
             statement.execute("insert into devel.relace select * from abc.relace where typ_predka='S'");
 
+            /* zkopirovat komentare k diskusim */
+            statement.execute("insert into devel.komentar select K.* from abc.komentar K, devel.zaznam Z where K.zaznam=Z.cislo");
+
             /* dynamic RSS polozka */
             statement.execute("insert into devel.polozka values(59516,0,NULL,'<data><title>Dynamicka konfigurace</title></data>',1,now(),NULL)");
 

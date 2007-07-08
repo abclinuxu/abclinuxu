@@ -119,7 +119,7 @@ public class MySqlPersistence implements Persistence {
 
             if (obj instanceof Record && ((Record) obj).getType() == Record.DISCUSSION) {
                 statement.close();
-                statement = con.prepareStatement("insert into komentar values (?,?,?,?,?,?,?)");
+                statement = con.prepareStatement("insert into komentar values (NULL,?,?,?,?,?,?)");
 
                 DiscussionRecord diz = (DiscussionRecord) ((Record)obj).getCustom();
                 for (Iterator iter = diz.getThreads().iterator(); iter.hasNext();) {
@@ -143,34 +143,32 @@ public class MySqlPersistence implements Persistence {
 
     /**
      * Recursively walks through the thread and persists any comment
-     * that is set as dirty (otherwise skips this comment).
+     * that has row id equal to zero (otherwise skips this comment).
      */
     private void storeComment(RowComment comment, PreparedStatement statement) throws SQLException {
-        if (comment.is_dirty()) {
-            statement.setInt(1, comment.getRowId());
-            statement.setInt(2, comment.getRecord());
-            statement.setInt(3, comment.getId());
+        if (comment.getRowId()==0) {
+            statement.setInt(1, comment.getRecord());
+            statement.setInt(2, comment.getId());
             if (comment.getParent() != null)
-                statement.setInt(4, comment.getParent().intValue());
+                statement.setInt(3, comment.getParent().intValue());
             else
-                statement.setNull(4, Types.INTEGER);
+                statement.setNull(3, Types.INTEGER);
 
             java.util.Date d = (comment.getCreated() != null) ? comment.getCreated() : new java.util.Date();
-            statement.setTimestamp(5, new Timestamp(d.getTime()));
+            statement.setTimestamp(4, new Timestamp(d.getTime()));
             comment.setCreated(d);
 
             if (comment.getAuthor() != null)
-                statement.setInt(6, comment.getAuthor().intValue());
+                statement.setInt(5, comment.getAuthor().intValue());
             else
-                statement.setNull(6, Types.INTEGER);
-            statement.setObject(7, comment.getDataAsString().getBytes());
+                statement.setNull(5, Types.INTEGER);
+            statement.setObject(6, comment.getDataAsString().getBytes());
 
             int result = statement.executeUpdate();
             if (result == 0)
                 throw new PersistenceException("Nepodařilo se vložit " + comment + " do databáze!");
-
-            if (comment.getId() == 0)
-                comment.setRowId(getAutoId(statement));
+            int autoId = getAutoId(statement);
+            comment.setRowId(autoId);
         }
 
         for (Iterator iter = comment.getChildren().iterator(); iter.hasNext();) {
@@ -1800,7 +1798,7 @@ public class MySqlPersistence implements Persistence {
 
                 if (comment.getRowId() == 0) {
                     if (statement2 == null)
-                        statement2 = con.prepareStatement("insert into komentar values (?,?,?,?,?,?,?)");
+                        statement2 = con.prepareStatement("insert into komentar values (NULL,?,?,?,?,?,?)");
                     storeComment(comment, statement2);
                 } else if (comment.is_dirty()) {
                     if (statement3 == null)
