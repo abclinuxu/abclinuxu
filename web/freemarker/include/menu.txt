@@ -62,8 +62,9 @@
 <li><a href="/ucebnice">Učebnice</a>
   <ul>
     <li><a href="/ucebnice/uvod">Úvod</a></li>
-    <li><a href="/ucebnice/historie">Historie</a></li>
-    <li><a href="/ucebnice/zaklady">Základy</a></li>
+    <li><a href="/ucebnice/obsah">Obsah</a></li>
+    <li><a href="/ucebnice/historie">Historie Linuxu</a></li>
+    <li><a href="/ucebnice/zaklady">Základy Linuxu</a></li>
     <li><a href="/ucebnice/prehled-prikazu">Přehled příkazů</a></li>
   </ul></li>
 <li><a href="/blog">Blogy</a>
