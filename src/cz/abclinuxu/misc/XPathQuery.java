@@ -65,19 +65,20 @@ public class XPathQuery {
             tmp = MySqlPersistence.insertEncoding(tmp);
             doc = new XMLHandler(tmp).getData();
             nodes = doc.selectNodes(xpath);
-            if (nodes.size()>0) {
+            if (nodes.size() > 0) {
                 for (Iterator iter = nodes.iterator(); iter.hasNext();) {
                     node = (Node) iter.next();
-                    System.out.println(node.getText());
+                    System.out.print(node.getText());
+                    System.out.print(';');
                 }
 
                 metaData = resultSet.getMetaData();
                 columns = metaData.getColumnCount();
                 for (i=2; i<=columns; i++) {
-                    System.out.print(metaData.getColumnLabel(i));
-                    System.out.print(" = ");
-                    System.out.println(resultSet.getObject(i));
+                    System.out.print(resultSet.getObject(i));
+                    System.out.print(';');
                 }
+                System.out.println();
             }
         }
     }
