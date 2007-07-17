@@ -41,11 +41,17 @@ import org.dom4j.Node;
 public class XPathQuery {
 
     public static void main(String[] args) throws Exception {
-        if (args.length!=2) {
+        if (args.length != 2) {
             System.out.println("Usage: XPathQuery \"sql query\" \"xpath query\"");
-            System.out.println("sql query must return column with well formed XML in first column,");
+            System.out.println("Sql query must return column with well formed XML in first column,");
             System.out.println("additional columns in SQL result will be dumped to output.");
             System.out.println("xpath query contains your query, matching nodes will be printed.");
+            System.out.println();
+            System.out.println("Your parameters:");
+            for (int i = 0; i < args.length; i++) {
+                String arg = args[i];
+                System.out.println("arg " + i + " = " + arg);
+            }
             System.exit(1);
         }
 
