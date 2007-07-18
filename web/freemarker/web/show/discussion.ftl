@@ -70,7 +70,8 @@
  Vložit další komentář</a>
 </#if>
 
-<#if DIZ.frozen><p class="error">Diskuse byla administrátory uzamčena</p></#if>
+<#if DIZ.frozen><p class="error">Diskuse byla administrátory uzamčena.<br />
+FAQ: <a href="/faq/abclinuxu.cz/proc-byl-uzamcen-smazan-muj-dotaz-v-poradne">Proč byl uzamčen/smazán můj dotaz v Poradně?</a></p></#if>
 
 <#list DIZ.threads as thread>
    <@lib.showThread thread, 0, DIZ, !DIZ.frozen />
