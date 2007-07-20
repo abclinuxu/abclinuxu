@@ -19,19 +19,6 @@ Prehled clanku
 </#list>
 
 
-Reklama
-=======
-
-IBM Lotus Notes 8 prichazi!
-
-Efektivni zpracovani informaci je zakladem vysoke
-produktivity. IBM Lotus Notes 8 predstavuje nadstandardni
-e-mail a kalendarove sluzby s novym uzivatelskym prostredim,
-ale i chat, sdileni dokumentu, integrovany kancelarsky
-balik, workflow a propojeni s dalsimi aplikace.
-
-http://web.ogilvyinteractive.cz/ibmcz/logindex.php?kampId=358&odkazId=703&refId=39&redirect=http%3A%2F%2Fwww-306.ibm.com%2Fsoftware%2Fcz%2Flotus%2F
-
 Prehled zpravicek
 =================
 
