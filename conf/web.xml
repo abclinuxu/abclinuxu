@@ -3,7 +3,7 @@
 <web-app>
     <display-name>portal www.abclinuxu.cz</display-name>
 
-    <!--filter>
+    <filter>
         <filter-name>Compress</filter-name>
         <filter-class>javawebparts.filter.CompressionFilter</filter-class>
         <init-param>
@@ -14,7 +14,7 @@
     <filter-mapping>
         <filter-name>Compress</filter-name>
         <servlet-name>Controller</servlet-name>
-    </filter-mapping-->
+    </filter-mapping>
 
     <servlet>
         <servlet-name>AbcInit</servlet-name>

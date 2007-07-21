@@ -19,5 +19,6 @@ commons-logging		1.1		http://jakarta.apache.org
 commons-collections	3.1		http://jakarta.apache.org
 html-cleaner		1.12		http://htmlcleaner.sourceforge.net/
 whirlycache		1.0.1		https://whirlycache.dev.java.net/ (vyzaduje collections, logging, concurrent)
-concurrent		1.3.4		
+concurrent		1.3.4
 joda-time		1.4		http://joda-time.sourceforge.net/
+jwp-filter      1.1     http://javawebparts.sourceforge.net/
