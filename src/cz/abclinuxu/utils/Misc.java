@@ -43,6 +43,7 @@ import org.dom4j.Document;
  * Miscallenous utilities.
  */
 public class Misc {
+    public static final String[] SKIPPED_VERSIONING_ELEMENTS = { "monitor", "rating" };
 
     /**
      * Commits specified relation into version repository.
@@ -55,10 +56,12 @@ public class Misc {
     public static VersionInfo commitRelationRevision(GenericDataObject obj, int relationId, User user, String descr) {
         Element copy = obj.getData().getRootElement().createCopy();
 
-        // we do not store monitor element in versioning
-        Element monitor = copy.element("monitor");
-        if (monitor != null)
-            monitor.detach();
+        // we do not store some elements in the versioning
+        for (String elname : SKIPPED_VERSIONING_ELEMENTS) {
+            Element elem = copy.element(elname);
+            if (elem != null)
+                elem.detach();
+        }
 
         // we store properties in the revision
         Map<String, Set<String>> properties = obj.getProperties();
@@ -90,19 +93,25 @@ public class Misc {
         Versioning versioning = VersioningFactory.getVersioning();
         VersionedDocument version = versioning.load(relationId, revision);
         Document document = item.getData();
-        Element monitor = (Element) document.selectSingleNode("/data/monitor");
+
+        Element[] elems = new Element[SKIPPED_VERSIONING_ELEMENTS.length];
+        for (int i = 0; i < SKIPPED_VERSIONING_ELEMENTS.length; i++)
+            elems[i] = (Element) document.selectSingleNode("/data/" + SKIPPED_VERSIONING_ELEMENTS[i]);
+
         item.setData(version.getDocument());
         document = item.getData();
         item.setUpdated(version.getCommited());
         item.setOwner(version.getUser());
 
-        // we do not store monitor element in versioning, let's use it from persistance
-        if (monitor != null) {
-            monitor = monitor.createCopy();
-            Element element = (Element) document.selectSingleNode("/data/monitor");
-            if (element != null)
-                element.detach();
-            document.getRootElement().add(monitor);
+        // we do not store some elements in the versioning, let's use it from persistance
+        for (int i = 0; i < SKIPPED_VERSIONING_ELEMENTS.length; i++) {
+            if (elems[i] != null) {
+                Element copy = elems[i].createCopy();
+                Element orig = (Element) document.selectSingleNode("/data/" + SKIPPED_VERSIONING_ELEMENTS[i]);
+                if (orig != null)
+                    orig.detach();
+                document.getRootElement().add(copy);
+            }
         }
 
         Element versioningData = (Element) document.selectSingleNode("/data/versioning");
