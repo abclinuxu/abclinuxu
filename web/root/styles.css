@@ -385,22 +385,6 @@ a.selected:hover {
 .skoleni table { border-bottom-color: black; }
 .skoleni table td { background-color: #E6E6E6; }
 
-/* Sun */
-.sun-box {
-	background-color: #5583A2;
-	background-image: url('/images/bannery/sun-back.png');
-	color: white;
-	border-color: #D3D3D3;
-}
-
-.sun-box a { color: white; }
-.sun-box a:hover { background-color: #E97D19; }
-.bsupport-box { border-color: #ff0000;
-                color: #ff0000; }
-.bsupport-box a { color: #ff0000; }
-.bsupport-box a:hover { background-color: #ff0000;
-                        color: white; }
-
 .arbo-sky,
 .arbo-sq { background-color: white; }
 
