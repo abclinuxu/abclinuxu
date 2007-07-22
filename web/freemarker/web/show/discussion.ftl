@@ -57,6 +57,7 @@
 
  <@lib.advertisement id="sun-box" />
  <@lib.advertisement id="bsupport-box" />
+ <@lib.advertisement id="miton-box" />
  <@lib.advertisement id="gg-ds-otazka" />
 
  <#if DIZ.size==0>
