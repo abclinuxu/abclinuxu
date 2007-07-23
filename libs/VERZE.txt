@@ -8,7 +8,7 @@ dom4j			1.6		http://dom4j.org/ (vyzaduje jaxen)
 jaxen                   1.1-beta-4
 lucene			2.1		http://jakarta.apache.org
 lucene-highlighter	2.1		http://jakarta.apache.org
-htmlparser		1.4		http://htmlparser.sourceforge.net
+htmlparser		1.6-patched	http://htmlparser.sourceforge.net
 rome			0.7		http://rome.dev.java.net (RSS) (vyzaduje jdom)
 jdom			1.0		http://www.jdom.org
 javamail		1.4		http://java.sun.com/products/javamail (vyzaduje jaf)

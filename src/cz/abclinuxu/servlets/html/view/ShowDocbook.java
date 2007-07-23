@@ -31,11 +31,11 @@ import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.Element;
 import org.htmlparser.Parser;
-import org.htmlparser.StringNode;
+import org.htmlparser.Text;
 import org.htmlparser.lexer.Lexer;
 import org.htmlparser.lexer.Page;
-import org.htmlparser.lexer.nodes.Attribute;
-import org.htmlparser.tags.Tag;
+import org.htmlparser.Attribute;
+import org.htmlparser.Tag;
 import org.htmlparser.tags.LinkTag;
 import org.htmlparser.tags.ImageTag;
 import org.htmlparser.visitors.NodeVisitor;
@@ -286,7 +286,7 @@ public class ShowDocbook implements AbcAction {
                 print("</section>", 1, true);
         }
 
-        public void visitStringNode(StringNode stringNode) {
+        public void visitStringNode(Text stringNode) {
             String content = stringNode.getText();
             if (content.length()==0)
                 return;

@@ -20,9 +20,9 @@ package cz.abclinuxu.utils.parser.safehtml;
 
 import org.htmlparser.util.ParserException;
 import org.htmlparser.lexer.Lexer;
-import org.htmlparser.lexer.nodes.TagNode;
-import org.htmlparser.lexer.nodes.Attribute;
-import org.htmlparser.lexer.nodes.PageAttribute;
+import org.htmlparser.lexer.PageAttribute;
+import org.htmlparser.nodes.TagNode;
+import org.htmlparser.Attribute;
 import org.htmlparser.Node;
 
 import java.util.*;

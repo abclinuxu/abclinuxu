@@ -26,8 +26,8 @@ import cz.abclinuxu.AbcException;
 import org.htmlparser.Node;
 import org.htmlparser.lexer.Lexer;
 import org.htmlparser.lexer.Page;
-import org.htmlparser.lexer.nodes.TagNode;
-import org.htmlparser.lexer.nodes.StringNode;
+import org.htmlparser.nodes.TagNode;
+import org.htmlparser.Text;
 import org.gjt.jedit.TextUtilities;
 
 import java.util.List;
@@ -69,8 +69,8 @@ public class HtmlToTextFormatter implements Configurable {
             while ((node = lexer.nextNode()) != null) {
                 if (node instanceof TagNode) {
                     processTag((TagNode) node, sb);
-                } else if (node instanceof StringNode) {
-                    sb.append(((StringNode) node).getText());
+                } else if (node instanceof Text) {
+                    sb.append(((Text) node).getText());
                 }
             }
 
