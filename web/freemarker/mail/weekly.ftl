@@ -19,6 +19,13 @@ Prehled clanku
 </#list>
 
 
+Reklama
+=======
+
+We are looking for a Software Quality Engineer - J2EE
+http://www.talents.cz/sunjobs2_detail.php?id=240
+
+
 Prehled zpravicek
 =================
 
