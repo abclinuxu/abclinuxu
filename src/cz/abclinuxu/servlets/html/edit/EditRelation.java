@@ -445,7 +445,7 @@ public class EditRelation implements AbcAction {
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
         if ( prefix != null && relation.getUpper() > 0 ) {
-            url = prefix.concat("/dir/"+relation.getUpper());
+            url = UrlUtils.getRelationUrl(relation, prefix);
         } else
             url = "/";
 
@@ -508,11 +508,11 @@ public class EditRelation implements AbcAction {
 
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
-        if ( prefix!=null ) {
-            if ( originalUpper==Constants.REL_FORUM && returnBackToForum(user) )
+        if ( prefix != null ) {
+            if ( originalUpper == Constants.REL_FORUM && returnBackToForum(user) )
                 url = "/diskuse.jsp";
             else
-                url = prefix.concat("/show/"+relation.getUpper());
+                url = UrlUtils.getRelationUrl(relation, prefix);
         } else url = "/";
 
         UrlUtils urlUtils = new UrlUtils("", response);
