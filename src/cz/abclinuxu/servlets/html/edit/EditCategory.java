@@ -144,7 +144,7 @@ public class EditCategory implements AbcAction {
 
         String upperUrl = upper.getUrl();
         if (upperUrl != null) {
-            String name = document.selectSingleNode("/data/name").getName();
+            String name = document.selectSingleNode("/data/name").getText();
             String url = upperUrl + "/" + URLManager.enforceRelativeURL(name);
             url = URLManager.protectFromDuplicates(url);
             relation.setUrl(url);
