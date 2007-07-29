@@ -75,6 +75,10 @@
 	  <priority value="info" />
 	</category>
 
+	<category name="javawebparts.filter.CompressionFilter">
+	  <priority value="warn" />
+	</category>
+
 	<category name="security" additivity="false">
 	  <priority value="info" />
       <appender-ref ref="SECURITY"/>
