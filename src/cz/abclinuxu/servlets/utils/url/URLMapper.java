@@ -133,16 +133,7 @@ public final class URLMapper implements Configurable {
         AbcAction action = findAction(url, env);
 
         if (action == null) {
-            String newUrl = null;
-            Object redirect = SQLTool.getInstance().findNewAddress(url);
-            if (redirect instanceof String)
-                newUrl = (String) redirect;
-            else if (redirect instanceof Relation) {
-                Relation relation = (Relation) redirect;
-                newUrl = relation.getUrl();
-                // fortunatelly URL does not become unset, so we can assume that there must be some URL
-            }
-
+            String newUrl = findMovedUrl(url);
             if (newUrl != null) {
                 UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
                 urlUtils.redirect(response, newUrl);
@@ -154,6 +145,23 @@ public final class URLMapper implements Configurable {
             throw new NotFoundException("Neznamé URL: " + url + " !");
 
         return action;
+    }
+
+    /**
+     * Finds new URL for document that was moved to new URL.
+     * @param url original url
+     * @return new url or null, if old url was not found
+     */
+    private String findMovedUrl(String url) {
+        Object redirect = SQLTool.getInstance().findNewAddress(url);
+        if (redirect instanceof String)
+            return (String) redirect;
+        if (redirect instanceof Relation) {
+            Relation relation = (Relation) redirect;
+            // fortunatelly URL does not become unset, so we can assume that there must be some URL
+            return relation.getUrl();
+        }
+        return null;
     }
 
     /**
@@ -172,8 +180,13 @@ public final class URLMapper implements Configurable {
             Relation relation = loadCustomRelation(relativeUrl);
             if (relation != null)
                 params.put(ShowObject.PARAM_RELATION_SHORT, Integer.toString(relation.getId()));
-            else
+            else {
+                String newUrl = findMovedUrl(relativeUrl);
+                if (newUrl != null)
+                    return null; // it would be nice to pass this relation up
+
                 custom = false;
+            }
         }
 
         for (Iterator iter = priorityMapping.iterator(); iter.hasNext();) {
