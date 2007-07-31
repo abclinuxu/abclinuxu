@@ -225,13 +225,6 @@
                             <entry key="yesterday" value="včera" />
                         </map>
                     </node>
-                    <node name="SiteMapGenerator">
-                        <map>
-                            <entry key="index.file" value="sitemap.xml.gz" />
-                            <entry key="file.main" value="sitemap-main.xml.gz" />
-                            <entry key="file.forum" value="sitemap-forum.xml.gz" />
-                        </map>
-                    </node>
                 </node>
                 <node name="persistence">
                     <map/>
@@ -676,6 +669,16 @@
                                 <entry key="license.property.values.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/property_set_license.xml"/>
                             </map>
                         </node>
+                    </node>
+                </node>
+                <node name="misc">
+                    <map/>
+                    <node name="SiteMapGenerator">
+                        <map>
+                            <entry key="index.file" value="sitemap.xml.gz"/>
+                            <entry key="file.main" value="sitemap-main.xml.gz"/>
+                            <entry key="file.forum" value="sitemap-forum.xml.gz"/>
+                        </map>
                     </node>
                 </node>
             </node>
