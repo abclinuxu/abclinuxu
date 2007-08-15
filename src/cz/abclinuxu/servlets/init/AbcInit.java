@@ -23,7 +23,8 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.Sorters2;
-import cz.abclinuxu.utils.news.NewsCategories;
+import cz.abclinuxu.data.view.NewsCategories;
+import cz.abclinuxu.data.view.DriverCategories;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -403,6 +404,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             cfg.setSharedVariable(Constants.VAR_FETCHER, VariableFetcher.getInstance());
             cfg.setSharedVariable(Constants.VAR_CONFIG, AbcConfig.getInstance());
             cfg.setSharedVariable(Constants.VAR_NEWS_CATEGORIES, NewsCategories.getInstance());
+            cfg.setSharedVariable(Constants.VAR_DRIVER_CATEGORIES, DriverCategories.getInstance());
             cfg.setSharedVariable(Constants.VAR_UI_PROPERTY_VALUES, PropertySet.getPropertyValues(Constants.PROPERTY_USER_INTERFACE));
             cfg.setSharedVariable(Constants.VAR_LICENSE_PROPERTY_VALUES, PropertySet.getPropertyValues(Constants.PROPERTY_LICENSE));
 

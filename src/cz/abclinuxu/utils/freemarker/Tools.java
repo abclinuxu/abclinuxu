@@ -677,13 +677,16 @@ public class Tools implements Configurable {
      * is aware of list's limits, so IndexOutOfBounds is never
      * thrown.
      */
-    public List sublist(List list, int start, int count) {
-        if ( list==null ) return null;
-        if ( start>=list.size() ) return null;
+    public static List<?> sublist(List<?> list, int start, int count) {
+        if (list == null)
+            return null;
+        if (start >= list.size())
+            return null;
 
-        int end = start+count;
-        if ( end>=list.size() ) end = list.size();
-        return list.subList(start,end);
+        int end = start + count;
+        if (end >= list.size())
+            end = list.size();
+        return list.subList(start, end);
     }
 
     /**

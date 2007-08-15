@@ -4,17 +4,14 @@
 
 <h1>Úprava ovladače</h1>
 
-<p>Sekce Ovladačů slouží pro shromažďování informací ohledně ovladačů,
-které nejsou standardní součástí jádra. Jedná se buď o Open Source
-projekty vytvářené a udržované komunitou, nebo o proprietární ovladače
-s uzavřeným kódem, vyvíjené obvykle výrobcem.</p>
-
-<p>Úprava položky ovladače je snadná a díky historii verzí i bezpečná.
-Nejdříve můžete změnit název ovladače, je-li nevhodný. Pak zadejte aktuální
-verzi ovladače a případně upravte adresu, odkud je možné stáhnout tento ovladač.
-Do poznámky vložte informace o novinkách této verze a jiných změnách.
-Nebojte se celou poznámku aktualizovat, předchozí text bude dostupný v historii
-ovladače.</p>
+<p>
+    Pokud vyšla nová verze ovladače nebo jste našli nějakou chybku
+    v popisu ovladače, tento formulář slouží pro  zadání úprav.
+    V případě nové verze se nebojte smazat celý text a opravdu popsat
+    jen novinky oproti minulé verzi, v historii změn si čtenář může
+    přečíst popisy předchozích verzí. Pokud má ovladač více vývojových
+    řad, do políčka verze dávejte jen číslo aktuální řady.
+</p>
 
 <#if PARAMS.preview?exists>
  <h2>Náhled příspěvku</h2>
@@ -23,6 +20,9 @@ ovladače.</p>
   <tr>
     <td>Jméno</td><td>${PARAMS.name?if_exists}</td>
   </tr>
+  <tr>
+    <td>Kategorie ovladače</td><td><#if CATEGORY?exists>${CATEGORY.name}</#if></td>
+  <tr>
   <tr>
     <td>Verze</td><td>${PARAMS.version?if_exists}</td>
   </tr>
@@ -50,6 +50,21 @@ ovladače.</p>
    </td>
   </tr>
   <tr>
+   <td class="required">Kategorie</td>
+   <td>
+    <select name="category" tabindex="2">
+     <#assign selected = PARAMS.category?default("NONE")>
+     ${PARAMS.category?if_exists}
+     <#list CATEGORIES as category>
+      <option value="${category.key}"
+       <#if category.key=selected>selected</#if> >
+       ${category.name}
+      </option>
+     </#list>
+    </select>
+   </td>
+  </tr>
+  <tr>
    <td class="required">Verze</td>
    <td>
     <input type="text" name="version" value="${PARAMS.version?if_exists}" size="30" tabindex="2">
@@ -59,7 +74,7 @@ ovladače.</p>
   <tr>
    <td class="required">URL</td>
    <td>
-    <input type="text" name="url" value="${PARAMS.url?default("http://")}" size="70" tabindex="3">
+    <input type="text" name="url" value="${PARAMS.url?default("http://")}" size="70" tabindex="4">
     <div class="error">${ERRORS.url?if_exists}</div>
    </td>
   </tr>
@@ -68,7 +83,7 @@ ovladače.</p>
   </tr>
   <tr>
    <td colspan="2">
-    <textarea name="note" cols="70" rows="15" tabindex="4">${PARAMS.note?if_exists?html}</textarea>
+    <textarea name="note" cols="70" rows="15" tabindex="5">${PARAMS.note?if_exists?html}</textarea>
     <div class="error">${ERRORS.note?if_exists}</div>
    </td>
   </tr>
@@ -78,7 +93,7 @@ ovladače.</p>
         <a class="info" href="#">?<span class="tooltip">Text bude zobrazen v historii dokumentu</span></a>
     </td>
    <td>
-    <input tabindex="5" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists?html}">
+    <input tabindex="6" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists?html}">
     <div class="error">${ERRORS.rev_descr?if_exists}</div>
    </td>
   </tr>

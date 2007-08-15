@@ -32,6 +32,7 @@ public class VersionedDocument {
     private Date commited;
     private String document;
     private String diff;
+    private String description;
 
     /**
      * @return document
@@ -98,6 +99,17 @@ public class VersionedDocument {
 
     public void setCommited(Date commited) {
         this.commited = commited;
+    }
+
+    /**
+     * @return description (comment) of the changes
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean equals(Object o) {

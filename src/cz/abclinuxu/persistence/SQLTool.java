@@ -26,6 +26,7 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.persistence.impl.MySqlPersistence;
+import cz.abclinuxu.persistence.versioning.VersionedDocument;
 
 import java.sql.*;
 import java.util.prefs.Preferences;
@@ -108,6 +109,7 @@ public final class SQLTool implements Configurable {
     public static final String USERS_COUNT_NEWS = "users.count.news";
     public static final String TOP_USED_RELATIONS = "top.used.relations";
     public static final String TOP_COUNTED_RELATIONS = "top.counted.relations";
+    public static final String LAST_REVISIONS = "last.versions";
 
     private static SQLTool singleton;
     static {
@@ -1735,6 +1737,44 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds last revisions for specified relation.
+     * @param relation id of relation to be searched
+     * @param count number of revisions to be loaded
+     * @return list of VersionedDocuments
+     */
+    public List<VersionedDocument> getLastRevisions(int relation, int count) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement((String) sql.get(LAST_REVISIONS));
+            statement.setInt(1, relation);
+            statement.setInt(2, count);
+            resultSet = statement.executeQuery();
+
+            List<VersionedDocument> result = new ArrayList<VersionedDocument>();
+            while (resultSet.next()) {
+                VersionedDocument doc = new VersionedDocument();
+                doc.setVersion(resultSet.getInt(1));
+                doc.setUser(resultSet.getInt(2));
+                doc.setCommited(new Date(resultSet.getTimestamp(3).getTime()));
+                doc.setDocument(resultSet.getString(4));
+                doc.setDiff(resultSet.getString(5));
+                doc.setDescription(resultSet.getString(6));
+                result.add(doc);
+            }
+
+            return result;
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba při hledání!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
      * Private constructor
      */
     private SQLTool() {
@@ -1803,6 +1843,7 @@ public final class SQLTool implements Configurable {
         store(USERS_COUNT_NEWS, prefs);
         store(TOP_USED_RELATIONS, prefs);
         store(TOP_COUNTED_RELATIONS, prefs);
+        store(LAST_REVISIONS, prefs);
     }
 
     /**

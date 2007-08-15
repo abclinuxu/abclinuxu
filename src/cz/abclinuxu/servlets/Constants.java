@@ -147,6 +147,8 @@ public interface Constants {
     String VAR_DATE_TOOL = "DATE";
     /** holds instance of NewsCategories */
     String VAR_NEWS_CATEGORIES = "NEWS_CATEGORIES";
+    /** holds instance of DriverCategories */
+    String VAR_DRIVER_CATEGORIES = "DRIVER_CATEGORIES";
     /** holds Map where key is id of property value and value is its caption */
     String VAR_UI_PROPERTY_VALUES = "UI_PROPERTY";
     /** holds Map where key is id of property value and value is its caption */

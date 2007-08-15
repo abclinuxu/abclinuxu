@@ -20,12 +20,13 @@ package cz.abclinuxu.utils.feeds;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.DiscussionHeader;
+import cz.abclinuxu.data.view.NewsCategories;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.news.NewsCategories;
+import cz.abclinuxu.data.view.NewsCategories;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.persistence.SQLTool;

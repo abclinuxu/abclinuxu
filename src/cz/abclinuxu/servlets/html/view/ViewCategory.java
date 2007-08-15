@@ -50,11 +50,13 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.data.view.DriverCategories;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.html.edit.EditRelation;
 import cz.abclinuxu.servlets.html.edit.EditRequest;
 import cz.abclinuxu.servlets.html.edit.EditDiscussion;
+import cz.abclinuxu.servlets.html.edit.EditDriver;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -196,8 +198,10 @@ public class ViewCategory implements AbcAction {
                 return ShowForum.processMain(request, env);
             case Constants.REL_POLLS:
                 return ViewPolls.processPolls(env, request);
-            case Constants.REL_DRIVERS:
+            case Constants.REL_DRIVERS: {
+                env.put(EditDriver.VAR_CATEGORIES, DriverCategories.getAllCategories());
                 return FMTemplateSelector.select("ViewCategory", "drivers", env, request);
+            }
             case Constants.REL_NEWS_POOL:
                 return FMTemplateSelector.select("ViewCategory", "waiting_news", env, request);
             case Constants.REL_REQUESTS: {

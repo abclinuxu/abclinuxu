@@ -27,13 +27,18 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.ACL;
 import cz.abclinuxu.data.view.DiscussionRecord;
+import cz.abclinuxu.data.view.NewsCategories;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersionInfo;
+import cz.abclinuxu.persistence.versioning.VersionedDocument;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;
 
@@ -43,6 +48,7 @@ import java.util.*;
 
 import org.dom4j.Element;
 import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
 import org.apache.log4j.Logger;
 
 /**
@@ -74,6 +80,7 @@ public class ShowObject implements AbcAction {
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_PARENTS = "PARENTS";
     public static final String VAR_ITEM = "ITEM";
+    public static final String VAR_DRIVER_VERSIONS = "DRIVER_VERSIONS";
     /** children relation of Item, grouped by their type */
     public static final String VAR_CHILDREN_MAP = "CHILDREN";
     public static final String VAR_THREAD = "THREAD";
@@ -166,8 +173,23 @@ public class ShowObject implements AbcAction {
             }
             case Item.HARDWARE:
                 return FMTemplateSelector.select("ShowObject", "hardware", env, request);
-            case Item.DRIVER:
+            case Item.DRIVER: {
+                SQLTool sqlTool = SQLTool.getInstance();
+                List<VersionedDocument> history = sqlTool.getLastRevisions(relation.getId(), 6);
+                String revisionParam = "?" + ShowRevisions.PARAM_REVISION + "=";
+                env.put(ShowRevisions.VAR_HISTORY, history);
+                env.put(ShowRevisions.VAR_REVISION_PARAM, revisionParam);
+
+                List versions = new ArrayList();
+                for ( VersionedDocument version : history ) {
+                    Document doc = DocumentHelper.parseText(version.getDocument());
+                    Element e = (Element) doc.selectSingleNode("data/version");
+                    versions.add(e.getText());
+                }
+                env.put(VAR_DRIVER_VERSIONS, versions);
+
                 return FMTemplateSelector.select("ShowObject", "driver", env, request);
+            }
             case Item.DICTIONARY:
                 return ShowDictionary.processDefinition(request, relation, env);
             case Item.BLOG:

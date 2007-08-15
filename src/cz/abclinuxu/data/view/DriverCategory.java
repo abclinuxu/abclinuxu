@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005 Leos Literak
+ *  Copyright (C) 2007 Leos Literak
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -16,24 +16,22 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  */
-package cz.abclinuxu.utils.news;
+package cz.abclinuxu.data.view;
 
 /**
  * Holder of category for news.
  */
-public class NewsCategory {
-    String key, name, desc;
+public class DriverCategory implements Comparable {
+    String key, name;
 
     /**
-     * Constructs new NewsCategory.
-     * @param key identifier of NewsCategory. This value shall be not changed!
+     * Constructs new DriverCategory.
+     * @param key identifier of DriverCategory. This value shall be not changed!
      * @param name locale specific short name.
-     * @param desc locale specific description.
      */
-    public NewsCategory(String key, String name, String desc) {
+    public DriverCategory(String key, String name) {
         this.key = key;
         this.name = name;
-        this.desc = desc;
     }
 
     /**
@@ -51,9 +49,12 @@ public class NewsCategory {
     }
 
     /**
-     * @return locale specific description
+     * Comparable implementation.
+     * Values are compared by "name".
+     * @param obj other object
      */
-    public String getDesc() {
-        return desc;
+    public int compareTo(Object obj) {
+        DriverCategory other = (DriverCategory) obj;
+        return name.compareTo(other.name);
     }
 }

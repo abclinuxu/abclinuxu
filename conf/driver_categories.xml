@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<categories>
+    <category>
+        <key>NONE</key>
+        <name>Bez kategorie</name>
+    </category>
+    <category>
+        <key>GRAPHICS</key>
+        <name>Grafické karty</name>
+    </category>
+    <category>
+        <key>PRINTERS</key>
+        <name>Tiskárny</name>
+    </category>
+    <category>
+        <key>MODEMS</key>
+        <name>Modemy</name>
+    </category>
+    <category>
+        <key>WEBCAMS</key>
+        <name>Webové kamery</name>
+    </category>
+    <category>
+        <key>WIFI</key>
+        <name>WiFi</name>
+    </category>
+    <category>
+        <key>SCANNERS</key>
+        <name>Skenery</name>
+    </category>
+    <category>
+        <key>SOUNDCARDS</key>
+        <name>Zvukové karty</name>
+    </category>
+    <category>
+        <key>NICS</key>
+        <name>Síťové karty</name>
+    </category>
+</categories>

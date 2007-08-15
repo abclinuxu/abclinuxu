@@ -7,18 +7,14 @@
 <p>Právě se chystáte vložit do databáze nový ovladač. Pokud jste si
 jisti, že tento ovladač v databázi chybí, pokračujte
 a vyplňte tento formulář. Pokud jste se ale nedívali, prosím
-vraťte se zpět a zkontrolujte, zda jej nepřidal někdo před vámi.
-V tom případě jej otevřete a pro aktualizaci zvolte odkaz <i>Vlož novou verzi</i>.
-</p>
-
-<p>Sekce Ovladačů slouží pro shromažďování informací ohledně ovladačů,
-které nejsou standardní součástí jádra. Jedná se buď o Open Source
-projekty vytvářené a udržované komunitou, nebo o proprietární ovladače
-s uzavřeným kódem, vyvíjené obvykle výrobcem.
+vraťte se <a href="/ovladace">zpět</a> a zkontrolujte, zda jej nepřidal někdo před vámi.
+V tom případě jej otevřete a pro aktualizaci zvolte odkaz <i>Upravit</i>.
 </p>
 
 <p>Vytvoření položky ovladače je snadné. Nejdříve vyplňte jméno
-ovladače, případně hardwaru. Pak vložte verzi ovladače a adresu,
+ovladače, případně hardwaru. Ovladače jsou zařazeny do kategorií
+podle typu hardwaru - pokud není v seznamu žádná vhodná kategorie,
+vyberte položku "Bez kategorie". Pak vložte verzi ovladače a adresu,
 odkud je možné jej stáhnout. Poslední položkou je poznámka,
 kam patří informace o schopnostech ovladače, či změnách oproti minulé
 verzi.
@@ -31,6 +27,8 @@ verzi.
   <tr>
     <td>Jméno ovladače</td><td>${PARAMS.name?if_exists}</td>
   </tr>
+  <tr>
+    <td>Kategorie ovladače</td><td><#if CATEGORY?exists>${CATEGORY.name}</#if></td>
   <tr>
     <td>Verze ovladače</td><td>${PARAMS.version?if_exists}</td>
   </tr>
@@ -58,16 +56,30 @@ verzi.
    </td>
   </tr>
   <tr>
+   <td class="required">Kategorie</td>
+   <td>
+    <select name="category" tabindex="2">
+     <#assign selected = PARAMS.category?default("NONE")>
+     <#list CATEGORIES as category>
+      <option value="${category.key}"
+       <#if category.key=selected>selected</#if> >
+       ${category.name}
+      </option>
+     </#list>
+    </select>
+   </td>
+  </tr>
+  <tr>
    <td class="required">Verze</td>
    <td>
-    <input type="text" name="version" value="${PARAMS.version?if_exists}" size="30" tabindex="2">
+    <input type="text" name="version" value="${PARAMS.version?if_exists}" size="30" tabindex="3">
     <div class="error">${ERRORS.version?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required">URL</td>
    <td>
-    <input type="text" name="url" value="${PARAMS.url?default("http://")}" size="50" tabindex="3">
+    <input type="text" name="url" value="${PARAMS.url?default("http://")}" size="50" tabindex="4">
     <div class="error">${ERRORS.url?if_exists}</div>
    </td>
   </tr>
@@ -76,7 +88,7 @@ verzi.
   </tr>
   <tr>
    <td colspan="2">
-    <textarea name="note" cols="70" rows="15" tabindex="4">${PARAMS.note?if_exists?html}</textarea>
+    <textarea name="note" cols="70" rows="15" tabindex="5">${PARAMS.note?if_exists?html}</textarea>
     <div class="error">${ERRORS.note?if_exists}</div>
    </td>
   </tr>

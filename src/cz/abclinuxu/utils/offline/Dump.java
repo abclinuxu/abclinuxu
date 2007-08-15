@@ -40,7 +40,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.news.NewsCategories;
+import cz.abclinuxu.data.view.NewsCategories;
 import cz.abclinuxu.utils.paging.Paging;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;

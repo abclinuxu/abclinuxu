@@ -51,6 +51,7 @@
             <fileset dir="conf">
                 <include name="templates.xml"/>
                 <include name="news_categories.xml"/>
+                <include name="driver_categories.xml"/>
                 <include name="UnicodeData.txt"/>
                 <include name="stop_words.txt"/>
                 <include name="property_set_ui.xml"/>

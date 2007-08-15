@@ -33,7 +33,7 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.news.NewsCategories;
+import cz.abclinuxu.data.view.NewsCategories;
 import cz.abclinuxu.scheduler.UpdateLinks;
 
 import javax.servlet.http.HttpServletRequest;

@@ -29,7 +29,7 @@ v prvním sloupečku.
                     <#assign who=TOOL.createUser(info.user)>
                     <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
                 </td>
-                <td align="right">${DATE.show(info.commited,"CZ_FULL")}</td>
+                <td align="right">${DATE.show(info.commited,"SMART")}</td>
                 <td>${info.description?if_exists}</td>
             </tr>
         </#list>

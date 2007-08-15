@@ -36,6 +36,7 @@ import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
+import cz.abclinuxu.data.view.DriverCategories;
 
 import org.dom4j.*;
 import org.htmlparser.util.ParserException;
@@ -44,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Cotroller for working drivers manipulation.
@@ -58,8 +60,11 @@ public class EditDriver implements AbcAction {
     public static final String PARAM_URL = "url";
     public static final String PARAM_NOTE = "note";
     public static final String PARAM_PREVIEW = "preview";
+    public static final String PARAM_CATEGORY = "category";
 
     public static final String VAR_RELATION = "RELATION";
+    public static final String VAR_CATEGORY = "CATEGORY";
+    public static final String VAR_CATEGORIES = "CATEGORIES";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -87,7 +92,7 @@ public class EditDriver implements AbcAction {
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
         if ( ACTION_ADD.equals(action) )
-            return FMTemplateSelector.select("EditDriver", "add", env, request);
+            return actionAddStep1(request, env);
 
         if ( ACTION_ADD_STEP2.equals(action) ) {
             ActionProtector.ensureContract(request, EditDriver.class, true, true, true, false);
@@ -103,6 +108,15 @@ public class EditDriver implements AbcAction {
         }
 
         throw new MissingArgumentException("Chybí parametr action!");
+    }
+
+    /**
+     * Fills environment with categories data.
+     * @return template to be rendered.
+     */
+    private String actionAddStep1(HttpServletRequest request, Map env) throws Exception {
+        env.put(VAR_CATEGORIES, DriverCategories.getAllCategories());
+        return FMTemplateSelector.select("EditDriver", "add", env, request);
     }
 
     /**
@@ -122,9 +136,10 @@ public class EditDriver implements AbcAction {
         canContinue &= setVersion(params, document, env);
         canContinue &= setURL(params, document, env);
         canContinue &= setNote(params, document, env);
+        canContinue &= setCategory(params, driver, env);
 
-        if ( !canContinue || params.get(PARAM_PREVIEW)!=null )
-            return FMTemplateSelector.select("EditDriver", "add", env, request);
+        if ( !canContinue || params.get(PARAM_PREVIEW) != null )
+            return redisplayForm("add", request, params, env);
 
         User user = (User) env.get(Constants.VAR_USER);
         driver.setOwner(user.getId());
@@ -168,13 +183,20 @@ public class EditDriver implements AbcAction {
 
         Document document = driver.getData();
         Node node = document.selectSingleNode("data/name");
-        if ( node!=null ) params.put(PARAM_NAME, node.getText());
+        if (node != null)
+            params.put(PARAM_NAME, node.getText());
         node = document.selectSingleNode("data/version");
-        if ( node!=null ) params.put(PARAM_VERSION, node.getText());
+        if (node != null)
+            params.put(PARAM_VERSION, node.getText());
         node = document.selectSingleNode("data/url");
-        if ( node!=null ) params.put(PARAM_URL, node.getText());
+        if (node != null)
+            params.put(PARAM_URL, node.getText());
         node = document.selectSingleNode("data/note");
-        if ( node!=null ) params.put(PARAM_NOTE, node.getText());
+        if (node != null)
+            params.put(PARAM_NOTE, node.getText());
+
+        params.put(PARAM_CATEGORY, driver.getSubType());
+        env.put(VAR_CATEGORIES, DriverCategories.getAllCategories());
 
         return FMTemplateSelector.select("EditDriver","edit",env,request);
     }
@@ -199,14 +221,15 @@ public class EditDriver implements AbcAction {
         canContinue &= setVersion(params, document, env);
         canContinue &= setURL(params, document, env);
         canContinue &= setNote(params, document, env);
+        canContinue &= setCategory(params, driver, env);
         canContinue &= ServletUtils.checkNoChange(driver, origItem, env);
         String changesDescription = Misc.getRevisionString(params, env);
         canContinue &= !Constants.ERROR.equals(changesDescription);
 
-        if ( !canContinue || params.get(PARAM_PREVIEW)!=null )
-            return FMTemplateSelector.select("EditDriver", "edit", env, request);
+        if (! canContinue || params.get(PARAM_PREVIEW) != null)
+            return redisplayForm("edit", request, params, env);
 
-        driver.setCreated(new Date()); // todo proc menime created?
+
         persistence.update(driver);
 
         // commit new version
@@ -230,6 +253,12 @@ public class EditDriver implements AbcAction {
     }
 
     /* ******* setters ********* */
+
+    private String redisplayForm(String action, HttpServletRequest request, Map params, Map env) {
+        env.put(VAR_CATEGORY, DriverCategories.get((String) params.get(PARAM_CATEGORY)));
+        env.put(VAR_CATEGORIES, DriverCategories.getAllCategories());
+        return FMTemplateSelector.select("EditDriver", action, env, request);
+    }
 
     /**
      * Updates name of driver from parameters. Changes are not synchronized with persistence.
@@ -319,5 +348,28 @@ public class EditDriver implements AbcAction {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Updates driver's category from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param item Item to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setCategory(Map params, Item item, Map env) {
+        String text = (String) params.get(PARAM_CATEGORY);
+        if (text == null || text.length() == 0) {
+            ServletUtils.addError(PARAM_CATEGORY, "Vyberte kategorii!", env, null);
+            return false;
+        }
+
+        List categories = DriverCategories.listKeys();
+        if ( categories.contains(text) ) {
+            item.setSubType(text);
+            return true;
+        } else {
+            ServletUtils.addError(PARAM_CATEGORY, "Nalezena neznámá kategorie '"+text+"'!", env, null);
+            return false;
+        }
     }
 }

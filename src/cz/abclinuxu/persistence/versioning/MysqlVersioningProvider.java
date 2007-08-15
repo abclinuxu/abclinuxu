@@ -135,6 +135,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
             doc.setCommited(new Date(resultSet.getTimestamp(3).getTime()));
             doc.setDocument(resultSet.getString(4));
             doc.setDiff(resultSet.getString(5));
+            doc.setDescription(resultSet.getString(6));
             return doc;
         } catch (SQLException e) {
             throw new PersistenceException("SQL error", e);
