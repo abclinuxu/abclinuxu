@@ -231,7 +231,7 @@
                 <a href="${link.url}">${link.text}</a>
                 <#if link_has_next> - </#if>
             </#list>
-            <#if RELATION?exists>
+            <#if RELATION?exists && USER?exists>
                 <form action="/EditUser/${USER.id}" style="display: inline">
                     <input type="submit" class="bookmarks_add" value="do záložek">
                     <input type="hidden" name="action" value="toBookmarks">
