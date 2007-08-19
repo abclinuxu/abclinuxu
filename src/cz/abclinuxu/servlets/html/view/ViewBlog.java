@@ -72,6 +72,7 @@ public class ViewBlog implements AbcAction, Configurable {
     public static final String VAR_UNPUBLISHED_STORIES = "UNPUBLISHED_STORIES";
     public static final String VAR_ARCHIVE = "ARCHIVE";
     public static final String VAR_DIGEST = "DIGEST";
+    public static final String VAR_RELATION = "RELATION";
 
     static final String PREF_BLOG_URL = "regexp.blog.url";
     static final String PREF_SUMMARY_URL = "regexp.blog.summary.url";
@@ -159,6 +160,8 @@ public class ViewBlog implements AbcAction, Configurable {
             if (type != Item.BLOG && type != Item.UNPUBLISHED_BLOG)
                 throw new InvalidInputException("Tato relace nepatří blogu!");
 
+            env.put(VAR_RELATION, relation);
+
             blog = (Category) relation.getParent();
             blogRelation = (Relation) persistence.findById(new Relation(relation.getUpper()));
         } else {
@@ -171,6 +174,8 @@ public class ViewBlog implements AbcAction, Configurable {
 
                 blogRelation = (Relation) list.get(0);
                 blog = (Category) blogRelation.getChild();
+
+                env.put(VAR_RELATION, blogRelation);
             }
         }
 

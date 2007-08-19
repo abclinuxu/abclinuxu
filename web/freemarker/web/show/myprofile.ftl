@@ -91,6 +91,10 @@ vybrat barevný styl či zakázat automatické přihlašování.</p>
         změnit nastavení</a>
     </li>
     <li>
+        <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editBookmarks")}">
+        upravit seznam záložek</a>
+    </li>
+    <li>
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editBlacklist")}">
         upravit seznam blokovaných uživatelů</a>
     </li>

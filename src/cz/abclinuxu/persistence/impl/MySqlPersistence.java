@@ -456,14 +456,12 @@ public class MySqlPersistence implements Persistence {
                     resultSet = statement.executeQuery();
                     if ( !resultSet.next() )
                         queue.add(child);
-                    if ( log.isDebugEnabled() ) log.debug("Smazan objekt "+obj);
-                    continue; // relation doesn't have content
-                }
-
-                List children = Nursery.getInstance().getChildren(obj);
-                for (Iterator iter = children.iterator(); iter.hasNext();) {
-                    Relation child = (Relation) iter.next();
-                    queue.add(child);
+                } else { // relation doesn't have content
+                    List children = Nursery.getInstance().getChildren(obj);
+                    for (Iterator iter = children.iterator(); iter.hasNext();) {
+                        Relation child = (Relation) iter.next();
+                        queue.add(child);
+                    }
                 }
 
                 cache.remove(obj);
@@ -477,11 +475,21 @@ public class MySqlPersistence implements Persistence {
     }
 
     /**
-     * Synchronizes list of GenericObjects. The list may hold different objects.
-     * It tries to work in batches for optimal access.
+     * Synchronizes list of GenericObjects. The list may hold different objects. Identical to calling
+     * synchronizeList(list, false). It tries to work in batches for optimal access.
      * @param list
      */
     public void synchronizeList(List list) {
+        synchronizeList(list, false);
+    }
+
+    /**
+     * Synchronizes list of GenericObjects. The list may hold different objects.
+     * It tries to work in batches for optimal access.
+     * @param list
+     * @param ignoreMissing If true, silently ignore any non-existent object, otherwise thow an exception.
+     */
+    public void synchronizeList(List list, boolean ignoreMissing) {
         if (list.size()==0)
             return;
 
@@ -551,21 +559,21 @@ public class MySqlPersistence implements Persistence {
         try {
             // loads them and merge fresh objects with objects from list, store them in cache
             if (relations != null)
-                syncRelations(relations);
+                syncRelations(relations, ignoreMissing);
             if (items != null)
-                syncDataObjects(items);
+                syncDataObjects(items, ignoreMissing);
             if (categories != null)
-                syncDataObjects(categories);
+                syncDataObjects(categories, ignoreMissing);
             if (records != null)
-                syncDataObjects(records);
+                syncDataObjects(records, ignoreMissing);
             if (links != null)
-                syncLinks(links);
+                syncLinks(links, ignoreMissing);
             if (servers != null)
-                syncServers(servers);
+                syncServers(servers, ignoreMissing);
             if (users != null)
-                syncUsers(users);
+                syncUsers(users, ignoreMissing);
             if (polls != null)
-                syncPolls(polls);
+                syncPolls(polls, ignoreMissing);
 
             if (log.isDebugEnabled()) {
                 long end = System.currentTimeMillis();
@@ -1121,7 +1129,7 @@ public class MySqlPersistence implements Persistence {
      * Synchronizes specified users from database.
      * @param users
      */
-    protected void syncUsers(Collection users) throws SQLException {
+    protected void syncUsers(Collection users, boolean ignoreMissing) throws SQLException {
         Connection con = null; PreparedStatement statement = null; ResultSet rs = null;
         User user;
         try {
@@ -1138,8 +1146,12 @@ public class MySqlPersistence implements Persistence {
 
             for (Iterator iter = users.iterator(); iter.hasNext();) {
                 user = (User) iter.next();
-                if (! rs.next() || rs.getInt(1) != user.getId())
-                    throw new NotFoundException("Uživatel " + user.getId() + " nebyl nalezen!");
+                if (! rs.next() || rs.getInt(1) != user.getId()) {
+                    if (!ignoreMissing)
+                        throw new NotFoundException("Uživatel " + user.getId() + " nebyl nalezen!");
+                    else
+                        continue;
+                }
 
                 syncUserFromRS(user, rs);
                 if (! PropertiesConfig.isSupported(user))
@@ -1209,7 +1221,7 @@ public class MySqlPersistence implements Persistence {
      * Synchronizes specified GenericDataObjects from database.
      * @param objs at least one generic object, all must be same class
      */
-    protected void syncDataObjects(Collection objs) throws SQLException {
+    protected void syncDataObjects(Collection objs, boolean ignoreMissing) throws SQLException {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -1231,8 +1243,10 @@ public class MySqlPersistence implements Persistence {
                 int id = rs.getInt(1);
                 obj = (GenericDataObject) objects.get(id);
                 if (obj == null) {
-                    // this cannot happen
-                    log.warn("Datova položka nebyla nalezena: " + obj);
+                    if (!ignoreMissing) {
+                        // this cannot happen
+                        log.warn("Datova položka nebyla nalezena: " + id);
+                    }
                     continue;
                 }
 
@@ -1380,7 +1394,7 @@ public class MySqlPersistence implements Persistence {
      * Synchronizes specified relations from database.
      * @param relations
      */
-    protected void syncRelations(Collection relations) throws SQLException {
+    protected void syncRelations(Collection relations, boolean ignoreMissing) throws SQLException {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -1397,8 +1411,12 @@ public class MySqlPersistence implements Persistence {
             for (Iterator iter = relations.iterator(); iter.hasNext();) {
                 Relation relation = (Relation) iter.next();
                 boolean hasNext = rs.next();
-                if (!hasNext || rs.getInt(1) != relation.getId())
-                    throw new NotFoundException("Relace " + relation.getId() + " nebyla nalezen!");
+                if (!hasNext || rs.getInt(1) != relation.getId()) {
+                    if (!ignoreMissing)
+                        throw new NotFoundException("Relace " + relation.getId() + " nebyla nalezen!");
+                    else
+                        continue;
+                }
                 syncRelationFromRS(relation, rs);
                 cache.store(relation);
             }
@@ -1491,7 +1509,7 @@ public class MySqlPersistence implements Persistence {
      * Synchronizes specified Links from database.
      * @param links
      */
-    protected void syncLinks(Collection links) throws SQLException {
+    protected void syncLinks(Collection links, boolean ignoreMissing) throws SQLException {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -1507,8 +1525,12 @@ public class MySqlPersistence implements Persistence {
 
             for (Iterator iter = links.iterator(); iter.hasNext();) {
                 Link link = (Link) iter.next();
-                if (!rs.next() || rs.getInt(1) != link.getId())
-                    throw new NotFoundException("Odkaz " + link.getId() + " nebyl nalezen!");
+                if (!rs.next() || rs.getInt(1) != link.getId()) {
+                    if (!ignoreMissing)
+                        throw new NotFoundException("Odkaz " + link.getId() + " nebyl nalezen!");
+                    else
+                        continue;
+                }
                 syncLinkFromRS(link, rs);
                 cache.store(link);
             }
@@ -1560,7 +1582,7 @@ public class MySqlPersistence implements Persistence {
      * Synchronizes specified Polls from database.
      * @param polls
      */
-    protected void syncPolls(Collection polls) throws SQLException {
+    protected void syncPolls(Collection polls, boolean ignoreMissing) throws SQLException {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -1576,8 +1598,12 @@ public class MySqlPersistence implements Persistence {
 
             for (Iterator iter = polls.iterator(); iter.hasNext();) {
                 Poll poll = (Poll) iter.next();
-                if (!rs.next() || rs.getInt(1) != poll.getId())
-                    throw new NotFoundException("Anketa " + poll.getId() + " nebyla nalezena!");
+                if (!rs.next() || rs.getInt(1) != poll.getId()) {
+                    if (!ignoreMissing)
+                        throw new NotFoundException("Anketa " + poll.getId() + " nebyla nalezena!");
+                    else
+                        continue;
+                }
                 syncPollFromRS(poll, rs);
                 cache.store(poll);
             }
@@ -1693,7 +1719,7 @@ public class MySqlPersistence implements Persistence {
      * Synchronizes specified Servers from database.
      * @param servers
      */
-    protected void syncServers(Collection servers) throws SQLException {
+    protected void syncServers(Collection servers, boolean ignoreMissing) throws SQLException {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -1709,8 +1735,12 @@ public class MySqlPersistence implements Persistence {
 
             for (Iterator iter = servers.iterator(); iter.hasNext();) {
                 Server server = (Server) iter.next();
-                if (!rs.next() || rs.getInt(1) != server.getId())
-                    throw new NotFoundException("Server " + server.getId() + " nebyl nalezen!");
+                if (!rs.next() || rs.getInt(1) != server.getId()) {
+                    if (!ignoreMissing)
+                        throw new NotFoundException("Server " + server.getId() + " nebyl nalezen!");
+                    else
+                        continue;
+                }
                 syncServerFromRS(server, rs);
                 cache.store(server);
             }

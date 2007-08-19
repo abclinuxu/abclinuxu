@@ -115,6 +115,19 @@ public interface Constants {
     String TYPE_POLL = "poll";
     String TYPE_LINK = "link";
 
+    // more types, see EditRelated, Item and Item.dtd
+    String TYPE_AUTHOR = "author";
+    String TYPE_CONTENT = "content";
+    String TYPE_DICTIONARY = "dictionary";
+    String TYPE_EXTERNAL_DOCUMENT = "external";
+    String TYPE_FAQ = "faq";
+    String TYPE_HARDWARE = "hardware";
+    String TYPE_OTHER = "other";
+    String TYPE_SECTION = "section";
+    String TYPE_SERIES = "series";
+    String TYPE_SOFTWARE = "software";
+    String TYPE_STORY = "story";
+
     // template variables
 
     /** holds VariableFetcher */
@@ -217,24 +230,6 @@ public interface Constants {
     String PROPERTY_SCORE = "score";
     String PROPERTY_TICKET = "ticket";
     String PROPERTY_USED_BY = "used_by";
-
-    // see EditRelated and Item.dtd
-    String RELATED_ARTICLE = "article";
-    String RELATED_AUTHOR = "author";
-    String RELATED_CONTENT = "content";
-    String RELATED_DICTIONARY = "dictionary";
-    String RELATED_DISCUSSION = "discussion";
-    String RELATED_DRIVER = "driver";
-    String RELATED_EXTERNAL_DOCUMENT = "external";
-    String RELATED_FAQ = "faq";
-    String RELATED_HARDWARE = "hardware";
-    String RELATED_NEWS = "news";
-    String RELATED_OTHER = "other";
-    String RELATED_POLL = "poll";
-    String RELATED_SECTION = "section";
-    String RELATED_SERIES = "series";
-    String RELATED_SOFTWARE = "software";
-    String RELATED_STORY = "story";
 
     // see EditBazaar
     String BAZAAR_BUY = "buy";

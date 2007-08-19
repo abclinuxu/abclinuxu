@@ -445,7 +445,7 @@ public class EditRelation implements AbcAction {
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
         if ( prefix != null && relation.getUpper() > 0 ) {
-            url = UrlUtils.getRelationUrl(relation, prefix);
+            url = UrlUtils.getRelationUrl(new Relation(relation.getUpper()), prefix);
         } else
             url = "/";
 

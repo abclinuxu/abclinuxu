@@ -349,10 +349,12 @@ a.selected:hover {
 
 .search_fragments { color: gray; }
 
+.bookmarks_add { font-size: small;}
+
 .anketa-tr-dark { background-color: #E6E6E6; }
 
 .game-results { background-color: #D3D3D3; }
-.game-wrong { color: #8B0000; } /* darkred */ 
+.game-wrong { color: #8B0000; } /* darkred */
 
 .host .img-server a:hover { background-color: transparent }
 .host .avail { color: green; }

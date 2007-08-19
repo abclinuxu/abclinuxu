@@ -20,6 +20,12 @@ package cz.abclinuxu.servlets.html.edit;
 
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Server;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.Poll;
+import cz.abclinuxu.data.view.Bookmark;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -127,6 +133,8 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_TEMPLATE_FEED_SIZE = "feedSize";
     public static final String PARAM_INDEX_FEED_SIZE = "indexFeedSize";
     public static final String PARAM_URL = "url";
+    public static final String PARAM_RID = "rid";
+    public static final String PARAM_PREFIX = "prefix";
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
@@ -136,6 +144,7 @@ public class EditUser implements AbcAction, Configurable {
     public static final String VAR_DEFAULT_TEMPLATE_FEED_LINKS_COUNT = "DEFAULT_TEMPLATE_LINKS";
     public static final String VAR_USERS = "USERS";
     public static final String VAR_SERVERS = "SERVERS";
+    public static final String VAR_BOOKMARKS = "BOOKMARKS";
 
     public static final String ACTION_REGISTER = "register";
     public static final String ACTION_REGISTER_STEP2 = "register2";
@@ -156,6 +165,9 @@ public class EditUser implements AbcAction, Configurable {
     public static final String ACTION_EDIT_BLACKLIST = "editBlacklist";
     public static final String ACTION_REMOVE_FROM_BLACKLIST = "fromBlacklist";
     public static final String ACTION_ADD_TO_BLACKLIST = "toBlacklist";
+    public static final String ACTION_EDIT_BOOKMARKS = "editBookmarks";
+    public static final String ACTION_ADD_TO_BOOKMARKS = "toBookmarks";
+    public static final String ACTION_REMOVE_FROM_BOOKMARKS = "fromBookmarks";
     public static final String ACTION_EDIT_SUBSCRIPTION = "subscribe";
     public static final String ACTION_EDIT_SUBSCRIPTION_STEP2 = "subscribe2";
     public static final String ACTION_GRANT_ROLES = "grant";
@@ -256,6 +268,19 @@ public class EditUser implements AbcAction, Configurable {
         if ( action.equals(ACTION_REMOVE_FROM_BLACKLIST) ) {
             ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
             return actionRemoveFromBlacklist(request, response, env);
+        }
+
+        if ( action.equals(ACTION_EDIT_BOOKMARKS) )
+            return actionEditBookmarks(request, env);
+
+        if ( action.equals(ACTION_ADD_TO_BOOKMARKS) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
+            return actionAddToBookmarks(request, response, env);
+        }
+
+        if ( action.equals(ACTION_REMOVE_FROM_BOOKMARKS) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
+            return actionRemoveFromBookmarks(request, response, env);
         }
 
         if ( action.equals(ACTION_EDIT_SUBSCRIPTION) )
@@ -813,6 +838,101 @@ public class EditUser implements AbcAction, Configurable {
             sessionUser.synchronizeWith(managed);
 
         ServletUtils.addMessage("Uživatel byl odstraněn ze seznamu blokovaných uživatelů.", env, request.getSession());
+        urlUtils.redirect(response, url);
+        return null;
+    }
+
+    protected String actionEditBookmarks(HttpServletRequest request, Map env) throws Exception {
+        Persistence persistence = PersistenceFactory.getPersistence();
+        User user = (User) env.get(VAR_MANAGED);
+
+        List bookmarks = new ArrayList();
+        List elements = user.getData().selectNodes("/data/links/link");
+        String title, prefix, type;
+        Relation relation;
+        Bookmark bookmark;
+        Element element;
+        if (elements.size() != 0) {
+            List relations = new ArrayList(elements.size());
+            for (Iterator iter = elements.iterator(); iter.hasNext();) {
+                element = (Element) iter.next();
+                relation = new Relation(Integer.parseInt(element.elementText("rid")));
+                title = element.elementText("title");
+                prefix = element.elementText("prefix");
+                type = element.elementText("type");
+                bookmark = new Bookmark(relation, title, prefix, type);
+                relations.add(relation);
+                bookmarks.add(bookmark);
+            }
+            persistence.synchronizeList(relations, true);
+
+            // now update titles for all valid items
+            for (Iterator iter = bookmarks.iterator(); iter.hasNext();) {
+                Bookmark b = (Bookmark) iter.next();
+                Relation r = b.getRelation();
+                if (r.isInitialized())
+                    b.setTitle(Tools.childName(r));
+            }
+            Collections.sort(bookmarks);
+        }
+        env.put(VAR_BOOKMARKS, bookmarks);
+
+        return FMTemplateSelector.select("EditUser", "editBookmarks", env, request);
+    }
+
+    /**
+     * Removes selected item from bookmarks.
+     */
+    protected String actionRemoveFromBookmarks(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User managed = (User) env.get(VAR_MANAGED);
+    	String url = "/EditUser/" + managed.getId() + "?action=" + ACTION_EDIT_BOOKMARKS;
+
+        boolean canContinue = removeFromBookmarks(params, managed, env);
+        if ( ! canContinue ) {
+            urlUtils.redirect(response, url);
+            return null;
+        }
+
+        Persistence persistence = PersistenceFactory.getPersistence();
+        persistence.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId())
+            sessionUser.synchronizeWith(managed);
+
+        ServletUtils.addMessage("Vybrané stránky byly odstraněny ze záložek.", env, request.getSession());
+        urlUtils.redirect(response, url);
+        return null;
+    }
+
+    /**
+     * Adds an object to bookmarks.
+     */
+    protected String actionAddToBookmarks(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User managed = (User) env.get(VAR_MANAGED);
+
+        String url = (String) params.get(PARAM_URL);
+        if ( url == null || url.length() == 0)
+            url = "/EditUser/" + managed.getId() + "?action=" + ACTION_EDIT_BOOKMARKS;
+
+        boolean canContinue = addToBookmarks(request, params, managed, env);
+        if ( ! canContinue ) {
+            urlUtils.redirect(response, url);
+            return null;
+        }
+
+        Persistence persistence = PersistenceFactory.getPersistence();
+        persistence.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId())
+            sessionUser.synchronizeWith(managed);
+
+        ServletUtils.addMessage("Stránka byla přidána do vašich záložek.", env, request.getSession());
         urlUtils.redirect(response, url);
         return null;
     }
@@ -1661,6 +1781,70 @@ public class EditUser implements AbcAction, Configurable {
      */
     private boolean setForumPageSize(Map params, User user, Map env) {
         return setLimitedSize(params, PARAM_FORUM_PAGE_SIZE, user.getData(), "/data/settings/forum_size", 10, 100, env);
+    }
+
+    private boolean addToBookmarks(HttpServletRequest request, Map params, User user, Map env) {
+        Persistence persistence = PersistenceFactory.getPersistence();
+
+        String rid = (String) params.get(PARAM_RID);
+        String prefix = (String) params.get(PARAM_PREFIX);
+        if (rid == null || prefix == null) {
+            ServletUtils.addError(PARAM_RID, "Chybí parametr " + PARAM_RID + "!", env, null);
+            return false;
+        }
+
+        Element elem = DocumentHelper.makeElement(user.getData(), "/data/links");
+        Node node = elem.selectSingleNode("link/rid[text()=\"" + rid + "\"]");
+        if (node != null)
+            return true;
+
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RID, Relation.class, params, request);
+        relation = (Relation) persistence.findById(relation);
+
+        GenericObject obj = persistence.findById(relation.getChild());
+        String type;
+        if (obj instanceof Item)
+           type = ((Item) obj).getTypeString();
+        else if (obj instanceof Category)
+            type = Constants.TYPE_SECTION;
+        else if (obj instanceof Poll)
+            type = Constants.TYPE_POLL;
+        else
+            type = Constants.TYPE_OTHER;
+
+        Element link = elem.addElement("link");
+        link.addElement("rid").setText(rid);
+        link.addElement("title").setText(Tools.childName(relation));
+        link.addElement("prefix").setText(prefix);
+        link.addElement("type").setText(type);
+
+        return true;
+
+    }
+
+    /**
+     * Removes a rids from user's bookmarks. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean removeFromBookmarks(Map params, User user, Map env) {
+        List rids = Tools.asList(params.get(PARAM_RID));
+        if (rids.isEmpty()) {
+            ServletUtils.addError(PARAM_RID, "Nevybral jste žádné dokumenty.", env, null);
+            return false;
+        }
+
+        Element bookmarks = (Element) user.getData().selectSingleNode("/data/links");
+        for (Iterator iter = rids.iterator(); iter.hasNext();) {
+            String s = (String) iter.next();
+            Node node = bookmarks.selectSingleNode("link/rid[text()=\"" + s + "\"]");
+            if (node != null) {
+                node.getParent().detach();
+            }
+        }
+
+        return true;
     }
 
     /**

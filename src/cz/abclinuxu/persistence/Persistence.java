@@ -113,7 +113,15 @@ public interface Persistence {
     public List findParents(Relation relation);
 
     /**
-     * Synchronizes list of GenericObjects. The list may hold different objects.
+     * Synchronizes list of GenericObjects. The list may hold objects of different kinds.
+     * @param list
+     * @param ignoreMissing If true, silently ignore any non-existent object, otherwise throw an exception.
+     */
+    public void synchronizeList(List list, boolean ignoreMissing);
+
+    /**
+     * Synchronizes list of GenericObjects. The list may hold different objects. Identical to calling
+     * synchronizeList(list, false)
      * @param list
      */
     public void synchronizeList(List list);

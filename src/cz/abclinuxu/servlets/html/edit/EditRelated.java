@@ -366,7 +366,7 @@ public class EditRelated implements AbcAction {
             url = url.substring(position);
         }
         if (url.indexOf("://") != -1) {
-            type = Constants.RELATED_EXTERNAL_DOCUMENT;
+            type = Constants.TYPE_EXTERNAL_DOCUMENT;
             if (Misc.empty(title)) {
                 ServletUtils.addError(PARAM_TITLE, "Zadejte jméno pro externí dokument.", env, null);
                 return null;
@@ -383,32 +383,19 @@ public class EditRelated implements AbcAction {
                 }
             } else {
                 GenericObject obj = persistence.findById(relation.getChild());
-                if (obj instanceof Item) {
-                    switch (((Item) obj).getType()) {
-                        case Item.ARTICLE: type = Constants.RELATED_ARTICLE; break;
-                        case Item.AUTHOR: type = Constants.RELATED_AUTHOR; break;
-                        case Item.BLOG: type = Constants.RELATED_STORY; break;
-                        case Item.CONTENT: type = Constants.RELATED_CONTENT; break;
-                        case Item.DICTIONARY: type = Constants.RELATED_DICTIONARY; break;
-                        case Item.DISCUSSION: type = Constants.RELATED_DISCUSSION; break;
-                        case Item.DRIVER: type = Constants.RELATED_DRIVER; break;
-                        case Item.FAQ: type = Constants.RELATED_FAQ; break;
-                        case Item.HARDWARE: type = Constants.RELATED_HARDWARE; break;
-                        case Item.NEWS: type = Constants.RELATED_NEWS; break;
-                        case Item.SERIES: type = Constants.RELATED_SERIES; break;
-                        case Item.SOFTWARE: type = Constants.RELATED_SOFTWARE; break;
-                    }
-                } else if (obj instanceof Category)
-                    type = Constants.RELATED_SECTION;
+                if (obj instanceof Item)
+                   type = ((Item) obj).getTypeString();
+                else if (obj instanceof Category)
+                    type = Constants.TYPE_SECTION;
                 else if (obj instanceof Poll)
-                    type = Constants.RELATED_POLL;
+                    type = Constants.TYPE_POLL;
 
                 if (Misc.empty(title))
                     title = Tools.childName(relation);
             }
 
             if (type == null)
-                type = Constants.RELATED_OTHER;
+                type = Constants.TYPE_OTHER;
         }
 
         RelatedDocument document = new RelatedDocument(url, type);

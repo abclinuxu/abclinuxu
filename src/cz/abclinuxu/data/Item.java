@@ -19,6 +19,7 @@
 package cz.abclinuxu.data;
 
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.servlets.Constants;
 
 public class Item extends GenericDataObject {
 
@@ -124,5 +125,23 @@ public class Item extends GenericDataObject {
     public int hashCode() {
         String tmp = "Item"+id;
         return tmp.hashCode();
+    }
+
+    public String getTypeString() {
+        switch (this.type) {
+            case ARTICLE: return Constants.TYPE_ARTICLE;
+            case AUTHOR: return Constants.TYPE_AUTHOR;
+            case BLOG: return Constants.TYPE_STORY;
+            case CONTENT: return Constants.TYPE_CONTENT;
+            case DICTIONARY: return Constants.TYPE_DICTIONARY;
+            case DISCUSSION: return Constants.TYPE_DISCUSSION;
+            case DRIVER: return Constants.TYPE_DRIVER;
+            case FAQ: return Constants.TYPE_FAQ;
+            case HARDWARE: return Constants.TYPE_HARDWARE;
+            case NEWS: return Constants.TYPE_NEWS;
+            case SERIES: return Constants.TYPE_SERIES;
+            case SOFTWARE: return Constants.TYPE_SOFTWARE;
+            default: return Constants.TYPE_OTHER;
+        }
     }
 }

@@ -73,22 +73,17 @@
                 <a href="${URL.noPrefix("/Profile/"+USER.id)}">${USER.name}</a> |
                 <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")?default("UNDEF")>
                 <#if blogName!="UNDEF"><a href="/blog/${blogName}">Blog</a> |</#if>
-                <a href="/History?type=comments&amp;uid=${USER.id}">Diskuse</a> |
-                <a href="${URL.noPrefix("/Index?logout=true")}">Odhlášení</a> |
+                <a href="/History?type=comments&amp;uid=${USER.id}">Komentáře</a> |
+                <a href="/History?type=questions&amp;uid=${USER.id}">Dotazy</a> |
+                <a href="/EditUser/${USER.id}?action=editBookmarks">Záložky</a> |
+                <a href="/Profile/${USER.id}?action=myPage">Nastavení</a> |
+                <a href="${URL.noPrefix("/Index?logout=true")}">Odhlásit</a>
             <#else>
                 <a href="${URL.noPrefix("/Profile?action=login")}">Přihlášení</a> |
-                <a href="${URL.noPrefix("/EditUser?action=register")}">Registrace</a> |
+                <a href="${URL.noPrefix("/EditUser?action=register")}">Registrace</a>
             </#if>
-            <a href="/SelectUser?sAction=form&amp;url=/Profile">Hledat uživatele</a>
         </div>
-        <div class="hl_vlevo">
-            <#if PARENTS?exists>
-                <#list TOOL.getParents(PARENTS,USER?if_exists,URL) as link>
-                    <a href="${link.url}">${link.text}</a>
-                    <#if link_has_next> - </#if>
-                </#list>
-            </#if>&nbsp;
-        </div>
+        <div class="hl_vlevo">&nbsp;</div>
         </div>
 
         <div id="ls_prepinac" title="Skrýt sloupec" onclick="prepni_sloupec()">&#215;</div>
@@ -231,13 +226,29 @@
 
 	<div class="st" id="st"><a name="obsah"></a>
 
-<#if SYSTEM_CONFIG.isMaintainanceMode()>
-    <div style="color: red; border: medium solid red; margin: 10px; padding: 3ex">
-        <p style="font-size: xx-large; text-align: center">Režim údržby</p>
-        <p>
-            Právě provádíme údržbu portálu. Prohlížení obsahu by mělo nadále fungovat,
-            úpravy obsahu bohužel nejsou prozatím k dispozici. Děkujeme za pochopení.
-        </p>
-    </div>
-</#if>
+        <#if PARENTS?exists>
+            <#list TOOL.getParents(PARENTS,USER?if_exists,URL) as link>
+                <a href="${link.url}">${link.text}</a>
+                <#if link_has_next> - </#if>
+            </#list>
+            <#if RELATION?exists>
+                <form action="/EditUser/${USER.id}" style="display: inline">
+                    <input type="submit" class="bookmarks_add" value="do záložek">
+                    <input type="hidden" name="action" value="toBookmarks">
+                    <input type="hidden" name="rid" value="${RELATION.id}">
+                    <input type="hidden" name="prefix" value="${URL.prefix}">
+                    <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER)}">
+                </form>
+            </#if>
+        </#if>
+
+        <#if SYSTEM_CONFIG.isMaintainanceMode()>
+            <div style="color: red; border: medium solid red; margin: 10px; padding: 3ex">
+                <p style="font-size: xx-large; text-align: center">Režim údržby</p>
+                <p>
+                    Právě provádíme údržbu portálu. Prohlížení obsahu by mělo nadále fungovat,
+                    úpravy obsahu bohužel nejsou prozatím k dispozici. Děkujeme za pochopení.
+                </p>
+            </div>
+        </#if>
 

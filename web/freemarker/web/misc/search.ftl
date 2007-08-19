@@ -23,6 +23,7 @@
             <td>
               <input type="text" name="dotaz" value="${QUERY?if_exists?html}" size="50" tabindex="1">
               <input type="submit" value="Hledej" tabindex="2">
+              <a href="/SelectUser?sAction=form&amp;url=/Profile">Hledat uživatele</a>
               <#if ERRORS.dotaz?exists><div class="error">${ERRORS.dotaz}</div></#if>
               <#if PARAMS.advancedMode?default("false")=="true">
                   <input type="hidden" name="advancedMode" value="true">

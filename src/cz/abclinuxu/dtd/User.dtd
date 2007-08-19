@@ -1,6 +1,6 @@
 verze 2.0
 
-<!ELEMENT data (personal,communication,profile,settings,system,roles?)>
+<!ELEMENT data (personal,communication,profile,settings,system,roles?,links?)>
 
 <!ELEMENT personal (sex,birth_year?,area?,city?,country?,signature?)>
 <!ELEMENT sex (#PCDATA)> <!-- man or woman -->
@@ -24,6 +24,13 @@ verze 2.0
 <!ELEMENT linux_user_from_year (#PCDATA)> <!-- YYYY, od kdy pouziva linux -->
 <!ELEMENT distributions (distribution)> <!-- ktere distribuce pouziva(l) -->
 <!ELEMENT distribution (#PCDATA)> <!-- jmeno distribuce -->
+
+<!ELEMENT links (link*)> <!-- zalozky -->
+<!ELEMENT link (rid, title, prefix, type)> <!-- objekt zalozky -->
+<!ELEMENT rid (#PCDATA)> <!-- ID relace objektu -->
+<!ELEMENT title (#PCDATA)> <!-- zaloha titulku objektu -->
+<!ELEMENT prefix (#PCDATA)> <!-- prefix URL -->
+<!ELEMENT type (#PCDATA)> <!-- typ objektu -->
 
 <!ELEMENT settings (emoticons?,cookie_valid?,index_discussions?, index_stories?, index_links?, template_links?, return_to_forum?,
                     blog?, css?, guidepost?, blacklist?, feeds?, hp_all_stories?)>

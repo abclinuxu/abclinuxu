@@ -322,6 +322,9 @@
         <action name="editBlacklist" content="/edit/user_blacklist.ftl">
             <var name="TITLE" value="Seznam blokovaných uživatelů" />
         </action>
+        <action name="editBookmarks" content="/edit/user_bookmarks.ftl">
+            <var name="TITLE" value="Seznam záložek" />
+        </action>
         <action name="grantSelect" content="/edit/grant_select.ftl" template="print">
             <var name="TITLE" value="Změna rolí uživatele - výběr"/>
         </action>
