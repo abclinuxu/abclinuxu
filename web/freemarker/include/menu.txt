@@ -75,6 +75,7 @@
   </ul></li>
 <li><a href="/hry">Hry</a></li>
 <li><a href="/slovnik">Slovník</a></li>
+<li><a href="/kdo-je">Kdo je</a></li>
 <li><a href="/bazar">Bazar</a></li>
 <li><a href="/ovladace">Ovladače</a></li>
 <li><a href="/">Portál</a>

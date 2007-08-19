@@ -129,6 +129,8 @@ public class SiteMapGenerator implements Configurable {
         writeUrl(server + "/hry", null, DAILY, 0.8f, stream);
         writeUrl(server + UrlUtils.PREFIX_DICTIONARY, null, DAILY, 0.8f, stream);
         dumpDictionaryUrls(stream);
+        writeUrl(server + UrlUtils.PREFIX_PERSONALITIES, null, DAILY, 0.8f, stream);
+        dumpPersonalityUrls(stream);
         writeUrl(server + UrlUtils.PREFIX_POLLS, null, DAILY, 0.8f, stream);
         dumpPollUrls(stream);
         writeUrl(server + UrlUtils.PREFIX_NEWS, null, DAILY, 0.8f, stream);
@@ -251,6 +253,17 @@ public class SiteMapGenerator implements Configurable {
 
         for (Relation relation : relations) {
             url = server + UrlUtils.getRelationUrl(relation, UrlUtils.PREFIX_DICTIONARY);
+            writeUrl(url, null, DAILY, null, stream);
+        }
+    }
+
+    static void dumpPersonalityUrls(OutputStream stream) throws IOException {
+        String url;
+        List<Relation> relations = sqlTool.findItemRelationsWithType(Item.PERSONALITY, new Qualifier[0]);
+//        Tools.syncList(relations);
+
+        for (Relation relation : relations) {
+            url = server + UrlUtils.getRelationUrl(relation, UrlUtils.PREFIX_PERSONALITIES);
             writeUrl(url, null, DAILY, null, stream);
         }
     }

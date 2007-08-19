@@ -34,8 +34,6 @@ import cz.abclinuxu.utils.search.AbcCzechAnalyzer;
 import cz.abclinuxu.utils.search.AbcQueryParser;
 import cz.abclinuxu.utils.search.MyDocument;
 import cz.abclinuxu.data.view.SearchResult;
-import cz.abclinuxu.data.view.NewsCategories;
-import cz.abclinuxu.data.view.NewsCategory;
 import cz.abclinuxu.persistence.SQLTool;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.highlight.Highlighter;
@@ -362,6 +360,12 @@ public class Search implements AbcAction {
             if (map.size() == 0)
                 return true;
             return map.containsKey(MyDocument.TYPE_DICTIONARY);
+        }
+
+        public boolean isPersonality() {
+            if (map.size() == 0)
+                return true;
+            return map.containsKey(MyDocument.TYPE_PERSONALITY);
         }
 
         public boolean isDiscussion() {

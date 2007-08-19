@@ -52,6 +52,7 @@ public interface Constants {
     int CAT_TRIVIA = 1605;
     int CAT_HANGMAN = 1606;
     int CAT_SERIES = 1647;
+    int CAT_PERSONALITIES = 1863;
 
     int ITEM_DIZ_TODO = 11606;
     /** item holding dynamic configuration */
@@ -94,6 +95,7 @@ public interface Constants {
     int REL_TRIVIA = 156666;
     int REL_HANGMAN = 156667;
     int REL_SERIES = 164193;
+    int REL_PERSONALITIES = 190499;
 
     int GROUP_ADMINI = 11246;
     int GROUP_AUTORI = 11247;
@@ -123,6 +125,7 @@ public interface Constants {
     String TYPE_FAQ = "faq";
     String TYPE_HARDWARE = "hardware";
     String TYPE_OTHER = "other";
+    String TYPE_PERSONALITY = "personality";
     String TYPE_SECTION = "section";
     String TYPE_SERIES = "series";
     String TYPE_SOFTWARE = "software";
@@ -193,6 +196,7 @@ public interface Constants {
     String PAGE_BAZAAR = "bazar";
     String PAGE_BLOGS = "blogy";
     String PAGE_DICTIONARY = "slovnik";
+    String PAGE_PERSONALITIES = "kdo-je";
     String PAGE_DRIVERS = "ovladace";
     String PAGE_FAQ = "faq";
     String PAGE_FORUM = "forum";

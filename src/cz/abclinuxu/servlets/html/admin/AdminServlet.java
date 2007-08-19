@@ -221,6 +221,7 @@ public class AdminServlet implements AbcAction {
         FeedGenerator.updateBlog(null);
         FeedGenerator.updateBlogDigest();
         FeedGenerator.updateDictionary();
+        FeedGenerator.updatePersonalities();
         FeedGenerator.updateDrivers();
         FeedGenerator.updateFAQ();
         FeedGenerator.updateForum();

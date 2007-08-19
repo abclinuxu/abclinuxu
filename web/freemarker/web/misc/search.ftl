@@ -49,6 +49,7 @@
                    <tr>
                     <td><label><input type="checkbox" name="typ" value="dokument" <#if TYPES.document>checked</#if>>Dokumenty</label></td>
                     <td><label><input type="checkbox" name="typ" value="bazar" <#if TYPES.bazaar>checked</#if>>Bazar</label></td>
+                    <td><label><input type="checkbox" name="typ" value="osobnost" <#if TYPES.personality>checked</#if>>Osobnosti</label></td>
                    </tr>
                    <tr>
                     <td colspan="4" align="left"><label><input type="checkbox" onclick="toggle(this)">Vyber vše/nic</label></td>

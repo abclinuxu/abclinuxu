@@ -353,6 +353,7 @@
                     <#elseif link.type=='section'>(sekce)
                     <#elseif link.type=='software'>(software)
                     <#elseif link.type=='story'>(blog)
+                    <#elseif link.type=='personality'>(osobnost)
                     </#if>
                 </dt>
                 <#if link.description?exists>

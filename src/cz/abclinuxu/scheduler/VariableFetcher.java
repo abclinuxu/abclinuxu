@@ -64,6 +64,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String KEY_QUESTION = "question";
     public static final String KEY_FAQ = "faq";
     public static final String KEY_DICTIONARY = "dictionary";
+    public static final String KEY_PERSONALITIES = "personalities";
     public static final String KEY_BAZAAR = "bazaar";
     public static final String KEY_INDEX_LINKS = "links.in.index";
     public static final String KEY_TEMPLATE_LINKS = "links.in.template";
@@ -75,7 +76,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String PREF_SECTION_CACHE_FREQUENCY = "section.cache.rebuild.frequency";
 
     List freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
-    List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds;
+    List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities;
     String indexFeeds, templateFeeds;
     Map defaultSizes, maxSizes, counter;
     Map<Server, List<Link>> feedLinks;
@@ -203,6 +204,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public List getFreshDictionary(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_DICTIONARY, null);
         return getSubList(freshDictionary, userLimit);
+    }
+
+    /**
+     * List of the most fresh personality relations according to user preference or system setting.
+     */
+    public List getFreshPersonalities(Object user) {
+        int userLimit = getObjectCountForUser(user, KEY_PERSONALITIES, null);
+        return getSubList(freshPersonalities, userLimit);
     }
 
     /**
@@ -382,6 +391,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshBazaar();
             refreshCurrentPoll();
             refreshDictionary();
+            refreshPersonalities();
             refreshDrivers();
             refreshFaq();
             refreshHardware();
@@ -538,13 +548,25 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     public void refreshDictionary() {
         try {
-            int maximum = (Integer) maxSizes.get(KEY_QUESTION);
+            int maximum = (Integer) maxSizes.get(KEY_DICTIONARY);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
             List data = sqlTool.findItemRelationsWithType(Item.DICTIONARY, qualifiers);
             Tools.syncList(data);
             freshDictionary = data;
         } catch (Exception e) {
             log.error("Selhalo nacitani pojmu", e);
+        }
+    }
+
+    public void refreshPersonalities() {
+        try {
+            int maximum = (Integer) maxSizes.get(KEY_PERSONALITIES);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
+            List data = sqlTool.findItemRelationsWithType(Item.PERSONALITY, qualifiers);
+            Tools.syncList(data);
+            freshPersonalities = data;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani osobnosti", e);
         }
     }
 
@@ -609,7 +631,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         int id;
         Server server;
         Map<Server, List<Link>> result = new LinkedHashMap<Server, List<Link>>(25, 0.99f);
-        List links;
+        List<Link> links;
         while (stk.hasMoreTokens()) {
             tmp = stk.nextToken();
             id = Misc.parseInt(tmp, -1);
@@ -649,6 +671,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
         defaultSizes.put(KEY_DICTIONARY, size);
         size = prefs.getInt(PREF_MAX + KEY_DICTIONARY, 10);
         maxSizes.put(KEY_DICTIONARY, size);
+        freshDictionary = Collections.EMPTY_LIST;
+
+        size = prefs.getInt(PREF_DEFAULT + KEY_PERSONALITIES, 3);
+        defaultSizes.put(KEY_PERSONALITIES, size);
+        size = prefs.getInt(PREF_MAX + KEY_PERSONALITIES, 10);
+        maxSizes.put(KEY_PERSONALITIES, size);
         freshDictionary = Collections.EMPTY_LIST;
 
         size = prefs.getInt(PREF_DEFAULT + KEY_DRIVER, 3);

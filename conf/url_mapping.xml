@@ -110,6 +110,14 @@
             <action>cz.abclinuxu.servlets.html.view.ViewFaq</action>
         </mapping>
         <mapping priority="true">
+            <pattern>^/kdo-je/edit</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditPersonality</action>
+        </mapping>
+        <mapping priority="true">
+            <pattern>^/kdo-je</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewPersonality</action>
+        </mapping>
+        <mapping priority="true">
             <pattern>^/slovnik/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditDictionary</action>
         </mapping>

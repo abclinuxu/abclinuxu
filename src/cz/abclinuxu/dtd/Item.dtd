@@ -118,6 +118,15 @@
 <!ELEMENT name (#PCDATA)> <!-- word to be explained -->
 <!ELEMENT description (#PCDATA)> <!-- explanation -->
 
+<!-- Item.PERSONALITY -->
+<!ELEMENT data (name, description, url+, date+)>
+<!ELEMENT name (#PCDATA)> <!-- word to be explained -->
+<!ELEMENT description (#PCDATA)> <!-- explanation -->
+<!ELEMENT url (#PCDATA)> <!-- an url related to the personality -->
+<!ATTLIST url useType (#NMTOKEN)> <!-- type of given url (rss, info) -->
+<!ELEMENT date (#PCDATA)> <!-- a date related to the personality -->
+<!ATTLIST date type (#NMTOKEN)> <!-- type of the date (birth, death) -->
+
 <!-- Item.CONTENT -->
 <!ELEMENT data (name, content, class?, toc?)>
 <!ELEMENT name (#PCDATA)> <!-- HTML page's title -->

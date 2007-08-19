@@ -37,6 +37,7 @@ public class MyDocument {
     public static final String TYPE_BLOG = "blog";
     public static final String TYPE_CATEGORY = "sekce";
     public static final String TYPE_DICTIONARY = "pojem";
+    public static final String TYPE_PERSONALITY = "osobnost";
     public static final String TYPE_DISCUSSION = "diskuse";
     public static final String TYPE_DOCUMENT = "dokument";
     public static final String TYPE_DRIVER = "ovladac";

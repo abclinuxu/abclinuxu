@@ -68,6 +68,7 @@ public class CreateIndex implements Configurable {
     public static final String PREF_BOOST_BLOG = "boost.blog";
     public static final String PREF_BOOST_FAQ = "boost.faq";
     public static final String PREF_BOOST_DICTIONARY = "boost.dictionary";
+    public static final String PREF_BOOST_PERSONALITIES = "boost.personalities";
     public static final String PREF_BOOST_SECTION = "boost.section";
     public static final String PREF_BOOST_POLL = "boost.poll";
     public static final String PREF_BOOST_DOCUMENT = "boost.document";
@@ -83,7 +84,7 @@ public class CreateIndex implements Configurable {
     static HashMap indexed = new HashMap(150000, 0.99f);
     static float boostHardware, boostSoftware, boostArticle, boostNews, boostQuestion, boostDiscussion;
     static float boostDriver, boostBlog, boostFaq, boostDictionary, boostSection, boostPoll;
-    static float boostDocument, boostBazaar;
+    static float boostDocument, boostBazaar, boostPersonalities;
     static boolean addTitleToContent;
     static int pageSize;
 
@@ -127,6 +128,11 @@ public class CreateIndex implements Configurable {
                 makeIndexOnDictionary();
             } catch (Exception e) {
                 log.error("Failed to index dictionary", e);
+            }
+            try {
+                makeIndexOnPersonalities();
+            } catch (Exception e) {
+                log.error("Failed to index personalities", e);
             }
             try {
                 makeIndexOnFaq();
@@ -242,6 +248,28 @@ public class CreateIndex implements Configurable {
                 indexWriter.addDocument(doc.getDocument());
             } catch (Exception e) {
                 log.error("Chyba při indexování pojmu " + relation, e);
+            }
+        }
+    }
+
+    /**
+     * Indexes personalities.
+     */
+    static void makeIndexOnPersonalities() throws Exception {
+        Item child;
+        MyDocument doc;
+        List<Relation> relations = sqlTool.findItemRelationsWithType(Item.PERSONALITY, new Qualifier[0]);
+        Tools.syncList(relations);
+
+        for (Relation relation : relations) {
+            try {
+                child = (Item) relation.getChild();
+                if ( hasBeenIndexed(child) )
+                    continue;
+                doc = indexPersonality(relation);
+                indexWriter.addDocument(doc.getDocument());
+            } catch (Exception e) {
+                log.error("Chyba při indexování osobnosti " + relation, e);
             }
         }
     }
@@ -1118,6 +1146,27 @@ public class CreateIndex implements Configurable {
     }
 
     /**
+     * Extracts text from a personality item for indexing.
+     * @param relation relation with initialized item
+     */
+    static MyDocument indexPersonality(Relation relation) {
+        Item personality = (Item) relation.getChild();
+        String title = Tools.xpath(personality, "/data/name");
+        String s = Tools.xpath(personality, "/data/description");
+        StringBuffer sb = new StringBuffer(s);
+
+        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        doc.setType(MyDocument.TYPE_PERSONALITY);
+        doc.setCreated(personality.getCreated());
+        doc.setUpdated(personality.getUpdated());
+        doc.setURL(relation.getUrl());
+        doc.setCid(personality);
+        doc.setBoost(boostPersonalities);
+
+        return doc;
+    }
+
+    /**
      * Extracts text from faq item for indexing.
      * @param relation initialized relation
      */
@@ -1235,6 +1284,7 @@ public class CreateIndex implements Configurable {
         boostBazaar = prefs.getFloat(PREF_BOOST_BAZAAR, 1.0f);
         boostBlog = prefs.getFloat(PREF_BOOST_BLOG, 1.0f);
         boostDictionary = prefs.getFloat(PREF_BOOST_DICTIONARY, 1.0f);
+        boostPersonalities = prefs.getFloat(PREF_BOOST_PERSONALITIES, 1.0f);
         boostDiscussion = prefs.getFloat(PREF_BOOST_DISCUSSION, 1.0f);
         boostDocument = prefs.getFloat(PREF_BOOST_DOCUMENT, 1.0f);
         boostDriver = prefs.getFloat(PREF_BOOST_DRIVER, 1.0f);

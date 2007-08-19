@@ -71,10 +71,11 @@ public class FeedGenerator implements Configurable {
     static final String PREF_FAQ = "faq";
     static final String PREF_BAZAAR = "bazaar";
     static final String PREF_DICTIONARY = "dictionary";
+    static final String PREF_PERSONALITIES = "personalities";
     static final String PREF_NEWS_WORD_LIMIT = "news.word.limit";
 
     static String fileDiscussions, fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileBlogDigest;
-    static String fileNews, fileFaq, filePolls, fileTrafika, fileSoftware, fileBazaar, fileDictionary;
+    static String fileNews, fileFaq, filePolls, fileTrafika, fileSoftware, fileBazaar, fileDictionary, filePersonalities;
     static int feedLength = 10, highFrequencyFeedLength = 25, newsWordLimit;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new FeedGenerator());
@@ -216,6 +217,50 @@ public class FeedGenerator implements Configurable {
             writer.close();
         } catch (Exception e) {
             log.error("Chyba pri generovani RSS pro slovnik", e);
+        }
+    }
+
+    /**
+     * Generates RSS feed for personalities
+     */
+    public static void updatePersonalities() {
+        try {
+            Persistence persistence = PersistenceFactory.getPersistence();
+
+            SyndFeed feed = new SyndFeedImpl();
+            feed.setEncoding("UTF-8");
+            feed.setFeedType(TYPE_RSS_1_0);
+            feed.setTitle("abclinuxu - osobnosti");
+            feed.setLink("http://www.abclinuxu.cz/kdo-je");
+            feed.setUri("http://www.abclinuxu.cz/kdo-je");
+            feed.setDescription("Osobnosti na portálu www.abclinuxu.cz");
+            List entries = new ArrayList();
+            feed.setEntries(entries);
+            SyndEntry entry;
+
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
+            List list = SQLTool.getInstance().findItemRelationsWithType(Item.PERSONALITY, qualifiers);
+            Tools.syncList(list);
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Relation found = (Relation) iter.next();
+                Item item = (Item) found.getChild();
+                User author = (User) persistence.findById(new User(item.getOwner()));
+
+                entry = new SyndEntryImpl();
+                entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
+                entry.setTitle(Tools.xpath(item, "data/name"));
+                entry.setPublishedDate(item.getUpdated());
+                entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
+                entries.add(entry);
+            }
+
+            String path = AbcConfig.calculateDeployedPath(filePersonalities);
+            Writer writer = getWriter(path);
+            SyndFeedOutput output = new SyndFeedOutput();
+            output.output(feed, writer);
+            writer.close();
+        } catch (Exception e) {
+            log.error("Chyba pri generovani RSS pro osobnosti", e);
         }
     }
 
@@ -785,6 +830,7 @@ public class FeedGenerator implements Configurable {
         filePolls = prefs.get(PREF_POLLS, null);
         fileBazaar = prefs.get(PREF_BAZAAR, null);
         fileDictionary = prefs.get(PREF_DICTIONARY, null);
+        filePersonalities = prefs.get(PREF_PERSONALITIES, null);
         newsWordLimit = prefs.getInt(PREF_NEWS_WORD_LIMIT, 10);
     }
 

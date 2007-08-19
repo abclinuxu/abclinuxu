@@ -18,37 +18,34 @@
  */
 package cz.abclinuxu.servlets.html.view;
 
+import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.Operation;
-import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.html.edit.EditDictionary;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Sorters2;
-import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.servlets.html.edit.EditPersonality;
 import cz.abclinuxu.utils.paging.Paging;
+import cz.abclinuxu.utils.Misc;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Displays dictionary
- */
-public class ShowDictionary implements AbcAction {
-    public static final String PARAM_RELATION_ID_SHORT = "rid";
+public class ViewPersonality implements AbcAction {
+    public static final String PARAM_RELATION_ID = "rid";
     public static final String PARAM_PREFIX = "prefix";
 
     public static final String VAR_RELATION = "RELATION";
@@ -63,7 +60,7 @@ public class ShowDictionary implements AbcAction {
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params, request);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID, Relation.class, params, request);
 
         if ( relation == null ) {
             String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());
@@ -85,9 +82,9 @@ public class ShowDictionary implements AbcAction {
                 }
 
                 String name = url.substring(PREFIX_LENGTH);
-                params.put(EditDictionary.PARAM_NAME, name);
-                ServletUtils.addMessage("Tento pojem nebyl ještě popsán. V tomto formuláři jej můžete vysvětlit jako první.", env, null);
-                return FMTemplateSelector.select("Dictionary", "add", env, request);
+                params.put(EditPersonality.PARAM_NAME, name);
+                ServletUtils.addMessage("Tato osobnost v naší databázi zatím není. V tomto formuláři o ní můžete napsat jako první.", env, null);
+                return FMTemplateSelector.select("EditPersonality", "add", env, request);
             }
         }
 
@@ -97,16 +94,16 @@ public class ShowDictionary implements AbcAction {
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
-        if (relation.getId() == Constants.REL_DICTIONARY)
+        if (relation.getId() == Constants.REL_PERSONALITIES)
             return processList(request, env);
         else
-            return processDefinition(request, relation, env);
+            return processPersonality(request, relation, env);
     }
 
     /**
-     * Shows single dictionary definition.
+     * Shows a single personality object.
      */
-    static String processDefinition(HttpServletRequest request, Relation relation, Map env) throws Exception {
+    static String processPersonality(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Item item = (Item) relation.getChild();
         env.put(VAR_ITEM, item);
@@ -116,15 +113,15 @@ public class ShowDictionary implements AbcAction {
             Misc.loadRelationRevision(item, relation.getId(), revision);
 
         SQLTool sqlTool = SQLTool.getInstance();
-        List siblings = sqlTool.getNeighbourItemRelations(item.getSubType(), Item.DICTIONARY, true, 3);
+        List siblings = sqlTool.getNeighbourItemRelations(item.getSubType(), Item.PERSONALITY, true, 3);
         env.put(VAR_PREVIOUS, Tools.syncList(siblings));
-        siblings = sqlTool.getNeighbourItemRelations(item.getSubType(), Item.DICTIONARY, false, 3);
+        siblings = sqlTool.getNeighbourItemRelations(item.getSubType(), Item.PERSONALITY, false, 3);
         env.put(VAR_NEXT, Tools.syncList(siblings));
-        return FMTemplateSelector.select("Dictionary", "show", env, request);
+        return FMTemplateSelector.select("ViewPersonality", "view", env, request);
     }
 
     /**
-     * Shows page with list of dictionary definitions.
+     * Shows page with a list of personalities.
      */
     static String processList(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -136,13 +133,13 @@ public class ShowDictionary implements AbcAction {
             prefix = "a";
 
         Qualifier[] qualifiers = new Qualifier[]{new CompareCondition(Field.SUBTYPE, Operation.LIKE, prefix + "%")};
-        List data = sqlTool.findItemRelationsWithType(Item.DICTIONARY, qualifiers);
+        List data = sqlTool.findItemRelationsWithType(Item.PERSONALITY, qualifiers);
         Tools.syncList(data);
         Sorters2.byName(data);
 
         Paging found = new Paging(data, 0, data.size(), data.size(), qualifiers);
         env.put(VAR_FOUND, found);
         env.put(VAR_CURRENT_PREFIX, prefix);
-        return FMTemplateSelector.select("Dictionary", "showList", env, request);
+        return FMTemplateSelector.select("ViewPersonality", "viewList", env, request);
     }
 }

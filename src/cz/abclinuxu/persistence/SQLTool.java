@@ -1229,12 +1229,13 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Finds dictionary item relations that alphabetically neighbours selected one.
+     * Finds item relations that alphabetically neighbours selected one.
+     * @param type Item type, e.g. Item.DICTIONARY
      * @param smaller whether the returned items shall be smaller or greater
      * @return List of itialized Relations, first item is closest to selected one.
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List<Relation> getNeighbourDictionaryItemRelations(String urlName, boolean smaller, int count) {
+    public List<Relation> getNeighbourItemRelations(String urlName, int type, boolean smaller, int count) {
         StringBuffer sb = new StringBuffer((String) sql.get(ITEM_RELATIONS_BY_TYPE));
         if (smaller)
             sb.append("  and podtyp<? order by podtyp desc limit ?");
@@ -1242,7 +1243,7 @@ public final class SQLTool implements Configurable {
             sb.append("  and podtyp>? order by podtyp asc limit ?");
 
         List params = new ArrayList();
-        params.add(Item.DICTIONARY);
+        params.add(type);
         params.add(urlName);
         params.add(count);
         return loadRelations(sb.toString(), params);

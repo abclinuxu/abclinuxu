@@ -180,8 +180,54 @@
 <table class="boxy">
   <tr>
    <td>
+    <#assign FAQ = VARS.getFreshFaqs(USER?if_exists)>
+    <div class="s_nadpis">
+        <a class="info" href="#">?<span class="tooltip">Odpovědi na často kladené otázky.</span></a>
+        <a href="/faq">FAQ</a>
+    </div>
+    <div class="s_sekce">
+        <ul>
+        <#list FAQ as rel>
+             <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/title")}</a></li>
+        </#list>
+        </ul>
+    </div>
+   </td>
+   <td>
+    <#assign DICTIONARY=VARS.getFreshDictionary(USER?if_exists)>
+      <div class="s_nadpis">
+        <a class="info" href="#">?<span class="tooltip">Výkladový slovník linuxových pojmů.</span></a>
+        <a href="/slovnik">Slovník</a>
+      </div>
+      <div class="s_sekce">
+        <ul>
+          <#list DICTIONARY as rel>
+            <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+          </#list>
+        </ul>
+      </div>
+   </td>
+
+  <td>
+    <#assign PERSONALITY=VARS.getFreshPersonalities(USER?if_exists)>
+    <div class="s_nadpis">
+        <a class="info" href="#">?<span class="tooltip">Databáze významných osobností z komunity.</span></a>
+        <a href="/kdo-je">Kdo je</a>
+    </div>
+    <div class="s_sekce">
+        <ul>
+            <#list PERSONALITY as rel>
+                <li>
+                    <a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a>
+                </li>
+            </#list>
+        </ul>
+    </div>
+   </td>
+  </tr>
+  <tr>
+   <td>
     <#assign BAZAAR = VARS.getFreshBazaarAds(USER?if_exists)>
-    <#if (BAZAAR?size>0) >
       <div class="s_nadpis">
         <a class="info" href="#">?<span class="tooltip">Inzeráty z AbcBazaru.</span></a>
         <a href="/bazar">Bazar</a>
@@ -200,42 +246,26 @@
         </#list>
         </ul>
       </div>
-    </#if>
    </td>
 
    <td>
-    <#assign DICTIONARY=VARS.getFreshDictionary(USER?if_exists)>
-    <#if (DICTIONARY?size>0) >
+    <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Výkladový slovník linuxových pojmů.</span></a>
-        <a href="/slovnik">Slovník</a>
+        <a class="info" href="#">?<span class="tooltip">Nejčertsvější ovladače</span></a>
+        <a href="/bazar">Ovladače</a>
       </div>
       <div class="s_sekce">
         <ul>
-          <#list DICTIONARY as rel>
-            <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a></li>
-          </#list>
+        <#list DRIVERS as rel>
+             <li>
+                <a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a>
+             </li>
+        </#list>
         </ul>
       </div>
-    </#if>
    </td>
 
-   <td>
-    <#assign FAQ = VARS.getFreshFaqs(USER?if_exists)>
-    <#if (FAQ?size>0) >
-        <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Odpovědi na často kladené otázky.</span></a>
-            <a href="/faq">FAQ</a>
-        </div>
-        <div class="s_sekce">
-            <ul>
-            <#list FAQ as rel>
-                 <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/title")}</a></li>
-            </#list>
-            </ul>
-        </div>
-    </#if>
-   </td>
+
   </tr>
 </table>
 

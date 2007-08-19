@@ -73,6 +73,7 @@ public class History implements AbcAction {
     public static final String VALUE_TYPE_QUESTIONS = "questions";
     public static final String VALUE_TYPE_COMMENTS = "comments";
     public static final String VALUE_TYPE_DICTIONARY = "dictionary";
+    public static final String VALUE_TYPE_PERSONALITIES = "personalities";
     public static final String VALUE_TYPE_WIKI = "wiki";
     public static final String VALUE_TYPE_FAQ = "faq";
 
@@ -194,6 +195,22 @@ public class History implements AbcAction {
             data = sqlTool.findItemRelationsWithType(Item.DICTIONARY, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_DICTIONARY;
+
+        } else if ( VALUE_TYPE_PERSONALITIES.equalsIgnoreCase(type) ) {
+            qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
+            if ( uid > 0 ) {
+                CompareCondition userEqualsCondition = new CompareCondition(Field.OWNER, Operation.EQUAL, uid);
+                Qualifier[] tmp = new Qualifier[qualifiers.length + 1];
+                tmp[0] = userEqualsCondition;
+                System.arraycopy(qualifiers, 0, tmp, 1, qualifiers.length);
+                qualifiers = tmp;
+                total = sqlTool.countItemRelationsWithType(Item.PERSONALITY, new Qualifier[]{userEqualsCondition});
+            } else
+                total = sqlTool.countItemRelationsWithType(Item.PERSONALITY, null);
+
+            data = sqlTool.findItemRelationsWithType(Item.PERSONALITY, qualifiers);
+            found = new Paging(data, from, count, total, qualifiers);
+            type = VALUE_TYPE_PERSONALITIES;
 
         } else
             return ServletUtils.showErrorPage("Chybí parametr type!",env,request);

@@ -31,6 +31,7 @@ public class ObjectType {
     public static final ObjectType FAQ = new ObjectType("faq");
     public static final ObjectType CONTENT = new ObjectType("content");
     public static final ObjectType BAZAAR = new ObjectType("bazaar");
+    public static final ObjectType PERSONALITY = new ObjectType("personality");
 
     private ObjectType(String name) {
         this.name = name;

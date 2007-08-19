@@ -31,10 +31,7 @@ import cz.abclinuxu.data.view.NewsCategories;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.SQLTool;
-import cz.abclinuxu.persistence.versioning.Versioning;
-import cz.abclinuxu.persistence.versioning.VersionInfo;
 import cz.abclinuxu.persistence.versioning.VersionedDocument;
-import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
@@ -208,6 +205,8 @@ public class ShowObject implements AbcAction {
                 return ViewContent.show(request, env);
             case Item.TOC:
                 return ViewTOC.show(request, env);
+            case Item.PERSONALITY:
+                return ViewPersonality.processPersonality(request, relation, env);
         }
 
         return null;

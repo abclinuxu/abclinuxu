@@ -69,6 +69,7 @@
                                 <entry key="boost.bazaar" value="1.0"/>
                                 <entry key="boost.blog" value="0.5"/>
                                 <entry key="boost.dictionary" value="1.0"/>
+                                <entry key="boost.personalities" value="1.0"/>
                                 <entry key="boost.discussion" value="0.8" />
                                 <entry key="boost.document" value="1.9" />
                                 <entry key="boost.driver" value="1.0" />
@@ -185,6 +186,7 @@
                                 <entry key="ankety" value="auto/ankety.rss"/>
                                 <entry key="bazaar" value="auto/bazar.rss"/>
                                 <entry key="dictionary" value="auto/slovnik.rss"/>
+                                <entry key="personalities" value="auto/kdojekdo.rss"/>
                                 <entry key="blogs" value="auto/blog/"/>
                                 <entry key="trafika" value="auto/abc.dat"/>
                                 <entry key="anneca" value="auto/abc2.dat"/>
@@ -456,6 +458,8 @@
                             <entry key="max.faq" value="10"/>
                             <entry key="default.dictionary" value="3"/>
                             <entry key="max.dictionary" value="10"/>
+                            <entry key="default.personalities" value="3"/>
+                            <entry key="max.personalities" value="10"/>
                             <entry key="default.bazaar" value="3"/>
                             <entry key="max.bazaar" value="10"/>
                             <entry key="feeds.for.index" value="18,19,21" />

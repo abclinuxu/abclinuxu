@@ -133,6 +133,15 @@
         </action>
     </servlet>
 
+    <servlet name="EditPersonality">
+        <action name="add" content="/add/personality.ftl">
+            <var name="TITLE" value="Vložit osobnost"/>
+        </action>
+        <action name="edit" content="/add/personality.ftl">
+            <var name="TITLE" value="Upravit osobnost"/>
+        </action>
+    </servlet>
+
     <servlet name="EditHardware">
         <action name="add" content="/add/hwitem.ftl">
             <var name="TITLE" value="Vlož záznam" />
@@ -685,6 +694,15 @@
         </action>
         <action name="edit" content="/edit/dictionary.ftl">
             <var name="TITLE" value="Upravit pojem"/>
+        </action>
+    </servlet>
+
+    <servlet name="ViewPersonality">
+        <action name="view" content="/show/personality.ftl">
+            <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy"/>
+        </action>
+        <action name="viewList" content="/show/personality_all.ftl">
+            <var name="TITLE" value="Kdo je"/>
         </action>
     </servlet>
 
