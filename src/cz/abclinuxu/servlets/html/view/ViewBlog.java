@@ -320,7 +320,7 @@ public class ViewBlog implements AbcAction, Configurable {
 
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(Qualifier.ORDER_DESCENDING);
-        qualifiers.add(new LimitQualifier(from, count));
+        qualifiers.add(new LimitQualifier(from, Tools.getPreloadedStoryCount(count) ));
 
         qa = new Qualifier[qualifiers.size()];
         List stories = null;
@@ -332,7 +332,7 @@ public class ViewBlog implements AbcAction, Configurable {
 
         // filter out stories written by users that current user has blocked
         if (user != null)
-            stories = Tools.filterRelationsOfBlockedUsers(stories, user);
+            stories = Tools.filterBannedStories(stories, user, count); // todo this method filters out HP banned stories too!
 
         List parentBlogs = new ArrayList(stories.size());
         for (Iterator iter = stories.iterator(); iter.hasNext();) {

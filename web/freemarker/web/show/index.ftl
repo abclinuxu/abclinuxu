@@ -125,8 +125,6 @@
 </#if>
 
 <#assign STORIES=VARS.getFreshStories(USER?if_exists)>
-<#assign STORIES=TOOL.filterRelationsOfBlockedUsers(STORIES,USER?if_exists)>
-<#assign STORIES=TOOL.filterBannedStories(STORIES,USER?if_exists)>
 <#if (STORIES?size>0) >
   <#assign half = STORIES?size/2 >
   <#if STORIES?size%2==1><#assign half=half+1></#if>
@@ -251,8 +249,8 @@
    <td>
     <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Nejčertsvější ovladače</span></a>
-        <a href="/bazar">Ovladače</a>
+        <a class="info" href="#">?<span class="tooltip">Nejčerstvější ovladače</span></a>
+        <a href="/ovladace">Ovladače</a>
       </div>
       <div class="s_sekce">
         <ul>

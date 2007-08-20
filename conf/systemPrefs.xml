@@ -106,6 +106,7 @@
                                 <entry key="RE_VLNKA" value="((^|\s)\w)\s+(\S+)"/>
                                 <entry key="REPLACEMENT_VLNKA" value="$1&amp;nbsp;$3"/>
                                 <entry key="RE_AMPERSAND" value="&amp;(?!#?[a-zA-Z0-9]+;)" />
+                                <entry key="story.reserve.percents" value="25" />
                             </map>
                         </node>
                     </node>

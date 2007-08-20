@@ -66,11 +66,13 @@ public class Tools implements Configurable {
     public static final String PREF_REGEXP_VLNKA = "RE_VLNKA";
     public static final String PREF_REPLACEMENT_VLNKA = "REPLACEMENT_VLNKA";
     public static final String PREF_REGEXP_AMPERSAND = "RE_AMPERSAND";
+    public static final String PREF_STORY_RESERVE_PERCENTS = "story.reserve.percents";
 
     static Persistence persistence = PersistenceFactory.getPersistence();
     static REProgram reRemoveTags, reVlnka, lineBreak;
     static Pattern reAmpersand;
     static String vlnkaReplacement;
+    static int storyReservePercents;
 
     static {
         Tools tools = new Tools();
@@ -91,6 +93,8 @@ public class Tools implements Configurable {
             lineBreak = reCompiler.compile("[\r\n$]+");
             pref = prefs.get(PREF_REGEXP_AMPERSAND, null);
             reAmpersand = Pattern.compile(pref);
+
+            storyReservePercents = prefs.getInt(PREF_STORY_RESERVE_PERCENTS, 50);
         } catch (RESyntaxException e) {
             log.error("Chyba pri kompilaci regexpu!", e);
         } catch (PatternSyntaxException e) {
@@ -514,55 +518,60 @@ public class Tools implements Configurable {
     }
 
     /**
-     * Returns all item relations from parameter that were not created by users
-     * blocked by passed user.
+     * Filters blog stories banned by blog administrator or written
+     * by a banned user, according to user's preferences.
      * @param relations initialized Item relations
      * @param aUser typically User instance
-     * @return relations not created by blocked users
+     * @param count desired amount of returned relations
+     * @return relations not banned for any reason
      */
-    public static List filterRelationsOfBlockedUsers(List relations, Object aUser) {
-        if (aUser == null || ! (aUser instanceof User))
-            return relations;
 
-        Set blocked = getBlacklist((User)aUser, true);
-        if (blocked.isEmpty())
-            return relations;
+    public static List filterBannedStories(List stories, Object aUser, int count) {
+        boolean filterBanned = true;
+        Set blockedUsers = Collections.EMPTY_SET;
+        List result = new ArrayList(count);
 
-        List result = new ArrayList(relations.size());
-        Relation relation; Item story;
-        for (Iterator iter = relations.iterator(); iter.hasNext();) {
-            relation = (Relation) iter.next();
-            story = (Item) relation.getChild();
-            if (! blocked.contains(new Integer(story.getOwner())))
-                result.add(relation);
+        if (aUser != null && (aUser instanceof User)) {
+            User user = (User) aUser;
+            blockedUsers = Tools.getBlacklist(user, true);
+
+            Element element = (Element) user.getData().selectSingleNode("/data/settings/hp_all_stories");
+            if (element != null && "yes".equals(element.getText()))
+                filterBanned = false;
         }
+
+        if (! blockedUsers.isEmpty() || filterBanned) {
+            for (Iterator iter = stories.iterator(); iter.hasNext() && result.size() < count;) {
+                Relation relation = (Relation) iter.next();
+                Item story = (Item) relation.getChild();
+                boolean removeStory = false;
+
+                removeStory |= blockedUsers.contains(new Integer(story.getOwner()));
+                removeStory |= (filterBanned && story.getSingleProperty(Constants.PROPERTY_BANNED_BLOG) != null);
+
+                if (!removeStory)
+                    result.add(relation);
+            }
+        }
+        else {
+            // don't filter anything, just limit the story count
+            if(stories.size() > count)
+                result.addAll(stories.subList(0, count));
+            else
+                result.addAll(stories);
+        }
+
         return result;
     }
 
     /**
-     * Unless user requests to see all stories, filter out stories marked as inappropirate for home page.
-     * @param relations initialized Item relations
-     * @param aUser typically User instance
-     * @return relations not banned by blog administrator
+     * Returns the relation count including the reserve.
+     * Needed for correct further blog stories filtering.
+     * @param count target relation count
+     * @return "preloaded" amount
      */
-    public static List filterBannedStories(List relations, Object aUser) {
-        if (aUser != null && aUser instanceof User) {
-            User user = (User) aUser;
-            Element element = (Element) user.getData().selectSingleNode("/data/settings/hp_all_stories");
-            if (element != null && "yes".equals(element.getText()))
-                return relations;
-        }
-
-        List result = new ArrayList(relations.size());
-        Relation relation;
-        Item story;
-        for (Iterator iter = relations.iterator(); iter.hasNext();) {
-            relation = (Relation) iter.next();
-            story = (Item) relation.getChild();
-            if (story.getSingleProperty(Constants.PROPERTY_BANNED_BLOG) == null)
-                result.add(relation);
-        }
-        return result;
+    public static int getPreloadedStoryCount(int count) {
+        return count + count*storyReservePercents/100;
     }
 
     /**

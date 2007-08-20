@@ -171,7 +171,8 @@ public class VariableFetcher extends TimerTask implements Configurable {
      */
     public List getFreshStories(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_STORY, "/data/settings/index_stories");
-        return getSubList(freshStories, userLimit);
+        List unfiltered = getSubList(freshStories, Tools.getPreloadedStoryCount(userLimit) );
+        return Tools.filterBannedStories(unfiltered, user, userLimit);
     }
 
     /**
@@ -718,7 +719,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         size = prefs.getInt(PREF_DEFAULT + KEY_STORY, 5);
         defaultSizes.put(KEY_STORY, size);
         size = prefs.getInt(PREF_MAX + KEY_STORY, 5);
-        maxSizes.put(KEY_STORY, size);
+        maxSizes.put(KEY_STORY, Tools.getPreloadedStoryCount(size));
         freshStories = Collections.EMPTY_LIST;
 
         size = prefs.getInt(PREF_DEFAULT + KEY_BAZAAR, 5);
