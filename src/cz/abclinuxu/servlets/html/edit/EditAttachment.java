@@ -145,8 +145,9 @@ public class EditAttachment implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item item = (Item) relation.getChild();
 
+        Item item = (Item) relation.getChild().clone();
+        item.setOwner(user.getId());
         boolean canContinue = addScreenshot(params, item, env);
         if (!canContinue)
             return FMTemplateSelector.select("EditAttachment", "addScreenshot", env, request);
@@ -191,7 +192,9 @@ public class EditAttachment implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
+
         Item item = (Item) relation.getChild().clone();
+        item.setOwner(user.getId());
 
         Document document = (Document) item.getData();
         Element inset = (Element) document.selectSingleNode("/data/inset");
