@@ -224,22 +224,29 @@
         </#if>
     </#if>
 
-	<div class="st" id="st"><a name="obsah"></a>
+        <div class="st" id="st"><a name="obsah"></a>
 
         <#if PARENTS?exists>
-            <#list TOOL.getParents(PARENTS,USER?if_exists,URL) as link>
-                <a href="${link.url}">${link.text}</a>
-                <#if link_has_next> - </#if>
-            </#list>
-            <#if RELATION?exists && USER?exists>
+          <div class="pwd-box">
+            <div class="do-zalozek">
+              <#if RELATION?exists && USER?exists>
                 <form action="/EditUser/${USER.id}" style="display: inline">
-                    <input type="submit" class="bookmarks_add" value="do záložek">
+                    <input type="submit" class="button" value="do záložek">
                     <input type="hidden" name="action" value="toBookmarks">
                     <input type="hidden" name="rid" value="${RELATION.id}">
                     <input type="hidden" name="prefix" value="${URL.prefix}">
                     <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER)}">
                 </form>
-            </#if>
+              </#if>
+            </div>
+            <div class="pwd">
+              <b>abc:/$</b>
+              <#list TOOL.getParents(PARENTS,USER?if_exists,URL) as link>
+                <a href="${link.url}">${link.text}</a>
+                <#if link_has_next> / </#if>
+              </#list>
+            </div>
+          </div>
         </#if>
 
         <#if SYSTEM_CONFIG.isMaintainanceMode()>
