@@ -520,14 +520,14 @@ public class Tools implements Configurable {
     /**
      * Filters blog stories banned by blog administrator or written
      * by a banned user, according to user's preferences.
-     * @param relations initialized Item relations
+     * @param stories initialized Item relations
      * @param aUser typically User instance
      * @param count desired amount of returned relations
+     * @param filterBanned remove stories banned by an administrator
      * @return relations not banned for any reason
      */
 
-    public static List filterBannedStories(List stories, Object aUser, int count) {
-        boolean filterBanned = true;
+    public static List filterBannedStories(List stories, Object aUser, int count, boolean filterBanned) {
         Set blockedUsers = Collections.EMPTY_SET;
         List result = new ArrayList(count);
 
@@ -535,9 +535,11 @@ public class Tools implements Configurable {
             User user = (User) aUser;
             blockedUsers = Tools.getBlacklist(user, true);
 
-            Element element = (Element) user.getData().selectSingleNode("/data/settings/hp_all_stories");
-            if (element != null && "yes".equals(element.getText()))
-                filterBanned = false;
+            if(filterBanned) {
+                Element element = (Element) user.getData().selectSingleNode("/data/settings/hp_all_stories");
+                if (element != null && "yes".equals(element.getText()))
+                    filterBanned = false;
+            }
         }
 
         if (! blockedUsers.isEmpty() || filterBanned) {

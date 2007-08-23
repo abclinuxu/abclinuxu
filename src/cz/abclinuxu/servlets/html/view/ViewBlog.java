@@ -332,7 +332,7 @@ public class ViewBlog implements AbcAction, Configurable {
 
         // filter out stories written by users that current user has blocked
         if (user != null)
-            stories = Tools.filterBannedStories(stories, user, count); // todo this method filters out HP banned stories too!
+            stories = Tools.filterBannedStories(stories, user, count, false);
 
         List parentBlogs = new ArrayList(stories.size());
         for (Iterator iter = stories.iterator(); iter.hasNext();) {
