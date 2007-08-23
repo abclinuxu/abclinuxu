@@ -221,7 +221,7 @@ td.pad,code.kod,pre.kod {
 .swlist .meta,
 .faq .meta { color: gray; }
 
-.ds_toolbox {
+.ds_toolbox, .pwd-box {
 	background-color: #ECECEC;
 	border-color: silver;
 }
@@ -348,8 +348,6 @@ a.selected:hover {
 .bazar-ad { background-color: #ECECEC; }
 
 .search_fragments { color: gray; }
-
-.bookmarks_add { font-size: small;}
 
 .anketa-tr-dark { background-color: #E6E6E6; }
 

@@ -122,6 +122,11 @@ input, select, textarea, .button,
 	color: #80BBCA;
 }
 
+.pwd-box {
+	border-color: gray;
+	background-color: #ececec;
+}
+
 .st {
 	background-color: #202020;
 	border-left-color: #4B4B4B;
@@ -228,7 +233,7 @@ td.pad,code.kod,pre.kod {
 .swlist .meta,
 .faq .meta { color: #9A9A9A; }
 
-.ds_toolbox {
+.ds_toolbox, .pwd-box {
 	background-color: black;
 	border-color: #4B4B4B;
 }
