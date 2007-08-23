@@ -68,7 +68,7 @@ blockquote {
 	margin-left: -1em;
 }
 
-.button { height: 1.8em; }
+.button { height: 1.8em; font-size: small; }
 
 /********************************************************/
 #zh-kont {
