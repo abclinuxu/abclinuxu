@@ -135,6 +135,8 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_URL = "url";
     public static final String PARAM_RID = "rid";
     public static final String PARAM_PREFIX = "prefix";
+    public static final String PARAM_UID1 = "uid1";
+    public static final String PARAM_UID2 = "uid2";
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
@@ -145,6 +147,8 @@ public class EditUser implements AbcAction, Configurable {
     public static final String VAR_USERS = "USERS";
     public static final String VAR_SERVERS = "SERVERS";
     public static final String VAR_BOOKMARKS = "BOOKMARKS";
+    public static final String VAR_USER1 = "USER1";
+    public static final String VAR_USER2 = "USER2";
 
     public static final String ACTION_REGISTER = "register";
     public static final String ACTION_REGISTER_STEP2 = "register2";
@@ -176,6 +180,9 @@ public class EditUser implements AbcAction, Configurable {
     public static final String ACTION_INVALIDATE_EMAIL = "invalidateEmail";
     public static final String ACTION_INVALIDATE_EMAIL2 = "invalidateEmail2";
     public static final String ACTION_ADD_GROUP_MEMBER = "addToGroup";
+    public static final String ACTION_REMOVE_MERGE = "removeMerge";
+    public static final String ACTION_REMOVE_MERGE_STEP2 = "removeMerge2";
+    public static final String ACTION_REMOVE_MERGE_STEP3 = "removeMerge3";
 
     public static final String PREF_INVALID_NICK_REGEXP = "regexp.invalid.login";
     private static REProgram reLoginInvalid;
@@ -338,6 +345,19 @@ public class EditUser implements AbcAction, Configurable {
             return actionAddToGroup(request, response, env);
         }
 
+        if ( action.equals(ACTION_REMOVE_MERGE) ) {
+            return FMTemplateSelector.select("EditUser", "removeMerge", env, request);
+        }
+
+        if ( action.equals(ACTION_REMOVE_MERGE_STEP2) ) {
+            return actionRemoveMerge2(request, env);
+        }
+
+        if ( action.equals(ACTION_REMOVE_MERGE_STEP3) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
+            return actionRemoveMerge3(request, response, env);
+        }
+
         throw new MissingArgumentException("Chybí parametr action!");
     }
 
@@ -383,7 +403,7 @@ public class EditUser implements AbcAction, Configurable {
         }
 
         HttpSession session = request.getSession();
-        session.setAttribute(Constants.VAR_USER, managed);
+        session.setAttribute(Constants.VAR_USER, managed.getId());
 
         Map data = new HashMap();
         data.put(Constants.VAR_USER, managed);
@@ -444,11 +464,6 @@ public class EditUser implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditUser","editBasic",env,request);
         }
 
-        User sessionUser = (User) env.get(Constants.VAR_USER);
-        if ( managed.getId()==sessionUser.getId() ) {
-            sessionUser.synchronizeWith(managed);
-        }
-
         ServletUtils.addMessage("Změny byly uloženy.",env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
@@ -481,11 +496,6 @@ public class EditUser implements AbcAction, Configurable {
         Cookie cookie = ServletUtils.getCookie(request, Constants.VAR_USER);
         if ( cookie!=null )
             ServletUtils.deleteCookie(cookie, response);
-
-        User sessionUser = (User) env.get(Constants.VAR_USER);
-        if (managed.getId() == sessionUser.getId()) {
-            sessionUser.synchronizeWith(managed);
-        }
 
         ServletUtils.addMessage("Heslo bylo změněno.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -547,11 +557,6 @@ public class EditUser implements AbcAction, Configurable {
 
         persistence.update(managed);
 
-        User sessionUser = (User) env.get(Constants.VAR_USER);
-        if (managed.getId() == sessionUser.getId()) {
-            sessionUser.synchronizeWith(managed);
-        }
-
         ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
@@ -611,11 +616,6 @@ public class EditUser implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditUser", "editProfile", env, request);
 
         persistence.update(managed);
-
-        User sessionUser = (User) env.get(Constants.VAR_USER);
-        if (managed.getId() == sessionUser.getId()) {
-            sessionUser.synchronizeWith(managed);
-        }
 
         ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -748,11 +748,6 @@ public class EditUser implements AbcAction, Configurable {
 
         persistence.update(managed);
 
-        User sessionUser = (User) env.get(Constants.VAR_USER);
-        if (managed.getId() == sessionUser.getId()) {
-            sessionUser.synchronizeWith(managed);
-        }
-
         ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
@@ -803,10 +798,6 @@ public class EditUser implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistence();
         persistence.update(managed);
 
-        User sessionUser = (User) env.get(Constants.VAR_USER);
-        if (managed.getId() == sessionUser.getId())
-            sessionUser.synchronizeWith(managed);
-
     	ServletUtils.addMessage("Uživatel byl přidán na seznam blokovaných uživatelů.", env, request.getSession());
         urlUtils.redirect(response, url);
         return null;
@@ -832,10 +823,6 @@ public class EditUser implements AbcAction, Configurable {
 
         Persistence persistence = PersistenceFactory.getPersistence();
         persistence.update(managed);
-
-        User sessionUser = (User) env.get(Constants.VAR_USER);
-        if (managed.getId() == sessionUser.getId())
-            sessionUser.synchronizeWith(managed);
 
         ServletUtils.addMessage("Uživatel byl odstraněn ze seznamu blokovaných uživatelů.", env, request.getSession());
         urlUtils.redirect(response, url);
@@ -898,10 +885,6 @@ public class EditUser implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistence();
         persistence.update(managed);
 
-        User sessionUser = (User) env.get(Constants.VAR_USER);
-        if (managed.getId() == sessionUser.getId())
-            sessionUser.synchronizeWith(managed);
-
         ServletUtils.addMessage("Vybrané stránky byly odstraněny ze záložek.", env, request.getSession());
         urlUtils.redirect(response, url);
         return null;
@@ -927,10 +910,6 @@ public class EditUser implements AbcAction, Configurable {
 
         Persistence persistence = PersistenceFactory.getPersistence();
         persistence.update(managed);
-
-        User sessionUser = (User) env.get(Constants.VAR_USER);
-        if (managed.getId() == sessionUser.getId())
-            sessionUser.synchronizeWith(managed);
 
         ServletUtils.addMessage("Stránka byla přidána do vašich záložek.", env, request.getSession());
         urlUtils.redirect(response, url);
@@ -985,11 +964,6 @@ public class EditUser implements AbcAction, Configurable {
 
         persistence.update(managed);
 
-        User sessionUser = (User) env.get(Constants.VAR_USER);
-        if (managed.getId() == sessionUser.getId()) {
-            sessionUser.synchronizeWith(managed);
-        }
-
         ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
@@ -1018,11 +992,6 @@ public class EditUser implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditUser", "uploadPhoto", env, request);
 
         persistence.update(managed);
-
-        User sessionUser = (User) env.get(Constants.VAR_USER);
-        if (managed.getId() == sessionUser.getId()) {
-            sessionUser.synchronizeWith(managed);
-        }
 
         ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -1053,14 +1022,102 @@ public class EditUser implements AbcAction, Configurable {
 
         persistence.update(managed);
 
-        User sessionUser = (User) env.get(Constants.VAR_USER);
-        if (managed.getId() == sessionUser.getId()) {
-            sessionUser.synchronizeWith(managed);
-        }
-
         ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
+        return null;
+    }
+
+    /**
+     * Remove/merge accounts, step 2: safety checks.
+     */
+    protected String actionRemoveMerge2(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user1 = null, user2 = null;
+
+        int uid1 = Misc.parseInt((String) params.get(PARAM_UID1), 0);
+        int uid2 = Misc.parseInt((String) params.get(PARAM_UID2), 0);
+
+        if (uid1 == 0) {
+            ServletUtils.addError(PARAM_UID1, "Vyplňte UID!", env, null);
+            return FMTemplateSelector.select("EditUser", "removeMerge", env, request);
+        }
+
+        if (uid1 == uid2) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "UID jsou shodná!", env, null);
+            return FMTemplateSelector.select("EditUser", "removeMerge", env, request);
+        }
+
+        try {
+            user1 = Tools.createUser(uid1);
+            if (uid2 != 0)
+                user2 = Tools.createUser(uid2);
+        } catch (Exception e) {
+            if (user1 == null) {
+                ServletUtils.addError(PARAM_UID1, "První UID je neplatné!", env, null);
+                return FMTemplateSelector.select("EditUser", "removeMerge", env, request);
+            } else {
+                ServletUtils.addError(PARAM_UID2, "Druhé UID je neplatné!", env, null);
+                return FMTemplateSelector.select("EditUser", "removeMerge", env, request);
+            }
+        }
+
+        if (user2 == null) {
+            // verify that the user account is unused
+            boolean unused = true;
+            SQLTool sqlTool = SQLTool.getInstance();
+
+            Set<String> property = Collections.singleton(Integer.toString(user1.getId()));
+            Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_USER, property);
+            List<Relation> authors = sqlTool.findItemRelationsWithTypeWithFilters(Item.AUTHOR, null, filters);
+
+            unused &= authors.isEmpty();
+            unused &= sqlTool.countNewsRelationsByUser(user1.getId()) == 0;
+            unused &= sqlTool.countQuestionRelationsByUser(user1.getId()) == 0;
+            unused &= sqlTool.countCommentRelationsByUser(user1.getId()) == 0;
+            unused &= sqlTool.countWikiRelationsByUser(user1.getId()) == 0;
+            unused &= sqlTool.countPropertiesByUser(user1.getId()) == 0;
+
+            if ( ! unused) {
+                ServletUtils.addError(PARAM_UID1, "Tento uživatel má záznamy v systému! Musíte je nejdříve smazat.", env, null);
+                return FMTemplateSelector.select("EditUser", "removeMerge", env, request);
+            }
+        }
+
+        env.put(VAR_USER1, user1);
+        env.put(VAR_USER2, user2);
+
+        return FMTemplateSelector.select("EditUser", "removeMerge2", env, request);
+    }
+
+    /**
+     * Remove/merge accounts, step 3: execute the operation.
+     */
+    protected String actionRemoveMerge3(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
+        SQLTool sqlTool = SQLTool.getInstance();
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+
+        int uid1 = Misc.parseInt((String) params.get(PARAM_UID1), 0);
+        int uid2 = Misc.parseInt((String) params.get(PARAM_UID2), 0);
+        User user1 = Tools.createUser(uid1);
+
+        if (uid2 != 0)
+            sqlTool.mergeUsers(uid1, uid2);
+        sqlTool.deleteUser(uid1);
+        PersistenceFactory.getPersistence().clearCache();
+
+        if (uid2 != 0) {
+            ServletUtils.addMessage("Uživatelé byli sloučeni.", env, request.getSession());
+            AdminLogger.logEvent(user, "sloucil uzivatele " + uid1 + "(" + user1.getEmail() + ") s uzivatelem " + uid2);
+        } else {
+            ServletUtils.addMessage("Uživatel byl odstraněn.", env, request.getSession());;
+            AdminLogger.logEvent(user, "smazal uzivatele " + uid1 + "(" + user1.getEmail() + ")");
+        }
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/Admin");
+
         return null;
     }
 
@@ -1111,11 +1168,6 @@ public class EditUser implements AbcAction, Configurable {
 
         persistence.update(managed);
 
-        User sessionUser = (User) env.get(Constants.VAR_USER);
-        if (managed.getId() == sessionUser.getId()) {
-            sessionUser.synchronizeWith(managed);
-        }
-
         ServletUtils.addMessage("Změny rolí uživatele "+managed.getName()+" byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
@@ -1155,7 +1207,7 @@ public class EditUser implements AbcAction, Configurable {
             }
         }
 
-        if ( sb.length()>0 )
+        if (sb.length() > 0)
             ServletUtils.addError(Constants.ERROR_GENERIC, sb.toString(), env, request.getSession());
         ServletUtils.addMessage(count+" uživatelům byl zneplatněn email.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);

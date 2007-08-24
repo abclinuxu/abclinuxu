@@ -21,7 +21,6 @@ package cz.abclinuxu.servlets.utils;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.servlets.Constants;
@@ -168,7 +167,7 @@ public class ServletUtils implements Configurable {
      * Performs automatic login. If user wishes to log out, it does so. Otherwise
      * it searches special session attribute, request parameters or cookie for
      * login information in this order and tries user to log in. If it suceeds,
-     * instance of User is stored in both session attribute and environment.
+     * instance of User is stored in environment and its id in the session.
      */
     public static void handleLogin(HttpServletRequest request, HttpServletResponse response, Map env) {
         HttpSession session = request.getSession();
@@ -179,22 +178,31 @@ public class ServletUtils implements Configurable {
             session.removeAttribute(Constants.VAR_USER);
             session.invalidate();
             Cookie cookie = getCookie(request, Constants.VAR_USER);
-            if ( cookie!=null )
+            if (cookie != null)
                 deleteCookie(cookie,response);
             return;
         }
 
-        User user = (User) session.getAttribute(Constants.VAR_USER);
-        if ( user!=null ) {
-            env.put(Constants.VAR_USER,user);
-            return;
+        Persistence persistence = PersistenceFactory.getPersistence();
+        User user = null;
+        Integer uid = (Integer) session.getAttribute(Constants.VAR_USER);
+        if (uid != null) {
+            try {
+                user = (User) persistence.findById(new User(uid));
+                if (user != null) {
+                    env.put(Constants.VAR_USER, user);
+                    return;
+                }
+            } catch (Exception e) {
+                log.warn("Nalezena session s neznámým uživatelem!");
+                return;
+            }
         }
 
-        Persistence persistence = PersistenceFactory.getPersistence();
         String login = (String) params.get(PARAM_LOG_USER);
         if ( ! Misc.empty(login) ) {
             Integer id = SQLTool.getInstance().getUserByLogin(login);
-            if ( id==null ) {
+            if (id == null) {
                 ServletUtils.addError(PARAM_LOG_USER,"Přihlašovací jméno nenalezeno!",env, null);
                 return;
             }
@@ -202,39 +210,39 @@ public class ServletUtils implements Configurable {
             user = (User) persistence.findById(user);
 
             String password = (String) params.get(PARAM_LOG_PASSWORD);
-            if ( !user.validatePassword(password) ) {
-                ServletUtils.addError(PARAM_LOG_PASSWORD,"Špatné heslo!",env, null);
+            if ( ! user.validatePassword(password) ) {
+                ServletUtils.addError(PARAM_LOG_PASSWORD, "Špatné heslo!", env, null);
                 return;
             }
 
-            handleLoggedIn(user,false,response);
+            handleLoggedIn(user, false, response);
             params.put(ActionProtector.PARAM_TICKET, user.getSingleProperty(Constants.PROPERTY_TICKET));
 
         } else {
             Cookie cookie = getCookie(request, Constants.VAR_USER);
-            if ( cookie==null )
+            if (cookie == null)
                 return;
 
             LoginCookie loginCookie = new LoginCookie(cookie);
             try {
                 user = (User) persistence.findById(new User(loginCookie.id));
-            } catch (PersistenceException e) {
-                deleteCookie(cookie,response);
+            } catch (Exception e) {
+                deleteCookie(cookie, response);
                 log.warn("Nalezena cookie s neznámým uživatelem!");
-                addError(Constants.ERROR_GENERIC,"Nalezena cookie s neznámým uživatelem!",env, null);
+                addError(Constants.ERROR_GENERIC, "Nalezena cookie s neznámým uživatelem!", env, null);
                 return;
             }
 
-            if ( user.getPassword().hashCode()!=loginCookie.hash ) {
-                deleteCookie(cookie,response);
+            if (user.getPassword().hashCode() != loginCookie.hash) {
+                deleteCookie(cookie, response);
                 log.warn("Nalezena cookie se špatným heslem!");
-                addError(Constants.ERROR_GENERIC,"Nalezena cookie se špatným heslem!",env, null);
+                addError(Constants.ERROR_GENERIC, "Nalezena cookie se špatným heslem!", env, null);
                 return;
             }
             handleLoggedIn(user, true, null);
         }
 
-        session.setAttribute(Constants.VAR_USER, user);
+        session.setAttribute(Constants.VAR_USER, user.getId());
         env.put(Constants.VAR_USER, user);
     }
 
@@ -401,12 +409,12 @@ public class ServletUtils implements Configurable {
         }
         user.fillLastSeenComments(comments);
 
-        if ( !cookieExists ) {
+        if (! cookieExists) {
             int valid = 6*30*24*3600; // six months
             Node node = user.getData().selectSingleNode("/data/settings/cookie_valid");
-            if ( node!=null )
+            if (node != null)
                 valid = Misc.parseInt(node.getText(), valid);
-            if ( valid!=0 ) {
+            if (valid != 0) {
                 Cookie cookie = new LoginCookie(user).getCookie();
                 cookie.setMaxAge(valid);
                 addCookie(cookie,response);

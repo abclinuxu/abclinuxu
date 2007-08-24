@@ -343,6 +343,12 @@
         <action name="invalidateEmail" content="/edit/invalidate_emails.ftl" template="print">
             <var name="TITLE" value="Zneplatnění emailu uživatelům"/>
         </action>
+        <action name="removeMerge" content="/remove/user.ftl" template="print">
+            <var name="TITLE" value="Odstranění či sloučení uživatele"/>
+        </action>
+        <action name="removeMerge2" content="/remove/user2.ftl" template="print">
+            <var name="TITLE" value="Odstranění či sloučení uživatele"/>
+        </action>
     </servlet>
 
     <servlet name="EditBlog">

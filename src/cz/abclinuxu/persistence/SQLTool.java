@@ -27,6 +27,7 @@ import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.persistence.impl.MySqlPersistence;
 import cz.abclinuxu.persistence.versioning.VersionedDocument;
+import cz.abclinuxu.scheduler.VariableFetcher;
 
 import java.sql.*;
 import java.util.prefs.Preferences;
@@ -111,13 +112,24 @@ public final class SQLTool implements Configurable {
     public static final String TOP_COUNTED_RELATIONS = "top.counted.relations";
     public static final String LAST_REVISIONS = "last.versions";
 
+    public static final String DELETE_USER = "delete.user";
+    public static final String DELETE_USER_TICKET = "delete.user.ticket";
+
+    public static final String CHANGE_REVISION_OWNER = "change.revision.owner";
+    public static final String CHANGE_COMMENT_OWNER = "change.comment.owner";
+    public static final String CHANGE_ITEM_OWNER = "change.item.owner";
+    public static final String CHANGE_RECORD_OWNER = "change.record.owner";
+    public static final String CHANGE_CATEGORY_OWNER = "change.category.owner";
+    public static final String CHANGE_PROPERTY_OWNER = "change.property.owner";
+    public static final String COUNT_PROPERTIES_BY_USER = "count.properties.by.user";
+
     private static SQLTool singleton;
     static {
         singleton = new SQLTool();
         ConfigurationManager.getConfigurator().configureAndRememberMe(singleton);
     }
 
-    private Map sql = new HashMap(60, 0.9f);
+    private Map<String, String> sql = new HashMap<String, String>(60, 0.9f);
 
     /**
      * Returns singleton of SQLTool.
@@ -312,6 +324,88 @@ public final class SQLTool implements Configurable {
         if (param == null || param.length() == 0)
             return param;
         return param.replace('\\', ' ');
+    }
+
+    /**
+     * Removes a user from the database.
+     * @param uid User's UID
+     */
+    public void deleteUser(int uid) throws Exception {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(sql.get(DELETE_USER));
+            statement.setInt(1, uid);
+            statement.executeUpdate();
+            persistance.releaseSQLResources(null, statement, null);
+
+            statement = con.prepareStatement(sql.get(DELETE_USER_TICKET));
+            statement.setInt(1, uid);
+            statement.executeUpdate();
+
+            persistance.clearCache();
+            VariableFetcher.getInstance().run();
+        } finally {
+            persistance.releaseSQLResources(con, statement, null);
+        }
+    }
+
+    /**
+     * Merges two users - changes ownership for all items from user #1 to user #2.
+     * @param from UID of the original user.
+     * @param to UID of the destination user.
+     */
+    public void mergeUsers(int from, int to) throws Exception {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+
+        try {
+            con = persistance.getSQLConnection();
+
+            mergeUsersStep(con, CHANGE_REVISION_OWNER, from, to);
+            mergeUsersStep(con, CHANGE_COMMENT_OWNER, from, to);
+            mergeUsersStep(con, CHANGE_ITEM_OWNER, from, to);
+            mergeUsersStep(con, CHANGE_RECORD_OWNER, from, to);
+            mergeUsersStep(con, CHANGE_CATEGORY_OWNER, from, to);
+            mergeUsersStep(con, CHANGE_PROPERTY_OWNER, from, to);
+        } finally {
+            persistance.releaseSQLResources(con, (Statement) null, null);
+        }
+    }
+
+    /**
+     * Executes one step of merging two users
+     * @param con Connection to the database
+     * @param sqlKey key to map with SQL commands
+     * @param from UID of the original user.
+     * @param to UID of the destination user.
+     */
+    private void mergeUsersStep(Connection con, String sqlKey, int from, int to) throws Exception {
+        PreparedStatement statement = null;
+        try {
+            statement = con.prepareStatement(sql.get(sqlKey));
+            statement.setInt(1, to);
+            statement.setInt(2, from);
+            statement.executeUpdate();
+        } finally {
+            MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+            persistance.releaseSQLResources(null, statement, null);
+        }
+    }
+
+    /**
+     * Finds properties containing the given uid. The only likely use is to verify that a user account
+     * is unused.
+     * @param uid User's id
+     * @return property count
+     */
+    public int countPropertiesByUser(int uid) {
+        List params = new ArrayList();
+        params.add(uid);
+        return loadNumber(sql.get(COUNT_PROPERTIES_BY_USER), params);
     }
 
     /**
@@ -1845,6 +1939,15 @@ public final class SQLTool implements Configurable {
         store(TOP_USED_RELATIONS, prefs);
         store(TOP_COUNTED_RELATIONS, prefs);
         store(LAST_REVISIONS, prefs);
+        store(DELETE_USER, prefs);
+        store(DELETE_USER_TICKET, prefs);
+        store(CHANGE_REVISION_OWNER, prefs);
+        store(CHANGE_COMMENT_OWNER, prefs);
+        store(CHANGE_ITEM_OWNER, prefs);
+        store(CHANGE_RECORD_OWNER, prefs);
+        store(CHANGE_CATEGORY_OWNER, prefs);
+        store(CHANGE_PROPERTY_OWNER, prefs);
+        store(COUNT_PROPERTIES_BY_USER, prefs);
     }
 
     /**

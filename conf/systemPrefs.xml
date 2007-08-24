@@ -329,6 +329,15 @@
                             <entry key="top.used.relations" value="select R.cislo,count(*) from relace R, vlastnost V where V.typ='used_by' and R.typ_potomka='P' and R.potomek=V.predek group by R.potomek order by 2 desc"/>
                             <entry key="top.counted.relations" value="select R.cislo from relace R, citac C, polozka P where R.typ_potomka='P' and R.potomek=C.cislo and C.typ='P' and C.druh=? and R.potomek=P.cislo and P.typ=? order by soucet desc"/>
                             <entry key="last.versions" value="select verze,kdo,kdy,obsah,zmena,popis from verze where relace=? order by verze desc limit ?"/>
+                            <entry key="delete.user" value="delete from uzivatel where cislo=?"/>
+                            <entry key="delete.user.ticket" value="delete from vlastnost where predek=? and typ='ticket'"/>
+                            <entry key="change.revision.owner" value="update verze set kdo=? where kdo=?"/>
+                            <entry key="change.comment.owner" value="update komentar set autor=? where autor=?"/>
+                            <entry key="change.item.owner" value="update polozka set pridal=?, zmeneno=zmeneno where pridal=?"/>
+                            <entry key="change.record.owner" value="update zaznam set pridal=?, zmeneno=zmeneno where pridal=?"/>
+                            <entry key="change.category.owner" value="update kategorie set pridal=?, zmeneno=zmeneno where pridal=?"/>
+                            <entry key="change.property.owner" value="update vlastnost set hodnota=? where hodnota=? and (typ='user' or typ='used_by')"/>
+                            <entry key="count.properties.by.user" value="select count(*) from vlastnost where hodnota=? and (typ='user' or typ='used_by')"/>
                         </map>
                     </node>
                     <node name="versioning">
