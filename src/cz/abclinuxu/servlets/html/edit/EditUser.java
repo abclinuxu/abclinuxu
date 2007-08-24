@@ -403,7 +403,7 @@ public class EditUser implements AbcAction, Configurable {
         }
 
         HttpSession session = request.getSession();
-        session.setAttribute(Constants.VAR_USER, managed.getId());
+        session.setAttribute(Constants.VAR_USER, managed);
 
         Map data = new HashMap();
         data.put(Constants.VAR_USER, managed);
@@ -464,6 +464,11 @@ public class EditUser implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditUser","editBasic",env,request);
         }
 
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
+
         ServletUtils.addMessage("Změny byly uloženy.",env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
@@ -496,6 +501,11 @@ public class EditUser implements AbcAction, Configurable {
         Cookie cookie = ServletUtils.getCookie(request, Constants.VAR_USER);
         if ( cookie!=null )
             ServletUtils.deleteCookie(cookie, response);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
 
         ServletUtils.addMessage("Heslo bylo změněno.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -557,6 +567,11 @@ public class EditUser implements AbcAction, Configurable {
 
         persistence.update(managed);
 
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
+
         ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
@@ -616,6 +631,11 @@ public class EditUser implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditUser", "editProfile", env, request);
 
         persistence.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
 
         ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -748,6 +768,11 @@ public class EditUser implements AbcAction, Configurable {
 
         persistence.update(managed);
 
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
+
         ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
@@ -798,6 +823,10 @@ public class EditUser implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistence();
         persistence.update(managed);
 
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId())
+            sessionUser.synchronizeWith(managed);
+
     	ServletUtils.addMessage("Uživatel byl přidán na seznam blokovaných uživatelů.", env, request.getSession());
         urlUtils.redirect(response, url);
         return null;
@@ -823,6 +852,10 @@ public class EditUser implements AbcAction, Configurable {
 
         Persistence persistence = PersistenceFactory.getPersistence();
         persistence.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId())
+            sessionUser.synchronizeWith(managed);
 
         ServletUtils.addMessage("Uživatel byl odstraněn ze seznamu blokovaných uživatelů.", env, request.getSession());
         urlUtils.redirect(response, url);
@@ -885,6 +918,10 @@ public class EditUser implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistence();
         persistence.update(managed);
 
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId())
+            sessionUser.synchronizeWith(managed);
+
         ServletUtils.addMessage("Vybrané stránky byly odstraněny ze záložek.", env, request.getSession());
         urlUtils.redirect(response, url);
         return null;
@@ -910,6 +947,10 @@ public class EditUser implements AbcAction, Configurable {
 
         Persistence persistence = PersistenceFactory.getPersistence();
         persistence.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId())
+            sessionUser.synchronizeWith(managed);
 
         ServletUtils.addMessage("Stránka byla přidána do vašich záložek.", env, request.getSession());
         urlUtils.redirect(response, url);
@@ -964,6 +1005,11 @@ public class EditUser implements AbcAction, Configurable {
 
         persistence.update(managed);
 
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
+
         ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
@@ -993,6 +1039,11 @@ public class EditUser implements AbcAction, Configurable {
 
         persistence.update(managed);
 
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
+
         ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
@@ -1021,6 +1072,11 @@ public class EditUser implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditUser", "uploadAvatar", env, request);
 
         persistence.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
 
         ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -1167,6 +1223,11 @@ public class EditUser implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditUser", "grantRoles", env, request);
 
         persistence.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
 
         ServletUtils.addMessage("Změny rolí uživatele "+managed.getName()+" byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);

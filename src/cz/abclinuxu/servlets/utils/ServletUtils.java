@@ -167,7 +167,7 @@ public class ServletUtils implements Configurable {
      * Performs automatic login. If user wishes to log out, it does so. Otherwise
      * it searches special session attribute, request parameters or cookie for
      * login information in this order and tries user to log in. If it suceeds,
-     * instance of User is stored in environment and its id in the session.
+     * instance of User is stored in both session attribute and environment.
      */
     public static void handleLogin(HttpServletRequest request, HttpServletResponse response, Map env) {
         HttpSession session = request.getSession();
@@ -184,19 +184,10 @@ public class ServletUtils implements Configurable {
         }
 
         Persistence persistence = PersistenceFactory.getPersistence();
-        User user = null;
-        Integer uid = (Integer) session.getAttribute(Constants.VAR_USER);
-        if (uid != null) {
-            try {
-                user = (User) persistence.findById(new User(uid));
-                if (user != null) {
-                    env.put(Constants.VAR_USER, user);
-                    return;
-                }
-            } catch (Exception e) {
-                log.warn("Nalezena session s neznámým uživatelem!");
-                return;
-            }
+        User user = (User) session.getAttribute(Constants.VAR_USER);
+        if (user != null) {
+            env.put(Constants.VAR_USER, user);
+            return;
         }
 
         String login = (String) params.get(PARAM_LOG_USER);
@@ -242,7 +233,7 @@ public class ServletUtils implements Configurable {
             handleLoggedIn(user, true, null);
         }
 
-        session.setAttribute(Constants.VAR_USER, user.getId());
+        session.setAttribute(Constants.VAR_USER, user);
         env.put(Constants.VAR_USER, user);
     }
 
