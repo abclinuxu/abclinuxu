@@ -35,6 +35,7 @@ import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.exceptions.InvalidInputException;
+import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -77,13 +78,14 @@ public class ViewBlog implements AbcAction, Configurable {
     static final String PREF_BLOG_URL = "regexp.blog.url";
     static final String PREF_SUMMARY_URL = "regexp.blog.summary.url";
     static final String PREF_ARCHIVE_URL = "regexp.blog.archive.url";
+    static final String PREF_EXPORT_URL = "regexp.blog.export.url";
     static final String PREF_DIGEST_URL = "regexp.blog.digest.url";
     static final String PREF_PAGE_SIZE = "page.size";
     static final String PREF_SUMMARY_SIZE = "summary.size";
     static final String PREF_FRESH_STORIES_SIZE = "fresh.stories.size";
     static final String PREF_URL_SUMMARY = "url.summary";
 
-    static REProgram reUrl, reSummaryUrl, reArchiveUrl, reDigestUrl;
+    static REProgram reUrl, reSummaryUrl, reArchiveUrl, reDigestUrl, reExportUrl;
     static int defaultPageSize, freshStoriesSize, summarySize;
     static String urlSummary;
     static {
@@ -97,7 +99,7 @@ public class ViewBlog implements AbcAction, Configurable {
         int year, month, day, rid;
         year = month = day = rid = 0;
         String name = null;
-        boolean summary = false, archive = false, digest = false;
+        boolean summary = false, archive = false, digest = false, export = false;
 
         String uri = (String) env.get(Constants.VAR_REQUEST_URI);
         if (uri.startsWith("/blogy"))
@@ -116,10 +118,14 @@ public class ViewBlog implements AbcAction, Configurable {
                 digest = true;
                 env.put(VAR_DIGEST, Boolean.TRUE);
             } else {
+                RE regexpExport = new RE(reExportUrl);
                 regexp = new RE(reArchiveUrl);
                 if (regexp.match(uri)) { // uri = "/blog/jmeno/archiv";
                     archive = true;
                     name = regexp.getParen(1);
+                } else if (regexpExport.match(uri)) { // uri = "/blog/jmeno/export"
+                    export = true;
+                    name = regexpExport.getParen(1);
                 } else { // uri = "/blog/jmeno/2004/12/12/124545";
                     regexp = new RE(reUrl);
                     regexp.match(uri);
@@ -189,6 +195,9 @@ public class ViewBlog implements AbcAction, Configurable {
             env.put(VAR_BLOG, blog);
             env.put(VAR_BLOG_XML, NodeModel.wrap((new DOMWriter().write(blog.getData()))));
 
+            if (export)
+                return processExport(request, env, blog);
+
             fillFreshStories(blog, env);
             if (! archive)
                 fillMonthStatistics(blog, env);
@@ -232,6 +241,26 @@ public class ViewBlog implements AbcAction, Configurable {
         List parents = persistence.findParents(blogRelation);
         env.put(ShowObject.VAR_PARENTS, parents);
         return FMTemplateSelector.select("ViewBlog", "archive", env, request);
+    }
+
+    protected String processExport(HttpServletRequest request, Map env, Category blog) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
+        SQLTool sqlTool = SQLTool.getInstance();
+
+        // verify permissions
+        if (user == null)
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+        if (user.getId() != blog.getOwner() && !user.hasRole(Roles.ROOT))
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        Qualifier[] qa = new Qualifier[]{ new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner()), Qualifier.SORT_BY_CREATED };
+        List stories = sqlTool.findItemRelationsWithType(Item.BLOG, qa);
+        Tools.syncList(stories);
+
+        env.put(VAR_STORIES, stories);
+        fillUnpublishedStories(blog, env);
+        env.put(Constants.VAR_CONTENT_TYPE, "text/plain; charset=UTF-8");
+        return FMTemplateSelector.select("ViewBlog", "export", env, request);
     }
 
     /**
@@ -304,10 +333,8 @@ public class ViewBlog implements AbcAction, Configurable {
         if (!summary)
             addTimeLimitsFQ(year, month, day, qualifiers);
 
-        HashSet values = new HashSet();
-        values.add("yes");
-        Map filters = new HashMap();
-        filters.put(Constants.PROPERTY_BLOG_DIGEST, values);
+        Set<String> values = Collections.singleton("yes");
+        Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_BLOG_DIGEST, values);
 
         Qualifier[] qa = new Qualifier[qualifiers.size()];
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
@@ -553,6 +580,12 @@ public class ViewBlog implements AbcAction, Configurable {
         re = prefs.get(PREF_ARCHIVE_URL, null);
         try {
             reArchiveUrl = new RECompiler().compile(re);
+        } catch (RESyntaxException e) {
+            throw new ConfigurationException("Invalid regexp: '"+re+"'!");
+        }
+        re = prefs.get(PREF_EXPORT_URL, null);
+        try {
+            reExportUrl = new RECompiler().compile(re);
         } catch (RESyntaxException e) {
             throw new ConfigurationException("Invalid regexp: '"+re+"'!");
         }

@@ -611,6 +611,7 @@
         <action name="archive" content="/show/blog_archive.ftl">
             <var name="TITLE" value="Archiv blogu" />
         </action>
+        <action name="export" template="print" content="/misc/blog_export.ftl"/>
     </servlet>
 
     <servlet name="ViewUser">

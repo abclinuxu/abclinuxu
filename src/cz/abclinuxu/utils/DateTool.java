@@ -47,6 +47,8 @@ public class DateTool implements Configurable {
     public static final String ISO_FORMAT = "ISO";
     /** 2003-01-01 */
     public static final String ISO_ONLY_DATE = "ISO_DMY";
+    /** 01/01/2003 16:00:00 (poradi MM/DD/YYYY) */
+    public static final String US_FULL = "US_FULL";
     /** 1.1. 16:00 */
     public static final String CZ_SHORT = "CZ_SHORT";
     /** 1.1.2003 16:00 */
@@ -207,6 +209,12 @@ public class DateTool implements Configurable {
         if ( CZ_ONLY_DAY.equalsIgnoreCase(format) ) {
             synchronized (Constants.czDay) {
                 return Constants.czDay.format(date);
+            }
+        }
+
+        if ( US_FULL.equalsIgnoreCase(format) ) {
+            synchronized (Constants.usFormat) {
+                return Constants.usFormat.format(date);
             }
         }
 
