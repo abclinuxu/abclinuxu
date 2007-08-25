@@ -917,21 +917,21 @@ public class FeedGenerator implements Configurable {
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
-        fileDiscussions = prefs.get(PREF_DISCUSSIONS, null);
         fileArticles = prefs.get(PREF_ARTICLES, null);
-        fileDrivers = prefs.get(PREF_DRIVERS, null);
-        fileHardware = prefs.get(PREF_HARDWARE, null);
-        fileSoftware = prefs.get(PREF_SOFTWARE, null);
+        fileBazaar = prefs.get(PREF_BAZAAR, null);
         fileBlog = prefs.get(PREF_BLOG, null);
         fileBlogDigest = prefs.get(PREF_BLOG_DIGEST, null);
+        fileDictionary = prefs.get(PREF_DICTIONARY, null);
+        fileDiscussions = prefs.get(PREF_DISCUSSIONS, null);
+        fileDrivers = prefs.get(PREF_DRIVERS, null);
+        fileFaq = prefs.get(PREF_FAQ, null);
+        fileHardware = prefs.get(PREF_HARDWARE, null);
+        fileNews = prefs.get(PREF_NEWS, null);
+        filePersonalities = prefs.get(PREF_PERSONALITIES, null);
+        filePolls = prefs.get(PREF_POLLS, null);
+        fileSoftware = prefs.get(PREF_SOFTWARE, null);
         dirBlogs = prefs.get(PREF_BLOGS, null);
         fileTrafika = prefs.get(PREF_TRAFIKA, null);
-        fileNews = prefs.get(PREF_NEWS, null);
-        fileFaq = prefs.get(PREF_FAQ, null);
-        filePolls = prefs.get(PREF_POLLS, null);
-        fileBazaar = prefs.get(PREF_BAZAAR, null);
-        fileDictionary = prefs.get(PREF_DICTIONARY, null);
-        filePersonalities = prefs.get(PREF_PERSONALITIES, null);
         newsWordLimit = prefs.getInt(PREF_NEWS_WORD_LIMIT, 10);
 
         try {
@@ -946,6 +946,112 @@ public class FeedGenerator implements Configurable {
         } catch(BackingStoreException e) {
             throw new ConfigurationException(e.getMessage(), e.getCause());
         }
+    }
+
+    /**
+     * @return url for fresh articles feed
+     */
+    public static String getArticlesFeedUrl() {
+        return fileArticles;
+    }
+
+    /**
+     * @return url for fresh ads feed
+     */
+    public static String getBazaarFeedUrl() {
+        return fileBazaar;
+    }
+
+    /**
+     * @return url for fresh stories from given blog feed
+     */
+    public static String getBlogFeedUrl(Category blog) {
+        return dirBlogs + blog.getSubType() + ".rss";
+    }
+
+    /**
+     * @return url for fresh blog stories feed
+     */
+    public static String getBlogsFeedUrl() {
+        return fileBlog;
+    }
+
+    /**
+     * @return url for selected blog stories feed
+     */
+    public static String getBlogDigestFeedUrl() {
+        return fileBlogDigest;
+    }
+
+    /**
+     * @return url for fresh dictionaries items feed
+     */
+    public static String getDictionariesFeedUrl() {
+        return fileDictionary;
+    }
+
+    /**
+     * @return url for fresh drivers feed
+     */
+    public static String getDriversFeedUrl() {
+        return fileDrivers;
+    }
+
+    /**
+     * @return url for fresh FAQ items feed
+     */
+    public static String getFaqFeedUrl() {
+        return fileFaq;
+    }
+
+    /**
+     * @return url for fresh questions in forum feed
+     */
+    public static String getForumFeedUrl() {
+        return fileDiscussions;
+    }
+
+    /**
+     * @return url for fresh hardware items feed
+     */
+    public static String getHardwareFeedUrl() {
+        return fileHardware;
+    }
+
+    /**
+     * @return url for fresh news feed
+     */
+    public static String getNewsFeedUrl() {
+        return fileNews;
+    }
+
+    /**
+     * @return url for fresh personalities items feed
+     */
+    public static String getPersonalitiesFeedUrl() {
+        return filePersonalities;
+    }
+
+    /**
+     * @return url for fresh polls feed
+     */
+    public static String getPollsFeedUrl() {
+        return filePolls;
+    }
+
+    /**
+     * @param relationId relation id of the series
+     * @return url for fresh articles in given feed or null, if it does not have its feed
+     */
+    public static String getSeriesFeedUrl(int relationId) {
+        return filesArticleSeries.get(relationId);
+    }
+
+    /**
+     * @return url for fresh software items feed
+     */
+    public static String getSoftwareFeedUrl() {
+        return fileSoftware;
     }
 
     public static void main(String[] args) {

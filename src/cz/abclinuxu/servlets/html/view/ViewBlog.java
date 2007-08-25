@@ -28,6 +28,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.persistence.SQLTool;
@@ -219,16 +220,18 @@ public class ViewBlog implements AbcAction, Configurable {
      */
     public static String processStory(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
+        Category blog = (Category) persistence.findById(relation.getParent());
         Item story = (Item) relation.getChild();
         env.put(VAR_STORY, relation);
 
         User user = (User) env.get(Constants.VAR_USER);
-        if (user==null || user.getId()!=story.getOwner())
+        if (user == null || user.getId() != story.getOwner())
             ReadRecorder.log(story, Constants.COUNTER_READ, env);
 
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getBlogFeedUrl(blog));
         return FMTemplateSelector.select("ViewBlog", "story", env, request);
     }
 
@@ -240,6 +243,7 @@ public class ViewBlog implements AbcAction, Configurable {
         Relation blogRelation = (Relation) env.get(VAR_BLOG_RELATION);
         List parents = persistence.findParents(blogRelation);
         env.put(ShowObject.VAR_PARENTS, parents);
+        env.put(Constants.VAR_RSS, FeedGenerator.getBlogFeedUrl(blog));
         return FMTemplateSelector.select("ViewBlog", "archive", env, request);
     }
 
@@ -315,6 +319,7 @@ public class ViewBlog implements AbcAction, Configurable {
         List parents = persistence.findParents(blogRelation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getBlogFeedUrl(blog));
         return FMTemplateSelector.select("ViewBlog", "blog", env, request);
     }
 
@@ -388,6 +393,7 @@ public class ViewBlog implements AbcAction, Configurable {
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getBlogsFeedUrl());
         return FMTemplateSelector.select("ViewBlog", "blogspace", env, request);
     }
 
@@ -444,6 +450,7 @@ public class ViewBlog implements AbcAction, Configurable {
         }
         env.put(VAR_BLOGS, result);
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getBlogsFeedUrl());
         return FMTemplateSelector.select("ViewBlog", "blogs", env, request);
     }
 

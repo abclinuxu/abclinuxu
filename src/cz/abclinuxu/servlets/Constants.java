@@ -181,6 +181,8 @@ public interface Constants {
     String VAR_CONTENT_TYPE = "Content-Type";
     /** environment map */
     String VAR_ENVIRONMENT = "ENV";
+    /** optional variable holding RSS url for current page */
+    String VAR_RSS = "RSS";
 
     /** parameter holding description of changes */
     String PARAM_REVISION_DESCRIPTION = "rev_descr";

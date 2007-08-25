@@ -35,6 +35,7 @@ import cz.abclinuxu.persistence.versioning.VersionedDocument;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;
@@ -160,16 +161,21 @@ public class ShowObject implements AbcAction {
             case Item.ARTICLE:
                 return ShowArticle.show(env, item, request);
             case Item.NEWS: {
+                env.put(Constants.VAR_RSS, FeedGenerator.getNewsFeedUrl());
                 env.put(EditNews.VAR_CATEGORY, NewsCategories.get(item.getSubType()));
                 return FMTemplateSelector.select("ShowObject", "news", env, request);
             }
             case Item.DISCUSSION: {
-                if (Tools.isQuestion(relation))
+                if (Tools.isQuestion(relation)) {
                     ReadRecorder.log(item, Constants.COUNTER_READ, env);
+                    env.put(Constants.VAR_RSS, FeedGenerator.getForumFeedUrl());
+                }
                 return FMTemplateSelector.select("ShowObject", "discussion", env, request);
             }
-            case Item.HARDWARE:
+            case Item.HARDWARE: {
+                env.put(Constants.VAR_RSS, FeedGenerator.getHardwareFeedUrl());
                 return FMTemplateSelector.select("ShowObject", "hardware", env, request);
+            }
             case Item.DRIVER: {
                 SQLTool sqlTool = SQLTool.getInstance();
                 List<VersionedDocument> history = sqlTool.getLastRevisions(relation.getId(), 6);
@@ -185,10 +191,13 @@ public class ShowObject implements AbcAction {
                 }
                 env.put(VAR_DRIVER_VERSIONS, versions);
 
+                env.put(Constants.VAR_RSS, FeedGenerator.getDriversFeedUrl());
                 return FMTemplateSelector.select("ShowObject", "driver", env, request);
             }
-            case Item.DICTIONARY:
+            case Item.DICTIONARY: {
+                env.put(Constants.VAR_RSS, FeedGenerator.getDictionariesFeedUrl());
                 return ShowDictionary.processDefinition(request, relation, env);
+            }
             case Item.BLOG:
                 return ViewBlog.processStory(request, relation, env);
             case Item.FAQ:

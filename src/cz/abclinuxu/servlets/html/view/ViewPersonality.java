@@ -38,6 +38,7 @@ import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.servlets.html.edit.EditPersonality;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -117,6 +118,7 @@ public class ViewPersonality implements AbcAction {
         env.put(VAR_PREVIOUS, Tools.syncList(siblings));
         siblings = sqlTool.getNeighbourItemRelations(item.getSubType(), Item.PERSONALITY, false, 3);
         env.put(VAR_NEXT, Tools.syncList(siblings));
+        env.put(Constants.VAR_RSS, FeedGenerator.getPersonalitiesFeedUrl());
         return FMTemplateSelector.select("ViewPersonality", "view", env, request);
     }
 
@@ -140,6 +142,7 @@ public class ViewPersonality implements AbcAction {
         Paging found = new Paging(data, 0, data.size(), data.size(), qualifiers);
         env.put(VAR_FOUND, found);
         env.put(VAR_CURRENT_PREFIX, prefix);
+        env.put(Constants.VAR_RSS, FeedGenerator.getPersonalitiesFeedUrl());
         return FMTemplateSelector.select("ViewPersonality", "viewList", env, request);
     }
 }

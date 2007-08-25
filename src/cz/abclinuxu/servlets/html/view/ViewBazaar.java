@@ -46,6 +46,7 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -116,6 +117,7 @@ public class ViewBazaar implements AbcAction {
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getBazaarFeedUrl());
         return FMTemplateSelector.select("ViewBazaar", "bazaar", env, request);
     }
 
@@ -132,6 +134,8 @@ public class ViewBazaar implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         if (user == null || user.getId() != item.getOwner())
             ReadRecorder.log(item, Constants.COUNTER_READ, env);
+
+        env.put(Constants.VAR_RSS, FeedGenerator.getBazaarFeedUrl());
         return FMTemplateSelector.select("ViewBazaar", "ad", env, request);
     }
 }

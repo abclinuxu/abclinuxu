@@ -31,6 +31,7 @@ import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 
@@ -76,6 +77,7 @@ public class ViewPolls implements AbcAction {
 
         Map children = Tools.groupByType(poll.getChildren());
         env.put(ShowObject.VAR_CHILDREN_MAP, children);
+        env.put(Constants.VAR_RSS, FeedGenerator.getPollsFeedUrl());
         return FMTemplateSelector.select("ShowObject", "poll", env, request);
     }
 
@@ -90,13 +92,14 @@ public class ViewPolls implements AbcAction {
 
         SQLTool sqlTool = SQLTool.getInstance();
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
-        List polls = sqlTool.findStandalonePollRelations(qualifiers);
+        List<Relation> polls = sqlTool.findStandalonePollRelations(qualifiers);
         int total = sqlTool.countStandalonePollRelations();
         Tools.syncList(polls);
         Tools.initializeChildren(polls);
 
         Paging paging = new Paging(polls, from, count, total);
         env.put(VAR_POLLS, paging);
+        env.put(Constants.VAR_RSS, FeedGenerator.getPollsFeedUrl());
         return FMTemplateSelector.select("ViewCategory", "ankety", env, request);
     }
 }

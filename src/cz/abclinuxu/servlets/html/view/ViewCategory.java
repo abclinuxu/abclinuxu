@@ -47,6 +47,7 @@ import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -199,6 +200,7 @@ public class ViewCategory implements AbcAction {
             case Constants.REL_POLLS:
                 return ViewPolls.processPolls(env, request);
             case Constants.REL_DRIVERS: {
+                env.put(Constants.VAR_RSS, FeedGenerator.getDriversFeedUrl());
                 env.put(EditDriver.VAR_CATEGORIES, DriverCategories.getAllCategories());
                 return FMTemplateSelector.select("ViewCategory", "drivers", env, request);
             }
@@ -215,10 +217,12 @@ public class ViewCategory implements AbcAction {
                 return ViewBazaar.processSection(request, relation, env);
         }
 
-        if ( category.getId()==Constants.CAT_ARTICLES )
-                return FMTemplateSelector.select("ViewCategory","rubriky",env, request);
+        if ( category.getId()==Constants.CAT_ARTICLES ) {
+            env.put(Constants.VAR_RSS, FeedGenerator.getArticlesFeedUrl());
+            return FMTemplateSelector.select("ViewCategory","rubriky",env, request);
+        }
 
-
+        // todo smazat? Zda se mi to duplikaci processArticleSection
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         tmp = urlUtils.getPrefix();
         if ( Misc.same(tmp,UrlUtils.PREFIX_CLANKY) ) {
@@ -256,6 +260,7 @@ public class ViewCategory implements AbcAction {
         env.put(VAR_CATEGORIES, categories);
         env.put(VAR_TREE_DEPTH, depth);
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getHardwareFeedUrl());
         return FMTemplateSelector.select("ViewCategory", "hwsekce", env, request);
     }
 
@@ -284,6 +289,11 @@ public class ViewCategory implements AbcAction {
         Paging paging = new Paging(articles, from, count, total);
         env.put(VAR_ARTICLES, paging);
 
+
+        String feedUrl = FeedGenerator.getSeriesFeedUrl(relation.getId());
+        if (feedUrl == null)
+            feedUrl = FeedGenerator.getArticlesFeedUrl();
+        env.put(Constants.VAR_RSS, feedUrl);
         return FMTemplateSelector.select("ViewCategory", "rubrika", env, request);
     }
 

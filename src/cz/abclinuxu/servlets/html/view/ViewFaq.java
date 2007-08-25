@@ -28,6 +28,7 @@ import cz.abclinuxu.data.view.SectionTreeCache;
 import cz.abclinuxu.data.view.SectionNode;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -124,6 +125,7 @@ public class ViewFaq implements AbcAction {
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getFaqFeedUrl());
         return FMTemplateSelector.select("ViewFaq", "list", env, request);
     }
 
@@ -145,6 +147,7 @@ public class ViewFaq implements AbcAction {
         if (revision != -1)
             Misc.loadRelationRevision(item, relation.getId(), revision);
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getFaqFeedUrl());
         return FMTemplateSelector.select("ViewFaq", "view", env, request);
     }
 

@@ -36,6 +36,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
 
@@ -110,6 +111,7 @@ public class ShowDictionary implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Item item = (Item) relation.getChild();
         env.put(VAR_ITEM, item);
+        env.put(Constants.VAR_RSS, FeedGenerator.getDictionariesFeedUrl());
 
         int revision = Misc.parseInt((String) params.get(ShowRevisions.PARAM_REVISION), -1);
         if (revision != -1)
@@ -143,6 +145,7 @@ public class ShowDictionary implements AbcAction {
         Paging found = new Paging(data, 0, data.size(), data.size(), qualifiers);
         env.put(VAR_FOUND, found);
         env.put(VAR_CURRENT_PREFIX, prefix);
+        env.put(Constants.VAR_RSS, FeedGenerator.getDictionariesFeedUrl());
         return FMTemplateSelector.select("Dictionary", "showList", env, request);
     }
 }

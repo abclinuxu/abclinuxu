@@ -11,16 +11,21 @@
        <link href="/bugie.css" type="text/css" rel="stylesheet">
     <![endif]-->
     <link rel="icon" href="/images/site2/favicon.png" type="image/png">
-    <link rel="alternate" title="abclinuxu.cz: články" href="http://www.abclinuxu.cz/auto/abc.rss" type="application/rss+xml">
-    <link rel="alternate" title="abclinuxu.cz: blogy" href="http://www.abclinuxu.cz/auto/blog.rss" type="application/rss+xml">
-    <link rel="alternate" title="abclinuxu.cz: linuxové blogy" href="http://www.abclinuxu.cz/auto/blogDigest.rss" type="application/rss+xml">
-    <link rel="alternate" title="abclinuxu.cz: zprávičky" href="http://www.abclinuxu.cz/auto/zpravicky.rss" type="application/rss+xml">
-    <link rel="alternate" title="abclinuxu.cz: diskuse" href="http://www.abclinuxu.cz/auto/diskuse.rss" type="application/rss+xml">
-    <link rel="alternate" title="abclinuxu.cz: bazar" href="http://www.abclinuxu.cz/auto/bazar.rss" type="application/rss+xml">
-    <link rel="alternate" title="abclinuxu.cz: hardware" href="http://www.abclinuxu.cz/auto/hardware.rss" type="application/rss+xml">
-    <link rel="alternate" title="abclinuxu.cz: software" href="http://www.abclinuxu.cz/auto/software.rss" type="application/rss+xml">
-    <link rel="alternate" title="abclinuxu.cz: ankety" href="http://www.abclinuxu.cz/auto/ankety.rss" type="application/rss+xml">
-    <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
+    <#if IS_INDEX?exists>
+        <link rel="alternate" title="abclinuxu.cz: články" href="http://www.abclinuxu.cz/auto/abc.rss" type="application/rss+xml">
+        <link rel="alternate" title="abclinuxu.cz: blogy" href="http://www.abclinuxu.cz/auto/blog.rss" type="application/rss+xml">
+        <link rel="alternate" title="abclinuxu.cz: linuxové blogy" href="http://www.abclinuxu.cz/auto/blogDigest.rss" type="application/rss+xml">
+        <link rel="alternate" title="abclinuxu.cz: zprávičky" href="http://www.abclinuxu.cz/auto/zpravicky.rss" type="application/rss+xml">
+        <link rel="alternate" title="abclinuxu.cz: diskuse" href="http://www.abclinuxu.cz/auto/diskuse.rss" type="application/rss+xml">
+        <link rel="alternate" title="abclinuxu.cz: bazar" href="http://www.abclinuxu.cz/auto/bazar.rss" type="application/rss+xml">
+        <link rel="alternate" title="abclinuxu.cz: hardware" href="http://www.abclinuxu.cz/auto/hardware.rss" type="application/rss+xml">
+        <link rel="alternate" title="abclinuxu.cz: software" href="http://www.abclinuxu.cz/auto/software.rss" type="application/rss+xml">
+        <link rel="alternate" title="abclinuxu.cz: ankety" href="http://www.abclinuxu.cz/auto/ankety.rss" type="application/rss+xml">
+        <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
+    </#if>
+    <#if RSS?exists>
+        <link rel="alternate" title="feed" href="http://www.abclinuxu.cz${RSS}" type="application/rss+xml">
+    </#if>
     <meta name="keywords" lang="cs" content="linux,abclinuxu,hardware,software,ovladače,diskuse,nápověda,rada,pomoc">
     <meta name="keywords" lang="en" content="linux,hardware,software,drivers,forum,help,faq,advice">
     <script type="text/javascript" src="/data/site/impact.js"></script>
@@ -229,6 +234,9 @@
         <#if PARENTS?exists>
           <div class="pwd-box">
             <div class="do-zalozek">
+              <#if RSS?exists>
+                <a href="${RSS}"><img src="/images/site2/feed16.png" width="16" height="16" border="0"></a>
+              </#if>
               <#if RELATION?exists && USER?exists>
                 <form action="/EditUser/${USER.id}" style="display: inline">
                     <input type="submit" class="button" value="do záložek">
@@ -240,7 +248,7 @@
               </#if>
             </div>
             <div class="pwd">
-              <b>abc:/$</b>
+              <b><a href="/">abclinuxu</a>:/$</b>
               <#list TOOL.getParents(PARENTS,USER?if_exists,URL) as link>
                 <a href="${link.url}">${link.text}</a>
                 <#if link_has_next> / </#if>

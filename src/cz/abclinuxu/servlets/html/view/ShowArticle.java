@@ -27,6 +27,7 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.InvalidDataException;
@@ -219,6 +220,7 @@ public class ShowArticle implements AbcAction {
         if ( user == null || ! user.hasRole(Roles.ARTICLE_ADMIN) )
             ReadRecorder.log(item, Constants.COUNTER_READ, env);
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getArticlesFeedUrl());
         return FMTemplateSelector.select("ShowObject", "article", env, request);
     }
 

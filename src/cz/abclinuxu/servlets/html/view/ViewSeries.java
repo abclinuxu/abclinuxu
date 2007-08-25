@@ -27,6 +27,7 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -79,6 +80,7 @@ public class ViewSeries implements AbcAction {
         env.put(VAR_SERIES_LIST, series);
         env.put(ShowObject.VAR_PARENTS, Collections.singletonList(relation));
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getArticlesFeedUrl());
         return FMTemplateSelector.select("ViewSeries", "main", env, request);
     }
 
@@ -119,6 +121,11 @@ public class ViewSeries implements AbcAction {
 
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
+
+        String feedUrl = FeedGenerator.getSeriesFeedUrl(relation.getId());
+        if (feedUrl == null)
+            feedUrl = FeedGenerator.getArticlesFeedUrl();
+        env.put(Constants.VAR_RSS, feedUrl);
 
         return FMTemplateSelector.select("ViewSeries", "series", env, request);
     }

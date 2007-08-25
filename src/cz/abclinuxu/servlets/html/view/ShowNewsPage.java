@@ -25,6 +25,7 @@ import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,6 +48,7 @@ public class ShowNewsPage implements AbcAction {
 
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         env.put(VAR_CATEGORIES, Search.getNewsCategories(params));
+        env.put(Constants.VAR_RSS, FeedGenerator.getNewsFeedUrl());
 
         return FMTemplateSelector.select("ViewCategory", "news", env, request);
     }

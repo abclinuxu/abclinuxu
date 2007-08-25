@@ -32,6 +32,7 @@ import cz.abclinuxu.data.view.DiscussionHeader;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.scheduler.VariableFetcher;
@@ -111,6 +112,7 @@ public class ShowForum implements AbcAction {
         env.put(VAR_FORUM_HARDWARE, forumHardware);
         env.put(VAR_FORUM_SETTINGS, forumSettings);
         env.put(VAR_FORUM_VARIOUS, forumVarious);
+        env.put(Constants.VAR_RSS, FeedGenerator.getForumFeedUrl());
         return FMTemplateSelector.select("ShowForum", "main", env, request);
     }
 
@@ -160,6 +162,7 @@ public class ShowForum implements AbcAction {
         Paging paging = new Paging(discussions, from, count, total);
         env.put(VAR_DISCUSSIONS,paging);
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getForumFeedUrl());
         return FMTemplateSelector.select("ShowForum","show",env,request);
     }
 }

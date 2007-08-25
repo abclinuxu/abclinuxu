@@ -39,6 +39,7 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
@@ -214,6 +215,7 @@ public class ViewSoftware implements AbcAction {
         env.put(ShowObject.VAR_PARENTS, parents);
         env.put(VAR_CATEGORY, Tools.sync(relation.getChild()));
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getSoftwareFeedUrl());
         return FMTemplateSelector.select("ViewSoftware", "swsekce", env, request);
     }
 
@@ -241,6 +243,7 @@ public class ViewSoftware implements AbcAction {
         if (revision != -1)
             Misc.loadRelationRevision(item, relation.getId(), revision);
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getSoftwareFeedUrl());
         return FMTemplateSelector.select("ViewSoftware", "software", env, request);
     }
 
@@ -255,6 +258,7 @@ public class ViewSoftware implements AbcAction {
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getSoftwareFeedUrl());
         return FMTemplateSelector.select("ViewSoftware", "sw_users", env, request);
     }
 
@@ -285,6 +289,7 @@ public class ViewSoftware implements AbcAction {
         Tools.syncList(lastUpdated);
         env.put(VAR_LAST_UPDATED, lastUpdated);
 
+        env.put(Constants.VAR_RSS, FeedGenerator.getSoftwareFeedUrl());
         return FMTemplateSelector.select("ViewSoftware", "sw_stats", env, request);
     }
 }
