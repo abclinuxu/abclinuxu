@@ -26,7 +26,6 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.data.view.NewsCategories;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.persistence.SQLTool;
@@ -37,6 +36,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
 import java.util.prefs.Preferences;
+import java.util.prefs.BackingStoreException;
 import java.util.*;
 import java.io.*;
 
@@ -73,9 +73,11 @@ public class FeedGenerator implements Configurable {
     static final String PREF_DICTIONARY = "dictionary";
     static final String PREF_PERSONALITIES = "personalities";
     static final String PREF_NEWS_WORD_LIMIT = "news.word.limit";
+    static final String PREF_ARTICLE_SERIES = "article.series";
 
     static String fileDiscussions, fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileBlogDigest;
     static String fileNews, fileFaq, filePolls, fileTrafika, fileSoftware, fileBazaar, fileDictionary, filePersonalities;
+    static Map<Integer, String> filesArticleSeries;
     static int feedLength = 10, highFrequencyFeedLength = 25, newsWordLimit;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new FeedGenerator());
@@ -368,6 +370,122 @@ public class FeedGenerator implements Configurable {
     }
 
     /**
+     * Generates RSS feeds for article series and sections
+     */
+    public static void updateSeries() {
+        try {
+            for (Map.Entry<Integer, String> e : filesArticleSeries.entrySet()) {
+                Relation relation = new Relation(e.getKey());
+                SyndFeed feed = new SyndFeedImpl();
+                GenericDataObject series;
+                String url;
+
+                Tools.sync(relation);
+                series = (GenericDataObject) relation.getChild();
+                url = "http://" + AbcConfig.getHostname() + relation.getUrl();
+
+                feed.setFeedType(TYPE_RSS_1_0);
+                feed.setEncoding("UTF-8");
+                feed.setUri(url);
+                feed.setLink(url);
+                feed.setTitle("abclinuxu - " + Tools.childName(series));
+
+                if (series instanceof Category)
+                    createSectionEntries((Category) series, feed, feedLength);
+                else if (series instanceof Item)
+                    createSeriesEntries((Item) series, feed, feedLength);
+                else
+                    throw new Exception("Neznamy typ objektu " + series.getId());
+
+                String path = AbcConfig.calculateDeployedPath(e.getValue());
+                Writer writer = getWriter(path);
+                SyndFeedOutput output = new SyndFeedOutput();
+                output.output(feed, writer);
+                writer.close();
+            }
+        } catch(Exception e) {
+            log.error("Chyba pri generovani RSS pro serialy", e);
+        }
+    }
+
+    /**
+     * Create feed entries for article section
+     * @param cat Category to create feed entries for
+     * @param feed RSS feed
+     * @param maxArticles Maximum amount of RSS entries
+     */
+    public static void createSectionEntries(Category cat, SyndFeed feed, int maxArticles) {
+        Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maxArticles)};
+        List<Relation> articles = SQLTool.getInstance().findArticleRelations(qualifiers, cat.getId());
+
+        List<SyndEntry> entries = new ArrayList<SyndEntry>();
+        feed.setDescription(Tools.xpath(cat, "/data/note"));
+        feed.setEntries(entries);
+
+        SyndEntry entry;
+        for (Relation r : articles) {
+            Tools.sync(r);
+            entry = createArticleEntry(r);
+            entries.add(entry);
+        }
+    }
+
+    /**
+     * Create feed entries for article series
+     * @param serie Serie to create feed entries for
+     * @param feed RSS feed
+     * @param maxArticles Maximum amount of RSS entries
+     */
+    public static void createSeriesEntries(Item serie, SyndFeed feed, int maxArticles) {
+        List articlesElements = serie.getData().getRootElement().elements("article");
+        articlesElements = articlesElements.subList(0, Math.min(maxArticles, articlesElements.size()));
+        articlesElements = new ArrayList<Element>(articlesElements);
+        Collections.reverse(articlesElements);
+
+        List<SyndEntry> entries = new ArrayList<SyndEntry>();
+        feed.setDescription(Tools.xpath(serie, "/data/description"));
+        feed.setEntries(entries);
+
+        SyndEntry entry;
+        for (Iterator iter = articlesElements.iterator(); iter.hasNext();) {
+            Element article = (Element) iter.next();
+            int rid = Misc.parseInt(article.getText(), 0);
+            Relation r = new Relation(rid);
+            Tools.sync(r);
+            entry = createArticleEntry(r);
+            entries.add(entry);
+        }
+    }
+
+    /**
+     * Creates an RSS entry for specified article.
+     * @param r Relation of the article
+     * @return RSS entry object
+     */
+    protected static SyndEntry createArticleEntry(Relation r) {
+        SyndContent description;
+        Item item = (Item) r.getChild();
+        Set authors = item.getProperty(Constants.PROPERTY_AUTHOR);
+        String firstId = (String) authors.iterator().next();
+        Relation authorRelation = (Relation) Tools.sync(new Relation(Misc.parseInt(firstId, 0)));
+        Item author = (Item) authorRelation.getChild();
+        Document document = item.getData();
+
+        SyndEntry entry = new SyndEntryImpl();
+        entry.setLink("http://"+AbcConfig.getHostname() + r.getUrl());
+        entry.setTitle(Tools.xpath(item, "data/name"));
+        entry.setPublishedDate(item.getCreated());
+        entry.setAuthor(Tools.childName(author));
+        description = new SyndContentImpl();
+        description.setType("text/plain");
+        Node node = document.selectSingleNode("/data/perex");
+        description.setValue(node.getText());
+        entry.setDescription(description);
+
+        return entry;
+    }
+
+    /**
      * Generates RSS and Trafika feed for articles
      */
     public static void updateArticles() {
@@ -384,7 +502,6 @@ public class FeedGenerator implements Configurable {
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
-            SyndContent description;
 
             Map defaultSizes = VariableFetcher.getInstance().getDefaultSizes();
             int countArticles = (Integer) defaultSizes.get(VariableFetcher.KEY_ARTICLE);
@@ -393,24 +510,7 @@ public class FeedGenerator implements Configurable {
             Tools.syncList(articles);
             for (Iterator iter = articles.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
-                Item item = (Item) found.getChild();
-                Document document = item.getData();
-
-                Set authors = item.getProperty(Constants.PROPERTY_AUTHOR);
-                String firstId = (String) authors.iterator().next();
-                Relation authorRelation = (Relation) Tools.sync(new Relation(Misc.parseInt(firstId, 0)));
-                Item author = (Item) authorRelation.getChild();
-
-                entry = new SyndEntryImpl();
-                entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
-                entry.setTitle(Tools.xpath(item, "data/name"));
-                entry.setPublishedDate(item.getCreated());
-                entry.setAuthor(Tools.childName(author));
-                description = new SyndContentImpl();
-                description.setType("text/plain");
-                Node node = document.selectSingleNode("/data/perex");
-                description.setValue(node.getText());
-                entry.setDescription(description);
+                entry = createArticleEntry(found);
                 entries.add(entry);
             }
 
@@ -436,6 +536,8 @@ public class FeedGenerator implements Configurable {
         } catch (Exception e) {
             log.error("Chyba pri generovani RSS pro clanky", e);
         }
+
+        updateSeries();
     }
 
     /**
@@ -540,9 +642,8 @@ public class FeedGenerator implements Configurable {
             feed.setEntries(entries);
             SyndEntry entry;
 
-            HashSet values = new HashSet();
-            values.add("yes");
-            Map filters = new HashMap();
+            Set<String> values = Collections.singleton("yes");
+            Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_BLOG_DIGEST, values);
             filters.put(Constants.PROPERTY_BLOG_DIGEST, values);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, highFrequencyFeedLength)};
             List stories = sqlTool.findItemRelationsWithTypeWithFilters(Item.BLOG, qualifiers, filters);
@@ -832,6 +933,19 @@ public class FeedGenerator implements Configurable {
         fileDictionary = prefs.get(PREF_DICTIONARY, null);
         filePersonalities = prefs.get(PREF_PERSONALITIES, null);
         newsWordLimit = prefs.getInt(PREF_NEWS_WORD_LIMIT, 10);
+
+        try {
+            Preferences subprefs = prefs.node(PREF_ARTICLE_SERIES);
+            String[] keys = subprefs.keys();
+            filesArticleSeries = new HashMap<Integer, String>(keys.length);
+
+            for (int i = 0; i < keys.length; i++) {
+                Integer key = new Integer(keys[i]);
+                filesArticleSeries.put(key, subprefs.get(keys[i], null));
+            }
+        } catch(BackingStoreException e) {
+            throw new ConfigurationException(e.getMessage(), e.getCause());
+        }
     }
 
     public static void main(String[] args) {

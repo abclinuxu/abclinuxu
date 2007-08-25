@@ -194,6 +194,12 @@
                                 <entry key="szm" value="auto/abc_szm.xml"/>
                                 <entry key="news.word.limit" value="17"/>
                             </map>
+                            <node name="article.series">
+                                <map>
+                                    <entry key="165272" value="auto/distribucni-novinky.rss"/>
+                                    <entry key="4" value="auto/jaderne-noviny.rss"/>
+                                </map>
+                            </node>
                         </node>
                     </node>
                     <node name="format">
