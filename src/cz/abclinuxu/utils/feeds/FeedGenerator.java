@@ -952,91 +952,91 @@ public class FeedGenerator implements Configurable {
      * @return url for fresh articles feed
      */
     public static String getArticlesFeedUrl() {
-        return fileArticles;
+        return "/" + fileArticles;
     }
 
     /**
      * @return url for fresh ads feed
      */
     public static String getBazaarFeedUrl() {
-        return fileBazaar;
+        return "/" + fileBazaar;
     }
 
     /**
      * @return url for fresh stories from given blog feed
      */
     public static String getBlogFeedUrl(Category blog) {
-        return dirBlogs + blog.getSubType() + ".rss";
+        return "/" + dirBlogs + blog.getSubType() + ".rss";
     }
 
     /**
      * @return url for fresh blog stories feed
      */
     public static String getBlogsFeedUrl() {
-        return fileBlog;
+        return "/" + fileBlog;
     }
 
     /**
      * @return url for selected blog stories feed
      */
     public static String getBlogDigestFeedUrl() {
-        return fileBlogDigest;
+        return "/" + fileBlogDigest;
     }
 
     /**
      * @return url for fresh dictionaries items feed
      */
     public static String getDictionariesFeedUrl() {
-        return fileDictionary;
+        return "/" + fileDictionary;
     }
 
     /**
      * @return url for fresh drivers feed
      */
     public static String getDriversFeedUrl() {
-        return fileDrivers;
+        return "/" + fileDrivers;
     }
 
     /**
      * @return url for fresh FAQ items feed
      */
     public static String getFaqFeedUrl() {
-        return fileFaq;
+        return "/" + fileFaq;
     }
 
     /**
      * @return url for fresh questions in forum feed
      */
     public static String getForumFeedUrl() {
-        return fileDiscussions;
+        return "/" + fileDiscussions;
     }
 
     /**
      * @return url for fresh hardware items feed
      */
     public static String getHardwareFeedUrl() {
-        return fileHardware;
+        return "/" + fileHardware;
     }
 
     /**
      * @return url for fresh news feed
      */
     public static String getNewsFeedUrl() {
-        return fileNews;
+        return "/" + fileNews;
     }
 
     /**
      * @return url for fresh personalities items feed
      */
     public static String getPersonalitiesFeedUrl() {
-        return filePersonalities;
+        return "/" + filePersonalities;
     }
 
     /**
      * @return url for fresh polls feed
      */
     public static String getPollsFeedUrl() {
-        return filePolls;
+        return "/" + filePolls;
     }
 
     /**
@@ -1044,14 +1044,15 @@ public class FeedGenerator implements Configurable {
      * @return url for fresh articles in given feed or null, if it does not have its feed
      */
     public static String getSeriesFeedUrl(int relationId) {
-        return filesArticleSeries.get(relationId);
+        String s = filesArticleSeries.get(relationId);
+        return (s != null) ? "/" + s : null;
     }
 
     /**
      * @return url for fresh software items feed
      */
     public static String getSoftwareFeedUrl() {
-        return fileSoftware;
+        return "/" + fileSoftware;
     }
 
     public static void main(String[] args) {
