@@ -54,7 +54,7 @@
         <input type="hidden" name="parent" value="42932">
         <input type="hidden" name="type" value="zpravicka">
         <input type="hidden" name="orderBy" value="create">
-        <input type="hidden" name="orderDir" value="asc">
+        <input type="hidden" name="orderDir" value="desc">
     </form>
 
     <#assign map=TOOL.groupByType(CHILDREN)>
