@@ -65,7 +65,6 @@ public class DumpCategoryTree {
         current.mkdirs();
 
         dumper.dumpTree(current, new Relation(Constants.REL_ARTICLES));
-        dumper.dumpTree(current, new Relation(Constants.REL_ABC));
         dumper.dumpTree(current, new Relation(Constants.REL_HARDWARE));
         dumper.dumpTree(current, new Relation(Constants.REL_SOFTWARE));
         dumper.dumpTree(current, new Relation(Constants.REL_FORUM));
