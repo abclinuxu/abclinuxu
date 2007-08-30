@@ -86,6 +86,10 @@ public class Search implements AbcAction {
     public static final String PARAM_PARENT = "parent";
     /** news category */
     public static final String PARAM_CATEGORY = "category";
+    public static final String PARAM_ACTION = "action";
+    public static final String PARAM_ADVANCED_MODE = "advancedMode";
+
+    public static final String ACTION_TO_ADVANCED_MODE = "toAdvanced";
 
     static IndexReader indexReader;
     static Date lastUpdated;
@@ -100,6 +104,9 @@ public class Search implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int count = Misc.getPageSize(AbcConfig.getSearchResultsCount(), 100, env, "/data/settings/found_size");
+        boolean toAdvanced = ACTION_TO_ADVANCED_MODE.equals(params.get(PARAM_ACTION));
+        String uri = (String) env.get(Constants.VAR_REQUEST_URI);
+        boolean onlyNews = uri.startsWith(UrlUtils.PREFIX_NEWS);
 
         File file = CreateIndex.getLastRunFile();
         if (! file.exists()) {
@@ -113,18 +120,20 @@ public class Search implements AbcAction {
             env.put(VAR_UPDATED, lastUpdated);
         }
 
-        Types types = new Types(params.get(PARAM_TYPE));
+        Types types = new Types(params.get(PARAM_TYPE), ! toAdvanced);
         env.put(VAR_TYPES, types);
-        String uri = (String) env.get(Constants.VAR_REQUEST_URI);
-        boolean onlyNews = uri.startsWith(UrlUtils.PREFIX_NEWS);
         NewsCategoriesSet newsCategoriesSet = getNewsCategories(params);
+        env.put(VAR_NEWS_CATEGORIES, newsCategoriesSet);
+        if (toAdvanced)
+            params.put(PARAM_ADVANCED_MODE, "true");
+
         String baseUrl = getCurrentUrl(onlyNews, params);
         env.put(VAR_CURRENT_URL, baseUrl);
 
         String queryString = (String) params.get(PARAM_QUERY);
-        if ( queryString == null || queryString.length()==0 )
-            return choosePage(onlyNews, newsCategoriesSet, request, env);
-        env.put(VAR_QUERY,queryString);
+        env.put(VAR_QUERY, queryString);
+        if (queryString == null || queryString.length() == 0 || toAdvanced)
+            return choosePage(onlyNews, request, env);
 
         long start = System.currentTimeMillis(), end;
         AbcCzechAnalyzer analyzer = new AbcCzechAnalyzer();
@@ -136,7 +145,7 @@ public class Search implements AbcAction {
                 logSearch(queryString);
         } catch (ParseException e) {
             ServletUtils.addError(PARAM_QUERY, "Hledaný řetězec obsahuje chybu!", env, null);
-            return choosePage(onlyNews, newsCategoriesSet, request, env);
+            return choosePage(onlyNews, request, env);
         }
 
         try {
@@ -178,10 +187,10 @@ public class Search implements AbcAction {
                 ServletUtils.addError(PARAM_QUERY,"Došlo k chybě při hledání. Kontaktujte prosím správce.",env,null);
             else
                 ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zkuste zadat jiný řetězec.",env,null);
-            return choosePage(onlyNews, newsCategoriesSet, request, env);
+            return choosePage(onlyNews, request, env);
         }
 
-        return choosePage(onlyNews, newsCategoriesSet, request, env);
+        return choosePage(onlyNews, request, env);
     }
 
     /**
@@ -230,9 +239,8 @@ public class Search implements AbcAction {
         return sb.toString();
     }
 
-    private static String choosePage(boolean displayNews, NewsCategoriesSet newsCategories, HttpServletRequest request, Map env) throws Exception {
+    private static String choosePage(boolean displayNews, HttpServletRequest request, Map env) throws Exception {
         if (displayNews) {
-            env.put(VAR_NEWS_CATEGORIES, newsCategories);
             return FMTemplateSelector.select("Search", "news", env, request);
         } else
             return FMTemplateSelector.select("Search", "show", env, request);
@@ -315,8 +323,11 @@ public class Search implements AbcAction {
 
     public static class Types {
         Map map = new HashMap();
+        /** when true, none selected is considered as all types were selected */
+        boolean noneIsAll;
 
-        public Types(Object param) {
+        public Types(Object param, boolean noneIsAll) {
+            this.noneIsAll = noneIsAll;
             List params = Tools.asList(param);
             for ( Iterator iter = params.iterator(); iter.hasNext(); ) {
                 String s = (String) iter.next();
@@ -333,91 +344,91 @@ public class Search implements AbcAction {
         }
 
         public boolean isArticle() {
-            if (map.size() == 0)
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_ARTICLE);
         }
 
         public boolean isBlog() {
-            if (map.size() == 0)
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_BLOG);
         }
 
         public boolean isBazaar() {
-            if (map.size() == 0)
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_BAZAAR);
         }
 
         public boolean isSection() {
-            if ( map.size()==0 )
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_CATEGORY);
         }
 
         public boolean isDictionary() {
-            if (map.size() == 0)
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_DICTIONARY);
         }
 
         public boolean isPersonality() {
-            if (map.size() == 0)
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_PERSONALITY);
         }
 
         public boolean isDiscussion() {
-            if (map.size() == 0)
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_DISCUSSION);
         }
 
         public boolean isDocument() {
-            if (map.size() == 0)
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_DOCUMENT);
         }
 
         public boolean isDriver() {
-            if (map.size() == 0)
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_DRIVER);
         }
 
         public boolean isFaq() {
-            if (map.size() == 0)
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_FAQ);
         }
 
         public boolean isHardware() {
-            if ( map.size()==0 )
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_HARDWARE);
         }
 
         public boolean isNews() {
-            if (map.size() == 0)
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_NEWS);
         }
 
         public boolean isPoll() {
-            if (map.size() == 0)
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_POLL);
         }
 
         public boolean isQuestion() {
-            if ( map.size()==0 )
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_QUESTION);
         }
 
         public boolean isSoftware() {
-            if (map.size() == 0)
+            if (noneIsAll && map.isEmpty())
                 return true;
             return map.containsKey(MyDocument.TYPE_SOFTWARE);
         }

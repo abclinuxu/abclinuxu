@@ -63,7 +63,7 @@
       <input class="button" type="submit" value="Hledej">
      </div>
     </form>
-    <a href="/hledani?advancedMode=true">Rozšířené hledání</a>
+    <a href="/hledani?action=toAdvanced">Rozšířené hledání</a>
   </div>
 </div>
 <div class="cistic"></div>
