@@ -48,14 +48,23 @@
 </#macro>
 
 <#if USER?exists && USER.hasRole("news admin")>
- <#assign map=TOOL.groupByType(CHILDREN)>
- <#if map.news?exists>
-  <#list SORT.byDate(map.news, "ASCENDING") as rel>
-   <@showAdminNews rel />
-   <hr>
-  </#list>
-  <br>
- </#if>
+    <form action="/zpravicky/hledani" method="POST">
+        <input type="text" name="dotaz" size="30" tabindex="1">
+        <input type="submit" class="button" value="Prohledej zprávičky" tabindex="2">
+        <input type="hidden" name="parent" value="42932">
+        <input type="hidden" name="type" value="zpravicka">
+        <input type="hidden" name="orderBy" value="create">
+        <input type="hidden" name="orderDir" value="asc">
+    </form>
+
+    <#assign map=TOOL.groupByType(CHILDREN)>
+    <#if map.news?exists>
+        <#list SORT.byDate(map.news, "ASCENDING") as rel>
+            <@showAdminNews rel />
+            <hr>
+        </#list>
+        <br>
+    </#if>
 </#if>
 
 <#include "../footer.ftl">

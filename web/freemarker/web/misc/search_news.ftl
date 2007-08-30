@@ -63,6 +63,43 @@
         </div>
     </#list>
 
+    <form action="${BASE_URL}">
+        <table border="0">
+            <tr>
+                <th>Pozice</th>
+                <th>Počet</th>
+                <th>Třídit podle</th>
+                <th>Směr</th>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" size="4" value="${RESULT.thisPage.row}" name="from" tabindex="1">
+                </td>
+                <td>
+                    <input type="text" size="3" value="${RESULT.pageSize}" name="count" tabindex="2">
+                </td>
+                <td>
+                    <select name="orderBy" tabindex="3">
+                        <option value="relevance"<#if PARAMS.orderBy?default("relevance")=="relevance"> selected</#if>>relevance</option>
+                        <option value="update"<#if PARAMS.orderBy?default("relevance")=="update"> selected</#if>>data poslední změny</option>
+                        <option value="create"<#if PARAMS.orderBy?default("relevance")=="create"> selected</#if>>data vytvoření</option>
+                    </select>
+                </td>
+                <td>
+                    <select name="orderDir" tabindex="4">
+                        <option value="desc"<#if PARAMS.orderDir?default("desc")=="desc"> selected</#if>>sestupně</option>
+                        <option value="asc"<#if PARAMS.orderDir?default("desc")=="asc"> selected</#if>>vzestupně</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="submit" value="Zobrazit">
+                </td>
+            </tr>
+        </table>
+        ${TOOL.saveParams(PARAMS, ["orderDir","orderBy","from","count"])}
+    </form>
+
     <#if RESULT.prevPage?exists>
         <input type="submit" name="from_0" value="0">
         <input type="submit" name="from_${RESULT.prevPage.row}" value="&lt;&lt;">
@@ -70,6 +107,8 @@
         <button value="" disabled="disabled">0</button>
         <button value="" disabled="disabled">&lt;&lt;</button>
     </#if>
+
+    ${RESULT.thisPage.row} - ${RESULT.thisPage.row + RESULT.thisPage.size}
 
     <#if RESULT.nextPage?exists>
         <input type="submit" name="from_${RESULT.nextPage.row?string["#"]}" value="&gt;&gt;">

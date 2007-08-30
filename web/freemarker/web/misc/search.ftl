@@ -150,12 +150,51 @@
         </div>
     </#list>
 
+    <form action="${BASE_URL}">
+        <table border="0">
+            <tr>
+                <th>Pozice</th>
+                <th>Počet</th>
+                <th>Třídit podle</th>
+                <th>Směr</th>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" size="4" value="${RESULT.thisPage.row}" name="from" tabindex="1">
+                </td>
+                <td>
+                    <input type="text" size="3" value="${RESULT.pageSize}" name="count" tabindex="2">
+                </td>
+                <td>
+                    <select name="orderBy" tabindex="3">
+                        <option value="relevance"<#if PARAMS.orderBy?default("relevance")=="relevance"> selected</#if>>relevance</option>
+                        <option value="update"<#if PARAMS.orderBy?default("relevance")=="update"> selected</#if>>data poslední změny</option>
+                        <option value="create"<#if PARAMS.orderBy?default("relevance")=="create"> selected</#if>>data vytvoření</option>
+                    </select>
+                </td>
+                <td>
+                    <select name="orderDir" tabindex="4">
+                        <option value="desc"<#if PARAMS.orderDir?default("desc")=="desc"> selected</#if>>sestupně</option>
+                        <option value="asc"<#if PARAMS.orderDir?default("desc")=="asc"> selected</#if>>vzestupně</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="submit" value="Zobrazit">
+                </td>
+            </tr>
+        </table>
+        ${TOOL.saveParams(PARAMS, ["orderDir","orderBy","from","count"])}
+    </form>
+
     <#if RESULT.prevPage?exists>
         <a href="${CURRENT_URL}&from=0">0</a>
         <a href="${CURRENT_URL}&from=${RESULT.prevPage.row}">&lt;&lt;</a>
     <#else>
         0 &lt;&lt;
     </#if>
+
+    ${RESULT.thisPage.row} - ${RESULT.thisPage.row + RESULT.thisPage.size}
 
     <#if RESULT.nextPage?exists>
         <a href="${CURRENT_URL}&from=${RESULT.nextPage.row?string["#"]}">&gt;&gt;</a>

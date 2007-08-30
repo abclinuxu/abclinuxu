@@ -73,15 +73,13 @@ public class Search implements AbcAction {
     public static final String VAR_NEWS_CATEGORIES = "CATEGORIES";
     /** current url with all parameters except temporary or paging */
     public static final String VAR_CURRENT_URL = "CURRENT_URL";
+    /** base url without any parameters */
+    public static final String VAR_BASE_URL = "BASE_URL";
 
     /** expression to be searched */
     public static final String PARAM_QUERY = "dotaz";
     /** type of object to search */
     public static final String PARAM_TYPE = "typ";
-    /** n-th oldest object, from where to display */
-    public static final String PARAM_FROM = "from";
-    /** how many objects to display */
-    public static final String PARAM_COUNT = "count";
     /** id of parental relation */
     public static final String PARAM_PARENT = "parent";
     /** news category */
@@ -102,8 +100,6 @@ public class Search implements AbcAction {
     public static String performSearch(HttpServletRequest request, Map env) throws Exception {
         boolean initIndexReader = indexReader == null, lastRunFileMissing = false;
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-        int count = Misc.getPageSize(AbcConfig.getSearchResultsCount(), 100, env, "/data/settings/found_size");
         boolean toAdvanced = ACTION_TO_ADVANCED_MODE.equals(params.get(PARAM_ACTION));
         String uri = (String) env.get(Constants.VAR_REQUEST_URI);
         boolean onlyNews = uri.startsWith(UrlUtils.PREFIX_NEWS);
@@ -127,13 +123,16 @@ public class Search implements AbcAction {
         if (toAdvanced)
             params.put(PARAM_ADVANCED_MODE, "true");
 
-        String baseUrl = getCurrentUrl(onlyNews, params);
-        env.put(VAR_CURRENT_URL, baseUrl);
+        setCurrentUrl(onlyNews, params, env);
 
         String queryString = (String) params.get(PARAM_QUERY);
         env.put(VAR_QUERY, queryString);
         if (queryString == null || queryString.length() == 0 || toAdvanced)
             return choosePage(onlyNews, request, env);
+
+        int from = Misc.parseInt((String) params.get(Constants.PARAM_FROM), 0);
+        int count = Misc.getPageSize(AbcConfig.getSearchResultsCount(), 100, env, "/data/settings/found_size");
+        Sort sort = detectSort(params);
 
         long start = System.currentTimeMillis(), end;
         AbcCzechAnalyzer analyzer = new AbcCzechAnalyzer();
@@ -141,7 +140,7 @@ public class Search implements AbcAction {
         try {
             query = AbcQueryParser.parse(queryString, analyzer, types, newsCategoriesSet);
             query = AbcQueryParser.addParentToQuery((String)params.get(PARAM_PARENT), query);
-            if (params.get(PARAM_FROM) == null) // user is on the first page of the result
+            if (params.get(Constants.PARAM_FROM) == null) // user is on the first page of the result
                 logSearch(queryString);
         } catch (ParseException e) {
             ServletUtils.addError(PARAM_QUERY, "Hledaný řetězec obsahuje chybu!", env, null);
@@ -154,7 +153,7 @@ public class Search implements AbcAction {
 
             query = query.rewrite(indexReader);
             Searcher searcher = new IndexSearcher(indexReader);
-            Hits hits = searcher.search(query);
+            Hits hits = searcher.search(query, sort);
             end = System.currentTimeMillis();
 
             // vytvoreni query a hledani trva do 10 ms, highlight trva 300 ms
@@ -194,6 +193,25 @@ public class Search implements AbcAction {
     }
 
     /**
+     * Finds out sorting parameters for current query
+     * @param params query parameters
+     * @return sort instance or null, if default relevance sort shall be used
+     */
+    private static Sort detectSort(Map params) {
+        String sDir = (String) params.get(Constants.PARAM_ORDER_DIR);
+        boolean descending = Constants.ORDER_DIR_DESC.equals(sDir);
+
+        String sBy = (String) params.get(Constants.PARAM_ORDER_BY);
+        if (Constants.ORDER_BY_RELEVANCE.equals(sBy))
+            return null;
+        if (Constants.ORDER_BY_CREATED.equals(sBy))
+            return new Sort(MyDocument.CREATED, descending);
+        if (Constants.ORDER_BY_UPDATED.equals(sBy))
+            return new Sort(MyDocument.UPDATED, descending);
+        return null;
+    }
+
+    /**
      * Logs the search query, so we can know the statistics.
      * @param query non-normalized search query, it must not be null
      */
@@ -206,17 +224,18 @@ public class Search implements AbcAction {
      * Creates current URL without information about current page.
      * @param news whether the current url is serach news
      * @param params
-     * @return absolute url (without host)
      */
-    private static String getCurrentUrl(boolean news, Map params) {
+    private static void setCurrentUrl(boolean news, Map params, Map env) {
         StringBuffer sb = new StringBuffer();
         if (news)
             sb.append(UrlUtils.PREFIX_NEWS);
         sb.append("/hledani");
+        env.put(VAR_BASE_URL, sb.toString());
+
         boolean asterisk = true;
         for (Iterator iter = params.keySet().iterator(); iter.hasNext();) {
             String param = (String) iter.next();
-            if (PARAM_FROM.equals(param))
+            if (Constants.PARAM_FROM.equals(param))
                 continue;
 
             List values = Tools.asList(params.get(param));
@@ -236,7 +255,7 @@ public class Search implements AbcAction {
                 sb.append(param).append('=').append(value);
             }
         }
-        return sb.toString();
+        env.put(VAR_CURRENT_URL, sb.toString());
     }
 
     private static String choosePage(boolean displayNews, HttpServletRequest request, Map env) throws Exception {

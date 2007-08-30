@@ -46,24 +46,8 @@ public class History implements AbcAction {
 
     /** type of object to display */
     public static final String PARAM_TYPE = "type";
-    /** n-th oldest object, where display from */
-    public static final String PARAM_FROM = "from";
-    /** how many object to display */
-    public static final String PARAM_COUNT = "count";
-    /** specifies attribute, by which data shall be sorted */
-    public static final String PARAM_ORDER_BY = "orderBy";
-    /** specifies direction of sort order */
-    public static final String PARAM_ORDER_DIR = "orderDir";
     /** specifies, which user created the data */
     public static final String PARAM_USER_SHORT = ViewUser.PARAM_USER_SHORT;
-
-    public static final String VALUE_ORDER_BY_CREATED = "create";
-    public static final String VALUE_ORDER_BY_UPDATED = "update";
-    public static final String VALUE_ORDER_BY_WHEN = "date";
-    public static final String VALUE_ORDER_BY_ID = "id";
-
-    public static final String VALUE_ORDER_DIR_ASC = "asc";
-    public static final String VALUE_ORDER_DIR_DESC = "desc";
 
     public static final String VALUE_TYPE_ARTICLES = "articles";
     public static final String VALUE_TYPE_NEWS = "news";
@@ -93,8 +77,8 @@ public class History implements AbcAction {
         SQLTool sqlTool = SQLTool.getInstance();
 
         String type = (String) params.get(PARAM_TYPE);
-        int from = Misc.parseInt((String)params.get(PARAM_FROM),0);
-        int count = Misc.parseInt((String)params.get(PARAM_COUNT),20);
+        int from = Misc.parseInt((String)params.get(Constants.PARAM_FROM),0);
+        int count = Misc.parseInt((String)params.get(Constants.PARAM_COUNT),20);
         count = Misc.limit(count, 1, 50);
         int uid = Misc.parseInt((String)params.get(PARAM_USER_SHORT),0);
 
@@ -220,18 +204,18 @@ public class History implements AbcAction {
         StringBuffer sb = new StringBuffer("&amp;count=");
         sb.append(found.getPageSize());
         if (found.isQualifierSet(Qualifier.SORT_BY_CREATED.toString()))
-            sb.append("&amp;" + PARAM_ORDER_BY + "=" + VALUE_ORDER_BY_CREATED);
+            sb.append("&amp;" + Constants.PARAM_ORDER_BY + "=" + Constants.ORDER_BY_CREATED);
         else if (found.isQualifierSet(Qualifier.SORT_BY_UPDATED.toString()))
-            sb.append("&amp;" + PARAM_ORDER_BY + "=" + VALUE_ORDER_BY_UPDATED);
+            sb.append("&amp;" + Constants.PARAM_ORDER_BY + "=" + Constants.ORDER_BY_UPDATED);
         else if (found.isQualifierSet(Qualifier.SORT_BY_WHEN.toString()))
-            sb.append("&amp;" + PARAM_ORDER_BY + "=" + VALUE_ORDER_BY_WHEN);
+            sb.append("&amp;" + Constants.PARAM_ORDER_BY + "=" + Constants.ORDER_BY_WHEN);
         else if (found.isQualifierSet(Qualifier.SORT_BY_ID.toString()))
-            sb.append("&amp;" + PARAM_ORDER_BY + "=" + VALUE_ORDER_BY_ID);
+            sb.append("&amp;" + Constants.PARAM_ORDER_BY + "=" + Constants.ORDER_BY_ID);
 
         if ( found.isQualifierSet(Qualifier.ORDER_DESCENDING.toString()) )
-            sb.append("&amp;" + PARAM_ORDER_DIR + "=" + VALUE_ORDER_DIR_DESC);
+            sb.append("&amp;" + Constants.PARAM_ORDER_DIR + "=" + Constants.ORDER_DIR_DESC);
         else if ( found.isQualifierSet(Qualifier.ORDER_ASCENDING.toString()) )
-            sb.append("&amp;" + PARAM_ORDER_DIR + "=" + VALUE_ORDER_DIR_ASC);
+            sb.append("&amp;" + Constants.PARAM_ORDER_DIR + "=" + Constants.ORDER_DIR_ASC);
 
         if (uid > 0) {
             sb.append("&amp;" + PARAM_USER_SHORT + "=");
@@ -255,23 +239,23 @@ public class History implements AbcAction {
      * @return Qualifiers.
      */
     public static Qualifier[] getQualifiers(Map params, Qualifier sortBy, Qualifier sortDir, int fromRow, int rowCount) {
-        String sBy = (String) params.get(PARAM_ORDER_BY);
+        String sBy = (String) params.get(Constants.PARAM_ORDER_BY);
         if (sBy != null && sortBy != null) {
-            if (VALUE_ORDER_BY_CREATED.equals(sBy))
+            if (Constants.ORDER_BY_CREATED.equals(sBy))
                 sortBy = Qualifier.SORT_BY_CREATED;
-            else if (VALUE_ORDER_BY_UPDATED.equals(sBy))
+            else if (Constants.ORDER_BY_UPDATED.equals(sBy))
                 sortBy = Qualifier.SORT_BY_UPDATED;
-            else if (VALUE_ORDER_BY_WHEN.equals(sBy))
+            else if (Constants.ORDER_BY_WHEN.equals(sBy))
                 sortBy = Qualifier.SORT_BY_WHEN;
-            else if (VALUE_ORDER_BY_ID.equals(sBy))
+            else if (Constants.ORDER_BY_ID.equals(sBy))
                 sortBy = Qualifier.SORT_BY_ID;
         }
 
-        String sDir = (String) params.get(PARAM_ORDER_DIR);
-        if (sDir!=null) {
-            if ( VALUE_ORDER_DIR_ASC.equals(sDir) )
+        String sDir = (String) params.get(Constants.PARAM_ORDER_DIR);
+        if (sDir != null) {
+            if ( Constants.ORDER_DIR_ASC.equals(sDir) )
                 sortDir = Qualifier.ORDER_ASCENDING;
-            else if ( VALUE_ORDER_DIR_DESC.equals(sDir) )
+            else if ( Constants.ORDER_DIR_DESC.equals(sDir) )
                 sortDir = Qualifier.ORDER_DESCENDING;
         }
 

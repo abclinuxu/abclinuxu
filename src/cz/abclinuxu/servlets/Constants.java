@@ -186,6 +186,29 @@ public interface Constants {
 
     /** parameter holding description of changes */
     String PARAM_REVISION_DESCRIPTION = "rev_descr";
+    /**
+     * n-th oldest object, where display from
+     */
+    String PARAM_FROM = "from";
+    /**
+     * how many object to display
+     */
+    String PARAM_COUNT = "count";
+    /**
+     * specifies attribute, by which data shall be sorted
+     */
+    String PARAM_ORDER_BY = "orderBy";
+    /**
+     * specifies direction of sort order
+     */
+    String PARAM_ORDER_DIR = "orderDir";
+    String ORDER_BY_CREATED = "create";
+    String ORDER_BY_UPDATED = "update";
+    String ORDER_BY_WHEN = "date";
+    String ORDER_BY_RELEVANCE = "relevance";
+    String ORDER_BY_ID = "id";
+    String ORDER_DIR_ASC = "asc";
+    String ORDER_DIR_DESC = "desc";
 
     /** error, that is not related to specific form field */
     String ERROR_GENERIC = "generic";
