@@ -98,6 +98,10 @@ public class ShowDictionary implements AbcAction {
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
+        Object item = (Item) relation.getChild();
+        if (item instanceof Item && ((Item) item).getType() != Item.DICTIONARY)
+            return ShowObject.processItem(request, env, relation);
+
         if (relation.getId() == Constants.REL_DICTIONARY)
             return processList(request, env);
         else
