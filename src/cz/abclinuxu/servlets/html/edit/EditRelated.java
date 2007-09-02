@@ -40,6 +40,8 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.security.ActionProtector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -141,11 +143,11 @@ public class EditRelated implements AbcAction {
             return actionManageRelated(request, env);
 
         item.setOwner(user.getId());
-        persistence.update(item);
 
-        // commit new version
-        String descr = "Přidán související dokument";
-        Misc.commitRelationRevision(item, relation.getId(), user, descr);
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
+        persistence.update(item);
+        versioning.commit(item, user.getId(), "Přidán související dokument");
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -195,11 +197,11 @@ public class EditRelated implements AbcAction {
             return FMTemplateSelector.select("EditRelated", "edit", env, request);
 
         item.setOwner(user.getId());
-        persistence.update(item);
 
-        // commit new version
-        String descr = "Upraveny související dokumenty";
-        Misc.commitRelationRevision(item, relation.getId(), user, descr);
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
+        persistence.update(item);
+        versioning.commit(item, user.getId(), "Upraveny související dokumenty");
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/EditRelated/" + relation.getId());
@@ -259,11 +261,11 @@ public class EditRelated implements AbcAction {
         }
 
         item.setOwner(user.getId());
-        persistence.update(item);
 
-        // commit new version
-        String descr = "Odstraněny související dokumenty";
-        Misc.commitRelationRevision(item, relation.getId(), user, descr);
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
+        persistence.update(item);
+        versioning.commit(item, user.getId(), "Odstraněny související dokumenty");
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/EditRelated/"+relation.getId());

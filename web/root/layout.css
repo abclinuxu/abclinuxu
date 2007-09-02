@@ -864,12 +864,16 @@ table.swdetail {
 div.cenzura {
     margin: 0.5em;
     padding: 0.5em;
-    font-size: 80%; 
+    font-size: 80%;
     border: solid 1px gray;
 }
 
 p.cenzura_duvod {
     margin: 1em;
+	font-style: italic;
+}
+
+p.documentHistory {
 	font-style: italic;
 }
 

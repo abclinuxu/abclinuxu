@@ -26,6 +26,8 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistence.*;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
@@ -127,37 +129,37 @@ public class EditDriver implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
 
-        Item driver = new Item(0, Item.DRIVER);
+        Item item = new Item(0, Item.DRIVER);
         Document document = DocumentHelper.createDocument();
-        driver.setData(document);
+        item.setData(document);
 
         boolean canContinue = true;
         canContinue &= setName(params, document, env);
         canContinue &= setVersion(params, document, env);
         canContinue &= setURL(params, document, env);
         canContinue &= setNote(params, document, env);
-        canContinue &= setCategory(params, driver, env);
+        canContinue &= setCategory(params, item, env);
 
         if ( !canContinue || params.get(PARAM_PREVIEW) != null )
             return redisplayForm("add", request, params, env);
 
         User user = (User) env.get(Constants.VAR_USER);
-        driver.setOwner(user.getId());
-        driver.setCreated(new Date());
+        item.setOwner(user.getId());
+        item.setCreated(new Date());
 
-        Element element = (Element) driver.getData().selectSingleNode("/data/name");
+        Element element = (Element) item.getData().selectSingleNode("/data/name");
         String url = UrlUtils.PREFIX_DRIVERS + "/" + URLManager.enforceRelativeURL(element.getTextTrim());
         url = URLManager.protectFromDuplicates(url);
 
-        persistence.create(driver);
-        Relation relation = new Relation(new Category(Constants.CAT_DRIVERS), driver, Constants.REL_DRIVERS);
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
+        persistence.create(item);
+        versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
+
+        Relation relation = new Relation(new Category(Constants.CAT_DRIVERS), item, Constants.REL_DRIVERS);
         relation.setUrl(url);
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
-
-        // commit new version
-        String descr = "Počáteční revize dokumentu";
-        Misc.commitRelationRevision(driver, relation.getId(), user, descr);
 
         FeedGenerator.updateDrivers();
         VariableFetcher.getInstance().refreshDrivers();
@@ -211,37 +213,36 @@ public class EditDriver implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item driver = (Item) persistence.findById(relation.getChild()).clone();
-        Item origItem = (Item) driver.clone();
-        driver.setOwner(user.getId());
-        Document document = driver.getData();
+        Item item = (Item) persistence.findById(relation.getChild()).clone();
+        Item origItem = (Item) item.clone();
+        item.setOwner(user.getId());
+        Document document = item.getData();
 
         boolean canContinue = true;
         canContinue &= setName(params, document, env);
         canContinue &= setVersion(params, document, env);
         canContinue &= setURL(params, document, env);
         canContinue &= setNote(params, document, env);
-        canContinue &= setCategory(params, driver, env);
-        canContinue &= ServletUtils.checkNoChange(driver, origItem, env);
+        canContinue &= setCategory(params, item, env);
+        canContinue &= ServletUtils.checkNoChange(item, origItem, env);
         String changesDescription = Misc.getRevisionString(params, env);
         canContinue &= !Constants.ERROR.equals(changesDescription);
 
         if (! canContinue || params.get(PARAM_PREVIEW) != null)
             return redisplayForm("edit", request, params, env);
 
-
-        persistence.update(driver);
-
-        // commit new version
-        Misc.commitRelationRevision(driver, relation.getId(), user, changesDescription);
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
+        persistence.update(item);
+        versioning.commit(item, user.getId(), changesDescription);
 
         String url = relation.getUrl();
-        if (url==null)
+        if (url == null)
             url = UrlUtils.PREFIX_DRIVERS + "/show/" + relation.getId();
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz"+url;
-        MonitorAction action = new MonitorAction(user,UserAction.EDIT,ObjectType.DRIVER,driver,absoluteUrl);
+        MonitorAction action = new MonitorAction(user,UserAction.EDIT,ObjectType.DRIVER,item,absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 
         FeedGenerator.updateDrivers();

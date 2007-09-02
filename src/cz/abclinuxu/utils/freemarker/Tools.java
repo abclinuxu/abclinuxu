@@ -347,6 +347,62 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Loads revision information for specified object.
+     * @param obj object that is wiki
+     * @return view object encapsulating information from /data/versioning/revisions element
+     */
+    public RevisionInfo getRevisionInfo(GenericDataObject obj) {
+        if (! Misc.isWiki(obj))
+            throw new InvalidDataException("Objekt " + obj.getId() + " typu " + obj.getType() + " neni wiki!");
+        Element elementRevisions = (Element) obj.getData().selectSingleNode("/data/versioning/revisions");
+        if (elementRevisions == null)
+            throw new InvalidDataException("Objekt " + obj.getId() + " neobsahuje versioning element!");
+
+        String s = elementRevisions.attributeValue("last");
+        int revision = Misc.parseInt(s, -1);
+        Element elementCommitters = elementRevisions.element("committers");
+        s = elementCommitters.elementText("creator");
+        User creator = new User(Misc.parseInt(s, -1));
+        User last = null;
+        s = elementCommitters.elementText("last");
+        if (s != null) {
+            int id = Misc.parseInt(s, -2);
+            if (id == creator.getId())
+                last = creator;
+            else
+                last = new User(id);
+        }
+
+        List<User> committers = new ArrayList<User>(3);
+        for (Iterator iter = elementCommitters.elements("committer").iterator(); iter.hasNext();) {
+            Element element = (Element) iter.next();
+            s = element.getText();
+            int id = Misc.parseInt(s, -3);
+            User user = null;
+            if (id == creator.getId())
+                user = creator;
+            else if (id == last.getId())
+                user = last;
+            else
+                user = new User(id);
+            committers.add(user);
+        }
+
+        List syncList = new ArrayList();
+        syncList.add(creator);
+        if (last != null)
+            syncList.add(last);
+        syncList.addAll(committers);
+        persistence.synchronizeList(syncList);
+
+        RevisionInfo info = new RevisionInfo(revision);
+        info.setCreator(creator);
+        info.setLastCommiter(last);
+        info.setCommitters(committers);
+        return info;
+    }
+
+    /**
      * Generates list of Links to parents of this object.
      * @param parents list of relations.
      * @param o it shall be User or undefined value

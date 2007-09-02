@@ -6,10 +6,6 @@
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <li>
-                <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a><br />
-                <span class="regular-color">(${DATE.show(ITEM.updated,"CZ_FULL")})</span>
-            </li>
             <#if PARAMS.revize?exists>
                 <li>
                     <a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
@@ -17,7 +13,6 @@
             <#else>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
-                <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/ovladace">Historie</a></li>
                 <li><a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
                     <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
@@ -55,6 +50,8 @@
 <div>${TOOL.render(TOOL.element(ITEM.data,"data/note"),USER?if_exists)}</div>
 
 <@lib.showRelated ITEM/>
+
+<@lib.showRevisions RELATION/>
 
 <hr/>
 

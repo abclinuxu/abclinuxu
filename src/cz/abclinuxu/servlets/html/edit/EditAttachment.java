@@ -25,14 +25,16 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.utils.PathGenerator;
 import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ImageTool;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -152,11 +154,13 @@ public class EditAttachment implements AbcAction {
         if (!canContinue)
             return FMTemplateSelector.select("EditAttachment", "addScreenshot", env, request);
 
-        persistence.update(item);
-
-        // commit new version
-        if (item.getType() != Item.BLOG && item.getType() != Item.UNPUBLISHED_BLOG)
-            Misc.commitRelationRevision(item, relation.getId(), user, "Přidán screenshot");
+        if (Misc.isWiki(item)) {
+            Versioning versioning = VersioningFactory.getVersioning();
+            versioning.prepareObjectBeforeCommit(item, user.getId());
+            persistence.update(item);
+            versioning.commit(item, user.getId(), "Přidán screenshot");
+        } else
+            persistence.update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
@@ -215,11 +219,13 @@ public class EditAttachment implements AbcAction {
             element.detach();
         }
 
-        persistence.update(item);
-
-        // commit new version
-        if (item.getType() != Item.BLOG && item.getType() != Item.UNPUBLISHED_BLOG)
-            Misc.commitRelationRevision(item, relation.getId(), user, "Odstraněn screenshot");
+        if (Misc.isWiki(item)) {
+            Versioning versioning = VersioningFactory.getVersioning();
+            versioning.prepareObjectBeforeCommit(item, user.getId());
+            persistence.update(item);
+            versioning.commit(item, user.getId(), "Odstraněn screenshot");
+        } else
+            persistence.update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));

@@ -35,6 +35,8 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.servlets.html.edit.EditPersonality;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.Misc;
@@ -110,8 +112,10 @@ public class ViewPersonality implements AbcAction {
         env.put(VAR_ITEM, item);
 
         int revision = Misc.parseInt((String) params.get(ShowRevisions.PARAM_REVISION), -1);
-        if (revision != -1)
-            Misc.loadRelationRevision(item, relation.getId(), revision);
+        if (revision != -1) {
+            Versioning versioning = VersioningFactory.getVersioning();
+            versioning.load(item, revision);
+        }
 
         SQLTool sqlTool = SQLTool.getInstance();
         List siblings = sqlTool.getNeighbourItemRelations(item.getSubType(), Item.PERSONALITY, true, 3);

@@ -70,7 +70,7 @@
         <p class="cl_inforadek">
             ${DATE.show(story.created, "SMART")} |
     	    <a href="/blog/${blog.subType}">${title}</a> |
-    	    <a href="/Profile/${author.id}">${author.name}</a>
+    	    <@lib.showUser author/>
             <#if (category!="UNDEF" && category?length > 1)>| ${category}</#if>
             <#if SUMMARY?exists><br /><#else> | </#if>
 	        Přečteno: ${TOOL.getCounterValue(story,"read")}&times;

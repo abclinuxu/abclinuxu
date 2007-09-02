@@ -33,6 +33,8 @@ import cz.abclinuxu.data.view.ACL;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
@@ -430,8 +432,11 @@ public class EditRelation implements AbcAction {
             Element inset = (Element) item.getData().selectSingleNode("/data/inset");
             if (inset != null)
                 EditAttachment.removeAllAttachments(inset, env, user, request);
+        }
 
-            Misc.purgeRelationRevisions(relation.getId());
+        if (child instanceof GenericDataObject) {
+            Versioning versioning = VersioningFactory.getVersioning();
+            versioning.purge((GenericDataObject)child);
         }
 
         runMonitor(relation,user);

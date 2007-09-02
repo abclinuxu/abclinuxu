@@ -5,10 +5,6 @@
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <li>
-                <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
-                (${DATE.show(ITEM.updated,"CZ_FULL")})
-            </li>
             <#if PARAMS.revize?exists>
                 <li>
                     <a href="${RELATION.url}">Návrat na aktuální verzi</a>
@@ -16,7 +12,6 @@
             <#else>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
-                <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/faq" rel="nofollow">Historie</a></li>
                 <li><a href="${RELATION.url}?varianta=print" rel="nofollow">Tisk otázky</a></li>
                 <li>
                     <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
@@ -48,5 +43,7 @@
 </div>
 
 <@lib.showRelated ITEM/>
+
+<@lib.showRevisions RELATION/>
 
 <#include "../footer.ftl">

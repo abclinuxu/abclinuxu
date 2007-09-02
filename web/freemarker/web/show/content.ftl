@@ -6,7 +6,6 @@
     <#assign plovouci_sloupec>
       <div class="s_sekce">
        <ul>
-        <li><a href="/revize?rid=${RELATION.id}">Historie</a></li>
         <#if PARAMS.revize?exists>
             <li><a href="${RELATION.url}">Návrat na aktuální verzi</a></li>
         <#else>
@@ -62,5 +61,7 @@ ${TOOL.xpath(ITEM,"/data/content")}
       </span>
     </div>
 </#if>
+
+<@lib.showRevisions RELATION/>
 
 <#include "../footer.ftl">

@@ -44,7 +44,7 @@ pravdu, nebo byl příliš úzkostlivý.
   Od:
   <#if THREAD.author?exists>
    <#assign who=TOOL.createUser(THREAD.author)>
-   <a href="/Profile/${who.id}">${who.name}</a><br>
+   <@lib.showUser who/><br>
   <#else>
    ${THREAD.anonymName?if_exists}<br>
   </#if>

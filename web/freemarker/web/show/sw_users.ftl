@@ -7,7 +7,7 @@
     <#list usedby as sw_user>
         <#assign who = TOOL.createUser(sw_user)>
         <li>
-            <a href="/Profile/${sw_user}">${who.nick?default(who.name)}</a>
+            <@lib.showUser sw_user/>
         </li>
     </#list>
 </ul>

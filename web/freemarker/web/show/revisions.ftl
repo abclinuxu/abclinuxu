@@ -27,7 +27,7 @@ v prvním sloupečku.
                 </td>
                 <td>
                     <#assign who=TOOL.createUser(info.user)>
-                    <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
+                    <@lib.showUser who/>
                 </td>
                 <td align="right">${DATE.show(info.commited,"SMART")}</td>
                 <td>${info.description?if_exists}</td>

@@ -6,8 +6,8 @@
 <#assign plovouci_sloupec>
 
     <div class="s_nadpis">
-        <a href="/Profile/${owner.id}">${owner.nick?default(owner.name)}</a>
-	<#if title!="UNDEF"> - <a href="/blog/${BLOG.subType}">${title}</a></#if>
+        <@lib.showUser owner/>
+    	<#if title!="UNDEF"> - <a href="/blog/${BLOG.subType}">${title}</a></#if>
     </div>
 
     <div class="s_sekce">

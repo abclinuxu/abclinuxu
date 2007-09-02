@@ -1225,7 +1225,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized Items
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findItemsWithType(int type, int offset, int count) {
+    public List<Item> findItemsWithType(int type, int offset, int count) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
@@ -1240,7 +1240,7 @@ public final class SQLTool implements Configurable {
             statement.setInt(3, count);
 
             resultSet = statement.executeQuery();
-            List result = new ArrayList(count);
+            List<Item> result = new ArrayList<Item>(count);
             while ( resultSet.next() ) {
                 int id = resultSet.getInt(1);
                 result.add(new Item(id));

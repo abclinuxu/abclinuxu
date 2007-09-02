@@ -25,6 +25,8 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
@@ -136,38 +138,38 @@ public class EditBazaar implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
 
-        Item ad = new Item(0, Item.BAZAAR);
+        Item item = new Item(0, Item.BAZAAR);
         Document document = DocumentHelper.createDocument();
-        ad.setData(document);
+        item.setData(document);
 
         boolean canContinue = setTitle(params, document, env);
         canContinue &= setContent(params, document, env);
-        canContinue &= setType(params, ad, env);
+        canContinue &= setType(params, item, env);
         canContinue &= setPrice(params, document, env);
         canContinue &= setContact(params, document, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
                 params.remove(PARAM_PREVIEW);
-            ad.setInitialized(true);
-            ad.setCreated(new Date());
-            ad.setUpdated(new Date());
-            env.put(VAR_PREVIEW, ad);
+            item.setInitialized(true);
+            item.setCreated(new Date());
+            item.setUpdated(new Date());
+            env.put(VAR_PREVIEW, item);
             return FMTemplateSelector.select("EditBazaar", "add", env, request);
         }
 
         User user = (User) env.get(Constants.VAR_USER);
-        ad.setOwner(user.getId());
-        ad.setCreated(new Date());
-        persistence.create(ad);
+        item.setOwner(user.getId());
+        item.setCreated(new Date());
 
-        Relation relation = new Relation(new Category(Constants.CAT_BAZAAR), ad, Constants.REL_BAZAAR);
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
+        persistence.create(item);
+        versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
+
+        Relation relation = new Relation(new Category(Constants.CAT_BAZAAR), item, Constants.REL_BAZAAR);
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
-
-        // commit new version
-        String descr = "Počáteční revize dokumentu";
-        Misc.commitRelationRevision(ad, relation.getId(), user, descr);
 
         EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
@@ -220,12 +222,12 @@ public class EditBazaar implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item ad = (Item) persistence.findById(relation.getChild()).clone();
-        Document document = ad.getData();
+        Item item = (Item) persistence.findById(relation.getChild()).clone();
+        Document document = item.getData();
 
         boolean canContinue = setTitle(params, document, env);
         canContinue &= setContent(params, document, env);
-        canContinue &= setType(params, ad, env);
+        canContinue &= setType(params, item, env);
         canContinue &= setPrice(params, document, env);
         canContinue &= setContact(params, document, env);
         String changesDescription = Misc.getRevisionString(params, env);
@@ -234,15 +236,15 @@ public class EditBazaar implements AbcAction {
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
                 params.remove(PARAM_PREVIEW);
-            ad.setInitialized(true);
-            env.put(VAR_PREVIEW, ad);
+            item.setInitialized(true);
+            env.put(VAR_PREVIEW, item);
             return FMTemplateSelector.select("EditBazaar", "edit", env, request);
         }
 
-        persistence.update(ad);
-
-        // commit new version
-        Misc.commitRelationRevision(ad, relation.getId(), user, changesDescription);
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
+        persistence.update(item);
+        versioning.commit(item, user.getId(), changesDescription);
 
         FeedGenerator.updateBazaar();
         VariableFetcher.getInstance().refreshBazaar();

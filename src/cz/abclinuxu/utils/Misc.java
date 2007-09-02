@@ -18,128 +18,26 @@
  */
 package cz.abclinuxu.utils;
 
-import cz.abclinuxu.exceptions.InvalidInputException;
-import cz.abclinuxu.persistence.versioning.VersionInfo;
-import cz.abclinuxu.persistence.versioning.VersioningFactory;
-import cz.abclinuxu.persistence.versioning.Versioning;
-import cz.abclinuxu.persistence.versioning.VersionNotFoundException;
-import cz.abclinuxu.persistence.versioning.VersionedDocument;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.GenericDataObject;
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.html.view.ShowForum;
-
-import java.util.*;
-import java.text.ParseException;
-import java.text.DateFormat;
-
-import org.dom4j.Element;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 import org.dom4j.Node;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Document;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Miscallenous utilities.
  */
 public class Misc {
-    public static final String[] SKIPPED_VERSIONING_ELEMENTS = { "monitor", "rating" };
-
-    /**
-     * Commits specified relation into version repository.
-     * @param obj object to be stored as new revision in versioning
-     * @param relationId identifies data
-     * @param user user who created this version
-     * @param descr description of commited changes
-     * @return VersionInfo
-     */
-    public static VersionInfo commitRelationRevision(GenericDataObject obj, int relationId, User user, String descr) {
-        Element copy = obj.getData().getRootElement().createCopy();
-
-        // we do not store some elements in the versioning
-        for (String elname : SKIPPED_VERSIONING_ELEMENTS) {
-            Element elem = copy.element(elname);
-            if (elem != null)
-                elem.detach();
-        }
-
-        // we store properties in the revision
-        Map<String, Set<String>> properties = obj.getProperties();
-        if (properties != null) {
-            Element propertiesElement = DocumentHelper.makeElement(copy, "/versioning/properties");
-            for (String key : properties.keySet()) {
-                Element propertyElement = propertiesElement.addElement("property");
-                propertyElement.addElement("key").setText(key);
-                for (String value : properties.get(key)) {
-                    propertyElement.addElement("value").setText(value);
-                }
-            }
-        }
-
-        Versioning versioning = VersioningFactory.getVersioning();
-        return versioning.commit(copy.asXML(), relationId, user.getId(), descr);
-    }
-
-    /**
-     * Loads specified revision of given relation into the item.
-     *
-     * @param item       GenericDataObject that shall be updated with data from given revision. It shall be already initialized.
-     * @param relationId id of relation where item is child
-     * @param revision   existing revision number
-     * @throws cz.abclinuxu.persistence.versioning.VersionNotFoundException
-     *          no such revision for given relation
-     */
-    public static void loadRelationRevision(GenericDataObject item, int relationId, int revision) throws VersionNotFoundException {
-        Versioning versioning = VersioningFactory.getVersioning();
-        VersionedDocument version = versioning.load(relationId, revision);
-        Document document = item.getData();
-
-        Element[] elems = new Element[SKIPPED_VERSIONING_ELEMENTS.length];
-        for (int i = 0; i < SKIPPED_VERSIONING_ELEMENTS.length; i++)
-            elems[i] = (Element) document.selectSingleNode("/data/" + SKIPPED_VERSIONING_ELEMENTS[i]);
-
-        item.setData(version.getDocument());
-        document = item.getData();
-        item.setUpdated(version.getCommited());
-        item.setOwner(version.getUser());
-
-        // we do not store some elements in the versioning, let's use it from persistance
-        for (int i = 0; i < SKIPPED_VERSIONING_ELEMENTS.length; i++) {
-            if (elems[i] != null) {
-                Element copy = elems[i].createCopy();
-                Element orig = (Element) document.selectSingleNode("/data/" + SKIPPED_VERSIONING_ELEMENTS[i]);
-                if (orig != null)
-                    orig.detach();
-                document.getRootElement().add(copy);
-            }
-        }
-
-        Element versioningData = (Element) document.selectSingleNode("/data/versioning");
-        if (versioningData != null) {
-            versioningData.detach();
-            item.clearProperties();
-
-            List list = versioningData.selectNodes("properties/property");
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Element propertyElement = (Element) iter.next();
-                String key = propertyElement.elementText("key");
-                for (Iterator iterIn = propertyElement.elements("value").iterator(); iterIn.hasNext();) {
-                    Element value = (Element) iterIn.next();
-                    item.addProperty(key, value.getText());
-                }
-            }
-        }
-    }
-
-    /**
-     * Purges all revisions of specified relation from version repository. This action cannot be undone!
-     * @param relationId identifies data
-     */
-    public static void purgeRelationRevisions(int relationId) {
-        Versioning versioning = VersioningFactory.getVersioning();
-        versioning.purge(relationId);
-    }
-
     /**
      * Retrieves description of changes, that current user made.
      * @return changes description, null if none provided or Constants.ERROR if there is an error.
@@ -155,6 +53,27 @@ public class Misc {
             return Constants.ERROR;
         }
         return description;
+    }
+
+    /**
+     * Tests whether given document is wiki-style.
+     * @param obj object to be tested
+     * @return true if it is wiki
+     */
+    public static boolean isWiki(GenericDataObject obj) {
+        if (! (obj instanceof Item))
+            return false;
+        switch (obj.getType()) {
+            case Item.CONTENT:
+            case Item.DICTIONARY:
+            case Item.DRIVER:
+            case Item.FAQ:
+            case Item.HARDWARE:
+            case Item.PERSONALITY:
+            case Item.SOFTWARE:
+                return true;
+            default: return false;
+        }
     }
 
     /**

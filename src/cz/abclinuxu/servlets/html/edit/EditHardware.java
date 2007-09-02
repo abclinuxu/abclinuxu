@@ -26,6 +26,8 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistence.*;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -163,7 +165,10 @@ public class EditHardware implements AbcAction {
             return FMTemplateSelector.select("EditHardware", "add", env, request);
         }
 
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
         persistence.create(item);
+        versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
 
         Relation relation = new Relation(upper.getChild(), item, upper.getId());
         String name = root.elementTextTrim("name");
@@ -173,10 +178,6 @@ public class EditHardware implements AbcAction {
             relation.setUrl(url);
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
-
-        // commit new version
-        String descr = "Počáteční revize dokumentu";
-        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         // refresh RSS
         FeedGenerator.updateHardware();
@@ -264,11 +265,12 @@ public class EditHardware implements AbcAction {
             return FMTemplateSelector.select("EditHardware", "edit", env, request);
         }
 
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
         persistence.update(item);
-        FeedGenerator.updateHardware();
+        versioning.commit(item, user.getId(), changesDescription);
 
-        // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user, changesDescription);
+        FeedGenerator.updateHardware();
 
         // run monitor
         String url = relation.getUrl();

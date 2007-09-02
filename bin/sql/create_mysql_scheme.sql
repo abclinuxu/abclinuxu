@@ -199,7 +199,8 @@ ALTER TABLE akce ADD INDEX akce_index (kdo,relace);
 
 -- mala implementace RCS
 CREATE TABLE verze (
- relace INT NOT NULL,                            -- relace dokumentu
+ typ CHAR(1) NOT NULL,                           -- id tabulky predka
+ cislo MEDIUMINT NOT NULL,                       -- id predka
  verze INT(4) NOT NULL,                          -- verze dokumentu
  kdo INT(6) NOT NULL,                            -- identifikator uzivatele
  kdy DATETIME NOT NULL,                          -- cas pridani
@@ -207,7 +208,7 @@ CREATE TABLE verze (
  zmena TEXT NULL,                                -- diff oproti minule verzi
  popis VARCHAR(255) NULL                         -- popis teto zmeny
 );
-ALTER TABLE verze ADD UNIQUE INDEX in_relace_verze (relace,verze);
+ALTER TABLE verze ADD UNIQUE INDEX in_vazba_verze (typ,cislo,verze);
 
 CREATE TABLE komentar (
  cislo INT AUTO_INCREMENT PRIMARY KEY,     -- id tohoto radku; v podstate je zbytecny

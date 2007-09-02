@@ -20,8 +20,10 @@
 
 <#list BLOGS as info>
     <#assign title=TOOL.xpath(info.blog,"//custom/title")?default("blog")>
-    <p><b class="st_nadpis"><a href="/blog/${info.blog.subType}">${title}</a></b> | 
-    <a href="/Profile/${info.author.id}">${info.author.nickname?default(info.author.name)}</a></p>
+    <p>
+        <b class="st_nadpis"><a href="/blog/${info.blog.subType}">${title}</a></b> |
+       <@lib.showUser info.author />
+    </p>
     <p class="cl_inforadek"> &nbsp; Založeno: ${DATE.show(info.blog.created,"CZ_FULL_TXT")} | Příspěvků: ${info.stories}</p>
 </#list>
 

@@ -25,7 +25,7 @@
                 <#else>
                     <#assign who = TOOL.createUser(who_)>
                     <input type="checkbox" name="bUid" value="${who.id}">
-                    <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
+                    <@lib.showUser who/>
                 </#if>
                 </li>
             </#list>

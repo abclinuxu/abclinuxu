@@ -22,7 +22,7 @@
         <tr>
             <td><b>Autor:</b></td>
             <td>
-                <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
+                <@lib.showUser who/>
                 <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
             </td>
         </tr>

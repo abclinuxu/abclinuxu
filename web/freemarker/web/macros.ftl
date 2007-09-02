@@ -139,7 +139,7 @@
         </#if>
         ${DATE.show(comment.created,"SMART")}
         <#if comment.author?exists>
-            <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
+            <@showUser who/>
             <#local score=who.getIntProperty("score")?default(-1)><#if score != -1> | skóre: ${score}</#if>
             <#local blog=TOOL.getUserBlogAnchor(who, "blog")?default("UNDEF")><#if blog!="UNDEF"> | blog: ${blog}</#if>
             <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
@@ -391,4 +391,24 @@
     <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")?exists>
         <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
     </#if>
+</#macro>
+
+<#macro showUser user><a href="/Profile/${user.id}">${user.nick?default(user.name)}</a></#macro>
+
+<#macro showRevisions relation>
+    <p class="documentHistory">
+        <#local info = TOOL.getRevisionInfo(relation.child)>
+        Dokument vytvořil: <@showUser info.creator/>, ${DATE.show(relation.child.created,"SMART")}.
+        <#if (info.lastRevision > 1)>
+            Poslední úprava: <@showUser info.lastCommiter/>, ${DATE.show(relation.child.updated,"SMART")}.
+            <#if (info.committers?size > 0)>
+                Další přispěvatelé:
+                <#list info.committers as committer><#rt>
+                    <@showUser committer/><#rt>
+                    <#lt><#if committer_has_next>, <#else>.</#if>
+                </#list>
+            </#if>
+            <a href="/revize?rid=${relation.id}&amp;prefix=${URL.prefix}" rel="nofollow">Historie změn</a>
+        </#if>
+    </p>
 </#macro>

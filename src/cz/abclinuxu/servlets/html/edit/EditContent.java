@@ -26,6 +26,8 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
@@ -188,13 +190,13 @@ public class EditContent implements AbcAction {
             return FMTemplateSelector.select("EditContent", "add", env, request);
         }
 
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
         persistence.create(item);
+        versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
+
         relation.setChild(item);
         persistence.create(relation);
-
-        // commit new version
-        String descr = "Počáteční revize dokumentu";
-        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -253,13 +255,13 @@ public class EditContent implements AbcAction {
             return FMTemplateSelector.select("EditContent", "addDerived", env, request);
         }
 
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
         persistence.create(item);
+        versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
+
         relation.setChild(item);
         persistence.create(relation);
-
-        // commit new version
-        String descr = "Počáteční revize dokumentu";
-        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         if (toc!=null) {
             Element element = (Element) toc.getData().selectSingleNode("//node[@rid="+parentRelation.getId()+"]");
@@ -315,11 +317,10 @@ public class EditContent implements AbcAction {
             return FMTemplateSelector.select("EditContent", "editPublic", env, request);
         }
 
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
         persistence.update(item);
-        persistence.update(relation);
-
-        // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user, changesDescription);
+        versioning.commit(item, user.getId(), changesDescription);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
@@ -381,11 +382,12 @@ public class EditContent implements AbcAction {
             return FMTemplateSelector.select("EditContent", "edit", env, request);
         }
 
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
         persistence.update(item);
-        persistence.update(relation);
+        versioning.commit(item, user.getId(), changesDescription);
 
-        // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user, changesDescription);
+        persistence.update(relation);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();

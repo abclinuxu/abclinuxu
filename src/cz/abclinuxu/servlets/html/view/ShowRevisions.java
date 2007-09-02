@@ -19,6 +19,7 @@
 package cz.abclinuxu.servlets.html.view;
 
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.versioning.Versioning;
 import cz.abclinuxu.persistence.versioning.VersioningFactory;
@@ -60,7 +61,7 @@ public class ShowRevisions implements AbcAction {
         env.put(VAR_RELATION, relation);
 
         Versioning versioning = VersioningFactory.getVersioning();
-        List history = versioning.getHistory(relation.getId());
+        List history = versioning.getHistory((GenericDataObject) relation.getChild());
         env.put(VAR_HISTORY, history);
 
         String url = relation.getUrl(), revisionParam = "?" + PARAM_REVISION + "=";

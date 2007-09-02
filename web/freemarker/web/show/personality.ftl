@@ -5,10 +5,6 @@
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <li>
-                <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a><br />
-                <span class="regular-color">(${DATE.show(ITEM.updated,"CZ_FULL")})</span>
-            </li>
             <#if PARAMS.revize?exists>
                 <li>
                     <a class="bez-slovniku" href="${RELATION.url}">Návrat na aktuální verzi</a>
@@ -17,7 +13,6 @@
                 <li><a class="bez-slovniku" href="${URL.make("/edit/"+RELATION.id+"?action=edit")}" rel="nofollow">Upravit</a></li>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
                 <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Přidat fotografii</a></li>
-                <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/slovnik" rel="nofollow">Historie</a></li>
                 <li><a class="bez-slovniku" href="${RELATION.url}?varianta=print" rel="nofollow">Tisk</a></li>
                 <li>
                     <a class="bez-slovniku" href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
@@ -76,8 +71,11 @@
             <p>Zdroj zatím nebyl načten, je prázdný nebo obsahuje chybu.</p>
         </#if>
     </#if>
-    <@lib.showRelated ITEM/>
 </div>
+
+<@lib.showRelated ITEM/>
+
+<@lib.showRevisions RELATION/>
 
 <p class="dalsi_pojmy">
     Další osobnosti:

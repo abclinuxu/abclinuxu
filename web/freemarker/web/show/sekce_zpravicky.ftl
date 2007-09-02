@@ -27,12 +27,12 @@
     <br>
     <#if approved><b></#if>${DATE.show(ITEM.created,"SMART")}<#if approved></b></#if> |
     ${NEWS_CATEGORIES[ITEM.subType].name} |
-    <a href="/Profile/${autor.id}">${autor.name}</a>
+    <@lib.showUser autor/>
     <br>
     <a href="${URL.make("/edit?action=mail&amp;rid="+relation.id)}">Poslat email autorovi</a>
     <#if locked>
         <#assign admin=TOOL.createUser(TOOL.xpath(ITEM, "//locked_by"))>
-        Uzamknul <a href="/Profile/${admin.id}">${admin.name}</a> -
+        Uzamknul <@lib.showUser admin/> -
         <a href="${URL.make("/edit?action=unlock&amp;rid="+relation.id+TOOL.ticket(USER?if_exists, false))}">odemknout</a>
     <#else>
         <a href="${URL.make("/show/"+relation.id)}">Zobrazit</a>

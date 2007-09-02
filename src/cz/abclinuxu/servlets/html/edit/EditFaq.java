@@ -26,6 +26,8 @@ import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -133,36 +135,35 @@ public class EditFaq implements AbcAction {
             throw new InvalidInputException("Interní chyba - tato sekce není typu FAQ.");
         }
 
-        Item faq = new Item(0, Item.FAQ);
-        faq.setOwner(user.getId());
+        Item item = new Item(0, Item.FAQ);
+        item.setOwner(user.getId());
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
-        faq.setData(document);
-        Relation relation = new Relation(parentRelation.getChild(), faq, parentRelation.getId());
+        item.setData(document);
+        Relation relation = new Relation(parentRelation.getChild(), item, parentRelation.getId());
 
         boolean canContinue = true;
-        canContinue &= setQuestion(params, faq, root, env);
+        canContinue &= setQuestion(params, item, root, env);
         canContinue &= setText(params, root, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
                 params.remove(PARAM_PREVIEW);
-            faq.setInitialized(true);
-            env.put(VAR_PREVIEW, faq);
+            item.setInitialized(true);
+            env.put(VAR_PREVIEW, item);
             return FMTemplateSelector.select("EditFaq", "add", env, request);
         }
 
-        persistence.create(faq);
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
+        persistence.create(item);
+        versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
 
         String title = root.elementText("title");
         String url = parentRelation.getUrl() + "/" + URLManager.enforceRelativeURL(title);
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);
         persistence.create(relation);
-
-        // commit new version
-        String descr = "Počáteční revize dokumentu";
-        Misc.commitRelationRevision(faq, relation.getId(), user, descr);
 
         // refresh RSS
         FeedGenerator.updateFAQ();
@@ -202,15 +203,15 @@ public class EditFaq implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item faq = (Item) relation.getChild().clone();
-        Item origItem = (Item) faq.clone();
-        faq.setOwner(user.getId());
-        Element root = faq.getData().getRootElement();
+        Item item = (Item) relation.getChild().clone();
+        Item origItem = (Item) item.clone();
+        item.setOwner(user.getId());
+        Element root = item.getData().getRootElement();
 
         boolean canContinue = true;
-        canContinue &= setQuestion(params, faq, root, env);
+        canContinue &= setQuestion(params, item, root, env);
         canContinue &= setText(params, root, env);
-        canContinue &= ServletUtils.checkNoChange(faq, origItem, env);
+        canContinue &= ServletUtils.checkNoChange(item, origItem, env);
         String changesDescription = Misc.getRevisionString(params, env);
         canContinue &= ! Constants.ERROR.equals(changesDescription);
 
@@ -218,18 +219,18 @@ public class EditFaq implements AbcAction {
             if (!canContinue)
                 params.remove(PARAM_PREVIEW);
             else
-                env.put(VAR_PREVIEW, faq);
+                env.put(VAR_PREVIEW, item);
             return FMTemplateSelector.select("EditFaq", "edit", env, request);
         }
 
-        persistence.update(faq);
-
-        // commit new version
-        Misc.commitRelationRevision(faq, relation.getId(), user, changesDescription);
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
+        persistence.update(item);
+        versioning.commit(item, user.getId(), changesDescription);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
-        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.FAQ, faq, absoluteUrl);
+        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.FAQ, item, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 
         // refresh RSS

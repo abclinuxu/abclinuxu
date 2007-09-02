@@ -32,6 +32,8 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.versioning.VersionedDocument;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
@@ -154,8 +156,10 @@ public class ShowObject implements AbcAction {
         Tools.sync(upper);
 
         int revision = Misc.parseInt((String) params.get(ShowRevisions.PARAM_REVISION), -1);
-        if (revision != -1)
-            Misc.loadRelationRevision(item, relation.getId(), revision);
+        if (revision != -1) {
+            Versioning versioning = VersioningFactory.getVersioning();
+            versioning.load(item, revision);
+        }
 
         switch (item.getType()) {
             case Item.ARTICLE:

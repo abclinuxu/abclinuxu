@@ -291,8 +291,8 @@
                             <entry key="relations.record.by.user.and.type" value="select R.cislo from relace R left join zaznam Z on R.potomek=Z.cislo where R.typ_potomka='Z' and Z.pridal=? and Z.typ=?"/>
                             <entry key="relations.question.by.user" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and P.typ=3 and P.pridal=?"/>
                             <entry key="relations.comment.by.user" value="select R.predchozi,max(vytvoreno) from relace R, komentar K where R.typ_potomka='Z' and R.potomek=K.zaznam and K.autor=? group by K.zaznam order by 2"/>
-                            <entry key="relations.wiki.by.user" value="select distinct V.relace,R.url from verze V, relace R where kdo=? and R.cislo=V.relace"/>
-                            <entry key="count.relations.wiki.by.user" value="select count(distinct V.relace) from verze V, relace R where kdo=? and R.cislo=V.relace"/>
+                            <entry key="relations.wiki.by.user" value="select distinct V.relace,R.url from verze V, relace R where kdo=? and R.potomek=V.cislo and R.typ_potomka=V.typ"/>
+                            <entry key="count.relations.wiki.by.user" value="select count(distinct R.cislo) from verze V, relace R where kdo=? and R.potomek=V.cislo and R.typ_potomka=V.typ"/>
                             <entry key="count.relations.comment.by.user" value="select count(distinct R.predchozi) from relace R, komentar K where R.typ_predka='P' and R.typ_potomka='Z' and R.potomek=K.zaznam and K.autor=?"/>
                             <entry key="relations.section.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek) where typ_potomka='K' and K.typ=?"/>
                             <entry key="relations.standalone.polls" value="select R.cislo from relace R, anketa2 A where typ_potomka='A' and potomek=A.cislo and predchozi=250"/>
@@ -326,7 +326,7 @@
                             <entry key="relations.royalty" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=9 and R.typ_predka='P' and R.predek=K.cislo and K.typ=2"/>
                             <entry key="users.count.forum.comments" value="select K.autor, count(distinct K.zaznam) from komentar K, relace R1, relace R2, kategorie F where R1.typ_potomka='Z' and R1.potomek=K.zaznam  and R1.predchozi=R2.cislo and R2.typ_predka='K' and  R2.predek=F.cislo and F.typ=2 group by K.autor" />
                             <entry key="users.count.articles" value="select V2.hodnota, count(P.cislo) from polozka P, vlastnost V1, relace R, vlastnost V2 where P.typ=2 and V1.predek=P.cislo and V1.typ='author' and V1.hodnota=R.cislo and V2.typ_predka='P' and V2.predek=R.potomek and V2.typ='user' group by V2.hodnota" />
-                            <entry key="users.count.wiki.records" value="select kdo,count(distinct relace) from verze group by kdo" />
+                            <entry key="users.count.wiki.records" value="select kdo,count(distinct cislo,typ) from verze group by kdo" />
                             <entry key="users.count.news" value="select pridal,count(*) from polozka where typ=7 group by pridal" />
                             <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
                             <entry key="users.with.forum.by.email" value="select cislo from uzivatel where data like '%&lt;email valid=&quot;yes&quot;%&lt;forum&gt;yes%&lt;/email%'"/>
@@ -334,7 +334,7 @@
                             <entry key="users.in.group" value="select cislo from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%')"/>
                             <entry key="top.used.relations" value="select R.cislo,count(*) from relace R, vlastnost V where V.typ='used_by' and R.typ_potomka='P' and R.potomek=V.predek group by R.potomek order by 2 desc"/>
                             <entry key="top.counted.relations" value="select R.cislo from relace R, citac C, polozka P where R.typ_potomka='P' and R.potomek=C.cislo and C.typ='P' and C.druh=? and R.potomek=P.cislo and P.typ=? order by soucet desc"/>
-                            <entry key="last.versions" value="select verze,kdo,kdy,obsah,zmena,popis from verze where relace=? order by verze desc limit ?"/>
+                            <entry key="last.versions" value="select verze,kdo,kdy,obsah,zmena,popis from verze where cislo=? and typ=? order by verze desc limit ?"/>
                             <entry key="delete.user" value="delete from uzivatel where cislo=?"/>
                             <entry key="delete.user.ticket" value="delete from vlastnost where predek=? and typ='ticket'"/>
                             <entry key="change.revision.owner" value="update verze set kdo=? where kdo=?"/>
@@ -355,11 +355,11 @@
                         </node>
                         <node name="MysqlVersioningProvider">
                             <map>
-                                <entry key="sql.find.latest.version" value="select max(verze) from verze where relace=?"/>
-                                <entry key="sql.find.all.versions" value="select verze,kdo,kdy,popis from verze where relace=? order by kdy desc"/>
-                                <entry key="sql.insert.version" value="insert into verze (relace,verze,kdo,kdy,obsah,zmena,popis) values (?,?,?,?,?,NULL,?)"/>
-                                <entry key="sql.fetch.document" value="select verze,kdo,kdy,obsah,zmena,popis from verze where relace=? and verze=?"/>
-                                <entry key="sql.purge.document" value="delete from verze where relace=?"/>
+                                <entry key="sql.find.all.versions" value="select verze,kdo,kdy,popis from verze where typ=? and cislo=? order by verze desc"/>
+                                <entry key="sql.insert.version" value="insert into verze (typ,cislo,verze,kdo,kdy,obsah,zmena,popis) values (?,?,?,?,?,?,NULL,?)"/>
+                                <entry key="sql.fetch.document" value="select kdo,kdy,obsah from verze where typ=? and cislo=? and verze=?"/>
+                                <entry key="sql.purge.document" value="delete from verze where typ=? and cislo=?"/>
+                                <entry key="committers.count" value="3"/>
                             </map>
                         </node>
                     </node>

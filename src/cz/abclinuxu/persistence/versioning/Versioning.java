@@ -18,50 +18,64 @@
  */
 package cz.abclinuxu.persistence.versioning;
 
+import cz.abclinuxu.data.GenericDataObject;
+
 import java.util.List;
 
 /**
- * Interface to access versioning repository. It supports to
- * store (latest) version of document, load selected
- * document in given version and load information about all
- * versions of selected document. The document can hold any data,
- * for example serialized xml.
+ * Interface to access versioning repository. It supports
+ * storing and loading GenericDataObject revisions.
  * User: literakl
  * Date: 27.3.2005
  */
 public interface Versioning {
 
     /**
-     * Stores latest version of document into versioning repository.
-     * @param document document to be stored
-     * @param relation relation id for this document
+     * Updates versioning element inside object's XML. This call is mandatory
+     * before versioned object can be persisted and committed. It increments
+     * latest version and list of last committers. It is neccessary to store
+     * these changes to persistence, once this method is finished.
+     * Typical use case is:
+     * <ul>
+     * <li>versioning.prepareObjectBeforeCommit(obj, user.getId());</li>
+     * <li>persistence.create(obj); or persistence.update(obj);</li>
+     * <li>versioning.commit(obj, user.getId(), commitMessage);</li>
+     * </ul>
+     * @param obj object that shall be updated
      * @param user identifier of the user who commited this version
-     * @param descr description of commited changes
-     * @return information about this version
      */
-    public VersionInfo commit(String document, int relation, int user, String descr);
+    public void prepareObjectBeforeCommit(GenericDataObject obj, int user);
 
     /**
-     * Loads document identified by path in selected version.
-     * @param relation relation id for this document
+     * Stores latest version of document into versioning repository. Object's XML document
+     * must contain valid versioning/info element. You must call prepareObjectBeforeCommit()
+     * method prior to this call.
+     * @param obj object that shall be stored
+     * @param user identifier of the user who commited this version
+     * @param descr description of commited changes
+     */
+    public void commit(GenericDataObject obj, int user, String descr) throws VersioningException;
+
+    /**
+     * Loads given document in selected version from versioning.
+     * @param obj object to be loaded and updated to contain same data like in specified revision
      * @param version version to be fetched
-     * @return document with versioning metadata
      * @throws VersionNotFoundException Thrown when either document or specified version doesn't exist.
      */
-    public VersionedDocument load(int relation, int version) throws VersionNotFoundException;
+    public void load(GenericDataObject obj, int version) throws VersionNotFoundException;
 
     /**
      * Loads versioning history for selected document in descending order.
-     * @param relation relation id for this document
+     * @param obj object, its type and id is used for identification
      * @return list of VersionInfo objects. When the list is empty, then there is no
      * version of specified document.
      */
-    public List<VersionInfo> getHistory(int relation);
+    public List<VersionInfo> getHistory(GenericDataObject obj);
 
     /**
      * Removes all information for given document from versioning repository.
-     * @param relation relation id for this document
+     * @param obj object, its type and id is used for identification
      * @return true if there were some revisions for specified document
      */
-    public boolean purge(int relation);
+    public boolean purge(GenericDataObject obj);
 }

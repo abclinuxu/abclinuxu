@@ -10,7 +10,7 @@
 <h1>${title}</h1>
 
 <p>
-    <b>Autor:</b> <a href="/Profile/${autor.id}">${autor.name}</a><br>
+    <b>Autor:</b> <@lib.showUser autor/><br>
     <#if CATEGORY?exists>
         <b>Kategorie:</b> ${CATEGORY.name}<br>
     </#if>
@@ -30,7 +30,7 @@
     <#if USER?exists && USER.hasRole("news admin")>
         <#if locked>
             <#assign admin=TOOL.createUser(TOOL.xpath(ITEM, "//locked_by"))>
-                Uzamknul <a href="/Profile/${admin.id}">${admin.name}</a> -
+                Uzamknul <@lib.showUser admin/> -
                 <a href="${URL.make("/edit?action=unlock&amp;rid="+RELATION.id+TOOL.ticket(USER, false))}">odemknout</a>
             <#else>
                 <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>

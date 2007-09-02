@@ -5,10 +5,6 @@
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-                <li>
-                    <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a><br />
-                    <span class="regular-color">(${DATE.show(ITEM.updated,"CZ_FULL")})</span>
-                </li>
             <#if PARAMS.revize?exists>
                 <li>
                     <a href="${RELATION.url?default("/hardware/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
@@ -17,7 +13,6 @@
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
                 <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Přidat obrázek</a></li>
-                <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/software">Historie</a></li>
                 <li><a href="${RELATION.url?default("/software/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
                     <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
@@ -79,6 +74,8 @@
 
     <@lib.showRelated ITEM/>
 </div>
+
+<@lib.showRevisions RELATION/>
 
 <@lib.advertisement id="arbo-sq" />
 <@lib.advertisement id="hosting90" />

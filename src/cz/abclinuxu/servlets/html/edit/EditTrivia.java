@@ -38,6 +38,8 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -140,9 +142,12 @@ public class EditTrivia implements AbcAction {
         if (!canContinue)
             return FMTemplateSelector.select("EditTrivia", "add", env, request);
 
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
         persistence.create(item);
-        Relation relation = new Relation(upper.getChild(), item, upper.getId());
+        versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
 
+        Relation relation = new Relation(upper.getChild(), item, upper.getId());
         String name = root.elementTextTrim("title");
         String url = upper.getUrl() + "/" + URLManager.enforceRelativeURL(name);
         url = URLManager.protectFromDuplicates(url);
@@ -151,12 +156,6 @@ public class EditTrivia implements AbcAction {
 
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
-
-        persistence.update(item);
-
-        // commit new version
-        String descr = "Počáteční revize dokumentu";
-        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
@@ -231,10 +230,10 @@ public class EditTrivia implements AbcAction {
         if (!canContinue)
             return FMTemplateSelector.select("EditTrivia", "edit", env, request);
 
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
         persistence.update(item);
-
-        // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user, changesDescription);
+        versioning.commit(item, user.getId(), changesDescription);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, upper.getUrl());

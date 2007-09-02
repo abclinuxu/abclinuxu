@@ -36,6 +36,8 @@ import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
@@ -144,8 +146,10 @@ public class ViewFaq implements AbcAction {
         env.put(VAR_ITEM, item);
 
         int revision = Misc.parseInt((String) params.get(ShowRevisions.PARAM_REVISION), -1);
-        if (revision != -1)
-            Misc.loadRelationRevision(item, relation.getId(), revision);
+        if (revision != -1) {
+            Versioning versioning = VersioningFactory.getVersioning();
+            versioning.load(item, revision);
+        }
 
         env.put(Constants.VAR_RSS, FeedGenerator.getFaqFeedUrl());
         return FMTemplateSelector.select("ViewFaq", "view", env, request);

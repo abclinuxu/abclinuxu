@@ -23,6 +23,8 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -143,16 +145,17 @@ public class EditPersonality implements AbcAction {
             return FMTemplateSelector.select("EditPersonality", "add", env, request);
         }
 
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
         persistence.create(item);
+        versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
+
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
+        // todo prvni revize nebude obsahovat RSS v tabulce verze
         setRssUrl(params, item, relation.getId());
         persistence.update(item);
-
-        // commit new version
-        String descr = "Počáteční revize dokumentu";
-        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         FeedGenerator.updatePersonalities();
         VariableFetcher.getInstance().refreshPersonalities();
@@ -228,10 +231,10 @@ public class EditPersonality implements AbcAction {
             return FMTemplateSelector.select("EditPersonality", "edit", env, request);
         }
 
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
         persistence.update(item);
-
-        // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user, changesDescription);
+        versioning.commit(item, user.getId(), changesDescription);
 
         // run monitor
         String url = "http://www.abclinuxu.cz"+relation.getUrl();

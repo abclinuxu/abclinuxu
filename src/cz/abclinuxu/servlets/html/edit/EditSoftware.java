@@ -25,6 +25,8 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -183,9 +185,12 @@ public class EditSoftware implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditSoftware", "add", env, request);
         }
 
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
         persistence.create(item);
-        Relation relation = new Relation(upper.getChild(), item, upper.getId());
+        versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
 
+        Relation relation = new Relation(upper.getChild(), item, upper.getId());
         String name = root.elementTextTrim("name");
         String url = upper.getUrl() + "/" + URLManager.enforceRelativeURL(name);
         url = URLManager.protectFromDuplicates(url);
@@ -195,12 +200,9 @@ public class EditSoftware implements AbcAction, Configurable {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
+        // todo prvni revize nebude obsahovat RSS v tabulce verze
         setRssUrl(params, item, relation.getId());
         persistence.update(item);
-
-        // commit new version
-        String descr = "Počáteční revize dokumentu";
-        Misc.commitRelationRevision(item, relation.getId(), user, descr);
 
         // refresh RSS
         FeedGenerator.updateSoftware();
@@ -276,10 +278,11 @@ public class EditSoftware implements AbcAction, Configurable {
         }
 
         setRssUrl(params, item, relation.getId());
-        persistence.update(item);
 
-        // commit new version
-        Misc.commitRelationRevision(item, relation.getId(), user, changesDescription);
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.prepareObjectBeforeCommit(item, user.getId());
+        persistence.update(item);
+        versioning.commit(item, user.getId(), changesDescription);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
