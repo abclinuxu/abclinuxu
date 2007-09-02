@@ -182,7 +182,7 @@ public class ShowObject implements AbcAction {
             }
             case Item.DRIVER: {
                 SQLTool sqlTool = SQLTool.getInstance();
-                List<VersionedDocument> history = sqlTool.getLastRevisions(relation.getId(), 6);
+                List<VersionedDocument> history = sqlTool.getLastRevisions(item, 6);
                 String revisionParam = "?" + ShowRevisions.PARAM_REVISION + "=";
                 env.put(ShowRevisions.VAR_HISTORY, history);
                 env.put(ShowRevisions.VAR_REVISION_PARAM, revisionParam);

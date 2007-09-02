@@ -1832,12 +1832,12 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Finds last revisions for specified relation.
-     * @param relation id of relation to be searched
+     * Finds last revisions for specified object.
+     * @param obj generic data object to be searched
      * @param count number of revisions to be loaded
      * @return list of VersionedDocuments
      */
-    public List<VersionedDocument> getLastRevisions(int relation, int count) {
+    public List<VersionedDocument> getLastRevisions(GenericDataObject obj, int count) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
@@ -1845,8 +1845,9 @@ public final class SQLTool implements Configurable {
         try {
             con = persistance.getSQLConnection();
             statement = con.prepareStatement((String) sql.get(LAST_REVISIONS));
-            statement.setInt(1, relation);
-            statement.setInt(2, count);
+            statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
+            statement.setInt(2, obj.getId());
+            statement.setInt(3, count);
             resultSet = statement.executeQuery();
 
             List<VersionedDocument> result = new ArrayList<VersionedDocument>();
