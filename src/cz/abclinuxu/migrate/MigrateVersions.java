@@ -44,12 +44,12 @@ public class MigrateVersions {
 
     public static void main(String[] args) throws Exception {
         long started = System.currentTimeMillis();
-        fixItems(Item.CONTENT);
-        fixItems(Item.DICTIONARY);
-        fixItems(Item.DRIVER);
-        fixItems(Item.FAQ);
-        fixItems(Item.HARDWARE);
-        fixItems(Item.PERSONALITY);
+//        fixItems(Item.CONTENT);
+//        fixItems(Item.DICTIONARY);
+//        fixItems(Item.DRIVER);
+//        fixItems(Item.FAQ);
+//        fixItems(Item.HARDWARE);
+//        fixItems(Item.PERSONALITY);
         fixItems(Item.SOFTWARE);
         System.out.println("Migration took " + (System.currentTimeMillis() - started) + " ms.");
     }
@@ -86,7 +86,10 @@ public class MigrateVersions {
                 break;
         }
 
-        Element info = DocumentHelper.makeElement(item.getData(), "/data/versioning/revisions");
+        Element info = (Element) item.getData().selectSingleNode("/data/versioning/revisions");
+        if (info != null)
+            info.detach();
+        info = DocumentHelper.makeElement(item.getData(), "/data/versioning/revisions");
         info.addAttribute("last", Integer.toString((last != null) ? last.getVersion() : first.getVersion()));
         Element committers = info.addElement("committers");
         committers.addElement("creator").setText(Integer.toString(first.getUser()));
