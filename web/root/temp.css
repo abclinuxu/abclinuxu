@@ -32,3 +32,13 @@
 .miton-box a { color: #dd2b0f; }
 .miton-box a:hover { background-color: #dd2b0f;
                      color: white; }
+
+.novell-box { border: 1px solid red;
+              background-color: white;
+              color: black; }
+.novell-box a.h { color: black; }
+.novell-box a.h:hover { background-color: white;
+                     color: black; }
+.novell-box a { color: red; }
+.novell-box a:hover { background-color: red;
+                      color: white; }
