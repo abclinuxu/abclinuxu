@@ -143,7 +143,7 @@ CREATE TABLE relace (
 ALTER TABLE relace ADD INDEX in_potomek (typ_potomka,potomek);
 ALTER TABLE relace ADD INDEX in_predek (typ_predka,predek);
 ALTER TABLE relace ADD INDEX in_predchozi (predchozi);
-ALTER TABLE relace ADD INDEX in_url (url);
+ALTER TABLE relace ADD UNIQUE INDEX in_url (url);
 
 -- tabulka obsahujici dalsi hodnoty pro zvoleny objekt
 -- oddelene z XML aby se dalo dobre hledat uz v SQL
