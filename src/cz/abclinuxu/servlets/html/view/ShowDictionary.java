@@ -20,6 +20,7 @@ package cz.abclinuxu.servlets.html.view;
 
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
@@ -100,7 +101,7 @@ public class ShowDictionary implements AbcAction {
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
-        Object item = (Item) relation.getChild();
+        GenericObject item = relation.getChild();
         if (item instanceof Item && ((Item) item).getType() != Item.DICTIONARY)
             return ShowObject.processItem(request, env, relation);
 
