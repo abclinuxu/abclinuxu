@@ -11,7 +11,7 @@
   <#list USERS.data as user>
    <li>
     <input type="radio" name="${PARAMS.sParam?default("uid")}" value="${user.id}" <#if user_index==0>checked</#if>>
-    <@lib.showUser who/>
+    <@lib.showUser user/>
    </li>
   </#list>
  </ol>

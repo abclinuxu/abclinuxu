@@ -7,7 +7,7 @@
     <#list usedby as sw_user>
         <#assign who = TOOL.createUser(sw_user)>
         <li>
-            <@lib.showUser sw_user/>
+            <@lib.showUser who/>
         </li>
     </#list>
 </ul>
