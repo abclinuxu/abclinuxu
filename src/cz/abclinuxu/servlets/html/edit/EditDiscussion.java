@@ -292,6 +292,7 @@ public class EditDiscussion implements AbcAction {
 
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item discussion = new Item(0,Item.DISCUSSION);
+        discussion.setSubType(Constants.SUBTYPE_QUESTION);
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");

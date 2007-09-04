@@ -1829,6 +1829,9 @@ public class Tools implements Configurable {
      * @return true if it is question
      */
     public static boolean isQuestion(Item item) {
-        return item.getType() == Item.DISCUSSION && item.getData().selectSingleNode("/data/title") != null;
+        if (item.getType() != Item.DISCUSSION)
+            return false;
+        return Constants.SUBTYPE_QUESTION.equals(item.getSubType()) ||
+                item.getData().selectSingleNode("/data/title") != null;
     }
 }

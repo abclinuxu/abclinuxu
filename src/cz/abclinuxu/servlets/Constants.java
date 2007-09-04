@@ -236,6 +236,9 @@ public interface Constants {
     String PAGE_SEARCH = "hledani";
     String PAGE_WAP = "wap";
 
+    /** value for subtype that marks discussion item as question */
+    String SUBTYPE_QUESTION = "question";
+
     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     DateFormat isoFormatShort = new SimpleDateFormat("yyyy-MM-dd");
     DateFormat isoSearchFormat = new SimpleDateFormat("yyyyMMdd");
