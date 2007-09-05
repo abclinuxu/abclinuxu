@@ -300,6 +300,12 @@ public class GenerateDevelDatabase {
         user.setPassword("xxx");
         user.setProperty(Constants.PROPERTY_TICKET, Collections.singleton("xxx"));
         user.setProperty(Constants.PROPERTY_SCORE, Collections.singleton("33"));
+        Document data = user.getData();
+        removeNode(data, "/data/communication");
+        removeNode(data, "/data/settings");
+        removeNode(data, "/data/system");
+        removeNode(data, "/data/roles");
+        removeNode(data, "/data/links");
     }
 
     /**
