@@ -119,7 +119,7 @@ public class GenerateDevelDatabase {
             statement.execute("insert into devel.konstanty select * from abc.konstanty");
 
             /* prenest historii wiki dokumentu */
-            statement.execute("insert into devel.verze select V.* from abc.verze V, devel.relace R, devel.polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.cislo=V.relace");
+            statement.execute("insert into devel.verze select V.* from abc.verze V, devel.relace R where R.typ_potomka=V.typ and R.potomek=V.cislo");
             ResultSet resultSet = statement.executeQuery("select kdo from devel.verze");
             while (resultSet.next()) {
                 int id = resultSet.getInt(1);
