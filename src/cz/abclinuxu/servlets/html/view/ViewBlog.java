@@ -399,9 +399,9 @@ public class ViewBlog implements AbcAction, Configurable {
 
     /**
      * Displays all available blogs
-     * todo paging, sort by number of stories
      */
     protected String processBlogs(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation;
@@ -410,8 +410,14 @@ public class ViewBlog implements AbcAction, Configurable {
         Map map;
         List months;
 
-        List blogs = sqlTool.findCategoryRelationsWithType(Category.BLOG, null);
+        int total = sqlTool.countCategoryRelationsWithType(Category.BLOG);
+        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
+        int pageSize = Misc.getPageSize(40, 100, env, "/data/settings/forum_size");
+
+        Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, pageSize)};
+        List blogs = sqlTool.findCategoryRelationsWithType(Category.BLOG, qualifiers);
         Tools.syncList(blogs);
+        
         List users = new ArrayList(blogs.size());
         for (Iterator iter = blogs.iterator(); iter.hasNext();) {
             relation = (Relation) iter.next();
@@ -448,8 +454,9 @@ public class ViewBlog implements AbcAction, Configurable {
             map.put("stories", new Integer(count));
             result.add(map);
         }
-        env.put(VAR_BLOGS, result);
 
+        Paging paging = new Paging(result, from, pageSize, total);
+        env.put(VAR_BLOGS, paging);
         env.put(Constants.VAR_RSS, FeedGenerator.getBlogsFeedUrl());
         return FMTemplateSelector.select("ViewBlog", "blogs", env, request);
     }

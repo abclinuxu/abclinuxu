@@ -18,13 +18,37 @@
 
 <#include "../header.ftl">
 
-<#list BLOGS as info>
+<table>
+  <thead>
+    <tr>
+      <th>Blog</th>
+      <th>Autor</th>
+      <th>Založeno</th>
+      <th>Příspěvků</th>
+    </tr>
+  </thead>
+  <tbody>
+  <#list BLOGS.data as info>
     <#assign title=TOOL.xpath(info.blog,"//custom/title")?default("blog")>
-    <p>
-        <b class="st_nadpis"><a href="/blog/${info.blog.subType}">${title}</a></b> |
-       <@lib.showUser info.author />
-    </p>
-    <p class="cl_inforadek"> &nbsp; Založeno: ${DATE.show(info.blog.created,"CZ_FULL_TXT")} | Příspěvků: ${info.stories}</p>
-</#list>
+      <tr>
+        <td><a href="/blog/${info.blog.subType}">${title}</a></td>
+        <td><@lib.showUser info.author /></td>
+        <td align="right">${DATE.show(info.blog.created,"SMART_DMY_TXT")}</td>
+        <td align="center">${info.stories}</td>
+      </tr>
+   </#list>
+  </tbody>
+</table>
+
+<p>
+<#if (BLOGS.currentPage.row > 0) >
+    <#assign start=BLOGS.currentPage.row-BLOGS.pageSize><#if (start<0)><#assign start=0></#if>
+    <a href="/blogy?from=${start}&amp;count=${BLOGS.pageSize}">Novější blogy</a> &#8226;
+</#if>
+<#assign start=BLOGS.currentPage.row + BLOGS.pageSize>
+<#if (start < BLOGS.total) >
+    <a href="/blogy?from=${start}&amp;count=${BLOGS.pageSize}">Starší blogy</a>
+</#if>
+</p>
 
 <#include "../footer.ftl">

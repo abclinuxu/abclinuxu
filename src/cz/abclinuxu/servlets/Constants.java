@@ -248,7 +248,9 @@ public interface Constants {
     DateFormat czShortFormat = new SimpleDateFormat("d.M. HH:mm");
     DateFormat czDayMonthYearSpaces = new SimpleDateFormat("d. M. yyyy");
     DateFormat czDayMonthYear = new SimpleDateFormat("d.M.yyyy");
+    DateFormat czDayMonthYearTxt = new SimpleDateFormat("d. MMMMM yyyy");
     DateFormat czDayMonth = new SimpleDateFormat("d.M.");
+    DateFormat czDayMonthTxt = new SimpleDateFormat("d. MMMMM");
     DateFormat czTimeOnly = new SimpleDateFormat("HH:mm");
     DateFormat czDay = new SimpleDateFormat("EEEE");
 

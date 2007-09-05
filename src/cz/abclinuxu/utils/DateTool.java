@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.Calendar;
 import java.util.prefs.Preferences;
 import java.text.ParseException;
+import java.text.DateFormat;
 
 import org.apache.log4j.Logger;
 
@@ -69,6 +70,8 @@ public class DateTool implements Configurable {
     public static final String CZ_SMART = "SMART";
     /** Selects best way according to distance from now, time is not included */
     public static final String CZ_SMART_DAY_MONTH_YEAR = "SMART_DMY";
+    /** Selects best way according to distance from now, time is not included, month is expressed in word */
+    public static final String CZ_SMART_DAY_MONTH_YEAR_TXT = "SMART_DMY_TXT";
 
     private static final int DAY_DURATION = 24*60*60*1000;
 
@@ -93,17 +96,11 @@ public class DateTool implements Configurable {
     public String show(Date date, String format, boolean specialCurrentDayHandling) {
         if ( date==null ) return null;
 
-        if ( ISO_FORMAT.equalsIgnoreCase(format) ) {
-            synchronized (Constants.isoFormat) {
-                return Constants.isoFormat.format(date);
-            }
-        }
+        if ( ISO_FORMAT.equalsIgnoreCase(format) )
+            return renderDate(Constants.isoFormat, date);
 
-        if ( ONLY_TIME.equalsIgnoreCase(format) ) {
-            synchronized (Constants.czTimeOnly) {
-                return Constants.czTimeOnly.format(date);
-            }
-        }
+        if ( ONLY_TIME.equalsIgnoreCase(format) )
+            return renderDate(Constants.czTimeOnly, date);
 
         long timeToRender = date.getTime();
         boolean notTodayOrYesterday = true;
@@ -111,112 +108,78 @@ public class DateTool implements Configurable {
             notTodayOrYesterday = timeToRender < yesterday || timeToRender > tommorow;
 
         if ( CZ_SHORT.equalsIgnoreCase(format) ) {
-            if (notTodayOrYesterday) {
-                synchronized (Constants.czShortFormat) {
-                    return Constants.czShortFormat.format(date);
-                }
-            } else {
-                synchronized (Constants.czTimeOnly) {
-                    return getCzDay(timeToRender) + " " + Constants.czTimeOnly.format(date);
-                }
-            }
+            if (notTodayOrYesterday)
+                return renderDate(Constants.czShortFormat, date);
+            else
+                return getCzDay(timeToRender) + " " + renderDate(Constants.czTimeOnly, date);
         }
 
         if (CZ_SMART.equalsIgnoreCase(format)) {
             if (notTodayOrYesterday) {
-                if (timeToRender < thisYear) {
-                    synchronized (Constants.czFormat) {
-                        return Constants.czFormat.format(date);
-                    }
-                } else {
-                    synchronized (Constants.czShortFormat) {
-                        return Constants.czShortFormat.format(date);
-                    }
-                }
-            } else {
-                synchronized (Constants.czTimeOnly) {
-                    return getCzDay(timeToRender) + " " + Constants.czTimeOnly.format(date);
-                }
-            }
+                if (timeToRender < thisYear)
+                    return renderDate(Constants.czFormat, date);
+                else
+                    return renderDate(Constants.czShortFormat, date);
+            } else
+                return getCzDay(timeToRender) + " " + renderDate(Constants.czTimeOnly, date);
         }
 
         if (CZ_SMART_DAY_MONTH_YEAR.equalsIgnoreCase(format)) {
             if (notTodayOrYesterday) {
-                if (timeToRender < thisYear) {
-                    synchronized (Constants.czDayMonthYearSpaces) {
-                        return Constants.czDayMonthYearSpaces.format(date);
-                    }
-                } else {
-                    synchronized (Constants.czDayMonth) {
-                        return Constants.czShortFormat.format(date);
-                    }
-                }
-            } else {
-                synchronized (Constants.czTimeOnly) {
-                    return getCzDay(timeToRender);
-                }
-            }
+                if (timeToRender < thisYear)
+                    return renderDate(Constants.czDayMonthYearSpaces, date);
+                else
+                    return renderDate(Constants.czDayMonth, date);
+            } else
+                return renderDate(Constants.czTimeOnly, date);
+        }
+
+        if (CZ_SMART_DAY_MONTH_YEAR_TXT.equalsIgnoreCase(format)) {
+            if (notTodayOrYesterday) {
+                if (timeToRender < thisYear)
+                    return renderDate(Constants.czDayMonthYearTxt, date);
+                else
+                    return renderDate(Constants.czDayMonthTxt, date);
+            } else
+                return getCzDay(timeToRender);
         }
 
         if ( CZ_FULL.equalsIgnoreCase(format) ) {
-            if (notTodayOrYesterday) {
-                synchronized (Constants.czFormat) {
-                    return Constants.czFormat.format(date);
-                }
-            } else {
-                synchronized (Constants.czTimeOnly) {
-                    return getCzDay(timeToRender) + " " + Constants.czTimeOnly.format(date);
-                }
-            }
+            if (notTodayOrYesterday)
+                return renderDate(Constants.czFormat, date);
+            else
+                return getCzDay(timeToRender) + " " + renderDate(Constants.czTimeOnly, date);
         }
 
         if ( CZ_DAY_MONTH_YEAR_SPACES.equalsIgnoreCase(format) ) {
-            if (notTodayOrYesterday) {
-                synchronized (Constants.czDayMonthYearSpaces) {
-                    return Constants.czDayMonthYearSpaces.format(date);
-                }
-            } else {
+            if (notTodayOrYesterday)
+                return renderDate(Constants.czDayMonthYearSpaces, date);
+            else
                 return getCzDay(timeToRender);
-            }
         }
 
         if ( CZ_DAY_MONTH_YEAR.equalsIgnoreCase(format) ) {
-            if (notTodayOrYesterday) {
-                synchronized (Constants.czDayMonthYear) {
-                    return Constants.czDayMonthYear.format(date);
-                }
-            } else {
+            if (notTodayOrYesterday)
+                return renderDate(Constants.czDayMonthYear, date);
+            else
                 return getCzDay(timeToRender);
-            }
         }
 
         if ( CZ_DAY_MONTH.equalsIgnoreCase(format) ) {
-            if (notTodayOrYesterday) {
-                synchronized (Constants.czDayMonth) {
-                    return Constants.czDayMonth.format(date);
-                }
-            } else {
+            if (notTodayOrYesterday)
+                return renderDate(Constants.czDayMonth, date);
+            else
                 return getCzDay(timeToRender);
-            }
         }
 
-        if ( CZ_FULL_TEXT.equalsIgnoreCase(format) ) {
-            synchronized (Constants.czFormatTxt) {
-                return Constants.czFormatTxt.format(date);
-            }
-        }
+        if ( CZ_FULL_TEXT.equalsIgnoreCase(format) )
+            return renderDate(Constants.czFormatTxt, date);
 
-        if ( CZ_ONLY_DAY.equalsIgnoreCase(format) ) {
-            synchronized (Constants.czDay) {
-                return Constants.czDay.format(date);
-            }
-        }
+        if ( CZ_ONLY_DAY.equalsIgnoreCase(format) )
+            return renderDate(Constants.czDay, date);
 
-        if ( US_FULL.equalsIgnoreCase(format) ) {
-            synchronized (Constants.usFormat) {
-                return Constants.usFormat.format(date);
-            }
-        }
+        if ( US_FULL.equalsIgnoreCase(format) )
+            return renderDate(Constants.usFormat, date);
 
         log.warn("Neznamy format data: "+format);
         return null;
@@ -230,6 +193,18 @@ public class DateTool implements Configurable {
             return textYesterday;
         else
             return textToday;
+    }
+
+    /**
+     * Renders a date using given format with neccessary synchronization.
+     * @param format format
+     * @param date date
+     * @return rendered date
+     */
+    private String renderDate(DateFormat format, Date date) {
+        synchronized (format) {
+            return format.format(date);
+        }
     }
 
     /**
