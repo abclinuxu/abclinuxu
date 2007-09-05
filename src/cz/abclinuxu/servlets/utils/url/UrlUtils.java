@@ -48,10 +48,10 @@ public class UrlUtils {
     public static final String PREFIX_FORUM = "/forum";
     public static final String PREFIX_HARDWARE = "/hardware";
     public static final String PREFIX_NEWS = "/zpravicky";
+    public static final String PREFIX_PERSONALITIES = "/kdo-je";
     public static final String PREFIX_POLLS = "/ankety";
     public static final String PREFIX_SERIES = "/serialy";
     public static final String PREFIX_SOFTWARE = "/software";
-    public static final String PREFIX_PERSONALITIES = "/kdo-je";
     public static final String PREFIX_NONE = "";
 
     static List prefixes = null;

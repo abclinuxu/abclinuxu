@@ -143,7 +143,7 @@ public class HTMLVersion implements Configurable {
         if ( e instanceof NotFoundException ) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             template = config.getTemplate("/web/show/notfound.ftl");
-        } else if ( e instanceof MissingArgumentException || e instanceof InvalidInputException) {
+        } else if ( e instanceof MissingArgumentException || e instanceof InvalidInputException || e instanceof MissingArgumentException) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             template = config.getTemplate("/errors/badinput.ftl");
         } else if ( e instanceof NotAuthorizedException) {

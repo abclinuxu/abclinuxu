@@ -47,6 +47,7 @@ import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
@@ -175,6 +176,8 @@ public class EditBlog implements AbcAction, Configurable {
         if (relation.getChild() instanceof Category) {
             blog = (Category) relation.getChild();
         } else if (relation.getChild() instanceof Item) {
+            if ( ! (relation.getParent() instanceof Category))
+                throw new InvalidInputException("Tato relace nepatří blogu!");
             blog = (Category) relation.getParent();
             Tools.sync(blog);
             blogRelation = relation;

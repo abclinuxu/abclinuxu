@@ -67,7 +67,7 @@
     <#list ARTICLES.data as relation>
       <#assign clanek=relation.child, tmp=TOOL.groupByType(clanek.children, "Item"),
                url=relation.url?default("/clanky/show/"+relation.id),
-               rating=TOOL.ratingFor(relation.child.data)?default("UNDEF")>
+               rating=TOOL.ratingFor(clanek.data)?default("UNDEF")>
       <tr>
         <td><a href="${url}">${TOOL.xpath(clanek,"data/name")}</a></td>
         <td class="td-datum">${DATE.show(clanek.created, "SMART_DMY")}</td>

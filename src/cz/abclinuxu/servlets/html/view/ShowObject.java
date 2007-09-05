@@ -96,9 +96,11 @@ public class ShowObject implements AbcAction {
             return processCensored(request,env);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
-        if ( relation==null )
+        if (relation == null)
             throw new MissingArgumentException("Parametr relationId je prázdný!");
         relation = (Relation) persistence.findById(relation);
+        if (relation.getChild() instanceof Record)
+            relation = (Relation) persistence.findById(new Relation(relation.getUpper()));
         env.put(VAR_RELATION,relation);
 
         // check ACL
@@ -120,9 +122,6 @@ public class ShowObject implements AbcAction {
                     return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             }
         }
-
-        if (relation.getChild() instanceof Record)
-            relation = (Relation) persistence.findById(new Relation(relation.getUpper()));
 
         List parents = persistence.findParents(relation);
         env.put(VAR_PARENTS, parents);
