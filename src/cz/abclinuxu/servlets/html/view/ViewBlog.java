@@ -276,14 +276,7 @@ public class ViewBlog implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistence();
 
         Category blog = (Category) env.get(VAR_BLOG);
-        int count = 0;
-        if (summary)
-            count = summarySize;
-        else {
-            Element element = (Element) blog.getData().selectSingleNode("//settings/page_size");
-            count = Misc.parseInt((element != null) ? element.getText() : null, defaultPageSize);
-        }
-
+        int count = summarySize;
         List qualifiers = new ArrayList();
         qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner()));
         if (!summary)
@@ -417,7 +410,7 @@ public class ViewBlog implements AbcAction, Configurable {
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, pageSize)};
         List blogs = sqlTool.findCategoryRelationsWithType(Category.BLOG, qualifiers);
         Tools.syncList(blogs);
-        
+
         List users = new ArrayList(blogs.size());
         for (Iterator iter = blogs.iterator(); iter.hasNext();) {
             relation = (Relation) iter.next();

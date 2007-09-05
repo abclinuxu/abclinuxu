@@ -28,7 +28,6 @@ import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.security.Roles;
 
@@ -118,30 +117,7 @@ public class ViewUser implements AbcAction {
      * shows profile for selected user
      */
     protected String handleProfile(HttpServletRequest request, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(VAR_PROFILE);
-
-        Element settingsBlog = (Element) user.getData().selectSingleNode("/data/settings/blog");
-        if (settingsBlog != null) {
-            int id = Misc.parseInt(settingsBlog.getText(), 0);
-            Category blog = (Category) persistence.findById(new Category(id));
-            env.put(ViewBlog.VAR_BLOG, blog);
-
-            Element element = (Element) blog.getData().selectSingleNode("//settings/page_size");
-            int count = Misc.parseInt((element != null) ? element.getText() : null, ViewBlog.getDefaultPageSize());
-
-            List qualifiers = new ArrayList();
-            qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(user.getId())));
-            qualifiers.add(Qualifier.SORT_BY_CREATED);
-            qualifiers.add(Qualifier.ORDER_DESCENDING);
-            qualifiers.add(new LimitQualifier(0, count));
-
-            Qualifier[] qa = new Qualifier[qualifiers.size()];
-            List stories = SQLTool.getInstance().findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
-            Tools.syncList(stories);
-            env.put(ViewBlog.VAR_STORIES, stories);
-        }
-
         SQLTool sqlTool = SQLTool.getInstance();
         Set<String> property = Collections.singleton(Integer.toString(user.getId()));
         Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_USED_BY, property);
@@ -174,6 +150,17 @@ public class ViewUser implements AbcAction {
             Relation author = (Relation) persistence.findById(authors.get(0));
             counts.put("article", sqlTool.countArticleRelationsByAuthor(author.getId()));
             env.put(VAR_AUTHOR, author);
+        }
+
+        Element settingsBlog = (Element) user.getData().selectSingleNode("/data/settings/blog");
+        if (settingsBlog != null) {
+            int id = Misc.parseInt(settingsBlog.getText(), 0);
+            Category blog = (Category) persistence.findById(new Category(id));
+            env.put(ViewBlog.VAR_BLOG, blog);
+
+            Qualifier[] qa = new Qualifier[]{ new CompareCondition(Field.OWNER, Operation.EQUAL, user.getId()) };
+            int stories = sqlTool.countItemRelationsWithType(Item.BLOG, qa);
+            counts.put("story", stories);
         }
 
         counts.put("news", sqlTool.countNewsRelationsByUser(user.getId()));

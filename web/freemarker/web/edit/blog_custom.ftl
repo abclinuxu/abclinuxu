@@ -42,15 +42,6 @@ přidat obrázek, odkazy na své přátelé nebo blogy, které čtete.
    </td>
   </tr>
   <tr>
-   <td>Počet zápisů
-       <a class="info" href="#">?<span class="tooltip">Zde nastavíte, kolik zápisů se má zobrazovat na stránce</span></a>
-   </td>
-   <td>
-    <input type="text" name="pageSize" size="40" maxlength="70" value="${PARAMS.pageSize?if_exists}">
-    <div class="error">${ERRORS.pageSize?if_exists}</div>
-   </td>
-  </tr>
-  <tr>
    <td>&nbsp;</td>
    <td>
     <input type="submit" name="finish" value="Dokonči">

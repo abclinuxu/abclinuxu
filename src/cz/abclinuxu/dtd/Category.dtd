@@ -18,8 +18,7 @@
 <!ELEMENT links (link+)> <!-- container for links, that user is watching/recommending -->
 <!ELEMENT link #PCDATA> <!-- URI of the link -->
 <!ATTLIST caption (#NMTOKEN) #REQUIRED> <!-- caption for the link -->
-<!ELEMENT settings (page_size?)> <!-- various settings -->
-<!ELEMENT page_size (#PCDATA)> <!-- integer, number of stories per page -->
+<!ELEMENT settings ()> <!-- various settings -->
 <!ELEMENT archive (year*)> <!-- container for number of blog's stories divided per year and month -->
 <!ELEMENT year (month*)> <!-- container for number of stories during this year -->
 <!ATTLIST year value (#NMTOKEN) #REQUIRED> <!-- integer, year -->

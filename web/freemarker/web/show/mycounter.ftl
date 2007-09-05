@@ -30,6 +30,12 @@
             <a href="${URL.noPrefix("/History?type=comments&amp;uid="+PROFILE.id)}">komentáře</a>
             (${COUNTS.comment})
         </li>
+        <#if BLOG?exists>
+            <li>
+                <a href="/blog/${BLOG.subType}">zápisky v blogu</a>
+                (${COUNTS.story})
+            </li>
+        </#if>
     </ul>
 </#if>
 

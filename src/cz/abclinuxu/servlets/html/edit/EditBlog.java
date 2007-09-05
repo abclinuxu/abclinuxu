@@ -91,7 +91,6 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String PARAM_RELATION = "rid";
     public static final String PARAM_PREVIEW = "preview";
     public static final String PARAM_DELAY = "delay";
-    public static final String PARAM_PAGE_SIZE = "pageSize";
     public static final String PARAM_WATCH_DISCUSSION = "watchDiz";
     public static final String PARAM_URL = "url";
     public static final String PARAM_POSITION = "position";
@@ -662,9 +661,6 @@ public class EditBlog implements AbcAction, Configurable {
         node = document.selectSingleNode("//custom/intro");
         if ( node!=null )
             params.put(PARAM_INTRO, node.getText());
-        node = document.selectSingleNode("//settings/page_size");
-        if ( node!=null )
-            params.put(PARAM_PAGE_SIZE, node.getText());
         return FMTemplateSelector.select("EditBlog", "custom", env, request);
     }
 
@@ -680,7 +676,6 @@ public class EditBlog implements AbcAction, Configurable {
         boolean canContinue = setPageTitle(params, root, env);
         canContinue &= setBlogTitle(params, root, env);
         canContinue &= setBlogIntro(params, root, env);
-        canContinue &= setPageSize(params, root, env);
 
         if ( !canContinue )
             return actionEditCustomStep1(request, blog, env);
@@ -1267,34 +1262,6 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Sets page size for blog archive. Changes are not synchronized with persistence.
-     * @param params map holding request's parameters
-     * @param root XML document
-     * @return false, if there is a major error.
-     */
-    boolean setPageSize(Map params, Element root, Map env) {
-        Element pageSize = DocumentHelper.makeElement(root, "/settings/page_size");
-        String s = (String) params.get(PARAM_PAGE_SIZE);
-        if (Misc.empty(s)) {
-            if (pageSize!=null)
-                pageSize.detach();
-        } else {
-            try {
-                int size = Integer.parseInt(s);
-                if (size<1) {
-                    ServletUtils.addError(PARAM_PAGE_SIZE, "Prosím zadejte číslo větší než nula.", env, null);
-                    return false;
-                }
-                pageSize.setText(Integer.toString(size));
-            } catch (NumberFormatException e) {
-                ServletUtils.addError(PARAM_PAGE_SIZE, "Prosím zadejte celé číslo.", env, null);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * Sets title for story. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root XML document
@@ -1473,7 +1440,7 @@ public class EditBlog implements AbcAction, Configurable {
             if (item.getType() != Item.DISCUSSION)
                 continue;
 
-            Discussion diz = new Tools().createDiscussionTree(item, null, 0, false);
+            Discussion diz = Tools.createDiscussionTree(item, null, 0, false);
             if (diz.getSize()==0)
                 return false;
 
