@@ -294,20 +294,22 @@ public class EditRelation implements AbcAction {
      * Shows the relation for which the user wishes to set new URL.
      */
     protected String actionSetUrlStep2(HttpServletRequest request, Map env) {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_CURRENT);
-        Relation upper = null;
-        if (relation.getUpper()!=0)
-            upper = (Relation) persistence.findById(new Relation(relation.getUpper()));
-        else {
-            upper = new Relation();
-            upper.setUrl("");
+        if (relation.getUrl() != null) {
+            params.put(PARAM_URL, relation.getUrl());
+            return FMTemplateSelector.select("EditRelation", "setUrl2", env, request);
         }
-        if (upper.getUrl() == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nadřazená relace ("+relation.getUpper()+") nemá definované URL!", env, null);
-            return FMTemplateSelector.select("EditRelation", "setUrl", env, request);
+
+        if (relation.getUpper() != 0) {
+            Relation upper = (Relation) persistence.findById(new Relation(relation.getUpper()));
+            if (upper.getUrl() != null) {
+                String name = Tools.childName(relation);
+                String url = upper.getUrl() + "/" + URLManager.enforceRelativeURL(name);
+                params.put(PARAM_URL, url);
+            }
         }
-        env.put(VAR_PARENT, upper);
 
         return FMTemplateSelector.select("EditRelation", "setUrl2", env, request);
     }
@@ -316,40 +318,40 @@ public class EditRelation implements AbcAction {
      * Sets new URL.
      */
     protected String actionSetUrlStep3(HttpServletRequest request, HttpServletResponse response, Map env) throws IOException {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         SQLTool sqlTool = SQLTool.getInstance();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
 
         Relation relation = (Relation) env.get(VAR_CURRENT);
         String originalUrl = relation.getUrl();
 
-        Relation upper = null;
-        if (relation.getUpper() != 0)
-            upper = (Relation) persistence.findById(new Relation(relation.getUpper()));
-        else {
-            upper = new Relation();
-            upper.setUrl("");
-        }
-
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         String url = (String) params.get(PARAM_URL);
-        if (url==null || url.length()==0) {
+        if (url == null || url.length() == 0) {
             ServletUtils.addError(PARAM_URL, "Zadejte URL!", env, null);
-            return actionSetUrlStep2(request, env);
+            return FMTemplateSelector.select("EditRelation", "setUrl2", env, request);
         }
 
-        if (url.charAt(url.length()-1)=='/')
-            url = url.substring(0, url.length()-1);
+        if (url.charAt(url.length() - 1) == '/')
+            url = url.substring(0, url.length() - 1);
 
-        if (url.indexOf('/')!=-1) {
-            ServletUtils.addError(PARAM_URL, "Zadáváte jen poslední část URL, lomítko je zakázáno!", env, null);
-            return actionSetUrlStep2(request, env);
+        if (relation.getUpper() != 0) {
+            Relation upper = (Relation) persistence.findById(new Relation(relation.getUpper()));
+            if (url.equals(upper.getUrl())) {
+                ServletUtils.addError(PARAM_URL, "Musíte přidat lokální část URL!", env, null);
+                return FMTemplateSelector.select("EditRelation", "setUrl2", env, request);
+            }
         }
 
-        url = URLManager.enforceRelativeURL(url);
-        url = upper.getUrl() + '/' + url;
+        url = URLManager.enforceAbsoluteURL(url);
+        if (url.equals(originalUrl)) {
+            urlUtils.redirect(response, url);
+            return null;
+        }
+
         if (URLManager.exists(url)) {
             ServletUtils.addError(PARAM_URL, "Toto URL již existuje!", env, null);
-            return actionSetUrlStep2(request, env);
+            return FMTemplateSelector.select("EditRelation", "setUrl2", env, request);
         }
 
         relation.setUrl(url);
@@ -361,7 +363,6 @@ public class EditRelation implements AbcAction {
             ServletUtils.addMessage("Adresa byla změněna. Nyní zkontrolujte, zda není třeba změnit i adresy podstránek.", env, request.getSession());
         }
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);
         return null;
     }

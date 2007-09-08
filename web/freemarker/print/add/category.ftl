@@ -21,7 +21,7 @@
                     <option value="faq"<#if PARAMS.type?if_exists=="faq"> SELECTED</#if>>Sekce FAQ</option>
                     <option value="section"<#if PARAMS.type?if_exists=="section"> SELECTED</#if>>Rubrika</option>
                     <option value="blog"<#if PARAMS.type?if_exists=="blog"> SELECTED</#if>>Blog</option>
-                    <option value="generic"<#if ! PARAMS.type?exists> SELECTED</#if>>Sekce</option>
+                    <option value="generic"<#if PARAMS.type?default("generic")=="generic"> SELECTED</#if>>Sekce</option>
                 </select>
             </td>
         </tr>

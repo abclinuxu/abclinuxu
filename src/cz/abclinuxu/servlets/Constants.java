@@ -52,6 +52,7 @@ public interface Constants {
     int CAT_TRIVIA = 1605;
     int CAT_HANGMAN = 1606;
     int CAT_SERIES = 1647;
+    int CAT_SURVEY = 1679;
     int CAT_PERSONALITIES = 1863;
 
     int ITEM_DIZ_TODO = 11606;
@@ -95,6 +96,7 @@ public interface Constants {
     int REL_TRIVIA = 156666;
     int REL_HANGMAN = 156667;
     int REL_SERIES = 164193;
+    int REL_SURVEY = 168884;
     int REL_PERSONALITIES = 190499;
 
     int GROUP_ADMINI = 11246;

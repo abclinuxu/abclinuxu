@@ -74,9 +74,6 @@
             <#else>
                 <a href="${URL.make("/show/"+obj.id)}">
             </#if>
-            <#if TOOL.childIcon(obj)?exists>
-                <img src="${TOOL.childIcon(obj)}" class="ikona" alt="${TOOL.childName(obj)}">
-            </#if>
             ${TOOL.childName(obj)}</a>
         </td>
         <#if obj_index%3==2></tr></#if>

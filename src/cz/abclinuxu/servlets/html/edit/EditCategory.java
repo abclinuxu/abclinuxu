@@ -22,6 +22,7 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.security.ActionProtector;
@@ -60,6 +61,7 @@ public class EditCategory implements AbcAction {
     public static final String PARAM_TYPE = "type";
     public static final String PARAM_SUBTYPE = "subtype";
     public static final String PARAM_NOTE = "note";
+    public static final String PARAM_UPPER = "upper";
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_CATEGORY = "CATEGORY";
@@ -164,7 +166,9 @@ public class EditCategory implements AbcAction {
      */
     protected String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
         Category category = (Category) env.get(VAR_CATEGORY);
+
         Document document = category.getData();
         Node node = document.selectSingleNode("data/name");
         if (node != null)
@@ -177,6 +181,7 @@ public class EditCategory implements AbcAction {
             params.put(PARAM_OPEN, node.getText());
         setTypeParam(params, category);
         params.put(PARAM_SUBTYPE, category.getSubType());
+        params.put(PARAM_UPPER, relation.getUpper());
 
         return FMTemplateSelector.select("EditCategory","edit",env,request);
     }
@@ -197,6 +202,8 @@ public class EditCategory implements AbcAction {
         canContinue &= setType(params, category, env);
         canContinue &= setSubType(params, category);
         canContinue &= setOpen(params, document);
+        if (canContinue)
+            canContinue = setUpper(params, relation, env);
         if (! canContinue)
             return FMTemplateSelector.select("EditCategory", "edit", env, request);
 
@@ -321,7 +328,7 @@ public class EditCategory implements AbcAction {
     }
 
     /**
-     * Updates type from parameters. Changes are not synchronized with persistence.
+     * Updates subtype from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param category category to be updated
      * @return false, if there is a major error.
@@ -336,8 +343,40 @@ public class EditCategory implements AbcAction {
     }
 
     /**
-     * Updates type from parameters. Changes are not synchronized with persistence.
-     *
+     * Updates relation from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param relation relation to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setUpper(Map params, Relation relation, Map env) {
+        String tmp = (String) params.get(PARAM_UPPER);
+        if (tmp == null || tmp.trim().length() == 0)
+            return true;
+
+        Persistence persistence = PersistenceFactory.getPersistence();
+        int upper = Misc.parseInt(tmp, 0);
+        if (upper == relation.getUpper())
+            return true;
+
+        if (upper == 0) {
+            relation.setUpper(0);
+            persistence.update(relation);
+            return true;
+        }
+
+        try {
+            persistence.findById(new Relation(upper));
+            relation.setUpper(upper);
+            persistence.update(relation);
+            return true;
+        } catch (NotFoundException e) {
+            ServletUtils.addError(PARAM_UPPER, "Relace s číslem " + upper + " nebyla nalezena!", env, null);
+            return false;
+        }
+    }
+
+    /**
+     * Updates open flag from parameters. Changes are not synchronized with persistence.
      * @param params   map holding request's parameters
      * @param document document to be update
      * @return false, if there is a major error.

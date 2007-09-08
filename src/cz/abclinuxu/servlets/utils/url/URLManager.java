@@ -177,6 +177,7 @@ public class URLManager implements Configurable {
     public static boolean exists(String url) {
         SQLTool sqlTool = SQLTool.getInstance();
         Relation relation = sqlTool.findRelationByURL(url);
+        // todo overit deprecated url
         return relation!=null;
     }
 

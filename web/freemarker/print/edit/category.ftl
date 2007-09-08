@@ -22,7 +22,7 @@
                     <option value="faq"<#if PARAMS.type?if_exists=="faq"> SELECTED</#if>>Sekce FAQ</option>
                     <option value="section"<#if PARAMS.type?if_exists=="section"> SELECTED</#if>>Rubrika</option>
                     <option value="blog"<#if PARAMS.type?if_exists=="blog"> SELECTED</#if>>Blog</option>
-                    <option value="generic"<#if ! PARAMS.type?exists> SELECTED</#if>>Sekce</option>
+                    <option value="generic"<#if PARAMS.type?default("generic")=="generic"> SELECTED</#if>>Sekce</option>
                 </select>
             </td>
         </tr>
@@ -39,6 +39,13 @@
             </td>
         </tr>
         <tr>
+            <td width="120">Relation.upper</td>
+            <td>
+                <input type="text" name="upper" value="${PARAMS.upper?if_exists}" tabindex="5">
+                <div class="error">${ERRORS.upper?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
             <td width="120">Poznámka</td>
             <td>
                 <div class="form-edit">
@@ -51,13 +58,13 @@
                     <a href="javascript:insertAtCursor(document.abcForm.note, '&amp;lt;', '');" id="mono" title="Vložit písmeno &lt;">&lt;</a>
                     <a href="javascript:insertAtCursor(document.abcForm.note, '&amp;gt;', '');" id="mono" title="Vložit písmeno &gt;">&gt;</a>
                 </div>
-                <textarea name="note" cols="80" rows="15" tabindex="5">${PARAMS.note?if_exists?html}</textarea>
+                <textarea name="note" cols="80" rows="15" tabindex="6">${PARAMS.note?if_exists?html}</textarea>
                 <div class="error">${ERRORS.note?if_exists}</div>
             </td>
         </tr>
         <tr>
             <td width="120">&nbsp;</td>
-            <td><input type="submit" VALUE="Dokonči" TABINDEX="6"></td>
+            <td><input type="submit" VALUE="Dokonči" TABINDEX="7"></td>
         </tr>
     </table>
 
