@@ -26,21 +26,25 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
 <h2>Nevyřízené požadavky</h2>
 
 <#list SORT.byDate(CHILDREN) as relation>
-
-  <p><b>
-    ${DATE.show(relation.child.created,"CZ_FULL")}
-    ${TOOL.xpath(relation.child,"/data/category")},
-    ${TOOL.xpath(relation.child,"data/author")}
-    <#if USER?exists && USER.hasRole("root")>${TOOL.xpath(relation.child,"data/email")}</#if>
-   </b><br />
-    ${TOOL.render(TOOL.element(relation.child.data,"data/text"),USER?if_exists)}
-    <#if USER?exists && USER.hasRole("requests admin")>
+    <p>
+        <b>
+            <a name="#${relation.id}">${DATE.show(relation.child.created,"SMART")}</a>
+            ${TOOL.xpath(relation.child,"/data/category")},
+            ${TOOL.xpath(relation.child,"data/author")}
+            <#if USER?exists && USER.hasRole("root")>${TOOL.xpath(relation.child,"data/email")}</#if>
+        </b>
         <br />
-        <a href="${URL.make("/EditRequest?action=email&requestId="+relation.id)}">Poslat email</a>,
-        <a href="${URL.make("/EditRequest?action=deliver&requestId="+relation.id+TOOL.ticket(USER, false))}">Vyřízeno</a>,
-        <a href="${URL.make("/EditRequest?action=delete&requestId="+relation.id+TOOL.ticket(USER, false))}">Smazat</a>
-    </#if>
-  </p><hr />
+
+        ${TOOL.render(TOOL.element(relation.child.data,"data/text"),USER?if_exists)}
+
+        <#if USER?exists && USER.hasRole("requests admin")>
+            <br />
+            <a href="${URL.make("/EditRequest?action=email&requestId="+relation.id)}">Poslat email</a>,
+            <a href="${URL.make("/EditRequest?action=deliver&requestId="+relation.id+TOOL.ticket(USER, false))}">Vyřízeno</a>,
+            <a href="${URL.make("/EditRequest?action=delete&requestId="+relation.id+TOOL.ticket(USER, false))}">Smazat</a>
+        </#if>
+    </p>
+    <hr />
 </#list>
 
 </#if>

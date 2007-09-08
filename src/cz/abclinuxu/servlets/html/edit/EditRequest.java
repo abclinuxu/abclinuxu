@@ -36,6 +36,7 @@ import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.EmailSender;
@@ -149,14 +150,14 @@ public class EditRequest implements AbcAction, Configurable {
     }
 
     protected String actionAdd(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        boolean saved = addRequest(request, response, null, true, env);
-        if (!saved) {
+        Relation saved = addRequest(request, response, null, true, env);
+        if (saved != null) {
             env.put(EditRequest.VAR_CATEGORIES, EditRequest.categories);
             return FMTemplateSelector.select("EditRequest", "view", env, request);
         }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/hardware/show/" + Constants.REL_REQUESTS);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)));
         return null;
     }
 
@@ -165,9 +166,9 @@ public class EditRequest implements AbcAction, Configurable {
      * @param response
      * @param prefix optional text to be put before the message
      * @param messageRequired when true, message must be specified. If false, prefix must be set.
-     * @return true, when request was successfully saved
+     * @return relation, when request was successfully saved or null otherwise
      */
-    protected boolean addRequest(HttpServletRequest request, HttpServletResponse response, String prefix, boolean messageRequired, Map env) throws Exception {
+    protected Relation addRequest(HttpServletRequest request, HttpServletResponse response, String prefix, boolean messageRequired, Map env) throws Exception {
         User user = (User) env.get(Constants.VAR_USER);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
@@ -223,11 +224,11 @@ public class EditRequest implements AbcAction, Configurable {
 
         if ( error ) {
             params.remove(PARAM_PREVIEW);
-            return false;
+            return null;
         }
 
         if (params.get(PARAM_PREVIEW) != null)
-            return false;
+            return null;
 
         if (prefix!=null) {
             if (text==null)
@@ -237,7 +238,8 @@ public class EditRequest implements AbcAction, Configurable {
         }
 
         Item req = new Item(0,Item.REQUEST);
-        if ( user!=null ) req.setOwner(user.getId());
+        if (user != null)
+            req.setOwner(user.getId());
 
         Document document = DocumentHelper.createDocument();
         DocumentHelper.makeElement(document,"/data/author").addText(author);
@@ -253,9 +255,11 @@ public class EditRequest implements AbcAction, Configurable {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
+        sendNotification(relation);
+
         ServletUtils.addMessage("Váš požadavek byl přijat.",env,request.getSession());
         logRequests.info("Autor: "+author+"("+email+")\n"+text);
-        return true;
+        return relation;
     }
 
     protected String actionDelete(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -298,7 +302,7 @@ public class EditRequest implements AbcAction, Configurable {
         ServletUtils.addMessage("Požadavek byl vyřízen.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/hardware/show/"+Constants.REL_REQUESTS);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)));
         return null;
     }
 
@@ -313,7 +317,7 @@ public class EditRequest implements AbcAction, Configurable {
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_SUBJECT, subjectForResponse);
         session.setAttribute(SendEmail.PREFIX+SendEmail.PARAM_DISABLE_CODE, Boolean.TRUE);
 
-        String url = response.encodeRedirectURL("/Mail?url=/hardware/dir/"+Constants.REL_REQUESTS);
+        String url = response.encodeRedirectURL("/Mail?url=/pozadavky");
         response.sendRedirect(url);
         return null;
     }
@@ -352,12 +356,12 @@ public class EditRequest implements AbcAction, Configurable {
         String title = comment.getTitle();
         String action = "<a href=\"/forum/show/" + relation.getId() + "#"+comment.getId()+"\">" + title + "</a>";
 
-        boolean saved = addRequest(request, response, action, false, env);
-        if (!saved)
+        Relation saved = addRequest(request, response, action, false, env);
+        if (saved != null)
             return actionCommentTools(request, env);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/hardware/show/" + Constants.REL_REQUESTS);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)));
         return null;
     }
 
@@ -403,13 +407,38 @@ public class EditRequest implements AbcAction, Configurable {
         String action = "Přesunout diskusi <a href=\"/forum/show/"+relationId+"\">"+dizName+
                         "</a> do fora <a href=\"/forum/dir/"+forumId+"\">"+forumName+"</a> "+forumId;
 
-        boolean saved = addRequest(request, response, action, false, env);
-        if (!saved)
+        Relation saved = addRequest(request, response, action, false, env);
+        if (saved != null)
             return actionChooseForum(request, env);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/hardware/show/" + Constants.REL_REQUESTS);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)));
         return null;
+    }
+
+    /**
+     * Sends notification email to admin's mailing list.
+     * @param relation relation with request
+     */
+    private void sendNotification(Relation relation) {
+        Persistence persistence = PersistenceFactory.getPersistence();
+        Relation requests = (Relation) persistence.findById(new Relation(Constants.REL_REQUESTS));
+        Item item = (Item) relation.getChild();
+        String email = null;
+        if (item.getOwner() != 0) 
+            email = ((User) persistence.findById(new User(item.getOwner()))).getEmail();
+        else
+            email = item.getData().getRootElement().elementText("email");
+
+        Map map = new HashMap();
+        map.put(EmailSender.KEY_TO, AbcConfig.getAdminsEmail());
+        map.put(EmailSender.KEY_SUBJECT, item.getData().selectSingleNode("/data/category").getText());
+        if (email != null)
+            map.put(EmailSender.KEY_FROM, email);
+        map.put(EmailSender.KEY_TEMPLATE, "/mail/requests.ftl");
+        map.put("URL", requests.getUrl() + "#" + relation.getId());
+        map.put("REQUEST", item);
+        EmailSender.sendEmail(map);
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
