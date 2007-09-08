@@ -54,7 +54,7 @@ public class AbcConfig implements Configurable {
     public static final String PREF_MAINTAINANCE_MODE = "maintainance.mode";
     public static final String PREF_TICKET_LENGTH = "user.ticket.length";
     public static final String PREF_MAILING_LIST_BLOG_WATCH = "mail.blog.watch";
-    public static final String PREF_MAILING_LIST_ADMINS = "admini@abclinuxu.cz";
+    public static final String PREF_MAILING_LIST_ADMINS = "mailing.list.admini";
     public static final String PREF_WARN_OLD_DISCUSSION_CREATED = "warn.old.diz.created.days";
     public static final String PREF_WARN_OLD_DISCUSSION_COMMENTED = "warn.old.diz.commented.days";
 
