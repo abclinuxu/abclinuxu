@@ -4,7 +4,7 @@
             <#if CATEGORY.isOpen()>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=add")}">Vložit novou položku</a></li>
             </#if>
-            <li><a href="/clanky/show/3500?text=sekce+${RELATION.id}">Požádat o vytvoření podsekce</a></li>
+            <li><a href="/pozadavky?url=${URL.getRelationUrl(RELATION)?url}&categoryPosition=4#form">Požádat o vytvoření podsekce</a></li>
             <#if USER?exists && USER.hasRole("category admin")>
                 <hr />
                 <li>

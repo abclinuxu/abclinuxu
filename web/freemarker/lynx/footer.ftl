@@ -50,7 +50,7 @@
 
 <h3>O serveru</h3>
 <p>
- <a href="${URL.make("/clanky/dir/3500")}">Požadavky</a>
+ <a href="${URL.make("/pozadavky")}">Požadavky</a>
  <a href="http://abicko.stickfish.cz/bugzilla/">Bugzilla</a>
  <a href="/doc/portal/rss-a-jine-pristupy">RSS a PDA</a>
  <a href="/doc/propagace">Propagace</a>

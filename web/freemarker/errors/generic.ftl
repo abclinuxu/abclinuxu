@@ -8,7 +8,7 @@
 <p>Omlouváme se, ale systém nemohl provést zadanou akci.
 Chyba byla zalogována, nicméně váš slovní popis může
 být někdy velmi užitečný. Máte-li zájem nám pomoci,
-využijte formulář <a href="/clanky/dir/3500">Vzkazy správcům</a>.</p>
+využijte formulář <a href="/pozadavky">Vzkazy správcům</a>.</p>
 <p>Název chyby: ${EXCEPTION}</p>
 </body>
 </html>

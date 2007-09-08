@@ -17,7 +17,7 @@ moc. Z vašich návrhů vybíráme ty nejzajímavější.</p>
 
 <p>Potřebujete-li poradit s Linuxem, zkuste si nejdříve
 <a href="/hledani">najít</a> odpověď sami a nenajdete-li řešení,
-požádejte o pomoc v <a href="/diskuse.jsp">diskusním fóru</a>.
+požádejte o pomoc v <a href="/poradna">poradně</a>.
 Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
 <u>smažeme</u> jakékoliv požadavky, které nesouvisí s chodem portálu.</p>
 
@@ -26,16 +26,21 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
 <h2>Nevyřízené požadavky</h2>
 
 <#list SORT.byDate(CHILDREN) as relation>
+    <#assign item = relation.child>
     <p>
         <b>
-            <a name="#${relation.id}">${DATE.show(relation.child.created,"SMART")}</a>
-            ${TOOL.xpath(relation.child,"/data/category")},
-            ${TOOL.xpath(relation.child,"data/author")}
-            <#if USER?exists && USER.hasRole("root")>${TOOL.xpath(relation.child,"data/email")}</#if>
+            <a name="${relation.id}">${DATE.show(item.created,"SMART")}</a>
+            ${TOOL.xpath(item,"/data/category")},
+            ${TOOL.xpath(item,"data/author")}
+            <#if USER?exists && USER.hasRole("root")>${TOOL.xpath(item,"data/email")}</#if>
         </b>
         <br />
 
-        ${TOOL.render(TOOL.element(relation.child.data,"data/text"),USER?if_exists)}
+        <#assign url = TOOL.xpath(item, "data/url")?default("UNDEFINED")>
+        <#if url != "UNDEFINED">
+            <a href="${url}">${url}</a>
+        </#if>
+        ${TOOL.render(TOOL.element(item.data,"data/text"),USER?if_exists)}
 
         <#if USER?exists && USER.hasRole("requests admin")>
             <br />
@@ -63,6 +68,7 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
 
 <p>Chyby prosím hlaste do <a href="http://bugzilla.abclinuxu.cz">bugzilly</a>.</p>
 
+<a name="form"></a>
 <form action="${URL.make("/EditRequest")}" method="POST">
  <table border=0 cellpadding=5 style="padding-top: 10px">
   <tr>
@@ -130,6 +136,9 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
   </tr>
  </table>
  <input type="hidden" name="action" value="add">
+ <#if PARAMS.url?exists>
+    <input type="hidden" name="url" value="${PARAMS.url}">
+ </#if>
 </form>
 
 <#include "../footer.ftl">

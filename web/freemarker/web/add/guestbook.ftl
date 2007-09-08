@@ -7,7 +7,7 @@
 <p>Tento formulář slouží pro vkládání zápisů do knihy návštěv.
 Zde můžete psát své pocity či vzkazy administrátorům tohoto
 portálu. Pokud chcete nahlásit chybu, přejděte na
-<a href="${URL.noPrefix("/hardware/dir/3500")}">tuto</a> stránku.
+<a href="${URL.noPrefix("/pozadavky")}">tuto</a> stránku.
 </p>
 
 <p>Do formuláře zadejte své jméno a váš vzkaz. Ve vzkazu jsou

@@ -101,6 +101,17 @@
     <span class="error">${ERRORS.email?if_exists}</span>
    </td>
   </tr>
+    <#if ! (USER?exists || USER_VERIFIED?if_exists)>
+        <tr>
+            <td class="required">Aktuální rok</td>
+            <td>
+                <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}">
+                <a class="info" href="#">?<span class="tooltip">Vložte aktuální rok. Jedná se o ochranu před spamboty.
+                Po úspěšném ověření se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.</span></a>
+                <span class="error">${ERRORS.antispam?if_exists}</span>
+            </td>
+        </tr>
+    </#if>
   <tr>
     <td class="required">Jméno tohoto serveru</td>
     <td>

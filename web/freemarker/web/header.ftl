@@ -105,7 +105,7 @@
                 <#if anketa.multiChoice><#assign type = "checkbox"><#else><#assign type = "radio"></#if>
 
                 <div class="s_nadpis">
-                   <a class="s_nadpis-pravy-odkaz" href="/clanky/dir/3500?categoryPosition=0">navrhněte&nbsp;&raquo;</a>
+                   <a class="s_nadpis-pravy-odkaz" href="/pozadavky?categoryPosition=0">navrhněte&nbsp;&raquo;</a>
                    <a href="/ankety">Anketa</a>
                 </div>
                 <div class="s_sekce">

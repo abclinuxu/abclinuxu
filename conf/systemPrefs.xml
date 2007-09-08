@@ -622,7 +622,7 @@
                             </node>
                             <node name="EditRequest">
                                 <map>
-                                    <entry key="categories" value="Návrh na anketu,Hlášení chyby,Námět na vylepšení,Problém s účtem"/>
+                                    <entry key="categories" value="Návrh na anketu,Hlášení chyby,Námět na vylepšení,Problém s účtem,Nová sekce"/>
                                     <entry key="response.subject" value="Re: pozadavek"/>
                                 </map>
                             </node>

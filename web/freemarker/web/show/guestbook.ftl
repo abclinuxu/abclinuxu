@@ -10,7 +10,7 @@
     se o obdobu návštěvních knih, jaké vídáte na hradech a zámcích,
     prostě napište zde, jak se vám na našem portále líbilo či nelíbilo.
     Pro hlášení chyb či námětů na vylepšení je určena
-    <a href="${URL.noPrefix("/hardware/dir/3500")}">tato</a> stránka.
+    <a href="${URL.noPrefix("/pozadavky")}">tato</a> stránka.
     </p>
 
     <p>

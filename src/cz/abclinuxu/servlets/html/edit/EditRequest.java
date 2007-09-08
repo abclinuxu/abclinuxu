@@ -62,6 +62,7 @@ public class EditRequest implements AbcAction, Configurable {
     public static final String PARAM_AUTHOR = "author";
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_TEXT = "text";
+    public static final String PARAM_URL = "url";
     public static final String PARAM_REQUEST = "requestId";
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_FORUM_ID = "forumId";
@@ -157,7 +158,7 @@ public class EditRequest implements AbcAction, Configurable {
         }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)));
+        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)) + "#" +saved.getId());
         return null;
     }
 
@@ -177,6 +178,7 @@ public class EditRequest implements AbcAction, Configurable {
         String text = (String) params.get(PARAM_TEXT);
         text = Misc.filterDangerousCharacters(text);
         String category = (String) params.get(PARAM_CATEGORY);
+        String url = (String) params.get(PARAM_URL);
         boolean error = false;
 
         if ( ! EditDiscussion.checkSpambot(request, response, params, env, user))
@@ -246,6 +248,8 @@ public class EditRequest implements AbcAction, Configurable {
         DocumentHelper.makeElement(document,"/data/email").addText(email);
         DocumentHelper.makeElement(document,"/data/text").addText(text);
         DocumentHelper.makeElement(document,"/data/category").addText(category);
+        if (url != null)
+            DocumentHelper.makeElement(document, "/data/url").addText("http://" + AbcConfig.getHostname() + url);
 
         req.setData(document);
 
@@ -346,6 +350,7 @@ public class EditRequest implements AbcAction, Configurable {
      * Adds user complaint into Requests to admins.
      */
     private String actionSubmitComplaint(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
@@ -354,14 +359,14 @@ public class EditRequest implements AbcAction, Configurable {
         Item discussion = (Item) persistence.findById(relation.getChild());
         Comment comment = EditDiscussion.getDiscussedComment(params, discussion, persistence);
         String title = comment.getTitle();
-        String action = "<a href=\"/forum/show/" + relation.getId() + "#"+comment.getId()+"\">" + title + "</a>";
+        String url = urlUtils.getRelationUrl(relation) + "#"+comment.getId();
+        params.put(PARAM_URL, url);
 
-        Relation saved = addRequest(request, response, action, false, env);
+        Relation saved = addRequest(request, response, title, false, env);
         if (saved == null)
             return actionCommentTools(request, env);
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)));
+        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)) + "#" + saved.getId());
         return null;
     }
 
@@ -385,6 +390,8 @@ public class EditRequest implements AbcAction, Configurable {
     }
 
     private String actionAskForumChange(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistence persistence = PersistenceFactory.getPersistence();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int forumId = Misc.parseInt((String) params.get(PARAM_FORUM_ID),0);
         int relationId = Misc.parseInt((String) params.get(PARAM_RELATION_SHORT),0);
@@ -396,14 +403,16 @@ public class EditRequest implements AbcAction, Configurable {
 
         if (relationId==0) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Parametr rid je prázdný! Napište prosím hlášení chyby.", env, null);
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/hardware/show/"+Constants.REL_REQUESTS);
             return null;
         }
 
-        String dizName = Tools.childName(new Integer(relationId));
+        Relation discussion = (Relation) persistence.findById(new Relation(relationId));
+        String dizName = Tools.childName(discussion);
         String forumName = Tools.childName(new Integer(forumId));
         params.put(PARAM_CATEGORY, "Přesun diskuse");
+        String url = urlUtils.getRelationUrl(discussion);
+        params.put(PARAM_URL, url);
         String action = "Přesunout diskusi <a href=\"/forum/show/"+relationId+"\">"+dizName+
                         "</a> do fora <a href=\"/forum/dir/"+forumId+"\">"+forumName+"</a> "+forumId;
 
@@ -411,8 +420,7 @@ public class EditRequest implements AbcAction, Configurable {
         if (saved == null)
             return actionChooseForum(request, env);
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)));
+        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)) + "#" + saved.getId());
         return null;
     }
 
