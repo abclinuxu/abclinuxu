@@ -40,7 +40,6 @@ import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -102,26 +101,6 @@ public class ShowObject implements AbcAction {
         if (relation.getChild() instanceof Record)
             relation = (Relation) persistence.findById(new Relation(relation.getUpper()));
         env.put(VAR_RELATION,relation);
-
-        // check ACL
-        Document document = relation.getData();
-        if (document != null) {
-            List elements = document.getRootElement().elements("/data/acl");
-            if (elements != null && elements.size() > 0) {
-                List acls = new ArrayList(elements.size());
-                for (Iterator iter = elements.iterator(); iter.hasNext();) {
-                    ACL acl = EditRelation.getACL((Element) iter.next());
-                    acls.add(acl);
-                }
-
-                User user = (User) env.get(Constants.VAR_USER);
-                if (user == null && !ACL.isGranted(ACL.RIGHT_READ, acls))
-                    return FMTemplateSelector.select("ViewUser", "login", env, request);
-
-                if (user != null && !user.hasRole(Roles.ROOT) && !ACL.isGranted(user, ACL.RIGHT_READ, acls))
-                    return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            }
-        }
 
         List parents = persistence.findParents(relation);
         env.put(VAR_PARENTS, parents);

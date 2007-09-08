@@ -274,12 +274,6 @@
         <action name="moveAll" template="print" content="/edit/move_content.ftl">
             <var name="TITLE" value="Přesun obsahu" />
         </action>
-        <action name="showACL" template="print" content="/show/acl.ftl">
-            <var name="TITLE" value="Ukaž přístupová práva" />
-        </action>
-        <action name="addACL" template="print" content="/add/acl.ftl">
-            <var name="TITLE" value="Vytvoř přístupová práva" />
-        </action>
         <action name="setUrl" template="print" content="/misc/set_url.ftl">
             <var name="TITLE" value="Nastav URL" />
         </action>

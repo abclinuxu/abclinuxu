@@ -37,7 +37,6 @@
 package cz.abclinuxu.servlets.html.view;
 
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.data.view.ACL;
 import cz.abclinuxu.data.view.SectionTreeCache;
 import cz.abclinuxu.data.view.SectionNode;
 import cz.abclinuxu.persistence.Persistence;
@@ -54,26 +53,19 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.data.view.DriverCategories;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.servlets.html.edit.EditRelation;
 import cz.abclinuxu.servlets.html.edit.EditRequest;
 import cz.abclinuxu.servlets.html.edit.EditDiscussion;
 import cz.abclinuxu.servlets.html.edit.EditDriver;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.dom4j.Document;
-import org.dom4j.Element;
-
 
 /**
  * Servlet, which loads Category specified by parameter <code>categoryId</code> (or
@@ -124,26 +116,6 @@ public class ViewCategory implements AbcAction {
         env.put(ShowObject.VAR_RELATION,relation);
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS,parents);
-
-        // check ACL
-        Document document = relation.getData();
-        if (document != null) {
-            List elements = document.getRootElement().elements("/data/acl");
-            if (elements!=null && elements.size()>0) {
-                List acls = new ArrayList(elements.size());
-                for (Iterator iter = elements.iterator(); iter.hasNext();) {
-                    ACL acl = EditRelation.getACL((Element) iter.next());
-                    acls.add(acl);
-                }
-
-                User user = (User) env.get(Constants.VAR_USER);
-                if (user == null && !ACL.isGranted(ACL.RIGHT_READ, acls))
-                    return FMTemplateSelector.select("ViewUser", "login", env, request);
-
-                if (user != null && !user.hasRole(Roles.ROOT) && !ACL.isGranted(user, ACL.RIGHT_READ, acls))
-                    return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            }
-        }
 
         return processCategory(request,response,env,relation);
     }

@@ -16,13 +16,13 @@
         <td width="120" class="required">Typ</td>
         <td>
             <select name="type" tabindex="2">
-                <option value="generic"<#if ! PARAMS.type?exists> SELECTED</#if>>Sekce</option>
-                <option value="software"<#if PARAMS.type?if_exists=="software"> SELECTED</#if>>Sekce Software</option>
-                <option value="hardware"<#if PARAMS.type?if_exists=="hardware"> SELECTED</#if>>Sekce Hardware</option>
-                <option value="faq"<#if PARAMS.type?if_exists=="faq"> SELECTED</#if>>Sekce FAQ</option>
+                <option value="software"<#if PARAMS.type?if_exists=="software"> SELECTED</#if>>Sekce software</option>
+                <option value="hardware"<#if PARAMS.type?if_exists=="hardware"> SELECTED</#if>>Sekce hardware</option>
                 <option value="forum"<#if PARAMS.type?if_exists=="forum"> SELECTED</#if>>Diskusní fórum</option>
-                <option value="section"<#if PARAMS.type?if_exists=="section"> SELECTED</#if>>Rubrika pro články</option>
+                <option value="faq"<#if PARAMS.type?if_exists=="faq"> SELECTED</#if>>Sekce FAQ</option>
+                <option value="section"<#if PARAMS.type?if_exists=="section"> SELECTED</#if>>Rubrika</option>
                 <option value="blog"<#if PARAMS.type?if_exists=="blog"> SELECTED</#if>>Blog</option>
+                <option value="generic"<#if ! PARAMS.type?exists> SELECTED</#if>>Sekce</option>
             </select>
         </td>
     </tr>

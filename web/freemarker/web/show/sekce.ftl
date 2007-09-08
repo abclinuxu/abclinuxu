@@ -14,9 +14,6 @@
                 <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Přesunout</a></li>
                 <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=moveAll&amp;prefix="+URL.prefix)}">Přesuň obsah</a></li>
             </#if>
-            <#if USER?exists && USER.hasRole("root")>
-                <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=showACL")}">ACL</a></li>
-            </#if>
         </ul>
     </div>
 </#assign>
@@ -26,6 +23,41 @@
 <h1>Sekce ${TOOL.xpath(CATEGORY,"/data/name")}</h1>
 
 <@lib.showMessages/>
+
+<#if USER?exists && USER.hasRole("category admin")>
+    <table>
+        <tr>
+            <th>Typ</th>
+            <td>
+                <#switch CATEGORY.type>
+                    <#case 0>nedefinován <#break>
+                    <#case 1>sekce hardware <#break>
+                    <#case 2>fórum <#break>
+                    <#case 3>blog <#break>
+                    <#case 4>rubrika <#break>
+                    <#case 5>sekce FAQ <#break>
+                    <#case 6>sekce software <#break>
+                </#switch>
+            </td>
+        </tr>
+        <tr>
+            <th>Podtyp</th>
+            <td>${CATEGORY.subType?default('NULL")}</td>
+        </tr>
+        <tr>
+            <th>Upravil</th>
+            <td><@lib.showUser who CATEGORY.owner /></td>
+        </tr>
+        <tr>
+            <th>Vytvořeno</th>
+            <td>${DATE.render(CATEGORY.created, "SMART")}</td>
+        </tr>
+        <tr>
+            <th>Poslední změna</th>
+            <td>${DATE.render(CATEGORY.created, "SMART")}</td>
+        </tr>
+    </table>
+</#if>
 
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
  ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
