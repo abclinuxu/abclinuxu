@@ -34,7 +34,7 @@ import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.parser.safehtml.ContentGuard;
+import cz.abclinuxu.utils.parser.safehtml.WikiContentGuard;
 import cz.abclinuxu.utils.email.monitor.*;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
@@ -459,7 +459,7 @@ public class EditContent implements AbcAction {
         }
 
         try {
-            ContentGuard.check(content);
+            WikiContentGuard.check(content);
         } catch (ParserException e) {
             log.error("ParseException on '" + content + "'", e);
             ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);

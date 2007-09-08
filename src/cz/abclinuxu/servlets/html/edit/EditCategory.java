@@ -18,26 +18,25 @@
  */
 package cz.abclinuxu.servlets.html.edit;
 
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.servlets.utils.*;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.utils.url.URLManager;
-import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Category;
-import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.security.ActionProtector;
+import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.url.URLManager;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
-
+import cz.abclinuxu.utils.parser.safehtml.WikiContentGuard;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -59,6 +58,7 @@ public class EditCategory implements AbcAction {
     public static final String PARAM_NAME = "name";
     public static final String PARAM_OPEN = "open";
     public static final String PARAM_TYPE = "type";
+    public static final String PARAM_SUBTYPE = "subtype";
     public static final String PARAM_NOTE = "note";
 
     public static final String VAR_RELATION = "RELATION";
@@ -134,6 +134,7 @@ public class EditCategory implements AbcAction {
         boolean canContinue = setName(params, document, env);
         canContinue &= setDescription(params, document, env);
         canContinue &= setType(params, category, env);
+        canContinue &= setSubType(params, category);
         canContinue &= setOpen(params, document);
         if (! canContinue)
             return FMTemplateSelector.select("EditCategory", "add", env, request);
@@ -175,6 +176,7 @@ public class EditCategory implements AbcAction {
         if (node != null)
             params.put(PARAM_OPEN, node.getText());
         setTypeParam(params, category);
+        params.put(PARAM_SUBTYPE, category.getSubType());
 
         return FMTemplateSelector.select("EditCategory","edit",env,request);
     }
@@ -193,6 +195,7 @@ public class EditCategory implements AbcAction {
         boolean canContinue = setName(params, document, env);
         canContinue &= setDescription(params, document, env);
         canContinue &= setType(params, category, env);
+        canContinue &= setSubType(params, category);
         canContinue &= setOpen(params, document);
         if (! canContinue)
             return FMTemplateSelector.select("EditCategory", "edit", env, request);
@@ -241,7 +244,7 @@ public class EditCategory implements AbcAction {
         tmp = Misc.filterDangerousCharacters(tmp);
         if (tmp != null && tmp.length() > 0) {
             try {
-                SafeHTMLGuard.check(tmp);
+                WikiContentGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '" + tmp + "'", e);
                 ServletUtils.addError(PARAM_NOTE, e.getMessage(), env, null);
@@ -315,6 +318,21 @@ public class EditCategory implements AbcAction {
             default:
                 params.put(PARAM_TYPE, "generic");
         }
+    }
+
+    /**
+     * Updates type from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param category category to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setSubType(Map params, Category category) {
+        String tmp = (String) params.get(PARAM_SUBTYPE);
+        tmp = Misc.filterDangerousCharacters(tmp);
+        if (tmp != null && tmp.trim().length() == 0)
+            tmp = null;
+        category.setSubType(tmp);
+        return true;
     }
 
     /**

@@ -27,7 +27,7 @@ import java.util.*;
  * to be safe. E.g. it will blocks malicious (or stupid) user's
  * input, that can harm portal's UI or XSS.
  */
-public class ContentGuard {
+public class WikiContentGuard {
     static final Map TAGS = new HashMap();
     static {
         TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF", "TITLE", "ID", "CLASS", "NAME", "TARGET"}));

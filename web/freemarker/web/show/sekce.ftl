@@ -27,7 +27,7 @@
 <#if USER?exists && USER.hasRole("category admin")>
     <table>
         <tr>
-            <th>Typ</th>
+            <th align="left">Typ</th>
             <td>
                 <#switch CATEGORY.type>
                     <#case 0>nedefinován <#break>
@@ -41,26 +41,28 @@
             </td>
         </tr>
         <tr>
-            <th>Podtyp</th>
-            <td>${CATEGORY.subType?default('NULL")}</td>
+            <th align="left">Podtyp</th>
+            <td>${CATEGORY.subType?default("NULL")}</td>
         </tr>
         <tr>
-            <th>Upravil</th>
-            <td><@lib.showUser who CATEGORY.owner /></td>
+            <th align="left">Upravil</th>
+            <td><@lib.showUser TOOL.createUser(CATEGORY.owner?default(1)) /></td>
         </tr>
         <tr>
-            <th>Vytvořeno</th>
-            <td>${DATE.render(CATEGORY.created, "SMART")}</td>
+            <th align="left">Vytvořeno</th>
+            <td>${DATE.show(CATEGORY.created, "SMART")}</td>
         </tr>
         <tr>
-            <th>Poslední změna</th>
-            <td>${DATE.render(CATEGORY.created, "SMART")}</td>
+            <th align="left">Poslední změna</th>
+            <td>${DATE.show(CATEGORY.created, "SMART")}</td>
         </tr>
     </table>
 </#if>
 
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
- ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
+    <div style="margin: 1em">
+        ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
+    </div>
 </#if>
 
 <table class="hw-sekce">
