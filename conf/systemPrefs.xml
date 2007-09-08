@@ -263,7 +263,7 @@
                             <entry key="ignore.section.A" value="452"/><!-- zpravicky -->
                             <entry key="ignore.section.B" value="569"/><!-- vykladovy slovnik -->
                             <entry key="ignore.section.C" value="240"/><!-- ankety -->
-                            <entry key="ignore.section.C" value="589"/><!-- blogy -->
+                            <entry key="ignore.section.D" value="589"/><!-- blogy -->
                         </map>
                     </node>
                     <node name="impl">
