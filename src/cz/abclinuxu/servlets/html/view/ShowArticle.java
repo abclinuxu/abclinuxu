@@ -150,10 +150,11 @@ public class ShowArticle implements AbcAction {
         }
 
         // initialize series view
+        Relation seriesRelation = null;
         Element seriesElement = item.getData().getRootElement().element("series_rid");
         if (seriesElement != null) {
             int rid = Misc.parseInt(seriesElement.getText(), 0);
-            Relation seriesRelation = (Relation) persistence.findById(new Relation(rid));
+            seriesRelation = (Relation) persistence.findById(new Relation(rid));
             Item seriesItem = (Item) persistence.findById(seriesRelation.getChild());
             Element seriesRoot = seriesItem.getData().getRootElement();
 
@@ -220,7 +221,13 @@ public class ShowArticle implements AbcAction {
         if ( user == null || ! user.hasRole(Roles.ARTICLE_ADMIN) )
             ReadRecorder.log(item, Constants.COUNTER_READ, env);
 
-        env.put(Constants.VAR_RSS, FeedGenerator.getArticlesFeedUrl());
+        String feedUrl = null;
+        if (seriesRelation != null)
+            feedUrl = FeedGenerator.getSeriesFeedUrl(seriesRelation.getId());
+        if (feedUrl == null)
+            feedUrl = FeedGenerator.getArticlesFeedUrl();
+        env.put(Constants.VAR_RSS, feedUrl);
+
         return FMTemplateSelector.select("ShowObject", "article", env, request);
     }
 

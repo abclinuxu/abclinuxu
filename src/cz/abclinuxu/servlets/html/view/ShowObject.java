@@ -18,37 +18,40 @@
  */
 package cz.abclinuxu.servlets.html.view;
 
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.servlets.html.edit.EditNews;
-import cz.abclinuxu.servlets.html.edit.EditRelation;
-import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.data.*;
+import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Poll;
+import cz.abclinuxu.data.Record;
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.view.Comment;
-import cz.abclinuxu.data.view.ACL;
 import cz.abclinuxu.data.view.DiscussionRecord;
 import cz.abclinuxu.data.view.NewsCategories;
-import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.versioning.VersionedDocument;
 import cz.abclinuxu.persistence.versioning.Versioning;
 import cz.abclinuxu.persistence.versioning.VersioningFactory;
+import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.edit.EditNews;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.exceptions.MissingArgumentException;
+import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-
-import org.dom4j.Element;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.apache.log4j.Logger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Servlet, which loads Relation specified by parameter <code>relationId</code>
