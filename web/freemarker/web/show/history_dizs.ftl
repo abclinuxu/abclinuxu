@@ -41,7 +41,7 @@
 <table border="0"><tr>
 <th>Pozice</th>
 <th>Počet</th>
-<th>Třídit podle</th>
+<th>Řadit podle</th>
 <th>Směr</th>
 <td></td>
 </tr><tr>
