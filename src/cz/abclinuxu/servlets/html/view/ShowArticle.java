@@ -225,6 +225,8 @@ public class ShowArticle implements AbcAction {
         if (seriesRelation != null)
             feedUrl = FeedGenerator.getSeriesFeedUrl(seriesRelation.getId());
         if (feedUrl == null)
+            feedUrl = FeedGenerator.getSeriesFeedUrl(articleRelation.getUpper());
+        if (feedUrl == null)
             feedUrl = FeedGenerator.getArticlesFeedUrl();
         env.put(Constants.VAR_RSS, feedUrl);
 
