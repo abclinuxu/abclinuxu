@@ -31,6 +31,7 @@ public class SafeHTMLGuard {
     static final Map TAGS = new HashMap();
     static {
         TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF", "TITLE", "CLASS", "NAME", "TARGET"}));
+        TAGS.put("ACRONYM", new CheckedTag("ACRONYM", true, null));
         TAGS.put("B", new CheckedTag("B", true, null));
         TAGS.put("BIG", new CheckedTag("BIG", true, null));
         TAGS.put("BLOCKQUOTE", new CheckedTag("BLOCKQUOTE", true, new String[]{"ID"}));
