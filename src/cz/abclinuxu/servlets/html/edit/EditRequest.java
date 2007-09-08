@@ -151,7 +151,7 @@ public class EditRequest implements AbcAction, Configurable {
 
     protected String actionAdd(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Relation saved = addRequest(request, response, null, true, env);
-        if (saved != null) {
+        if (saved == null) {
             env.put(EditRequest.VAR_CATEGORIES, EditRequest.categories);
             return FMTemplateSelector.select("EditRequest", "view", env, request);
         }
@@ -357,7 +357,7 @@ public class EditRequest implements AbcAction, Configurable {
         String action = "<a href=\"/forum/show/" + relation.getId() + "#"+comment.getId()+"\">" + title + "</a>";
 
         Relation saved = addRequest(request, response, action, false, env);
-        if (saved != null)
+        if (saved == null)
             return actionCommentTools(request, env);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -408,7 +408,7 @@ public class EditRequest implements AbcAction, Configurable {
                         "</a> do fora <a href=\"/forum/dir/"+forumId+"\">"+forumName+"</a> "+forumId;
 
         Relation saved = addRequest(request, response, action, false, env);
-        if (saved != null)
+        if (saved == null)
             return actionChooseForum(request, env);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -425,7 +425,7 @@ public class EditRequest implements AbcAction, Configurable {
         Relation requests = (Relation) persistence.findById(new Relation(Constants.REL_REQUESTS));
         Item item = (Item) relation.getChild();
         String email = null;
-        if (item.getOwner() != 0) 
+        if (item.getOwner() != 0)
             email = ((User) persistence.findById(new User(item.getOwner()))).getEmail();
         else
             email = item.getData().getRootElement().elementText("email");
