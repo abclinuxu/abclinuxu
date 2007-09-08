@@ -32,12 +32,16 @@ public class SafeHTMLGuard {
     static {
         TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF", "TITLE", "CLASS", "NAME", "TARGET"}));
         TAGS.put("B", new CheckedTag("B", true, null));
+        TAGS.put("BIG", new CheckedTag("BIG", true, null));
         TAGS.put("BLOCKQUOTE", new CheckedTag("BLOCKQUOTE", true, new String[]{"ID"}));
         TAGS.put("BR", new CheckedTag("BR", false, null));
         TAGS.put("CITE", new CheckedTag("CITE", true, null));
         TAGS.put("CODE", new CheckedTag("CODE", true, null));
+        TAGS.put("DD", new CheckedTag("DD", true, null));
         TAGS.put("DEL", new CheckedTag("DEL", true, null));
         TAGS.put("DIV", new CheckedTag("DIV", true, new String[]{"ID", "CLASS"}));
+        TAGS.put("DL", new CheckedTag("DL", true, null));
+        TAGS.put("DT", new CheckedTag("DT", true, null));
         TAGS.put("EM", new CheckedTag("EM", true, null));
         TAGS.put("H1", new CheckedTag("H1", true, new String[]{"ID", "CLASS"}));
         TAGS.put("H2", new CheckedTag("H2", true, new String[]{"ID", "CLASS"}));
@@ -50,7 +54,10 @@ public class SafeHTMLGuard {
         TAGS.put("P", new CheckedTag("P", false, new String[]{"ID", "CLASS"}));
         TAGS.put("PRE", new CheckedTag("PRE", true, new String[]{"WIDTH", "ID", "CLASS"}));
         TAGS.put("Q", new CheckedTag("Q", true, new String[]{"ID"}));
+        TAGS.put("SMALL", new CheckedTag("SMALL", true, null));
         TAGS.put("STRONG", new CheckedTag("STRONG", true, null));
+        TAGS.put("SUB", new CheckedTag("SUB", true, null));
+        TAGS.put("SUP", new CheckedTag("SUP", true, null));
         TAGS.put("TT", new CheckedTag("TT", true, null));
         TAGS.put("U", new CheckedTag("U", true, null));
         TAGS.put("UL", new CheckedTag("UL", true, new String[]{"ID"}));
