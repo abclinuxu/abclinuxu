@@ -90,7 +90,7 @@
     <li><a href="mailto:info@stickfish.cz">Inzerce</a></li>
     <li><a href="/doc/portal/rss-a-jine-pristupy">RSS a PDA</a></li>
     <li><a href="http://bugzilla.abclinuxu.cz" rel="nofollow">Hlášení chyb a námětů</a></li>
-    <li><a href="/hardware/dir/3500">Vzkazy správcům (${VARS.counter.REQUESTS})</a></li>
+    <li><a href="/pozadavky">Vzkazy správcům (${VARS.counter.REQUESTS})</a></li>
     <li><a href="/projekty/zdrojaky">Zdrojové kódy</a></li>
     <li><a href="javascript:addSidebar();">Přidej sidebar</a></li>
     <li><a href="javascript:addBookmark();">Přidej mezi oblíbené</a></li>
