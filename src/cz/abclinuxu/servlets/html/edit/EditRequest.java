@@ -432,17 +432,11 @@ public class EditRequest implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation requests = (Relation) persistence.findById(new Relation(Constants.REL_REQUESTS));
         Item item = (Item) relation.getChild();
-        String email = null;
-        if (item.getOwner() != 0)
-            email = ((User) persistence.findById(new User(item.getOwner()))).getEmail();
-        else
-            email = item.getData().getRootElement().elementText("email");
 
         Map map = new HashMap();
         map.put(EmailSender.KEY_TO, AbcConfig.getAdminsEmail());
         map.put(EmailSender.KEY_SUBJECT, item.getData().selectSingleNode("/data/category").getText());
-        if (email != null)
-            map.put(EmailSender.KEY_FROM, email);
+        map.put(EmailSender.KEY_FROM, "literakl@abclinuxu.cz");
         map.put(EmailSender.KEY_TEMPLATE, "/mail/requests.ftl");
         map.put("URL", requests.getUrl() + "#" + relation.getId());
         map.put("REQUEST", item);
