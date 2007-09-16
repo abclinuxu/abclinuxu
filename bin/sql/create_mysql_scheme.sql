@@ -199,8 +199,8 @@ ALTER TABLE akce ADD INDEX akce_index (kdo,relace);
 
 -- mala implementace RCS
 CREATE TABLE verze (
- typ CHAR(1) NOT NULL,                           -- id tabulky predka
- cislo MEDIUMINT NOT NULL,                       -- id predka
+ typ CHAR(1) NOT NULL,                           -- id tabulky dokumentu
+ cislo MEDIUMINT NOT NULL,                       -- id dokumentu
  verze INT(4) NOT NULL,                          -- verze dokumentu
  kdo INT(6) NOT NULL,                            -- identifikator uzivatele
  kdy DATETIME NOT NULL,                          -- cas pridani
@@ -235,8 +235,29 @@ CREATE TABLE hledano (
  pocet INT(6) NOT NULL DEFAULT 0                 -- kolikrat bylo hledano (bez kliku na dalsi stranky vysledku)
 ) collate utf8_bin;
 
+-- tabulka obsahujici popisy konstant pro sloupecek typ
 CREATE TABLE konstanty (
   tabulka char(1)  default NULL,
   typ int(4) default NULL,
   popis varchar(255) default NULL
 );
+
+-- seznam stitku
+CREATE TABLE stitek (
+  id VARCHAR(20) PRIMARY KEY,                    -- ascii identifikator stitku
+  titulek VARCHAR(40) NOT NULL                   -- jmeno stitku
+);
+
+-- seznam klicovych slov pro stitky
+CREATE TABLE stitek_slova (
+  stitek VARCHAR(20) NOT NULL,                       -- ascii identifikator stitku
+  slovo VARCHAR(255) NOT NULL                    -- normalizovane klicove slovo asociovane se stitkem
+);
+ALTER TABLE stitek_slova ADD INDEX in_stitek_slova (stitek);
+
+CREATE TABLE stitkovani (
+ typ CHAR(1) NOT NULL,                           -- id tabulky dokumentu
+ cislo MEDIUMINT NOT NULL,                       -- id dokumentu
+ stitek VARCHAR(20) NOT NULL                     -- id stitku
+);
+ALTER TABLE stitkovani ADD UNIQUE INDEX in_stitkovani_vazba (typ,cislo,stitek);

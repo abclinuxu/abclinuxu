@@ -183,6 +183,51 @@ public interface Persistence {
     public void removeCounter(GenericObject obj, String type);
 
     /**
+     * Creates new tag in persistent storage. Tag keywords are stored too.
+     * @param tag tag to be persisted, its key must be unique
+     */
+    public void create(Tag tag);
+
+    /**
+     * Update tag's title and keywords.
+     * @param tag a tag
+     */
+    public void update(Tag tag);
+
+    /**
+     * Removes tag from persistent storage and unassign all its usages.
+     * @param tag a tag to be removed
+     */
+    public void remove(Tag tag);
+
+    /**
+     * Finds all tags.
+     * @return map of tags, key is identifier, value is its tag
+     */
+    public Map<String, Tag> getTags();
+
+    /**
+     * Finds tags assigned to given object.
+     * @param obj object to be searched
+     * @return list of tags (empty in case no tags have been assigned)
+     */
+    public List<Tag> getAssignedTags(GenericDataObject obj);
+
+    /**
+     * Assign tags to given object. Duplicates are slightly ignored.
+     * @param obj object to which tags shall be assigned
+     * @param tags tags to be assigned
+     */
+    public void assignTags(GenericDataObject obj, List<String> tags);
+
+    /**
+     * Unassigns tags from given object. Already unassigned tags are slightly ignored.
+     * @param obj object from which tags shall be unassigned
+     * @param tags tags to be unassigned
+     */
+    public void unassignTags(GenericDataObject obj, List<String> tags);
+
+    /**
      * Sets cache.
      */
     public void setCache(TransparentCache cache);

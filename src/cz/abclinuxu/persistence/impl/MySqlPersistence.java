@@ -68,9 +68,6 @@ public class MySqlPersistence implements Persistence {
         this.cache = cache;
     }
 
-    /**
-     * Removes content of associated cache.
-     */
     public void clearCache() {
         cache.clear();
     }
@@ -220,12 +217,6 @@ public class MySqlPersistence implements Persistence {
         }
     }
 
-    /**
-     * Finds all relations where obj is children.
-     * @param child
-     * @return list of initialized relations
-     * @throws PersistenceException
-     */
     public List findRelations(GenericObject child) throws PersistenceException {
         Connection con; Statement statement = null;ResultSet resultSet = null;
         con = getSQLConnection();
@@ -345,10 +336,6 @@ public class MySqlPersistence implements Persistence {
         return result;
     }
 
-    /**
-     * Finds all parents of this Relation. First element is top level relation, the second is its child and the
-     * last element is this relation.
-     */
     public List findParents(Relation relation) {
         List result = new ArrayList(6);
         result.add(relation);
@@ -419,7 +406,7 @@ public class MySqlPersistence implements Persistence {
     }
 
     public void remove(GenericObject obj) {
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        Connection con = null; PreparedStatement statement = null, statement2 = null; ResultSet resultSet = null;
         if ( log.isDebugEnabled() ) log.debug("Chystám se smazat "+obj);
 
         try {
@@ -428,14 +415,23 @@ public class MySqlPersistence implements Persistence {
             queue.add(obj);
 
             do {
+                String objectType = PersistenceMapping.getGenericObjectType(obj);
                 obj = (GenericObject) queue.remove(0);
                 statement = con.prepareStatement("delete from "+getTable(obj)+" where cislo=?");
-                statement.setInt(1,obj.getId());
+                statement.setInt(1, obj.getId());
                 statement.executeUpdate();
 
+                // unassign any tags for deleted object
+                if (obj instanceof GenericDataObject) {
+                    statement2 = con.prepareStatement("delete from stitkovani where typ=? and cislo=?");
+                    statement2.setString(1, objectType);
+                    statement2.setInt(2, obj.getId());
+                    statement2.executeUpdate();
+                }
+
                 // remove all properties from table vlastnost
-                if(obj instanceof CommonObject)
-                    deleteCommonObjectProperties((CommonObject) obj, PersistenceMapping.getGenericObjectType(obj));
+                if (obj instanceof CommonObject)
+                    deleteCommonObjectProperties((CommonObject) obj, objectType);
 
                 // remove comments, they are not referenced via relation table
                 if (obj instanceof Record) {
@@ -474,21 +470,10 @@ public class MySqlPersistence implements Persistence {
         }
     }
 
-    /**
-     * Synchronizes list of GenericObjects. The list may hold different objects. Identical to calling
-     * synchronizeList(list, false). It tries to work in batches for optimal access.
-     * @param list
-     */
     public void synchronizeList(List list) {
         synchronizeList(list, false);
     }
 
-    /**
-     * Synchronizes list of GenericObjects. The list may hold different objects.
-     * It tries to work in batches for optimal access.
-     * @param list
-     * @param ignoreMissing If true, silently ignore any non-existent object, otherwise thow an exception.
-     */
     public void synchronizeList(List list, boolean ignoreMissing) {
         if (list.size()==0)
             return;
@@ -730,12 +715,6 @@ public class MySqlPersistence implements Persistence {
         return null;
     }
 
-    /**
-     * Finds children of given GenericObject. Children are not initialized.
-     * If there is no child for the obj, empty list is returned.
-     * @throws cz.abclinuxu.exceptions.PersistenceException When something goes wrong.
-     * @return list of initialized Relations
-     */
     public List<Relation> findChildren(GenericObject obj) {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         List<Relation> children = new ArrayList<Relation>();
@@ -766,13 +745,6 @@ public class MySqlPersistence implements Persistence {
         }
     }
 
-    /**
-     * Finds children for list of GenericObjects. Children are not initialized.
-     * If there is no child for the obj, empty list is used.
-     * @param objects list of GenericObject
-     * @return Map where GenericObject is key and List with initialized Relations is value.
-     * @throws cz.abclinuxu.exceptions.PersistenceException When something goes wrong.
-     */
     public Map<GenericObject, List<Relation>> findChildren(List objects) {
         Connection con = null; Statement statement = null; ResultSet resultSet = null;
         if (objects==null || objects.size()==0)
@@ -1646,10 +1618,6 @@ public class MySqlPersistence implements Persistence {
         poll.setTotalVoters(resultSet.getInt(6));
     }
 
-    /**
-     * Increment counter for one or more PollChoices of the same Poll.
-     * @param choices list of PollChoices. They must have valid poll and id properties.
-     */
     public void incrementPollChoicesCounter(List choices) {
         if (choices == null || choices.size() == 0)
             return;
@@ -2158,6 +2126,212 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             log.error(e);
             throw e;
+        } finally {
+            releaseSQLResources(con, statement, null);
+        }
+    }
+
+    // todo special cache for tags
+
+    public void create(Tag tag) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("insert into stitek values (?, ?)");
+            statement.setString(1, tag.getId());
+            statement.setString(2, tag.getTitle());
+
+            int result = statement.executeUpdate();
+            if (result == 0)
+                throw new PersistenceException("Nepodařilo se vložit " + tag + " do databáze!");
+
+            storeTagKeywords(tag, false);
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1062) {
+                throw new DuplicateKeyException("Duplikátní údaj: " + tag.getId() + "!");
+            } else {
+                throw new PersistenceException("Nemohu uložit " + tag, e);
+            }
+        } finally {
+            releaseSQLResources(con, statement, null);
+        }
+    }
+
+    public void update(Tag tag) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("update stitek set titulek=? where id=?");
+            statement.setString(1, tag.getTitle());
+            statement.setString(2, tag.getId());
+
+            int result = statement.executeUpdate();
+            if (result == 0)
+                throw new PersistenceException("Nepodařilo se vložit " + tag + " do databáze!");
+
+            storeTagKeywords(tag, true);
+        } catch (SQLException e) {
+            throw new PersistenceException("Nemohu uložit " + tag, e);
+        } finally {
+            releaseSQLResources(con, statement, null);
+        }
+    }
+
+    private void storeTagKeywords(Tag tag, boolean purgeFirst) throws SQLException {
+        Connection con = null;
+        PreparedStatement purgeStatement = null;
+        PreparedStatement statement = null;
+        try {
+            con = getSQLConnection();
+            if (purgeFirst) {
+                purgeStatement = con.prepareStatement("delete from stitek_slova where stitek=?");
+                purgeStatement.setString(1, tag.getId());
+                purgeStatement.executeUpdate();
+            }
+
+            if (tag.getKeywords().size() > 0) {
+                statement = con.prepareStatement("insert into stitek_slova values (?, ?)");
+                statement.setString(1, tag.getId());
+                for (String keyword : tag.getKeywords()) {
+                    statement.setString(2, keyword);
+                    statement.executeUpdate();
+                }
+            }
+        } finally {
+            releaseSQLResources(con, new Statement[] {purgeStatement, statement}, null);
+        }
+    }
+
+    public void remove(Tag tag) {
+        Connection con = null;
+        PreparedStatement statement = null, statement2 = null, statement3 = null;
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("delete from stitkovani where stitek=?");
+            statement.setString(1, tag.getId());
+            statement.executeUpdate();
+
+            statement2 = con.prepareStatement("delete from stitek_slova where stitek=?");
+            statement2.setString(1, tag.getId());
+            statement2.executeUpdate();
+
+            statement3 = con.prepareStatement("delete from stitek where id=?");
+            statement3.setString(1, tag.getId());
+            statement3.executeUpdate();
+        } catch (SQLException e) {
+            throw new PersistenceException("Nemohu smazat " + tag, e);
+        } finally {
+            releaseSQLResources(con, new Statement[] {statement, statement2, statement3}, null);
+        }
+    }
+
+    public Map<String, Tag> getTags() {
+        Connection con = null;
+        Statement statement = null, statement2 = null;
+        ResultSet resultSet = null, resultSet2 = null;
+        try {
+            HashMap<String, Tag> tags = new HashMap<String, Tag>(100);
+            con = getSQLConnection();
+            statement = con.createStatement();
+            resultSet = statement.executeQuery("select *, (select count(*) from stitkovani where stitek=id) from stitek");
+            while (resultSet.next()) {
+                String id = resultSet.getString(1);
+                Tag tag = new Tag(id, resultSet.getString(2));
+                tag.setUsage(resultSet.getInt(3));
+                tags.put(id, tag);
+            }
+
+            statement2 = con.createStatement();
+            resultSet2 = statement2.executeQuery("select * from stitek_slova");
+            while (resultSet2.next()) {
+                String id = resultSet2.getString(1);
+                String keyword = resultSet2.getString(2);
+                Tag tag = (Tag) tags.get(id);
+                if (tag == null) {
+                    log.warn("Nalezeno klíčové slovo pro neznámý štítek " + id);
+                    continue;
+                }
+                tag.addKeyword(keyword);
+            }
+
+            return tags;
+        } catch (SQLException e) {
+            throw new PersistenceException("Nemohu získat seznam štítků!", e);
+        } finally {
+            releaseSQLResources(con, new Statement[]{statement, statement2}, new ResultSet[] {resultSet, resultSet2});
+        }
+    }
+
+    public List<Tag> getAssignedTags(GenericDataObject obj) {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("select stitek,titulek from stitkovani, stitek where typ=? and cislo=? and stitek=id");
+            statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
+            statement.setInt(2, obj.getId());
+
+            resultSet = statement.executeQuery();
+            List<Tag> tags = new ArrayList<Tag>();
+            while (resultSet.next()) {
+                Tag tag = new Tag(resultSet.getString(1), resultSet.getString(2));
+                tags.add(tag);
+            }
+            return tags;
+        } catch (SQLException e) {
+            throw new PersistenceException("Nemohu načíst štítky pro " + obj, e);
+        } finally {
+            releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    public void assignTags(GenericDataObject obj, List<String> tags) {
+        if (tags.isEmpty())
+            return;
+
+        Connection con = null;
+        PreparedStatement statement = null;
+        int count = 0;
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("replace into stitkovani values (?, ?, ?)");
+            statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
+            statement.setInt(2, obj.getId());
+
+            for (String tag : tags) {
+                statement.setString(3, tag);
+                count += statement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new PersistenceException("Nemohu uložit štítky pro " + obj, e);
+        } finally {
+            releaseSQLResources(con, statement, null);
+        }
+    }
+
+    public void unassignTags(GenericDataObject obj, List<String> tags) {
+        if (tags.isEmpty())
+            return;
+
+        Connection con = null;
+        PreparedStatement statement = null;
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("delete from stitkovani where typ=? and cislo=? and stitek in " + Misc.getInCondition(tags.size()));
+            statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
+            statement.setInt(2, obj.getId());
+
+            int i = 3;
+            for (String tag : tags) {
+                statement.setString(i++, tag);
+            }
+            int count = statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new PersistenceException("Nemohu uložit štítky pro " + obj, e);
         } finally {
             releaseSQLResources(con, statement, null);
         }
