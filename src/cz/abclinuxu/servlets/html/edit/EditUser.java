@@ -460,7 +460,7 @@ public class EditUser implements AbcAction, Configurable {
         try {
             persistence.update(managed);
         } catch ( DuplicateKeyException e ) {
-            ServletUtils.addError(PARAM_LOGIN, "Toto jméno je již používáno.", env, null);
+            ServletUtils.addError(PARAM_LOGIN, "Login nebo přezdívka je již používána", env, null);
             return FMTemplateSelector.select("EditUser","editBasic",env,request);
         }
 
