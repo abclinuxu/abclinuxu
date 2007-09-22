@@ -302,7 +302,7 @@ public class EditDiscussion implements AbcAction {
 
         boolean canContinue = true;
         canContinue &= setTitle(params, root, env);
-        canContinue &= setText(params, root, env);
+        canContinue &= setText(params, root, true, env);
         canContinue &= setCommentAuthor(params, user, comment, root, env);
         canContinue &= setUserIPAddress(root, request);
         canContinue &= checkSpambot(request, response, params, env, user);
@@ -429,7 +429,7 @@ public class EditDiscussion implements AbcAction {
         canContinue &= setParent(params, comment);
         canContinue &= setCommentAuthor(params, user, comment, root, env);
         canContinue &= setTitle(params, root, env);
-        canContinue &= setText(params, root, env);
+        canContinue &= setText(params, root, false, env);
         canContinue &= setUserIPAddress(root, request);
         canContinue &= checkSpambot(request, response, params, env, user);
 //        canContinue &= testAnonymCanPostComments(user, env);
@@ -662,7 +662,7 @@ public class EditDiscussion implements AbcAction {
 
         boolean canContinue = true;
         canContinue &= setTitle(params, root, env);
-        canContinue &= setText(params, root, env);
+        canContinue &= setText(params, root, false, env);
         canContinue &= setCommentAuthor(params, null, comment, root, env);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
@@ -1133,7 +1133,7 @@ public class EditDiscussion implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    static boolean setText(Map params, Element root, Map env) {
+    static boolean setText(Map params, Element root, boolean question, Map env) {
         String tmp = (String) params.get(PARAM_TEXT);
         if ( tmp!=null && tmp.length()>0 ) {
             try {
@@ -1152,7 +1152,7 @@ public class EditDiscussion implements AbcAction {
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
         } else {
-            ServletUtils.addError(PARAM_TEXT, "Zadejte text vašeho dotazu.", env, null);
+            ServletUtils.addError(PARAM_TEXT, "Zadejte text vašeho " + ((question) ? "dotazu" : "komentáře"), env, null);
             return false;
         }
         return true;
