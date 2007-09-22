@@ -49,15 +49,17 @@ zajímavostí ze světa Linuxu i z našeho portálu.
   <tr>
    <td class="required" width="60">Login</td>
    <td>
-    <input type="text" name="login" value="${PARAMS.login?if_exists}" size="24" tabindex="2">
-    <div class="error">${ERRORS.login?if_exists}</div>
+    <input type="text" name="login" id="login" value="${PARAMS.login?if_exists}" size="24" tabindex="2"
+           onChange="new Ajax.Updater('loginError', '/ajax/checkLogin', {parameters: { value : $F('login')}})">
+    <div class="error" id="loginError">${ERRORS.login?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required" width="60">Přezdívka</td>
    <td>
-    <input type="text" name="nick" value="${PARAMS.nick?if_exists}" size="24" tabindex="3">
-    <div class="error">${ERRORS.nick?if_exists}</div>
+    <input type="text" name="nick" id="nick" value="${PARAMS.nick?if_exists}" size="24" tabindex="3"
+           onChange="new Ajax.Updater('nickError', '/ajax/checkNick', {parameters: { value : $F('nick')}})">
+    <div class="error" id="nickError">${ERRORS.nick?if_exists}</div>
    </td>
   </tr>
   <tr>

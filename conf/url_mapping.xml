@@ -4,6 +4,14 @@
             <pattern>^/$</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewIndex</action>
         </mapping>
+        <mapping priority="true">
+            <pattern>/ajax/checkLogin</pattern>
+            <action>cz.abclinuxu.servlets.html.ajax.ConflictingUsers</action>
+        </mapping>
+        <mapping priority="true">
+            <pattern>/ajax/checkNick</pattern>
+            <action>cz.abclinuxu.servlets.html.ajax.ConflictingUsers</action>
+        </mapping>
         <mapping>
             <pattern>/show</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowObject</action>

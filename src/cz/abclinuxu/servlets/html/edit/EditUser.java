@@ -1396,6 +1396,13 @@ public class EditUser implements AbcAction, Configurable {
             ServletUtils.addError(PARAM_LOGIN, "Přihlašovací jméno smí obsahovat pouze písmena A až Z, číslice, pomlčku, tečku a podtržítko!", env, null);
             return false;
         }
+
+        List<Integer> users = SQLTool.getInstance().findUsersWithLogin(login, null);
+        if (! (users.isEmpty() || users.contains(user.getId()))) {
+            ServletUtils.addError(PARAM_LOGIN, "Toto přihlašovací jméno je již používáno. Zkuste jiné.", env, null);
+            return false;
+        }
+
         user.setLogin(login);
         return true;
     }
@@ -1445,6 +1452,12 @@ public class EditUser implements AbcAction, Configurable {
 
         if (!verifyGuard(NoHTMLGuard.class, nick, PARAM_NICK, env))
             return false;
+
+        List<Integer> users = SQLTool.getInstance().findUsersWithNick(nick, null);
+        if (!(users.isEmpty() || users.contains(user.getId()))) {
+            ServletUtils.addError(PARAM_NICK, "Tato přezdívka je již používána. Zkuste jinou.", env, null);
+            return false;
+        }
 
         user.setNick(nick);
         return true;

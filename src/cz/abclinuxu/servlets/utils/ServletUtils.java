@@ -206,7 +206,7 @@ public class ServletUtils implements Configurable {
                 return;
             }
 
-            handleLoggedIn(user, false, response);
+            handleLoggedIn(user, false, request, response, env);
             params.put(ActionProtector.PARAM_TICKET, user.getSingleProperty(Constants.PROPERTY_TICKET));
 
         } else {
@@ -230,7 +230,7 @@ public class ServletUtils implements Configurable {
                 addError(Constants.ERROR_GENERIC, "Nalezena cookie se špatným heslem!", env, null);
                 return;
             }
-            handleLoggedIn(user, true, null);
+            handleLoggedIn(user, true, request, null, env);
         }
 
         session.setAttribute(Constants.VAR_USER, user);
@@ -380,7 +380,7 @@ public class ServletUtils implements Configurable {
      * @param cookieExists if true, it makes no sense to create cookie
      * @param response cookie will be placed here
      */
-    private static void handleLoggedIn(User user, boolean cookieExists, HttpServletResponse response) {
+    private static void handleLoggedIn(User user, boolean cookieExists, HttpServletRequest request, HttpServletResponse response, Map env) {
         if (! AbcConfig.isMaintainanceMode()) {
             String now;
             synchronized (Constants.isoFormat) {
@@ -399,6 +399,23 @@ public class ServletUtils implements Configurable {
             comments.put((Integer) objects[0], (Integer) objects[1]);
         }
         user.fillLastSeenComments(comments);
+
+        SQLTool sqlTool = SQLTool.getInstance();
+        List<Integer> usersLogin = sqlTool.findUsersWithLogin(user.getLogin(), null);
+        List<Integer> usersNick = sqlTool.findUsersWithNick(user.getNick(), null);
+        if (usersLogin.size() > 1 || usersNick.size() > 1) {
+            StringBuffer sb = new StringBuffer();
+            if (usersLogin.size() > 1 && usersNick.size() <= 1)
+                sb.append("Vaše přihlašovací jméno je v konfliktu s jinými uživateli. Může");
+            else if (usersLogin.size()<= 1 && usersNick.size() > 1)
+                sb.append("Vaše přezdívka je v konfliktu s jinými uživateli. Může");
+            else
+                sb.append("Vaše přihlašovací jméno i přezdívka jsou v konfliktu s jinými uživateli. Mohou");
+
+            sb.append(" se lišit například jen velikostí písmen či háčky a čárkami. ");
+            sb.append("V budoucnu dojde k odstranění podobných duplicit automatickou změnou.");
+            addError(Constants.ERROR_GENERIC, sb.toString(), env, request.getSession());
+        }
 
         if (! cookieExists) {
             int valid = 6*30*24*3600; // six months

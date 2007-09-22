@@ -75,6 +75,8 @@ public final class SQLTool implements Configurable {
     public static final String USERS_WITH_FORUM_BY_EMAIL = "users.with.forum.by.email";
     public static final String USERS_WITH_ROLES = "users.with.roles";
     public static final String USERS_IN_GROUP = "users.in.group";
+    public static final String USERS_WITH_LOGIN = "users.with.login";
+    public static final String USERS_WITH_NICK = "users.with.nick";
     public static final String ITEMS_WITH_TYPE = "items.with.type";
     public static final String RECORDS_WITH_TYPE = "records.with.type";
     public static final String ITEMS_COUNT_IN_SECTION = "items.count.in.section";
@@ -1059,6 +1061,34 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds users with given login (case and locale insensitive search).
+     * Use Qualifiers to set additional parameters.
+     * @return list of Integers of user ids.
+     */
+    public List<Integer> findUsersWithLogin(String login, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer((String) sql.get(USERS_WITH_LOGIN));
+        List params = new ArrayList();
+        params.add(login);
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadUsers(sb.toString(), params);
+    }
+
+    /**
+     * Finds users with given nick name (case and locale insensitive search).
+     * Use Qualifiers to set additional parameters.
+     * @return list of Integers of user ids.
+     */
+    public List<Integer> findUsersWithNick(String nick, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer((String) sql.get(USERS_WITH_NICK));
+        List params = new ArrayList();
+        params.add(nick);
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadUsers(sb.toString(), params);
+    }
+
+    /**
      * Finds users, that have at least one role.
      * Use Qualifiers to set additional parameters.
      * @return list of Integers of user ids.
@@ -1903,6 +1933,8 @@ public final class SQLTool implements Configurable {
         store(USERS_WITH_WEEKLY_EMAIL, prefs);
         store(USERS_WITH_FORUM_BY_EMAIL, prefs);
         store(USERS_WITH_ROLES, prefs);
+        store(USERS_WITH_LOGIN, prefs);
+        store(USERS_WITH_NICK, prefs);
         store(USERS_IN_GROUP, prefs);
         store(ITEMS_COUNT_IN_SECTION, prefs);
         store(LAST_ITEM_AND_COUNT_IN_SECTION, prefs);

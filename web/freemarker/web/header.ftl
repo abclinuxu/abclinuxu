@@ -30,6 +30,7 @@
     <meta name="keywords" lang="en" content="linux,hardware,software,drivers,forum,help,faq,advice">
     <script type="text/javascript" src="/data/site/impact.js"></script>
     <script type="text/javascript" src="/data/site/scripts.js"></script>
+    <script src="/data/site/prototype.js" type="text/javascript"></script>
     <#if html_header?exists>
         ${html_header}
     </#if>
