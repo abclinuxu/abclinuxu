@@ -622,7 +622,7 @@ public class EditUser implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditUser", "editProfile", env, request);
 
         canContinue &= setMyPage(params, managed, env);
-        canContinue &= setLinuxUserFrom(params, managed);
+        canContinue &= setLinuxUserFrom(params, managed, env);
         canContinue &= setSignature(params, managed, env);
         canContinue &= setAbout(params, managed, env);
         canContinue &= setDistributions(params, managed, env);
@@ -1638,16 +1638,21 @@ public class EditUser implements AbcAction, Configurable {
      * @param user user to be updated
      * @return false, if there is a major error.
      */
-    private boolean setLinuxUserFrom(Map params, User user) {
-        String year = (String) params.get(PARAM_LINUX_USER_FROM);
+    private boolean setLinuxUserFrom(Map params, User user, Map env) {
+        String s = (String) params.get(PARAM_LINUX_USER_FROM);
         Element profile = DocumentHelper.makeElement(user.getData(), "/data/profile");
-        if ( year==null || year.length()==0 ) {
+        if (s == null || s.trim().length() == 0) {
             Node node = profile.element("linux_user_from_year");
-            if (node!=null)
-                profile.remove(node);
+            if (node != null)
+                node.detach();
             return true;
         }
-        DocumentHelper.makeElement(profile, "linux_user_from_year").setText(year);
+        int year = Misc.parseInt(s, -1);
+        if (year < 1991) {
+            ServletUtils.addError(PARAM_LINUX_USER_FROM, "Očekáváno je číslo větší nebo rovno 1991.", env, null);
+            return false;
+        }
+        DocumentHelper.makeElement(profile, "linux_user_from_year").setText(s);
         return true;
     }
 

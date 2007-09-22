@@ -32,14 +32,14 @@ povídání.</p>
   <tr>
    <td width="120">Domovská stránka</td>
    <td>
-    <input type="text" name="www" value="${PARAMS.www?if_exists}" size="40" tabindex="2">
+    <input type="text" name="www" value="${PARAMS.www?if_exists?html}" size="40" tabindex="2">
     <div class="error">${ERRORS.www?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td width="120">Linux používám<br>od roku</td>
    <td>
-    <input type="text" name="linuxFrom" value="${PARAMS.linuxFrom?if_exists}" size="40" tabindex="2">
+    <input type="text" name="linuxFrom" value="${PARAMS.linuxFrom?if_exists?html}" size="40" tabindex="2">
    </td>
   </tr>
   <tr>
@@ -47,27 +47,27 @@ povídání.</p>
    <td>
     <#assign distros=TOOL.asList(PARAMS.distribution)>
     <#if distros?size gte 1 >
-     <input type="text" name="distribution" value="${distros[0]}" size="40" tabindex="3"><br>
+     <input type="text" name="distribution" value="${distros[0]?html}" size="40" tabindex="3"><br>
     <#else>
      <input type="text" name="distribution" size="16" tabindex="3"><br>
     </#if>
     <#if distros?size gte 2 >
-     <input type="text" name="distribution" value="${distros[1]}" size="40" tabindex="4"><br>
+     <input type="text" name="distribution" value="${distros[1]?html}" size="40" tabindex="4"><br>
     <#else>
      <input type="text" name="distribution" size="16" tabindex="4"><br>
     </#if>
     <#if distros?size gte 3 >
-     <input type="text" name="distribution" value="${distros[2]}" size="40" tabindex="5"><br>
+     <input type="text" name="distribution" value="${distros[2]?html}" size="40" tabindex="5"><br>
     <#else>
      <input type="text" name="distribution" size="16" tabindex="5"><br>
     </#if>
     <#if distros?size gte 4 >
-     <input type="text" name="distribution" value="${distros[3]}" size="40" tabindex="6"><br>
+     <input type="text" name="distribution" value="${distros[3]?html}" size="40" tabindex="6"><br>
     <#else>
      <input type="text" name="distribution" size="16" tabindex="6"><br>
     </#if>
     <#if distros?size gte 5 >
-     <input type="text" name="distribution" value="${distros[4]}" size="40" tabindex="7"><br>
+     <input type="text" name="distribution" value="${distros[4]?html}" size="40" tabindex="7"><br>
     <#else>
      <input type="text" name="distribution" size="16" tabindex="7"><br>
     </#if>
