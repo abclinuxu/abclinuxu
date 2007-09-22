@@ -415,7 +415,6 @@ public class MySqlPersistence implements Persistence {
             queue.add(obj);
 
             do {
-                String objectType = PersistenceMapping.getGenericObjectType(obj);
                 obj = (GenericObject) queue.remove(0);
                 statement = con.prepareStatement("delete from "+getTable(obj)+" where cislo=?");
                 statement.setInt(1, obj.getId());
@@ -424,14 +423,14 @@ public class MySqlPersistence implements Persistence {
                 // unassign any tags for deleted object
                 if (obj instanceof GenericDataObject) {
                     statement2 = con.prepareStatement("delete from stitkovani where typ=? and cislo=?");
-                    statement2.setString(1, objectType);
+                    statement2.setString(1, PersistenceMapping.getGenericObjectType(obj));
                     statement2.setInt(2, obj.getId());
                     statement2.executeUpdate();
                 }
 
                 // remove all properties from table vlastnost
                 if (obj instanceof CommonObject)
-                    deleteCommonObjectProperties((CommonObject) obj, objectType);
+                    deleteCommonObjectProperties((CommonObject) obj, PersistenceMapping.getGenericObjectType(obj));
 
                 // remove comments, they are not referenced via relation table
                 if (obj instanceof Record) {
