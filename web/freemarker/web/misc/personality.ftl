@@ -1,5 +1,7 @@
 <#macro showPersonality(personality, showGallery)>
-    <h1>${TOOL.xpath(personality,"/data/name")}</h1>
+    <h1>
+        ${TOOL.childName(personality)}
+    </h1>
 
     <div class="dict-item">
         ${TOOL.render(TOOL.xpath(personality,"/data/description"),USER?if_exists)}
@@ -37,9 +39,9 @@
             <p class="galerie">
                 <#list images as image>
                     <#if image.thumbnailPath?exists>
-                        <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${TOOL.xpath(personality,"/data/name")?if_exists}" border="0"></a>
+                        <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${TOOL.childName(personality)}" border="0"></a>
                     <#else>
-                        <img src="${image.path}" alt="${TOOL.xpath(personality,"/data/name")?if_exists}">
+                        <img src="${image.path}" alt="${TOOL.childName(personality)}">
                     </#if>
                 </#list>
             </p>

@@ -62,7 +62,8 @@ public class EditPersonality implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditPersonality.class);
 
     public static final String PARAM_RELATION_ID = "rid";
-    public static final String PARAM_NAME = "name";
+    public static final String PARAM_FIRSTNAME = "firstname";
+    public static final String PARAM_SURNAME = "surname";
     public static final String PARAM_DESCRIPTION = "desc";
     public static final String PARAM_BIRTH_DATE = "birthDate";
     public static final String PARAM_DEATH_DATE = "deathDate";
@@ -132,7 +133,8 @@ public class EditPersonality implements AbcAction {
         Relation relation = new Relation(new Category(Constants.CAT_PERSONALITIES), item, Constants.REL_PERSONALITIES);
 
         boolean canContinue = true;
-        canContinue &= setName(params, item, root, env);
+        canContinue &= setFirstname(params, root, env);
+        canContinue &= setSurname(params, item, root, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setURL(relation, root, env); // local URL
         canContinue &= setWebUrl(params, root, env); // "more information" website (e.g. Wikipedia)
@@ -174,8 +176,14 @@ public class EditPersonality implements AbcAction {
 
         Item item = (Item) relation.getChild();
         Document document = item.getData();
-        Node node = document.selectSingleNode("data/name");
-        params.put(PARAM_NAME, node.getText());
+        Node node = document.selectSingleNode("data/firstname");
+
+        if (node != null)
+            params.put(PARAM_FIRSTNAME, node.getText());
+
+        node = document.selectSingleNode("data/surname");
+        if (node != null)
+            params.put(PARAM_SURNAME, node.getText());
 
         node = document.selectSingleNode("data/description");
         if (node != null)
@@ -214,7 +222,8 @@ public class EditPersonality implements AbcAction {
         Element root = item.getData().getRootElement();
 
         boolean canContinue = true;
-        canContinue &= setName(params, item, root, env);
+        canContinue &= setFirstname(params, root, env);
+        canContinue &= setSurname(params, item, root, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setURL(relation, root, env); // local URL
         canContinue &= setWebUrl(params, root, env); // "more information" website (e.g. Wikipedia)
@@ -257,11 +266,12 @@ public class EditPersonality implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setName(Map params, Item item, Element root, Map env) {
-        String name = (String) params.get(PARAM_NAME);
+    private boolean setFirstname(Map params, Element root, Map env) {
+        String name = (String) params.get(PARAM_FIRSTNAME);
+
         name = Misc.filterDangerousCharacters(name);
         if ( name == null || name.length() == 0 ) {
-            ServletUtils.addError(PARAM_NAME, "Nezadali jste jméno osobnosti.", env, null);
+            ServletUtils.addError(PARAM_FIRSTNAME, "Nezadali jste jméno osobnosti.", env, null);
             return false;
         }
 
@@ -269,14 +279,47 @@ public class EditPersonality implements AbcAction {
 
         char first = Character.toLowerCase(normalizedName.charAt(0));
         if (first < 'a' || first > 'z') {
-            ServletUtils.addError(PARAM_NAME, "Jméno musí začínat písmenem.", env, null);
+            ServletUtils.addError(PARAM_FIRSTNAME, "Jméno musí začínat písmenem.", env, null);
             return false;
         }
 
-        DocumentHelper.makeElement(root, "name").setText(name);
+        DocumentHelper.makeElement(root, "firstname").setText(name);
+        return true;
+    }
 
-        normalizedName = normalizedName.toLowerCase();
-        item.setSubType(normalizedName); // used for SQL queries
+    /**
+     * Updates surname from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param item Item to be updated
+     * @param root root element of item to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setSurname(Map params, Item item, Element root, Map env) {
+        String surname = (String) params.get(PARAM_SURNAME);
+
+        surname = Misc.filterDangerousCharacters(surname);
+        if ( surname == null || surname.length() == 0 ) {
+            ServletUtils.addError(PARAM_SURNAME, "Nezadali jste příjmení osobnosti.", env, null);
+            return false;
+        }
+
+        String normalizedSurname = DiacriticRemover.getInstance().removeDiacritics(surname);
+        if (normalizedSurname.length() == 0) {
+            ServletUtils.addError(PARAM_SURNAME, "Příjmení musí začínat písmenem.", env, null);
+            return false;
+        }
+
+        char first = Character.toLowerCase(normalizedSurname.charAt(0));
+        if (first < 'a' || first > 'z') {
+            ServletUtils.addError(PARAM_SURNAME, "Příjmení musí začínat písmenem.", env, null);
+            return false;
+        }
+
+        DocumentHelper.makeElement(root, "surname").setText(surname);
+
+        normalizedSurname = normalizedSurname.toLowerCase();
+        item.setSubType(normalizedSurname); // used for SQL queries
         return true;
     }
 
@@ -288,7 +331,7 @@ public class EditPersonality implements AbcAction {
      * @return false, if there is a major error.
      */
     private boolean setURL(Relation relation,  Element root, Map env) {
-        String name = root.elementText("name");
+        String name = root.elementText("firstname") + " " + root.elementText("surname");
         name = Misc.filterDangerousCharacters(name);
         if (name == null)
             return false;
@@ -296,7 +339,7 @@ public class EditPersonality implements AbcAction {
         String url = URLManager.enforceRelativeURL(name);
         Relation relation2 = SQLTool.getInstance().findRelationByURL(url);
         if (relation2 != null) {
-            ServletUtils.addError(PARAM_NAME, "Tato osobnost <a href=\"/kdo-je/"+url+"\">již existuje</a>.", env, null);
+            ServletUtils.addError(PARAM_FIRSTNAME, "Tato osobnost <a href=\"/kdo-je/"+url+"\">již existuje</a>.", env, null);
             return false;
         }
 

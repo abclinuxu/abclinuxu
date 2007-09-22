@@ -1151,7 +1151,7 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexPersonality(Relation relation) {
         Item personality = (Item) relation.getChild();
-        String title = Tools.xpath(personality, "/data/name");
+        String title = Tools.childName(relation);
         String s = Tools.xpath(personality, "/data/description");
         StringBuffer sb = new StringBuffer(s);
 

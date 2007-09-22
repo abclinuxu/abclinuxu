@@ -80,11 +80,11 @@
 <p class="dalsi_pojmy">
     Další osobnosti:
     <#list PREV?reverse as relation>
-        <a href="${relation.url}">${TOOL.xpath(relation.child,"/data/name")}</a> -
+        <a href="${relation.url}">${TOOL.childName(relation.child)}</a> -
     </#list>
-    ${TOOL.xpath(ITEM,"/data/name")} <#if (NEXT?size>0)>-</#if>
+    ${TOOL.childName(ITEM)} <#if (NEXT?size>0)>-</#if>
     <#list NEXT?if_exists as relation>
-        <a href="${relation.url}">${TOOL.xpath(relation.child,"/data/name")}</a>
+        <a href="${relation.url}">${TOOL.childName(relation.child)}</a>
         <#if relation_has_next> - </#if>
     </#list>
 </p>

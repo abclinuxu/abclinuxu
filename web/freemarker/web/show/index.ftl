@@ -216,7 +216,7 @@
         <ul>
             <#list PERSONALITY as rel>
                 <li>
-                    <a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a>
+                    <a href="${rel.url}">${TOOL.childName(rel.child)}</a>
                 </li>
             </#list>
         </ul>

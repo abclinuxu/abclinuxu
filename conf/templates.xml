@@ -700,7 +700,7 @@
 
     <servlet name="ViewPersonality">
         <action name="view" content="/show/personality.ftl">
-            <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy"/>
+            <var name="TITLE" value='${TOOL.childName(ITEM)}' type="Lazy"/>
         </action>
         <action name="viewList" content="/show/personality_all.ftl">
             <var name="TITLE" value="Kdo je"/>

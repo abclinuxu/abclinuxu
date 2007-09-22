@@ -85,7 +85,7 @@ public class ViewPersonality implements AbcAction {
                 }
 
                 String name = url.substring(PREFIX_LENGTH);
-                params.put(EditPersonality.PARAM_NAME, name);
+                params.put(EditPersonality.PARAM_SURNAME, name);
                 ServletUtils.addMessage("Tato osobnost v naší databázi zatím není. V tomto formuláři o ní můžete napsat jako první.", env, null);
                 return FMTemplateSelector.select("EditPersonality", "add", env, request);
             }

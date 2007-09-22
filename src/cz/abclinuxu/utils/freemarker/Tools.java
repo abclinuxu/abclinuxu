@@ -240,7 +240,7 @@ public class Tools implements Configurable {
                 return "Diskuse";
             if (type == Item.NEWS)
                 return "Zprávička";
-            if (type == Item.AUTHOR) {
+            if (type == Item.AUTHOR || type == Item.PERSONALITY) {
                 Element root = ((Item)obj).getData().getRootElement();
                 StringBuffer sb = new StringBuffer();
                 String name = root.elementTextTrim("firstname");

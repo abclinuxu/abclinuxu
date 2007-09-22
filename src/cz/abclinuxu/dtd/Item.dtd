@@ -119,8 +119,9 @@
 <!ELEMENT description (#PCDATA)> <!-- explanation -->
 
 <!-- Item.PERSONALITY -->
-<!ELEMENT data (name, description, url+, date+)>
-<!ELEMENT name (#PCDATA)> <!-- word to be explained -->
+<!ELEMENT data (firstname, surname, description, url+, date+)>
+<!ELEMENT firstname (#PCDATA)> <!-- first name of the person -->
+<!ELEMENT surname (#PCDATA)> <!-- surname of the person -->
 <!ELEMENT description (#PCDATA)> <!-- explanation -->
 <!ELEMENT url (#PCDATA)> <!-- an url related to the personality -->
 <!ATTLIST url useType (#NMTOKEN)> <!-- type of given url (rss, info) -->
