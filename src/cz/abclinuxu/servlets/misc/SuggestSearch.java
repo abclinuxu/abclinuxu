@@ -55,7 +55,7 @@ public class SuggestSearch extends HttpServlet implements Configurable {
     public static final String PREF_RESULTS_LIMIT = "results.limit";
 
     public static final String PARAM_FIELD_NAME = "type";
-    public static final String PARAM_QUERY = "q";
+    public static final String PARAM_QUERY = "dotaz";
 
     public static final String VAR_QUERIES = "QUERIES";
 
@@ -73,14 +73,14 @@ public class SuggestSearch extends HttpServlet implements Configurable {
             if (Misc.empty(query))
                 found = Collections.EMPTY_LIST;
             else {
-                query = new String(query.getBytes("ISO-8859-1"));
+//                query = new String(query.getBytes("ISO-8859-1"));
 
                 SQLTool sqlTool = SQLTool.getInstance();
                 Qualifier[] qualifiers = new Qualifier[]{new LimitQualifier(0, limit)};
                 found = sqlTool.getSearchQueries(query, qualifiers);
             }
 
-            Template template = FMUtils.getConfiguration().getTemplate("/print/misc/suggest_search.ftl");
+            Template template = FMUtils.getConfiguration().getTemplate("/print/ajax/suggest_search.ftl");
             response.setContentType("text/html; charset=UTF-8");
             Writer writer = response.getWriter();
 

@@ -82,7 +82,7 @@
 
     <servlet-mapping>
         <servlet-name>SuggestSearch</servlet-name>
-        <url-pattern>/SuggestSearch</url-pattern>
+        <url-pattern>/ajax/suggest</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

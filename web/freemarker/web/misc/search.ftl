@@ -1,4 +1,5 @@
 <#assign html_header>
+    <script src="/data/site/scriptaculous.js?load=effects,controls" type="text/javascript"></script>
     <script language="javascript1.2" type="text/javascript">
         stav = true;
         function toggle(sender) {
@@ -21,7 +22,11 @@
     <table border="0" class="siroka">
         <tr>
             <td>
-              <input type="text" name="dotaz" value="${QUERY?if_exists?html}" size="50" tabindex="1">
+              <input type="text" name="dotaz" value="${QUERY?if_exists?html}" id="autocomplete"
+                     class="text" size="50" tabindex="1">
+              <div id="autocomplete_choices" class="autocomplete"></div>
+              <script type="text/javascript">new Ajax.Autocompleter("autocomplete", "autocomplete_choices", "/ajax/suggest", {});</script>
+
               <input type="submit" value="Hledej" tabindex="2">
               <a href="/SelectUser?sAction=form&amp;url=/Profile">Hledat uživatele</a>
               <#if ERRORS.dotaz?exists><div class="error">${ERRORS.dotaz}</div></#if>
