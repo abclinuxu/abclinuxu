@@ -61,7 +61,7 @@
                    </tr>
                   </table>
               <#else>
-                  <br><a href="${CURRENT_URL}&action=toAdvanced">Rozšířené hledání</a>
+                  <br><a href="${CURRENT_URL}<#if CURRENT_URL?index_of('?') == -1>?<#else>&</#if>action=toAdvanced">Rozšířené hledání</a>
               </#if>
             </td>
             <td align="right" valign="middle">
