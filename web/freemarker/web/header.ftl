@@ -49,12 +49,9 @@
 
 <div id="zh-kont">
   <div id="zh-text" class="zh-box">
-    <div id="zh-tema">
-       <@lib.advertisement id="zahl-vlevo" />
-    </div>
-    <div id="zh-ad">
-       <@lib.advertisement id="zahl-vpravo" />
-    </div>
+    <@lib.advertisement id="zahl-vlevo" />
+    <@lib.advertisement id="zahl-vpravo" />
+    <@lib.advertisement id="zahl-komplet" />
   </div>
   <div id="zh-logo" class="zh-box"><a href="/"></a></div>
   <div id="zh-hledani" class="zh-box">
