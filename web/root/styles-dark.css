@@ -374,6 +374,12 @@ a.selected:hover {
 .game-results { background-color: gray; }
 .game-wrong { color: #FFC0CB; } /* pink */
 
+div.autocomplete {
+      background-color: black;
+      border-color: #4B4B4B;
+}
+div.autocomplete ul li.selected { background-color: #80BBCA;}
+
 .host .img-server a:hover { background-color: transparent }
 
 .host .avail { color: #00FF00; }  /* lime */

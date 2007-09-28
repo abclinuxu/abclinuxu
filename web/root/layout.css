@@ -865,23 +865,22 @@ div.cenzura {
     margin: 0.5em;
     padding: 0.5em;
     font-size: 80%;
-    border: solid 1px gray;
 }
 
 p.cenzura_duvod {
     margin: 1em;
-	font-style: italic;
+    font-style: italic;
 }
 
 p.documentHistory {
-	font-style: italic;
+    font-style: italic;
+    font-size: small;
 }
 
 div.autocomplete {
   position:absolute;
   width:250px;
-  background-color:white;
-  border:1px solid #888;
+  border:1px solid;
   margin:0px;
   padding:0px;
 }
@@ -889,14 +888,14 @@ div.autocomplete ul {
   list-style-type:none;
   margin:0px;
   padding:0px;
+  font-size: small;
 }
-div.autocomplete ul li.selected { background-color: #ffb;}
 div.autocomplete ul li {
   list-style-type:none;
   display:block;
   margin:0;
   padding:2px;
-  height:32px;
+  height:1.5em;
   cursor:pointer;
 }
 div.autocomplete ul li span.informal { size: 80%;}
