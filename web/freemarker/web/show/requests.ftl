@@ -29,7 +29,7 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
     <#assign item = relation.child>
     <p>
         <b>
-            <a name="${relation.id}">${DATE.show(item.created,"SMART")}</a>
+            <span id="${relation.id}">${DATE.show(item.created,"SMART")}</span>
             ${TOOL.xpath(item,"/data/category")},
             ${TOOL.xpath(item,"data/author")}
             <#if USER?exists && USER.hasRole("root")>${TOOL.xpath(item,"data/email")}</#if>
