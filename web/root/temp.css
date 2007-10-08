@@ -42,3 +42,12 @@
 .novell-box a { color: red; }
 .novell-box a:hover { background-color: red;
                       color: white; }
+
+.jobscz-box { background: #003b6d;
+              min-height: 45px;
+              padding: 0 0 0 0.5em;
+              color: white;
+              font-size: small; }
+.jobscz-box a { color: #fa9600; }
+.jobscz-box a:hover { background: #fa9600;
+                      color: #003b6d; }
