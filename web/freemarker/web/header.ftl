@@ -246,7 +246,7 @@
               </#if>
             </div>
             <div class="pwd">
-              <b><a href="/">abclinuxu</a>:/$</b>
+              <a href="/">AbcLinuxu</a>:/
               <#list TOOL.getParents(PARENTS,USER?if_exists,URL) as link>
                 <a href="${link.url}">${link.text}</a>
                 <#if link_has_next> / </#if>
