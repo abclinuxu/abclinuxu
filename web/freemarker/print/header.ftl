@@ -2,6 +2,7 @@
 <head>
     <title>${TITLE}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex,nofollow">
     <#if ! css?exists || css=="UNDEF"><#assign css="/styles.css"></#if>
     <link rel="stylesheet" type="text/css" href="${css}">
     <script type="text/javascript" src="/data/site/scripts.js"></script>

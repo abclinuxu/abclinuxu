@@ -2,6 +2,7 @@
  <head>
   <title>${TITLE}</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex,nofollow">
   <meta name="author" content="Leos Literak">
   <meta name="keywords" content="linux,abclinuxu,hardware,USB,SCSI,modem,kernel,ovladač">
   <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
