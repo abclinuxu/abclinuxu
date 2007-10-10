@@ -21,7 +21,7 @@ package cz.abclinuxu.servlets.misc;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.servlets.utils.url.URLMapper;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +56,7 @@ public class Robots extends HttpServlet implements Configurable {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         RequestDispatcher dispatcher = null;
         String server = request.getServerName();
-        if (server.startsWith(URLMapper.Version.HTML.toString()))
+        if (server.equals(AbcConfig.getHostname()))
             dispatcher = request.getRequestDispatcher(wwwContent);
         else
             dispatcher = request.getRequestDispatcher(otherContent);
