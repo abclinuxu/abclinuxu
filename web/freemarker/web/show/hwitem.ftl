@@ -57,9 +57,9 @@
     <p class="galerie">
         <#list images as image>
             <#if image.thumbnailPath?exists>
-                <a href="${image.path}"><img src="${image.thumbnailPath}" alt="Obrázek ${image_index}" border="0"></a>
+                <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${TOOL.xpath(hardware,"/data/name")?if_exists}" border="0"></a>
             <#else>
-                <img src="${image.path}" alt="Obrázek ${image_index}">
+                <img src="${image.path}" alt="${TOOL.xpath(hardware,"/data/name")?if_exists}">
             </#if>
         </#list>
     </p>
