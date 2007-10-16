@@ -214,7 +214,9 @@ public class UrlUtils {
             return prefix + "/show/" + relation.getId();
 
         Item item = (Item) child;
-        if (item.getType() == Item.BLOG)
+        int type = item.getType();
+
+        if (type == Item.BLOG || type == Item.UNPUBLISHED_BLOG)
             return Tools.getUrlForBlogStory(relation);
         return prefix + "/show/" + relation.getId();
     }

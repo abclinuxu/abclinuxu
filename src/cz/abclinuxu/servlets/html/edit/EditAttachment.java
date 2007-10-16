@@ -103,7 +103,9 @@ public class EditAttachment implements AbcAction {
         boolean allowed = true;
         if (child instanceof Item) {
             Item item = (Item) child;
-            if (item.getType() == Item.BLOG && item.getOwner() != user.getId())
+            int type = item.getType();
+
+            if ( (type == Item.BLOG || type == Item.UNPUBLISHED_BLOG) && item.getOwner() != user.getId())
                 allowed = false;
         }
 
@@ -121,7 +123,9 @@ public class EditAttachment implements AbcAction {
         allowed = user.hasRole(Roles.ATTACHMENT_ADMIN);
         if (child instanceof Item) {
             Item item = (Item) child;
-            if (item.getType() == Item.BLOG && item.getOwner()==user.getId())
+            int type = item.getType();
+
+            if ( (type == Item.BLOG || type == Item.UNPUBLISHED_BLOG) && item.getOwner() == user.getId())
                 allowed = true;
         }
 
