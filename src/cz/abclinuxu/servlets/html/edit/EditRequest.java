@@ -158,7 +158,7 @@ public class EditRequest implements AbcAction, Configurable {
         }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)) + "#" +saved.getId());
+        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)) + "#" +saved.getId(), false);
         return null;
     }
 
@@ -306,7 +306,7 @@ public class EditRequest implements AbcAction, Configurable {
         ServletUtils.addMessage("Požadavek byl vyřízen.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)));
+        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)), false);
         return null;
     }
 
@@ -366,7 +366,7 @@ public class EditRequest implements AbcAction, Configurable {
         if (saved == null)
             return actionCommentTools(request, env);
 
-        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)) + "#" + saved.getId());
+        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)) + "#" + saved.getId(), false);
         return null;
     }
 
@@ -420,7 +420,7 @@ public class EditRequest implements AbcAction, Configurable {
         if (saved == null)
             return actionChooseForum(request, env);
 
-        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)) + "#" + saved.getId());
+        urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)) + "#" + saved.getId(), false);
         return null;
     }
 
