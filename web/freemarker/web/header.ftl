@@ -168,14 +168,7 @@
                 </div>
             </div>
 
-            <!-- abcprace.cz -->
-            <div class="s_nadpis">
-                <a href="http://www.abcprace.cz" title="Spojujeme lidi s prací v IT.">Pracovní nabídky</a>
-            </div>
-
-            <div class="s_sekce">
-                <#include "/include/prace.txt">
-            </div>
+            <@lib.advertisement id="sl-abcprace" />
 
             <#if ! IS_INDEX?exists>
                 <#assign FEEDS = VARS.getFeeds(USER?if_exists,false)>
