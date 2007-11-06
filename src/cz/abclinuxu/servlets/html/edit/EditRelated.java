@@ -377,7 +377,15 @@ public class EditRelated implements AbcAction {
 
         if (type == null) {
             Persistence persistence = PersistenceFactory.getPersistence();
-            Relation relation = URLMapper.loadRelationFromUrl(url);
+            String myurl;
+            int pos = url.indexOf('#');
+
+            if (pos != -1)
+                myurl = url.substring(0, pos);
+            else
+                myurl = url;
+
+            Relation relation = URLMapper.loadRelationFromUrl(myurl);
             if (relation == null) {
                 if (Misc.empty(title)) {
                     ServletUtils.addError(PARAM_TITLE, "Zadejte jméno pro tento nepodporovaný dokument.", env, null);
