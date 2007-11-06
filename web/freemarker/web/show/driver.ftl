@@ -41,7 +41,7 @@
   </tr>
   <tr>
     <td><b>Adresa:</b></td>
-    <td><a href="${TOOL.xpath(ITEM,"data/url")}" rel="nofollow">${TOOL.limit(TOOL.xpath(ITEM,"data/url"),50," ..")}</a></td>
+    <td><a href="${TOOL.xpath(ITEM,"data/url")?html}" rel="nofollow">${TOOL.limit(TOOL.xpath(ITEM,"data/url"),50," ..")?html}</a></td>
   </tr>
 </table>
 

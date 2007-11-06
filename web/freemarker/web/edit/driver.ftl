@@ -29,7 +29,7 @@
   <tr>
     <td>Adresa</td>
     <td>
-      <a href="${PARAMS.url?if_exists}">${TOOL.limit(PARAMS.url?if_exists,50," ..")}</a>
+      <a href="${PARAMS.url?if_exists?html}">${TOOL.limit(PARAMS.url?if_exists,50," ..")?html}</a>
     </td>
   </tr>
   <tr>
@@ -74,7 +74,7 @@
   <tr>
    <td class="required">URL</td>
    <td>
-    <input type="text" name="url" value="${PARAMS.url?default("http://")}" size="70" tabindex="4">
+    <input type="text" name="url" value="${PARAMS.url?default("http://")?html}" size="70" tabindex="4">
     <div class="error">${ERRORS.url?if_exists}</div>
    </td>
   </tr>

@@ -37,7 +37,7 @@ a vygeneruje se z něj URL.</p>
         <tr>
             <td class="required">Titulek</td>
             <td>
-                <input type="text" name="title" size="40" maxlength="50" value="${PARAMS.title?if_exists}">
+                <input type="text" name="title" size="40" maxlength="50" value="${PARAMS.title?if_exists?html}">
                 <div class="error">${ERRORS.title?if_exists}</div>
             </td>
         </tr>
