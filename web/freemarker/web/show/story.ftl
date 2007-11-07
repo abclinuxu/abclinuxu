@@ -154,11 +154,11 @@
 
 <h2>${TOOL.xpath(ITEM, "/data/name")}</h2>
 <p class="cl_inforadek">
-    <#if ITEM.type==15>Odloženo<#else>${DATE.show(ITEM.created, "CZ_SHORT")}</#if> |
+    <#if ITEM.type==15>Odloženo<#else>${DATE.show(ITEM.created, "SMART")}</#if> |
     Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;
     <#if category!="UNDEF">| ${category}</#if>
     <#if (ITEM.type==12 && ITEM.created.time!=ITEM.updated.time)>
-        | poslední úprava: ${DATE.show(ITEM.updated, "CZ_SHORT")}
+        | poslední úprava: ${DATE.show(ITEM.updated, "SMART")}
     </#if>
 </p>
 
