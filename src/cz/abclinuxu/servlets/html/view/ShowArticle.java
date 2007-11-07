@@ -160,45 +160,47 @@ public class ShowArticle implements AbcAction {
 
             List articleElements = seriesRoot.elements("article");
             int total = articleElements.size();
-            Relation first, last, previous = null, next = null;
+            Relation first = null, last = null, previous = null, next = null;
 
-            rid = Misc.parseInt(((Element) articleElements.get(0)).getText(), 0);
-            first = new Relation(rid);
-            rid = Misc.parseInt(((Element) articleElements.get(total - 1)).getText(), 0);
-            if (rid == first.getId())
-                last = first;
-            else
-                last = new Relation(rid);
-
-            String xpath = "/data/article[text()='" + articleRelation.getId() + "']/preceding-sibling::*[1]";
-            Element element = (Element) seriesRoot.selectSingleNode(xpath);
-            if (element != null && "article".equals(element.getName())) {
-                rid = Misc.parseInt(element.getText(), 0);
+            if (!articleElements.isEmpty()) {
+                rid = Misc.parseInt(((Element) articleElements.get(0)).getText(), 0);
+                first = new Relation(rid);
+                rid = Misc.parseInt(((Element) articleElements.get(total - 1)).getText(), 0);
                 if (rid == first.getId())
-                    previous = first;
+                    last = first;
                 else
-                    previous = new Relation(rid);
-            }
+                    last = new Relation(rid);
 
-            xpath = "/data/article[text()='" + articleRelation.getId() + "']/following::*[1]";
-            element = (Element) seriesRoot.selectSingleNode(xpath);
-            if (element != null && "article".equals(element.getName())) {
-                rid = Misc.parseInt(element.getText(), 0);
-                if (rid == last.getId())
-                    next = last;
-                else
-                    next = new Relation(rid);
-            }
+                String xpath = "/data/article[text()='" + articleRelation.getId() + "']/preceding-sibling::*[1]";
+                Element element = (Element) seriesRoot.selectSingleNode(xpath);
+                if (element != null && "article".equals(element.getName())) {
+                    rid = Misc.parseInt(element.getText(), 0);
+                    if (rid == first.getId())
+                        previous = first;
+                    else
+                        previous = new Relation(rid);
+                }
 
-            List list = new ArrayList();
-            list.add(first);
-            if ( ! first.equals(last))
-                list.add(last);
-            if (previous != null)
-                list.add(previous);
-            if (next != null)
-                list.add(next);
-            Tools.syncList(list);
+                xpath = "/data/article[text()='" + articleRelation.getId() + "']/following::*[1]";
+                element = (Element) seriesRoot.selectSingleNode(xpath);
+                if (element != null && "article".equals(element.getName())) {
+                    rid = Misc.parseInt(element.getText(), 0);
+                    if (rid == last.getId())
+                        next = last;
+                    else
+                        next = new Relation(rid);
+                }
+
+                List list = new ArrayList();
+                list.add(first);
+                if ( ! first.equals(last))
+                    list.add(last);
+                if (previous != null)
+                    list.add(previous);
+                if (next != null)
+                    list.add(next);
+                Tools.syncList(list);
+            }
 
             Series series = new Series(seriesRelation, first, last, previous, next, total);
             env.put(VAR_SERIES, series);

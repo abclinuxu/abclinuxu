@@ -106,7 +106,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
     <td>poslední díl</td>
   </tr>
   <tr>
-    <td><a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a></td>
+    <td><#if SERIES.first?exists><a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a><#else>&bull;</#if></td>
     <td><#if (SERIES.total > 1)><a href="${SERIES.last.url}">${TOOL.childName(SERIES.last)}</a><#else>&bull;</#if></td>
   </tr>
   <tr class="dil">
