@@ -2,7 +2,7 @@
 
 <script language="javascript1.2" type="text/javascript">
     stav = true;
-    function toggle(sender) {
+    function toggleCheckBoxes(sender) {
         stav = !stav;
         if (sender.form.elements.length) {
             for (var i = 0; i < sender.form.elements.length; i++) {
@@ -42,7 +42,7 @@
      </td>
     <#if category_index%3==2></tr></#if>
    </#list>
-   <tr><td colspan="3"><button type="button" onclick="toggle(this)">Vše/nic</button></td></tr>
+   <tr><td colspan="3"><button type="button" onclick="toggleCheckBoxes(this)">Vše/nic</button></td></tr>
   </table>
 
  <input type="hidden" name="parent" value="42932">

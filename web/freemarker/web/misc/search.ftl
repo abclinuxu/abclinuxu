@@ -1,8 +1,8 @@
 <#assign html_header>
     <script src="/data/site/scriptaculous.js?load=effects,controls" type="text/javascript"></script>
     <script language="javascript1.2" type="text/javascript">
-        stav = true;
-        function toggle(sender) {
+        stav = false;
+        function toggleCheckBoxes(sender) {
             stav = !stav;
             if (sender.form.elements.length) {
                 for (var i = 0; i < sender.form.elements.length; i++) {
@@ -57,7 +57,7 @@
                     <td><label><input type="checkbox" name="typ" value="osobnost" <#if TYPES.personality>checked</#if>>Osobnosti</label></td>
                    </tr>
                    <tr>
-                    <td colspan="4" align="left"><label><input type="checkbox" onclick="toggle(this)">Vyber vše/nic</label></td>
+                    <td colspan="4" align="left"><button type="button" onclick="toggleCheckBoxes(this)">Vše/nic</button></td>
                    </tr>
                   </table>
               <#else>

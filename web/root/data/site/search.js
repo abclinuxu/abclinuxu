@@ -6,7 +6,7 @@ if ((typeof window.sidebar == "object") && (typeof window.sidebar.addPanel == "f
 	document.write("<br><img src=\"/images/site/mozilla.gif\" width=\"16\" height=\"16\"> <a href=\"javascript:window.sidebar.addSearchEngine(moz_src, moz_ico, moz_tit, moz_cat);\" title=\"Přidat vyhledávací modul pro Mozillu\">Mozilla/Firefox</a>&nbsp;(<a href=\"http://www.czilla.cz/sidebars/search.html\" title=\"Více o vyhledávacích modulech pro Mozillu\">?</a>)");
 }
 
-function toggle(sender, stav) {
+function toggleCheckBoxes(sender, stav) {
     stav = !stav;
     if (sender.form.elements.length) {
         for (var i = 0; i < sender.form.elements.length; i++) {
