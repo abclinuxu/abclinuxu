@@ -98,24 +98,22 @@
             </tr>
         </table>
         ${TOOL.saveParams(PARAMS, ["orderDir","orderBy","from","count"])}
-    </form>
+    </from>
 
     <#if RESULT.prevPage?exists>
-        <input type="submit" name="from_0" value="0">
-        <input type="submit" name="from_${RESULT.prevPage.row}" value="&lt;&lt;">
+        <a href="${CURRENT_URL}&amp;from=0">0</a>
+        <a href="${CURRENT_URL}&amp;from=${RESULT.prevPage.row}">&lt;&lt;</a>
     <#else>
-        <button value="" disabled="disabled">0</button>
-        <button value="" disabled="disabled">&lt;&lt;</button>
+        0 &lt;&lt;
     </#if>
 
     ${RESULT.thisPage.row} - ${RESULT.thisPage.row + RESULT.thisPage.size}
 
     <#if RESULT.nextPage?exists>
-        <input type="submit" name="from_${RESULT.nextPage.row?string["#"]}" value="&gt;&gt;">
-        <input type="submit" name="from_${(RESULT.total-RESULT.pageSize)?string["#"]}" value="${RESULT.total}">
+        <a href="${CURRENT_URL}&amp;from=${RESULT.nextPage.row?string["#"]}">&gt;&gt;</a>
+        <a href="${CURRENT_URL}&amp;from=${(RESULT.total-RESULT.pageSize)?string["#"]}">${RESULT.total}</a>
     <#else>
-        <button value="" disabled="disabled">&gt;&gt;</button>
-        <button value="" disabled="disabled">${RESULT.total}</button>
+        &gt;&gt; ${RESULT.total}
     </#if>
 
 </#if>
