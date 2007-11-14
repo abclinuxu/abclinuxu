@@ -290,4 +290,6 @@
   </div>
 </#if>
 
+<@lib.advertisement id="obsah-box" />
+
 <#include "../footer.ftl">
