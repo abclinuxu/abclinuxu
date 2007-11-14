@@ -8,6 +8,7 @@
 
 <#if !is_question>
  <@lib.advertisement id="gg-ds-obsah" />
+ <@lib.advertisement id="obsah-box" />
 </#if>
 
 <@lib.advertisement id="arbo-sq" />
@@ -55,7 +56,7 @@
         uložit vzorovou odpověď do <a href="/faq">Často kladených otázek (FAQ)</a>.
     </p>
 
- <@lib.advertisement id="sun-box" />
+ <@lib.advertisement id="obsah-box" />
  <@lib.advertisement id="bsupport-box" />
  <@lib.advertisement id="miton-box" />
  <@lib.advertisement id="gg-ds-otazka" />

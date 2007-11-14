@@ -147,7 +147,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
 
 <#flush>
 
-<@lib.advertisement id="sun-box" />
+<@lib.advertisement id="obsah-box" />
 <@lib.advertisement id="bsupport-box" />
 <@lib.advertisement id="miton-box" />
 
