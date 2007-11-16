@@ -168,7 +168,7 @@ ALTER TABLE citac ADD INDEX in_citac (typ,cislo);
 -- statistiky pouzivani sluzeb
 CREATE TABLE statistika (
  den DATE NOT NULL,                     -- den
- typ CHAR(10) NOT NULL,                 -- typ
+ typ CHAR(30) NOT NULL,                 -- typ
  pocet INT DEFAULT 0,                   -- pocet pouziti daneho typu dany den
  PRIMARY KEY statistika_den_typ (den, typ)
 );
