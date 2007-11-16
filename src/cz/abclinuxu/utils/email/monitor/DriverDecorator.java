@@ -52,7 +52,7 @@ public class DriverDecorator implements Decorator, Configurable {
 
         env.put(EmailSender.KEY_SUBJECT, subject);
         env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_driver.ftl");
-        env.put(EmailSender.KEY_TEMPLATE, Constants.EMAIL_MONITOR_DRIVER);
+        env.put(EmailSender.KEY_STATS_KEY, Constants.EMAIL_MONITOR_DRIVER);
 
         if ( action.url!=null )
             env.put(VAR_URL, action.url);

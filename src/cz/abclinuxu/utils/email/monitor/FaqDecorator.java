@@ -52,7 +52,7 @@ public class FaqDecorator implements Decorator, Configurable {
 
         env.put(EmailSender.KEY_SUBJECT, subject);
         env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_faq.ftl");
-        env.put(EmailSender.KEY_TEMPLATE, Constants.EMAIL_MONITOR_FAQ);
+        env.put(EmailSender.KEY_STATS_KEY, Constants.EMAIL_MONITOR_FAQ);
 
         if ( action.url!=null )
             env.put(VAR_URL, action.url);
