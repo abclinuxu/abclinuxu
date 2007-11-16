@@ -23,6 +23,7 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.format.HtmlToTextFormatter;
+import cz.abclinuxu.servlets.Constants;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -75,6 +76,7 @@ public class DiscussionDecorator implements Decorator, Configurable {
         env.put(EmailSender.KEY_SENT_DATE, action.performed);
         env.put(EmailSender.KEY_SUBJECT, (String) action.getProperty(PROPERTY_NAME));
         env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_discussion.ftl");
+        env.put(EmailSender.KEY_TEMPLATE, Constants.EMAIL_MONITOR_DISCUSSION);
 
         return env;
     }

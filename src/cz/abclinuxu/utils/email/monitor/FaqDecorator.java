@@ -25,6 +25,7 @@ import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.servlets.Constants;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -51,6 +52,7 @@ public class FaqDecorator implements Decorator, Configurable {
 
         env.put(EmailSender.KEY_SUBJECT, subject);
         env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_faq.ftl");
+        env.put(EmailSender.KEY_TEMPLATE, Constants.EMAIL_MONITOR_FAQ);
 
         if ( action.url!=null )
             env.put(VAR_URL, action.url);

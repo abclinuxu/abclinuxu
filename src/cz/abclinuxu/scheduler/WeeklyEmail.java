@@ -72,11 +72,12 @@ public class WeeklyEmail extends TimerTask implements Configurable {
             int year = calendar.get(Calendar.YEAR);
 
             Map params = new HashMap();
-            params.put(EmailSender.KEY_FROM,sender);
-            params.put(EmailSender.KEY_SUBJECT,subject+" "+week+"/"+year);
-            params.put(EmailSender.KEY_TEMPLATE,template);
-            params.put(Constants.VAR_TOOL,new Tools());
-            params.put(Constants.VAR_DATE_TOOL,new DateTool());
+            params.put(EmailSender.KEY_FROM, sender);
+            params.put(EmailSender.KEY_SUBJECT, subject + " " + week + "/" + year);
+            params.put(EmailSender.KEY_TEMPLATE, template);
+            params.put(EmailSender.KEY_STATS_KEY, Constants.EMAIL_WEEKLY);
+            params.put(Constants.VAR_TOOL, new Tools());
+            params.put(Constants.VAR_DATE_TOOL, new DateTool());
             params.put(VAR_WEEK, week);
             params.put(VAR_YEAR, year);
 

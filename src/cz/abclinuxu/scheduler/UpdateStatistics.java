@@ -47,19 +47,19 @@ public final class UpdateStatistics extends TimerTask {
     /**
      * Records new page view in statistics for selected type of page.
      */
-    public void recordPageView(String page) {
+    public void recordView(String type, int count) {
         if (! batchMode) {
-            SQLTool.getInstance().recordPageView(page, 1);
+            SQLTool.getInstance().recordPageView(type, 1);
             return;
         }
 
         synchronized(this) {
-            Integer count = entries.get(page);
-            if (count == null)
-                count = 1;
+            Integer storedCount = entries.get(type);
+            if (storedCount == null)
+                storedCount = 1;
             else
-                count = count + 1;
-            entries.put(page, count);
+                storedCount = storedCount + count;
+            entries.put(type, storedCount);
         }
     }
 
@@ -74,7 +74,7 @@ public final class UpdateStatistics extends TimerTask {
             Map toBeSaved;
             synchronized (this) {
                 toBeSaved = entries;
-                entries = new HashMap<String, Integer>(20, 0.95f);
+                entries = new HashMap<String, Integer>(35, 0.95f);
             }
 
             SQLTool sqlTool = SQLTool.getInstance();

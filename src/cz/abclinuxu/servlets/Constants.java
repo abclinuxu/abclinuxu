@@ -238,6 +238,17 @@ public interface Constants {
     String PAGE_SEARCH = "hledani";
     String PAGE_WAP = "wap";
 
+    String EMAIL_FORUM = "email-forum";
+    String EMAIL_WEEKLY = "email-weekly";
+    String EMAIL_SCRIPT = "email-script";
+    String EMAIL_USER_MESSAGE = "email-message";
+    String EMAIL_MONITOR_DRIVER = "email-monitor-driver";
+    String EMAIL_MONITOR_FAQ = "email-monitor-faq";
+    String EMAIL_MONITOR_ITEM = "email-monitor-item";
+    String EMAIL_MONITOR_DISCUSSION = "email-monitor-discussion";
+    String EMAIL_FORGOTTEN_PASSWORD = "email-forgotten-password";
+    String EMAIL_UNKNOWN = "email-unknown";
+
     /** value for subtype that marks discussion item as question */
     String SUBTYPE_QUESTION = "question";
 

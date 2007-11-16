@@ -24,6 +24,7 @@ import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.servlets.Constants;
 
 import java.util.*;
 import java.util.prefs.Preferences;
@@ -88,6 +89,7 @@ public class Mailer implements Configurable {
         map.put(EmailSender.KEY_FROM,sender);
         map.put(EmailSender.KEY_SUBJECT,subject);
         map.put(EmailSender.KEY_TEMPLATE,template);
+        map.put(EmailSender.KEY_STATS_KEY, Constants.EMAIL_SCRIPT);
 
         LoggingConfig.initialize();
         log.info("EmailSender called by "+System.getProperty("user.name")+", sender="+sender+

@@ -231,6 +231,7 @@ public class ViewUser implements AbcAction {
         data.put(EmailSender.KEY_TO, user.getEmail());
         data.put(EmailSender.KEY_SUBJECT, "Zapomenute heslo");
         data.put(EmailSender.KEY_TEMPLATE, "/mail/password.ftl");
+        data.put(EmailSender.KEY_TEMPLATE, Constants.EMAIL_FORGOTTEN_PASSWORD);
         EmailSender.sendEmail(data);
 
         String email = user.getEmail();

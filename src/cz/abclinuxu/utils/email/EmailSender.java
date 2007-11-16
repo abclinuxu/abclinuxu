@@ -29,6 +29,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.scheduler.UpdateStatistics;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import javax.mail.*;
@@ -84,9 +85,12 @@ public class EmailSender implements Configurable {
     public static final String KEY_MESSAGE_ID = "MESSAGE_ID";
     /** message header references */
     public static final String KEY_REFERENCES = "REFERENCES";
+    /** the key to statistics for thsi kind of email */
+    public static final String KEY_STATS_KEY = "STATS_KEY";
 
     static String smtpServer, defaultFrom;
     static boolean debugSMTP;
+    private static final UpdateStatistics stats = UpdateStatistics.getInstance();
 
     /**
      * Sends an email. Params shall hold neccessary atributes like
@@ -133,6 +137,12 @@ public class EmailSender implements Configurable {
 
             if ( log.isDebugEnabled() )
                 log.debug("Email sent from "+from+" to "+to+".");
+
+            String statsKey = (String) params.get(KEY_STATS_KEY);
+            if (statsKey == null)
+                statsKey = Constants.EMAIL_UNKNOWN;
+            stats.recordView(statsKey, 1);
+
             return true;
         } catch (MessagingException e) {
             log.error("Cannot send email sent from "+from+" to "+to+".",e);
@@ -184,9 +194,11 @@ public class EmailSender implements Configurable {
 
         int count = 0, total = users.size();
         User user = new User();
-        log.info("Sending email to "+total+" users.");
-        if (log.isDebugEnabled())
+
+        if (log.isDebugEnabled()) {
+            log.debug("Sending email to " + total + " users.");
             log.debug("Email header: from="+from+", subject="+subject);
+        }
 
         try {
             Transport transport = session.getTransport("smtp");
@@ -237,12 +249,16 @@ public class EmailSender implements Configurable {
                 }
             }
             transport.close();
+
+            String statsKey = (String) params.get(KEY_STATS_KEY);
+            if (statsKey == null)
+                statsKey = Constants.EMAIL_UNKNOWN;
+            stats.recordView(statsKey, count);
         } catch (MessagingException e) {
             log.error("Error - is JavaMail set up correctly?", e);
         } catch (UnsupportedEncodingException e) {
             log.debug("Setting sender name failed on '" + senderName + "'", e);
         }
-        log.info("Sent "+count+" emails.");
 
         return count;
     }

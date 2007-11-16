@@ -88,7 +88,7 @@ public class Controller extends HttpServlet implements Configurable {
         }
 
         if (page != null)
-            UpdateStatistics.getInstance().recordPageView(page);
+            UpdateStatistics.getInstance().recordView(page, 1);
     }
 
     private String detectHtmlPage(String uri) {
