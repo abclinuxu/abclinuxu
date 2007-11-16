@@ -57,8 +57,8 @@ public class CommentDecorator implements Configurable {
     static int counter;
     static String sender;
 
-    public CommentDecorator() {
-        ConfigurationManager.getConfigurator().configureAndRememberMe(this);
+    static {
+        ConfigurationManager.getConfigurator().configureAndRememberMe(new CommentDecorator());
     }
 
 
