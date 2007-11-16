@@ -423,6 +423,11 @@
                             <entry key="item" value="52001" />
                         </map>
                     </node>
+                    <node name="Shop64bitFetcher">
+                        <map>
+                            <entry key="uri" value="http://www.64bit.cz/data/abclinuxu.xml"/>
+                        </map>
+                    </node>
                     <node name="InvalidateEmails">
                         <map>
                             <entry key="server.address" value="posta.move.cz"/>

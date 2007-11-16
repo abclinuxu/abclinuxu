@@ -88,7 +88,6 @@ public class AbcHostFetcher extends TimerTask implements Configurable {
             Map env = new HashMap();
             env.put("SERVERS", servers);
             env.put("SERVICES", services);
-//            FMUtils.executeTemplate("/include/misc/generate_hosting.ftl", env, new File("/home/literakl/hosting.html"));
             String result = FMUtils.executeTemplate("/include/misc/generate_hosting.ftl", env);
 
             Persistence persistence = PersistenceFactory.getPersistence();
