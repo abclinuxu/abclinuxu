@@ -49,14 +49,14 @@ public final class UpdateStatistics extends TimerTask {
      */
     public void recordView(String type, int count) {
         if (! batchMode) {
-            SQLTool.getInstance().recordPageView(type, 1);
+            SQLTool.getInstance().recordPageView(type, count);
             return;
         }
 
         synchronized(this) {
             Integer storedCount = entries.get(type);
             if (storedCount == null)
-                storedCount = 1;
+                storedCount = count;
             else
                 storedCount = storedCount + count;
             entries.put(type, storedCount);
