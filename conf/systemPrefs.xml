@@ -564,9 +564,9 @@
                                 <entry key="variable.fetcher.delay" value="0"/>
                                 <entry key="variable.fetcher.period" value="@VARIABLE.FETCHER.PERIOD@"/>
                                 <entry key="start.user.score.setter" value="@START.UPDATE.SCORE@"/>
-                                <entry key="start.article.pool.monitor" value="@START.POOL.MONITOR@"/>
-                                <entry key="article.pool.monitor.delay" value="60"/>
-                                <entry key="article.pool.monitor.period" value="180"/>
+                                <entry key="start.pool.monitor" value="@START.POOL.MONITOR@"/>
+                                <entry key="pool.monitor.delay" value="60"/>
+                                <entry key="pool.monitor.period" value="180"/>
                                 <entry key="start.abc.monitor" value="@START.ABC.MONITOR@"/>
                                 <entry key="start.forum.mail.gateway" value="@START.FORUM.GATEWAY@"/>
                                 <entry key="start.weekly.emails" value="@START.WEEKLY.EMAILS@"/>
