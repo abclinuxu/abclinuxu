@@ -167,8 +167,6 @@ public class TemplateSelector {
 
         if ( Misc.same(browser,BROWSER_LYNX) )
             return "lynx";
-        if ( Misc.same(browser,BROWSER_PLUCKER) )
-            return "plucker";
         return DEFAULT_TEMPLATE;
     }
 
@@ -183,8 +181,6 @@ public class TemplateSelector {
         try {
             if ( new RE(reLynx, RE.MATCH_CASEINDEPENDENT).match(browser) )
                 return BROWSER_LYNX;
-//            if ( new RE(rePlucker, RE.MATCH_CASEINDEPENDENT).match(browser) )
-//                return BROWSER_PLUCKER;
         } catch (Exception e) {
             log.warn("Error on parsing User Agent '"+browser+"' ! "+e.getMessage());
         }
