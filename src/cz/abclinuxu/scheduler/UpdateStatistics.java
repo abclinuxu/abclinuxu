@@ -98,7 +98,7 @@ public final class UpdateStatistics extends TimerTask {
     }
 
     private UpdateStatistics() {
-        entries = new HashMap<String, Integer>(20, 0.95f);
+        entries = new HashMap<String, Integer>(35, 0.95f);
     }
 
     public static UpdateStatistics getInstance() {
