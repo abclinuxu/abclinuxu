@@ -31,6 +31,11 @@ import java.util.Iterator;
  */
 public class FMTemplateSelector extends TemplateSelector {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(FMTemplateSelector.class);
+    public static final String LAYOUT_LYNX = "lynx";
+    public static final String LAYOUT_PDA = "pda";
+    public static final String LAYOUT_PRINT = "print";
+    public static final String LAYOUT_WAP = "wap";
+    public static final String LAYOUT_DEFAULT = "web";
 
     /**
      * Selects page to be processed and template to decorate it. The page is defined as combination
@@ -51,12 +56,14 @@ public class FMTemplateSelector extends TemplateSelector {
         }
 
         String browser = findBrowser(request);
-        String template = selectTemplate(servletAction,browser,request);
+        String layout = selectTemplate(servletAction,browser,request);
+        if (!layoutExists(layout))
+            layout = LAYOUT_DEFAULT;
         String page = servletAction.getContent();
         storeVariables(data,servletAction.getVariables());
 
         StringBuffer sb = new StringBuffer("/");
-        sb.append(template);
+        sb.append(layout);
         sb.append(page);
         return sb.toString();
     }
@@ -71,7 +78,7 @@ public class FMTemplateSelector extends TemplateSelector {
      * @return page to be processed
      * @throws NotFoundException when such combination of servlet and action doesn't exist
      */
-    public static String select(String servlet, String action, Map data, String template) {
+    public static String select(String servlet, String action, Map data, String layout) {
         ServletAction servletAction = (ServletAction) mappings.get(servlet + action);
         if ( servletAction==null ) {
             log.warn("Neexistuje šablona pro kombinaci "+servlet+","+action);
@@ -82,10 +89,11 @@ public class FMTemplateSelector extends TemplateSelector {
         storeVariables(data,servletAction.getVariables());
 
         StringBuffer sb = new StringBuffer("/");
-        sb.append(template);
+        sb.append(layout);
         sb.append(page);
         return sb.toString();
     }
+
     /**
      * Selects template to decorate given page. The template, which decorates page, is
      * chosen by browser or taken from users profile.
@@ -95,10 +103,12 @@ public class FMTemplateSelector extends TemplateSelector {
      */
     public static String select(String page, Map data, HttpServletRequest request) {
         String browser = findBrowser(request);
-        String template = selectTemplate(null, browser, request);
+        String layout = selectTemplate(null, browser, request);
+        if (! layoutExists(layout))
+            layout = LAYOUT_DEFAULT;
 
         StringBuffer sb = new StringBuffer("/");
-        sb.append(template);
+        sb.append(layout);
         sb.append(page);
         return sb.toString();
     }
@@ -130,15 +140,15 @@ public class FMTemplateSelector extends TemplateSelector {
      * @return whether it exists
      */
     public static boolean layoutExists(String layout) {
-        if ("lynx".equalsIgnoreCase(layout))
+        if (LAYOUT_LYNX.equalsIgnoreCase(layout))
             return true;
-        if ("pda".equalsIgnoreCase(layout))
+        if (LAYOUT_PDA.equalsIgnoreCase(layout))
             return true;
-        if ("print".equalsIgnoreCase(layout))
+        if (LAYOUT_PRINT.equalsIgnoreCase(layout))
             return true;
-        if ("wap".equalsIgnoreCase(layout))
+        if (LAYOUT_WAP.equalsIgnoreCase(layout))
             return true;
-        if ("web".equalsIgnoreCase(layout))
+        if (LAYOUT_DEFAULT.equalsIgnoreCase(layout))
             return true;
         return false;
     }
