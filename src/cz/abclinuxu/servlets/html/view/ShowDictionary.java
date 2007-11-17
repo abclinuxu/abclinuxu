@@ -42,6 +42,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
+import cz.abclinuxu.exceptions.InvalidInputException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -101,14 +102,17 @@ public class ShowDictionary implements AbcAction {
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
-        GenericObject item = relation.getChild();
-        if (item instanceof Item && ((Item) item).getType() != Item.DICTIONARY)
-            return ShowObject.processItem(request, env, relation);
-
         if (relation.getId() == Constants.REL_DICTIONARY)
             return processList(request, env);
-        else
-            return processDefinition(request, relation, env);
+
+        GenericObject item = relation.getChild();
+        if (! (item instanceof Item))
+            throw new InvalidInputException("Byla očekávána položka typu Slovník, nicméně argumentem je " + item);
+
+        if (((Item) item).getType() != Item.DICTIONARY)
+            return ShowObject.processItem(request, env, relation);
+
+        return processDefinition(request, relation, env);
     }
 
     /**
