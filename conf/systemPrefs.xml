@@ -546,7 +546,7 @@
                         <node name="AbcInit">
                             <map>
                                 <entry key="start.rss.monitor" value="@START.RSS.MONITOR@"/>
-                                <entry key="rss.monitor.delay" value="60"/>
+                                <entry key="rss.monitor.delay" value="600"/>
                                 <entry key="rss.monitor.period" value="10800"/>
                                 <entry key="start.rss.generator" value="@START.RSS.GENERATOR@"/>
                                 <entry key="rss.generator.delay" value="30"/>
