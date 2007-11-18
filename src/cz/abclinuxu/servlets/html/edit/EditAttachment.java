@@ -295,7 +295,7 @@ public class EditAttachment implements AbcAction {
             return false;
         }
 
-        File thumbnailFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, name+"-mini", ".jpg");
+        File thumbnailFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, name+"-mini", ".png");
         boolean thumbnail = ImageTool.createThumbnail(imageFile, thumbnailFile);
 
         Element screenshots = DocumentHelper.makeElement(root, "inset/images");

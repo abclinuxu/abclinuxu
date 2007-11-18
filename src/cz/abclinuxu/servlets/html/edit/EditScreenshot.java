@@ -322,12 +322,12 @@ public class EditScreenshot implements AbcAction {
             return false;
         }
 
-        File thumbnailListingFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, name + "-listing", ".jpg");
+        File thumbnailListingFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, name + "-listing", ".png");
         ImageTool.createThumbnailMaxSize(imageFile, thumbnailListingFile, 200, true);
         path = Misc.getWebPath(thumbnailListingFile.getAbsolutePath());
         root.addElement("listingThumbnail").setText(path);
 
-        File thumbnailDetailFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, name + "-detail", ".jpg");
+        File thumbnailDetailFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, name + "-detail", ".png");
         ImageTool.createThumbnailMaxSize(imageFile, thumbnailDetailFile, 500, false);
         path = Misc.getWebPath(thumbnailDetailFile.getAbsolutePath());
         root.addElement("detailThumbnail").setText(path);

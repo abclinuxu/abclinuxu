@@ -62,7 +62,7 @@ public class ImageTool {
         }
 
         if (save)
-            ImageIO.write(img, "jpg", thumbnailPath);
+            ImageIO.write(img, "png", thumbnailPath);
         return save;
     }
 
@@ -89,7 +89,7 @@ public class ImageTool {
         if (img2 == null)
             return false;
 
-        ImageIO.write(img2, "jpg", thumbnailPath);
+        ImageIO.write(img2, "png", thumbnailPath);
         return true;
     }
 
