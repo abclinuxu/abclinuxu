@@ -56,7 +56,7 @@ public class Record extends GenericDataObject {
         }
         sb.append(": id=").append(id);
         if ( owner!=0 ) sb.append(",owner=").append(owner);
-        if ( documentHandler!=null ) sb.append(",data=").append(getDataAsString());
+//        if ( documentHandler!=null ) sb.append(",data=").append(getDataAsString());
         return sb.toString();
     }
 

@@ -72,6 +72,8 @@ public class Item extends GenericDataObject {
     public static final int SERIES = 22;
     /** personality */
     public static final int PERSONALITY = 23;
+    /** screenshot */
+    public static final int SCREENSHOT = 24;
 
     public Item() {
         super();
@@ -107,13 +109,16 @@ public class Item extends GenericDataObject {
             case SOFTWARE: sb.append("Software");break;
             case BAZAAR: sb.append("Bazaar");break;
             case AUTHOR: sb.append("Author");break;
+            case TRIVIA: sb.append("Trivia");break;
+            case SERIES: sb.append("Series");break;
             case PERSONALITY: sb.append("Personality");break;
+            case SCREENSHOT: sb.append("Screenshot");break;
             default: sb.append("Unknown Item");
         }
         sb.append(": id=").append(id);
         if ( owner!=0 ) sb.append(",owner=").append(owner);
         if ( subType!=null ) sb.append(",subtype=").append(subType);
-        if ( documentHandler!=null ) sb.append(",data=").append(getDataAsString());
+//        if ( documentHandler!=null ) sb.append(",data=").append(getDataAsString());
         return sb.toString();
     }
 
@@ -145,6 +150,7 @@ public class Item extends GenericDataObject {
             case PERSONALITY: return Constants.TYPE_PERSONALITY;
             case SERIES: return Constants.TYPE_SERIES;
             case SOFTWARE: return Constants.TYPE_SOFTWARE;
+            case SCREENSHOT: return Constants.TYPE_SCREENSHOT;
             default: return Constants.TYPE_OTHER;
         }
     }

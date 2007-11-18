@@ -248,6 +248,7 @@ public class EditDictionary implements AbcAction {
         if (name == null)
             return false;
 
+        // TODO dava tato kontrola smysl? Spise by se melo kontrolovat url /slovnik/jmeno-pojmu , ne?
         String url = URLManager.enforceRelativeURL(name);
         Relation relation2 = SQLTool.getInstance().findRelationByURL(url);
         if (relation2 != null) {

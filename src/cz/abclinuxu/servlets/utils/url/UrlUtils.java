@@ -50,13 +50,14 @@ public class UrlUtils {
     public static final String PREFIX_NEWS = "/zpravicky";
     public static final String PREFIX_PERSONALITIES = "/kdo-je";
     public static final String PREFIX_POLLS = "/ankety";
+    public static final String PREFIX_SCREENSHOTS = "/desktopy";
     public static final String PREFIX_SERIES = "/serialy";
     public static final String PREFIX_SOFTWARE = "/software";
     public static final String PREFIX_NONE = "";
 
     static List prefixes = null;
     static {
-        prefixes = new ArrayList();
+        prefixes = new ArrayList(15);
         prefixes.add(PREFIX_AUTHORS);
         prefixes.add(PREFIX_BAZAAR);
         prefixes.add(PREFIX_BLOG);
@@ -67,9 +68,10 @@ public class UrlUtils {
         prefixes.add(PREFIX_FORUM);
         prefixes.add(PREFIX_HARDWARE);
         prefixes.add(PREFIX_NEWS);
-        prefixes.add(PREFIX_POLLS);
-        prefixes.add(PREFIX_SERIES);
         prefixes.add(PREFIX_PERSONALITIES);
+        prefixes.add(PREFIX_POLLS);
+        prefixes.add(PREFIX_SCREENSHOTS);
+        prefixes.add(PREFIX_SERIES);
         prefixes.add(PREFIX_SOFTWARE);
     }
 

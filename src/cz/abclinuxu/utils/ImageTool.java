@@ -62,8 +62,35 @@ public class ImageTool {
         }
 
         if (save)
-            ImageIO.write(img, "png", thumbnailPath);
+            ImageIO.write(img, "jpg", thumbnailPath);
         return save;
+    }
+
+    /**
+     * Creates thumbnail with given absolute width or height.
+     * @param imagePath path to original image
+     * @param thumbnailPath path for image to be created
+     * @param size maximum width
+     * @param height true if the size is height, false if the size is width
+     * @return true if thumbnail was created or false, if the image was smaller
+     * @throws IOException failed to read image
+     * @throws AbcException failed to read image
+     */
+    public static boolean createThumbnailMaxSize(File imagePath, File thumbnailPath, int size, boolean height) throws IOException, AbcException {
+        BufferedImage img = null, img2 = null;
+        img = ImageIO.read(imagePath);
+        if (img == null)
+            throw new AbcException("Nepodařilo se načíst obrázek ze souboru " + imagePath);
+
+        if (height)
+            img2 = scaleIfNeeded(img, img.getWidth(), size);
+        else
+            img2 = scaleIfNeeded(img, size, img.getHeight());
+        if (img2 == null)
+            return false;
+
+        ImageIO.write(img2, "jpg", thumbnailPath);
+        return true;
     }
 
     /**
@@ -118,5 +145,20 @@ public class ImageTool {
 
         AffineTransformOp op = new AffineTransformOp(tx, rh);
         return op.filter(img, null);
+    }
+
+    public static void main(String[] args) throws Exception {
+        System.out.println("Usage: image width size");
+        File imageFile = new File(args[0]);
+        int width = Integer.parseInt(args[1]);
+        int height = Integer.parseInt(args[2]);
+
+        int position = imageFile.getName().lastIndexOf('.');
+        String fileName = imageFile.getName().substring(0, position);
+        String extension = imageFile.getName().substring(position);
+
+        createThumbnail(imageFile, new File(imageFile.getParent(), fileName + "_mini" + extension));
+        createThumbnailMaxSize(imageFile, new File(imageFile.getParent(), fileName + "_mini_width" + extension), width, false);
+        createThumbnailMaxSize(imageFile, new File(imageFile.getParent(), fileName + "_mini_height" + extension), height, true);
     }
 }

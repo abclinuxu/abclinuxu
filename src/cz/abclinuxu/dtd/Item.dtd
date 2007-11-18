@@ -220,6 +220,13 @@
 <!ELEMENT article (#PCDATA)> <!-- id of relation for article associated with this series, articles are sorted by published date in ascending order -->
 <!ATTLIST article published (#NMTOKEN)> <!-- date in ISO format (YYYY-MM-DD), when this article was published -->
 
+<!-- Item.SCREENSHOT -->
+<!ELEMENT data (title, image, listingThumbnail, detailThumbnail)>
+<!ELEMENT title (#PCDATA)> <!-- title for the screenshot -->
+<!ELEMENT image (#PCDATA)> <!-- path to the file (starting with / from webroot) containing the screenshot -->
+<!ELEMENT listingThumbnail (#PCDATA)> <!-- path to the file (starting with / from webroot) containing thumbnail for screenshots list -->
+<!ELEMENT detailThumbnail (#PCDATA)> <!-- path to the file (starting with / from webroot) containing thumbnail for screenshot's detail -->
+
 <!-- common -->
 
 <!ELEMENT versioning (properties*, revisions?)> <!-- mandatory element under root that contains versioning specific data -->

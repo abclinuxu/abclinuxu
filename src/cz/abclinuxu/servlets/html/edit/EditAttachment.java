@@ -41,6 +41,7 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
+import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -277,16 +278,13 @@ public class EditAttachment implements AbcAction {
             return false;
         }
 
-        String suffix = getFileSuffix(fileItem.getName()).toLowerCase();
+        String suffix = Misc.getFileSuffix(fileItem.getName()).toLowerCase();
         if (!(suffix.equals("jpg") || suffix.equals("jpeg") || suffix.equals("png") || suffix.equals("gif"))) {
             ServletUtils.addError(PARAM_SCREENSHOT, "Soubor musí být typu PNG, GIF nebo JPEG.", env, null);
             return false;
         }
 
-        Relation tmpRel = new Relation(0);
-        tmpRel.setInitialized(true);
-        tmpRel.setChild(item);
-        String name = Tools.childName(tmpRel);
+        String name = getFileName(item);
 
         File imageFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, name, "." + suffix);
         try {
@@ -302,15 +300,32 @@ public class EditAttachment implements AbcAction {
 
         Element screenshots = DocumentHelper.makeElement(root, "inset/images");
         Element screenshot = screenshots.addElement("image");
-        String path = getWebPath(imageFile.getAbsolutePath());
+        String path = Misc.getWebPath(imageFile.getAbsolutePath());
         screenshot.setText(path);
 
         if (thumbnail) {
-            path = getWebPath(thumbnailFile.getAbsolutePath());
+            path = Misc.getWebPath(thumbnailFile.getAbsolutePath());
             screenshot.addAttribute("thumbnail", path);
         }
 
         return true;
+    }
+
+    /**
+     * Creates valid file name generated from item's title.
+     * @param item item
+     * @return valid file name (lower case, no diacritics, slashes etc)
+     */
+    public static String getFileName(Item item) {
+        Relation tmpRel = new Relation(0);
+        tmpRel.setInitialized(true);
+        tmpRel.setChild(item);
+        String name = Tools.childName(tmpRel);
+        name = Misc.filterDangerousCharacters(name);
+        name = DiacriticRemover.getInstance().removeDiacritics(name);
+        name = name.toLowerCase();
+        // TODO more checks like in URLManager.normalizeCharacters()
+        return name;
     }
 
     /**
@@ -320,7 +335,7 @@ public class EditAttachment implements AbcAction {
      * @param user user performing this operation
      * @param request
      */
-    private static void deleteAttachment(String path, Map env, User user, HttpServletRequest request) {
+    public static void deleteAttachment(String path, Map env, User user, HttpServletRequest request) {
         File file = new File(AbcConfig.getDeployPath()+path);
         if (! file.exists()) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Nepodařilo se smazat soubor '"+path+"'!", env, request.getSession());
@@ -332,23 +347,5 @@ public class EditAttachment implements AbcAction {
             return;
         }
         AdminLogger.logEvent(user, "remove | attachment "+path);
-    }
-
-    /**
-     * @return text after last dot in string.
-     */
-    private String getFileSuffix(String name) {
-        if (name == null)
-            return "";
-        int i = name.lastIndexOf('.');
-        if (i == -1)
-            return "";
-        else
-            return name.substring(i + 1);
-    }
-
-    private String getWebPath(String absolutePath) {
-        String deployPath = AbcConfig.getDeployPath();
-        return absolutePath.substring(deployPath.length() - 1);
     }
 }

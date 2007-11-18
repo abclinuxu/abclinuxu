@@ -51,6 +51,7 @@ public interface Constants {
     int CAT_BAZAAR = 1584;
     int CAT_TRIVIA = 1605;
     int CAT_HANGMAN = 1606;
+    int CAT_SCREENSHOTS = 1949;
     int CAT_SERIES = 1647;
     int CAT_SURVEY = 1679;
     int CAT_PERSONALITIES = 1863;
@@ -95,6 +96,7 @@ public interface Constants {
     int REL_GAMES = 156665;
     int REL_TRIVIA = 156666;
     int REL_HANGMAN = 156667;
+    int REL_SCREENSHOTS = 200506;
     int REL_SERIES = 164193;
     int REL_SURVEY = 168884;
     int REL_PERSONALITIES = 190499;
@@ -131,6 +133,7 @@ public interface Constants {
     String TYPE_SECTION = "section";
     String TYPE_SERIES = "series";
     String TYPE_SOFTWARE = "software";
+    String TYPE_SCREENSHOT = "screenshot";
     String TYPE_STORY = "story";
 
     // template variables

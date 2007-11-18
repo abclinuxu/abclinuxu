@@ -25,6 +25,7 @@ import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ShowForum;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import org.dom4j.Node;
 
 import java.text.DateFormat;
@@ -286,5 +287,23 @@ public class Misc {
         }
         sb.setCharAt(sb.length() - 1, ')');
         return sb.toString();
+    }
+
+    /**
+     * @return text after last dot in string.
+     */
+    public static String getFileSuffix(String name) {
+        if (name == null)
+            return "";
+        int i = name.lastIndexOf('.');
+        if (i == -1)
+            return "";
+        else
+            return name.substring(i + 1);
+    }
+
+    public static String getWebPath(String absolutePath) {
+        String deployPath = AbcConfig.getDeployPath();
+        return absolutePath.substring(deployPath.length() - 1);
     }
 }
