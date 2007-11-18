@@ -77,7 +77,7 @@ public class ImageTool {
      * @throws AbcException failed to read image
      */
     public static boolean createThumbnailMaxSize(File imagePath, File thumbnailPath, int size, boolean height) throws IOException, AbcException {
-        BufferedImage img = null, img2 = null;
+        BufferedImage img, img2;
         img = ImageIO.read(imagePath);
         if (img == null)
             throw new AbcException("Nepodařilo se načíst obrázek ze souboru " + imagePath);

@@ -118,6 +118,14 @@
             <action>cz.abclinuxu.servlets.html.view.ViewFaq</action>
         </mapping>
         <mapping priority="true">
+            <pattern>^/desktopy/edit</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditScreenshot</action>
+        </mapping>
+        <mapping priority="true">
+            <pattern>^/desktopy</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewScreenshot</action>
+        </mapping>
+        <mapping priority="true">
             <pattern>^/kdo-je/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditPersonality</action>
         </mapping>

@@ -50,6 +50,14 @@ value: id of user
 mapping: 1:1
 purpose: defines relationship between author and user
 
+ITEM.SCREENSHOT
+
+name: favourited_by
+values: user IDs
+mapping: 1:n
+purpose: user likes this item
+
+
 USER
 ====
 

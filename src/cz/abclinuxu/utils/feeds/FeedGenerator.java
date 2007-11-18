@@ -76,7 +76,8 @@ public class FeedGenerator implements Configurable {
     static final String PREF_ARTICLE_SERIES = "article.series";
 
     static String fileDiscussions, fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileBlogDigest;
-    static String fileNews, fileFaq, filePolls, fileTrafika, fileSoftware, fileBazaar, fileDictionary, filePersonalities;
+    static String fileNews, fileFaq, filePolls, fileTrafika, fileSoftware, fileBazaar, fileDictionary;
+    static String fileScreenshots, filePersonalities;
     static Map<Integer, String> filesArticleSeries;
     static int feedLength = 10, highFrequencyFeedLength = 25, newsWordLimit;
     static {
@@ -366,6 +367,54 @@ public class FeedGenerator implements Configurable {
             writer.close();
         } catch (Exception e) {
             log.error("Chyba pri generovani RSS pro software",e);
+        }
+    }
+
+    /**
+     * Generates RSS feed for screenshots
+     */
+    public static void updateScreenshots() {
+        try {
+            Persistence persistence = PersistenceFactory.getPersistence();
+
+            SyndFeed feed = new SyndFeedImpl();
+            feed.setFeedType(TYPE_RSS_1_0);
+            feed.setEncoding("UTF-8");
+            feed.setTitle("abclinuxu - desktopy");
+            feed.setLink("http://www.abclinuxu.cz/desktopy");
+            feed.setUri("http://www.abclinuxu.cz/desktopy");
+            feed.setDescription("Seznam čerstvých desktopů na portálu www.abclinuxu.cz");
+            List entries = new ArrayList();
+            feed.setEntries(entries);
+            SyndEntry entry;
+            SyndContent description;
+            Node node;
+
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0,feedLength)};
+            List list = SQLTool.getInstance().findItemRelationsWithType(Item.SCREENSHOT, qualifiers);
+            Tools.syncList(list);
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Relation found = (Relation) iter.next();
+                Item item = (Item) found.getChild();
+                User author = (User) persistence.findById(new User(item.getOwner()));
+
+                entry = new SyndEntryImpl();
+                String url = found.getUrl();
+                url = "http://"+AbcConfig.getHostname() + url;
+                entry.setLink(url);
+                entry.setTitle(Tools.xpath(item,"data/title"));
+                entry.setPublishedDate(item.getCreated());
+                entry.setAuthor((author.getNick()!=null) ? author.getNick() : author.getName());
+                entries.add(entry);
+            }
+
+            String path = AbcConfig.calculateDeployedPath(fileScreenshots);
+            Writer writer = getWriter(path);
+            SyndFeedOutput output = new SyndFeedOutput();
+            output.output(feed, writer);
+            writer.close();
+        } catch (Exception e) {
+            log.error("Chyba pri generovani RSS pro desktopy",e);
         }
     }
 
@@ -1055,10 +1104,17 @@ public class FeedGenerator implements Configurable {
         return "/" + fileSoftware;
     }
 
+    /**
+     * @return url for fresh screenshots feed
+     */
+    public static String getScreenshotsFeedUrl() {
+        return "/" + fileScreenshots;
+    }
+
     public static void main(String[] args) {
         if (args==null || args.length==0) {
             System.out.println("Enter one of hardware, software, articles, blog, blogs, drivers, news, faq, " +
-                               "polls, bazaar, dictionary or forum as an argument!");
+                               "polls, bazaar, dictionary, screenshots or forum as an argument!");
             System.exit(1);
         }
         Arrays.sort(args);
@@ -1094,5 +1150,7 @@ public class FeedGenerator implements Configurable {
             updatePolls();
         if (Arrays.binarySearch(args, "software") >= 0)
             updateSoftware();
+        if (Arrays.binarySearch(args, "screenshots") >= 0)
+            updateScreenshots();
     }
 }

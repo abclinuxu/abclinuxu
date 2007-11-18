@@ -85,12 +85,6 @@ public class EditScreenshot implements AbcAction {
         if (ServletUtils.handleMaintainance(request, env))
             response.sendRedirect(response.encodeRedirectURL("/"));
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
-        if (relation != null) {
-            Tools.sync(relation);
-            env.put(VAR_RELATION, relation);
-        }
-
         // check permissions
         if (user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
@@ -102,6 +96,12 @@ public class EditScreenshot implements AbcAction {
             ActionProtector.ensureContract(request, EditDictionary.class, true, false, true, false);
             return actionAddStep2(request, response, env, true);
         }
+
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
+        if (relation == null)
+            throw new MissingArgumentException("Chybí parametr relationId!");
+        Tools.sync(relation);
+        env.put(VAR_RELATION, relation);
 
         boolean allowed = user.hasRole(Roles.ATTACHMENT_ADMIN);
         allowed |= ((Item)relation.getChild()).getOwner() == user.getId();
@@ -140,19 +140,21 @@ public class EditScreenshot implements AbcAction {
         item.setOwner(user.getId());
         Relation relation = new Relation(new Category(Constants.CAT_SCREENSHOTS), item, Constants.REL_SCREENSHOTS);
 
-        boolean canContinue = true;
-        canContinue &= setName(params, root, env);
-        canContinue &= setImage(params, item, env);
+        boolean canContinue = setName(params, root, env);
+        canContinue &= checkImage(params, env);
         canContinue &= setURL(relation, user);
         if (!canContinue)
             return FMTemplateSelector.select("Screenshot", "add", env, request);
 
         persistence.create(item);
+        createImage(params, item, env);
+        persistence.update(item);
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
+        EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
-//        FeedGenerator.updateDictionary(); TODO
-//        VariableFetcher.getInstance().refreshDictionary();
+        FeedGenerator.updateScreenshots();
+        VariableFetcher.getInstance().refreshScreenshots();
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -182,16 +184,15 @@ public class EditScreenshot implements AbcAction {
         Item item = (Item) relation.getChild().clone();
         Element root = item.getData().getRootElement();
 
-        boolean canContinue = true;
-        canContinue &= setName(params, root, env);
+        boolean canContinue = setName(params, root, env);
 
         if (!canContinue)
             return FMTemplateSelector.select("Screenshot", "edit", env, request);
 
         persistence.update(item);
 
-//        FeedGenerator.updateDictionary(); TODO
-//        VariableFetcher.getInstance().refreshDictionary();
+        FeedGenerator.updateScreenshots();
+        VariableFetcher.getInstance().refreshScreenshots();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -267,25 +268,20 @@ public class EditScreenshot implements AbcAction {
             name = UrlUtils.PREFIX_SCREENSHOTS + "/" + name + "-" + Constants.isoSearchFormat.format(new Date());
         }
 
-        String url = URLManager.enforceRelativeURL(name);
+        String url = URLManager.enforceAbsoluteURL(name);
         url = URLManager.protectFromDuplicates(url);
-
-        relation.setUrl(UrlUtils.PREFIX_DICTIONARY + "/" + url);
+        relation.setUrl(url);
         return true;
     }
 
     /**
-     * Uploads new screenshot and creates a thumbnail (if needed). Changes to Item are not synchronized with persistence.
+     * Checks the screenshot, if the file is correct.
      * @param params map holding request's parameters
-     * @param item item to be updated
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setImage(Map params, Item item, Map env) throws IOException {
+    private boolean checkImage(Map params, Map env) throws IOException {
         FileItem fileItem = (FileItem) params.get(PARAM_SCREENSHOT);
-        PathGenerator pathGenerator = AbcConfig.getPathGenerator();
-        Element root = item.getData().getRootElement();
-
         if (fileItem == null) {
             ServletUtils.addError(PARAM_SCREENSHOT, "Zadejte prosím cestu k souboru.", env, null);
             return false;
@@ -298,6 +294,22 @@ public class EditScreenshot implements AbcAction {
         }
 
         // todo check that image has minimum dimension of 800x600
+
+        return true;
+    }
+
+    /**
+     * Uploads new screenshot and creates a thumbnail (if needed). Changes to Item are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param item item to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean createImage(Map params, Item item, Map env) throws IOException {
+        FileItem fileItem = (FileItem) params.get(PARAM_SCREENSHOT);
+        PathGenerator pathGenerator = AbcConfig.getPathGenerator();
+        Element root = item.getData().getRootElement();
+        String suffix = Misc.getFileSuffix(fileItem.getName()).toLowerCase();
         String name = EditAttachment.getFileName(item);
         File imageFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, name, "." + suffix);
         String path = Misc.getWebPath(imageFile.getAbsolutePath());
@@ -322,5 +334,4 @@ public class EditScreenshot implements AbcAction {
 
         return true;
     }
-
 }

@@ -320,6 +320,7 @@ public class EditAttachment implements AbcAction {
         Relation tmpRel = new Relation(0);
         tmpRel.setInitialized(true);
         tmpRel.setChild(item);
+        item.setInitialized(true);
         String name = Tools.childName(tmpRel);
         name = Misc.filterDangerousCharacters(name);
         name = DiacriticRemover.getInstance().removeDiacritics(name);

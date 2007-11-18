@@ -364,7 +364,7 @@ public class EditNews implements AbcAction {
 
         Element element = DocumentHelper.makeElement(item.getData(), "/data/locked_by");
         User user = (User) env.get(Constants.VAR_USER);
-        element.setText(new Integer(user.getId()).toString());
+        element.setText(Integer.toString(user.getId()));
 
         persistence.update(item);
         AdminLogger.logEvent(user, "  lock | news "+relation.getId());

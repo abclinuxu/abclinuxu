@@ -66,6 +66,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String KEY_DICTIONARY = "dictionary";
     public static final String KEY_PERSONALITIES = "personalities";
     public static final String KEY_BAZAAR = "bazaar";
+    public static final String KEY_SCREENSHOT = "screenshot";
     public static final String KEY_INDEX_LINKS = "links.in.index";
     public static final String KEY_TEMPLATE_LINKS = "links.in.template";
 
@@ -77,6 +78,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     List freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
     List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities;
+    List freshScreenshots;
     String indexFeeds, templateFeeds;
     Map defaultSizes, maxSizes, counter;
     Map<Server, List<Link>> feedLinks;
@@ -229,6 +231,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public List getFreshNews(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_NEWS, "/data/settings/index_news");
         return getSubList(freshNews, userLimit);
+    }
+
+    /**
+     * List of the most fresh screenshot relations according to user preference or system setting.
+     */
+    public List getFreshScreenshots(Object user) {
+        int userLimit = getObjectCountForUser(user, KEY_SCREENSHOT, null);
+        return getSubList(freshScreenshots, userLimit);
     }
 
     /**
@@ -595,6 +605,18 @@ public class VariableFetcher extends TimerTask implements Configurable {
         }
     }
 
+    public void refreshScreenshots() {
+        try {
+            int maximum = (Integer) maxSizes.get(KEY_SCREENSHOT);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
+            List list = sqlTool.findItemRelationsWithType(Item.SCREENSHOT, qualifiers);
+            Tools.syncList(list);
+            freshScreenshots = list;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani desktopu", e);
+        }
+    }
+
     public void refreshCurrentPoll() {
         try {
             currentPoll = sqlTool.findActivePoll();
@@ -727,6 +749,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
         size = prefs.getInt(PREF_MAX + KEY_BAZAAR, 5);
         maxSizes.put(KEY_BAZAAR, size);
         freshBazaarAds = Collections.EMPTY_LIST;
+
+        size = prefs.getInt(PREF_DEFAULT + KEY_SCREENSHOT, 3);
+        defaultSizes.put(KEY_SCREENSHOT, size);
+        size = prefs.getInt(PREF_MAX + KEY_SCREENSHOT, 3);
+        maxSizes.put(KEY_SCREENSHOT, size);
+        freshScreenshots = Collections.EMPTY_LIST;
 
         indexFeeds = prefs.get(PREF_INDEX_FEEDS, "");
         templateFeeds = prefs.get(PREF_TEMPLATE_FEEDS, "");

@@ -281,6 +281,7 @@ public interface Constants {
     String PROPERTY_SCORE = "score";
     String PROPERTY_TICKET = "ticket";
     String PROPERTY_USED_BY = "used_by";
+    String PROPERTY_FAVOURITED_BY = "favourited_by";
 
     // see EditBazaar
     String BAZAAR_BUY = "buy";
