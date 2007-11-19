@@ -238,6 +238,7 @@ public interface Constants {
     String PAGE_POLLS = "ankety";
     String PAGE_SOFTWARE = "software";
     String PAGE_SCHOOLBOOK = "ucebnice";
+    String PAGE_SCREENSHOTS = "desktopy";
     String PAGE_SEARCH = "hledani";
     String PAGE_WAP = "wap";
 

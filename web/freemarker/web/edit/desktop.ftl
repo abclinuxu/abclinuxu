@@ -17,8 +17,15 @@
             </td>
         </tr>
         <tr>
+            <td width="60">Popis</td>
+            <td>
+                <textarea name="desc" class="siroka" tabindex="2">${PARAMS.desc?if_exists?html}</textarea>
+                <div class="error">${ERRORS.desc?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
             <td colspan="2" align="left">
-                <input type="submit" name="submit" value="Dokonči">
+                <input type="submit" name="submit" value="Dokonči" tabindex="3">
             </td>
         </tr>
     </table>

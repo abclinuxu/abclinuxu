@@ -38,6 +38,9 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.PathGenerator;
 import cz.abclinuxu.utils.ImageTool;
+import cz.abclinuxu.utils.format.Format;
+import cz.abclinuxu.utils.format.FormatDetector;
+import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -47,6 +50,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.apache.commons.fileupload.FileItem;
+import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,6 +70,7 @@ public class EditScreenshot implements AbcAction {
     public static final String PARAM_RELATION = "rid";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_SCREENSHOT = "screenshot";
+    public static final String PARAM_DESCRIPTION = "desc";
 
     public static final String VAR_RELATION = "RELATION";
 
@@ -112,7 +117,7 @@ public class EditScreenshot implements AbcAction {
             return actionEdit(request, env);
 
         if (action.equals(ACTION_EDIT_STEP2)) {
-            ActionProtector.ensureContract(request, EditDictionary.class, true, true, true, false);
+            ActionProtector.ensureContract(request, EditScreenshot.class, true, true, true, false);
             return actionEdit2(request, response, env);
         }
 
@@ -121,7 +126,7 @@ public class EditScreenshot implements AbcAction {
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (action.equals(ACTION_REMOVE_STEP2)) {
-            ActionProtector.ensureContract(request, EditAttachment.class, true, true, true, false);
+            ActionProtector.ensureContract(request, EditScreenshot.class, true, true, true, false);
             return actionRemoveStep2(request, response, env);
         }
 
@@ -141,6 +146,7 @@ public class EditScreenshot implements AbcAction {
         Relation relation = new Relation(new Category(Constants.CAT_SCREENSHOTS), item, Constants.REL_SCREENSHOTS);
 
         boolean canContinue = setName(params, root, env);
+        canContinue &= setDescription(params, root, env);
         canContinue &= checkImage(params, env);
         canContinue &= setURL(relation, user);
         if (!canContinue)
@@ -172,6 +178,8 @@ public class EditScreenshot implements AbcAction {
         Document document = item.getData();
         Node node = document.selectSingleNode("data/title");
         params.put(PARAM_NAME, node.getText());
+        Node desc = document.selectSingleNode("data/description");
+        params.put(PARAM_DESCRIPTION, desc.getText());
 
         return FMTemplateSelector.select("Screenshot", "edit", env, request);
     }
@@ -185,6 +193,7 @@ public class EditScreenshot implements AbcAction {
         Element root = item.getData().getRootElement();
 
         boolean canContinue = setName(params, root, env);
+        canContinue &= setDescription(params, root, env);
 
         if (!canContinue)
             return FMTemplateSelector.select("Screenshot", "edit", env, request);
@@ -220,8 +229,8 @@ public class EditScreenshot implements AbcAction {
         relation.getParent().removeChildRelation(relation);
         AdminLogger.logEvent(user, "  remove | screenshot " + relation.getUrl());
 
-//        FeedGenerator.updateNews(); TODO
-//        VariableFetcher.getInstance().refreshNews();
+        FeedGenerator.updateScreenshots();
+        VariableFetcher.getInstance().refreshScreenshots();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, UrlUtils.PREFIX_SCREENSHOTS);
@@ -250,6 +259,41 @@ public class EditScreenshot implements AbcAction {
 
         DocumentHelper.makeElement(root, "title").setText(name);
         return true;
+    }
+
+    /**
+     * Updates explaination from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param root root element of record to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setDescription(Map params, Element root, Map env) {
+        String tmp = (String) params.get(PARAM_DESCRIPTION);
+        tmp = Misc.filterDangerousCharacters(tmp);
+        Element element = root.element("description");
+        if (tmp == null || tmp.length() == 0) {
+            if (element != null)
+                element.detach();
+            return true;
+        }
+
+        if (element == null)
+            element = DocumentHelper.makeElement(root, "description");
+
+        try {
+            SafeHTMLGuard.check(tmp);
+            element.setText(tmp);
+            Format format = FormatDetector.detect(tmp);
+            element.addAttribute("format", Integer.toString(format.getId()));
+            return true;
+        } catch (ParserException e) {
+            log.error("ParseException on '" + tmp + "'", e);
+            ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
+            return false;
+        } catch (Exception e) {
+            ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
+            return false;
+        }
     }
 
     /**

@@ -108,6 +108,8 @@ public class Controller extends HttpServlet implements Configurable {
             return Constants.PAGE_SEARCH;
         if (uri.startsWith(UrlUtils.PREFIX_NEWS))
             return Constants.PAGE_NEWS;
+        if (uri.startsWith(UrlUtils.PREFIX_SCREENSHOTS))
+            return Constants.PAGE_SCREENSHOTS;
         if (uri.startsWith(UrlUtils.PREFIX_DICTIONARY))
             return Constants.PAGE_DICTIONARY;
         if (uri.startsWith(UrlUtils.PREFIX_PERSONALITIES))

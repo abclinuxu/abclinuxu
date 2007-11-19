@@ -5,6 +5,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.Misc;
@@ -76,7 +77,10 @@ public class ViewScreenshot implements AbcAction {
     public static String processItem(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Item item = (Item) relation.getChild();
         env.put(VAR_ITEM, item);
-        ReadRecorder.log(item, Constants.COUNTER_READ, env);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        if (user == null || user.getId() != item.getOwner())
+            ReadRecorder.log(item, Constants.COUNTER_READ, env);
 
         Map children = Tools.groupByType(item.getChildren());
         env.put(ShowObject.VAR_CHILDREN_MAP, children);

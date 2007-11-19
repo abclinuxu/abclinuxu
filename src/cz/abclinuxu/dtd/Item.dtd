@@ -221,8 +221,9 @@
 <!ATTLIST article published (#NMTOKEN)> <!-- date in ISO format (YYYY-MM-DD), when this article was published -->
 
 <!-- Item.SCREENSHOT -->
-<!ELEMENT data (title, image, listingThumbnail, detailThumbnail)>
+<!ELEMENT data (title, description?, image, listingThumbnail, detailThumbnail)>
 <!ELEMENT title (#PCDATA)> <!-- title for the screenshot -->
+<!ELEMENT description (#PCDATA)> <!-- description of the screenshot -->
 <!ELEMENT image (#PCDATA)> <!-- path to the file (starting with / from webroot) containing the screenshot -->
 <!ELEMENT listingThumbnail (#PCDATA)> <!-- path to the file (starting with / from webroot) containing thumbnail for screenshots list -->
 <!ELEMENT detailThumbnail (#PCDATA)> <!-- path to the file (starting with / from webroot) containing thumbnail for screenshot's detail -->

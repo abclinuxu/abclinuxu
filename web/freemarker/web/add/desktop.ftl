@@ -20,13 +20,20 @@
         <tr>
             <td class="required">Obrázek</td>
             <td>
-                <input type="file" name="screenshot" size="40" tabindex="1">
+                <input type="file" name="screenshot" size="40" tabindex="2">
                 <div class="error">${ERRORS.screenshot?if_exists}</div>
             </td>
         </tr>
         <tr>
+            <td width="60">Popis</td>
+            <td>
+                <textarea name="desc" class="siroka" tabindex="3">${PARAMS.desc?if_exists?html}</textarea>
+                <div class="error">${ERRORS.desc?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
             <td colspan="2" align="left">
-                <input type="submit" name="submit" value="Dokonči">
+                <input type="submit" name="submit" value="Dokonči" tabindex="4">
             </td>
         </tr>
     </table>

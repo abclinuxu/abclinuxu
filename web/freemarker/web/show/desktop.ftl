@@ -27,6 +27,7 @@
 
 <table class="swdetail">
     <#assign usedBy = ITEM.getProperty("favourited_by"), autor=TOOL.createUser(ITEM.owner)>
+    <#assign desc=TOOL.xpath(ITEM, "/data/description")?default("UNDEFINED")>
     <tr>
         <td>Autor</td>
         <td><@lib.showUser autor/></td>
@@ -57,6 +58,11 @@
             ${reads}&times;
         </td>
     </tr>
+    <#if desc != "UNDEFINED">
+        <tr>
+            <td colspan="2">${desc}</td>
+        </tr>
+    </#if>
 </table>
 
 <h3>Komentáře</h3>
