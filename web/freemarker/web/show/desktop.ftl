@@ -7,7 +7,8 @@
                 </li>
                 <#if USER.hasRole("attachment admin")>
                     <li>
-                        <a href="${URL.make("/edit/"+RELATION.id+"?action=rm2")}" title="Smaž" onSubmit="">Smazat</a>
+                        <a href="${URL.make("/edit/"+RELATION.id+"?action=rm2")}" title="Smaž"
+                        onSubmit="javascript:return confirm('Opravdu smazat tento desktop?);">Smazat</a>
                     </li>
                 </#if>
             </ul>
@@ -37,22 +38,26 @@
         <td>${DATE.show(ITEM.created,"SMART_DMY")}</td>
     </tr>
     <tr>
-        <td>Oblibenost</td>
+        <td>Oblíbenost</td>
         <td>
            <form action="${URL.make("/desktopy/edit/"+RELATION.id)}">
-              <a href="?action=users" title="Seznam uživatelů abclinuxu, kterym se libi tento desktop">${usedBy?size}</a> &nbsp;
+              <#if (usedBy?size > 0)>
+                  <a href="?action=users" title="Seznam uživatelů abclinuxu, kterým se líbí tento desktop">${usedBy?size}</a> &nbsp;
+              <#else>
+              0
+              </#if>
               <#if USER?exists && usedBy.contains(""+USER.id)>
                  <input type="submit" value="Odebrat se">
               <#else>
                  <input type="submit" value="Přidat se">
               </#if>
-              <input type="hidden" name="action" value="user_of">
+              <input type="hidden" name="action" value="favourite">
               <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER?if_exists)}">
            </form>
         </td>
     </tr>
     <tr>
-        <td>Shlednuto:</td>
+        <td>Shlédnuto</td>
         <td>
             <#assign reads = TOOL.getCounterValue(ITEM,"read")>
             ${reads}&times;

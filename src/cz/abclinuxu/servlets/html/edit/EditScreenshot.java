@@ -25,6 +25,7 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
@@ -56,6 +57,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 import java.io.IOException;
 import java.io.File;
 
@@ -79,6 +81,7 @@ public class EditScreenshot implements AbcAction {
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
     public static final String ACTION_REMOVE_STEP2 = "rm2";
+    public static final String ACTION_I_LIKE = "favourite";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -107,6 +110,11 @@ public class EditScreenshot implements AbcAction {
             throw new MissingArgumentException("Chybí parametr relationId!");
         Tools.sync(relation);
         env.put(VAR_RELATION, relation);
+
+        if (ACTION_I_LIKE.equals(action)) {
+            ActionProtector.ensureContract(request, EditSoftware.class, true, false, false, true);
+            return actionILike(request, response, env);
+        }
 
         boolean allowed = user.hasRole(Roles.ATTACHMENT_ADMIN);
         allowed |= ((Item)relation.getChild()).getOwner() == user.getId();
@@ -238,6 +246,30 @@ public class EditScreenshot implements AbcAction {
         return null;
     }
 
+    public String actionILike(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        User user = (User) env.get(Constants.VAR_USER);
+        Persistence persistence = PersistenceFactory.getPersistence();
+        Set<String> users = item.getProperty(Constants.PROPERTY_FAVOURITED_BY);
+
+        // see whether user wants to remove or add himself
+        String userid = Integer.toString(user.getId());
+        if (!users.contains(userid))
+            item.addProperty(Constants.PROPERTY_FAVOURITED_BY, userid);
+        else
+            item.removePropertyValue(Constants.PROPERTY_FAVOURITED_BY, userid);
+
+        Date originalUpdated = item.getUpdated();
+        persistence.update(item);
+        SQLTool.getInstance().setUpdatedTimestamp(item, originalUpdated);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+
+        return null;
+    }
+
 
 
 
@@ -325,7 +357,7 @@ public class EditScreenshot implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean checkImage(Map params, Map env) throws IOException {
+    private boolean checkImage(Map params, Map env) {
         FileItem fileItem = (FileItem) params.get(PARAM_SCREENSHOT);
         if (fileItem == null) {
             ServletUtils.addError(PARAM_SCREENSHOT, "Zadejte prosím cestu k souboru.", env, null);

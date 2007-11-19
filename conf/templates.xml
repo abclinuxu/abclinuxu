@@ -505,9 +505,6 @@
         <action name="sw_users" content="/show/sw_users.ftl">
             <var name="TITLE" value='Seznam uživatelů ${TOOL.xpath(ITEM,"data/name")}' type="Lazy"/>
         </action>
-        <action name="sw_users" content="/show/sw_users.ftl">
-            <var name="TITLE" value='Seznam uživatelů ${TOOL.xpath(ITEM,"data/name")}' type="Lazy"/>
-        </action>
         <action name="alternatives" content="/show/sw_alternatives.ftl">
             <var name="TITLE" value="Seznam alternativ pro aplikace z MS Windows"/>
         </action>
@@ -704,6 +701,9 @@
         </action>
         <action name="showList" content="/show/desktops.ftl">
             <var name="TITLE" value="Snímky desktopů"/>
+        </action>
+        <action name="users" content="/show/desktop_users.ftl">
+            <var name="TITLE" value='Seznam fanoušků desktopu ${TOOL.xpath(ITEM," data/ title")}'/>
         </action>
         <action name="add" content="/add/desktop.ftl">
             <var name="TITLE" value="Vložit nový desktop"/>

@@ -36,6 +36,7 @@ public class ViewScreenshot implements AbcAction {
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_ITEM = "ITEM";
     public static final String VAR_ITEMS = "ITEMS";
+    public static final String ACTION_USERS = "users";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -48,6 +49,9 @@ public class ViewScreenshot implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistence();
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
+
+        if (ACTION_USERS.equals((String) params.get(PARAM_ACTION)))
+            return processItemUsers(request, relation, env);
 
         if (relation.getId() == Constants.REL_SCREENSHOTS)
             return processSection(request, env);
@@ -87,5 +91,16 @@ public class ViewScreenshot implements AbcAction {
 
         env.put(Constants.VAR_RSS, FeedGenerator.getScreenshotsFeedUrl());
         return FMTemplateSelector.select("Screenshot", "show", env, request);
+    }
+
+    /**
+     * Generates list of software's users.
+     */
+    public static String processItemUsers(HttpServletRequest request, Relation relation, Map env) throws Exception {
+        Item item = (Item) relation.getChild();
+        env.put(VAR_ITEM, item);
+
+        env.put(Constants.VAR_RSS, FeedGenerator.getScreenshotsFeedUrl());
+        return FMTemplateSelector.select("Screenshot", "users", env, request);
     }
 }

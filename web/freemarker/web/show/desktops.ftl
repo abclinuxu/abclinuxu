@@ -40,14 +40,16 @@
                 <a href="${diz.url}">${diz.responseCount}<@lib.markNewComments diz/></a>
             </td>
         </tr>
+        <#if (usedBy?size > 0)>
+            <tr>
+                <td>Oblibenost</td>
+                <td>
+                    <a href="${relation.url}?action=users" title="Seznam uživatelů abclinuxu, kterym se libi tento desktop">${usedBy?size}</a>
+                </td>
+            </tr>
+        </#if>
         <tr>
-            <td>Oblibenost</td>
-            <td>
-                <a href="?action=users" title="Seznam uživatelů abclinuxu, kterym se libi tento desktop">${usedBy?size}</a>
-            </td>
-        </tr>
-        <tr>
-            <td>Shlednuto:</td>
+            <td>Shlédnuto</td>
             <td>
                 <@lib.showCounter item, .globals["CITACE"]?if_exists, "read" />&times;
             </td>
