@@ -179,7 +179,8 @@ public class EditScreenshot implements AbcAction {
         Node node = document.selectSingleNode("data/title");
         params.put(PARAM_NAME, node.getText());
         Node desc = document.selectSingleNode("data/description");
-        params.put(PARAM_DESCRIPTION, desc.getText());
+        if (desc != null)
+            params.put(PARAM_DESCRIPTION, desc.getText());
 
         return FMTemplateSelector.select("Screenshot", "edit", env, request);
     }
