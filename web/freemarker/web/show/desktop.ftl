@@ -7,8 +7,8 @@
                 </li>
                 <#if USER.hasRole("attachment admin")>
                     <li>
-                        <a href="${URL.make("/edit/"+RELATION.id+"?action=rm2")}" title="Smaž"
-                        onSubmit="javascript:return confirm('Opravdu smazat tento desktop?);">Smazat</a>
+                        <a href="${URL.make("/edit/"+RELATION.id+"?action=rm2"+TOOL.ticket(USER, false))}" title="Smaž"
+                        onClick="javascript:return confirm('Opravdu chcete smazat tento desktop?');">Smazat</a>
                     </li>
                 </#if>
             </ul>

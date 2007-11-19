@@ -31,6 +31,7 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.view.ViewScreenshot;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.URLManager;
@@ -134,7 +135,7 @@ public class EditScreenshot implements AbcAction {
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (action.equals(ACTION_REMOVE_STEP2)) {
-            ActionProtector.ensureContract(request, EditScreenshot.class, true, true, true, false);
+            ActionProtector.ensureContract(request, ViewScreenshot.class, true, true, false, true);
             return actionRemoveStep2(request, response, env);
         }
 
