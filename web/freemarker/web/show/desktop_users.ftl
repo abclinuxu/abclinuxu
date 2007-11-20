@@ -1,14 +1,18 @@
 <#include "../header.ftl">
 
-<div style="float:right">
+<div class="desktopy">
+<div class="thumb uzivatele">
     <a href="${RELATION.url}" title="${TOOL.xpath(ITEM,"/data/title")?if_exists}">
         <img src="${TOOL.xpath(ITEM,"/data/listingThumbnail")}" alt="${TOOL.xpath(ITEM,"/data/title")?if_exists}" border="0">
     </a>
 </div>
 
-<h1 class="st_nadpis">Seznam uživatelů, kterým se líbí desktop „<a href="${RELATION.url}">${TOOL.xpath(ITEM,"/data/title")?if_exists}</a>“</h1>
+<#assign usedBy=ITEM.getProperty("favourited_by"), autor=TOOL.createUser(ITEM.owner)>
 
-<#assign usedby = ITEM.getProperty("favourited_by")>
+<h1>Seznam uživatelů, kterým se líbí desktop</h1>
+
+<p><a href="${RELATION.url}">${TOOL.xpath(ITEM,"/data/title")?if_exists}</a> od uživatele <@lib.showUser autor/></p>
+
 <ul>
     <#list usedby as a_user>
         <#assign who = TOOL.createUser(a_user)>
@@ -17,5 +21,7 @@
         </li>
     </#list>
 </ul>
+
+</div>
 
 <#include "../footer.ftl">
