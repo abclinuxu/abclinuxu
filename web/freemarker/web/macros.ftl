@@ -18,7 +18,7 @@
     <#if thumbnail!="UNDEF"><div class="cl_thumbnail">${thumbnail}</div></#if>
     <h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(clanek,"data/name")}</a></h1>
     <p>${TOOL.xpath(clanek,"/data/perex")}</p>
-    <p class="cl_inforadek">
+    <p class="meta-vypis">
         ${DATE.show(clanek.created, dateFormat[0])} |
         <#list autors as autor>
             <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
