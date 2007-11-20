@@ -413,6 +413,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshStories();
             refreshFeedLinks();
             refreshSectionCaches();
+            refreshScreenshots();
 
             cycle++;
             log.debug("Cachovani hotovo.");
