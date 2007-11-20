@@ -47,6 +47,7 @@ public class PropertiesConfig {
             case Item.ARTICLE:
             case Item.AUTHOR:
             case Item.BLOG:
+            case Item.SCREENSHOT:
             case Item.SOFTWARE: return true;
         }
         return false;
