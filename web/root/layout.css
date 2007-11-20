@@ -286,9 +286,7 @@ td.pad,code.kod,pre.kod {
 	text-align: right;
 }
 
-.cl_inforadek,
-.ank-vypis,
-.serialy-vypis,
+.meta-vypis,
 .treeview li span {
 	font-size: 80%;
 }
@@ -735,10 +733,10 @@ a,
 	margin-bottom: 0.5em
 }
 
-.ank-vypis,
-.serialy-vypis {
+.ankety .meta-vypis,
+.serialy .meta-vypis {
 	margin: 0 0 0.5em 3em;
-}  /* + .cl_inforadek */
+}
 
 .ls_zpr p {
 	margin: 0.5em 0.2em;
@@ -899,6 +897,10 @@ div.autocomplete ul li {
   cursor:pointer;
 }
 div.autocomplete ul li span.informal { size: 80%;}
+
+.desktopy .thumb {
+  margin: 0.5em 0 0 0.5em;
+}
 
 .host { font-size: smaller }
 .host .prehled {

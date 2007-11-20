@@ -135,12 +135,8 @@ td.pad,code.kod,pre.kod {
 	background-color: #F0F0F0;
 }
 
-.cl_inforadek,
-.ank-vypis,
-.serialy-vypis,
-.treeview li span {
-	color: gray;
-}
+.meta-vypis,
+.treeview li span { color: gray; }
 
 .cl_highlight {
 	border-color: silver;
