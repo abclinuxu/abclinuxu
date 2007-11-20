@@ -206,6 +206,8 @@ td.pad,code.kod,pre.kod {
 	background-color: #F9F9F9
 }
 
+.desktopy .thumb a:hover,
+.cl-obrazky a:hover,
 .galerie a:hover,
 .sw h3 a:hover { background-color: white; }
 
