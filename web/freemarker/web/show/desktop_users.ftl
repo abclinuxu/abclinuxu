@@ -14,8 +14,8 @@
 <p><a href="${RELATION.url}">${TOOL.xpath(ITEM,"/data/title")?if_exists}</a> od uživatele <@lib.showUser autor/></p>
 
 <ul>
-    <#list usedby as a_user>
-        <#assign who = TOOL.createUser(a_user)>
+    <#list usedBy as a_user>
+        <#assign who=TOOL.createUser(a_user)>
         <li>
             <@lib.showUser who/>
         </li>
