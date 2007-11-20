@@ -38,7 +38,7 @@
 
 <p>
   <form action="${URL.make("/desktopy/edit/"+RELATION.id)}" class="meta-vypis">
-    <#assign usedBy = ITEM.getProperty("favourited_by"), autor=TOOL.createUser(ITEM.owner)>
+    <#assign usedBy=ITEM.getProperty("favourited_by"), autor=TOOL.createUser(ITEM.owner)>
         <@lib.showUser autor/> |
         ${DATE.show(ITEM.created,"SMART_DMY")} |
         Zhlédnuto: <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times; |
