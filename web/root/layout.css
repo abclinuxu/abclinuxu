@@ -733,6 +733,7 @@ a,
 	margin-bottom: 0.5em
 }
 
+.faq .meta-vypis,
 .ankety .meta-vypis,
 .serialy .meta-vypis {
 	margin: 0 0 0.5em 3em;
@@ -898,9 +899,7 @@ div.autocomplete ul li {
 }
 div.autocomplete ul li span.informal { size: 80%;}
 
-.desktopy .thumb {
-  margin: 0.5em 0 0 0.5em;
-}
+.desktopy .thumb { margin: 0.5em 0 0 0.5em; }
 
 .host { font-size: smaller }
 .host .prehled {
