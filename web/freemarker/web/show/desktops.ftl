@@ -2,13 +2,15 @@
     <div class="s_sekce">
         <ul>
             <li>
-                <a class="bez-slovniku" href="${URL.make("/edit?action=add")}" rel="nofollow">Vlozit</a>
+                <a class="bez-slovniku" href="${URL.make("/edit?action=add")}" rel="nofollow">Vložit</a>
             </li>
         </ul>
     </div>
 </#assign>
 
 <#include "../header.ftl">
+
+<div class="desktopy">
 
 <h1>Desktopy</h1>
 
@@ -17,44 +19,25 @@
     <#assign item = relation.child, reads = TOOL.getCounterValue(item,"read"), usedBy = item.getProperty("favourited_by")>
     <#assign tmp=TOOL.groupByType(item.children, "Item"), diz=TOOL.analyzeDiscussion(tmp.discussion[0]), autor=TOOL.createUser(item.owner)>
 
-    <h2>
-        <a href="${relation.url}">${TOOL.xpath(item,"/data/title")}</a>
+    <h2 class="st_nadpis">
+        <a href="${relation.url}" title="${TOOL.xpath(item,"/data/title")}">${TOOL.xpath(item,"/data/title")}</a>
     </h2>
-    <table class="swdetail">
-        <tr>
-            <td>Autor</td>
-            <td><@lib.showUser autor/></td>
-            <td rowspan="5">
-                <a href="${relation.url}">
-                    <img src="${TOOL.xpath(item,"/data/listingThumbnail")}" alt="${TOOL.xpath(item,"/data/title")}" border="0">
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td>Datum</td>
-            <td>${DATE.show(item.created,"SMART_DMY")}</td>
-        </tr>
-        <tr>
-            <td>Komentaru</td>
-            <td>
-                <a href="${diz.url}">${diz.responseCount}<@lib.markNewComments diz/></a>
-            </td>
-        </tr>
+
+    <div class="thumb">
+        <a href="${relation.url}" title="${TOOL.xpath(item,"/data/title")}">
+            <img src="${TOOL.xpath(item,"/data/listingThumbnail")}" alt="${TOOL.xpath(item,"/data/title")}" border="0">
+        </a>
+    </div>
+
+    <p class="meta-vypis">
+        <@lib.showUser autor/> |
+        ${DATE.show(item.created,"SMART_DMY")} |
+        <a href="${diz.url}">Komentářů: ${diz.responseCount}<@lib.markNewComments diz/></a> |
+        Zhlédnuto: <@lib.showCounter item, .globals["CITACE"]?if_exists, "read" />&times; |
         <#if (usedBy?size > 0)>
-            <tr>
-                <td>Oblibenost</td>
-                <td>
-                    <a href="${relation.url}?action=users" title="Seznam uživatelů abclinuxu, kterym se libi tento desktop">${usedBy?size}</a>
-                </td>
-            </tr>
+            Oblíbenost: <a href="${relation.url}?action=users" title="Seznam uživatelů abclinuxu, kterým se líbí tento desktop">${usedBy?size}</a>
         </#if>
-        <tr>
-            <td>Shlédnuto</td>
-            <td>
-                <@lib.showCounter item, .globals["CITACE"]?if_exists, "read" />&times;
-            </td>
-        </tr>
-    </table>
+    </p>
 
 </#list>
 
@@ -69,5 +52,6 @@
     </#if>
 </p>
 
+</div>
 
 <#include "../footer.ftl">

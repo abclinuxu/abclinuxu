@@ -3,7 +3,7 @@
         <div class="s_sekce">
             <ul>
                 <li>
-                    <a class="bez-slovniku" href="${URL.make("/edit/"+RELATION.id+"?action=edit")}" rel="nofollow">Upravit</a>
+                    <a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}" rel="nofollow">Upravit</a>
                 </li>
                 <#if USER.hasRole("attachment admin")>
                     <li>
@@ -18,57 +18,44 @@
 
 <#include "../header.ftl">
 
+<div class="desktopy">
+
 <h1>${TOOL.xpath(ITEM,"/data/title")}</h1>
 
-<p>
-    <a href="${TOOL.xpath(ITEM,"/data/image")}">
+<div class="thumb">
+    <a href="${TOOL.xpath(ITEM,"/data/image")}" title="${TOOL.xpath(ITEM,"/data/title")}">
         <img src="${TOOL.xpath(ITEM,"/data/detailThumbnail")}" alt="${TOOL.xpath(ITEM,"/data/title")}" border="0">
     </a>
-</p>
+</div>
 
-<table class="swdetail">
+<#if desc != "UNDEFINED">
+    <p class="popis">${desc}</p></td>
+</#if>
+
+<p class="meta-vypis">
     <#assign usedBy = ITEM.getProperty("favourited_by"), autor=TOOL.createUser(ITEM.owner)>
     <#assign desc=TOOL.xpath(ITEM, "/data/description")?default("UNDEFINED")>
-    <tr>
-        <td>Autor</td>
-        <td><@lib.showUser autor/></td>
-    </tr>
-    <tr>
-        <td>Datum</td>
-        <td>${DATE.show(ITEM.created,"SMART_DMY")}</td>
-    </tr>
-    <tr>
-        <td>Oblíbenost</td>
-        <td>
+        <@lib.showUser autor/> |
+        ${DATE.show(ITEM.created,"SMART_DMY")} |
+        Zhlédnuto: <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times; |
+        Oblíbenost: 
            <form action="${URL.make("/desktopy/edit/"+RELATION.id)}">
               <#if (usedBy?size > 0)>
-                  <a href="?action=users" title="Seznam uživatelů abclinuxu, kterým se líbí tento desktop">${usedBy?size}</a> &nbsp;
+                  <a href="?action=users" title="Seznam uživatelů abclinuxu, kterým se líbí tento desktop">${usedBy?size}</a>
               <#else>
               0
               </#if>
               <#if USER?exists && usedBy.contains(""+USER.id)>
-                 <input type="submit" value="Odebrat se">
+                 <input type="submit" value="Odebrat se" class="button">
               <#else>
-                 <input type="submit" value="Přidat se">
+                 <input type="submit" value="Přidat se" class="button">
               </#if>
               <input type="hidden" name="action" value="favourite">
               <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER?if_exists)}">
            </form>
-        </td>
-    </tr>
-    <tr>
-        <td>Shlédnuto</td>
-        <td>
-            <#assign reads = TOOL.getCounterValue(ITEM,"read")>
-            ${reads}&times;
-        </td>
-    </tr>
-    <#if desc != "UNDEFINED">
-        <tr>
-            <td colspan="2">${desc}</td>
-        </tr>
-    </#if>
-</table>
+</p>
+
+</div>
 
 <h3>Komentáře</h3>
 <#if CHILDREN.discussion?exists>
