@@ -1,4 +1,10 @@
 <#assign plovouci_sloupec>
+
+    <div class="s_nadpis">
+      <a class="info" href="#">?<span class="tooltip">Sbírka uživatelských desktopů. Pochlubte se, jak vypadá vaše pracovní prostředí.</span></a>
+      <a href="/desktopy">Desktopy</a>
+    </div>
+
     <div class="s_sekce">
         <ul>
             <li>
@@ -33,11 +39,13 @@
         <@lib.showUser autor/> |
         ${DATE.show(item.created,"SMART_DMY")} |
         <a href="${diz.url}">Komentářů: ${diz.responseCount}<@lib.markNewComments diz/></a> |
-        Zhlédnuto: <@lib.showCounter item, .globals["CITACE"]?if_exists, "read" />&times; |
+        Zhlédnuto: <@lib.showCounter item, .globals["CITACE"]?if_exists, "read" />&times;
         <#if (usedBy?size > 0)>
-            Oblíbenost: <a href="${relation.url}?action=users" title="Seznam uživatelů abclinuxu, kterým se líbí tento desktop">${usedBy?size}</a>
+            | <a href="${relation.url}?action=users" title="Seznam uživatelů abclinuxu, kterým se líbí tento desktop">Oblíbenost: ${usedBy?size}</a>
         </#if>
     </p>
+
+    <hr />
 
 </#list>
 

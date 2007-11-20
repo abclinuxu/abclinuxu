@@ -1,8 +1,8 @@
 <#include "../header.ftl">
 
 <div style="float:right">
-    <a href="${relation.url}" title="${TOOL.xpath(item,"/data/title")}">
-        <img src="${TOOL.xpath(item,"/data/listingThumbnail")}" alt="${TOOL.xpath(item,"/data/title")}" border="0">
+    <a href="${RELATION.url}" title="${TOOL.xpath(ITEM,"/data/title")?if_exists}">
+        <img src="${TOOL.xpath(ITEM,"/data/listingThumbnail")}" alt="${TOOL.xpath(ITEM,"/data/title")?if_exists}" border="0">
     </a>
 </div>
 

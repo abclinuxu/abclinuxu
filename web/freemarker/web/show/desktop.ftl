@@ -1,5 +1,8 @@
 <#if USER?exists>
     <#assign plovouci_sloupec>
+
+        <div class="s_nadpis">Nástroje</div>
+
         <div class="s_sekce">
             <ul>
                 <li>
@@ -28,31 +31,30 @@
     </a>
 </div>
 
+<#assign desc=TOOL.xpath(ITEM, "/data/description")?default("UNDEFINED")>
 <#if desc != "UNDEFINED">
-    <p class="popis">${desc}</p></td>
+    <p class="popis">${desc}</p>
 </#if>
 
-<p class="meta-vypis">
+<p>
+  <form action="${URL.make("/desktopy/edit/"+RELATION.id)}" class="meta-vypis">
     <#assign usedBy = ITEM.getProperty("favourited_by"), autor=TOOL.createUser(ITEM.owner)>
-    <#assign desc=TOOL.xpath(ITEM, "/data/description")?default("UNDEFINED")>
         <@lib.showUser autor/> |
         ${DATE.show(ITEM.created,"SMART_DMY")} |
         Zhlédnuto: <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times; |
-        Oblíbenost: 
-           <form action="${URL.make("/desktopy/edit/"+RELATION.id)}">
-              <#if (usedBy?size > 0)>
-                  <a href="?action=users" title="Seznam uživatelů abclinuxu, kterým se líbí tento desktop">${usedBy?size}</a>
-              <#else>
-              0
-              </#if>
-              <#if USER?exists && usedBy.contains(""+USER.id)>
-                 <input type="submit" value="Odebrat se" class="button">
-              <#else>
-                 <input type="submit" value="Přidat se" class="button">
-              </#if>
-              <input type="hidden" name="action" value="favourite">
-              <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER?if_exists)}">
-           </form>
+        <#if (usedBy?size > 0)>
+            <a href="?action=users" title="Seznam uživatelů abclinuxu, kterým se líbí tento desktop">Oblíbenost: ${usedBy?size}</a>
+        <#else>
+            Oblíbenost: 0
+        </#if>
+        <#if USER?exists && usedBy.contains(""+USER.id)>
+            <input type="submit" value="Odebrat se" class="button">
+        <#else>
+            <input type="submit" value="Přidat se" class="button">
+        </#if>
+        <input type="hidden" name="action" value="favourite">
+        <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER?if_exists)}">
+  </form>
 </p>
 
 </div>
