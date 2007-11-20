@@ -34,8 +34,7 @@ poslední změny.</p>
         <td class="td-nazev">
           <a href="${faq.url}">${faq.name}</a>
             <#if faq.description?exists>
-              <span class="meta"><br />
-              ${faq.description}</span>
+              <p class="meta-vypis">${faq.description}</p>
             </#if>
         </td>
         <td class="td-meta td-right">${faq.size}</td>

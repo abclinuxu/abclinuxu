@@ -6,12 +6,12 @@
 
 <h1>Archiv anket</h1>
 
-<ul>
+<ul class="ankety">
 <#list POLLS.data as relation>
     <li>
         <#assign poll=relation.child, diz=TOOL.findComments(poll)?default("UNDEF")>
         ${relation.child.text}<br />
-        <div class="ank-vypis">
+        <div class="meta-vypis">
 	    <a href="${relation.url?default("/ankety/show/"+relation.id)}">${DATE.show(poll.created, "CZ_DMY")}</a>
             ${poll.totalVoters} hlasů, komentářů: ${diz.responseCount}<#if (diz.responseCount > 0)>, poslední
 	    ${DATE.show(diz.updated, "CZ_FULL")}</#if>

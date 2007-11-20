@@ -153,7 +153,7 @@
 <@lib.showMessages/>
 
 <h2>${TOOL.xpath(ITEM, "/data/name")}</h2>
-<p class="cl_inforadek">
+<p class="meta-vypis">
     <#if ITEM.type==15>Odloženo<#else>${DATE.show(ITEM.created, "SMART")}</#if> |
     Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;
     <#if category!="UNDEF">| ${category}</#if>

@@ -67,13 +67,13 @@
                 <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
             </h2>
         </#if>
-        <p class="cl_inforadek">
+        <p class="meta-vypis">
             ${DATE.show(story.created, "SMART")} |
-    	    <a href="/blog/${blog.subType}">${title}</a> |
-    	    <@lib.showUser author/>
+            <a href="/blog/${blog.subType}">${title}</a> |
+            <@lib.showUser author/>
             <#if (category!="UNDEF" && category?length > 1)>| ${category}</#if>
             <#if SUMMARY?exists><br /><#else> | </#if>
-	        Přečteno: ${TOOL.getCounterValue(story,"read")}&times;
+               Přečteno: ${TOOL.getCounterValue(story,"read")}&times;
             <#if tmp.discussion?exists>| <@lib.showCommentsInListing TOOL.analyzeDiscussion(tmp.discussion[0]), "SMART_DMY", "/blog" /></#if>
             <@lib.showShortRating relation, "| " />
         </p>

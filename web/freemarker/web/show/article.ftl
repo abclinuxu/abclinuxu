@@ -7,7 +7,7 @@
 
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
-<p class="cl_inforadek">
+<p class="meta-vypis">
     ${DATE.show(ITEM.created,"SMART_DMY")} |
     <#list autors as autor>
         <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
