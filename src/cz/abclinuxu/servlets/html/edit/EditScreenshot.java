@@ -401,7 +401,7 @@ public class EditScreenshot implements AbcAction {
         }
 
         File thumbnailListingFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, name + "-listing", ".png");
-        ImageTool.createThumbnailMaxSize(imageFile, thumbnailListingFile, 200, true);
+        ImageTool.createThumbnailMaxSize(imageFile, thumbnailListingFile, 250, false);
         path = Misc.getWebPath(thumbnailListingFile.getAbsolutePath());
         root.addElement("listingThumbnail").setText(path);
 
