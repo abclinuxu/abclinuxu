@@ -346,8 +346,8 @@
                             <entry key="change.item.owner" value="update polozka set pridal=?, zmeneno=zmeneno where pridal=?"/>
                             <entry key="change.record.owner" value="update zaznam set pridal=?, zmeneno=zmeneno where pridal=?"/>
                             <entry key="change.category.owner" value="update kategorie set pridal=?, zmeneno=zmeneno where pridal=?"/>
-                            <entry key="change.property.owner" value="update vlastnost set hodnota=? where hodnota=? and (typ='user' or typ='used_by')"/>
-                            <entry key="count.properties.by.user" value="select count(*) from vlastnost where hodnota=? and (typ='user' or typ='used_by')"/>
+                            <entry key="change.property.owner" value="update vlastnost set hodnota=? where hodnota=? and (typ='user' or typ='used_by' or typ='favourited_by')"/>
+                            <entry key="count.properties.by.user" value="select count(*) from vlastnost where hodnota=? and (typ='user' or typ='used_by' or typ='favourited_by')"/>
                         </map>
                     </node>
                     <node name="versioning">
