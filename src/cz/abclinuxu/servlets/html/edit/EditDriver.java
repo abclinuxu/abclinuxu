@@ -161,6 +161,11 @@ public class EditDriver implements AbcAction {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
+        // run monitor
+        String absoluteUrl = "http://www.abclinuxu.cz"+url;
+        MonitorAction action = new MonitorAction(user,UserAction.ADD,ObjectType.DRIVER,relation,absoluteUrl);
+        MonitorPool.scheduleMonitorAction(action);
+
         FeedGenerator.updateDrivers();
         VariableFetcher.getInstance().refreshDrivers();
 
@@ -242,7 +247,7 @@ public class EditDriver implements AbcAction {
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz"+url;
-        MonitorAction action = new MonitorAction(user,UserAction.EDIT,ObjectType.DRIVER,item,absoluteUrl);
+        MonitorAction action = new MonitorAction(user,UserAction.EDIT,ObjectType.DRIVER,relation,absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 
         FeedGenerator.updateDrivers();

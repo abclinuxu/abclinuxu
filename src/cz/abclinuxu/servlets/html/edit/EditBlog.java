@@ -53,6 +53,7 @@ import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.utils.email.monitor.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,6 +66,7 @@ import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
 import org.apache.regexp.REProgram;
 import org.apache.regexp.RECompiler;
+import org.apache.commons.fileupload.FileItem;
 import org.dom4j.Element;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -88,9 +90,11 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String PARAM_CATEGORY_ID = "cid";
     public static final String PARAM_CATEGORY_NAME = "category";
     public static final String PARAM_CONTENT = "content";
+    public static final String PARAM_CONTENT_FILE = "contentFile";
     public static final String PARAM_RELATION = "rid";
     public static final String PARAM_PREVIEW = "preview";
     public static final String PARAM_DELAY = "delay";
+    public static final String PARAM_UPLOAD = "upload";
     public static final String PARAM_WATCH_DISCUSSION = "watchDiz";
     public static final String PARAM_URL = "url";
     public static final String PARAM_POSITION = "position";
@@ -377,11 +381,16 @@ public class EditBlog implements AbcAction, Configurable {
         story.setData(document);
         Element root = document.addElement("data");
 
+        boolean uploading = params.containsKey(PARAM_UPLOAD);
+
         boolean canContinue = setStoryTitle(params, root, env);
+
+        if (uploading) // this method will put file's contents into the params, checking will be done by the following method
+            canContinue &= setStoryContentFromFile(params, env);
         canContinue &= setStoryContent(params, root, env);
         canContinue &= setStoryCategory(params, story);
 
-        if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
+        if ( !canContinue || uploading || params.get(PARAM_PREVIEW)!=null ) {
             if ( canContinue ) {
                 story.setCreated(new Date());
                 story.setInitialized(true);
@@ -404,12 +413,17 @@ public class EditBlog implements AbcAction, Configurable {
         if ("yes".equals(watchDiscussion))
             EditDiscussion.alterDiscussionMonitor((Item) dizRelation.getChild(), user, persistence);
 
+        String storyUrl = Tools.getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId());
         if (!delayed) {
             incrementArchiveRecord(blog.getData().getRootElement(), new Date());
             persistence.update(blog);
             FeedGenerator.updateBlog(blog);
             VariableFetcher.getInstance().refreshStories();
             sendDigestMessage(relation);
+
+            // run monitor
+            MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.BLOG, relation, "http://www.abclinuxu.cz"+storyUrl);
+            MonitorPool.scheduleMonitorAction(action);
         } else {
             Element unpublished = DocumentHelper.makeElement(blog.getData(), "/data/unpublished");
             unpublished.addElement("rid").setText(Integer.toString(relation.getId()));
@@ -418,7 +432,6 @@ public class EditBlog implements AbcAction, Configurable {
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            String storyUrl = Tools.getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId());
             urlUtils.redirect(response, storyUrl);
         } else
             env.put(VAR_RELATION, relation);
@@ -637,6 +650,15 @@ public class EditBlog implements AbcAction, Configurable {
         Element unpublishedStory = (Element) document.selectSingleNode("/data/unpublished/rid[text()=\"" + story.getId() + "\"]");
         if (unpublishedStory != null)
             unpublishedStory.detach();
+
+        // run monitor
+        if (unpublishedStory == null) {
+            MonitorAction action = new MonitorAction(user, UserAction.REMOVE, ObjectType.BLOG, story, null);
+            String name = item.getData().selectSingleNode("/data/name").getText();
+            action.setProperty(Decorator.PROPERTY_NAME, name);
+            MonitorPool.scheduleMonitorAction(action);
+        }
+
         persistence.update(blog);
 
         FeedGenerator.updateBlog(blog);
@@ -1289,6 +1311,23 @@ public class EditBlog implements AbcAction, Configurable {
         if (title==null)
             title = root.addElement("name");
         title.setText(s);
+        return true;
+    }
+
+    /**
+     * Loads text from an uploaded file. Its contents are stored into params
+     * @param params map holding request's parameters
+     * @return false, if there is a major error
+     */
+    boolean setStoryContentFromFile(Map params, Map env) {
+        FileItem fileItem = (FileItem) params.get(PARAM_CONTENT_FILE);
+        // 0-length data is what we get if user doesn't choose any file
+        if (fileItem == null || fileItem.getSize() == 0) {
+            ServletUtils.addError(PARAM_CONTENT_FILE, "Vyberte soubor.", env, null);
+            return false;
+        }
+
+        params.put(PARAM_CONTENT, new String(fileItem.get()));
         return true;
     }
 

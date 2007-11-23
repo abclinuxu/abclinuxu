@@ -179,6 +179,10 @@ public class EditHardware implements AbcAction {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
+        // run monitor
+        MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.HARDWARE, relation, url);
+        MonitorPool.scheduleMonitorAction(action);
+
         // refresh RSS
         FeedGenerator.updateHardware();
         VariableFetcher.getInstance().refreshHardware();
@@ -277,7 +281,7 @@ public class EditHardware implements AbcAction {
         if (url==null)
             url = "/hardware/show/"+relation.getId();
         url = "http://www.abclinuxu.cz" + url;
-        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.ITEM, item, url);
+        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.HARDWARE, relation, url);
         MonitorPool.scheduleMonitorAction(action);
 
         VariableFetcher.getInstance().refreshHardware();

@@ -25,16 +25,15 @@ import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.servlets.Constants;
 
 import java.util.Map;
 import java.util.HashMap;
 import java.util.prefs.Preferences;
 
 /**
- * Decorator for Discussions.
+ * Decorator for Software items.
  */
-public class DriverDecorator implements Decorator, Configurable {
+public class SoftwareDecorator implements Decorator, Configurable {
     public static final String PREF_ACTION_ADD = "action.add";
     public static final String PREF_ACTION_EDIT = "action.edit";
     public static final String PREF_ACTION_REMOVE = "action.remove";
@@ -52,8 +51,7 @@ public class DriverDecorator implements Decorator, Configurable {
         Map env = new HashMap();
 
         env.put(EmailSender.KEY_SUBJECT, subject);
-        env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_driver.ftl");
-        env.put(EmailSender.KEY_STATS_KEY, Constants.EMAIL_MONITOR_DRIVER);
+        env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_software.ftl");
 
         if ( action.url!=null )
             env.put(VAR_URL, action.url);
@@ -73,15 +71,15 @@ public class DriverDecorator implements Decorator, Configurable {
         String name = (String) action.getProperty(PROPERTY_NAME);
         if ( name==null ) {
             Persistence persistence = PersistenceFactory.getPersistence();
-            Item driver = (Item) persistence.findById(action.relation.getChild());
-            name = driver.getData().selectSingleNode("/data/name").getText();
+            Item obj = (Item) persistence.findById(action.relation.getChild());
+            name = obj.getData().selectSingleNode("/data/name").getText();
         }
         env.put(VAR_NAME, name);
 
         return env;
     }
 
-    public DriverDecorator() {
+    public SoftwareDecorator() {
         ConfigurationManager.getConfigurator().configureAndRememberMe(this);
     }
 

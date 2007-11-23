@@ -25,7 +25,9 @@ import java.util.LinkedList;
 import java.util.Date;
 import java.util.Collections;
 
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.data.GenericDataObject;
+import cz.abclinuxu.data.GenericObject;
 
 /**
  * Pool for triggered actions used by InstantSender.
@@ -77,24 +79,18 @@ public class MonitorPool {
      * @param action
      */
     public static void scheduleMonitorAction(MonitorAction action) {
-        if ( action.object!=null ) {
-            Element monitor = (Element) action.object.getData().selectSingleNode("//monitor");
-            if ( monitor==null )
-                return;
-            action.monitor = monitor.createCopy();
-        }
-
         action.performed = new Date();
 
         try {
-            if (action.object!=null) {
-                GenericDataObject clone = (GenericDataObject) action.object.getClass().newInstance();
-                clone.setId(action.object.getId());
-                action.object = clone;
-            }
+            GenericObject src = action.relation.getChild();
+            GenericDataObject clone = (GenericDataObject) src.getClass().newInstance();
+            clone.setId(src.getId());
+            action.object = clone;
         } catch (Exception e) {
             log.error("Cannot create copy of "+action.object, e);
         }
+
+        action.gatherRecipients();
 
         singleton.pool.add(action);
     }

@@ -130,6 +130,7 @@
                             <node name="DriverDecorator">
                                 <map>
                                     <entry key="subject" value="AbcMonitor: uprava ovladace"/>
+                                    <entry key="action.add" value="vytvoril ovladac"/>
                                     <entry key="action.edit" value="upravil ovladac"/>
                                     <entry key="action.remove" value="smazal ovladac"/>
                                 </map>
@@ -155,6 +156,45 @@
                                     <entry key="action.add" value="pridal komentar"/>
                                     <entry key="action.remove" value="smazal diskusi"/>
                                     <entry key="action.censore" value="uvalil cenzuru na komentar"/>
+                                </map>
+                            </node>
+                            <node name="BlogDecorator">
+                                <map>
+                                    <entry key="subject" value="AbcMonitor: zmena v blogu"/>
+                                    <entry key="action.add" value="vytvoril zapisek"/>
+                                    <entry key="action.remove" value="smazal zapisek"/>
+                                </map>
+                            </node>
+                            <node name="SoftwareDecorator">
+                                <map>
+                                    <entry key="subject" value="AbcMonitor: zmena v sekci software"/>
+                                    <entry key="action.add" value="vytvoril softwarovou polozku"/>
+                                    <entry key="action.edit" value="upravil softwarovou polozku"/>
+                                    <entry key="action.remove" value="smazal softwarovou polozku"/>
+                                </map>
+                            </node>
+                            <node name="HardwareDecorator">
+                                <map>
+                                    <entry key="subject" value="AbcMonitor: zmena v sekci hardware"/>
+                                    <entry key="action.add" value="vytvoril hardwarovou polozku"/>
+                                    <entry key="action.edit" value="upravil hardwarovou polozku"/>
+                                    <entry key="action.remove" value="smazal hardwarovou polozku"/>
+                                </map>
+                            </node>
+                            <node name="PersonalityDecorator">
+                                <map>
+                                    <entry key="subject" value="AbcMonitor: zmena v sekci kdo je"/>
+                                    <entry key="action.add" value="vytvoril polozku osobnosti"/>
+                                    <entry key="action.edit" value="upravil polozku osobnosti"/>
+                                    <entry key="action.remove" value="smazal polozku osobnosti"/>
+                                </map>
+                            </node>
+                            <node name="DictionaryDecorator">
+                                <map>
+                                    <entry key="subject" value="AbcMonitor: zmena ve slovniku pojmu"/>
+                                    <entry key="action.add" value="vytvoril polozku ve slovniku"/>
+                                    <entry key="action.edit" value="upravil polozku ve slovniku"/>
+                                    <entry key="action.remove" value="smazal polozku ve slovniku"/>
                                 </map>
                             </node>
                         </node>

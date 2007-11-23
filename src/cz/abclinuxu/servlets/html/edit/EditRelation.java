@@ -593,23 +593,28 @@ public class EditRelation implements AbcAction {
             return;
 
         Item item = (Item) child;
-        if (item.getType()==Item.DRIVER) {
-            action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DRIVER, item, null);
-            String name = item.getData().selectSingleNode("/data/name").getText();
-            action.setProperty(Decorator.PROPERTY_NAME, name);
-        } else if (item.getType()==Item.HARDWARE) {
-            action = new MonitorAction(user, UserAction.REMOVE, ObjectType.ITEM, item, null);
-            String name = item.getData().selectSingleNode("/data/name").getText();
-            action.setProperty(Decorator.PROPERTY_NAME, name);
-        } else if (item.getType()==Item.DISCUSSION) {
-            action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DISCUSSION, item, null);
-            Element title = (Element) item.getData().selectSingleNode("/data/title");
-            if (title==null)
-                return;
-            action.setProperty(Decorator.PROPERTY_NAME, title.getText());
-        }
+        String name = Tools.childName(item);
 
-        if (action!=null)
+        if (item.getType() == Item.DRIVER) 
+            action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DRIVER, relation, null);
+        else if (item.getType() == Item.HARDWARE)
+            action = new MonitorAction(user, UserAction.REMOVE, ObjectType.HARDWARE, relation, null);
+        else if (item.getType() == Item.SOFTWARE)
+            action = new MonitorAction(user, UserAction.REMOVE, ObjectType.SOFTWARE, relation, null);
+        else if (item.getType() == Item.DICTIONARY)
+            action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DICTIONARY, relation, null);
+        else if (item.getType() == Item.PERSONALITY)
+            action = new MonitorAction(user, UserAction.REMOVE, ObjectType.PERSONALITY, relation, null);
+        else if (item.getType() == Item.FAQ)
+            action = new MonitorAction(user, UserAction.REMOVE, ObjectType.FAQ, relation, null);
+        else if (item.getType() == Item.DISCUSSION)
+            action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DISCUSSION, relation, null);
+
+        if (action != null) {
+            if (!Misc.empty(name))
+                action.setProperty(Decorator.PROPERTY_NAME, name);
+
             MonitorPool.scheduleMonitorAction(action);
+        }
     }
 }

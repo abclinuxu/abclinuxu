@@ -2,6 +2,9 @@
 <#assign intro=TOOL.xpath(BLOG,"//custom/intro")?default("UNDEF")>
 <#assign title=TOOL.xpath(BLOG,"//custom/title")?default("UNDEF")>
 <#assign owner=TOOL.createUser(BLOG.owner)>
+<#if USER?exists && TOOL.xpath(BLOG,"//monitor/id[text()='"+USER.id+"']")?exists>
+    <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj blog">
+</#if>
 
 <#assign plovouci_sloupec>
 
@@ -103,6 +106,11 @@
             <li><a href="/blog">Všechny blogy</a></li>
 	        <li><a href="/blog/souhrn">Stručný souhrn blogů</a></li>
 	        <li><a href="/blog/vyber">Výběr z blogů</a></li>
+	    <li>
+                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
+                <span title="Počet lidí, kteří sledují tento blog">(${TOOL.getMonitorCount(BLOG.data)})</span>
+                <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při vytvoření nového zápisku v tomto blogu.</span></a>
+            </li>
         </ul>
     </div>
 

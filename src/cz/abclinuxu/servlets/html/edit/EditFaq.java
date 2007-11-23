@@ -165,6 +165,11 @@ public class EditFaq implements AbcAction {
         relation.setUrl(url);
         persistence.create(relation);
 
+        // run monitor
+        String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
+        MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.FAQ, relation, absoluteUrl);
+        MonitorPool.scheduleMonitorAction(action);
+
         // refresh RSS
         FeedGenerator.updateFAQ();
         VariableFetcher.getInstance().refreshFaq();
@@ -230,7 +235,7 @@ public class EditFaq implements AbcAction {
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
-        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.FAQ, item, absoluteUrl);
+        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.FAQ, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 
         // refresh RSS

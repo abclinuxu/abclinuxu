@@ -289,6 +289,7 @@ public class EditDiscussion implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
 
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item discussion = new Item(0,Item.DISCUSSION);
@@ -320,15 +321,33 @@ public class EditDiscussion implements AbcAction {
         persistence.create(rel2);
         rel2.getParent().addChildRelation(rel2);
 
+        // run monitor
+        String url = relation.getUrl();
+        if (url == null)
+            url = "http://www.abclinuxu.cz" + urlUtils.getPrefix() + "/show/" + relation.getId();
+        else
+            url = "http://www.abclinuxu.cz" + url;
+
+        MonitorAction action = null;
+        if (user!=null)
+            action = new MonitorAction(user, UserAction.ADD, ObjectType.DISCUSSION, relation, url);
+        else {
+            String author = (String) params.get(PARAM_AUTHOR);
+            action = new MonitorAction(author, UserAction.ADD, ObjectType.DISCUSSION, relation, url);
+        }
+        action.setProperty(DiscussionDecorator.PROPERTY_NAME, comment.getTitle());
+        String content = root.elementText("text");
+        action.setProperty(DiscussionDecorator.PROPERTY_CONTENT, content);
+        MonitorPool.scheduleMonitorAction(action);
+
         // run email forum and refresh RSS
         ForumPool.submitComment(rel2, discussion.getId(), 0, 0);
         FeedGenerator.updateForum();
         VariableFetcher.getInstance().refreshQuestions();
 
-        if (redirect) {
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        if (redirect)
             urlUtils.redirect(response, "/show/"+rel2.getId());
-        } else
+        else
             env.put(VAR_RELATION, rel2);
 
         return null;
@@ -486,10 +505,10 @@ public class EditDiscussion implements AbcAction {
 
         MonitorAction action = null;
         if (user!=null)
-            action = new MonitorAction(user, UserAction.ADD, ObjectType.DISCUSSION, discussion, url);
+            action = new MonitorAction(user, UserAction.ADD, ObjectType.DISCUSSION, relation, url);
         else {
             String author = (String) params.get(PARAM_AUTHOR);
-            action = new MonitorAction(author, UserAction.ADD, ObjectType.DISCUSSION, discussion, url);
+            action = new MonitorAction(author, UserAction.ADD, ObjectType.DISCUSSION, relation, url);
         }
         action.setProperty(DiscussionDecorator.PROPERTY_NAME, comment.getTitle());
         String content = root.elementText("text");
@@ -588,7 +607,7 @@ public class EditDiscussion implements AbcAction {
 
                     // run monitor
                     String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/show/"+relation.getId();
-                    MonitorAction monitor = new MonitorAction(user, UserAction.CENSORE, ObjectType.DISCUSSION, discussion, url);
+                    MonitorAction monitor = new MonitorAction(user, UserAction.CENSORE, ObjectType.DISCUSSION, relation, url);
                     monitor.setProperty(DiscussionDecorator.PROPERTY_NAME, comment.getTitle());
                     MonitorPool.scheduleMonitorAction(monitor);
 
@@ -766,7 +785,7 @@ public class EditDiscussion implements AbcAction {
         String url = mainRelation.getUrl();
         if (url == null)
             url = "http://www.abclinuxu.cz" + urlUtils.getPrefix() + "/show/" + mainRelation.getId();
-        MonitorAction action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DISCUSSION, discussion, url);
+        MonitorAction action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DISCUSSION, mainRelation, url);
         action.setProperty(DiscussionDecorator.PROPERTY_NAME, title);
         action.setProperty(DiscussionDecorator.PROPERTY_CONTENT, content);
         MonitorPool.scheduleMonitorAction(action);

@@ -159,6 +159,11 @@ public class EditPersonality implements AbcAction {
         setRssUrl(params, item, relation.getId());
         persistence.update(item);
 
+        // run monitor
+        String url = "http://www.abclinuxu.cz"+relation.getUrl();
+        MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.PERSONALITY, relation, url);
+        MonitorPool.scheduleMonitorAction(action);
+
         FeedGenerator.updatePersonalities();
         VariableFetcher.getInstance().refreshPersonalities();
 
@@ -247,7 +252,7 @@ public class EditPersonality implements AbcAction {
 
         // run monitor
         String url = "http://www.abclinuxu.cz"+relation.getUrl();
-        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.PERSONALITY, item, url);
+        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.PERSONALITY, relation, url);
         MonitorPool.scheduleMonitorAction(action);
 
         FeedGenerator.updatePersonalities();

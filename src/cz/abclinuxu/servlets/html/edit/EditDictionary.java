@@ -140,6 +140,11 @@ public class EditDictionary implements AbcAction {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
+        // run monitor
+        String url = "http://www.abclinuxu.cz"+relation.getUrl();
+        MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.DICTIONARY, relation, url);
+        MonitorPool.scheduleMonitorAction(action);
+
         FeedGenerator.updateDictionary();
         VariableFetcher.getInstance().refreshDictionary();
 
@@ -194,7 +199,7 @@ public class EditDictionary implements AbcAction {
 
         // run monitor
         String url = "http://www.abclinuxu.cz"+relation.getUrl();
-        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.DICTIONARY, item, url);
+        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.DICTIONARY, relation, url);
         MonitorPool.scheduleMonitorAction(action);
 
         FeedGenerator.updateDictionary();

@@ -1,3 +1,20 @@
+<#if USER?exists && TOOL.xpath(RELATION.child,"//monitor/id[text()='"+USER.id+"']")?exists>
+    <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj sekci">
+</#if>
+<#assign plovouci_sloupec>
+    <div class="s_sekce">
+        <ul>
+            <li>
+                <a href="${URL.make("/kdo-je/edit?action=add")}">Vložit novou osobnost</a>
+            </li>
+            <li>
+                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
+                <span title="Počet lidí, kteří sledují tuto sekci">(${TOOL.getMonitorCount(RELATION.child.data)})</span>
+                <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při nové položce v této a v podřazených sekcích.</span></a>
+            </li>
+        </ul>
+    </div>
+</#assign>
 <#include "../header.ftl">
 
 <h1>Kdo je</h1>

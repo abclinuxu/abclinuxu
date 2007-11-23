@@ -204,6 +204,11 @@ public class EditSoftware implements AbcAction, Configurable {
         setRssUrl(params, item, relation.getId());
         persistence.update(item);
 
+        // run monitor
+        String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
+        MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.SOFTWARE, relation, absoluteUrl);
+        MonitorPool.scheduleMonitorAction(action);
+
         // refresh RSS
         FeedGenerator.updateSoftware();
 
@@ -286,7 +291,7 @@ public class EditSoftware implements AbcAction, Configurable {
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
-        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.ITEM, item, absoluteUrl);
+        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.SOFTWARE, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 
         // refresh RSS

@@ -40,7 +40,7 @@ spokojeni. Najdete jej v pravém menu.
 
 <h2>Zde můžete provést své úpravy</h2>
 
-<form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST" name="form">
+<form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST" name="form" enctype="multipart/form-data">
 <table class="siroka" cellpadding="5">
     <tr>
         <td>
@@ -91,13 +91,23 @@ spokojeni. Najdete jej v pravém menu.
     </tr>
     <tr>
         <td>
+            <span>Načíst obsah ze souboru</span>
+            <div>
+                <input type="file" name="contentFile" size="20" tabindex="3">
+                <input tabindex="4" type="submit" name="upload" value="Načti soubor">
+            </div>
+            <div class="error">${ERRORS.contentFile?if_exists}</div>
+        </td>
+    </tr>
+    <tr>
+        <td>
             <#if PREVIEW?exists>
-                <input tabindex="3" type="submit" name="preview" value="Zopakuj náhled">
-                <input tabindex="4" type="submit" name="finish" value="Dokonči">
-                <input tabindex="5" type="submit" name="delay" value="Odlož">
+                <input tabindex="5" type="submit" name="preview" value="Zopakuj náhled">
+                <input tabindex="6" type="submit" name="finish" value="Dokonči">
+                <input tabindex="7" type="submit" name="delay" value="Odlož">
             <#else>
-                <input tabindex="3" type="submit" name="preview" value="Náhled">
-                <input tabindex="4" type="submit" name="delay" value="Odlož">
+                <input tabindex="5" type="submit" name="preview" value="Náhled">
+                <input tabindex="6" type="submit" name="delay" value="Odlož">
             </#if>
         </td>
     </tr>

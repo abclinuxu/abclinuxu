@@ -198,6 +198,11 @@ public class EditContent implements AbcAction {
         relation.setChild(item);
         persistence.create(relation);
 
+        // run monitor
+        String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
+        MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.CONTENT, relation, absoluteUrl);
+        MonitorPool.scheduleMonitorAction(action);
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
         return null;
@@ -271,6 +276,11 @@ public class EditContent implements AbcAction {
             }
         }
 
+        // run monitor
+        String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
+        MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.CONTENT, relation, absoluteUrl);
+        MonitorPool.scheduleMonitorAction(action);
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
         return null;
@@ -324,7 +334,7 @@ public class EditContent implements AbcAction {
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
-        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.CONTENT, item, absoluteUrl);
+        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -391,7 +401,7 @@ public class EditContent implements AbcAction {
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
-        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.CONTENT, item, absoluteUrl);
+        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);

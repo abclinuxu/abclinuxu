@@ -18,16 +18,18 @@
  */
 package cz.abclinuxu.utils.email.monitor;
 
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.data.GenericDataObject;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.Item;
 
 import java.util.prefs.Preferences;
 import java.util.Map;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.dom4j.Element;
 
@@ -46,6 +48,11 @@ public class InstantSender extends Thread implements Configurable {
     static Decorator faqDecorator = new FaqDecorator();
     static Decorator driverDecorator = new DriverDecorator();
     static Decorator itemDecorator = new ItemDecorator();
+    static Decorator blogDecorator = new BlogDecorator();
+    static Decorator swDecorator = new SoftwareDecorator();
+    static Decorator hwDecorator = new HardwareDecorator();
+    static Decorator persDecorator = new PersonalityDecorator();
+    static Decorator dictDecorator = new DictionaryDecorator();
 
     int waitInterval;
 
@@ -74,10 +81,10 @@ public class InstantSender extends Thread implements Configurable {
                 action = pool.getFirst();
 
                 if (log.isDebugEnabled())
-                    log.debug("Processing action "+action.getAction()+" on "+action.getType()+" "+action.getObject());
+                    log.info("Processing action "+action.getAction()+" on "+action.getType()+" "+action.getRelation());
 
                 Map env = chooseDecorator(action).getEnvironment(action);
-                List users = getRecepients(action);
+                List<Integer> users = action.getRecipients();
                 if (users.size()>0)
                     EmailSender.sendEmailToUsers(env,users);
             } catch (Exception e) {
@@ -93,37 +100,23 @@ public class InstantSender extends Thread implements Configurable {
     private Decorator chooseDecorator(MonitorAction action) {
         if (ObjectType.DRIVER.equals(action.type) )
             return driverDecorator;
+        if (ObjectType.DICTIONARY.equals(action.type) )
+            return dictDecorator;
+        if (ObjectType.SOFTWARE.equals(action.type) )
+            return swDecorator;
+        if (ObjectType.HARDWARE.equals(action.type) )
+            return hwDecorator;
+        if (ObjectType.PERSONALITY.equals(action.type) )
+            return persDecorator;
         if (ObjectType.DISCUSSION.equals(action.type) )
             return discussionDecorator;
         if (ObjectType.ITEM.equals(action.type) || ObjectType.CONTENT.equals(action.type))
             return itemDecorator;
         if (ObjectType.FAQ.equals(action.type) )
             return faqDecorator;
+        if (ObjectType.BLOG.equals(action.type) )
+            return blogDecorator;
         return null;
-    }
-
-    /**
-     * Finds users, that wish to be informed about this action.
-     * User, who performed this action, will be skipped.
-     * @return List of Integers - keys of users
-     */
-    private List getRecepients(MonitorAction action) {
-        Element monitor = action.getMonitor();
-        List keys = monitor.elements("id");
-        List users = new ArrayList(keys.size());
-        Integer actor = action.getActorId();
-
-        for ( Iterator iter = keys.iterator(); iter.hasNext(); ) {
-            Element id = (Element) iter.next();
-            try {
-                Integer key = Integer.valueOf(id.getTextTrim());
-                if ( !actor.equals(key) )
-                    users.add(key);
-            } catch (NumberFormatException e) {
-                log.error("Error in XML in object "+action.getObject(), e);
-            }
-        }
-        return users;
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {

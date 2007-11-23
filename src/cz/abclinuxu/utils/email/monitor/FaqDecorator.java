@@ -70,7 +70,7 @@ public class FaqDecorator implements Decorator, Configurable {
         String name = (String) action.getProperty(PROPERTY_NAME);
         if ( name==null ) {
             Persistence persistence = PersistenceFactory.getPersistence();
-            Item driver = (Item) persistence.findById(action.object);
+            Item driver = (Item) persistence.findById(action.relation.getChild());
             name = driver.getData().selectSingleNode("/data/title").getText();
         }
         env.put(VAR_NAME, name);
