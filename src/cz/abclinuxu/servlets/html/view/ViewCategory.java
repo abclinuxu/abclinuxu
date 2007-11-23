@@ -187,6 +187,8 @@ public class ViewCategory implements AbcAction {
                 return FMTemplateSelector.select("ViewCategory", "documents", env, request);
             case Constants.REL_BAZAAR:
                 return ViewBazaar.processSection(request, relation, env);
+            case Constants.REL_SCREENSHOTS:
+                return ViewScreenshot.processSection(request, env);
         }
 
         if ( category.getId()==Constants.CAT_ARTICLES ) {
