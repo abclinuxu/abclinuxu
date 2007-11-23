@@ -22,16 +22,17 @@
 
 <#global CITACE = TOOL.getRelationCountersValue(ITEMS.data,"read")/>
 <#list ITEMS.data as relation>
-    <#assign item = relation.child, reads = TOOL.getCounterValue(item,"read"), usedBy = item.getProperty("favourited_by")>
+    <#assign item=relation.child, reads=TOOL.getCounterValue(item,"read"), usedBy=item.getProperty("favourited_by")>
     <#assign tmp=TOOL.groupByType(item.children, "Item"), diz=TOOL.analyzeDiscussion(tmp.discussion[0]), autor=TOOL.createUser(item.owner)>
+    <#assign title=TOOL.xpath(ITEM,"/data/title")>
 
     <h2 class="st_nadpis">
-        <a href="${relation.url}" title="${TOOL.xpath(item,"/data/title")}">${TOOL.xpath(item,"/data/title")}</a>
+        <a href="${relation.url}" title="${title?html}">${title?html}</a>
     </h2>
 
-    <div class="thumb">
-        <a href="${relation.url}" title="${TOOL.xpath(item,"/data/title")}">
-            <img src="${TOOL.xpath(item,"/data/listingThumbnail")}" alt="${TOOL.xpath(item,"/data/title")}" border="0">
+    <div>
+        <a href="${relation.url}" title="${title?html}" class="thumb">
+            <img src="${TOOL.xpath(item,"/data/listingThumbnail")}" alt="${title?html}" border="0">
         </a>
     </div>
 

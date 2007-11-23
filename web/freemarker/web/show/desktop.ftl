@@ -23,11 +23,13 @@
 
 <div class="desktopy">
 
-<h1>${TOOL.xpath(ITEM,"/data/title")}</h1>
+<#assign title=TOOL.xpath(ITEM,"/data/title")>
 
-<div class="thumb">
-    <a href="${TOOL.xpath(ITEM,"/data/image")}" title="${TOOL.xpath(ITEM,"/data/title")}">
-        <img src="${TOOL.xpath(ITEM,"/data/detailThumbnail")}" alt="${TOOL.xpath(ITEM,"/data/title")}" border="0">
+<h1>${title?html}</h1>
+
+<div>
+    <a href="${TOOL.xpath(ITEM,"/data/image")}" title="${title?html}" class="thumb">
+        <img src="${TOOL.xpath(ITEM,"/data/detailThumbnail")}" alt="${title?html}" border="0">
     </a>
 </div>
 
