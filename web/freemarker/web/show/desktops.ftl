@@ -22,7 +22,7 @@
 
 <#global CITACE = TOOL.getRelationCountersValue(ITEMS.data,"read")/>
 <#list ITEMS.data as relation>
-    <#assign item=relation.child, reads=TOOL.getCounterValue(item,"read"), usedBy=item.getProperty("favourited_by")>
+    <#assign item = relation.child, reads = TOOL.getCounterValue(item,"read"), usedBy = item.getProperty("favourited_by")>
     <#assign tmp=TOOL.groupByType(item.children, "Item"), diz=TOOL.analyzeDiscussion(tmp.discussion[0]), autor=TOOL.createUser(item.owner)>
 
     <h2 class="st_nadpis">
