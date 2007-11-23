@@ -46,6 +46,8 @@ public class ViewUser implements AbcAction {
     public static final String VAR_COUNTS = "COUNTS";
     public static final String VAR_AUTHOR = "AUTHOR";
     public static final String VAR_SOFTWARE = "SOFTWARE";
+    public static final String VAR_LAST_DESKTOP = "LAST_DESKTOP";
+    public static final String VAR_DESKTOPS = "DESKTOPS";
 
     public static final String PARAM_USER = "userId";
     public static final String PARAM_USER_SHORT = "uid";
@@ -123,6 +125,19 @@ public class ViewUser implements AbcAction {
         Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_USED_BY, property);
         List<Relation> softwares = sqlTool.findItemRelationsWithTypeWithFilters(Item.SOFTWARE, null, filters);
         env.put(VAR_SOFTWARE, softwares);
+
+        // find user's favourite desktop screenshots
+        filters = Collections.singletonMap(Constants.PROPERTY_FAVOURITED_BY, property);
+        List<Relation> desktops = sqlTool.findItemRelationsWithTypeWithFilters(Item.SCREENSHOT, null, filters);
+        env.put(VAR_DESKTOPS, desktops);
+
+        // find the last screenshot uploaded by this user
+        Qualifier[] qualifiers = new Qualifier[] { new CompareCondition(Field.OWNER, Operation.EQUAL, user.getId()),
+            Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 1) };
+        desktops = sqlTool.findItemRelationsWithType(Item.SCREENSHOT, qualifiers);
+
+        if (desktops.size() > 0)
+            env.put(VAR_LAST_DESKTOP, desktops.get(0));
 
         return FMTemplateSelector.select("ViewUser","profile",env,request);
     }

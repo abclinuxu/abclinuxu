@@ -111,6 +111,27 @@
     </ul>
 </#if>
 
+<#if LAST_DESKTOP?exists>
+    <p>Můj současný desktop:</p>
+    <p>
+        <#assign title=TOOL.xpath(LAST_DESKTOP.child,"/data/title")>
+        <a href="${LAST_DESKTOP.url}" title="${title?html}">
+            <img src="${TOOL.xpath(LAST_DESKTOP.child,"/data/detailThumbnail")}" alt="${title?html}" border="0">
+        </a>
+    </p>
+</#if>
+
+<#if DESKTOPS?size gt 0>
+    <p>Desktopy, které se mi líbí:</p>
+    <ul>
+        <#list DESKTOPS as ds>
+            <li>
+                <a href="${ds.url}">${TOOL.xpath(ds.child, "/data/title")}</a>
+            </li>
+        </#list>
+    </ul>
+</#if>
+
 <p><a href="/muj_obsah/${PROFILE.id}" rel="nofollow">Seznam příspěvků na abclinuxu.cz</a><br>
 (články, komentáře, dotazy, zprávičky, softwarové a hardwarové záznamy, pojmy ve slovníku a texty v učebnici)</p>
 <br>

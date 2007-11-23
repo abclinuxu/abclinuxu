@@ -79,6 +79,20 @@
         </div>
     </#if>
 
+    <#if LAST_DESKTOP?exists>
+        <div class="s_nadpis">
+            <a class="info" href="#">?<span class="tooltip">Poslední screenshot mého desktopu.</span></a>
+            Současný desktop
+        </div>
+
+        <div class="s_sekce" align="center">
+            <#assign title=TOOL.xpath(LAST_DESKTOP.child,"/data/title")>
+            <a href="${LAST_DESKTOP.url}" title="${title?html}">
+                <img src="${TOOL.xpath(LAST_DESKTOP.child,"/data/listingThumbnail")}" alt="${title?html}" border="0">
+            </a>
+        </div>
+    </#if>
+
     <div class="s_nadpis">
         <a class="info" href="#">?<span class="tooltip">Přístup na osobní hlavní stranu a na hlavní stranu všech blogů.</span></a>
         Navigace
