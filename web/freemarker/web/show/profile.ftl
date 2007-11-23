@@ -115,7 +115,7 @@
     <p>Můj současný desktop:</p>
     <p>
         <#assign title=TOOL.xpath(LAST_DESKTOP.child,"/data/title")>
-        <a href="${LAST_DESKTOP.url}" title="${title?html}">
+        <a href="${LAST_DESKTOP.url}" title="${title?html}" class="thumb">
             <img src="${TOOL.xpath(LAST_DESKTOP.child,"/data/detailThumbnail")}" alt="${title?html}" border="0">
         </a>
     </p>

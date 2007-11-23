@@ -82,7 +82,7 @@
 
         <div class="s_sekce" align="center">
             <#assign title=TOOL.xpath(LAST_DESKTOP.child,"/data/title")>
-            <a href="${LAST_DESKTOP.url}" title="${title?html}">
+            <a href="${LAST_DESKTOP.url}" title="${title?html}" class="thumb">
                 <img src="${TOOL.xpath(LAST_DESKTOP.child,"/data/listingThumbnail")}" alt="${title?html}" border="0">
             </a>
         </div>
