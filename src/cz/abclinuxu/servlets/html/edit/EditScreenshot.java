@@ -135,7 +135,7 @@ public class EditScreenshot implements AbcAction {
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (action.equals(ACTION_REMOVE_STEP2)) {
-            ActionProtector.ensureContract(request, ViewScreenshot.class, true, true, false, true);
+            ActionProtector.ensureContract(request, ViewScreenshot.class, true, false, false, true);
             return actionRemoveStep2(request, response, env);
         }
 
