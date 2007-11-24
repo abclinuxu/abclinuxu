@@ -613,7 +613,7 @@ public class EditBlog implements AbcAction, Configurable {
      * First step of renaming blog.
      */
     protected String actionRemoveStoryStep1(HttpServletRequest request, HttpServletResponse response, Relation story, Category blog, Map env) throws Exception {
-        if (containsForeignComments((Item) story.getChild())) {
+        if (Misc.containsForeignComments((Item) story.getChild())) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Tento zápis není možné smazat, neboť obsahuje cizí komentáře.", env, request.getSession());
             Item item = (Item) story.getChild();
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -631,7 +631,7 @@ public class EditBlog implements AbcAction, Configurable {
         User user = (User) env.get(Constants.VAR_USER);
         Item item = (Item) story.getChild();
 
-        if (containsForeignComments((Item) story.getChild())) {
+        if (Misc.containsForeignComments((Item) story.getChild())) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Tento zápis není možné smazat, neboť obsahuje cizí komentáře.", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(), item.getCreated(), story.getId()));
@@ -1455,45 +1455,6 @@ public class EditBlog implements AbcAction, Configurable {
             if (year.elements().size()==0)
                 year.detach();
         }
-    }
-
-    /**
-     * Tests if story contains discussion with at least one comment not owned by story author.
-     * @param story initialized story
-     * @return false if there is discussion with foreign comments.
-     */
-    boolean containsForeignComments(Item story) {
-        List children = story.getChildren();
-        if (children == null)
-            return false;
-
-        Persistence persistence = PersistenceFactory.getPersistence();
-        for (Iterator iter = children.iterator(); iter.hasNext();) {
-            Relation relation = (Relation) iter.next();
-            GenericObject child = (relation).getChild();
-            if (!(child instanceof Item))
-                continue;
-            Item item = (Item) child;
-            if (!item.isInitialized())
-                persistence.synchronize(item);
-            if (item.getType() != Item.DISCUSSION)
-                continue;
-
-            Discussion diz = Tools.createDiscussionTree(item, null, 0, false);
-            if (diz.getSize()==0)
-                return false;
-
-            LinkedList stack = new LinkedList();
-            stack.addAll(diz.getThreads());
-            User owner = new User(story.getOwner());
-            while (stack.size() > 0) {
-                Comment thread = (Comment) stack.removeFirst();
-                if (! owner.equals(thread.getAuthor()))
-                    return true;
-                stack.addAll(thread.getChildren());
-            }
-        }
-        return false;
     }
 
     void sendDigestMessage(Relation relation) {

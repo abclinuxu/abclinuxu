@@ -16,6 +16,8 @@
 
 <#include "../header.ftl">
 
+<@lib.showMessages/>
+
 <div class="desktopy">
 
 <h1>Desktopy</h1>

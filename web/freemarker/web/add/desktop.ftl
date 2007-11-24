@@ -3,9 +3,11 @@
 <@lib.showMessages/>
 
 <p>
-    Na této stránce můžete nahrát obrázek. Maximální velikost je omezena
-    na půl megabajtu, podporovány jsou formáty JPG, PNG a GIF (pro obrázky
-    desktopů je nejvhodnější formát PNG).
+    Tato stránka slouží k nahrání snímku vašeho desktopu. Maximální velikost obrázku
+    je omezena na půl megabajtu, podporovány jsou formáty JPG, PNG a GIF (pro obrázky
+    desktopů je obvykle nejvhodnější formát PNG). Nahraný obrázek již nepůjde změnit,
+    budete moci upravit jen titulek a popis. Desktop je možné smazat, jen dokud pod ním
+    nejsou cizí komentáře.
 </p>
 
 <p>

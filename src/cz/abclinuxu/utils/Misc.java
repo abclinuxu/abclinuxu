@@ -21,11 +21,18 @@ package cz.abclinuxu.utils;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.view.Discussion;
+import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ShowForum;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
+import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import org.dom4j.Node;
 
 import java.text.DateFormat;
@@ -34,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * Miscallenous utilities.
@@ -305,5 +314,44 @@ public class Misc {
     public static String getWebPath(String absolutePath) {
         String deployPath = AbcConfig.getDeployPath();
         return absolutePath.substring(deployPath.length() - 1);
+    }
+
+    /**
+     * Tests if story contains discussion with at least one comment not owned by story author.
+     * @param story initialized story
+     * @return false if there is discussion with foreign comments.
+     */
+    public static boolean containsForeignComments(Item story) {
+        List children = story.getChildren();
+        if (children == null)
+            return false;
+
+        Persistence persistence = PersistenceFactory.getPersistence();
+        for (Iterator iter = children.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+            GenericObject child = (relation).getChild();
+            if (!(child instanceof Item))
+                continue;
+            Item item = (Item) child;
+            if (!item.isInitialized())
+                persistence.synchronize(item);
+            if (item.getType() != Item.DISCUSSION)
+                continue;
+
+            Discussion diz = Tools.createDiscussionTree(item, null, 0, false);
+            if (diz.getSize()==0)
+                return false;
+
+            LinkedList stack = new LinkedList();
+            stack.addAll(diz.getThreads());
+            User owner = new User(story.getOwner());
+            while (stack.size() > 0) {
+                Comment thread = (Comment) stack.removeFirst();
+                if (! owner.equals(thread.getAuthor()))
+                    return true;
+                stack.addAll(thread.getChildren());
+            }
+        }
+        return false;
     }
 }

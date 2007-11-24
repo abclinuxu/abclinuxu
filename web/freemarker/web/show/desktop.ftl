@@ -8,7 +8,7 @@
                 <li>
                     <a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}" rel="nofollow">Upravit</a>
                 </li>
-                <#if USER.hasRole("attachment admin")>
+                <#if  USER.id==ITEM.owner || USER.hasRole("attachment admin")>
                     <li>
                         <a href="${URL.make("/edit/"+RELATION.id+"?action=rm2"+TOOL.ticket(USER, false))}" title="Smaž"
                         onClick="javascript:return confirm('Opravdu chcete smazat tento desktop?');">Smazat</a>
@@ -20,6 +20,8 @@
 </#if>
 
 <#include "../header.ftl">
+
+<@lib.showMessages/>
 
 <div class="desktopy">
 

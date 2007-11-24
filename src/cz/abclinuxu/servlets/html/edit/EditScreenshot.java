@@ -102,7 +102,7 @@ public class EditScreenshot implements AbcAction {
             return FMTemplateSelector.select("Screenshot", "add", env, request);
 
         if (action.equals(ACTION_ADD_STEP2)) {
-            ActionProtector.ensureContract(request, EditDictionary.class, true, false, true, false);
+            ActionProtector.ensureContract(request, EditScreenshot.class, true, false, true, false);
             return actionAddStep2(request, response, env, true);
         }
 
@@ -113,7 +113,7 @@ public class EditScreenshot implements AbcAction {
         env.put(VAR_RELATION, relation);
 
         if (ACTION_I_LIKE.equals(action)) {
-            ActionProtector.ensureContract(request, EditSoftware.class, true, false, false, true);
+            ActionProtector.ensureContract(request, EditScreenshot.class, true, false, false, true);
             return actionILike(request, response, env);
         }
 
@@ -130,9 +130,12 @@ public class EditScreenshot implements AbcAction {
             return actionEdit2(request, response, env);
         }
 
-        allowed = user.hasRole(Roles.ATTACHMENT_ADMIN);
-        if (!allowed)
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+        if (Misc.containsForeignComments((Item) relation.getChild())) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Tento desktop není možné smazat, neboť obsahuje cizí komentáře.", env, request.getSession());
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, UrlUtils.getRelationUrl(relation, UrlUtils.PREFIX_SCREENSHOTS));
+            return null;
+        }
 
         if (action.equals(ACTION_REMOVE_STEP2)) {
             ActionProtector.ensureContract(request, ViewScreenshot.class, true, false, false, true);
