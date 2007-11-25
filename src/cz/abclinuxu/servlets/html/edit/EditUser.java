@@ -1392,6 +1392,7 @@ public class EditUser implements AbcAction, Configurable {
             ServletUtils.addError(PARAM_LOGIN, "Přihlašovací jméno nesmí mít více než 16 znaků!", env, null);
             return false;
         }
+        // todo jakarta regexp se vsude odstranoval, ne?
         if ( new RE(reLoginInvalid).match(login) ) {
             ServletUtils.addError(PARAM_LOGIN, "Přihlašovací jméno smí obsahovat pouze písmena A až Z, číslice, pomlčku, tečku a podtržítko!", env, null);
             return false;
