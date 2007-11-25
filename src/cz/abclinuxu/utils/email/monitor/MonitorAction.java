@@ -20,6 +20,7 @@ package cz.abclinuxu.utils.email.monitor;
 
 import org.dom4j.Element;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
@@ -183,7 +184,12 @@ public class MonitorAction {
                 rel = new Relation(upper);
                 Tools.sync(rel);
 
-                obj = (GenericDataObject) rel.getChild();
+                GenericObject genobj = rel.getChild();
+
+                if (! (genobj instanceof GenericDataObject))
+                    break;
+
+                obj = (GenericDataObject) genobj;
 
                 // send discussion changes only to people watching the discussion
                 // or whole forum
