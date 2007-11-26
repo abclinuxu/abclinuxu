@@ -145,9 +145,12 @@ public class FindCollidingUsers {
         env.put(EmailSender.KEY_TEMPLATE, "/mail/kolize.ftl");
 
         for (UserInfo user : users.values()) {
-            env.put(EmailSender.KEY_TO, user.getEmail()); // if
+            if (user.getEmail() == null)
+                continue;
+            env.put(EmailSender.KEY_TO, user.getEmail());
             env.put("USER", user);
-            System.out.println(FMUtils.executeTemplate("/mail/kolize.ftl", env));
+            EmailSender.sendEmail(env);
+//            System.out.println(FMUtils.executeTemplate("/mail/kolize.ftl", env));
         }
     }
 
@@ -157,7 +160,7 @@ public class FindCollidingUsers {
             String s = iter.next();
             List<UserInfo> list = logins.get(s);
             if (list.size() > 1 || list.get(0).isIllegalLogin()) {
-                Collections.sort(list);
+                Collections.sort(list, new UserComparator(true));
                 System.out.println(s + " -> " + list);
             }
         }
@@ -175,7 +178,7 @@ public class FindCollidingUsers {
     }
 
     static void setNewLogin(List<UserInfo> logins, boolean updateUser) throws Exception {
-        Collections.sort(logins);
+        Collections.sort(logins, new UserComparator(true));
         int i = 2;
         boolean first = true;
         for (UserInfo user : logins) {
@@ -211,7 +214,7 @@ public class FindCollidingUsers {
     }
 
     static void setNewNick(List<UserInfo> nicks, boolean updateUser) throws Exception {
-        Collections.sort(nicks);
+        Collections.sort(nicks, new UserComparator(false));
         int i = 2;
         boolean first = true;
         for (UserInfo user : nicks) {
@@ -264,7 +267,7 @@ public class FindCollidingUsers {
         }
     }
 
-    public static class UserInfo implements Comparable {
+    public static class UserInfo {
         int id;
         String login, nick, newLogin, newNick, email, name;
         Date lastLogin;
@@ -353,17 +356,42 @@ public class FindCollidingUsers {
         public void setNickConflict(boolean nickConflict) {
             this.nickConflict = nickConflict;
         }
+    }
 
-        public int compareTo(Object o) {
-            UserInfo second = (UserInfo) o;
+    /**
+     * Compares users according to precedence rules (id matters, unless
+     * one user is inactive or login is invalid and must be changed anyway).
+     */
+    private static class UserComparator implements Comparator {
+        boolean login;
+
+        /**
+         * Creates new instance.
+         * @param login whether invalid login shall be a criterium
+         */
+        public UserComparator(boolean login) {
+            this.login = login;
+        }
+
+        public int compare(Object o, Object o1) {
+            UserInfo first = (UserInfo) o;
+            UserInfo second = (UserInfo) o1;
+
+            if (login) {
+                if (first.isIllegalLogin() && ! second.isIllegalLogin())
+                    return 1;
+                if (! first.isIllegalLogin() && second.isIllegalLogin())
+                    return -1;
+            }
+
             Calendar time1 = Calendar.getInstance();
-            time1.setTime(getLastLogin());
+            time1.setTime(first.getLastLogin());
             Calendar time2 = Calendar.getInstance();
             time2.setTime(second.getLastLogin());
 
             if (time1.get(Calendar.YEAR) == 2007) {
                 if (time2.get(Calendar.YEAR) == 2007)
-                    return getId() - second.getId(); // both are active
+                    return first.getId() - second.getId(); // both are active
 //                System.out.println("a"+getId()+","+second.getId());
                 return -1; // smaller - the first has precedence
             }
@@ -371,7 +399,7 @@ public class FindCollidingUsers {
 //                System.out.println("b" + getId() + "," + second.getId());
                 return 1; // greater - the second has precedence
             }
-            return getId() - second.getId(); // both are inactive
+            return first.getId() - second.getId(); // both are inactive
         }
     }
 }
