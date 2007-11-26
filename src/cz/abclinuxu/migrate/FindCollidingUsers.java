@@ -125,12 +125,16 @@ public class FindCollidingUsers {
         for (List<UserInfo> list : nicknames.values()) {
             setNewNick(list, false);
             for (UserInfo user : list) {
+                if (list.size() == 1)
+                    continue;
+
                 UserInfo stored = (UserInfo) users.get(user.getId());
                 if (stored == null) {
                     stored = user;
                 } else {
                     stored.setNewNick(user.getNewNick());
                 }
+                stored.setNickConflict(true);
                 users.put(user.getId(), stored);
             }
         }
@@ -260,7 +264,7 @@ public class FindCollidingUsers {
         }
     }
 
-    private static class UserInfo implements Comparable {
+    public static class UserInfo implements Comparable {
         int id;
         String login, nick, newLogin, newNick, email, name;
         Date lastLogin;

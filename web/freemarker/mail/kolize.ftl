@@ -1,4 +1,4 @@
-Vazeny uzivateli ${USER.name}, ${TO?if_exists}
+Vazeny uzivateli ${USER.name},
 
 dovolujeme si vas informovat o dulezite zmene, ktera
 se tyka vase uctu na nasem portale. Kvuli chybe v kodu
@@ -20,18 +20,18 @@ existovat stejna prezdivka
 Na portalu abclinuxu jste registrovan:
 id: ${USER.id}
 login: ${USER.login}
-prezdivka: ${USER.nick}
+prezdivka: ${USER.nick?default("neni nastavena")}
 
 Ve vasem pripade doslo ke:
-<#if USER.loginConflict>* kolizi loginu</#if>
-<#if USER.nickConflict>* kolizi prezdivky</#if>
+<#if USER.loginConflict>* kolizi loginu</#if><#rt>
+<#if USER.nickConflict>* kolizi prezdivky</#if><#rt>
 <#if USER.illegalLogin>* zakazanym znakum v loginu</#if>
+
+Odhad vygenerovaneho loginu: ${USER.newLogin?default("beze zmeny")}
+<#if USER.nick?exists>Odhad vygenerovane prezdivky: ${USER.newNick?default("beze zmeny")}</#if>
 
 Podrobnejsi informace, vcetne rad, co delat, najdete v clanku na adrese
 http://www.abclinuxu.cz/clanky/novinky/upozorneni-pro-nase-uzivatele-loginy
-
-<#if USER.newLogin?exists>Odhad vygenerovaneho loginu: ${USER.newLogin}</#if>
-<#if USER.newNick?exists>Odhad vygenerovane prezdivky: ${USER.newNick}</#if>
 
 Pokud dojde ke zmene vaseho loginu ci prezdivky, budete
 informovani emailem.
