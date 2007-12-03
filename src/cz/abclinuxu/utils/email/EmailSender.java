@@ -87,6 +87,10 @@ public class EmailSender implements Configurable {
     public static final String KEY_REFERENCES = "REFERENCES";
     /** the key to statistics for thsi kind of email */
     public static final String KEY_STATS_KEY = "STATS_KEY";
+    /** the uid of the recepient */
+    public static final String KEY_RECEPIENT_UID = "RECEPIENT";
+    /** SMTP header with id of the recepient */
+    public static final String HEADER_RECEPIENT = "X-ABC-Recepient";
 
     static String smtpServer, defaultFrom;
     static boolean debugSMTP;
@@ -128,6 +132,10 @@ public class EmailSender implements Configurable {
             message.setSentDate(sentDate);
             message.setMessageId((String) params.get(KEY_MESSAGE_ID));
             message.setReferences((String) params.get(KEY_REFERENCES));
+
+            String recepient = (String) params.get(KEY_RECEPIENT_UID);
+            if (recepient != null)
+                message.setHeader(HEADER_RECEPIENT, recepient);
 
             Transport transport = session.getTransport("smtp");
             transport.connect(smtpServer,null,null);
@@ -238,6 +246,7 @@ public class EmailSender implements Configurable {
                     message.setText(getEmailBody(params));
                     Date sentDate = getSentDate(params);
                     message.setSentDate(sentDate);
+                    message.setHeader(HEADER_RECEPIENT, Integer.toString(user.getId()));
                     message.saveChanges();
 
                     transport.sendMessage(message, message.getAllRecipients());

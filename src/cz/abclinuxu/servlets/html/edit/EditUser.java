@@ -411,6 +411,7 @@ public class EditUser implements AbcAction, Configurable {
         data.put(Constants.VAR_USER, managed);
         data.put(EmailSender.KEY_FROM, "admin@abclinuxu.cz");
         data.put(EmailSender.KEY_TO, managed.getEmail());
+        data.put(EmailSender.KEY_RECEPIENT_UID, Integer.toString(managed.getId()));
         data.put(EmailSender.KEY_SUBJECT, "Privitani na portalu www.abclinuxu.cz");
         data.put(EmailSender.KEY_TEMPLATE, "/mail/registrace.ftl");
         EmailSender.sendEmail(data);

@@ -165,7 +165,7 @@ public class SendEmail implements AbcAction {
             data.put(EmailSender.KEY_BCC, bcc);
         data.put(EmailSender.KEY_SUBJECT, subject);
         data.put(EmailSender.KEY_BODY, message);
-        data.put(EmailSender.KEY_TEMPLATE, Constants.EMAIL_USER_MESSAGE);
+        data.put(EmailSender.KEY_STATS_KEY, Constants.EMAIL_USER_MESSAGE);
 
         // prekopiruj vsechny promenne ze session, ktere zacinaji prefixem
         for ( Enumeration e = session.getAttributeNames(); e.hasMoreElements(); ) {

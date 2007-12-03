@@ -149,6 +149,7 @@ public class FindCollidingUsers {
                 continue;
             env.put(EmailSender.KEY_TO, user.getEmail());
             env.put("USER", user);
+            env.put(EmailSender.KEY_RECEPIENT_UID, Integer.toString(user.getId()));
             EmailSender.sendEmail(env);
 //            System.out.println(FMUtils.executeTemplate("/mail/kolize.ftl", env));
         }

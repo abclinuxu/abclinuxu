@@ -27,8 +27,6 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.data.view.Discussion;
-import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -1466,6 +1464,7 @@ public class EditBlog implements AbcAction, Configurable {
         String title = Tools.xpath(story, "/data/name");
         data.put(VAR_RELATION, relation);
         data.put(EmailSender.KEY_TO, AbcConfig.getBlogWatchEmail());
+//        data.put(EmailSender.KEY_RECEPIENT_UID, Integer.toString(user.getId())); TODO
         data.put(EmailSender.KEY_SUBJECT, title);
         data.put(EmailSender.KEY_TEMPLATE, "/mail/blogdigest.ftl");
         data.put("URL", Tools.getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId()));
