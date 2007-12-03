@@ -188,8 +188,8 @@
   </tr>
   <tr>
    <td colspan="2">Zde můžete ovlivnit počet zobrazovaných uživatelských desktopů na titulní stránce. Tento počet
-   je standardně nastaven na ${DEFAULT_SCREENSHOTS} a zde jej můžete zde přenastavit (v rozmezí 0&nbsp;-&nbsp;3,
-   přičemž 0 odstraní boxík se screenshoty z hlavní stránky úplně).
+   je standardně nastaven na ${DEFAULT_SCREENSHOTS}. Můžete jej přenastavit na hodnotu v rozmezí 0&nbsp;-&nbsp;3,
+   přičemž 0 odstraní boxík se screenshoty z hlavní stránky úplně.
    </td>
   </tr>
 
