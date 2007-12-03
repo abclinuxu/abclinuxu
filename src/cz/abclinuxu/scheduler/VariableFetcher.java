@@ -237,7 +237,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * List of the most fresh screenshot relations according to user preference or system setting.
      */
     public List getFreshScreenshots(Object user) {
-        int userLimit = getObjectCountForUser(user, KEY_SCREENSHOT, null);
+        int userLimit = getObjectCountForUser(user, KEY_SCREENSHOT, "/data/settings/index_screenshots");
         return getSubList(freshScreenshots, userLimit);
     }
 

@@ -515,6 +515,8 @@
                             <entry key="max.story" value="30"/>
                             <entry key="default.news" value="10"/>
                             <entry key="max.news" value="25"/>
+                            <entry key="default.screenshots" value="3"/>
+                            <entry key="max.screenshots" value="10"/>
                             <entry key="default.article" value="11"/>
                             <entry key="max.article" value="20"/>
                             <entry key="default.question" value="25"/>

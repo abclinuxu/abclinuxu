@@ -180,9 +180,22 @@
   </tr>
 
   <tr>
+   <td class="required">Počet desktopů</td>
+   <td>
+    <input type="text" name="screenshots" value="${PARAMS.screenshots?if_exists}" size="3" tabindex="11">
+    <div class="error">${ERRORS.screenshots?if_exists}</div>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2">Zde můžete ovlivnit počet zobrazovaných uživatelských desktopů na titulní stránce. Tento počet
+   je standardně nastaven na ${DEFAULT_SCREENSHOTS} a můžete jej zde předefinovat.
+   </td>
+  </tr>
+
+  <tr>
    <td class="required">Velikost stránky při hledání</td>
    <td>
-    <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="11">
+    <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="12">
     <div class="error">${ERRORS.search?if_exists}</div>
    </td>
   </tr>
@@ -193,7 +206,7 @@
   <tr>
    <td class="required">Velikost stránky diskusního fóra</td>
    <td>
-    <input type="text" name="forum" value="${PARAMS.forum?if_exists}" size="3" tabindex="12">
+    <input type="text" name="forum" value="${PARAMS.forum?if_exists}" size="3" tabindex="13">
     <div class="error">${ERRORS.forum?if_exists}</div>
    </td>
   </tr>
@@ -204,7 +217,7 @@
   <tr>
    <td class="required">Zobrazovat rozcestník</td>
    <td>
-    <select name="guidepost" tabindex="13">
+    <select name="guidepost" tabindex="14">
      <#assign guidepost=PARAMS.guidepost?default("yes")>
      <option value="yes" <#if guidepost=="yes">SELECTED</#if>>ano</option>
      <option value="no" <#if guidepost=="no">SELECTED</#if>>ne</option>

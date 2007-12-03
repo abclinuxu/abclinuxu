@@ -111,6 +111,7 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_SIGNATURE = "signature";
     public static final String PARAM_COOKIE_VALIDITY = "cookieValid";
     public static final String PARAM_DISCUSSIONS_COUNT = "discussions";
+    public static final String PARAM_SCREENSHOTS_COUNT = "screenshots";
     public static final String PARAM_NEWS_COUNT = "news";
     public static final String PARAM_STORIES_COUNT = "stories";
     public static final String PARAM_FOUND_PAGE_SIZE = "search";
@@ -140,6 +141,7 @@ public class EditUser implements AbcAction, Configurable {
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
+    public static final String VAR_DEFAULT_SCREENSHOT_COUNT = "DEFAULT_SCREENSHOTS";
     public static final String VAR_DEFAULT_NEWS_COUNT = "DEFAULT_NEWS";
     public static final String VAR_DEFAULT_STORIES_COUNT = "DEFAULT_STORIES";
     public static final String VAR_DEFAULT_FEED_LINKS_COUNT = "DEFAULT_LINKS";
@@ -684,6 +686,10 @@ public class EditUser implements AbcAction, Configurable {
         if ( node!=null )
             params.put(PARAM_DISCUSSIONS_COUNT, node.getText());
 
+        node = document.selectSingleNode("/data/settings/index_screenshots");
+        if ( node!=null )
+            params.put(PARAM_SCREENSHOTS_COUNT, node.getText());
+
         node = document.selectSingleNode("/data/settings/index_news");
         if ( node!=null )
             params.put(PARAM_NEWS_COUNT, node.getText());
@@ -753,6 +759,7 @@ public class EditUser implements AbcAction, Configurable {
         canContinue &= setAvatars(params, managed);
         canContinue &= setGuidepost(params, managed);
         canContinue &= setDiscussionsSizeLimit(params, managed, env);
+        canContinue &= setScreenshotsSizeLimit(params, managed, env);
         canContinue &= setNewsSizeLimit(params, managed, env);
         canContinue &= setStoriesSizeLimit(params, managed, env);
         canContinue &= setFoundPageSize(params, managed, env);
@@ -792,6 +799,7 @@ public class EditUser implements AbcAction, Configurable {
 
         Map defaultSizes = VariableFetcher.getInstance().getDefaultSizes();
         env.put(VAR_DEFAULT_DISCUSSION_COUNT, defaultSizes.get(VariableFetcher.KEY_QUESTION));
+        env.put(VAR_DEFAULT_SCREENSHOT_COUNT, defaultSizes.get(VariableFetcher.KEY_SCREENSHOT));
         env.put(VAR_DEFAULT_NEWS_COUNT, defaultSizes.get(VariableFetcher.KEY_NEWS));
         env.put(VAR_DEFAULT_STORIES_COUNT, defaultSizes.get(VariableFetcher.KEY_STORY));
         env.put(VAR_DEFAULT_FEED_LINKS_COUNT, defaultSizes.get(VariableFetcher.KEY_TEMPLATE_LINKS));
@@ -1865,6 +1873,18 @@ public class EditUser implements AbcAction, Configurable {
         Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
         int max = (Integer) maxSizes.get(VariableFetcher.KEY_QUESTION);
         return setLimitedSize(params, PARAM_DISCUSSIONS_COUNT, user.getData(), "/data/settings/index_discussions", 0, max, env);
+    }
+
+    /**
+     * Updates size limit of screenshots on main page from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setScreenshotsSizeLimit(Map params, User user, Map env) {
+        Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
+        int max = (Integer) maxSizes.get(VariableFetcher.KEY_SCREENSHOT);
+        return setLimitedSize(params, PARAM_SCREENSHOTS_COUNT, user.getData(), "/data/settings/index_screenshots", 0, max, env);
     }
 
     /**
