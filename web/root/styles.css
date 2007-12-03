@@ -209,7 +209,7 @@ td.pad,code.kod,pre.kod {
 a.thumb:hover,
 .cl-obrazky a:hover,
 .galerie a:hover,
-.sw h3 a:hover { background-color: white; }
+.sw h3 a:hover { background-color: transparent; }
 
 .prodej { color: #006400; }  /* darkgreen */
 .koupe { color: #8B0000; }  /* darkred */

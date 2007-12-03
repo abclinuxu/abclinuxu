@@ -224,7 +224,7 @@ a.thumb:hover,
 .cl-obrazky a:hover,
 .galerie a:hover,
 .sw h3 a:hover {
-	background-color: #202020;
+	background-color: transparent;
 }
 
 .prodej { color: #90EE90; }  /* lightgreen */
