@@ -263,9 +263,25 @@
       </div>
    </td>
 
-
   </tr>
 </table>
+
+<#assign DESKTOPS = VARS.getFreshScreenshots(USER?if_exists)>
+<#if (DESKTOPS?size > 0)>
+    <div class="ramec">
+      <div class="s_nadpis">
+        <a class="info" href="#">?<span class="tooltip">Sbírka uživatelských desktopů. Pochlubte se, jak vypadá vaše pracovní prostředí.</span></a>
+        <a href="/desktopy">Uživatelské desktopy</a>
+      </div>
+      <div class="s_sekce" style="text-align:center;">
+        <#list DESKTOPS as rel>
+          <a href="${rel.url}" title="${TOOL.xpath(rel.child,"/data/title")}" class="thumb">
+            <img width="200" src="${TOOL.xpath(rel.child,"/data/listingThumbnail")}" alt="${TOOL.xpath(rel.child,"/data/title")}" border="0" style="margin: 0.4em 0.3em 0.3em 0.3em">
+          </a>
+        </#list>
+      </div>
+    </div>
+</#if>
 
 
 <#assign FEEDS = VARS.getFeeds(USER?if_exists,true)>
