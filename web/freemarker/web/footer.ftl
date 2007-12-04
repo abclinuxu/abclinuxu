@@ -13,6 +13,8 @@
 
 <!-- impact: reklamy -->
 <@lib.advertisement id="ad-end" />
+
+<@lib.advertisement id="gg-anal" />
 </body>
 
 </html>
