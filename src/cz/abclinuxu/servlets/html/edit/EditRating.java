@@ -130,13 +130,13 @@ public class EditRating implements AbcAction, Configurable {
     public static boolean rate(User user, int relationId, Element object, Map params, Map env, HttpSession session) {
         int value = Misc.parseInt((String) params.get(PARAM_VALUE), 0);
         if (value != VALUE_MIN && value != VALUE_MAX) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, msgMissingData, env, session);
+            ServletUtils.addError(Constants.ERROR_GENERIC, msgMissingData, env, null);
             return false;
         }
 
         SQLTool sqlTool = SQLTool.getInstance();
         if (sqlTool.getUserAction(user.getId(), relationId, USER_ACTION_RATING)!=null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, msgAlreadyRated, env, session);
+            ServletUtils.addError(Constants.ERROR_GENERIC, msgAlreadyRated, env, null);
             return false;
         }
         sqlTool.insertUserAction(user.getId(), relationId, USER_ACTION_RATING);
