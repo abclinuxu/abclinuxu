@@ -1,4 +1,5 @@
 <#if USER?exists>
+    <#if USER.id==ITEM.owner || USER.hasRole("attachment admin")>
     <#assign plovouci_sloupec>
 
         <div class="s_nadpis">Nástroje</div>
@@ -8,15 +9,14 @@
                 <li>
                     <a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}" rel="nofollow">Upravit</a>
                 </li>
-                <#if  USER.id==ITEM.owner || USER.hasRole("attachment admin")>
-                    <li>
-                        <a href="${URL.make("/edit/"+RELATION.id+"?action=rm2"+TOOL.ticket(USER, false))}" title="Smaž"
-                        onClick="javascript:return confirm('Opravdu chcete smazat tento desktop?');">Smazat</a>
-                    </li>
-                </#if>
+                <li>
+                    <a href="${URL.make("/edit/"+RELATION.id+"?action=rm2"+TOOL.ticket(USER, false))}" title="Smaž"
+                    onClick="javascript:return confirm('Opravdu chcete smazat tento desktop?');">Smazat</a>
+                </li>
             </ul>
         </div>
     </#assign>
+    </#if>
 </#if>
 
 <#include "../header.ftl">
