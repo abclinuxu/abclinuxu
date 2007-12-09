@@ -194,7 +194,7 @@ public class ServletUtils implements Configurable {
         if ( ! Misc.empty(login) ) {
             Integer id = SQLTool.getInstance().getUserByLogin(login);
             if (id == null) {
-                ServletUtils.addError(PARAM_LOG_USER,"Přihlašovací jméno nenalezeno!",env, null);
+                ServletUtils.addError(PARAM_LOG_USER,"Přihlašovací jméno nebylo nalezeno. Pokud jste se dříve mohli přihlásit, asi váš login obsahoval zakázané znaky nebo byl v kolizi s jiným uživatelem. Viz tento <a href=\"/clanky/novinky/upozorneni-pro-nase-uzivatele-loginy\">článek</a>, <a href=\"/data/ruzne/kolize.ods\">seznam změn</a>.",env, null);
                 return;
             }
             user = new User(id);
