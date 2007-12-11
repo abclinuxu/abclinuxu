@@ -190,14 +190,7 @@
                 </#if>
             </#if>
 
-            <div class="s_nadpis">Doporučujeme</div>
-            <div class="s_sekce">
-                <ul>
-                    <li><a href="http://www.linux.cz" rel="nofollow">linux.cz</a></li>
-                    <li><a href="http://www.64bit.cz">64bit.cz</a></li>
-                    <li><a href="http://www.pravednes.cz" rel="nofollow">pravednes.cz</a></li>
-                </ul>
-            </div>
+            <@lib.advertisement id="sl-doporucujeme" />
 
             <@lib.advertisement id="sl-placene-odkazy" />
 
