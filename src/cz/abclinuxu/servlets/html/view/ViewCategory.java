@@ -221,7 +221,7 @@ public class ViewCategory implements AbcAction {
         SectionTreeCache sectionCache = VariableFetcher.getInstance().getHardwareTree();
         List<SectionNode> categories = null;
         int depth = 0;
-        if (relation.getId() == Constants.REL_HARDWARE_386) {
+        if (relation.getId() == Constants.REL_HARDWARE || relation.getId() == Constants.REL_HARDWARE_386) {
             categories = sectionCache.getChildren();
             depth = 999;
         } else {
