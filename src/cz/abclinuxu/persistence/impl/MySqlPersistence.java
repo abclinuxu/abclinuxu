@@ -2220,23 +2220,21 @@ public class MySqlPersistence implements Persistence {
         }
     }
 
-    public List<Tag> getAssignedTags(GenericDataObject obj) {
+    public List<String> getAssignedTags(GenericDataObject obj) {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select stitek,titulek,vytvoreno from stitkovani, stitek where typ=? and cislo=? and stitek=id");
+            statement = con.prepareStatement("select stitek from stitkovani where typ=? and cislo=?");
             statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
 
             resultSet = statement.executeQuery();
-            List<Tag> tags = new ArrayList<Tag>();
+            List<String> tags = new ArrayList<String>();
             while (resultSet.next()) {
-                Tag tag = new Tag(resultSet.getString(1), resultSet.getString(2));
-                tag.setCreated(new java.util.Date(resultSet.getTimestamp(3).getTime()));
-                tags.add(tag);
+                tags.add(resultSet.getString(1));
             }
             return tags;
         } catch (SQLException e) {

@@ -132,13 +132,13 @@ public class TestTags extends TestCase {
         assertEquals(2, tags.get(tagDebian.getId()).getUsage());
         assertEquals(3, tags.get(tagUbuntu.getId()).getUsage());
 
-        List<Tag> develTags = persistence.getAssignedTags(itemDevel);
-        assertTrue(develTags.contains(tagDevel));
+        List<String> develTags = persistence.getAssignedTags(itemDevel);
+        assertTrue(develTags.contains(tagDevel.getId()));
 
-        List<Tag> develNetwork = persistence.getAssignedTags(itemNetwork);
-        assertTrue(develNetwork.contains(tagNetwork));
-        assertTrue(develNetwork.contains(tagUbuntu));
-        assertFalse(develNetwork.contains(tagDebian));
+        List<String> develNetwork = persistence.getAssignedTags(itemNetwork);
+        assertTrue(develNetwork.contains(tagNetwork.getId()));
+        assertTrue(develNetwork.contains(tagUbuntu.getId()));
+        assertFalse(develNetwork.contains(tagDebian.getId()));
 
         persistence.remove(itemUbuntu);
 

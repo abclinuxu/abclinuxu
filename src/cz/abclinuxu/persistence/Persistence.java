@@ -209,9 +209,9 @@ public interface Persistence {
     /**
      * Finds tags assigned to given object.
      * @param obj object to be searched
-     * @return list of tags (empty in case no tags have been assigned)
+     * @return list of tag identifiers (empty in case that no tags have been assigned to given object)
      */
-    public List<Tag> getAssignedTags(GenericDataObject obj);
+    public List<String> getAssignedTags(GenericDataObject obj);
 
     /**
      * Assign tags to given object. Duplicates are slightly ignored.
