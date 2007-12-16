@@ -470,11 +470,11 @@
                     </node>
                     <node name="InvalidateEmails">
                         <map>
-                            <entry key="server.address" value="posta.move.cz"/>
+                            <entry key="server.address" value="@UNDELIVERED_SERVER@"/>
                             <entry key="server.type" value="pop3"/>
-                            <entry key="mailbox.folder" value="INBOX"/>
-                            <entry key="mailbox.user" value="robot@abclinuxu.cz"/>
-                            <entry key="mailbox.password" value="tdxCqP~zqh7k"/>
+                            <entry key="mailbox.folder" value="@UNDELIVERED_FOLDER@"/>
+                            <entry key="mailbox.user" value="@UNDELIVERED_USER@"/>
+                            <entry key="mailbox.password" value="@UNDELIVERED_PASSWORD@"/>
                             <entry key="debug" value="false" />
                             <entry key="regexp.vacation" value="nepritomnost|vacation|out of office" />
                             <entry key="regexp.retry" value="resend|retried" />
