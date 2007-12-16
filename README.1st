@@ -1,13 +1,12 @@
 Strucny navod
 =============
 
-
 1) nainstalujte
 
-Sun JDK 1.5
-Jakarta Ant 1.6
-Mysql 4.1
-Jetty 6.1.4 ci novejsi
+* Sun JDK 1.5
+* Jakarta Ant 1.6
+* Mysql 4.1
+* Jetty 6.1.4 ci novejsi
 
 Ant a jetty najdete v orezane verzi v adresari misc.
 
