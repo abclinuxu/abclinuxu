@@ -106,7 +106,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         softwareTree.setCacheSize(130);
         hardwareTree = new SectionTreeCache(UrlUtils.PREFIX_HARDWARE, Constants.CAT_HARDWARE);
         hardwareTree.setLoadDescriptions(false);
-        hardwareTree.setCacheSize(360);
+        hardwareTree.setCacheSize(400);
         articleTree = new SectionTreeCache(UrlUtils.PREFIX_CLANKY, Constants.CAT_ARTICLES);
         articleTree.setLoadDescriptions(false);
         articleTree.setCacheSize(20);
