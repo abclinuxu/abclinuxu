@@ -476,8 +476,9 @@
                             <entry key="mailbox.user" value="@UNDELIVERED_USER@"/>
                             <entry key="mailbox.password" value="@UNDELIVERED_PASSWORD@"/>
                             <entry key="debug" value="false" />
-                            <entry key="regexp.vacation" value="nepritomnost|vacation|out of office" />
-                            <entry key="regexp.retry" value="resend|retried" />
+                            <entry key="regexp.vacation" value="nepritomnost|vacation|holiday|dovolen|kancelar|office" />
+                            <entry key="regexp.retry" value="resend|retried|delayed|deferred|warning:" />
+                            <entry key="regexp.antispam" value="antispam|verification" />
                         </map>
                     </node>
                     <node name="UpdateLinks">

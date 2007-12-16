@@ -24,16 +24,20 @@ import java.util.TimerTask;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.prefs.Preferences;
+import java.io.IOException;
 
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.Folder;
 import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Flags;
 
 /**
  * @author literakl
@@ -49,11 +53,13 @@ public class InvalidateEmails extends TimerTask implements Configurable {
     public static final String PREF_SERVER_TYPE = "server.type";
     public static final String PREF_REGEXP_VACATION = "regexp.vacation";
     public static final String PREF_REGEXP_RETRY = "regexp.retry";
+    public static final String PREF_REGEXP_ANTISPAM = "regexp.antispam";
     public static final String PREF_DEBUG_MAIL = "debug";
 
     String server, mailServerType, folderName, user, password;
-    Pattern reRetry, reVacation;
+    Pattern reRetry, reVacation, reAntispam;
     static boolean debugSMTP;
+    private final DiacriticRemover diacriticRemover = DiacriticRemover.getInstance();
 
     public InvalidateEmails() {
         ConfigurationManager.getConfigurator().configureAndRememberMe(this);
@@ -74,22 +80,44 @@ public class InvalidateEmails extends TimerTask implements Configurable {
             store.connect(server, user, password);
 
             Folder folder = store.getFolder(folderName);
-            folder.open(Folder.READ_ONLY);
-            Message message[] = folder.getMessages();
-            if (message != null) {
-                for (int i = 0; i < message.length; i++) {
-                    System.out.println(i + ": " + message[i].getFrom()[0] + "\t" + message[i].getSubject());
-                    System.out.println(message[i].getContent());
+            folder.open(Folder.READ_WRITE);
+            Message messages[] = folder.getMessages();
+            if (messages != null) {
+                for (int i = 0; i < messages.length; i++) {
+                    Message message = messages[i];
+                    processMessage(message);
                 }
             }
 
-            folder.close(false);
+            folder.close(true);
             store.close();
 
             log.debug(getClass().getName() + " finished");
         } catch (Throwable e) {
             log.error("Invalidated emails failed", e);
         }
+    }
+
+    private void processMessage(Message message) throws MessagingException, IOException {
+        String subject = message.getSubject();
+        if (subject == null)
+            subject = "";
+        subject = diacriticRemover.removeDiacritics(subject);
+        if (reVacation.matcher(subject).find()) {
+            message.setFlag(Flags.Flag.DELETED, true);
+            return;
+        }
+        if (reRetry.matcher(subject).find()) {
+            message.setFlag(Flags.Flag.DELETED, true);
+            return;
+        }
+        if (reAntispam.matcher(subject).find()) {
+            message.setFlag(Flags.Flag.DELETED, true);
+            return;
+        }
+
+        System.out.println(subject);
+        System.out.println(message.getContent());
     }
 
     public static void main(String[] args) {
@@ -108,10 +136,10 @@ public class InvalidateEmails extends TimerTask implements Configurable {
         password = prefs.get(PREF_PASSWORD, "");
         debugSMTP = prefs.getBoolean(PREF_DEBUG_MAIL, false);
         String re = prefs.get(PREF_REGEXP_RETRY, null);
-        if (re != null)
-            reRetry = Pattern.compile(re);
+        reRetry = Pattern.compile(re, Pattern.CASE_INSENSITIVE + Pattern.MULTILINE);
         re = prefs.get(PREF_REGEXP_VACATION, null);
-        if (re != null)
-            reVacation = Pattern.compile(re);
+        reVacation = Pattern.compile(re, Pattern.CASE_INSENSITIVE + Pattern.MULTILINE);
+        re = prefs.get(PREF_REGEXP_ANTISPAM, null);
+        reAntispam = Pattern.compile(re, Pattern.CASE_INSENSITIVE + Pattern.MULTILINE);
     }
 }
