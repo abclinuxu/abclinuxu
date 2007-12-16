@@ -16,7 +16,7 @@ CREATE TABLE uzivatel (
  heslo VARCHAR(12) NOT NULL,     	        -- nekryptovane heslo
  prezdivka VARCHAR(20) NULL UNIQUE,         -- prezdivka
  data TEXT                                  -- XML s nazvem, ikonou, poznamkou ...
-) collate utf8_bin;
+);
 ALTER TABLE uzivatel ADD INDEX in_nick (prezdivka);
 
 
