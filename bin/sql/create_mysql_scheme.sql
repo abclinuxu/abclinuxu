@@ -9,26 +9,26 @@
 
 -- tabulka obsahujici definici vsech uzivatelu
 CREATE TABLE uzivatel (
- cislo INT(6) AUTO_INCREMENT PRIMARY KEY,   -- jednoznacny identifikator
- login CHAR(16) NOT NULL UNIQUE,            -- prihlasovaci jmeno
- jmeno VARCHAR(35) NOT NULL,                -- realne jmeno uzivatele
- email VARCHAR(60) NOT NULL,                -- email
- heslo VARCHAR(12) NOT NULL,     	        -- nekryptovane heslo
- prezdivka VARCHAR(20) NULL UNIQUE,         -- prezdivka
- data TEXT                                  -- XML s nazvem, ikonou, poznamkou ...
+ cislo INT(6) AUTO_INCREMENT PRIMARY KEY,        -- jednoznacny identifikator
+ login CHAR(16) NOT NULL UNIQUE,                 -- prihlasovaci jmeno
+ jmeno VARCHAR(35) NOT NULL,                     -- realne jmeno uzivatele
+ email VARCHAR(60) NOT NULL,                     -- email
+ heslo VARCHAR(12) NOT NULL,     	             -- nekryptovane heslo
+ prezdivka VARCHAR(20) NULL UNIQUE,              -- prezdivka
+ data TEXT                                       -- XML s nazvem, ikonou, poznamkou ...
 );
 ALTER TABLE uzivatel ADD INDEX in_nick (prezdivka);
 
 
 -- tabulka s kategoriemi
 CREATE TABLE kategorie (
- cislo INT AUTO_INCREMENT PRIMARY KEY,  -- jednoznacny identifikator
- typ SMALLINT,                          -- typ kategorie
- podtyp VARCHAR(30) NULL,               -- podtyp
- data LONGTEXT NOT NULL,                    -- XML s nazvem, ikonou, poznamkou ...
- pridal INT(6) NOT NULL,                -- odkaz na uzivatele
- vytvoreno DATETIME,       -- cas vytvoreni
- zmeneno TIMESTAMP NOT NULL             -- cas posledni zmeny
+ cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
+ typ SMALLINT,                                   -- typ kategorie
+ podtyp VARCHAR(30) NULL,                        -- podtyp
+ data LONGTEXT NOT NULL,                         -- XML s nazvem, ikonou, poznamkou ...
+ pridal INT(6) NOT NULL,                         -- odkaz na uzivatele
+ vytvoreno DATETIME,                             -- cas vytvoreni
+ zmeneno TIMESTAMP NOT NULL                      -- cas posledni zmeny
 );
 ALTER TABLE kategorie ADD INDEX in_podtyp (podtyp);
 ALTER TABLE kategorie ADD INDEX in_typ (typ);
@@ -38,13 +38,13 @@ ALTER TABLE kategorie ADD INDEX in_typ (typ);
 -- polozka muze byt: druh, otazka z diskuse, pozadavek,
 -- hlavicka clanku
 CREATE TABLE polozka (
- cislo INT AUTO_INCREMENT PRIMARY KEY,  -- jednoznacny identifikator
- typ SMALLINT,                          -- typ polozky (druh, novinka, ..)
- podtyp VARCHAR(30) NULL,               -- podtyp
- data LONGTEXT NOT NULL,                    -- XML s nazvem, ikonou, poznamkou ...
- pridal INT(6) NOT NULL,                -- odkaz na uzivatele
- vytvoreno DATETIME,       -- cas vytvoreni
- zmeneno TIMESTAMP NOT NULL             -- cas posledni zmeny
+ cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
+ typ SMALLINT,                                   -- typ polozky (druh, novinka, ..)
+ podtyp VARCHAR(30) NULL,                        -- podtyp
+ data LONGTEXT NOT NULL,                         -- XML s nazvem, ikonou, poznamkou ...
+ pridal INT(6) NOT NULL,                         -- odkaz na uzivatele
+ vytvoreno DATETIME,                             -- cas vytvoreni
+ zmeneno TIMESTAMP NOT NULL                      -- cas posledni zmeny
 );
 ALTER TABLE polozka ADD INDEX in_vytvoreno (vytvoreno);
 ALTER TABLE polozka ADD INDEX in_typ (typ);
@@ -56,13 +56,13 @@ ALTER TABLE polozka ADD INDEX in_podtyp (podtyp);
 -- treba i pro odpovedi v diskusi apod.
 -- pak ale musi byt ve stromu prirazen specialni kategorii
 CREATE TABLE zaznam (
- cislo INT AUTO_INCREMENT PRIMARY KEY,  -- jednoznacny identifikator
- typ SMALLINT,                          -- typ zaznamu (HW, SW, clanek ..)
- podtyp VARCHAR(30) NULL,               -- podtyp
- data LONGTEXT NOT NULL,                    -- XML s nazvem, poznamkou ...
- pridal INT(6) NOT NULL,                -- odkaz na uzivatele
- vytvoreno DATETIME,       -- cas vytvoreni
- zmeneno TIMESTAMP NOT NULL             -- cas posledni zmeny
+ cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
+ typ SMALLINT,                                   -- typ zaznamu (HW, SW, clanek ..)
+ podtyp VARCHAR(30) NULL,                        -- podtyp
+ data LONGTEXT NOT NULL,                         -- XML s nazvem, poznamkou ...
+ pridal INT(6) NOT NULL,                         -- odkaz na uzivatele
+ vytvoreno DATETIME,                             -- cas vytvoreni
+ zmeneno TIMESTAMP NOT NULL                      -- cas posledni zmeny
 );
 ALTER TABLE zaznam ADD INDEX in_zmeneno (zmeneno);
 ALTER TABLE zaznam ADD INDEX in_typ (typ);
@@ -71,53 +71,53 @@ ALTER TABLE zaznam ADD INDEX in_podtyp (podtyp);
 
 -- tabulka s definicemi serveru, kterym zobrazujeme odkazy
 CREATE TABLE server (
-  cislo INT(3) PRIMARY KEY,            -- identifikator serveru
-  jmeno VARCHAR(60) NOT NULL,          -- zobrazovany nazev serveru
-  url VARCHAR(255) NOT NULL,           -- URL serveru
-  kontakt VARCHAR(60)                  -- email na kontaktni osobu
+  cislo INT(3) PRIMARY KEY,                      -- identifikator serveru
+  jmeno VARCHAR(60) NOT NULL,                    -- zobrazovany nazev serveru
+  url VARCHAR(255) NOT NULL,                     -- URL serveru
+  kontakt VARCHAR(60)                            -- email na kontaktni osobu
 );
 
 
 -- tabulka obsahujici odkazy ostatnich serveru
 CREATE TABLE odkaz (
- cislo INT AUTO_INCREMENT PRIMARY KEY,  -- jednoznacny identifikator
- server INT(3),                         -- identifikator serveru
- nazev VARCHAR(80),                     -- nazev odkazu (clanku)
- url VARCHAR(255),                      -- jeho URL, kam pujde redirect
- trvaly CHAR(1),                        -- logicka, NULL pro FALSE, urcuje, zda muze byt link nahrazen novejsim ze seznamu clanku
- pridal INT(6) NOT NULL,                -- odkaz na uzivatele
- kdy TIMESTAMP                          -- cas pridani
+ cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
+ server INT(3),                                  -- identifikator serveru
+ nazev VARCHAR(80),                              -- nazev odkazu (clanku)
+ url VARCHAR(255),                               -- jeho URL, kam pujde redirect
+ trvaly CHAR(1),                                 -- logicka, NULL pro FALSE, urcuje, zda muze byt link nahrazen novejsim ze seznamu clanku
+ pridal INT(6) NOT NULL,                         -- odkaz na uzivatele
+ kdy TIMESTAMP                                   -- cas pridani
 );
 
 
 -- tabulka obsahujici objekty ( obrazky, zvuky, video )
 -- pokud format obsahuje "URL", data obsahuje URL na externi objekt
 CREATE TABLE objekt (
- cislo INT AUTO_INCREMENT PRIMARY KEY,  -- identifikator objektu
- format VARCHAR(30) NOT NULL,           -- mime-type nebo "URL"
- data BLOB,                             -- URL nebo binarni data objektu
- vlastnik INT NOT NULL                  -- majitel objektu
+ cislo INT AUTO_INCREMENT PRIMARY KEY,           -- identifikator objektu
+ format VARCHAR(30) NOT NULL,                    -- mime-type nebo "URL"
+ data BLOB,                                      -- URL nebo binarni data objektu
+ vlastnik INT NOT NULL                           -- majitel objektu
 );
 
 -- tabulka obsahujici anketu
 CREATE TABLE anketa2 (
- cislo INT AUTO_INCREMENT PRIMARY KEY,   -- identifikator ankety
- vice CHAR(1),                           -- logicka, NULL pro FALSE, povoluje vice hlasu
- uzavrena CHAR(1),                       -- logicka, NULL pro FALSE
- pridal INT(6) NOT NULL,                 -- odkaz na vlastnika
- vytvoreno DATETIME NOT NULL,            -- datum vytvoreni ankety
- hlasu SMALLINT DEFAULT 0,               -- celkovy pocet hlasujicich
- volba1 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
- volba2 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
- volba3 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
- volba4 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
- volba5 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
- volba6 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
- volba7 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
- volba8 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
- volba9 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
- volba10 SMALLINT DEFAULT 0,             -- pocet hlasu pro volbu
- data LONGTEXT NOT NULL                  -- XML s otazkou a odpovedmi
+ cislo INT AUTO_INCREMENT PRIMARY KEY,           -- identifikator ankety
+ vice CHAR(1),                                   -- logicka, NULL pro FALSE, povoluje vice hlasu
+ uzavrena CHAR(1),                               -- logicka, NULL pro FALSE
+ pridal INT(6) NOT NULL,                         -- odkaz na vlastnika
+ vytvoreno DATETIME NOT NULL,                    -- datum vytvoreni ankety
+ hlasu SMALLINT DEFAULT 0,                       -- celkovy pocet hlasujicich
+ volba1 SMALLINT DEFAULT 0,                      -- pocet hlasu pro volbu
+ volba2 SMALLINT DEFAULT 0,                      -- pocet hlasu pro volbu
+ volba3 SMALLINT DEFAULT 0,                      -- pocet hlasu pro volbu
+ volba4 SMALLINT DEFAULT 0,                      -- pocet hlasu pro volbu
+ volba5 SMALLINT DEFAULT 0,                      -- pocet hlasu pro volbu
+ volba6 SMALLINT DEFAULT 0,                      -- pocet hlasu pro volbu
+ volba7 SMALLINT DEFAULT 0,                      -- pocet hlasu pro volbu
+ volba8 SMALLINT DEFAULT 0,                      -- pocet hlasu pro volbu
+ volba9 SMALLINT DEFAULT 0,                      -- pocet hlasu pro volbu
+ volba10 SMALLINT DEFAULT 0,                     -- pocet hlasu pro volbu
+ data LONGTEXT NOT NULL                          -- XML s otazkou a odpovedmi
 );
 
 -- hlavni tabulka celeho serveru, popisuje vztahy mezi objekty
@@ -131,14 +131,14 @@ CREATE TABLE anketa2 (
 --     odkaz | 'L'
 --    chybne | 'E'
 CREATE TABLE relace (
- cislo INT AUTO_INCREMENT PRIMARY KEY,  -- identifikator vazby
- predchozi INT NOT NULL,                -- id predchozi vazby, podobne jako .. ve fs
- typ_predka CHAR(1) NOT NULL,           -- id tabulky predka
- predek INT NOT NULL,                   -- id predka
- typ_potomka CHAR(1) NOT NULL,          -- id tabulky obsahu
- potomek INT NOT NULL,                  -- id obsahu
- url VARCHAR(255) DEFAULT NULL,         -- URL stranky
- data TEXT DEFAULT NULL                 -- volitelne jmeno vazby
+ cislo INT AUTO_INCREMENT PRIMARY KEY,           -- identifikator vazby
+ predchozi INT NOT NULL,                         -- id predchozi vazby, podobne jako .. ve fs
+ typ_predka CHAR(1) NOT NULL,                    -- id tabulky predka
+ predek INT NOT NULL,                            -- id predka
+ typ_potomka CHAR(1) NOT NULL,                   -- id tabulky obsahu
+ potomek INT NOT NULL,                           -- id obsahu
+ url VARCHAR(255) DEFAULT NULL,                  -- URL stranky
+ data TEXT DEFAULT NULL                          -- volitelne jmeno vazby
 );
 ALTER TABLE relace ADD INDEX in_potomek (typ_potomka,potomek);
 ALTER TABLE relace ADD INDEX in_predek (typ_predka,predek);
@@ -158,26 +158,26 @@ ALTER TABLE vlastnost ADD INDEX in_typ (typ,hodnota);
 
 -- tabulka se ctennosti daneho objektu
 CREATE TABLE citac (
- typ CHAR(1) NOT NULL,                 -- id tabulky predka
- cislo MEDIUMINT NOT NULL,             -- id predka
- soucet MEDIUMINT,                     -- kolikrat byl precten
- druh VARCHAR(15) NOT NULL DEFAULT 'read' -- druh citace
+ typ CHAR(1) NOT NULL,                           -- id tabulky predka
+ cislo MEDIUMINT NOT NULL,                       -- id predka
+ soucet MEDIUMINT,                               -- kolikrat byl precten
+ druh VARCHAR(15) NOT NULL DEFAULT 'read'        -- druh citace
 );
 ALTER TABLE citac ADD INDEX in_citac (typ,cislo);
 
 -- statistiky pouzivani sluzeb
 CREATE TABLE statistika (
- den DATE NOT NULL,                     -- den
- typ CHAR(30) NOT NULL,                 -- typ
- pocet INT DEFAULT 0,                   -- pocet pouziti daneho typu dany den
+ den DATE NOT NULL,                              -- den
+ typ CHAR(30) NOT NULL,                          -- typ
+ pocet INT DEFAULT 0,                            -- pocet pouziti daneho typu dany den
  PRIMARY KEY statistika_den_typ (den, typ)
 );
 
 
 -- urcuje, zda je uzivatel admin
 CREATE TABLE pravo (
- cislo INT(3) AUTO_INCREMENT PRIMARY KEY,  -- id tohoto radku
- admin CHAR(1)                             -- logicka, NULL pro FALSE
+ cislo INT(3) AUTO_INCREMENT PRIMARY KEY,        -- id tohoto radku
+ admin CHAR(1)                                   -- logicka, NULL pro FALSE
 );
 
 -- seznam poslednich komentaru, ktere si uzivatel precetl
@@ -211,13 +211,13 @@ CREATE TABLE verze (
 ALTER TABLE verze ADD UNIQUE INDEX in_vazba_verze (typ,cislo,verze);
 
 CREATE TABLE komentar (
- cislo INT AUTO_INCREMENT PRIMARY KEY,     -- id tohoto radku; v podstate je zbytecny
- zaznam INT NOT NULL,                      -- id asociovaneho zaznamu
- id INT(5) NOT NULL,                       -- id komentare v ramci diskuse
- nadrazeny INT(5) NULL,                    -- id nadrazeneho komentare, NULL pokud je na nejvyssi urovni
- vytvoreno DATETIME,                       -- cas pridani
- autor INT(5) NULL,                        -- cislo autora prispevku, NULL pokud byl anonymni
- data LONGTEXT NOT NULL                    -- XML s textem komentare atd
+ cislo INT AUTO_INCREMENT PRIMARY KEY,           -- id tohoto radku; v podstate je zbytecny
+ zaznam INT NOT NULL,                            -- id asociovaneho zaznamu
+ id INT(5) NOT NULL,                             -- id komentare v ramci diskuse
+ nadrazeny INT(5) NULL,                          -- id nadrazeneho komentare, NULL pokud je na nejvyssi urovni
+ vytvoreno DATETIME,                             -- cas pridani
+ autor INT(5) NULL,                              -- cislo autora prispevku, NULL pokud byl anonymni
+ data LONGTEXT NOT NULL                          -- XML s textem komentare atd
 );
 ALTER TABLE komentar ADD INDEX komentar_zaznam (zaznam);
 ALTER TABLE komentar ADD INDEX komentar_autor (autor);
@@ -237,27 +237,37 @@ CREATE TABLE hledano (
 
 -- tabulka obsahujici popisy konstant pro sloupecek typ
 CREATE TABLE konstanty (
-  tabulka char(1)  default NULL,
+  tabulka char(1) default NULL,
   typ int(4) default NULL,
   popis varchar(255) default NULL
 );
 
 -- seznam stitku
 CREATE TABLE stitek (
-  id VARCHAR(20) PRIMARY KEY,                    -- ascii identifikator stitku
-  titulek VARCHAR(40) NOT NULL                   -- jmeno stitku
+  id VARCHAR(30) UNIQUE,                         -- ascii identifikator stitku
+  titulek VARCHAR(30) NOT NULL,                  -- jmeno stitku
+  vytvoreno DATETIME NOT NULL                    -- cas vytvoreni
 );
+ALTER TABLE stitek ADD INDEX in_stitek_kdy (vytvoreno);
 
--- seznam klicovych slov pro stitky
-CREATE TABLE stitek_slova (
-  stitek VARCHAR(20) NOT NULL,                       -- ascii identifikator stitku
-  slovo VARCHAR(255) NOT NULL                    -- normalizovane klicove slovo asociovane se stitkem
-);
-ALTER TABLE stitek_slova ADD INDEX in_stitek_slova (stitek);
-
+-- seznam prirazeni stitku dokumentum
 CREATE TABLE stitkovani (
- typ CHAR(1) NOT NULL,                           -- id tabulky dokumentu
- cislo MEDIUMINT NOT NULL,                       -- id dokumentu
- stitek VARCHAR(20) NOT NULL                     -- id stitku
+  typ CHAR(1) NOT NULL,                          -- id tabulky dokumentu
+  cislo MEDIUMINT NOT NULL,                      -- id dokumentu
+  stitek VARCHAR(30) NOT NULL                    -- id stitku
 );
 ALTER TABLE stitkovani ADD UNIQUE INDEX in_stitkovani_vazba (typ,cislo,stitek);
+
+-- log akci kolem stitku
+CREATE TABLE stitky_log (
+  akce VARCHAR(8) NOT NULL,                      -- druh akce nad stitky (add, edit, delete, assign, unassign)
+  kdy TIMESTAMP NOT NULL,                        -- datum akce
+  stitek VARCHAR(30) NOT NULL,                   -- id stitku
+  autor INT(5) NULL,                             -- cislo autora akce, NULL pokud byl anonymni
+  ip CHAR(15) NULL,                              -- IP adresa autora akce
+  typ CHAR(1) NULL,                              -- id tabulky dokumentu
+  cislo MEDIUMINT NULL,                          -- id dokumentu
+  titulek VARCHAR(30) NULL                       -- titulek stitku, jen pri akci add, edit a delete
+);
+ALTER TABLE stitky_log ADD INDEX in_stitky_log_stitek (stitek);
+ALTER TABLE stitky_log ADD INDEX in_stitky_log_kdy (kdy);

@@ -2137,15 +2137,15 @@ public class MySqlPersistence implements Persistence {
         PreparedStatement statement = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("insert into stitek values (?, ?)");
+            statement = con.prepareStatement("insert into stitek values (?, ?, ?)");
             statement.setString(1, tag.getId());
             statement.setString(2, tag.getTitle());
+            tag.setCreated(new java.util.Date());
+            statement.setTimestamp(3, new Timestamp(tag.getCreated().getTime()));
 
             int result = statement.executeUpdate();
             if (result == 0)
                 throw new PersistenceException("Nepodařilo se vložit " + tag + " do databáze!");
-
-            storeTagKeywords(tag, false);
         } catch (SQLException e) {
             if (e.getErrorCode() == 1062) {
                 throw new DuplicateKeyException("Duplikátní údaj: " + tag.getId() + "!");
@@ -2168,9 +2168,7 @@ public class MySqlPersistence implements Persistence {
 
             int result = statement.executeUpdate();
             if (result == 0)
-                throw new PersistenceException("Nepodařilo se vložit " + tag + " do databáze!");
-
-            storeTagKeywords(tag, true);
+                throw new PersistenceException("Nepodařilo se aktualizovat " + tag + " v databázi!");
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu uložit " + tag, e);
         } finally {
@@ -2178,58 +2176,29 @@ public class MySqlPersistence implements Persistence {
         }
     }
 
-    private void storeTagKeywords(Tag tag, boolean purgeFirst) throws SQLException {
-        Connection con = null;
-        PreparedStatement purgeStatement = null;
-        PreparedStatement statement = null;
-        try {
-            con = getSQLConnection();
-            if (purgeFirst) {
-                purgeStatement = con.prepareStatement("delete from stitek_slova where stitek=?");
-                purgeStatement.setString(1, tag.getId());
-                purgeStatement.executeUpdate();
-            }
-
-            if (tag.getKeywords().size() > 0) {
-                statement = con.prepareStatement("insert into stitek_slova values (?, ?)");
-                statement.setString(1, tag.getId());
-                for (String keyword : tag.getKeywords()) {
-                    statement.setString(2, keyword);
-                    statement.executeUpdate();
-                }
-            }
-        } finally {
-            releaseSQLResources(con, new Statement[] {purgeStatement, statement}, null);
-        }
-    }
-
     public void remove(Tag tag) {
         Connection con = null;
-        PreparedStatement statement = null, statement2 = null, statement3 = null;
+        PreparedStatement statement = null, statement2 = null;
         try {
             con = getSQLConnection();
             statement = con.prepareStatement("delete from stitkovani where stitek=?");
             statement.setString(1, tag.getId());
             statement.executeUpdate();
 
-            statement2 = con.prepareStatement("delete from stitek_slova where stitek=?");
+            statement2 = con.prepareStatement("delete from stitek where id=?");
             statement2.setString(1, tag.getId());
             statement2.executeUpdate();
-
-            statement3 = con.prepareStatement("delete from stitek where id=?");
-            statement3.setString(1, tag.getId());
-            statement3.executeUpdate();
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu smazat " + tag, e);
         } finally {
-            releaseSQLResources(con, new Statement[] {statement, statement2, statement3}, null);
+            releaseSQLResources(con, new Statement[] {statement, statement2}, null);
         }
     }
 
     public Map<String, Tag> getTags() {
         Connection con = null;
-        Statement statement = null, statement2 = null;
-        ResultSet resultSet = null, resultSet2 = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
         try {
             HashMap<String, Tag> tags = new HashMap<String, Tag>(100);
             con = getSQLConnection();
@@ -2238,28 +2207,16 @@ public class MySqlPersistence implements Persistence {
             while (resultSet.next()) {
                 String id = resultSet.getString(1);
                 Tag tag = new Tag(id, resultSet.getString(2));
-                tag.setUsage(resultSet.getInt(3));
+                tag.setCreated(new java.util.Date(resultSet.getTimestamp(3).getTime()));
+                tag.setUsage(resultSet.getInt(4));
                 tags.put(id, tag);
-            }
-
-            statement2 = con.createStatement();
-            resultSet2 = statement2.executeQuery("select * from stitek_slova");
-            while (resultSet2.next()) {
-                String id = resultSet2.getString(1);
-                String keyword = resultSet2.getString(2);
-                Tag tag = (Tag) tags.get(id);
-                if (tag == null) {
-                    log.warn("Nalezeno klíčové slovo pro neznámý štítek " + id);
-                    continue;
-                }
-                tag.addKeyword(keyword);
             }
 
             return tags;
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu získat seznam štítků!", e);
         } finally {
-            releaseSQLResources(con, new Statement[]{statement, statement2}, new ResultSet[] {resultSet, resultSet2});
+            releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -2270,7 +2227,7 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select stitek,titulek from stitkovani, stitek where typ=? and cislo=? and stitek=id");
+            statement = con.prepareStatement("select stitek,titulek,vytvoreno from stitkovani, stitek where typ=? and cislo=? and stitek=id");
             statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
 
@@ -2278,6 +2235,7 @@ public class MySqlPersistence implements Persistence {
             List<Tag> tags = new ArrayList<Tag>();
             while (resultSet.next()) {
                 Tag tag = new Tag(resultSet.getString(1), resultSet.getString(2));
+                tag.setCreated(new java.util.Date(resultSet.getTimestamp(3).getTime()));
                 tags.add(tag);
             }
             return tags;
@@ -2294,7 +2252,6 @@ public class MySqlPersistence implements Persistence {
 
         Connection con = null;
         PreparedStatement statement = null;
-        int count = 0;
         try {
             con = getSQLConnection();
             statement = con.prepareStatement("replace into stitkovani values (?, ?, ?)");
@@ -2303,7 +2260,7 @@ public class MySqlPersistence implements Persistence {
 
             for (String tag : tags) {
                 statement.setString(3, tag);
-                count += statement.executeUpdate();
+                statement.executeUpdate();
             }
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu uložit štítky pro " + obj, e);
@@ -2328,7 +2285,7 @@ public class MySqlPersistence implements Persistence {
             for (String tag : tags) {
                 statement.setString(i++, tag);
             }
-            int count = statement.executeUpdate();
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu uložit štítky pro " + obj, e);
         } finally {

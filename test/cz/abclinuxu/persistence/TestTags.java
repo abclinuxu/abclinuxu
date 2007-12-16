@@ -75,7 +75,6 @@ public class TestTags extends TestCase {
         assertEquals(0, persistence.getTags().size());
 
         Tag tagNvidia = new Tag("nvidia", "NVidia");
-        tagNvidia.setKeywords(toList("nvidia", "nv", "nouveau"));
         persistence.create(tagNvidia);
 
         assertEquals(1, persistence.getTags().size());
@@ -88,36 +87,28 @@ public class TestTags extends TestCase {
         }
 
         Tag tagAti = new Tag("ati", "ATI");
-        tagAti.setKeywords(toList("ati"));
         persistence.create(tagAti);
 
         Tag tagDevel = new Tag("programovani", "Programovani");
-        tagDevel.setKeywords(toList("programovani", "gcc", "kompilace", "php", "java"));
         persistence.create(tagDevel);
 
         Tag tagNetwork = new Tag("site", "Sitarina");
-        tagNetwork.setKeywords(toList("sit", "hosts", "djbdns", "firewall", "dhcp"));
         persistence.create(tagNetwork);
         tagNetwork.setTitle("Site");
-        tagNetwork.setKeywords(toList("sit", "hosts", "djbdns", "dhcp"));
         persistence.update(tagNetwork);
 
         Map<String, Tag> tags = persistence.getTags();
         Tag tagNetwork2 = tags.get(tagNetwork.getId());
         assertNotNull(tagNetwork2);
         assertEquals("Site", tagNetwork2.getTitle());
-        assertEquals(4, tagNetwork2.getKeywords().size());
 
         Tag tagUbuntu = new Tag("ubuntu", "Ubuntu");
-        tagUbuntu.setKeywords(toList("ubuntu", "kubuntu"));
         persistence.create(tagUbuntu);
 
         Tag tagDebian = new Tag("debian", "Debian");
-        tagDebian.setKeywords(toList("debian", "apt", "woody"));
         persistence.create(tagDebian);
 
         Tag tagVideo = new Tag("video", "Video");
-        tagVideo.setKeywords(toList("video", "mplayer", "avi"));
         persistence.create(tagVideo);
 
         persistence.assignTags(itemNvidia, toList(tagNvidia.getId()));
@@ -170,7 +161,6 @@ public class TestTags extends TestCase {
             con = ((MySqlPersistence) persistence).getSQLConnection();
             statement = con.createStatement();
             statement.executeUpdate("delete from stitek");
-            statement.executeUpdate("delete from stitek_slova");
             statement.executeUpdate("delete from stitkovani");
         } finally {
             ((MySqlPersistence) persistence).releaseSQLResources(con, statement, resultSet);

@@ -18,8 +18,7 @@
  */
 package cz.abclinuxu.data;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Class to hold tag information.
@@ -29,16 +28,21 @@ import java.util.ArrayList;
 public class Tag {
     private String id;
     private String title;
-    private List<String> keywords = new ArrayList<String>();
+    private Date created;
     private int usage;
 
+    /**
+     * Creates new instance of Tag.
+     * @param id id constructed from the title
+     * @param title tag title
+     */
     public Tag(String id, String title) {
-        this.id = id;
         this.title = title;
+        this.id = id;
     }
 
     /**
-     * Gets unique identifier of this tag
+     * Gets unique identifier of this tag constructed from the title
      * @return the identifier
      */
     public String getId() {
@@ -58,21 +62,15 @@ public class Tag {
     }
 
     /**
-     * Gets list of keywords that instructs automatic assignment of document to this tag.
-     * @return
+     * Time when this tag was created
+     * @return creation date
      */
-    public List<String> getKeywords() {
-        return keywords;
+    public Date getCreated() {
+        return created;
     }
 
-    public void setKeywords(List<String> keywords) {
-        if (keywords == null)
-            throw new NullPointerException();
-        this.keywords = keywords;
-    }
-
-    public void addKeyword(String keyword) {
-        keywords.add(keyword);
+    public void setCreated(Date created) {
+        this.created = created;
     }
 
     /**
@@ -103,6 +101,6 @@ public class Tag {
     }
 
     public String toString() {
-        return "tag " + id;
+        return "tag " + title;
     }
 }
