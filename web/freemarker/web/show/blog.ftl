@@ -8,15 +8,6 @@
 
 <#assign plovouci_sloupec>
 
-    <div class="s_nadpis">
-        <@lib.showUser owner/>
-    	<#if title!="UNDEF"> - <a href="/blog/${BLOG.subType}">${title}</a></#if>
-    </div>
-
-    <div class="s_sekce">
-        <#if intro!="UNDEF">${intro}</#if>
-    </div>
-
     <#if UNPUBLISHED_STORIES?exists>
         <div class="s_nadpis">Rozepsané zápisy</div>
 
@@ -31,6 +22,32 @@
             </ul>
         </div>
     </#if>
+
+    <#if (USER?exists && USER.id==BLOG.owner)>
+        <div class="s_nadpis">
+            Správa blogu
+        </div>
+
+        <div class="s_sekce">
+            <ul>
+                <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlož nový zápis</a></li>
+                <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavit blog</a></li>
+                <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Přejmenovat blog</a></li>
+                <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Upravit kategorie</a></li>
+                <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=links")}">Upravit oblíbené stránky</a></li>
+                <li><a href="${URL.noPrefix("/blog/"+BLOG.subType+"/export")}">Export do Movable Type</a></li>
+            </ul>
+        </div>
+    </#if>
+
+    <div class="s_nadpis">
+        <@lib.showUser owner/>
+    	<#if title!="UNDEF"> - <a href="/blog/${BLOG.subType}">${title}</a></#if>
+    </div>
+
+    <div class="s_sekce">
+        <#if intro!="UNDEF">${intro}</#if>
+    </div>
 
     <div class="s_nadpis">Aktuální zápisy</div>
 
@@ -114,30 +131,6 @@
         </ul>
     </div>
 
-
-    <#if (USER?exists && USER.id==BLOG.owner) || (! USER?exists)>
-        <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Tato sekce sdružuje akce pro majitele blogu.</span></a>
-            Nastavení
-        </div>
-    </#if>
-
-  <div class="s_sekce">
-    <ul>
-    <#if USER?exists>
-        <#if USER.id==BLOG.owner>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlož nový zápis</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavit blog</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Přejmenovat blog</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Upravit kategorie</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=links")}">Upravit oblíbené stránky</a></li>
-            <li><a href="${URL.noPrefix("/blog/"+BLOG.subType+"/export")}">Exportovat do Movable Type</a></li>
-        </#if>
-    <#else>
-        <li><a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">Přihlásit se</a></li>
-    </#if>
-    </ul>
-  </div>
   <#--<@lib.advertisement id="arbo-sq" />-->
   <@lib.advertisement id="gg-sq-blog" />
 

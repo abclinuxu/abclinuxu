@@ -76,6 +76,12 @@ spokojeni. Najdete jej v pravém menu.
     <tr>
         <td>
             <span class="required">Obsah zápisu</span>
+            <div>
+                Ze souboru
+                <input type="file" name="contentFile" size="20" tabindex="3">
+                <input tabindex="4" type="submit" name="upload" value="Načti">
+            </div>
+            <div class="error">${ERRORS.contentFile?if_exists}</div>
             <div class="form-edit">
                 <a href="javascript:insertAtCursor(document.form.content, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vložit značku tučně"><b>B</b></a>
                 <a href="javascript:insertAtCursor(document.form.content, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="Vložit značku kurzíva"><i>I</i></a>
@@ -87,16 +93,6 @@ spokojeni. Najdete jej v pravém menu.
             </div>
             <div class="error">${ERRORS.content?if_exists}</div>
             <textarea tabindex="2" name="content" class="siroka" rows="30">${PARAMS.content?default("<p></p>")?html}</textarea>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <span>Načíst obsah ze souboru</span>
-            <div>
-                <input type="file" name="contentFile" size="20" tabindex="3">
-                <input tabindex="4" type="submit" name="upload" value="Načti soubor">
-            </div>
-            <div class="error">${ERRORS.contentFile?if_exists}</div>
         </td>
     </tr>
     <tr>

@@ -126,6 +126,7 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String ACTION_MOVE_LINK_DOWN = "mvLinkDown";
     public static final String ACTION_TOGGLE_DIGEST = "toggleDigest";
     public static final String ACTION_TOGGLE_BAN = "toggleBlogBan";
+    public static final String ACTION_PUBLISH_DELAYED = "publish";
 
     public static final String VAR_BLOG = "BLOG";
     public static final String VAR_BLOG_RELATION = "REL_BLOG";
@@ -235,6 +236,11 @@ public class EditBlog implements AbcAction, Configurable {
         if ( ACTION_REMOVE_STORY_STEP2.equals(action) ) {
             ActionProtector.ensureContract(request, EditBlog.class, true, true, true, false);
             return actionRemoveStoryStep2(request, response, blogRelation, blog, env);
+        }
+
+        if (ACTION_PUBLISH_DELAYED.equals(action)) {
+            ActionProtector.ensureContract(request, EditBlog.class, true, false, false, true);
+            return actionPublishDelayedStory(request, response, blog, env);
         }
 
         if ( ACTION_CUSTOMIZATION.equals(action) )
@@ -380,15 +386,16 @@ public class EditBlog implements AbcAction, Configurable {
         Element root = document.addElement("data");
 
         boolean uploading = params.containsKey(PARAM_UPLOAD);
+        if (uploading) {
+            setStoryContentFromFile(params, env);
+            return actionAddStoryStep1(request, blog, env);
+        }
 
         boolean canContinue = setStoryTitle(params, root, env);
-
-        if (uploading) // this method will put file's contents into the params, checking will be done by the following method
-            canContinue &= setStoryContentFromFile(params, env);
         canContinue &= setStoryContent(params, root, env);
         canContinue &= setStoryCategory(params, story);
 
-        if ( !canContinue || uploading || params.get(PARAM_PREVIEW)!=null ) {
+        if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
             if ( canContinue ) {
                 story.setCreated(new Date());
                 story.setInitialized(true);
@@ -489,28 +496,52 @@ public class EditBlog implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditBlog", "edit", env, request);
         }
 
-        boolean delayed = params.get(PARAM_DELAY) != null, published = false;
-        if (story.getType()==Item.UNPUBLISHED_BLOG && !delayed) {
-            story.setType(Item.BLOG);
-            story.setCreated(new Date());
-            published = true;
-        }
-        persistence.update(story);
-
-        if (published) {
-            incrementArchiveRecord(blog.getData().getRootElement(), new Date());
-            Element unpublishedStory = (Element) blog.getData().selectSingleNode("/data/unpublished/rid[text()=\""+relation.getId()+"\"]");
-            if (unpublishedStory!=null)
-                unpublishedStory.detach();
-            persistence.update(blog);
-            sendDigestMessage(relation);
-        }
+        boolean delayed = params.get(PARAM_DELAY) != null;
+        if (story.getType()==Item.UNPUBLISHED_BLOG && ! delayed)
+            publishDelayedStory(story, blog, relation);
+        else
+            persistence.update(story);
 
         FeedGenerator.updateBlog(blog);
         VariableFetcher.getInstance().refreshStories();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(),story.getCreated(),relation.getId()));
+        return null;
+    }
+
+    protected void publishDelayedStory(Item story, Category blog, Relation relation) {
+        Persistence persistence = PersistenceFactory.getPersistence();
+        Date timeNow = new Date();
+
+        story.setType(Item.BLOG);
+        story.setCreated(timeNow);
+        story.setUpdated(timeNow);
+        persistence.update(story);
+
+        incrementArchiveRecord(blog.getData().getRootElement(), timeNow);
+        Element unpublishedStory = (Element) blog.getData().selectSingleNode("/data/unpublished/rid[text()=\"" + relation.getId() + "\"]");
+        if (unpublishedStory != null)
+            unpublishedStory.detach();
+        persistence.update(blog);
+
+        sendDigestMessage(relation);
+    }
+
+    /**
+     * Automatically switch delayed story to published state.
+     */
+    protected String actionPublishDelayedStory(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Relation relation = (Relation) env.get(VAR_STORY);
+        Item story = (Item) relation.getChild();
+
+        publishDelayedStory(story, blog, relation);
+
+        FeedGenerator.updateBlog(blog);
+        VariableFetcher.getInstance().refreshStories();
+
+        urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId()));
         return null;
     }
 
@@ -1339,7 +1370,7 @@ public class EditBlog implements AbcAction, Configurable {
         String content = (String) params.get(PARAM_CONTENT);
         content = Misc.filterDangerousCharacters(content);
         if (Misc.empty(content)) {
-            ServletUtils.addError(PARAM_CONTENT, "Prosím zadejte hodnotu.", env, null);
+            ServletUtils.addError(PARAM_CONTENT, "Prosím zadejte obsah zápisku.", env, null);
             return false;
         }
 

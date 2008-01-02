@@ -10,17 +10,8 @@
 
 <#assign plovouci_sloupec>
 
-    <div class="s_nadpis">
-        <@lib.showUser owner/>
-        <#if title!="UNDEF"> - <a href="/blog/${BLOG.subType}">${title}</a></#if>
-    </div>
-
-    <div class="s_sekce">
-        <#if intro!="UNDEF">${intro}</#if>
-    </div>
-
     <#if UNPUBLISHED_STORIES?exists>
-        <div class="s_nadpis">Rozepsané zápisy</div>
+        <div class="s_nadpis">Rozepsané zápisky</div>
 
         <div class="s_sekce">
             <ul>
@@ -33,6 +24,102 @@
             </ul>
         </div>
     </#if>
+
+    <#if USER?exists && (USER.id==BLOG.owner || USER.hasRole("root") || USER.hasRole("attachment admin"))>
+        <div class="s_nadpis">
+            Správa zápisku
+        </div>
+
+        <div class="s_sekce">
+            <ul>
+                <#if USER.hasRole("blog digest admin")>
+                    <#if (ITEM.getProperty("banned_blog")?size > 0)>
+                        <#assign banMsg='Není nevhodný pro HP'>
+                    <#else>
+                        <#assign banMsg='Nevhodný pro HP'>
+                        <#if (ITEM.getProperty("digest")?size > 0)>
+                            <#assign digestMsg='Odstranit z digestu'>
+                        <#else>
+                            <#assign digestMsg='Přidat do digestu'>
+                        </#if>
+                        <li>
+                            <a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=toggleDigest"+TOOL.ticket(USER, false))}">${digestMsg}</a>
+                        </li>
+                    </#if>
+                    <li>
+                        <a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=toggleBlogBan"+TOOL.ticket(USER, false))}">${banMsg}</a>
+                        <hr>
+                    </li>
+                </#if>
+                <#if USER.id==BLOG.owner || USER.hasRole("root")>
+                    <li>
+                        <a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zápis</a>
+                    </li>
+                    <#if ITEM.type==15>
+                        <li>
+                            <a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=publish"+TOOL.ticket(USER, false))}">Publikuj zápis</a>
+                        </li>
+                    </#if>
+                    <li>
+                        <a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=remove")}">Smaž zápis</a>
+                    </li>
+                </#if>
+                <#if USER.id==BLOG.owner>
+                    <li>
+                        <a href="${URL.make("/inset/"+STORY.id+"?action=addScreenshot")}">Přidej obrázek</a>
+                    </li>
+                    <#if !CHILDREN.poll?exists>
+                        <li>
+                            <a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+STORY.id)}">Vlož anketu</a>
+                        </li>
+                    </#if>
+                </#if>
+                <#if USER.hasRole("attachment admin") || USER.id==BLOG.owner>
+                    <li>
+                        <a href="${URL.make("/inset/"+STORY.id+"?action=manage")}">Správa příloh</a>
+                    </li>
+                </#if>
+            </ul>
+        </div>
+
+        <#if USER.id==BLOG.owner || USER.hasRole("root")>
+            <div class="s_nadpis">
+                Správa blogu
+            </div>
+
+            <div class="s_sekce">
+                <ul>
+                    <li>
+                        <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlož nový zápis</a>
+                    </li>
+                    <li>
+                        <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavit blog</a>
+                    </li>
+                    <li>
+                        <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Přejmenovat blog</a>
+                    </li>
+                    <li>
+                        <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Upravit kategorie</a>
+                    </li>
+                    <li>
+                        <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=links")}">Upravit odkazy</a>
+                    </li>
+                    <li>
+                        <a href="${URL.noPrefix("/blog/"+BLOG.subType+"/export")}">Export do Movable Type</a>
+                    </li>
+                </ul>
+            </div>
+        </#if>
+    </#if>
+
+    <div class="s_nadpis">
+        <@lib.showUser owner/>
+        <#if title!="UNDEF"> - <a href="/blog/${BLOG.subType}">${title}</a></#if>
+    </div>
+
+    <div class="s_sekce">
+        <#if intro!="UNDEF">${intro}</#if>
+    </div>
 
     <div class="s_nadpis">Aktuální zápisy</div>
 
@@ -109,53 +196,6 @@
 	    <li><a href="/blog/souhrn">Všechny blogy, stručný souhrn</a></li>
         </ul>
     </div>
-
-    <#if (USER?exists && (USER.id==BLOG.owner || USER.hasRole("root"))) || (! USER?exists)>
-        <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Tato sekce sdružuje akce pro majitele blogu.</span></a>
-            Nastavení
-        </div>
-    </#if>
-
-  <div class="s_sekce">
-    <ul>
-    <#if USER?exists>
-        <#if USER.hasRole("blog digest admin")>
-            <#if (ITEM.getProperty("banned_blog")?size > 0)><#assign banMsg='Není nevhodný pro HP'>
-            <#else>
-             <#assign banMsg='Nevhodný pro HP'>
-             <#if (ITEM.getProperty("digest")?size > 0)><#assign digestMsg='Odstranit z digestu'><#else><#assign digestMsg='Přidat do digestu'></#if>
-             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=toggleDigest"+TOOL.ticket(USER, false))}">${digestMsg}</a></li>
-            </#if>
-            <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=toggleBlogBan"+TOOL.ticket(USER, false))}">${banMsg}</a></li>
-        </#if>
-        <#if USER.id==BLOG.owner || USER.hasRole("root")>
-            <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zápis</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=remove")}">Smaž zápis</a></li>
-        </#if>
-        <#if USER.hasRole("attachment admin") || USER.id==BLOG.owner>
-            <li><a href="${URL.make("/inset/"+STORY.id+"?action=manage")}">Správa příloh</a></li>
-        </#if>
-        <#if USER.id==BLOG.owner>
-            <#if !CHILDREN.poll?exists>
-                <li><a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+STORY.id)}">Vlož anketu</a></li>
-            </#if>
-            <li>
-                <a href="${URL.make("/inset/"+STORY.id+"?action=addScreenshot")}">Přidej obrázek</a>
-                <hr>
-            </li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlož nový zápis</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavit blog</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Přejmenovat blog</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Upravit kategorie</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=links")}">Upravit odkazy</a></li>
-            <li><a href="${URL.noPrefix("/blog/"+BLOG.subType+"/export")}">Exportovat do Movable Type</a></li>
-        </#if>
-    <#else>
-        <li><a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">Přihlásit se</a></li>
-    </#if>
-    </ul>
-  </div>
   <#--<hr id="arbo-sq-cara" />
   <@lib.advertisement id="arbo-sq" />-->
   <@lib.advertisement id="gg-sq-blog" />

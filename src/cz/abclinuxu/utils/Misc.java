@@ -245,8 +245,7 @@ public class Misc {
     public static String filterDangerousCharacters(String input) {
         if (input == null)
             return null;
-        int length = input.length();
-        if (length == 0)
+        if (input.length() == 0)
             return input;
 
         return input.replaceAll("[\\x00-\\x08\\x0B-\\x0C\\x0E-\\x1f]", "?");
