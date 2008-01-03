@@ -183,45 +183,45 @@ public interface Persistence {
     public void removeCounter(GenericObject obj, String type);
 
     /**
-     * Creates new tag in persistent storage. Tag keywords are stored too.
+     * Creates new tag in persistent storage. The application developer shall use TagTool.
      * @param tag tag to be persisted, its key must be unique
      */
     public void create(Tag tag);
 
     /**
-     * Update tag's title and keywords.
+     * Update tag's title. The application developer shall use TagTool.
      * @param tag a tag
      */
     public void update(Tag tag);
 
     /**
-     * Removes tag from persistent storage and unassign all its usages.
+     * Removes tag from persistent storage and unassign all its usages. The application developer shall use TagTool.
      * @param tag a tag to be removed
      */
     public void remove(Tag tag);
 
     /**
-     * Finds all tags.
+     * Finds all tags. The application developer shall use TagTool.
      * @return map of tags, key is identifier, value is its tag
      */
     public Map<String, Tag> getTags();
 
     /**
-     * Finds tags assigned to given object.
+     * Finds tags assigned to given object. The application developer shall use TagTool.
      * @param obj object to be searched
      * @return list of tag identifiers (empty in case that no tags have been assigned to given object)
      */
     public List<String> getAssignedTags(GenericDataObject obj);
 
     /**
-     * Assign tags to given object. Duplicates are slightly ignored.
+     * Assign tags to given object. Duplicates are slightly ignored. The application developer shall use TagTool.
      * @param obj object to which tags shall be assigned
      * @param tags tags to be assigned
      */
     public void assignTags(GenericDataObject obj, List<String> tags);
 
     /**
-     * Unassigns tags from given object. Already unassigned tags are slightly ignored.
+     * Unassigns tags from given object. Already unassigned tags are slightly ignored. The application developer shall use TagTool.
      * @param obj object from which tags shall be unassigned
      * @param tags tags to be unassigned
      */

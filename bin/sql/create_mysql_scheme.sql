@@ -260,7 +260,7 @@ ALTER TABLE stitkovani ADD UNIQUE INDEX in_stitkovani_vazba (typ,cislo,stitek);
 
 -- log akci kolem stitku
 CREATE TABLE stitky_log (
-  akce VARCHAR(8) NOT NULL,                      -- druh akce nad stitky (add, edit, delete, assign, unassign)
+  akce VARCHAR(8) NOT NULL,                      -- druh akce nad stitky (add, update, delete, assign, unassign)
   kdy TIMESTAMP NOT NULL,                        -- datum akce
   stitek VARCHAR(30) NOT NULL,                   -- id stitku
   autor INT(5) NULL,                             -- cislo autora akce, NULL pokud byl anonymni

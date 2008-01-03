@@ -388,6 +388,7 @@
                             <entry key="change.category.owner" value="update kategorie set pridal=?, zmeneno=zmeneno where pridal=?"/>
                             <entry key="change.property.owner" value="update vlastnost set hodnota=? where hodnota=? and (typ='user' or typ='used_by' or typ='favourited_by')"/>
                             <entry key="count.properties.by.user" value="select count(*) from vlastnost where hodnota=? and (typ='user' or typ='used_by' or typ='favourited_by')"/>
+                            <entry key="tag.log.action" value="insert into stitky_log values (?,NULL,?,?,?,?,?,?)"/>
                         </map>
                     </node>
                     <node name="versioning">

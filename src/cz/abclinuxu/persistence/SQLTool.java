@@ -22,6 +22,7 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.persistence.extra.*;
@@ -113,6 +114,7 @@ public final class SQLTool implements Configurable {
     public static final String TOP_USED_RELATIONS = "top.used.relations";
     public static final String TOP_COUNTED_RELATIONS = "top.counted.relations";
     public static final String LAST_REVISIONS = "last.versions";
+    public static final String TAG_LOG_ACTION = "tag.log.action";
 
     public static final String DELETE_USER = "delete.user";
     public static final String DELETE_USER_TICKET = "delete.user.ticket";
@@ -131,7 +133,7 @@ public final class SQLTool implements Configurable {
         ConfigurationManager.getConfigurator().configureAndRememberMe(singleton);
     }
 
-    private Map<String, String> sql = new HashMap<String, String>(60, 0.9f);
+    private Map<String, String> sql = new HashMap<String, String>(100, 0.9f);
 
     /**
      * Returns singleton of SQLTool.
@@ -1802,6 +1804,50 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Logs action with the tag.
+     * @param tag mandatory parameter containing affected tag
+     * @param action action performed with the tag
+     * @param user optional parameter holding instance of User object that performed the action
+     * @param ip mandatory parameter holding IP address of the user that performed the action
+     * @param document document to which this tag was (un)assigned, null for other actions
+     */
+    public void logTagAction(Tag tag, TagTool.Action action, User user, String ip, GenericObject document) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement((String) sql.get(TAG_LOG_ACTION));
+            statement.setString(1, action.toString());
+            statement.setString(2, tag.getId());
+
+            if (user == null) {
+                statement.setNull(3, Types.INTEGER);
+                statement.setString(4, ip);
+            } else {
+                statement.setInt(3, user.getId());
+                statement.setNull(4, Types.VARCHAR);
+            }
+
+            if (action.equals(TagTool.Action.ASSIGN) || action.equals(TagTool.Action.UNASSIGN)) {
+                statement.setString(5, PersistenceMapping.getGenericObjectType(document));
+                statement.setInt(6, document.getId());
+                statement.setNull(7, Types.VARCHAR);
+            } else {
+                statement.setNull(5, Types.CHAR);
+                statement.setNull(6, Types.INTEGER);
+                statement.setString(7, tag.getTitle());
+            }
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba při logování akce se štítkem!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, null);
+        }
+    }
+
+    /**
      * Inserts deprecated URL into table of replacement. Either newUrl or
      * rid must be supplied.
      * @param oldUrl old URL that shall be sustained, it must start with /
@@ -1981,6 +2027,7 @@ public final class SQLTool implements Configurable {
         store(CHANGE_CATEGORY_OWNER, prefs);
         store(CHANGE_PROPERTY_OWNER, prefs);
         store(COUNT_PROPERTIES_BY_USER, prefs);
+        store(TAG_LOG_ACTION, prefs);
     }
 
     /**

@@ -21,17 +21,108 @@ package cz.abclinuxu.utils;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.Tag;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.Persistence;
 
 import java.util.List;
 import java.util.Comparator;
+import java.util.Iterator;
 
 /**
- * Main class to work with tags.
+ * Main class to work with tags. The application programmer shall use these tags instead of Persistence interface.
  * @author literakl
  * @since 16.12.2007
  */
 public class TagTool {
     // cache, probably sorted by usage property
+
+    /**
+     * Creates new tag in persistent storage.
+     * @param tag tag to be persisted, its key must be unique
+     */
+    public void create(Tag tag, User user, String ipAddress) {
+        PersistenceFactory.getPersistence().create(tag);
+        SQLTool.getInstance().logTagAction(tag, Action.ADD, user, ipAddress, null);
+    }
+
+    /**
+     * Update tag's title and keywords.
+     * @param tag a tag
+     */
+    public void update(Tag tag, User user, String ipAddress) {
+        PersistenceFactory.getPersistence().update(tag);
+        SQLTool.getInstance().logTagAction(tag, Action.UPDATE, user, ipAddress, null);
+    }
+
+    /**
+     * Removes tag from persistent storage and unassign all its usages.
+     * @param tag a tag to be removed
+     */
+    public void remove(Tag tag, User user, String ipAddress) {
+        PersistenceFactory.getPersistence().create(tag);
+        SQLTool.getInstance().logTagAction(tag, Action.REMOVE, user, ipAddress, null);
+    }
+
+    /**
+     * Assign tags to given object. Duplicates are slightly ignored.
+     * @param obj object to which tags shall be assigned
+     * @param tags tags to be assigned
+     */
+    public void assignTags(GenericDataObject obj, List<String> tags, User user, String ipAddress) {
+        if (tags == null)
+            return;
+
+        Persistence persistence = PersistenceFactory.getPersistence();
+        SQLTool sqlTool = SQLTool.getInstance();
+        for (Iterator<String> iter = tags.iterator(); iter.hasNext();) {
+            String id = iter.next();
+            Tag tag = getById(id);
+            if (tag == null) {
+                iter.remove();
+                continue;
+            }
+
+            sqlTool.logTagAction(tag, Action.ASSIGN, user, ipAddress, obj);
+        }
+        persistence.assignTags(obj, tags);
+        // TODO update cache
+    }
+
+    /**
+     * Unassigns tags from given object. Already unassigned tags are slightly ignored.
+     * @param obj object from which tags shall be unassigned
+     * @param tags tags to be unassigned
+     */
+    public void unassignTags(GenericDataObject obj, List<String> tags, User user, String ipAddress) {
+        if (tags == null)
+            return;
+
+        Persistence persistence = PersistenceFactory.getPersistence();
+        SQLTool sqlTool = SQLTool.getInstance();
+        for (Iterator<String> iter = tags.iterator(); iter.hasNext();) {
+            String id = iter.next();
+            Tag tag = getById(id);
+            if (tag == null) {
+                iter.remove();
+                continue;
+            }
+
+            sqlTool.logTagAction(tag, Action.UNASSIGN, user, ipAddress, obj);
+        }
+        persistence.unassignTags(obj, tags);
+        // TODO update cache
+    }
+
+    /**
+     * Finds tag with specified identifier or return null, if there is no such tag.
+     * The search is case insensitive.
+     * @param id identifier
+     * @return the tag
+     */
+    public Tag getById(String id) {
+        return null;
+    }
 
     /**
      * List tags in specified order.
@@ -42,37 +133,6 @@ public class TagTool {
      * @return tags according to criteria
      */
     public List<Tag> list(int from, int count, String order, boolean ascending) {
-        return null;
-    }
-
-    /**
-     * Creates new tag in persistent storage. Tag keywords are stored too.
-     * @param tag tag to be persisted, its key must be unique
-     */
-    public void create(Tag tag, User user, String ipAddress) {
-    }
-
-    /**
-     * Update tag's title and keywords.
-     * @param tag a tag
-     */
-    public void update(Tag tag, User user, String ipAddress) {
-    }
-
-    /**
-     * Removes tag from persistent storage and unassign all its usages.
-     * @param tag a tag to be removed
-     */
-    public void remove(Tag tag, User user, String ipAddress) {
-    }
-
-    /**
-     * Finds tag with specified identifier or return null, if there is no such tag.
-     * The search is case insensitive.
-     * @param id identifier
-     * @return the tag
-     */
-    public Tag getById(String id) {
         return null;
     }
 
@@ -95,27 +155,35 @@ public class TagTool {
     }
 
     /**
-     * Assign tags to given object. Duplicates are slightly ignored.
-     * @param obj object to which tags shall be assigned
-     * @param tags tags to be assigned
-     */
-    public void assignTags(GenericDataObject obj, List<String> tags, User user, String ipAddress) {
-    }
-
-    /**
-     * Unassigns tags from given object. Already unassigned tags are slightly ignored.
-     * @param obj object from which tags shall be unassigned
-     * @param tags tags to be unassigned
-     */
-    public void unassignTags(GenericDataObject obj, List<String> tags, User user, String ipAddress) {
-    }
-
-    /**
      * Compares two Tags by their usage property in descending order.
      */
     private static class UsageComparator implements Comparator {
         public int compare(Object o1, Object o2) {
             return ((Tag)o2).getUsage() - ((Tag)o1).getUsage();
+        }
+    }
+
+    /**
+     * Constants for logging the action.
+     */
+    public static class Action {
+        public static final Action ADD = new Action("add");
+        public static final Action UPDATE = new Action("update");
+        public static final Action REMOVE = new Action("remove");
+        public static final Action ASSIGN = new Action("assign");
+        public static final Action UNASSIGN = new Action("unassign");
+
+        String id;
+        private Action(String id) {
+            this.id = id;
+        }
+
+        public String toString() {
+            return id;
+        }
+
+        public boolean equals(Object obj) {
+            return ((Action)obj).id.equals(id);
         }
     }
 }
