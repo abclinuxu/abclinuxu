@@ -38,6 +38,8 @@ import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.Map;
 import java.util.Random;
+import java.util.Collections;
+import java.util.concurrent.ConcurrentHashMap;
 import java.io.File;
 
 /**
@@ -53,20 +55,35 @@ public class Measure {
         String s,t;
         Date d = null;
 
+        char ch;
+        Random random = new Random();
+        Tag tag;
+        List tags = null;
+
         // place initilizaton here
-        DiacriticRemover remover = DiacriticRemover.getInstance();
-        s = "ěščřžýáíéescrzyaie";
-        t = remover.removeDiacritics(s);
+        ConcurrentHashMap map = new ConcurrentHashMap(1001, 1.0f, 1);
+        for (i = 0; i<1000;i++) {
+            ch = (char)('a' + random.nextInt(26));
+            s = ch + Integer.toString(i);
+            tag = new Tag(s, s);
+            tag.setCreated(new Date(107+random.nextInt(4), random.nextInt(11), random.nextInt(28), 2, 2));
+            tag.setUsage(random.nextInt(500));
+            map.put(s, tag);
+        }
 
         long start = System.currentTimeMillis();
-        for (i=0; i<350000; i++) {
+        for (i = 0; i < 100; i++) {
             //place your code to measure here
-            t = remover.removeDiacritics(s);
+            tags = new ArrayList(map.values());
+            Collections.sort(tags, new TagTool.TitleComparator());
         }
         long end = System.currentTimeMillis();
-        System.out.println(t);
 
         // place clean up here
+        for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
+            Tag tag1 = (Tag) iterator.next();
+            System.out.println(tag1.getTitle() + "\t\t" + tag1.getUsage() + "\t\t" + tag1.getCreated() );
+        }
 
         float avg = (end-start)/(float)i;
         System.out.println("celkem = "+(end-start)+" ms, prumer = "+avg+ " ms.");
