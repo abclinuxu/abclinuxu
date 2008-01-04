@@ -295,6 +295,12 @@
                                 <entry key="size" value="10000"/>
                             </map>
                         </node>
+                        <node name="TagCache">
+                            <map>
+                                <entry key="size" value="500"/>
+                                <entry key="concurrency.level" value="1"/>
+                            </map>
+                        </node>
                     </node>
                     <node name="Nursery">
                         <map>

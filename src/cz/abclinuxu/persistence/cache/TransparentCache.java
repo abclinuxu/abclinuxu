@@ -25,7 +25,7 @@ import cz.abclinuxu.data.GenericObject;
  * <p>
  * Cache sucks really badly. The main problem is, that it returns
  * mutable objects, which are initialized in code. Then the data
- * stored in cache are not synchronized.
+ * stored in cache is not synchronized.
  * <p>
  * Imagine: clone of relation is stored, its parent and child are
  * both stored as not initialized. Later it is retrieved and someone

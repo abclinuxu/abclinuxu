@@ -31,6 +31,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
@@ -129,6 +130,7 @@ public class AdminServlet implements AbcAction {
         AbcInit.getInstance().configureFreeMarker();
 	    DateTool.calculateTodayTimes();
         VariableFetcher.getInstance().run(); // refresh variables
+        TagTool.init();
 
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "promazal cache");

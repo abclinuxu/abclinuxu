@@ -316,7 +316,7 @@ public class TestMySqlPersistance extends TestCase {
         item2.setData("<data>2</data>");
         item2.addProperty("property", "2");
         persistence.create(item2);
-        Item item3 = new Item(0, Item.BAZAAR);
+        Item item3 = new Item(0, Item.SOFTWARE);
         item3.setData("<data>3</data>");
         item3.addProperty("property", "3");
         persistence.create(item3);

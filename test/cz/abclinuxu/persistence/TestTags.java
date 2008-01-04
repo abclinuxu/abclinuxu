@@ -162,6 +162,29 @@ public class TestTags extends TestCase {
             statement = con.createStatement();
             statement.executeUpdate("delete from stitek");
             statement.executeUpdate("delete from stitkovani");
+            statement.executeUpdate("delete from stitky_log");
+        } finally {
+            ((MySqlPersistence) persistence).releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * clean up before test
+     * @throws Exception
+     */
+    protected void tearDown() throws Exception {
+        super.setUp();
+        persistence = PersistenceFactory.getPersistence(PersistenceFactory.defaultTestUrl, LRUCache.class);
+
+        Connection con = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = ((MySqlPersistence) persistence).getSQLConnection();
+            statement = con.createStatement();
+            statement.executeUpdate("delete from stitek");
+            statement.executeUpdate("delete from stitkovani");
+            statement.executeUpdate("delete from stitky_log");
         } finally {
             ((MySqlPersistence) persistence).releaseSQLResources(con, statement, resultSet);
         }

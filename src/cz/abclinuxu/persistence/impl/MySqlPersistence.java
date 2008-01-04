@@ -30,6 +30,7 @@ import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.cache.TransparentCache;
+import cz.abclinuxu.persistence.cache.TagCache;
 import cz.abclinuxu.persistence.Nursery;
 import cz.abclinuxu.persistence.PersistenceMapping;
 import org.logicalcobwebs.proxool.ProxoolException;
@@ -49,6 +50,7 @@ public class MySqlPersistence implements Persistence {
     /** contains URL to database connection */
     String dbUrl = null;
     TransparentCache cache = null;
+    TagCache tagCache = TagCache.getInstance();
 
     static {
         try {
@@ -422,10 +424,17 @@ public class MySqlPersistence implements Persistence {
 
                 // unassign any tags for deleted object
                 if (obj instanceof GenericDataObject) {
+                    GenericDataObject gdo = (GenericDataObject) obj;
+                    List<String> tags = getAssignedTags(gdo);
+                    for (String tag : tags) {
+                        tagCache.unassignTag(gdo, tag);
+                    }
+
                     statement2 = con.prepareStatement("delete from stitkovani where typ=? and cislo=?");
                     statement2.setString(1, PersistenceMapping.getGenericObjectType(obj));
                     statement2.setInt(2, obj.getId());
                     statement2.executeUpdate();
+                    tagCache.removeAssignment(gdo);
                 }
 
                 // remove all properties from table vlastnost
@@ -1004,7 +1013,7 @@ public class MySqlPersistence implements Persistence {
      * to <code>conditions</code> for each asterisk in perpared statement.
      */
     private void appendCounterDeleteParams(GenericObject obj, StringBuffer sb, List conditions, String type ) {
-        sb.append("delete from citac where typ=? and cislo=? and type=?");
+        sb.append("delete from citac where typ=? and cislo=? and druh=?");
         conditions.add(PersistenceMapping.getGenericObjectType(obj));
         conditions.add(new Integer(obj.getId()));
         conditions.add(type);
@@ -2130,8 +2139,6 @@ public class MySqlPersistence implements Persistence {
         }
     }
 
-    // todo special cache for tags
-
     public void create(Tag tag) {
         Connection con = null;
         PreparedStatement statement = null;
@@ -2146,6 +2153,8 @@ public class MySqlPersistence implements Persistence {
             int result = statement.executeUpdate();
             if (result == 0)
                 throw new PersistenceException("Nepodařilo se vložit " + tag + " do databáze!");
+
+            tagCache.put(tag);
         } catch (SQLException e) {
             if (e.getErrorCode() == 1062) {
                 throw new DuplicateKeyException("Duplikátní údaj: " + tag.getId() + "!");
@@ -2169,6 +2178,8 @@ public class MySqlPersistence implements Persistence {
             int result = statement.executeUpdate();
             if (result == 0)
                 throw new PersistenceException("Nepodařilo se aktualizovat " + tag + " v databázi!");
+
+            tagCache.put(tag);
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu uložit " + tag, e);
         } finally {
@@ -2188,6 +2199,8 @@ public class MySqlPersistence implements Persistence {
             statement2 = con.prepareStatement("delete from stitek where id=?");
             statement2.setString(1, tag.getId());
             statement2.executeUpdate();
+
+            tagCache.remove(tag.getId());
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu smazat " + tag, e);
         } finally {
@@ -2204,12 +2217,14 @@ public class MySqlPersistence implements Persistence {
             con = getSQLConnection();
             statement = con.createStatement();
             resultSet = statement.executeQuery("select *, (select count(*) from stitkovani where stitek=id) from stitek");
+            tags.clear();
             while (resultSet.next()) {
                 String id = resultSet.getString(1);
                 Tag tag = new Tag(id, resultSet.getString(2));
                 tag.setCreated(new java.util.Date(resultSet.getTimestamp(3).getTime()));
                 tag.setUsage(resultSet.getInt(4));
                 tags.put(id, tag);
+                tagCache.put(tag);
             }
 
             return tags;
@@ -2224,18 +2239,25 @@ public class MySqlPersistence implements Persistence {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
+        List<String> tags;
 
         try {
+            tags = tagCache.loadAssignedTags(obj);
+            if (tags != null)
+                return tags;
+
             con = getSQLConnection();
             statement = con.prepareStatement("select stitek from stitkovani where typ=? and cislo=?");
             statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
 
             resultSet = statement.executeQuery();
-            List<String> tags = new ArrayList<String>();
+            tags = new ArrayList<String>();
             while (resultSet.next()) {
                 tags.add(resultSet.getString(1));
             }
+
+            tagCache.storeAssignedTags(obj, tags);
             return tags;
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu načíst štítky pro " + obj, e);
@@ -2248,6 +2270,7 @@ public class MySqlPersistence implements Persistence {
         if (tags.isEmpty())
             return;
 
+        int updated;
         Connection con = null;
         PreparedStatement statement = null;
         try {
@@ -2258,7 +2281,9 @@ public class MySqlPersistence implements Persistence {
 
             for (String tag : tags) {
                 statement.setString(3, tag);
-                statement.executeUpdate();
+                updated = statement.executeUpdate();
+                if (updated == 1)
+                    tagCache.assignTag(obj, tag);
             }
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu uložit štítky pro " + obj, e);
@@ -2271,21 +2296,23 @@ public class MySqlPersistence implements Persistence {
         if (tags.isEmpty())
             return;
 
+        int updated;
         Connection con = null;
         PreparedStatement statement = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("delete from stitkovani where typ=? and cislo=? and stitek in " + Misc.getInCondition(tags.size()));
+            statement = con.prepareStatement("delete from stitkovani where typ=? and cislo=? and stitek=?");
             statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
 
-            int i = 3;
             for (String tag : tags) {
-                statement.setString(i++, tag);
+                statement.setString(3, tag);
+                updated = statement.executeUpdate();
+                if (updated == 1)
+                    tagCache.unassignTag(obj, tag);
             }
-            statement.executeUpdate();
         } catch (SQLException e) {
-            throw new PersistenceException("Nemohu uložit štítky pro " + obj, e);
+            throw new PersistenceException("Nemohu smazat štítky pro " + obj, e);
         } finally {
             releaseSQLResources(con, statement, null);
         }

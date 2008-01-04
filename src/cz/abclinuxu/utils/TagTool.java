@@ -24,24 +24,28 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.cache.TagCache;
 
 import java.util.List;
-import java.util.Comparator;
 import java.util.Iterator;
 
 /**
- * Main class to work with tags. The application programmer shall use these tags instead of Persistence interface.
+ * Main class to work with tags to be used by the application developer.
  * @author literakl
  * @since 16.12.2007
  */
 public class TagTool {
-    // cache, probably sorted by usage property
+    static TagCache cache = TagCache.getInstance();
+
+    public static void init() {
+        PersistenceFactory.getPersistence().getTags(); // rereads the tag cache
+    }
 
     /**
      * Creates new tag in persistent storage.
      * @param tag tag to be persisted, its key must be unique
      */
-    public void create(Tag tag, User user, String ipAddress) {
+    public static void create(Tag tag, User user, String ipAddress) {
         PersistenceFactory.getPersistence().create(tag);
         SQLTool.getInstance().logTagAction(tag, Action.ADD, user, ipAddress, null);
     }
@@ -50,7 +54,7 @@ public class TagTool {
      * Update tag's title and keywords.
      * @param tag a tag
      */
-    public void update(Tag tag, User user, String ipAddress) {
+    public static void update(Tag tag, User user, String ipAddress) {
         PersistenceFactory.getPersistence().update(tag);
         SQLTool.getInstance().logTagAction(tag, Action.UPDATE, user, ipAddress, null);
     }
@@ -59,7 +63,7 @@ public class TagTool {
      * Removes tag from persistent storage and unassign all its usages.
      * @param tag a tag to be removed
      */
-    public void remove(Tag tag, User user, String ipAddress) {
+    public static void remove(Tag tag, User user, String ipAddress) {
         PersistenceFactory.getPersistence().create(tag);
         SQLTool.getInstance().logTagAction(tag, Action.REMOVE, user, ipAddress, null);
     }
@@ -69,7 +73,7 @@ public class TagTool {
      * @param obj object to which tags shall be assigned
      * @param tags tags to be assigned
      */
-    public void assignTags(GenericDataObject obj, List<String> tags, User user, String ipAddress) {
+    public static void assignTags(GenericDataObject obj, List<String> tags, User user, String ipAddress) {
         if (tags == null)
             return;
 
@@ -86,7 +90,6 @@ public class TagTool {
             sqlTool.logTagAction(tag, Action.ASSIGN, user, ipAddress, obj);
         }
         persistence.assignTags(obj, tags);
-        // TODO update cache
     }
 
     /**
@@ -94,7 +97,7 @@ public class TagTool {
      * @param obj object from which tags shall be unassigned
      * @param tags tags to be unassigned
      */
-    public void unassignTags(GenericDataObject obj, List<String> tags, User user, String ipAddress) {
+    public static void unassignTags(GenericDataObject obj, List<String> tags, User user, String ipAddress) {
         if (tags == null)
             return;
 
@@ -111,7 +114,6 @@ public class TagTool {
             sqlTool.logTagAction(tag, Action.UNASSIGN, user, ipAddress, obj);
         }
         persistence.unassignTags(obj, tags);
-        // TODO update cache
     }
 
     /**
@@ -120,8 +122,8 @@ public class TagTool {
      * @param id identifier
      * @return the tag
      */
-    public Tag getById(String id) {
-        return null;
+    public static Tag getById(String id) {
+        return cache.get(id);
     }
 
     /**
@@ -132,7 +134,7 @@ public class TagTool {
      * @param ascending true when ascending order is requested
      * @return tags according to criteria
      */
-    public List<Tag> list(int from, int count, String order, boolean ascending) {
+    public static List<Tag> list(int from, int count, ListOrder order, boolean ascending) {
         return null;
     }
 
@@ -141,7 +143,7 @@ public class TagTool {
      * @param count number of returned tags
      * @return found tags
      */
-    public List<Tag> getMostUsedTags(int count) {
+    public static List<Tag> getMostUsedTags(int count) {
         return null;
     }
 
@@ -150,17 +152,8 @@ public class TagTool {
      * @param obj object to be searched
      * @return list of tags (empty in case that no tags have been assigned to given object)
      */
-    public List<Tag> getAssignedTags(GenericDataObject obj) {
+    public static List<Tag> getAssignedTags(GenericDataObject obj) {
         return null;
-    }
-
-    /**
-     * Compares two Tags by their usage property in descending order.
-     */
-    private static class UsageComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            return ((Tag)o2).getUsage() - ((Tag)o1).getUsage();
-        }
     }
 
     /**
@@ -175,6 +168,31 @@ public class TagTool {
 
         String id;
         private Action(String id) {
+            this.id = id;
+        }
+
+        public String toString() {
+            return id;
+        }
+
+        public boolean equals(Object obj) {
+            return ((Action)obj).id.equals(id);
+        }
+    }
+
+    /**
+     * Constants for list order.
+     */
+    public static class ListOrder {
+        /** order by tag title */
+        public static final ListOrder BY_TITLE = new ListOrder("title");
+        /** order by tag usage */
+        public static final ListOrder BY_USAGE = new ListOrder("usage");
+        /** order by time when tag was created */
+        public static final ListOrder BY_CREATION = new ListOrder("creation");
+
+        String id;
+        private ListOrder(String id) {
             this.id = id;
         }
 

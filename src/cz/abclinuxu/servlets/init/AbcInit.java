@@ -23,6 +23,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.data.view.NewsCategories;
 import cz.abclinuxu.data.view.DriverCategories;
 import cz.abclinuxu.utils.config.Configurable;
@@ -107,6 +108,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             log.fatal("Nemohu inicializovat systém šablon!", e);
         }
 
+        TagTool.init();
         startTasks();
         log.info("Inicializace je hotova");
     }
