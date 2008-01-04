@@ -25,7 +25,7 @@
         </div>
     </#if>
 
-    <#if USER?exists && (USER.id==BLOG.owner || USER.hasRole("root") || USER.hasRole("attachment admin"))>
+    <#if USER?exists && (USER.id==BLOG.owner || USER.hasRole("root") || USER.hasRole("attachment admin") || USER.hasRole("blog digest admin"))>
         <div class="s_nadpis">
             Správa zápisku
         </div>
