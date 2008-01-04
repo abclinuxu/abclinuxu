@@ -75,7 +75,7 @@ public class Measure {
         for (i = 0; i < 100; i++) {
             //place your code to measure here
             tags = new ArrayList(map.values());
-            Collections.sort(tags, new TagTool.TitleComparator());
+//            Collections.sort(tags, new TagTool.TitleComparator());
         }
         long end = System.currentTimeMillis();
 
