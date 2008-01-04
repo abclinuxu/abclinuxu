@@ -108,7 +108,7 @@ public class EditRequest implements AbcAction, Configurable {
             env.put(VAR_REQUEST_RELATION,relation);
 
         if ( action==null || action.equals(ACTION_ADD) ) {
-            ActionProtector.ensureContract(request, EditRequest.class, true, false, true, false);
+            ActionProtector.ensureContract(request, EditRequest.class, false, false, true, false);
             return actionAdd(request,response,env);
         }
 
@@ -116,7 +116,7 @@ public class EditRequest implements AbcAction, Configurable {
             return actionCommentTools(request, env);
 
         if ( action.equals(ACTION_COMPLAINT) ) {
-            ActionProtector.ensureContract(request, EditRequest.class, true, true, true, false);
+            ActionProtector.ensureContract(request, EditRequest.class, false, true, true, false);
             return actionSubmitComplaint(request,response,env);
         }
 
@@ -124,7 +124,7 @@ public class EditRequest implements AbcAction, Configurable {
             return actionChooseForum(request,env);
 
         if ( action.equals(ACTION_RIGHT_FORUM) ) {
-            ActionProtector.ensureContract(request, EditRequest.class, true, true, true, false);
+            ActionProtector.ensureContract(request, EditRequest.class, false, true, true, false);
             return actionAskForumChange(request,response,env);
         }
 
