@@ -25,6 +25,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.cache.TagCache;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.search.CreateIndex;
@@ -75,7 +76,7 @@ public class Measure {
         for (i = 0; i < 100; i++) {
             //place your code to measure here
             tags = new ArrayList(map.values());
-//            Collections.sort(tags, new TagTool.TitleComparator());
+//            Collections.sort(tags, new TagCache.TitleComparator(true));
         }
         long end = System.currentTimeMillis();
 
