@@ -207,7 +207,7 @@ public class EditTag implements AbcAction, Configurable {
             return false;
         }
 
-        String id = title.toLowerCase();
+        String id = DiacriticRemover.getInstance().removeDiacritics(title.toLowerCase());
         Matcher matcher = reInvalidTitle.matcher(id);
         if (matcher.find()) {
             ServletUtils.addError(PARAM_TITLE, "Název štítku obsahuje nepovolené znaky!", env, null);
