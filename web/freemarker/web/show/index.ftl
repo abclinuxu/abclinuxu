@@ -14,6 +14,7 @@
                  <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a></li>
             </#list>
             </ul>
+            <span class="s_sekce_dalsi"><a href="/History?type=software">další&nbsp;&raquo;</a></span>
         </div>
     </#if>
 
@@ -29,6 +30,7 @@
                  <li><a href="${rel.url?default("/hardware/show/"+rel.id)}">${TOOL.xpath(rel.child,"data/name")}</a></li>
             </#list>
             </ul>
+            <span class="s_sekce_dalsi"><a href="/History?type=hardware">další&nbsp;&raquo;</a></span>
         </div>
     </#if>
 
@@ -40,23 +42,6 @@
     <@lib.advertisement id="ps-boxik4" />
     <@lib.advertisement id="ps-boxik5" />
     <@lib.advertisement id="cvonline" />
-
-    <#--
-    <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
-    <#if (DRIVERS?size>0) >
-        <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Databáze ovladačů pro váš hardware.</span></a>
-            <a href="/ovladace">Ovladače</a>
-        </div>
-        <div class="s_sekce">
-            <ul>
-            <#list DRIVERS as rel>
-                <li><a href="${rel.url?default("/ovladace/show/"+rel.id)}">${TOOL.xpath(rel.child,"data/name")}</a></li>
-            </#list>
-            </ul>
-        </div>
-    </#if>
-    -->
 
     <#--<center><@lib.advertisement id="arbo-sq" /></center>-->
 
@@ -186,9 +171,12 @@
     <div class="s_sekce">
         <ul>
         <#list FAQ as rel>
-             <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/title")}</a></li>
+             <li>
+                <a href="${rel.url}">${TOOL.xpath(rel.child,"data/title")}</a>
+             </li>
         </#list>
         </ul>
+        <span class="s_sekce_dalsi"><a href="/History?type=faq">další&nbsp;&raquo;</a></span>
     </div>
    </td>
    <td>
@@ -200,9 +188,12 @@
       <div class="s_sekce">
         <ul>
           <#list DICTIONARY as rel>
-            <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+            <li>
+                <a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a>
+            </li>
           </#list>
         </ul>
+        <span class="s_sekce_dalsi"><a href="/History?type=dictionary">další&nbsp;&raquo;</a></span>
       </div>
    </td>
 
@@ -220,6 +211,7 @@
                 </li>
             </#list>
         </ul>
+        <span class="s_sekce_dalsi"><a href="/History?type=personalities">další&nbsp;&raquo;</a></span>
     </div>
    </td>
   </tr>
@@ -243,6 +235,7 @@
              </li>
         </#list>
         </ul>
+        <span class="s_sekce_dalsi"><a href="/bazar">další&nbsp;&raquo;</a></span>
       </div>
    </td>
 
@@ -260,6 +253,8 @@
              </li>
         </#list>
         </ul>
+        <br>
+        <span class="s_sekce_dalsi"><a href="/ovladace">další&nbsp;&raquo;</a></span>
       </div>
    </td>
 
@@ -279,6 +274,7 @@
             <img width="200" src="${TOOL.xpath(rel.child,"/data/listingThumbnail")}" alt="${TOOL.xpath(rel.child,"/data/title")}" border="0" style="margin: 0.4em 0.3em 0.3em 0.3em">
           </a>
         </#list>
+        <span class="s_sekce_dalsi"><a href="/desktopy">další&nbsp;&raquo;</a></span>
       </div>
     </div>
 </#if>

@@ -567,6 +567,11 @@ a.info:hover {
 	text-decoration: none;
 }
 
+.s_sekce_dalsi {
+	font-size: small;
+	text-decoration: none;
+}
+
 a.info span.tooltip {
 	display: none;
 }

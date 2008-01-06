@@ -634,34 +634,37 @@
 
     <servlet name="History">
         <action name="articles" content="/show/history_articles.ftl">
-            <var name="TITLE" value="Historie článků" />
+            <var name="TITLE" value="Výpis článků" />
         </action>
         <action name="news" content="/show/history_articles.ftl">
-            <var name="TITLE" value="Historie zpráviček" />
+            <var name="TITLE" value="Výpis zpráviček" />
         </action>
         <action name="discussions" content="/show/history_dizs.ftl">
-            <var name="TITLE" value="Historie diskusí" />
+            <var name="TITLE" value="Výpis diskusí" />
         </action>
         <action name="questions" content="/show/history_dizs.ftl">
-            <var name="TITLE" value="Historie otázek" />
+            <var name="TITLE" value="Výpis otázek" />
         </action>
         <action name="comments" content="/show/history_dizs.ftl">
-            <var name="TITLE" value="Historie komentářů" />
+            <var name="TITLE" value="Výpis komentářů" />
         </action>
         <action name="hardware" content="/show/history_records.ftl">
-            <var name="TITLE" value="Historie hardwaru" />
+            <var name="TITLE" value="Výpis hardwaru" />
         </action>
         <action name="software" content="/show/history_records.ftl">
-            <var name="TITLE" value="Historie softwaru" />
+            <var name="TITLE" value="Výpis softwaru" />
         </action>
         <action name="dictionary" content="/show/history_dictionary.ftl">
-            <var name="TITLE" value="Historie pojmů" />
+            <var name="TITLE" value="Výpis pojmů" />
+        </action>
+        <action name="personalities" content="/show/history_personalities.ftl">
+            <var name="TITLE" value="Výpis osobností" />
         </action>
         <action name="faq" content="/show/history_faq.ftl">
-            <var name="TITLE" value="Historie často kladených otázek" />
+            <var name="TITLE" value="Výpis často kladených otázek" />
         </action>
         <action name="wiki" content="/show/history_wiki.ftl">
-            <var name="TITLE" value="Historie wiki záznamů" />
+            <var name="TITLE" value="Výpis wiki záznamů" />
         </action>
     </servlet>
 
