@@ -266,7 +266,7 @@
     <div class="ramec">
       <div class="s_nadpis">
         <a class="info" href="#">?<span class="tooltip">Sbírka uživatelských desktopů. Pochlubte se, jak vypadá vaše pracovní prostředí.</span></a>
-        <a href="/desktopy">Uživatelské desktopy</a>
+        <a href="/desktopy">Vaše desktopy</a>
       </div>
       <div class="s_sekce" style="text-align:center;">
         <#list DESKTOPS as rel>
