@@ -2242,7 +2242,7 @@ public class MySqlPersistence implements Persistence {
         List<String> tags;
 
         try {
-            tags = tagCache.loadAssignedTags(obj);
+            tags = tagCache.getAssignedTags(obj);
             if (tags != null)
                 return tags;
 

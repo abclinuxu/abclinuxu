@@ -206,7 +206,7 @@ public class ServletUtils implements Configurable {
                 return;
             }
 
-            handleLoggedIn(user, false, request, response, env);
+            handleLoggedIn(user, false, response);
             params.put(ActionProtector.PARAM_TICKET, user.getSingleProperty(Constants.PROPERTY_TICKET));
 
         } else {
@@ -230,7 +230,7 @@ public class ServletUtils implements Configurable {
                 addError(Constants.ERROR_GENERIC, "Nalezena cookie se špatným heslem!", env, null);
                 return;
             }
-            handleLoggedIn(user, true, request, null, env);
+            handleLoggedIn(user, true, null);
         }
 
         session.setAttribute(Constants.VAR_USER, user);
@@ -380,7 +380,7 @@ public class ServletUtils implements Configurable {
      * @param cookieExists if true, it makes no sense to create cookie
      * @param response cookie will be placed here
      */
-    private static void handleLoggedIn(User user, boolean cookieExists, HttpServletRequest request, HttpServletResponse response, Map env) {
+    private static void handleLoggedIn(User user, boolean cookieExists, HttpServletResponse response) {
         if (! AbcConfig.isMaintainanceMode()) {
             String now;
             synchronized (Constants.isoFormat) {
@@ -400,45 +400,6 @@ public class ServletUtils implements Configurable {
         }
         user.fillLastSeenComments(comments);
 
-        SQLTool sqlTool = SQLTool.getInstance();
-        List<Integer> usersLogin = sqlTool.findUsersWithLogin(user.getLogin(), null);
-        List<Integer> usersNick = Collections.emptyList();
-        if (user.getNick() != null)
-            usersNick = sqlTool.findUsersWithNick(user.getNick(), null);
-        boolean warning = false;
-        if (usersLogin.size() > 1) {
-            warning = true;
-            usersLogin.remove(new Integer(user.getId()));
-            StringBuffer sb = new StringBuffer();
-            sb.append("Vaše přihlašovací jméno je v konfliktu s těmito uživateli: ");
-            List<User> users = loadUsers(usersLogin);
-            for (User user1 : users) {
-                sb.append("<a href=\"/Profile/" + user1.getId() + "\">" + user1.getName() + "</a>, ");
-            }
-            sb.setCharAt(sb.length() - 2, '.');
-
-            addError(Constants.ERROR_GENERIC, sb.toString(), env, request.getSession());
-        }
-        if (usersNick.size() > 1) {
-            warning = true;
-            usersNick.remove(new Integer(user.getId()));
-            StringBuffer sb = new StringBuffer();
-            sb.append("Vaše přezdívka je v konfliktu s těmito uživateli: ");
-            List<User> users = loadUsers(usersNick);
-            for (User user1 : users) {
-                sb.append("<a href=\"/Profile/" + user1.getId() + "\">" + user1.getName() + "</a>, ");
-            }
-            sb.setCharAt(sb.length() - 2, '.');
-
-            addError(Constants.ERROR_GENERIC, sb.toString(), env, request.getSession());
-        }
-        if (warning) {
-            StringBuffer sb = new StringBuffer();
-            sb.append("V budoucnu dojde k odstranění podobných duplicit automatickou změnou, nedohodnete-li ");
-            sb.append("se sami mezi sebou. <a href=\"/blog/leos/2007/9/23/194452\">Podrobnosti</a>.");
-            addError(Constants.ERROR_GENERIC, sb.toString(), env, request.getSession());
-        }
-
         if (! cookieExists) {
             int valid = 6*30*24*3600; // six months
             Node node = user.getData().selectSingleNode("/data/settings/cookie_valid");
@@ -450,15 +411,6 @@ public class ServletUtils implements Configurable {
                 addCookie(cookie,response);
             }
         }
-    }
-
-    private static List<User> loadUsers(List<Integer> ids) {
-        List<User> users = new ArrayList<User>(ids.size());
-        for (Integer id : ids) {
-            users.add(new User(id));
-        }
-        PersistenceFactory.getPersistence().synchronizeList(users);
-        return users;
     }
 
     /**

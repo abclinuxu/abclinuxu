@@ -713,6 +713,21 @@
         </action>
     </servlet>
 
+    <servlet name="Tags">
+        <action name="add" content="/add/tag.ftl">
+            <var name="TITLE" value="Vložit nový štítek"/>
+        </action>
+        <action name="edit" content="/edit/tag.ftl">
+            <var name="TITLE" value="Upravit štítek"/>
+        </action>
+        <action name="detail" content="/show/tag_detail.ftl">
+            <var name="TITLE" value='Štítek ${TAG.title}' type="Lazy"/>
+        </action>
+        <action name="list" content="/show/tag_list.ftl">
+            <var name="TITLE" value="Seznam štítků"/>
+        </action>
+    </servlet>
+
     <servlet name="ViewPersonality">
         <action name="view" content="/show/personality.ftl">
             <var name="TITLE" value='${TOOL.childName(ITEM)}' type="Lazy"/>

@@ -96,22 +96,26 @@ public class Controller extends HttpServlet implements Configurable {
             return Constants.PAGE_INDEX;
         if (uri.startsWith(UrlUtils.PREFIX_FORUM))
             return Constants.PAGE_FORUM;
-        if (uri.startsWith(UrlUtils.PREFIX_CLANKY))
-            return Constants.PAGE_ARTICLES;
         if (uri.startsWith(UrlUtils.PREFIX_BLOG))
             return Constants.PAGE_BLOGS;
-        if (uri.startsWith(UrlUtils.PREFIX_HARDWARE))
-            return Constants.PAGE_HARDWARE;
-        if (uri.startsWith(UrlUtils.PREFIX_SOFTWARE))
-            return Constants.PAGE_SOFTWARE;
-        if (uri.startsWith("/Search"))
-            return Constants.PAGE_SEARCH;
+        if (uri.startsWith(UrlUtils.PREFIX_CLANKY))
+            return Constants.PAGE_ARTICLES;
         if (uri.startsWith(UrlUtils.PREFIX_NEWS))
             return Constants.PAGE_NEWS;
+        if (uri.startsWith(UrlUtils.PREFIX_SOFTWARE))
+            return Constants.PAGE_SOFTWARE;
+        if (uri.startsWith(UrlUtils.PREFIX_HARDWARE))
+            return Constants.PAGE_HARDWARE;
+        if (uri.startsWith("/hledani"))
+            return Constants.PAGE_SEARCH;
         if (uri.startsWith(UrlUtils.PREFIX_SCREENSHOTS))
             return Constants.PAGE_SCREENSHOTS;
+        if (uri.startsWith(UrlUtils.PREFIX_TAGS))
+            return Constants.PAGE_TAGS;
         if (uri.startsWith(UrlUtils.PREFIX_DICTIONARY))
             return Constants.PAGE_DICTIONARY;
+        if (uri.startsWith("/ucebnice"))
+            return Constants.PAGE_SCHOOLBOOK;
         if (uri.startsWith(UrlUtils.PREFIX_PERSONALITIES))
             return Constants.PAGE_PERSONALITIES;
         if (uri.startsWith(UrlUtils.PREFIX_DRIVERS))
@@ -122,8 +126,6 @@ public class Controller extends HttpServlet implements Configurable {
             return Constants.PAGE_POLLS;
         if (uri.startsWith(UrlUtils.PREFIX_BAZAAR))
             return Constants.PAGE_BAZAAR;
-        if (uri.startsWith("/ucebnice"))
-            return Constants.PAGE_SCHOOLBOOK;
         if (uri.startsWith("/hry"))
             return Constants.PAGE_GAMES;
         if (uri.startsWith("/hosting"))

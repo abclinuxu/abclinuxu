@@ -23,12 +23,15 @@ import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.TagTool;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.prefs.Preferences;
 import java.util.concurrent.ConcurrentHashMap;
+import java.text.Collator;
 
 import org.apache.log4j.Logger;
 import com.whirlycott.cache.Cache;
@@ -51,7 +54,7 @@ public class TagCache implements Configurable {
     }
 
     private int cacheSize, concurrencyLevel;
-    private ConcurrentHashMap tagCache;
+    private ConcurrentHashMap<String, Tag> tagCache;
     Cache mappingCache;
 
     /**
@@ -77,7 +80,16 @@ public class TagCache implements Configurable {
      * @param id tag identifier
      */
     public void remove(String id) {
-        tagCache.remove(id.toLowerCase());
+        Tag tag = tagCache.remove(id.toLowerCase());
+        // if (tag.getUsage() > 0) todo remove tag from mappingCache
+    }
+
+    /**
+     * Returns number of tags
+     * @return number of tags
+     */
+    public int size() {
+        return tagCache.size();
     }
 
     /**
@@ -86,6 +98,29 @@ public class TagCache implements Configurable {
     public void clear() {
         tagCache.clear();
         mappingCache.clear();
+    }
+
+    /**
+     * List tags in specified order.
+     * @param from offset
+     * @param count number of returned tags
+     * @param order specified sort field - title, usage, creation time
+     * @param ascending true when ascending order is requested
+     * @return list of tags according to criteria
+     */
+    public List<Tag> list(int from, int count, TagTool.ListOrder order, boolean ascending) {
+        List<Tag> allTags = new ArrayList<Tag>(tagCache.values());
+        Comparator<Tag> comparator = null;
+        if (TagTool.ListOrder.BY_CREATION.equals(order))
+            comparator = new CreationComparator(ascending);
+        else if (TagTool.ListOrder.BY_USAGE.equals(order))
+            comparator = new UsageComparator(ascending);
+        else
+            comparator = new TitleComparator(ascending);
+
+        Collections.sort(allTags, comparator);
+        int toIndex = from + count, size = allTags.size();
+        return allTags.subList(from, (toIndex > size) ? size : toIndex);
     }
 
     /**
@@ -102,7 +137,7 @@ public class TagCache implements Configurable {
      * @param obj some object
      * @return list of tags, null if this information has not been cached yet
      */
-    public List<String> loadAssignedTags(GenericDataObject obj) {
+    public List<String> getAssignedTags(GenericDataObject obj) {
         List<String> tags = (List<String>) mappingCache.retrieve(obj);
         if (tags == null)
             return null;
@@ -123,7 +158,7 @@ public class TagCache implements Configurable {
         }
         tag.setUsage(tag.getUsage() + 1);
 
-        List<String> tags = loadAssignedTags(obj);
+        List<String> tags = getAssignedTags(obj);
         if (tags == null)
             tags = new ArrayList<String>();
         tags.add(id);
@@ -143,7 +178,7 @@ public class TagCache implements Configurable {
         }
         tag.setUsage(tag.getUsage() - 1);
 
-        List<String> tags = loadAssignedTags(obj);
+        List<String> tags = getAssignedTags(obj);
         if (tags == null) {
             log.warn("Cannot unassign tag '" + id + "' for " + obj + " - not in cache!");
             return;
@@ -170,7 +205,7 @@ public class TagCache implements Configurable {
 
     private TagCache() {
         ConfigurationManager.getConfigurator().configureMe(this);
-        tagCache = new ConcurrentHashMap(cacheSize, 1.0f, concurrencyLevel);
+        tagCache = new ConcurrentHashMap<String, Tag>(cacheSize, 1.0f, concurrencyLevel);
         try {
             mappingCache = CacheManager.getInstance().getCache("tags");
         } catch (CacheException e) {
@@ -186,7 +221,7 @@ public class TagCache implements Configurable {
     /**
      * Compares two Tags by their usage property in specified order.
      */
-    public static class UsageComparator implements Comparator {
+    private static class UsageComparator implements Comparator {
         boolean ascending;
 
         public UsageComparator(boolean ascending) {
@@ -200,8 +235,10 @@ public class TagCache implements Configurable {
 
     /**
      * Compares two Tags by their title property in specified order.
+     * todo Collator is very slow
      */
-    public static class TitleComparator implements Comparator {
+    private static class TitleComparator implements Comparator {
+        Collator collator = Collator.getInstance();
         boolean ascending;
 
         public TitleComparator(boolean ascending) {
@@ -209,14 +246,16 @@ public class TagCache implements Configurable {
         }
 
         public int compare(Object o1, Object o2) {
-            return ((ascending) ? 1 : -1) * ((Tag) o1).getTitle().compareTo(((Tag) o2).getTitle());
+            String s1 = ((Tag) o1).getTitle().toString();
+            String s2 = ((Tag) o2).getTitle().toString();
+            return ((ascending) ? 1 : -1) * collator.compare(s1, s2);
         }
     }
 
     /**
      * Compares two Tags by their created property in specified order.
      */
-    public static class CreationComparator implements Comparator {
+    private static class CreationComparator implements Comparator {
         boolean ascending;
 
         public CreationComparator(boolean ascending) {

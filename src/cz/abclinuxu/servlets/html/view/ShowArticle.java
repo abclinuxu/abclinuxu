@@ -22,7 +22,8 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.data.view.Series;
+import cz.abclinuxu.data.Link;
+import cz.abclinuxu.data.view.*;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
@@ -132,7 +133,7 @@ public class ShowArticle implements AbcAction {
             List articles = new ArrayList(nodes.size());
             for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
                 Element element = (Element) iter.next();
-                Link link = new Link(element.getText(), element.attributeValue("url"), element.attributeValue("description"));
+                cz.abclinuxu.data.view.Link link = new cz.abclinuxu.data.view.Link(element.getText(), element.attributeValue("url"), element.attributeValue("description"));
                 articles.add(link);
             }
             env.put(VAR_RELATED_ARTICLES,articles);
@@ -143,7 +144,7 @@ public class ShowArticle implements AbcAction {
             List resources = new ArrayList(nodes.size());
             for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
                 Element element = (Element) iter.next();
-                Link link = new Link(element.getText(), element.attributeValue("url"), element.attributeValue("description"));
+                cz.abclinuxu.data.view.Link link = new cz.abclinuxu.data.view.Link(element.getText(), element.attributeValue("url"), element.attributeValue("description"));
                 resources.add(link);
             }
             env.put(VAR_RELATED_RESOURCES,resources);
@@ -235,32 +236,4 @@ public class ShowArticle implements AbcAction {
         return FMTemplateSelector.select("ShowObject", "article", env, request);
     }
 
-    /**
-     * Holder of one link from related articles or resources.
-     */
-    public static class Link {
-        private String url, title, description;
-
-        public Link(String title, String url, String description) {
-            this.url = url;
-            this.title = title;
-            this.description = description;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String toString() {
-            return url+" -> "+title;
-        }
-    }
 }

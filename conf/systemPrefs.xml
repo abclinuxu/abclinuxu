@@ -662,6 +662,11 @@
                                     <entry key="regexp.invalid.login" value="[^a-zA-Z0-9_.\-]"/>
                                 </map>
                             </node>
+                            <node name="EditTag">
+                                <map>
+                                    <entry key="regexp.invalid.title" value="[^a-z0-9 +_.\-]"/>
+                                </map>
+                            </node>
                             <node name="EditBlog">
                                 <map>
                                     <entry key="regexp.invalid.blogname" value="[^a-zA-Z0-9_]|(^[0-9_])"/>

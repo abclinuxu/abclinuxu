@@ -62,6 +62,14 @@
             <action>cz.abclinuxu.servlets.html.edit.EditDiscussion</action>
         </mapping>
         <mapping>
+            <pattern>/stitky/edit</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditTag</action>
+        </mapping>
+        <mapping>
+            <pattern>/stitky</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewTag</action>
+        </mapping>
+        <mapping>
             <pattern>^/EditRelated</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditRelated</action>
         </mapping>

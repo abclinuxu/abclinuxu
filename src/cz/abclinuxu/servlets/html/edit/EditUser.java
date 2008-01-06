@@ -57,9 +57,6 @@ import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.scheduler.UpdateLinks;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.regexp.RE;
-import org.apache.regexp.REProgram;
-import org.apache.regexp.RECompiler;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -77,6 +74,8 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.io.File;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.prefs.Preferences;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
@@ -186,15 +185,15 @@ public class EditUser implements AbcAction, Configurable {
     public static final String ACTION_REMOVE_MERGE_STEP2 = "removeMerge2";
     public static final String ACTION_REMOVE_MERGE_STEP3 = "removeMerge3";
 
-    public static final String PREF_INVALID_NICK_REGEXP = "regexp.invalid.login";
-    private static REProgram reLoginInvalid;
+    public static final String PREF_INVALID_LOGIN_REGEXP = "regexp.invalid.login";
+    private static Pattern reLoginInvalid;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new EditUser());
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
-        String tmp = prefs.get(PREF_INVALID_NICK_REGEXP, null);
-        reLoginInvalid = new RECompiler().compile(tmp);
+        String tmp = prefs.get(PREF_INVALID_LOGIN_REGEXP, null);
+        reLoginInvalid = Pattern.compile(tmp);
     }
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -1401,8 +1400,8 @@ public class EditUser implements AbcAction, Configurable {
             ServletUtils.addError(PARAM_LOGIN, "Přihlašovací jméno nesmí mít více než 16 znaků!", env, null);
             return false;
         }
-        // todo jakarta regexp se vsude odstranoval, ne?
-        if ( new RE(reLoginInvalid).match(login) ) {
+        Matcher matcher = reLoginInvalid.matcher(login);
+        if ( matcher.find() ) {
             ServletUtils.addError(PARAM_LOGIN, "Přihlašovací jméno smí obsahovat pouze písmena A až Z, číslice, pomlčku, tečku a podtržítko!", env, null);
             return false;
         }

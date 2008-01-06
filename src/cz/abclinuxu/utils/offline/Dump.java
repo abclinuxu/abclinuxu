@@ -25,10 +25,8 @@ import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.cache.LRUCache;
 import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.html.view.ShowObject;
-import cz.abclinuxu.servlets.html.view.ViewCategory;
-import cz.abclinuxu.servlets.html.view.ViewFaq;
-import cz.abclinuxu.servlets.html.view.ShowArticle;
+import cz.abclinuxu.servlets.html.view.*;
+import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
@@ -255,7 +253,7 @@ public class Dump implements Configurable {
             List articles = new ArrayList(nodes.size());
             for (Iterator iter = nodes.iterator(); iter.hasNext();) {
                 Element element = (Element) iter.next();
-                ShowArticle.Link link = new ShowArticle.Link(element.getText(), element.attributeValue("url"), element.attributeValue("description"));
+                cz.abclinuxu.data.view.Link link = new Link(element.getText(), element.attributeValue("url"), element.attributeValue("description"));
                 articles.add(link);
             }
             env.put(ShowArticle.VAR_RELATED_ARTICLES, articles);
@@ -266,7 +264,7 @@ public class Dump implements Configurable {
             List resources = new ArrayList(nodes.size());
             for (Iterator iter = nodes.iterator(); iter.hasNext();) {
                 Element element = (Element) iter.next();
-                ShowArticle.Link link = new ShowArticle.Link(element.getText(), element.attributeValue("url"), element.attributeValue("description"));
+                Link link = new Link(element.getText(), element.attributeValue("url"), element.attributeValue("description"));
                 resources.add(link);
             }
             env.put(ShowArticle.VAR_RELATED_RESOURCES, resources);

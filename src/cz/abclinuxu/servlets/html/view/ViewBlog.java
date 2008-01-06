@@ -107,6 +107,7 @@ public class ViewBlog implements AbcAction, Configurable {
         if (uri.startsWith("/blogy"))
             return processBlogs(request, env);
 
+        // todo prevest na JDK 1.4 Pattern
         RE regexp = new RE(reSummaryUrl);
         if (regexp.match(uri)) { // uri = "/blog/jmeno/souhrn";
             summary = true;

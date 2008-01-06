@@ -212,6 +212,8 @@ public interface Constants {
     String ORDER_BY_WHEN = "date";
     String ORDER_BY_RELEVANCE = "relevance";
     String ORDER_BY_ID = "id";
+    String ORDER_BY_TITLE = "title";
+    String ORDER_BY_COUNT = "count";
     String ORDER_DIR_ASC = "asc";
     String ORDER_DIR_DESC = "desc";
 
@@ -240,6 +242,7 @@ public interface Constants {
     String PAGE_SCHOOLBOOK = "ucebnice";
     String PAGE_SCREENSHOTS = "desktopy";
     String PAGE_SEARCH = "hledani";
+    String PAGE_TAGS = "stitky";
     String PAGE_WAP = "wap";
 
     String EMAIL_FORUM = "email-forum";

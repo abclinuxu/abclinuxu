@@ -28,6 +28,9 @@ import cz.abclinuxu.persistence.cache.TagCache;
 
 import java.util.List;
 import java.util.Iterator;
+import java.util.ArrayList;
+
+import org.apache.log4j.Logger;
 
 /**
  * Main class to work with tags to be used by the application developer.
@@ -35,10 +38,13 @@ import java.util.Iterator;
  * @since 16.12.2007
  */
 public class TagTool {
-    static TagCache cache = TagCache.getInstance();
+    private static Logger log = Logger.getLogger(TagTool.class);
+
+    private static TagCache cache = TagCache.getInstance();
+    private static Persistence persistence = PersistenceFactory.getPersistence();
 
     public static void init() {
-        PersistenceFactory.getPersistence().getTags(); // rereads the tag cache
+        persistence.getTags(); // rereads the tag cache
     }
 
     /**
@@ -46,7 +52,7 @@ public class TagTool {
      * @param tag tag to be persisted, its key must be unique
      */
     public static void create(Tag tag, User user, String ipAddress) {
-        PersistenceFactory.getPersistence().create(tag);
+        persistence.create(tag);
         SQLTool.getInstance().logTagAction(tag, Action.ADD, user, ipAddress, null);
     }
 
@@ -55,7 +61,7 @@ public class TagTool {
      * @param tag a tag
      */
     public static void update(Tag tag, User user, String ipAddress) {
-        PersistenceFactory.getPersistence().update(tag);
+        persistence.update(tag);
         SQLTool.getInstance().logTagAction(tag, Action.UPDATE, user, ipAddress, null);
     }
 
@@ -64,8 +70,16 @@ public class TagTool {
      * @param tag a tag to be removed
      */
     public static void remove(Tag tag, User user, String ipAddress) {
-        PersistenceFactory.getPersistence().create(tag);
+        persistence.remove(tag);
         SQLTool.getInstance().logTagAction(tag, Action.REMOVE, user, ipAddress, null);
+    }
+
+    /**
+     * Returns total number of tags.
+     * @return number of tags
+     */
+    public static int getTagsCount() {
+        return cache.size();
     }
 
     /**
@@ -77,7 +91,7 @@ public class TagTool {
         if (tags == null)
             return;
 
-        Persistence persistence = PersistenceFactory.getPersistence();
+        Persistence persistence = TagTool.persistence;
         SQLTool sqlTool = SQLTool.getInstance();
         for (Iterator<String> iter = tags.iterator(); iter.hasNext();) {
             String id = iter.next();
@@ -101,7 +115,7 @@ public class TagTool {
         if (tags == null)
             return;
 
-        Persistence persistence = PersistenceFactory.getPersistence();
+        Persistence persistence = TagTool.persistence;
         SQLTool sqlTool = SQLTool.getInstance();
         for (Iterator<String> iter = tags.iterator(); iter.hasNext();) {
             String id = iter.next();
@@ -132,19 +146,10 @@ public class TagTool {
      * @param count number of returned tags
      * @param order specified sort field - title, usage, creation time
      * @param ascending true when ascending order is requested
-     * @return tags according to criteria
+     * @return list of tags according to criteria
      */
     public static List<Tag> list(int from, int count, ListOrder order, boolean ascending) {
-        return null;
-    }
-
-    /**
-     * Finds most frequently used tags. The returned tags will be sorted by their title in ascending order.
-     * @param count number of returned tags
-     * @return found tags
-     */
-    public static List<Tag> getMostUsedTags(int count) {
-        return null;
+        return cache.list(from, count, order, ascending);
     }
 
     /**
@@ -153,7 +158,17 @@ public class TagTool {
      * @return list of tags (empty in case that no tags have been assigned to given object)
      */
     public static List<Tag> getAssignedTags(GenericDataObject obj) {
-        return null;
+        List<String> ids = persistence.getAssignedTags(obj);
+        List<Tag> tags = new ArrayList<Tag>(ids.size());
+        for (String id : ids) {
+            Tag tag = getById(id);
+            if (tag == null) {
+                log.warn("persistence.getAssignedTags(" + obj + ") returned unknown tag '" + id + "'!");
+                continue;
+            }
+            tags.add(tag);
+        }
+        return tags;
     }
 
     /**
@@ -201,7 +216,7 @@ public class TagTool {
         }
 
         public boolean equals(Object obj) {
-            return ((Action)obj).id.equals(id);
+            return ((ListOrder)obj).id.equals(id);
         }
     }
 }

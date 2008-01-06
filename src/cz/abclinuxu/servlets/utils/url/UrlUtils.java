@@ -53,11 +53,12 @@ public class UrlUtils {
     public static final String PREFIX_SCREENSHOTS = "/desktopy";
     public static final String PREFIX_SERIES = "/serialy";
     public static final String PREFIX_SOFTWARE = "/software";
+    public static final String PREFIX_TAGS = "/stitky";
     public static final String PREFIX_NONE = "";
 
     static List prefixes = null;
     static {
-        prefixes = new ArrayList(15);
+        prefixes = new ArrayList(16);
         prefixes.add(PREFIX_AUTHORS);
         prefixes.add(PREFIX_BAZAAR);
         prefixes.add(PREFIX_BLOG);
@@ -73,6 +74,7 @@ public class UrlUtils {
         prefixes.add(PREFIX_SCREENSHOTS);
         prefixes.add(PREFIX_SERIES);
         prefixes.add(PREFIX_SOFTWARE);
+        prefixes.add(PREFIX_TAGS);
     }
 
     /** default prefix to URL */

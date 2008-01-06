@@ -42,11 +42,21 @@ public class Tag {
     }
 
     /**
+     * Creates new uninitialized instance of Tag.
+     */
+    public Tag() {
+    }
+
+    /**
      * Gets unique identifier of this tag constructed from the title
      * @return the identifier
      */
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
@@ -94,6 +104,13 @@ public class Tag {
         if (!id.equals(tag.id)) return false;
 
         return true;
+    }
+
+    public Object clone() {
+        Tag clone = new Tag(id, title);
+        clone.setCreated(created);
+        clone.setUsage(usage);
+        return clone;
     }
 
     public int hashCode() {

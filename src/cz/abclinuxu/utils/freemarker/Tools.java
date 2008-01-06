@@ -19,6 +19,7 @@
 package cz.abclinuxu.utils.freemarker;
 
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.data.Link;
 import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -404,23 +405,31 @@ public class Tools implements Configurable {
 
     /**
      * Generates list of Links to parents of this object.
-     * @param parents list of relations.
+     * @param parents list of Relations or cz.abclinuxu.data.view.Link
      * @param o it shall be User or undefined value
      * @return List of Links
      */
     public List getParents(List parents, Object o, UrlUtils urlUtils) {
-        if (parents.size()==0) return Collections.EMPTY_LIST;
+        if (parents.size() == 0)
+            return Collections.EMPTY_LIST;
+
         List result = new ArrayList();
         Relation relation = null;
+        cz.abclinuxu.data.view.Link link;
         for ( Iterator iter = parents.iterator(); iter.hasNext(); ) {
-            Link link = new Link();
-            relation = (Relation) iter.next();
-            GenericObject child = relation.getChild();
-            if ( child instanceof Category && (child.getId()==Constants.CAT_ROOT || child.getId()==Constants.CAT_SYSTEM ))
-                continue;
+            Object next = iter.next();
+            if (next instanceof Relation) {
+                relation = (Relation) next;
+                GenericObject child = relation.getChild();
+                if ( child instanceof Category && (child.getId()==Constants.CAT_ROOT || child.getId()==Constants.CAT_SYSTEM ))
+                    continue;
 
-            link.setText(childName(relation));
-            link.setUrl(childUrl(relation, urlUtils));
+                link = new cz.abclinuxu.data.view.Link(childName(relation), childUrl(relation, urlUtils), null);
+            } else if (next instanceof cz.abclinuxu.data.view.Link)
+                link = (cz.abclinuxu.data.view.Link) next;
+            else
+                throw new InvalidDataException("Parents shall contain instances of Relation or Link only, but received " + next + "!");
+
             result.add(link);
         }
         return result;
