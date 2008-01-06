@@ -31,12 +31,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.prefs.Preferences;
 import java.util.concurrent.ConcurrentHashMap;
-import java.text.Collator;
 
 import org.apache.log4j.Logger;
 import com.whirlycott.cache.Cache;
 import com.whirlycott.cache.CacheManager;
 import com.whirlycott.cache.CacheException;
+import net.eithel.CzechComparator;
 
 /**
  * @author literakl
@@ -235,10 +235,10 @@ public class TagCache implements Configurable {
 
     /**
      * Compares two Tags by their title property in specified order.
-     * todo Collator is very slow
      */
     private static class TitleComparator implements Comparator {
-        Collator collator = Collator.getInstance();
+//        Collator collator = Collator.getInstance();
+        CzechComparator collator = CzechComparator.getInstance();
         boolean ascending;
 
         public TitleComparator(boolean ascending) {
