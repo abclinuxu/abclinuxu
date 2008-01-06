@@ -253,7 +253,6 @@
              </li>
         </#list>
         </ul>
-        <br>
         <span class="s_sekce_dalsi"><a href="/ovladace">další&nbsp;&raquo;</a></span>
       </div>
    </td>
@@ -274,6 +273,7 @@
             <img width="200" src="${TOOL.xpath(rel.child,"/data/listingThumbnail")}" alt="${TOOL.xpath(rel.child,"/data/title")}" border="0" style="margin: 0.4em 0.3em 0.3em 0.3em">
           </a>
         </#list>
+        <br>
         <span class="s_sekce_dalsi"><a href="/desktopy">další&nbsp;&raquo;</a></span>
       </div>
     </div>
