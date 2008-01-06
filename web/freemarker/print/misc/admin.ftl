@@ -34,7 +34,7 @@
             <input type="text" name="uid" size="5">
             <input type="hidden" name="action" value="su">
             <input type="submit" value="su">
-            (číslo uživatele)
+            (číslo nebo login uživatele)
         </form>
     </li>
 </ul>

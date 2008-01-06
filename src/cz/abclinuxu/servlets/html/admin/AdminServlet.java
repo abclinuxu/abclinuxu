@@ -49,6 +49,8 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
+import java.util.List;
+import java.util.Collections;
 
 import org.logicalcobwebs.proxool.ProxoolFacade;
 import org.logicalcobwebs.proxool.admin.SnapshotIF;
@@ -163,16 +165,30 @@ public class AdminServlet implements AbcAction {
     }
 
     private String switchUser(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
+
         String s = (String) params.get(PARAM_USER);
         if (Misc.empty(s)) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Zadejte číslo uživatele", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Zadejte číslo nebo login uživatele", env, null);
             return FMTemplateSelector.select("Admin", "show", env, request);
         }
 
-        int uid = Integer.parseInt(s);
-        Persistence persistence = PersistenceFactory.getPersistence();
-        User user = (User) persistence.findById(new User(uid));
+        User user = null;
+        try {
+            int uid = Integer.parseInt(s);
+            user = new User(uid);
+        } catch (NumberFormatException e) {
+            user = new User();
+            user.setLogin(s);
+            List found = persistence.findByExample(Collections.singletonList(user), null);
+            if (found.size() != 1) {
+                ServletUtils.addError(Constants.ERROR_GENERIC, "Uživatel s tímto loginem nebyl nalezen.", env, null);
+                return FMTemplateSelector.select("Admin", "show", env, request);
+            }
+            user = (User) found.get(0);
+        }
+        user = (User) persistence.findById(user);
 
         env.put(Constants.VAR_USER, user);
         HttpSession session = request.getSession();
