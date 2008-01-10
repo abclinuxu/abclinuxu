@@ -29,6 +29,7 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
@@ -120,7 +121,30 @@ public class ViewUser implements AbcAction {
      */
     protected String handleProfile(HttpServletRequest request, Map env) throws Exception {
         User user = (User) env.get(VAR_PROFILE);
+        Persistence persistence = PersistenceFactory.getPersistence();
         SQLTool sqlTool = SQLTool.getInstance();
+
+        Element settingsBlog = (Element) user.getData().selectSingleNode("/data/settings/blog");
+        if (settingsBlog != null) {
+            int id = Misc.parseInt(settingsBlog.getText(), 0);
+            Category blog = (Category) persistence.findById(new Category(id));
+            env.put(ViewBlog.VAR_BLOG, blog);
+
+            Element element = (Element) blog.getData().selectSingleNode("//settings/page_size");
+            int count = Misc.parseInt((element != null) ? element.getText() : null, ViewBlog.getDefaultPageSize());
+
+            List qualifiers = new ArrayList();
+            qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(user.getId())));
+            qualifiers.add(Qualifier.SORT_BY_CREATED);
+            qualifiers.add(Qualifier.ORDER_DESCENDING);
+            qualifiers.add(new LimitQualifier(0, count));
+
+            Qualifier[] qa = new Qualifier[qualifiers.size()];
+            List stories = SQLTool.getInstance().findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+            Tools.syncList(stories);
+            env.put(ViewBlog.VAR_STORIES, stories);
+        }
+
         Set<String> property = Collections.singleton(Integer.toString(user.getId()));
         Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_USED_BY, property);
         List<Relation> softwares = sqlTool.findItemRelationsWithTypeWithFilters(Item.SOFTWARE, null, filters);

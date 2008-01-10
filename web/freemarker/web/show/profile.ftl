@@ -111,6 +111,27 @@
     </ul>
 </#if>
 
+<#if BLOG?exists>
+    <p>Můj blog: <a href="/blog/${BLOG.subType}">${TOOL.xpath(BLOG,"//custom/title")?default("blog")}</a></p>
+    <ul>
+        <#list STORIES as relation>
+            <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
+            <#assign CHILDREN=TOOL.groupByType(story.children)>
+            <#if CHILDREN.discussion?exists>
+                <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
+            <#else>
+                <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
+            </#if>
+            <li>
+                <a href="${url}">${TOOL.xpath(story, "/data/name")}</a> | ${DATE.show(story.created, "CZ_DMY")}
+                | <span title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>">
+                    komentářů: ${diz.responseCount}<@lib.markNewComments diz/>
+                  </span>
+            </li>
+        </#list>
+    </ul>
+</#if>
+
 <#if LAST_DESKTOP?exists>
     <p>Můj současný desktop:</p>
     <p>
