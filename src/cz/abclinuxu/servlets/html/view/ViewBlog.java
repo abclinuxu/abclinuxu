@@ -266,27 +266,6 @@ public class ViewBlog implements AbcAction, Configurable {
         env.put(VAR_BLOG_RELATION, blogRelation);
         env.put(VAR_BLOG_XML, NodeModel.wrap((new DOMWriter().write(blog.getData()))));
 
-        RE regexp = new RE(reUrl);
-
-        regexp.match(uri);
-        int matched = regexp.getParenCount();
-
-        if (matched == 4) { // 4 means that we are processing a text URL
-            try {
-                    int num;
-                    num = Integer.parseInt(regexp.getParen(2));
-                    env.put(VAR_YEAR, new Integer(num));
-
-                    num = Integer.parseInt(regexp.getParen(3));
-                    env.put(VAR_MONTH, new Integer(num));
-
-                    num = Integer.parseInt(regexp.getParen(4));
-                    env.put(VAR_DAY, new Integer(num));
-            } catch (NumberFormatException e) {
-                log.warn(uri, e);
-            }
-        }
-
         fillFreshStories(blog, env);
         fillMonthStatistics(blog, env);
 
