@@ -119,9 +119,6 @@
                         <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Přejmenovat blog</a>
                     </li>
                     <li>
-                        <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Upravit kategorie</a>
-                    </li>
-                    <li>
                         <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=links")}">Upravit odkazy</a>
                     </li>
                     <li>
