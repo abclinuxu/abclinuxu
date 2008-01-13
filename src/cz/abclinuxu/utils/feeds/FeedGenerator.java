@@ -693,7 +693,7 @@ public class FeedGenerator implements Configurable {
 
             Set<String> values = Collections.singleton("yes");
             Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_BLOG_DIGEST, values);
-            filters.put(Constants.PROPERTY_BLOG_DIGEST, values);
+
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, highFrequencyFeedLength)};
             List stories = sqlTool.findItemRelationsWithTypeWithFilters(Item.BLOG, qualifiers, filters);
             Tools.syncList(stories);
@@ -935,9 +935,9 @@ public class FeedGenerator implements Configurable {
         Document document = item.getData();
 
         entry = new SyndEntryImpl();
-        String url = found.getUrl();
-        if (url == null)
-            url = "http://"+AbcConfig.getHostname() + Tools.getUrlForBlogStory(found);
+
+        String url = "http://"+AbcConfig.getHostname() + Tools.getUrlForBlogStory(found);
+
         entry.setLink(url);
         entry.setTitle(Tools.xpath(item, "data/name"));
         entry.setPublishedDate(item.getCreated());
