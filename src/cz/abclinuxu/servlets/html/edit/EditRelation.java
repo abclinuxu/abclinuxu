@@ -406,8 +406,6 @@ public class EditRelation implements AbcAction {
         runMonitor(relation,user);
         persistence.remove(relation);
         relation.getParent().removeChildRelation(relation);
-        if (relation.getUrl() != null)
-            CustomURLCache.getInstance().remove(relation.getUrl());
 
         AdminLogger.logEvent(user, "remove | relation "+relation.getId()+" | "+objectName);
 

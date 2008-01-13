@@ -681,7 +681,7 @@ public class CreateIndex implements Configurable {
 
 
         MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
-        doc.setURL(Tools.getUrlForBlogStory(category.getSubType(), story.getCreated(), relation.getId()));
+        doc.setURL(Tools.getUrlForBlogStory(relation));
         doc.setType(MyDocument.TYPE_BLOG);
         doc.setCreated(story.getCreated());
         doc.setUpdated(story.getUpdated());

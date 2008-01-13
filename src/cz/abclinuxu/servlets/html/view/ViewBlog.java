@@ -18,8 +18,10 @@
  */
 package cz.abclinuxu.servlets.html.view;
 
+import cz.abclinuxu.servlets.html.edit.EditBlog;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.config.Configurable;
@@ -37,6 +39,7 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.data.view.BlogCategory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,6 +68,7 @@ public class ViewBlog implements AbcAction, Configurable {
     public static final String VAR_BLOGS = "BLOGS";
     public static final String VAR_BLOG_XML = "BLOG_XML";
     public static final String VAR_SUMMARY = "SUMMARY";
+    public static final String VAR_CATEGORY = "CATEGORY";
     public static final String VAR_STORIES = "STORIES";
     public static final String VAR_STORY = "STORY";
     public static final String VAR_YEAR = "YEAR";
@@ -79,15 +83,14 @@ public class ViewBlog implements AbcAction, Configurable {
 
     static final String PREF_BLOG_URL = "regexp.blog.url";
     static final String PREF_SUMMARY_URL = "regexp.blog.summary.url";
-    static final String PREF_ARCHIVE_URL = "regexp.blog.archive.url";
-    static final String PREF_EXPORT_URL = "regexp.blog.export.url";
+    static final String PREF_CATEGORY_URL = "regexp.blog.category.url";
     static final String PREF_DIGEST_URL = "regexp.blog.digest.url";
     static final String PREF_PAGE_SIZE = "page.size";
     static final String PREF_SUMMARY_SIZE = "summary.size";
     static final String PREF_FRESH_STORIES_SIZE = "fresh.stories.size";
     static final String PREF_URL_SUMMARY = "url.summary";
 
-    static REProgram reUrl, reSummaryUrl, reArchiveUrl, reDigestUrl, reExportUrl;
+    static REProgram reUrl, reSummaryUrl, reDigestUrl, reCategoryUrl;
     static int defaultPageSize, freshStoriesSize, summarySize;
     static String urlSummary;
     static {
@@ -100,7 +103,7 @@ public class ViewBlog implements AbcAction, Configurable {
         Relation blogRelation = null, relation = null;
         int year, month, day, rid;
         year = month = day = rid = 0;
-        String name = null;
+        String name = null, categoryUrl = null;
         boolean summary = false, archive = false, digest = false, export = false;
 
         String uri = (String) env.get(Constants.VAR_REQUEST_URI);
@@ -121,14 +124,16 @@ public class ViewBlog implements AbcAction, Configurable {
                 digest = true;
                 env.put(VAR_DIGEST, Boolean.TRUE);
             } else {
-                RE regexpExport = new RE(reExportUrl);
-                regexp = new RE(reArchiveUrl);
-                if (regexp.match(uri)) { // uri = "/blog/jmeno/archiv";
-                    archive = true;
+                regexp = new RE(reCategoryUrl);
+                if (regexp.match(uri)) { // uri = "/blog/jmeno/xxxxx";
                     name = regexp.getParen(1);
-                } else if (regexpExport.match(uri)) { // uri = "/blog/jmeno/export"
-                    export = true;
-                    name = regexpExport.getParen(1);
+
+                    if (regexp.getParen(2).equals("archiv"))
+                        archive = true;
+                    else if (regexp.getParen(2).equals("export"))
+                        export = true;
+                    else
+                        categoryUrl = regexp.getParen(2);
                 } else { // uri = "/blog/jmeno/2004/12/12/124545";
                     regexp = new RE(reUrl);
                     regexp.match(uri);
@@ -208,13 +213,30 @@ public class ViewBlog implements AbcAction, Configurable {
                 fillUnpublishedStories(blog, env);
 
             fillLastDesktop(blog, env);
+            EditBlog.storeCategories(blog, env);
+
+            BlogCategory category = null;
+            if (categoryUrl != null) {
+                List<BlogCategory> cats = (List<BlogCategory>) env.get(EditBlog.VAR_CATEGORIES);
+                for(BlogCategory c: cats) {
+                    if (c.getUrl().equals(categoryUrl)) {
+                        category = c;
+                        env.put(VAR_CATEGORY, category);
+                        break;
+                    }
+                }
+
+                if (category == null) {
+                    ServletUtils.addError(Constants.ERROR_GENERIC, "Kategorie "+categoryUrl+" neexistuje!", env, null);
+                }
+            }
 
             if (relation != null)
                 return processStory(request, relation, env);
             else if (archive)
                 return processArchive(request, blog, env);
             else
-                return processStories(request, blogRelation, summary, year, month, day, env);
+                return processStories(request, blogRelation, summary, year, month, day, category, env);
         } else
             return processBlogSpace(request, summary, digest, year, month, day, env);
     }
@@ -224,9 +246,11 @@ public class ViewBlog implements AbcAction, Configurable {
      */
     public static String processStory(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
+        String uri = (String) env.get(Constants.VAR_REQUEST_URI);
         Category blog = (Category) persistence.findById(relation.getParent());
         Item story = (Item) relation.getChild();
         env.put(VAR_STORY, relation);
+        EditBlog.storeCategories(blog, env);
 
         User user = (User) env.get(Constants.VAR_USER);
         if (user == null || user.getId() != story.getOwner())
@@ -234,6 +258,42 @@ public class ViewBlog implements AbcAction, Configurable {
 
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
+
+        Relation blogRelation = (Relation) persistence.findById(new Relation(relation.getUpper()));
+
+        blogRelation.setChild(blog);
+        env.put(VAR_BLOG, blog);
+        env.put(VAR_BLOG_RELATION, blogRelation);
+        env.put(VAR_BLOG_XML, NodeModel.wrap((new DOMWriter().write(blog.getData()))));
+
+        RE regexp = new RE(reUrl);
+
+        regexp.match(uri);
+        int matched = regexp.getParenCount();
+
+        if (matched == 4) { // 4 means that we are processing a text URL
+            try {
+                    int num;
+                    num = Integer.parseInt(regexp.getParen(2));
+                    env.put(VAR_YEAR, new Integer(num));
+
+                    num = Integer.parseInt(regexp.getParen(3));
+                    env.put(VAR_MONTH, new Integer(num));
+
+                    num = Integer.parseInt(regexp.getParen(4));
+                    env.put(VAR_DAY, new Integer(num));
+            } catch (NumberFormatException e) {
+                log.warn(uri, e);
+            }
+        }
+
+        fillFreshStories(blog, env);
+        fillMonthStatistics(blog, env);
+
+        if (user != null && user.getId() == blog.getOwner())
+            fillUnpublishedStories(blog, env);
+
+        fillLastDesktop(blog, env);
 
         env.put(Constants.VAR_RSS, FeedGenerator.getBlogFeedUrl(blog));
         return FMTemplateSelector.select("ViewBlog", "story", env, request);
@@ -274,7 +334,7 @@ public class ViewBlog implements AbcAction, Configurable {
     /**
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
-    protected String processStories(HttpServletRequest request, Relation blogRelation, boolean summary, int year, int month, int day, Map env) throws Exception {
+    protected String processStories(HttpServletRequest request, Relation blogRelation, boolean summary, int year, int month, int day, BlogCategory category, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
         Persistence persistence = PersistenceFactory.getPersistence();
@@ -283,7 +343,9 @@ public class ViewBlog implements AbcAction, Configurable {
         int count = summarySize;
         List qualifiers = new ArrayList();
         qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner()));
-        if (!summary)
+        if (category != null)
+            qualifiers.add(new CompareCondition(Field.SUBTYPE, Operation.EQUAL, category.getId()));
+        else if (!summary)
             addTimeLimitsFQ(year, month, day, qualifiers);
 
         Qualifier[] qa = new Qualifier[qualifiers.size()];
@@ -501,7 +563,7 @@ public class ViewBlog implements AbcAction, Configurable {
      * @param blog
      * @param env
      */
-    private void fillFreshStories(Category blog, Map env) {
+    private static void fillFreshStories(Category blog, Map env) {
         List qualifiers = new ArrayList();
         qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(blog.getOwner())));
         qualifiers.add(Qualifier.SORT_BY_CREATED);
@@ -520,7 +582,7 @@ public class ViewBlog implements AbcAction, Configurable {
      * The list will contain initialized story relations.
      * @param blog
      */
-    private void fillUnpublishedStories(Category blog, Map env) {
+    private static void fillUnpublishedStories(Category blog, Map env) {
         List elements = blog.getData().selectNodes("/data/unpublished/rid");
         if (elements==null || elements.size()==0)
             return;
@@ -539,7 +601,7 @@ public class ViewBlog implements AbcAction, Configurable {
      * Puts into env information about last six months, when user submitted
      * some stories.
      */
-    private void fillMonthStatistics(Category blog, Map env) {
+    private static void fillMonthStatistics(Category blog, Map env) {
         List archive = new ArrayList(6);
         env.put(VAR_ARCHIVE, archive);
         Element element;
@@ -562,7 +624,7 @@ public class ViewBlog implements AbcAction, Configurable {
     /**
      * Loads user's last desktop screenshot, if exists.
      */
-    private void fillLastDesktop(Category blog, Map env) {
+    private static void fillLastDesktop(Category blog, Map env) {
         SQLTool sqlTool = SQLTool.getInstance();
 
         Qualifier[] qualifiers = new Qualifier[] { new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner()),
@@ -602,15 +664,9 @@ public class ViewBlog implements AbcAction, Configurable {
         } catch (RESyntaxException e) {
             throw new ConfigurationException("Invalid regexp: '"+re+"'!");
         }
-        re = prefs.get(PREF_ARCHIVE_URL, null);
+        re = prefs.get(PREF_CATEGORY_URL, null);
         try {
-            reArchiveUrl = new RECompiler().compile(re);
-        } catch (RESyntaxException e) {
-            throw new ConfigurationException("Invalid regexp: '"+re+"'!");
-        }
-        re = prefs.get(PREF_EXPORT_URL, null);
-        try {
-            reExportUrl = new RECompiler().compile(re);
+            reCategoryUrl = new RECompiler().compile(re);
         } catch (RESyntaxException e) {
             throw new ConfigurationException("Invalid regexp: '"+re+"'!");
         }

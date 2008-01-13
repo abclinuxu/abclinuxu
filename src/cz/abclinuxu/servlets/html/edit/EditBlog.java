@@ -25,6 +25,7 @@ import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.servlets.html.view.ViewBlog;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.config.Configurable;
@@ -52,6 +53,7 @@ import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.email.monitor.*;
+import cz.abclinuxu.data.view.BlogCategory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,6 +68,7 @@ import org.apache.regexp.REProgram;
 import org.apache.regexp.RECompiler;
 import org.apache.commons.fileupload.FileItem;
 import org.dom4j.Element;
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
@@ -140,9 +143,11 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String PREF_RE_INVALID_BLOG_NAME = "regexp.invalid.blogname";
     public static final String PREF_MAX_STORY_TITLE_LENGTH = "max.story.title.length";
     public static final String PREF_MAX_STORY_WORD_COUNT = "max.story.word.count";
+    public static final String PREF_FORBIDDEN_CATEGORY_NAMES = "forbidden.category.names";
 
     static REProgram reBlogName;
     static int maxStoryTitleLength, maxStoryWordCount;
+    static List forbiddenCategoryNames;
     private final Pattern breakTagPattern = Pattern.compile("\\<break[ ]*/?\\>", Pattern.CASE_INSENSITIVE);
 
     static {
@@ -252,7 +257,7 @@ public class EditBlog implements AbcAction, Configurable {
         }
 
         if ( ACTION_RENAME_BLOG.equals(action) )
-            return actionRenameBlogStep1(request, blog, env);
+            return actionRenameBlogStep1(request, response, blog, env);
 
         if ( ACTION_RENAME_BLOG_STEP2.equals(action) ) {
             ActionProtector.ensureContract(request, EditBlog.class, true, true, true, false);
@@ -418,8 +423,15 @@ public class EditBlog implements AbcAction, Configurable {
         if ("yes".equals(watchDiscussion))
             EditDiscussion.alterDiscussionMonitor((Item) dizRelation.getChild(), user, persistence);
 
-        String storyUrl = Tools.getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId());
+        String storyUrl = null;
         if (!delayed) {
+            storyUrl = generateStoryURL(blog, story);
+
+            if (storyUrl != null) {
+                relation.setUrl(storyUrl);
+                persistence.update(relation);
+            }
+
             incrementArchiveRecord(blog.getData().getRootElement(), new Date());
             persistence.update(blog);
             FeedGenerator.updateBlog(blog);
@@ -434,6 +446,9 @@ public class EditBlog implements AbcAction, Configurable {
             unpublished.addElement("rid").setText(Integer.toString(relation.getId()));
             persistence.update(blog);
         }
+
+        if (storyUrl == null)
+            storyUrl = Tools.getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId());
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -506,13 +521,20 @@ public class EditBlog implements AbcAction, Configurable {
         VariableFetcher.getInstance().refreshStories();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(),story.getCreated(),relation.getId()));
+        urlUtils.redirect(response, Tools.getUrlForBlogStory(relation));
         return null;
     }
 
     protected void publishDelayedStory(Item story, Category blog, Relation relation) {
         Persistence persistence = PersistenceFactory.getPersistence();
         Date timeNow = new Date();
+
+        String storyUrl = generateStoryURL(blog, story);
+
+        if (storyUrl != null) {
+            relation.setUrl(storyUrl);
+            persistence.update(relation);
+        }
 
         story.setType(Item.BLOG);
         story.setCreated(timeNow);
@@ -571,7 +593,7 @@ public class EditBlog implements AbcAction, Configurable {
         FeedGenerator.updateBlogDigest();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(),story.getCreated(),relation.getId()));
+        urlUtils.redirect(response, Tools.getUrlForBlogStory(relation));
         return null;
     }
 
@@ -602,17 +624,30 @@ public class EditBlog implements AbcAction, Configurable {
         FeedGenerator.updateBlogDigest();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(),story.getCreated(),relation.getId()));
+        urlUtils.redirect(response, Tools.getUrlForBlogStory(relation));
         return null;
     }
 
     /**
      * First step of renaming blog.
      */
-    protected String actionRenameBlogStep1(HttpServletRequest request, Category blog, Map env) throws Exception {
+    protected String actionRenameBlogStep1(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        params.put(PARAM_BLOG_NAME, blog.getSubType());
-        return FMTemplateSelector.select("EditBlog", "rename", env, request);
+        SQLTool sqlTool = SQLTool.getInstance();
+
+        Qualifier[] qa = new Qualifier[]{ new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner()) };
+        int stories = sqlTool.countItemRelationsWithType(Item.BLOG, qa);
+
+        if (stories == 0) {
+            params.put(PARAM_BLOG_NAME, blog.getSubType());
+            return FMTemplateSelector.select("EditBlog", "rename", env, request);
+        } else {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Tento blog nelze přejmenovat, protože obsahuje zápisky.", env, request.getSession());
+
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/blog/"+blog.getSubType()+"/");
+            return null;
+        }
     }
 
     /**
@@ -620,10 +655,22 @@ public class EditBlog implements AbcAction, Configurable {
      */
     protected String actionRenameBlogStep2(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
+        SQLTool sqlTool = SQLTool.getInstance();
+
+        Qualifier[] qa = new Qualifier[]{ new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner()) };
+        int stories = sqlTool.countItemRelationsWithType(Item.BLOG, qa);
+
+        if (stories > 0) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Tento blog nelze přejmenovat, protože obsahuje zápisky.", env, request.getSession());
+
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/blog/"+blog.getSubType()+"/");
+            return null;
+        }
 
         boolean canContinue = setBlogName(params, blog, env);
         if ( !canContinue )
-            return actionRenameBlogStep1(request, blog, env);
+            return actionRenameBlogStep1(request, response, blog, env);
 
         User user = (User) env.get(Constants.VAR_USER);
         Element element = (Element) user.getData().selectSingleNode("//settings/blog");
@@ -746,14 +793,21 @@ public class EditBlog implements AbcAction, Configurable {
     public static void storeCategories(Category blog, Map env) {
         Document document = blog.getData();
         List nodes = document.selectNodes("//categories/category");
-        Map categories = new LinkedHashMap(nodes.size());
+        List categories = new ArrayList(nodes.size());
+
         for (Iterator iter = nodes.iterator(); iter.hasNext();) {
             Element category = (Element) iter.next();
             String id = category.attributeValue("id");
             String name = category.attributeValue("name");
-            categories.put(id, name);
+            String url = category.attributeValue("url");
+            BlogCategory cat;
+
+            cat = new BlogCategory(id, name, url);
+            categories.add(cat);
         }
-        env.put(VAR_CATEGORIES, new SimpleHash(categories));
+
+        Collections.sort(categories);
+        env.put(VAR_CATEGORIES, categories);
     }
 
     /**
@@ -772,6 +826,21 @@ public class EditBlog implements AbcAction, Configurable {
         String name = (String) params.get(PARAM_CATEGORY_NAME);
         if (Misc.empty(name))
             ServletUtils.addError(PARAM_CATEGORY_NAME, "Prosím zadejte hodnotu.", env, null);
+        else {
+            try {
+                String normalized = URLManager.enforceRelativeURL(name);
+
+                for (Iterator iter = forbiddenCategoryNames.iterator(); iter.hasNext();) {
+                    String cname = (String) iter.next();
+                    if (cname.equals(normalized)) {
+                        ServletUtils.addError(PARAM_CATEGORY_NAME, "Zadané jméno kategorie je vyhrazené!", env, null);
+                        break;
+                    }
+                }
+            } catch(Exception e) {
+                ServletUtils.addError(PARAM_CATEGORY_NAME, "Zadané jméno kategorie je neplatné!", env, null);
+            }
+        }
 
         return FMTemplateSelector.select("EditBlog", "add_category", env, request);
     }
@@ -1068,10 +1137,31 @@ public class EditBlog implements AbcAction, Configurable {
      * @return false, if there is a major error.
      */
     boolean addCategory(Map params, Element root, Map env) {
+        String normalizedName;
         String name = (String) params.get(PARAM_CATEGORY_NAME);
         name = Misc.filterDangerousCharacters(name);
         if (Misc.empty(name)) {
             ServletUtils.addError(PARAM_CATEGORY_NAME, "Prosím zadejte hodnotu.", env, null);
+            return false;
+        }
+
+        if (name.indexOf('<') != -1) {
+            ServletUtils.addError(PARAM_CATEGORY_NAME, "Zadané jméno kategorie je neplatné!", env, null);
+            return false;
+        }
+
+        try {
+            normalizedName = URLManager.enforceRelativeURL(name);
+
+            for (Iterator iter = forbiddenCategoryNames.iterator(); iter.hasNext();) {
+                String cname = (String) iter.next();
+                if (cname.equals(normalizedName)) {
+                    ServletUtils.addError(PARAM_CATEGORY_NAME, "Zadané jméno kategorie je vyhrazené!", env, null);
+                    return false;
+                }
+            }
+        } catch(Exception e) {
+            ServletUtils.addError(PARAM_CATEGORY_NAME, "Zadané jméno kategorie je neplatné!", env, null);
             return false;
         }
 
@@ -1089,6 +1179,7 @@ public class EditBlog implements AbcAction, Configurable {
         Element category = categories.addElement("category");
         category.addAttribute("id", Integer.toString(id+1));
         category.addAttribute("name", name);
+        category.addAttribute("url", normalizedName);
 
         return true;
     }
@@ -1107,6 +1198,11 @@ public class EditBlog implements AbcAction, Configurable {
             return false;
         }
 
+        if (name.indexOf('<') != -1) {
+            ServletUtils.addError(PARAM_CATEGORY_NAME, "Zadané jméno kategorie je neplatné!", env, null);
+            return false;
+        }
+
         int id = Misc.parseInt((String) params.get(PARAM_CATEGORY_ID), -1);
         if (id == -1) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Chybí parametr s číslem kategorie!", env, null);
@@ -1116,6 +1212,27 @@ public class EditBlog implements AbcAction, Configurable {
         Element category = (Element) root.selectSingleNode("//categories/category[@id=" + id + "]");
         if (category == null) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Kategorie s číslem " + id + " nebyla nalezena!", env, null);
+            return false;
+        }
+
+        try {
+            String normalized = URLManager.enforceRelativeURL(name);
+
+            for (Iterator iter = forbiddenCategoryNames.iterator(); iter.hasNext();) {
+                String cname = (String) iter.next();
+                if (cname.equals(normalized)) {
+                    ServletUtils.addError(PARAM_CATEGORY_NAME, "Zadané jméno kategorie je vyhrazené!", env, null);
+                    return false;
+                }
+            }
+
+            Attribute attr = category.attribute("url");
+            if (attr != null)
+                attr.setText(normalized);
+            else
+                category.addAttribute("url", normalized);
+        } catch(Exception e) {
+            ServletUtils.addError(PARAM_CATEGORY_NAME, "Zadané jméno kategorie je neplatné!", env, null);
             return false;
         }
 
@@ -1486,6 +1603,27 @@ public class EditBlog implements AbcAction, Configurable {
         }
     }
 
+    /**
+     * Generates a text URL for a blog story.
+     * @param blog Blog that contains this story
+     * @param story Story to generate the title for
+     * @return Generated url or null, if story's title has no valid characters
+     */
+    public static String generateStoryURL(Category blog, Item story) {
+        try {
+            Element title = (Element) story.getData().selectSingleNode("/data/name");
+            String normalized = URLManager.enforceRelativeURL(title.getTextTrim());
+            String storyUrl;
+
+            storyUrl = Tools.getUrlForBlogStory(blog.getSubType(), story.getCreated(), 0) + normalized;
+            storyUrl = URLManager.protectFromDuplicates(storyUrl);
+
+            return storyUrl;
+        } catch(Exception e) {
+            return null;
+        }
+    }
+
     void sendDigestMessage(Relation relation) {
         Persistence persistence = PersistenceFactory.getPersistence();
         Category blog = (Category) relation.getParent();
@@ -1498,7 +1636,7 @@ public class EditBlog implements AbcAction, Configurable {
 //        data.put(EmailSender.KEY_RECEPIENT_UID, Integer.toString(user.getId())); TODO
         data.put(EmailSender.KEY_SUBJECT, title);
         data.put(EmailSender.KEY_TEMPLATE, "/mail/blogdigest.ftl");
-        data.put("URL", Tools.getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId()));
+        data.put("URL", Tools.getUrlForBlogStory(relation));
         data.put("AUTHOR", persistence.findById(new User(story.getOwner())));
         EmailSender.sendEmail(data);
     }
@@ -1512,5 +1650,14 @@ public class EditBlog implements AbcAction, Configurable {
         } catch (RESyntaxException e) {
             throw new ConfigurationException("Cannot compile regular expression '"+re+"' given by "+PREF_RE_INVALID_BLOG_NAME);
         }
+
+        List tmpList = new ArrayList();
+        String tmp = prefs.get(PREF_FORBIDDEN_CATEGORY_NAMES, null);
+        if (tmp!=null && tmp.length()!=0) {
+            StringTokenizer stk = new StringTokenizer(tmp,",");
+            while (stk.hasMoreTokens())
+                tmpList.add(stk.nextToken());
+        }
+        forbiddenCategoryNames = tmpList;
     }
 }

@@ -1604,17 +1604,23 @@ public class Tools implements Configurable {
      * @return URL
      */
     public static String getUrlForBlogStory(Relation relation) {
-        Category blog = (Category) relation.getParent();
-        blog = (Category) persistence.findById(blog);
-        Item story = (Item) relation.getChild();
-        return getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId());
+        String url = relation.getUrl();
+
+        if (url != null)
+            return url;
+        else {
+            Category blog = (Category) relation.getParent();
+            blog = (Category) persistence.findById(blog);
+            Item story = (Item) relation.getChild();
+            return getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId());
+        }
     }
 
     /**
      * Gets absolute url for story.
      * @param blogName Name of blog.
      * @param date date when story was published
-     * @param relation id of relation of story
+     * @param relation id of relation of story, 0 if relation and day shoudn't be appended
      * @return formated unique URL. E.g. /blog/leos/archive/2004/12/12/12345
      */
     public static String getUrlForBlogStory(String blogName, Date date, int relation) {
@@ -1627,9 +1633,13 @@ public class Tools implements Configurable {
         sb.append('/');
         sb.append(calendar.get(Calendar.MONTH)+1);
         sb.append('/');
-        sb.append(calendar.get(Calendar.DAY_OF_MONTH));
-        sb.append('/');
-        sb.append(relation);
+
+        if (relation != 0) {
+            sb.append(calendar.get(Calendar.DAY_OF_MONTH));
+            sb.append('/');
+            sb.append(relation);
+        }
+
         return sb.toString();
     }
 

@@ -56,8 +56,8 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
             Kategorie zápisu
             <a class="info" href="#">?<span class="tooltip">Zde nastavíte kategorii vašeho zápisu. Můžete tak členit zápisy do různých kategorií.</span></a>
             <select name="cid">
-                <#list CATEGORIES?keys as category>
-                    <option value="${category}"<#if category==PARAMS.cid?default("UNDEF")> selected</#if>>${CATEGORIES[category]}</option>
+                <#list CATEGORIES as category>
+                    <option value="${category.id}"<#if category.id==PARAMS.cid?default("UNDEF")> selected</#if>>${category.name}</option>
                 </#list>
             </select>
         </td>

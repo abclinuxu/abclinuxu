@@ -144,7 +144,7 @@
 
 <#macro printStory relation>
     <#assign story=relation.child, blog=relation.parent, title=TOOL.xpath(blog,"//custom/title")?default("UNDEF"),
-             url=TOOL.getUrlForBlogStory(blog.subType, story.created, relation.id), CHILDREN=TOOL.groupByType(story.children),
+             url=TOOL.getUrlForBlogStory(relation), CHILDREN=TOOL.groupByType(story.children),
              author=TOOL.createUser(blog.owner)>
     <#if CHILDREN.discussion?exists>
         <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>

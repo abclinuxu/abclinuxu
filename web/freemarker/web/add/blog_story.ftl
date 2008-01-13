@@ -55,8 +55,8 @@ spokojeni. Najdete jej v pravém menu.
             Kategorie zápisu:
             <#if (CATEGORIES?size>0)>
                 <select name="cid">
-                    <#list CATEGORIES?keys as category>
-                        <option value="${category}"<#if category==PARAMS.cid?default("UNDEF")> selected</#if>>${CATEGORIES[category]}</option>
+                    <#list CATEGORIES as category>
+                        <option value="${category.id}"<#if category==PARAMS.cid?default("UNDEF")> selected</#if>>${category.name}</option>
                     </#list>
                 </select>&nbsp;
             <#else>

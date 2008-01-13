@@ -5,10 +5,30 @@
         ITEM=STORY.child,
         CHILDREN=TOOL.groupByType(ITEM.children),
         category = ITEM.subType?default("UNDEF"),
-        story_url = TOOL.getUrlForBlogStory(BLOG.subType, ITEM.created, STORY.id)>
-<#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
+        story_url = TOOL.getUrlForBlogStory(STORY)>
+
 
 <#assign plovouci_sloupec>
+
+    <div class="s_nadpis">
+        <#if USER?exists && USER.id==BLOG.owner>
+            <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Kategorie zápisů</a>
+        <#else>
+            Kategorie zápisů
+        </#if>
+    </div>
+
+    <div class="s_sekce">
+    <ul>
+        <#list CATEGORIES as cat>
+            <#if cat.url?exists>
+                <li><a href="/blog/${BLOG.subType + "/" + cat.url}">${cat.name}</a></li>
+            </#if>
+            <#if category!="UNDEF">
+                <#if category == cat.id><#assign category = cat></#if>
+            </#if>
+        </#list>
+    </div>
 
     <#if UNPUBLISHED_STORIES?exists>
         <div class="s_nadpis">Rozepsané zápisky</div>
@@ -16,7 +36,7 @@
         <div class="s_sekce">
             <ul>
             <#list UNPUBLISHED_STORIES as relation>
-                <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
+                <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
                 <li>
                     <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
                 </li>
@@ -126,7 +146,7 @@
     <div class="s_sekce">
         <ul>
         <#list CURRENT_STORIES as relation>
-            <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
+            <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
             <li>
                 <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
             </li>
@@ -210,7 +230,13 @@
 <p class="meta-vypis">
     <#if ITEM.type==15>Odloženo<#else>${DATE.show(ITEM.created, "SMART")}</#if> |
     Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;
-    <#if category!="UNDEF">| ${category}</#if>
+    <#if category!="UNDEF">| 
+        <#if category.url?exists>
+            <a href="/blog/${BLOG.subType + "/" + category.url}" title="Kategorie zápisu">${category.name}</a>
+        <#else>
+            ${category.name}
+        </#if>
+    </#if>
     <#if (ITEM.type==12 && ITEM.created.time!=ITEM.updated.time)>
         | poslední úprava: ${DATE.show(ITEM.updated, "SMART")}
     </#if>

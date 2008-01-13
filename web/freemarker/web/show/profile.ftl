@@ -115,7 +115,7 @@
     <p>Můj blog: <a href="/blog/${BLOG.subType}">${TOOL.xpath(BLOG,"//custom/title")?default("blog")}</a></p>
     <ul>
         <#list STORIES as relation>
-            <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
+            <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
             <#assign CHILDREN=TOOL.groupByType(story.children)>
             <#if CHILDREN.discussion?exists>
                 <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>

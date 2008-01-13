@@ -12,10 +12,16 @@ není dostupné. <a href="/blog/${BLOG.subType}">Zpět na váš blog</a>.</p>
 <form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST" name="form">
 
 <table border="0">
-    <#list CATEGORIES?keys as category>
+    <#list CATEGORIES as category>
         <tr>
-            <td>${CATEGORIES[category]}</td>
-            <td><a href="${URL.make("/blog/edit/"+REL_BLOG.id+"?cid="+category+"&amp;action=editCategory")}">upravit</a></td>
+            <td>
+            <#if category.url?exists>
+                <a href="/blog/${BLOG.subType + "/" + category.url}">${category.name}</a>
+            <#else>
+                ${category.name}
+            </#if>
+            </td>
+            <td><a href="${URL.make("/blog/edit/"+REL_BLOG.id+"?cid="+category.id+"&amp;action=editCategory")}">upravit</a></td>
         </tr>
     </#list>
     <tr>

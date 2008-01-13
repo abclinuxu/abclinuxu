@@ -138,9 +138,12 @@ public class URLManager implements Configurable {
 
         int length = fixedURL.length();
         char c = fixedURL.charAt(length-1);
-        while (length > 0 && (c == '-' || c == '.' || c == '/')) {
+        while (c == '-' || c == '.' || c == '/') {
             length--;
-            c = fixedURL.charAt(length-1);
+            if (length > 0)
+                c = fixedURL.charAt(length-1);
+            else
+                break;
         }
 
         if (fixedURL.length() > length)

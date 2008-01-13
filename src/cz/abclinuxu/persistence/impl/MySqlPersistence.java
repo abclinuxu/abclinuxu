@@ -28,6 +28,7 @@ import cz.abclinuxu.exceptions.*;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.servlets.utils.url.CustomURLCache;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.cache.TransparentCache;
 import cz.abclinuxu.persistence.cache.TagCache;
@@ -453,13 +454,18 @@ public class MySqlPersistence implements Persistence {
 
                 // if relation.getChild() became unreferenced, delete that child
                 if ( obj instanceof Relation ) {
+                    Relation rel = (Relation) obj;
+
                     statement = con.prepareStatement("select predek from relace where typ_potomka=? and potomek=?");
-                    GenericObject child = ((Relation)obj).getChild();
+                    GenericObject child = rel.getChild();
                     statement.setString(1,PersistenceMapping.getGenericObjectType(child));
                     statement.setInt(2,child.getId());
                     resultSet = statement.executeQuery();
                     if ( !resultSet.next() )
                         queue.add(child);
+
+                    if (rel.getUrl() != null)
+                        CustomURLCache.getInstance().remove(rel.getUrl());
                 } else { // relation doesn't have content
                     List children = Nursery.getInstance().getChildren(obj);
                     for (Iterator iter = children.iterator(); iter.hasNext();) {

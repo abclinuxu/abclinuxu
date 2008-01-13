@@ -937,7 +937,7 @@ public class FeedGenerator implements Configurable {
         entry = new SyndEntryImpl();
         String url = found.getUrl();
         if (url == null)
-            url = "http://"+AbcConfig.getHostname() + Tools.getUrlForBlogStory(blog.getSubType(), item.getUpdated(), found.getId());
+            url = "http://"+AbcConfig.getHostname() + Tools.getUrlForBlogStory(found);
         entry.setLink(url);
         entry.setTitle(Tools.xpath(item, "data/name"));
         entry.setPublishedDate(item.getCreated());

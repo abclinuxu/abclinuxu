@@ -8,13 +8,30 @@
 
 <#assign plovouci_sloupec>
 
+    <div class="s_nadpis">
+        <#if USER?exists && USER.id==BLOG.owner>
+            <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Kategorie zápisů</a>
+        <#else>
+            Kategorie zápisů
+        </#if>
+    </div>
+
+    <div class="s_sekce">
+    <ul>
+        <#list CATEGORIES as cat>
+            <#if cat.url?exists>
+                <li><a href="/blog/${BLOG.subType + "/" + cat.url}">${cat.name}</a></li>
+            </#if>
+        </#list>
+    </div>
+
     <#if UNPUBLISHED_STORIES?exists>
         <div class="s_nadpis">Rozepsané zápisy</div>
 
         <div class="s_sekce">
             <ul>
             <#list UNPUBLISHED_STORIES as relation>
-                <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
+                <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
                 <li>
                     <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
                 </li>
@@ -54,7 +71,7 @@
     <div class="s_sekce">
         <ul>
         <#list CURRENT_STORIES as relation>
-            <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
+            <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
             <li>
                 <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
             </li>
@@ -139,14 +156,21 @@
 <#include "../header.ftl">
 <@lib.showMessages/>
 
+<#if CATEGORY?exists>
+    <h2>Zápisy v kategorii ${CATEGORY.name}</h2>
+</#if>
+
 <#if STORIES.total==0>
     <p>Vašemu výběru neodpovídá žádný zápis.</p>
 </#if>
 
 <#list STORIES.data as relation>
-    <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id),
+    <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation),
              category = story.subType?default("UNDEF"), tmp=TOOL.groupByType(story.children)>
-    <#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
+    <#if category!="UNDEF">
+        <#assign category_url=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@url")?default("UNDEF"),
+            category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")>
+    </#if>
     <div class="cl">
         <#if SUMMARY?exists>
             <h3 class="st_nadpis">
@@ -159,7 +183,13 @@
         </#if>
         <p class="meta-vypis">
             ${DATE.show(story.created, "SMART")} |
-            <#if (category!="UNDEF" && category?length > 1)>${category} |</#if>
+            <#if (category!="UNDEF" && category?length > 1)>
+                <#if category_url!="UNDEF">
+                    <a href="/blog/${BLOG.subType+"/"+category_url}" title="Kategorie zápisu">${category}</a>
+                <#else>
+                    ${category}
+                </#if>
+            |</#if>
                Přečteno: ${TOOL.getCounterValue(story,"read")}&times;
             <#if tmp.discussion?exists>| <@lib.showCommentsInListing TOOL.analyzeDiscussion(tmp.discussion[0]), "SMART_DMY", "/blog" /></#if>
             <@lib.showShortRating relation, "| " />
@@ -180,6 +210,8 @@
 <p>
     <#if SUMMARY?exists>
         <#assign url="/blog/"+BLOG.subType+"/souhrn">
+    <#elseif CATEGORY?exists>
+        <#assign url="/blog/"+BLOG.subType+"/"+CATEGORY>
     <#else>
         <#assign url="/blog/"+BLOG.subType+"/">
         <#if YEAR?exists><#assign url=url+YEAR+"/"></#if>

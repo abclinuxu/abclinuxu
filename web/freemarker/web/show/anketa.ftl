@@ -34,7 +34,7 @@ Vytvořeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
 <#if CHILDREN.discussion?exists>
     <h3>Komentáře</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>
-<#elseif forbidDiscussion!="yes">
+<#elseif forbidDiscussion?default("yes") != "yes">
     <h3>Diskuse k tomuto článku</h3>
     <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vložit první komentář</a>
 </#if>

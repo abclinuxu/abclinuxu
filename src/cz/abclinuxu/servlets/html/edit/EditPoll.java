@@ -145,7 +145,9 @@ public class EditPoll implements AbcAction {
         canContinue &= setMultichoice(params, poll);
 
         String url = (String) params.get(PARAM_URL);
-        if (upperRelation.getId() == Constants.REL_POLLS && url != null && url.length() > 0) {
+        boolean globalPoll = upperRelation.getId() == Constants.REL_POLLS;
+
+        if (globalPoll && url != null && url.length() > 0) {
             try {
                 url = UrlUtils.PREFIX_POLLS + "/" + URLManager.enforceRelativeURL(url);
                 url = URLManager.protectFromDuplicates(url);
@@ -174,14 +176,18 @@ public class EditPoll implements AbcAction {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
-        EditDiscussion.createEmptyDiscussion(relation, user, persistence);
-
-        if (relation.getUpper() == Constants.REL_POLLS)
+        if (globalPoll) {
+            EditDiscussion.createEmptyDiscussion(relation, user, persistence);
             FeedGenerator.updatePolls();
+        }
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+
+            if (globalPoll)
+                urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+            else
+                urlUtils.redirect(response, urlUtils.getRelationUrl(upperRelation));
         } else {
             env.put(VAR_RELATION, relation);
         }
