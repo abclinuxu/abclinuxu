@@ -408,6 +408,7 @@ public class Tools implements Configurable {
      * @param parents list of Relations or cz.abclinuxu.data.view.Link
      * @param o it shall be User or undefined value
      * @return List of Links
+     * todo rename to getNavigationPath(), similarly ShowObject.VAR_PARENTS
      */
     public List getParents(List parents, Object o, UrlUtils urlUtils) {
         if (parents.size() == 0)

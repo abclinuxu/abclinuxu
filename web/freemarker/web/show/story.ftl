@@ -4,7 +4,6 @@
         owner=TOOL.createUser(BLOG.owner),
         ITEM=STORY.child,
         CHILDREN=TOOL.groupByType(ITEM.children),
-        category = ITEM.subType?default("UNDEF"),
         story_url = TOOL.getUrlForBlogStory(STORY)>
 
 
@@ -23,9 +22,6 @@
         <#list CATEGORIES as cat>
             <#if cat.url?exists>
                 <li><a href="/blog/${BLOG.subType + "/" + cat.url}">${cat.name}</a></li>
-            </#if>
-            <#if category!="UNDEF">
-                <#if category == cat.id><#assign category = cat></#if>
             </#if>
         </#list>
     </div>
@@ -227,11 +223,11 @@
 <p class="meta-vypis">
     <#if ITEM.type==15>Odloženo<#else>${DATE.show(ITEM.created, "SMART")}</#if> |
     Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;
-    <#if category!="UNDEF">| 
-        <#if category.url?exists>
-            <a href="/blog/${BLOG.subType + "/" + category.url}" title="Kategorie zápisu">${category.name}</a>
+    <#if CATEGORY?exists>|
+        <#if CATEGORY.url?exists>
+            <a href="/blog/${BLOG.subType + "/" + CATEGORY.url}" title="Kategorie zápisu">${CATEGORY.name}</a>
         <#else>
-            ${category.name}
+            ${CATEGORY.name}
         </#if>
     </#if>
     <#if (ITEM.type==12 && ITEM.created.time!=ITEM.updated.time)>

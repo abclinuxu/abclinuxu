@@ -22,7 +22,9 @@ import cz.abclinuxu.servlets.html.edit.EditBlog;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
@@ -213,22 +215,20 @@ public class ViewBlog implements AbcAction, Configurable {
                 fillUnpublishedStories(blog, env);
 
             fillLastDesktop(blog, env);
-            EditBlog.storeCategories(blog, env);
 
+            List<BlogCategory> cats = EditBlog.storeCategories(blog, env);
             BlogCategory category = null;
             if (categoryUrl != null) {
-                List<BlogCategory> cats = (List<BlogCategory>) env.get(EditBlog.VAR_CATEGORIES);
-                for(BlogCategory c: cats) {
-                    if (c.getUrl().equals(categoryUrl)) {
+                for (BlogCategory c : cats) {
+                    if (categoryUrl.equals(c.getUrl())) {
                         category = c;
                         env.put(VAR_CATEGORY, category);
                         break;
                     }
                 }
 
-                if (category == null) {
+                if (category == null)
                     ServletUtils.addError(Constants.ERROR_GENERIC, "Kategorie "+categoryUrl+" neexistuje!", env, null);
-                }
             }
 
             if (relation != null)
@@ -246,17 +246,30 @@ public class ViewBlog implements AbcAction, Configurable {
      */
     public static String processStory(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-        String uri = (String) env.get(Constants.VAR_REQUEST_URI);
         Category blog = (Category) persistence.findById(relation.getParent());
         Item story = (Item) relation.getChild();
         env.put(VAR_STORY, relation);
-        EditBlog.storeCategories(blog, env);
+
+        BlogCategory category = null;
+        List<BlogCategory> categories = EditBlog.storeCategories(blog, env);
+        for (BlogCategory blogCategory : categories) {
+            if (blogCategory.getId().equals(story.getSubType())) {
+                env.put(VAR_CATEGORY, blogCategory);
+                category = blogCategory;
+                break;
+            }
+        }
 
         User user = (User) env.get(Constants.VAR_USER);
         if (user == null || user.getId() != story.getOwner())
             ReadRecorder.log(story, Constants.COUNTER_READ, env);
 
         List parents = persistence.findParents(relation);
+        if (category != null) {
+            String url = UrlUtils.PREFIX_BLOG + "/" + blog.getSubType() + "/" + category.getUrl();
+            Link link = new Link(category.getName(), url, null);
+            parents.add(parents.size() - 1, link);
+        }
         env.put(ShowObject.VAR_PARENTS, parents);
 
         Relation blogRelation = (Relation) persistence.findById(new Relation(relation.getUpper()));

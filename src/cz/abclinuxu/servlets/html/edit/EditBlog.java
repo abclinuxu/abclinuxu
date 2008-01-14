@@ -789,11 +789,12 @@ public class EditBlog implements AbcAction, Configurable {
      * Puts map of categories into environment.
      * @param blog the blog
      * @param env the environment
+     * @return categories
      */
-    public static void storeCategories(Category blog, Map env) {
+    public static List<BlogCategory> storeCategories(Category blog, Map env) {
         Document document = blog.getData();
         List nodes = document.selectNodes("//categories/category");
-        List categories = new ArrayList(nodes.size());
+        List<BlogCategory> categories = new ArrayList<BlogCategory>(nodes.size());
 
         for (Iterator iter = nodes.iterator(); iter.hasNext();) {
             Element category = (Element) iter.next();
@@ -808,6 +809,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         Collections.sort(categories);
         env.put(VAR_CATEGORIES, categories);
+        return categories;
     }
 
     /**
