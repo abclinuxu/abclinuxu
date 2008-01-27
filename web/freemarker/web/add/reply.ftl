@@ -13,7 +13,7 @@
 
 <#if THREAD?exists>
  <h2>Příspěvek, na který reagujete</h2>
- <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussion(), false />
+ <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussionWithAttachments(DISCUSSION), false />
 
  <script language="javascript1.2" type="text/javascript">
     original = "${TOOL.xpath(THREAD.data,"//text")?js_string}";
@@ -33,7 +33,7 @@
 
 <h2>Váš komentář</h2>
 
-<form action="${URL.make("/EditDiscussion")}" method="POST" name="replyForm">
+<form action="${URL.make("/EditDiscussion")}" method="POST" name="replyForm" enctype="multipart/form-data">
   <#if ! USER?exists>
    <p>
     <span class="required">Login a heslo</span>
@@ -89,12 +89,24 @@
    <div class="error">${ERRORS.text?if_exists}</div>
    <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea>
   </p>
+    <p>
+        <input type="file" name="attachment" tabindex="6">
+        <@lib.showHelp>Například výpis logu, konfigurační soubor, snímek obrazovky a podobně.</@lib.showHelp>
+        <@lib.showError key="attachment" />
+        <#if ATTACHMENTS?exists>
+            <ul>
+                <#list ATTACHMENTS as file>
+                    <li>${file.name} (${file.size} bytů)</li>
+                </#list>
+            </ul>
+        </#if>
+    </p>
   <p>
     <#if PREVIEW?exists>
-     <input tabindex="6" type="submit" name="preview" value="Zopakuj náhled">
-     <input tabindex="7" type="submit" name="finish" value="Dokonči">
+     <input tabindex="7" type="submit" name="preview" value="Zopakuj náhled">
+     <input tabindex="8" type="submit" name="finish" value="Dokonči">
     <#else>
-     <input tabindex="6" type="submit" name="preview" value="Náhled">
+     <input tabindex="7" type="submit" name="preview" value="Náhled">
     </#if>
   </p>
 

@@ -38,6 +38,7 @@ import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.DefaultFileItemFactory;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.FileUploadBase;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 
@@ -109,8 +110,10 @@ public class ServletUtils implements Configurable {
                         map.put(fileItem.getFieldName(), fileItem);
                     }
                 }
+            } catch (FileUploadBase.SizeLimitExceededException e) {
+                throw new InvalidInputException("Zvolený soubor je příliš veliký!");
             } catch (FileUploadException e) {
-                throw new InvalidInputException("Chyba při čtení dat. Není zvolený soubor příliš velký?");
+                throw new InvalidInputException("Chyba při čtení dat.");
             }
         } else {
             Enumeration names = request.getParameterNames();
@@ -439,6 +442,7 @@ public class ServletUtils implements Configurable {
     }
 
     /**
+     * todo presunout, tohle sem nepatri
      * Checks that both arguments have not identical content. If they do, error
      * message is added and false is returned. The reason is to forbid to save
      * form with no change at all (which would create dump revision and uselessly

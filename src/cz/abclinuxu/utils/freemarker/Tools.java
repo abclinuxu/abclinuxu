@@ -43,6 +43,8 @@ import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.Element;
 import org.dom4j.Branch;
+import org.dom4j.DocumentException;
+import org.dom4j.io.DOMWriter;
 import org.apache.log4j.Logger;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
@@ -56,6 +58,7 @@ import java.util.regex.Matcher;
 import java.util.prefs.Preferences;
 
 import freemarker.template.*;
+import freemarker.ext.dom.NodeModel;
 
 /**
  * Various utilities available for templates
@@ -562,7 +565,7 @@ public class Tools implements Configurable {
     /**
      * Creates list of users, that selected user blocks.
      * @param user user whose blacklist shall be fetched
-     * @param onlyUsers true if only registered users (not anonymous visitors withou account) shall be returned
+     * @param onlyUsers true if only registered users (not anonymous visitors without account) shall be returned
      * @return set of integers containing user id and strings containing names of anonymous visitors
      */
     public static Set getBlacklist(User user, boolean onlyUsers) {
@@ -915,6 +918,25 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Wraps relation into Screenshot object.
+     * @param relation fully initialized relation containing Item of type Screenshot.
+     * @return view object
+     */
+    public static Screenshot createScreenshot(Relation relation) {
+        return new Screenshot(relation);
+    }
+
+    /**
+     * Wraps Document into freemarker friendly format.
+     * @param doc non-null document
+     * @return XML-aware model
+     * @throws DocumentException
+     */
+    public static NodeModel asNode(Document doc) throws DocumentException {
+        return NodeModel.wrap((new DOMWriter().write(doc)));
+    }
+
+    /**
      * @param type type of counter to be fetched
      * @return counter value for selected GenericObject
      */
@@ -944,7 +966,7 @@ public class Tools implements Configurable {
      * one of Constants.TYPE_* strings. The key represents list of relations, where
      * children are same type.
      */
-    public static Map groupByType(List relations) throws PersistenceException {
+    public static Map<String, List> groupByType(List relations) throws PersistenceException {
         return groupByType(relations, null);
     }
 
@@ -957,18 +979,18 @@ public class Tools implements Configurable {
      * class name (not FQCN).
      * @param classFilter comma separated list of classes, that may be included in the list
      */
-    public static Map groupByType(List relations, String classFilter) throws PersistenceException {
+    public static Map<String, List> groupByType(List relations, String classFilter) throws PersistenceException {
         if (relations==null)
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         else
             if (!Misc.empty(classFilter))
                 relations = new ArrayList(relations);
 
-        boolean itemYes, recordYes, categoryYes, userYes, pollYes, linkYes;
-        itemYes = recordYes = categoryYes = userYes = pollYes = linkYes = false;
+        boolean itemYes, recordYes, categoryYes, userYes, pollYes, linkYes, dataYes;
         if (Misc.empty(classFilter))
-            itemYes = recordYes = categoryYes = userYes = pollYes = linkYes = true;
+            itemYes = recordYes = categoryYes = userYes = pollYes = linkYes = dataYes = true;
         else {
+            itemYes = recordYes = categoryYes = userYes = pollYes = linkYes = dataYes = false;
             StringTokenizer stk = new StringTokenizer(classFilter);
             while (stk.hasMoreTokens()) {
                 String className = stk.nextToken();
@@ -978,6 +1000,8 @@ public class Tools implements Configurable {
                     recordYes = true;
                 else if ("Category".equalsIgnoreCase(className))
                     categoryYes = true;
+                else if ("Data".equalsIgnoreCase(className))
+                    dataYes = true;
                 else if ("User".equalsIgnoreCase(className))
                     userYes = true;
                 else if ("Poll".equalsIgnoreCase(className))
@@ -997,34 +1021,36 @@ public class Tools implements Configurable {
             }
 
             child = relation.getChild();
-            if (child instanceof Item && !itemYes) {
+            if (!itemYes && child instanceof Item) {
                 iterator.remove();
                 continue;
-            } else if (child instanceof Record && !recordYes) {
+            } else if (!recordYes && child instanceof Record) {
                 iterator.remove();
                 continue;
-            } else if (child instanceof Category && !categoryYes) {
+            } else if (!categoryYes && child instanceof Category) {
                 iterator.remove();
                 continue;
-            } else if (child instanceof Poll && !pollYes) {
+            } else if (!(!(child instanceof Data) || dataYes)) {
                 iterator.remove();
                 continue;
-            } else if (child instanceof User && !userYes) {
+            } else if (!pollYes && child instanceof Poll) {
                 iterator.remove();
                 continue;
-            } else if (child instanceof Link && !linkYes) {
+            } else if (!userYes && child instanceof User) {
+                iterator.remove();
+                continue;
+            } else if (!linkYes && child instanceof Link) {
                 iterator.remove();
                 continue;
             }
 
-            if (!child.isInitialized())
+            if (! child.isInitialized())
                 needsSync = true;
         }
         if (needsSync)
             syncList(relations);
 
-        Map map = new HashMap();
-
+        Map<String, List> map = new HashMap<String, List>();
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
 
@@ -1033,30 +1059,42 @@ public class Tools implements Configurable {
                 Misc.storeToMap(map,Constants.TYPE_CATEGORY,relation);
             else if ( child instanceof Item ) {
                 Item item = (Item) child;
-                if ( item.getType()==Item.HARDWARE )
-                    Misc.storeToMap(map,Constants.TYPE_MAKE,relation);
-                else if ( item.getType()==Item.DISCUSSION )
-                    Misc.storeToMap(map,Constants.TYPE_DISCUSSION,relation);
-                else if ( item.getType()==Item.ARTICLE )
-                    Misc.storeToMap(map,Constants.TYPE_ARTICLE,relation);
-                else if ( item.getType()==Item.DRIVER )
-                    Misc.storeToMap(map,Constants.TYPE_DRIVER,relation);
-                else if ( item.getType()==Item.NEWS )
-                    Misc.storeToMap(map,Constants.TYPE_NEWS,relation);
-                else if ( item.getType()==Item.REQUEST )
-                    Misc.storeToMap(map,Constants.TYPE_REQUEST,relation);
-                else if ( item.getType()==Item.ROYALTIES )
-                    Misc.storeToMap(map,Constants.TYPE_ROYALTIES,relation);
-                else if ( item.getType()==Item.CONTENT )
-                    Misc.storeToMap(map,Constants.TYPE_DOCUMENTS,relation);
+                switch (item.getType()) {
+                    case Item.HARDWARE:
+                        Misc.storeToMap(map, Constants.TYPE_MAKE, relation);
+                        break;
+                    case Item.DISCUSSION:
+                        Misc.storeToMap(map, Constants.TYPE_DISCUSSION, relation);
+                        break;
+                    case Item.ARTICLE:
+                        Misc.storeToMap(map, Constants.TYPE_ARTICLE, relation);
+                        break;
+                    case Item.DRIVER:
+                        Misc.storeToMap(map, Constants.TYPE_DRIVER, relation);
+                        break;
+                    case Item.NEWS:
+                        Misc.storeToMap(map, Constants.TYPE_NEWS, relation);
+                        break;
+                    case Item.REQUEST:
+                        Misc.storeToMap(map, Constants.TYPE_REQUEST, relation);
+                        break;
+                    case Item.ROYALTIES:
+                        Misc.storeToMap(map, Constants.TYPE_ROYALTIES, relation);
+                        break;
+                    case Item.CONTENT:
+                        Misc.storeToMap(map, Constants.TYPE_DOCUMENTS, relation);
+                        break;
+                }
             } else if ( child instanceof Record )
-                Misc.storeToMap(map,Constants.TYPE_RECORD,relation);
+                Misc.storeToMap(map,Constants.TYPE_RECORD, relation);
+            else if ( child instanceof Data )
+                Misc.storeToMap(map,Constants.TYPE_DATA, relation);
             else if ( child instanceof Link )
                 Misc.storeToMap(map,Constants.TYPE_LINK, relation);
             else if ( child instanceof Poll )
                 Misc.storeToMap(map,Constants.TYPE_POLL, relation);
             else if ( child instanceof User )
-                Misc.storeToMap(map,Constants.TYPE_USER,relation);
+                Misc.storeToMap(map,Constants.TYPE_USER, relation);
         }
         return map;
     }
@@ -1353,17 +1391,24 @@ public class Tools implements Configurable {
             discussion.setMonitored(document.selectSingleNode(xpath) != null);
         }
 
-        if (item.getChildren().size()==0)
+        if (item.getChildren().isEmpty())
             return discussion;
 
-        Relation child = item.getChildren().get(0);
+        Map<String, List> childrenMap = groupByType(item.getChildren());
+        discussion.setAttachments(childrenMap.get(Constants.TYPE_DATA));
+
+        List recordRelations = childrenMap.get(Constants.TYPE_RECORD);
+        if (recordRelations == null)
+            return discussion;
+
+        Relation child = (Relation) recordRelations.get(0);
         Record record = (Record) child.getChild();
-        if (!record.isInitialized())
-            record = (Record) persistence.findById(record);
+        record = (Record) persistence.findById(record);
 
         DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
-        if (dizRecord.getThreads().size() == 0)
+        if (dizRecord.getThreads().isEmpty())
             return discussion;
+
         discussion.init(dizRecord);
 
         if (user != null && saveLast) {
@@ -1381,10 +1426,22 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Creates empty discussions (no threads).
      * @return empty discussion
      */
     public Discussion createEmptyDiscussion() {
         return new Discussion();
+    }
+
+    /**
+     * Creates empty discussions (no threads), but with attachments from supplied Item.
+     * @return empty discussion with initialized attachments
+     */
+    public Discussion createEmptyDiscussionWithAttachments(Item item) {
+        Discussion discussion = new Discussion();
+        Map<String, List> childrenMap = groupByType(item.getChildren(), "Data");
+        discussion.setAttachments(childrenMap.get(Constants.TYPE_DATA));
+        return discussion;
     }
 
     /**
@@ -1714,16 +1771,21 @@ public class Tools implements Configurable {
         if (obj == null)
             return Collections.EMPTY_LIST;
 
-        Element images = (Element) obj.getData().selectSingleNode("/data/inset/images");
+        Map byType = groupByType(obj.getChildren(), "Data");
+        List images = (List) byType.get(Constants.TYPE_DATA);
         if (images == null)
             return Collections.EMPTY_LIST;
 
         List result = new ArrayList();
-        for (Iterator iter = images.elementIterator("image"); iter.hasNext();) {
-            Element element = (Element) iter.next();
+        for (Iterator iter = images.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+            Data data = (Data) relation.getChild();
+            Element element = (Element) data.getData().selectSingleNode("/data/object");
             Map map = new HashMap(2, 1.0f);
-            map.put("path", element.getText());
-            map.put("thumbnailPath", element.attributeValue("thumbnail"));
+            map.put("path", element.attributeValue("path"));
+            Element thumbnail = element.element("thumbnail");
+            if (thumbnail != null)
+                map.put("thumbnailPath", thumbnail.attributeValue("path"));
             result.add(map);
         }
         return result;

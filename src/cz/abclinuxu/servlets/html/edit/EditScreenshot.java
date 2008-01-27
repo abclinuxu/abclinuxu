@@ -22,6 +22,7 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.Data;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -165,10 +166,18 @@ public class EditScreenshot implements AbcAction {
             return FMTemplateSelector.select("Screenshot", "add", env, request);
 
         persistence.create(item);
-        createImage(params, item, env);
-        persistence.update(item);
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
+
+        Data data = new Data();
+        data.setOwner(user.getId());
+        createImage(params, data, item, env);
+        persistence.create(data);
+
+        Relation dataRelation = new Relation(item, data, relation.getId());
+        persistence.create(dataRelation);
+        dataRelation.getParent().addChildRelation(dataRelation);
+
         EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
         FeedGenerator.updateScreenshots();
@@ -225,18 +234,6 @@ public class EditScreenshot implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
-
-        Item item = (Item) relation.getChild();
-        Element rootElement = item.getData().getRootElement();
-        Element element = rootElement.element("image");
-        String path = element.getText();
-        EditAttachment.deleteAttachment(path, env, user, request);
-        element = rootElement.element("listingThumbnail");
-        path = element.getText();
-        EditAttachment.deleteAttachment(path, env, user, request);
-        element = rootElement.element("detailThumbnail");
-        path = element.getText();
-        EditAttachment.deleteAttachment(path, env, user, request);
 
         persistence.remove(relation);
         relation.getParent().removeChildRelation(relation);
@@ -382,36 +379,44 @@ public class EditScreenshot implements AbcAction {
     /**
      * Uploads new screenshot and creates a thumbnail (if needed). Changes to Item are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param item item to be updated
+     * @param data data to be updated
+     * @param item parent item
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean createImage(Map params, Item item, Map env) throws IOException {
+    private boolean createImage(Map params, Data data, Item item, Map env) throws IOException {
         FileItem fileItem = (FileItem) params.get(PARAM_SCREENSHOT);
+        data.setSubType(fileItem.getContentType());
+        Document document = DocumentHelper.createDocument();
+        data.setData(document);
+
         PathGenerator pathGenerator = AbcConfig.getPathGenerator();
-        Element root = item.getData().getRootElement();
         String suffix = Misc.getFileSuffix(fileItem.getName()).toLowerCase();
         String name = EditAttachment.getFileName(item);
         File imageFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, name, "." + suffix);
         String path = Misc.getWebPath(imageFile.getAbsolutePath());
         try {
             fileItem.write(imageFile);
-            root.addElement("image").setText(path);
         } catch (Exception e) {
             ServletUtils.addError(PARAM_SCREENSHOT, "Chyba při zápisu na disk!", env, null);
             log.error("Není možné uložit obrázek " + imageFile.getAbsolutePath() + " na disk!", e);
             return false;
         }
 
+        Element root = document.addElement("data");
+        Element screenshot = root.addElement("object").addAttribute("path", path);
+        screenshot.addElement("originalFilename").setText(fileItem.getName());
+        screenshot.addElement("size").setText(Long.toString(fileItem.getSize()));
+
         File thumbnailListingFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, name + "-listing", ".png");
         ImageTool.createThumbnailMaxSize(imageFile, thumbnailListingFile, 250, false);
         path = Misc.getWebPath(thumbnailListingFile.getAbsolutePath());
-        root.addElement("listingThumbnail").setText(path);
+        screenshot.addElement("thumbnail").addAttribute("path", path).addAttribute("useType", "listing");
 
         File thumbnailDetailFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, name + "-detail", ".png");
         ImageTool.createThumbnailMaxSize(imageFile, thumbnailDetailFile, 500, false);
         path = Misc.getWebPath(thumbnailDetailFile.getAbsolutePath());
-        root.addElement("detailThumbnail").setText(path);
+        screenshot.addElement("thumbnail").addAttribute("path", path).addAttribute("useType", "detail");
 
         return true;
     }

@@ -20,6 +20,7 @@ package cz.abclinuxu.persistence.impl;
 
 import java.util.*;
 import java.sql.*;
+import java.io.File;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.RowComment;
@@ -28,6 +29,7 @@ import cz.abclinuxu.exceptions.*;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.servlets.utils.url.CustomURLCache;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.cache.TransparentCache;
@@ -150,7 +152,7 @@ public class MySqlPersistence implements Persistence {
             statement.setInt(1, comment.getRecord());
             statement.setInt(2, comment.getId());
             if (comment.getParent() != null)
-                statement.setInt(3, comment.getParent().intValue());
+                statement.setInt(3, comment.getParent());
             else
                 statement.setNull(3, Types.INTEGER);
 
@@ -159,7 +161,7 @@ public class MySqlPersistence implements Persistence {
             comment.setCreated(d);
 
             if (comment.getAuthor() != null)
-                statement.setInt(5, comment.getAuthor().intValue());
+                statement.setInt(5, comment.getAuthor());
             else
                 statement.setNull(5, Types.INTEGER);
             statement.setObject(6, comment.getDataAsString().getBytes());
@@ -187,8 +189,6 @@ public class MySqlPersistence implements Persistence {
             update((Relation)obj);
         } else if ( obj instanceof Poll ) {
             update((Poll) obj);
-        } else if (obj instanceof Data) {
-            update((Data)obj);
         } else if (obj instanceof Link) {
             update((Link)obj);
         }
@@ -452,6 +452,13 @@ public class MySqlPersistence implements Persistence {
                     }
                 }
 
+
+                // remove referenced files from disk
+                if (obj instanceof Data) {
+                    Data data = (Data) findById(obj);
+                    deleteAttachment(data);
+                }
+
                 // if relation.getChild() became unreferenced, delete that child
                 if ( obj instanceof Relation ) {
                     Relation rel = (Relation) obj;
@@ -503,6 +510,7 @@ public class MySqlPersistence implements Persistence {
         Set links = null;
         Set servers = null;
         Set polls = null;
+        Set data = null;
 
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             GenericObject obj = (GenericObject) iter.next();
@@ -550,7 +558,8 @@ public class MySqlPersistence implements Persistence {
                 polls.add(obj);
                 type = "poll";
             } else if (obj instanceof Data) {
-                synchronize(obj);
+                if (data == null) data = new TreeSet(new Sorters2.IdComparator());
+                data.add(obj);
                 type = "data";
             }
         }
@@ -565,6 +574,8 @@ public class MySqlPersistence implements Persistence {
                 syncDataObjects(categories, ignoreMissing);
             if (records != null)
                 syncDataObjects(records, ignoreMissing);
+            if (data != null)
+                syncDataObjects(data, ignoreMissing);
             if (links != null)
                 syncLinks(links, ignoreMissing);
             if (servers != null)
@@ -581,13 +592,14 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu synchronizovat objekty!", e);
         } finally {
-            if (relations!=null) relations.clear();
-            if (items!=null) items.clear();
-            if (categories!=null) categories.clear();
-            if (records!=null) records.clear();
-            if (links!=null) links.clear();
-            if (servers!=null) servers.clear();
-            if (users!=null) users.clear();
+            if (relations != null) relations.clear();
+            if (items != null) items.clear();
+            if (categories != null) categories.clear();
+            if (records != null) records.clear();
+            if (data != null) data.clear();
+            if (links != null) links.clear();
+            if (servers != null) servers.clear();
+            if (users != null) users.clear();
         }
     }
 
@@ -724,8 +736,6 @@ public class MySqlPersistence implements Persistence {
             return loadLink((Link)obj);
         if (obj instanceof Poll)
             return loadPoll((Poll)obj);
-        if (obj instanceof Data)
-            return loadData((Data)obj);
         return null;
     }
 
@@ -811,7 +821,7 @@ public class MySqlPersistence implements Persistence {
                 list = new ArrayList();
                 byTable.put(tableId, list);
             }
-            list.add(new Integer(object.getId()));
+            list.add(object.getId());
         }
 
         int i = 0;
@@ -859,9 +869,8 @@ public class MySqlPersistence implements Persistence {
             conditions.add(gdo.getDataAsString().getBytes());
             conditions.add(gdo.getOwner());
 
-            java.util.Date d = ( gdo.getCreated()!=null ) ? gdo.getCreated() : new java.util.Date();
+            java.util.Date d = (gdo.getCreated() != null) ? gdo.getCreated() : new java.util.Date();
             conditions.add(new Timestamp(d.getTime()));
-
             gdo.setCreated(d);
             gdo.setUpdated(new java.util.Date());
 
@@ -877,13 +886,6 @@ public class MySqlPersistence implements Persistence {
             conditions.add(relation.getUrl());
             String tmp = relation.getDataAsString();
             conditions.add((tmp!=null)? tmp.getBytes():null);
-
-        } else if (obj instanceof Data) {
-            sb.append("insert into objekt values(?,?,?,?)");
-            conditions.add(obj.getId());
-            conditions.add(((Data)obj).getFormat());
-            conditions.add(((Data)obj).getData());
-            conditions.add(((Data)obj).getOwner());
 
         } else if (obj instanceof User) {
             sb.append("insert into uzivatel values(?,?,?,?,?,?,?)");
@@ -924,13 +926,13 @@ public class MySqlPersistence implements Persistence {
             if ( gdo.getId()>0 ) {
                 addAnd = true;
                 sb.append("cislo=?");
-                conditions.add(new Integer(gdo.getId()));
+                conditions.add(gdo.getId());
             }
 
             if ( gdo.getOwner()!=0 ) {
                 if ( addAnd ) sb.append(" and "); else addAnd = true;
                 sb.append("pridal=?");
-                conditions.add(new Integer(gdo.getOwner()));
+                conditions.add(gdo.getOwner());
             }
 
             String search = gdo.getSearchString();
@@ -943,7 +945,7 @@ public class MySqlPersistence implements Persistence {
             if ( gdo.getType()!=0 ) {
                 if ( addAnd ) sb.append(" and ");
                 sb.append("typ=?");
-                conditions.add(new Integer(gdo.getType()));
+                conditions.add(gdo.getType());
             }
 
         } else if ( obj instanceof User ) {
@@ -952,7 +954,7 @@ public class MySqlPersistence implements Persistence {
             if ( user.getId()>0 ) {
                 addAnd = true;
                 sb.append("cislo=?");
-                conditions.add(new Integer(user.getId()));
+                conditions.add(user.getId());
             }
 
             String tmp = user.getLogin();
@@ -999,7 +1001,7 @@ public class MySqlPersistence implements Persistence {
     private void appendIncrementUpdateParams(GenericObject obj, StringBuffer sb, List conditions, String type) {
         sb.append("update citac set soucet=soucet+1 where typ=? and cislo=? and druh=?");
         conditions.add(PersistenceMapping.getGenericObjectType(obj));
-        conditions.add(new Integer(obj.getId()));
+        conditions.add(obj.getId());
         conditions.add(type);
     }
 
@@ -1010,7 +1012,7 @@ public class MySqlPersistence implements Persistence {
     private void appendCounterInsertParams(GenericObject obj, StringBuffer sb, List conditions, String type) {
         sb.append("insert into citac values(?,?,1,?)");
         conditions.add(PersistenceMapping.getGenericObjectType(obj));
-        conditions.add(new Integer(obj.getId()));
+        conditions.add(obj.getId());
         conditions.add(type);
     }
 
@@ -1021,7 +1023,7 @@ public class MySqlPersistence implements Persistence {
     private void appendCounterDeleteParams(GenericObject obj, StringBuffer sb, List conditions, String type ) {
         sb.append("delete from citac where typ=? and cislo=? and druh=?");
         conditions.add(PersistenceMapping.getGenericObjectType(obj));
-        conditions.add(new Integer(obj.getId()));
+        conditions.add(obj.getId());
         conditions.add(type);
     }
 
@@ -1140,8 +1142,6 @@ public class MySqlPersistence implements Persistence {
                 }
 
                 syncUserFromRS(user, rs);
-                if (! PropertiesConfig.isSupported(user))
-                    objects.remove(user);
             }
 
             loadCommonObjectsProperties(objects, PersistenceMapping.TREE_USER);
@@ -1188,11 +1188,13 @@ public class MySqlPersistence implements Persistence {
                 data = new Category(obj.getId());
             else if (obj instanceof Item)
                 data = new Item(obj.getId());
-            else
+            else if (obj instanceof Record)
                 data = new Record(obj.getId());
+            else
+                data = new Data(obj.getId());
             syncGenericDataObjectFromRS(data, resultSet);
 
-            if (data instanceof Record && ((Record) data).getType() == Record.DISCUSSION)
+            if (data instanceof Record && data.getType() == Record.DISCUSSION)
                 loadComments((Record)data);
 
             loadCommonObjectProperties(data);
@@ -1237,7 +1239,7 @@ public class MySqlPersistence implements Persistence {
                 }
 
                 syncGenericDataObjectFromRS(obj, rs);
-                if (obj instanceof Record && ((Record) obj).getType() == Record.DISCUSSION)
+                if (obj instanceof Record && obj.getType() == Record.DISCUSSION)
                     loadComments((Record) obj); // todo read it in single query
 
                 if ( ! PropertiesConfig.isSupported(obj))
@@ -1296,7 +1298,7 @@ public class MySqlPersistence implements Persistence {
             while (resultSet.next()) {
                 current = new RowComment();
                 syncCommentFromRS(current, resultSet);
-                map.put(new Integer(current.getId()), current);
+                map.put(current.getId(), current);
                 count++;
                 if (current.getId() > max)
                     max = current.getId();
@@ -1436,35 +1438,6 @@ public class MySqlPersistence implements Persistence {
             relation.setData(tmp);
         }
         relation.setInitialized(true);
-    }
-
-    /**
-     * todo - probably remove this Object
-     * @return data from mysql db
-     */
-    protected GenericObject loadData(Data obj) throws SQLException {
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-
-        try {
-            con = getSQLConnection();
-            statement = con.prepareStatement("select * from objekt where cislo=?");
-            statement.setInt(1,obj.getId());
-
-            resultSet = statement.executeQuery();
-            if ( !resultSet.next() ) {
-                throw new NotFoundException("Datovy objekt "+obj.getId()+" nebyl nalezen!");
-            }
-
-            Data data = new Data(obj.getId());
-            data.setFormat(resultSet.getString(2));
-            data.setData(resultSet.getBytes(3));
-            data.setOwner(resultSet.getInt(4));
-            data.setInitialized(true);
-
-            return data;
-        } finally {
-            releaseSQLResources(con,statement,resultSet);
-        }
     }
 
     /**
@@ -1818,11 +1791,11 @@ public class MySqlPersistence implements Persistence {
 
                     statement3.setInt(1, comment.getRecord());
                     if (comment.getParent() != null)
-                        statement3.setInt(2, comment.getParent().intValue());
+                        statement3.setInt(2, comment.getParent());
                     else
                         statement3.setNull(2, Types.INTEGER);
                     if (comment.getAuthor() != null)
-                        statement3.setInt(3, comment.getAuthor().intValue());
+                        statement3.setInt(3, comment.getAuthor());
                     else
                         statement3.setNull(3, Types.INTEGER);
                     statement3.setTimestamp(4, new Timestamp(comment.getCreated().getTime()));
@@ -1872,34 +1845,6 @@ public class MySqlPersistence implements Persistence {
             cache.store(relation);
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu uložit změny do databáze!",e);
-        } finally {
-            releaseSQLResources(con,statement,resultSet);
-        }
-    }
-
-    /**
-     * updates data in database
-     */
-    public void update(Data data) {
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        if ( data==null )
-            throw new NullPointerException("Nemohu  uložit prázdný objekt!");
-
-        try {
-            con = getSQLConnection();
-            statement = con.prepareStatement("update objekt set data=?,format=? where cislo=?");
-            statement.setBytes(1,data.getData());
-            statement.setString(2,data.getFormat());
-            statement.setInt(3,data.getId());
-
-            int result = statement.executeUpdate();
-            if ( result!=1 ) {
-                throw new PersistenceException("Nepodarilo se ulozit zmeny v "+data.toString()+" do databáze!");
-            }
-
-            cache.store(data);
-        } catch (SQLException e) {
-            throw new PersistenceException("Nemohu uložit změny do databáze!", e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -2429,6 +2374,26 @@ public class MySqlPersistence implements Persistence {
         }
     }
 
+    // copied from EditAttachment
+    public static void deleteAttachment(Data data) {
+        Document document = data.getData();
+        List elements = document.selectNodes("//*[@path]");
+        for (Iterator iter = elements.iterator(); iter.hasNext();) {
+            Element element = (Element) iter.next();
+            String path = element.attributeValue("path");
+
+            File file = new File(AbcConfig.getDeployPath() + path);
+            if (!file.exists()) {
+                return;
+            }
+
+            if (!file.delete()) {
+                log.warn("Nepodařilo se smazat soubor " + file.getAbsolutePath());
+                return;
+            }
+        }
+    }
+
     /**
      * @return SQL table name for this GenericObject
      */
@@ -2450,7 +2415,7 @@ public class MySqlPersistence implements Persistence {
         } else if (obj instanceof Server) {
             return "server";
         } else if (obj instanceof Data) {
-            return "objekt";
+            return "data";
         }
         throw new InvalidDataException("Nepodporovany typ tridy!");
     }

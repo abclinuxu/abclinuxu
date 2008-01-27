@@ -35,6 +35,8 @@ import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.PathGenerator;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.monitor.*;
@@ -52,14 +54,18 @@ import org.dom4j.*;
 import org.htmlparser.util.ParserException;
 import org.joda.time.Days;
 import org.joda.time.DateTime;
+import org.apache.commons.fileupload.FileItem;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 import java.net.URLEncoder;
 import java.net.URLDecoder;
 import java.io.UnsupportedEncodingException;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * This class is responsible for adding new
@@ -81,6 +87,7 @@ public class EditDiscussion implements AbcAction {
     public static final String PARAM_URL = "url";
     public static final String PARAM_SOLVED = "solved";
     public static final String PARAM_ANTISPAM = "antispam";
+    public static final String PARAM_ATTACHMENT = "attachment";
 
     public static final String COOKIE_USER_VERIFIED = "usrVrfd";
 
@@ -91,6 +98,7 @@ public class EditDiscussion implements AbcAction {
     public static final String VAR_PARENT_TITLE = "PARENT_TITLE";
     public static final String VAR_FORUM_QUESTION = "FORUM_QUESTION";
     public static final String VAR_USER_VERIFIED = "USER_VERIFIED";
+    public static final String VAR_ATTACHMENTS = "ATTACHMENTS";
 
     public static final String ACTION_ADD_DISCUSSION = "addDiz";
     public static final String ACTION_ADD_QUESTION = "addQuez";
@@ -238,6 +246,7 @@ public class EditDiscussion implements AbcAction {
         env.put(VAR_RELATION,relChild);
         env.put(VAR_DISCUSSION,discussion);
         params.put(PARAM_AUTHOR, detectSpambotCookie(request, env, user));
+        request.getSession().removeAttribute(VAR_ATTACHMENTS);
         return FMTemplateSelector.select("EditDiscussion","reply",env,request);
     }
 
@@ -279,6 +288,7 @@ public class EditDiscussion implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         params.put(PARAM_AUTHOR, detectSpambotCookie(request, env, user));
+        request.getSession().removeAttribute(VAR_ATTACHMENTS);
         return FMTemplateSelector.select("EditDiscussion", "ask", env, request);
     }
 
@@ -306,6 +316,7 @@ public class EditDiscussion implements AbcAction {
         canContinue &= setText(params, root, true, env);
         canContinue &= setCommentAuthor(params, user, comment, root, env);
         canContinue &= setUserIPAddress(root, request);
+        canContinue &= setCommentAttachment(params, env, request);
         canContinue &= checkSpambot(request, response, params, env, user);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
@@ -320,6 +331,8 @@ public class EditDiscussion implements AbcAction {
         Relation rel2 = new Relation(relation.getChild(),discussion,relation.getId());
         persistence.create(rel2);
         rel2.getParent().addChildRelation(rel2);
+
+        storeAttachments(rel2, discussion, comment, env, request);
 
         // run monitor
         String url = relation.getUrl();
@@ -399,6 +412,7 @@ public class EditDiscussion implements AbcAction {
             env.put(VAR_PARENT_TITLE, getTitleFromParent(relation));
         }
 
+        request.getSession().removeAttribute(VAR_ATTACHMENTS);
         params.put(PARAM_AUTHOR, detectSpambotCookie(request, env, user));
         return FMTemplateSelector.select("EditDiscussion","reply",env,request);
     }
@@ -428,9 +442,11 @@ public class EditDiscussion implements AbcAction {
         DiscussionRecord dizRecord = null;
         Element root = DocumentHelper.createElement("data");
         RowComment comment = new RowComment(root);
-        List<Relation> children = discussion.getChildren();
-        if (children.size() > 0) {
-            record = (Record) (children.get(0)).getChild();
+
+        Map childrenMap = Tools.groupByType(discussion.getChildren(), "Record");
+        List<Relation> recordRelations = (List<Relation>) childrenMap.get(Constants.TYPE_RECORD);
+        if (! Misc.empty(recordRelations)) {
+            record = (Record) (recordRelations.get(0)).getChild();
             record = (Record) persistence.findById(record).clone();
             dizRecord = (DiscussionRecord) record.getCustom();
         } else {
@@ -450,8 +466,8 @@ public class EditDiscussion implements AbcAction {
         canContinue &= setTitle(params, root, env);
         canContinue &= setText(params, root, false, env);
         canContinue &= setUserIPAddress(root, request);
+        canContinue &= setCommentAttachment(params, env, request);
         canContinue &= checkSpambot(request, response, params, env, user);
-//        canContinue &= testAnonymCanPostComments(user, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             env.put(VAR_DISCUSSION, discussion);
@@ -480,6 +496,7 @@ public class EditDiscussion implements AbcAction {
         if (duplicate)
             return ServletUtils.showErrorPage("Systém detekoval vícenásobné odeslání totožného komentáře.", env, request);
 
+        storeAttachments(relation, discussion, comment, env, request);
         dizRecord.calculateCommentStatistics();
 
         if (record.getId() == 0) {
@@ -574,6 +591,7 @@ public class EditDiscussion implements AbcAction {
         if ( discussion==null )
             throw new MissingArgumentException("Chybí parametr dizId!");
         discussion = (Item) persistence.findById(discussion).clone();
+        env.put(VAR_DISCUSSION, discussion);
 
         Relation relation;
         int id = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
@@ -638,6 +656,8 @@ public class EditDiscussion implements AbcAction {
         if ( discussion==null )
             throw new MissingArgumentException("Chybí parametr dizId!");
         discussion = (Item) persistence.findById(discussion);
+        env.put(VAR_DISCUSSION, discussion);
+
         Comment thread = getDiscussedComment(params, discussion, persistence);
 
         params.put(PARAM_TITLE, thread.getTitle());
@@ -688,6 +708,7 @@ public class EditDiscussion implements AbcAction {
             if ( canContinue ) {
                 env.put(VAR_PREVIEW, getUnthreadedComment(comment));
             }
+            env.put(VAR_DISCUSSION, discussion);
             return FMTemplateSelector.select("EditDiscussion", "edit", env, request);
         }
 
@@ -720,6 +741,7 @@ public class EditDiscussion implements AbcAction {
         if ( discussion==null )
             throw new MissingArgumentException("Chybí parametr dizId!");
         discussion = (Item) persistence.findById(discussion);
+        env.put(VAR_DISCUSSION, discussion);
 
         int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
         if ( threadId==0 )
@@ -750,14 +772,32 @@ public class EditDiscussion implements AbcAction {
             throw new MissingArgumentException("Chybí parametr threadId!");
 
         discussion = (Item) persistence.findById(discussion).clone();
-
-        Relation relation = (Relation) discussion.getChildren().get(0);
+        Map childrenMap = Tools.groupByType(discussion.getChildren(), "Record");
+        List<Relation> recordRelations = (List<Relation>) childrenMap.get(Constants.TYPE_RECORD);
+        Relation relation = recordRelations.get(0);
         Record record = (Record) persistence.findById(relation.getChild()).clone();
         DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
 
         RowComment comment = (RowComment) dizRecord.getComment(threadId);
         String title = comment.getTitle();
         String content = comment.getData().getRootElement().elementText("text");
+
+        // remove attachments
+        List<Comment> comments = new ArrayList<Comment>();
+        comments.add(comment);
+        while (! comments.isEmpty()) {
+            Comment aComment = comments.remove(0);
+            comments.addAll(aComment.getChildren());
+            List<Integer> relations = aComment.getAttachments();
+            if (relations.isEmpty())
+                continue;
+
+            for (Integer dataRid : relations) {
+                Relation dataRelation = (Relation) persistence.findById(new Relation(dataRid));
+                persistence.remove(dataRelation);
+                dataRelation.getParent().removeChildRelation(dataRelation);
+            }
+        }
 
         boolean removed = false;
         if (comment.getParent() != null) {
@@ -1087,7 +1127,9 @@ public class EditDiscussion implements AbcAction {
     public static Comment getDiscussedComment(Map params, Item discussion, Persistence persistence) {
         int id = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
         if ( id != 0 ) {
-            Relation relation = (Relation) discussion.getChildren().get(0);
+            Map childrenMap = Tools.groupByType(discussion.getChildren(), "Record");
+            List<Relation> recordRelations = (List<Relation>) childrenMap.get(Constants.TYPE_RECORD);
+            Relation relation = recordRelations.get(0);
             Record record = (Record) persistence.findById(relation.getChild());
             DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
             Comment comment = dizRecord.getComment(id);
@@ -1240,20 +1282,89 @@ public class EditDiscussion implements AbcAction {
         return true;
     }
 
-//    /**
-//     * Anonymous post allowance test. The method setForumQuestionFlag() must be called prior this method.
-//     * @return false, if user is not logged in and anonymous posts are prohibited
-//     */
-//    static boolean testAnonymCanPostComments(User user, Relation relation, Map env) {
-//        if (user != null)
-//            return true;
-//
-//        if (isQuestionInForum(relation))
-//            return true;
-//
-//        ServletUtils.addError(ServletUtils.PARAM_LOG_USER, "Zadejte prosím své přihlašovací údaje.", env, null);
-//        return false;
-//    }
+    /**
+     * Stores uploaded file info in the session. Changes are not synchronized with persistence,
+     * the associated file will be deleted when object is garbage collected.
+     * @param params map holding request's parameters
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    boolean setCommentAttachment(Map params, Map env, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        List<FileItem> files = (List<FileItem>) session.getAttribute(VAR_ATTACHMENTS);
+        if (files == null)
+            files = new ArrayList<FileItem>(2);
+        env.put(VAR_ATTACHMENTS, files);
+
+        FileItem fileItem = (FileItem) params.get(PARAM_ATTACHMENT);
+        if (fileItem == null || fileItem.getName() == null || fileItem.getSize() == 0)
+            return true;
+
+        files.add(fileItem);
+        if (files.size() == 1)
+            session.setAttribute(VAR_ATTACHMENTS, files);
+        return true;
+    }
+
+    /**
+     * Stores attachments from session to file system and updates discussion
+     * @return true if discussion was updated n persistence
+     * @throws IOException
+     */
+    boolean storeAttachments(Relation relation, Item discussion, Comment comment, Map env, HttpServletRequest request) throws IOException {
+        HttpSession session = request.getSession();
+        List<FileItem> files = (List<FileItem>) session.getAttribute(VAR_ATTACHMENTS);
+        session.removeAttribute(VAR_ATTACHMENTS);
+        if (files == null || files.size() == 0)
+            return false;
+
+        PathGenerator pathGenerator = AbcConfig.getPathGenerator();
+        Persistence persistence = PersistenceFactory.getPersistence();
+        Element commentRoot = comment.getData().getRootElement();
+        for (FileItem fileItem : files) {
+            Data data = new Data();
+            data.setSubType(fileItem.getContentType());
+
+            String fileName = EditAttachment.getNormalizedFileName(fileItem.getName());
+            int i = fileName.lastIndexOf('.');
+            String prefix, suffix;
+            if (i == -1) {
+                prefix = fileName;
+                suffix = "";
+            } else {
+                prefix = fileName.substring(0, i);
+                suffix = fileName.substring(i + 1);
+            }
+
+            File imageFile = pathGenerator.getPath(discussion, PathGenerator.Type.ATTACHMENT, prefix, "." + suffix);
+            try {
+                fileItem.write(imageFile);
+            } catch (Exception e) {
+                ServletUtils.addError(Constants.ERROR_GENERIC, "Chyba při zápisu souboru " + fileName + " na disk!", env, null);
+                log.error("Není možné uložit soubor " + imageFile.getAbsolutePath() + " na disk!", e);
+                continue;
+            }
+
+            Document document = DocumentHelper.createDocument();
+            data.setData(document);
+            Element root = document.addElement("data");
+            String path = Misc.getWebPath(imageFile.getAbsolutePath());
+            Element screenshot = root.addElement("object").addAttribute("path", path);
+            screenshot.addElement("originalFilename").setText(fileName);
+            screenshot.addElement("size").setText(Long.toString(fileItem.getSize()));
+
+            persistence.create(data);
+            Relation dataRelation = new Relation(discussion, data, relation.getId());
+            persistence.create(dataRelation);
+            dataRelation.getParent().addChildRelation(dataRelation);
+
+            commentRoot.addElement("attachment").setText(Integer.toString(dataRelation.getId()));
+        }
+
+        persistence.update(discussion);
+        return true;
+    }
+
 
     /**
      * Sets client's IP address. Changes are not synchronized with persistence.
@@ -1376,13 +1487,6 @@ public class EditDiscussion implements AbcAction {
         }
         return true;
     }
-
-//    static boolean isQuestionInForum(Relation relation) {
-//        return true;
-//        Persistance persistence = PersistanceFactory.getPersistance();
-//        GenericObject parent = persistence.findById(relation.getParent());
-//        return (parent instanceof Category && ((Category)parent).getType()==Category.FORUM);
-//    }
 
     /**
      * This method detects if there is cookie COOKIE_USER_VERIFIED. In such case

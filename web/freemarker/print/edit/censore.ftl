@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
- <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussion(), false />
+ <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussionWithAttachments(DISCUSSION), false />
 
 <p>Napište zde důvod, proč cenzurujete tento příspěvek.</p>
 

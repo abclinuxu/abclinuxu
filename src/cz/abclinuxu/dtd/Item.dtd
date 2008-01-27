@@ -224,9 +224,6 @@
 <!ELEMENT data (title, description?, image, listingThumbnail, detailThumbnail)>
 <!ELEMENT title (#PCDATA)> <!-- title for the screenshot -->
 <!ELEMENT description (#PCDATA)> <!-- description of the screenshot -->
-<!ELEMENT image (#PCDATA)> <!-- path to the file (starting with / from webroot) containing the screenshot -->
-<!ELEMENT listingThumbnail (#PCDATA)> <!-- path to the file (starting with / from webroot) containing thumbnail for screenshots list -->
-<!ELEMENT detailThumbnail (#PCDATA)> <!-- path to the file (starting with / from webroot) containing thumbnail for screenshot's detail -->
 
 <!-- common -->
 
@@ -246,12 +243,6 @@
 <!ELEMENT creator (#PCDATA)> <!-- integer, id of user that committed initial revision -->
 <!ELEMENT last (#PCDATA)> <!-- integer, id of user that committed last revision -->
 <!ELEMENT committer (#PCDATA)> <!-- integer, id of user that committed one of last revisions (the first and the last are excluded) -->
-
-
-<!ELEMENT inset (images*)> <!-- this element is child of data and it serves as container for various attachments -->
-<!ELEMENT images (image+)> <!-- container for screenshots and other images -->
-<!ELEMENT image (#PCDATA)> <!-- full path to the image -->
-<!ATTLIST image thumbnail (#NMTOKEN) #OPTIONAL> <!-- full path to the image's thumbnail -->
 
 <!ELEMENT related (document*)> <!-- container for related documents, it can be attached to FAQ, Software, Driver -->
 <!ELEMENT document (title, url, description?)> <!-- one related document -->

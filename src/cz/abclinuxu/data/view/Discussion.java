@@ -18,6 +18,10 @@
  */
 package cz.abclinuxu.data.view;
 
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.Data;
+import cz.abclinuxu.utils.Misc;
+
 import java.util.*;
 
 /**
@@ -25,6 +29,7 @@ import java.util.*;
  */
 public class Discussion {
     private List<Comment> threads;
+    private Map<Integer, Data> attachments = Collections.emptyMap();
     private int size = 0;
     private int greatestId;
     private int id;
@@ -246,5 +251,34 @@ public class Discussion {
      */
     public void setMonitorSize(int monitorSize) {
         this.monitorSize = monitorSize;
+    }
+
+    /**
+     * Stores Data objects from list of relations to map.
+     * @param list list of fully initialized (including children) relations
+     */
+    public void setAttachments(List list) {
+        if (list == null || list.isEmpty())
+            return;
+
+        attachments = new HashMap<Integer, Data>(list.size(), 1.0f);
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+            attachments.put(relation.getId(), (Data) relation.getChild());
+        }
+    }
+
+    public Map<Integer, Data> getAttachments() {
+        return attachments;
+    }
+
+    /**
+     * Finds attachment with given relation id.
+     * @param relationId id of relation holding the Data object
+     * @return Data object or null if not found
+     */
+    public Data getAttachment(String relationId) {
+        int id = Misc.parseInt(relationId, -1);
+        return attachments.get(id);
     }
 }

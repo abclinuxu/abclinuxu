@@ -385,18 +385,8 @@ public class EditRelation implements AbcAction {
         GenericObject child = relation.getChild();
         String objectName = Tools.childName(relation);
 
-        if (child instanceof Item) {
-            Item item = (Item) child;
-            switch (item.getType()) {
-                case Item.ARTICLE:
-                    removeArticleFromSeries(item, relation.getId());
-                    break;
-            }
-
-            Element inset = (Element) item.getData().selectSingleNode("/data/inset");
-            if (inset != null)
-                EditAttachment.removeAllAttachments(inset, env, user, request);
-        }
+        if (child instanceof Item && ((Item) child).getType() == Item.ARTICLE)
+            removeArticleFromSeries((Item) child, relation.getId());
 
         if (child instanceof GenericDataObject) {
             Versioning versioning = VersioningFactory.getVersioning();
@@ -593,7 +583,7 @@ public class EditRelation implements AbcAction {
         Item item = (Item) child;
         String name = Tools.childName(item);
 
-        if (item.getType() == Item.DRIVER) 
+        if (item.getType() == Item.DRIVER)
             action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DRIVER, relation, null);
         else if (item.getType() == Item.HARDWARE)
             action = new MonitorAction(user, UserAction.REMOVE, ObjectType.HARDWARE, relation, null);

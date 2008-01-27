@@ -12,7 +12,7 @@ zásady (psán velkými písmeny apod.), nevhodné HTML značky, ...</p>
 
 <#if PREVIEW?exists>
  <h2>Náhled příspěvku</h2>
- <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
+ <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussionWithAttachments(DISCUSSION), false />
 </#if>
 
 <h2>Zde můžete provést své úpravy</h2>

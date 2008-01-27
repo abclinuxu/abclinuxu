@@ -714,10 +714,6 @@ public class EditBlog implements AbcAction, Configurable {
             return null;
         }
 
-        Element inset = (Element) item.getData().selectSingleNode("/data/inset");
-        if (inset != null)
-            EditAttachment.removeAllAttachments(inset, env, user, request);
-
         Persistence persistence = PersistenceFactory.getPersistence();
         persistence.remove(story);
 

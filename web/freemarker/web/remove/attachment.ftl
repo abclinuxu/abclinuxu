@@ -9,8 +9,9 @@
         Prosím potvrďte, zda si opravdu přejete smazat tyto přílohy:
     </p>
     <ul>
-        <#list PARAMS.attachment as attachment>
-            <li><a href="${attachment}">${attachment}</a></li>
+        <#list ATTACHMENTS?if_exists as rel>
+            <#assign xml = TOOL.asNode(rel.child.data), path = xml.data.object.@path>
+            <li><a href="${path}">${path}</a></li>
         </#list>
     </ul>
     <p>

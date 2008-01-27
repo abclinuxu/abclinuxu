@@ -25,12 +25,11 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.persistence.versioning.Versioning;
-import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.Data;
 import cz.abclinuxu.utils.PathGenerator;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.ImageTool;
@@ -56,8 +55,6 @@ import org.apache.commons.fileupload.FileItem;
 import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Document;
-import org.dom4j.io.DOMWriter;
-import freemarker.ext.dom.NodeModel;
 
 /**
  * @author literakl
@@ -67,7 +64,7 @@ public class EditAttachment implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditAttachment.class);
 
     public static final String VAR_RELATION = "RELATION";
-    public static final String VAR_XML = "XML";
+    public static final String VAR_ATTACHMENTS = "ATTACHMENTS";
 
     public static final String PARAM_RELATION = "rid";
     public static final String PARAM_SCREENSHOT = "screenshot";
@@ -141,7 +138,7 @@ public class EditAttachment implements AbcAction {
 
         if (action.equals(ACTION_REMOVE_STEP2)) {
             ActionProtector.ensureContract(request, EditAttachment.class, true, true, true, false);
-            return actionRemoveAttachmentStep2(request, response, env);
+            return actionRemoveAttachmentStep2(response, env);
         }
 
         return null;
@@ -153,19 +150,17 @@ public class EditAttachment implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
 
-        Item item = (Item) relation.getChild().clone();
-        item.setOwner(user.getId());
-        boolean canContinue = addScreenshot(params, item, env);
+        Data data = new Data();
+        data.setType(Data.IMAGE);
+        data.setOwner(user.getId());
+        boolean canContinue = addScreenshot(params, data, relation, env);
         if (!canContinue)
             return FMTemplateSelector.select("EditAttachment", "addScreenshot", env, request);
+        persistence.create(data);
 
-        if (Misc.isWiki(item)) {
-            Versioning versioning = VersioningFactory.getVersioning();
-            versioning.prepareObjectBeforeCommit(item, user.getId());
-            persistence.update(item);
-            versioning.commit(item, user.getId(), "Přidán screenshot");
-        } else
-            persistence.update(item);
+        Relation dataRelation = new Relation(relation.getChild(), data, relation.getId());
+        persistence.create(dataRelation);
+        dataRelation.getParent().addChildRelation(dataRelation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
@@ -175,7 +170,8 @@ public class EditAttachment implements AbcAction {
     private String actionManageAttachments(HttpServletRequest request, Map env) throws Exception {
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
-        env.put(VAR_XML, NodeModel.wrap((new DOMWriter().write(item.getData()))));
+        Map<String, List> map = Tools.groupByType(item.getChildren(), "Data");
+        env.put(VAR_ATTACHMENTS, map.get(Constants.TYPE_DATA));
         return FMTemplateSelector.select("EditAttachment", "manage", env, request);
     }
 
@@ -183,54 +179,53 @@ public class EditAttachment implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
-        env.put(VAR_XML, NodeModel.wrap((new DOMWriter().write(item.getData()))));
+        Map<String, List> map = Tools.groupByType(item.getChildren(), "Data");
+        List dataRelations = map.get(Constants.TYPE_DATA);
 
         Object param = params.get(PARAM_ATTACHMENT);
         if (param == null) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Nevybrali jste žádnou přílohu na smazání.", env, null);
             return FMTemplateSelector.select("EditAttachment", "manage", env, request);
         }
-        if (param instanceof String)
-            params.put(PARAM_ATTACHMENT, Collections.singletonList(param));
+        if (param instanceof String) {
+            param = Collections.singletonList(param);
+            params.put(PARAM_ATTACHMENT, param);
+        }
+
+        for (Iterator iter = dataRelations.iterator(); iter.hasNext();) {
+            Relation rel = (Relation) iter.next();
+            boolean found = false;
+            for (Iterator iterIn = ((List) param).iterator(); iterIn.hasNext();) {
+                String s = (String) iterIn.next();
+                int id = Misc.parseInt(s, -1);
+                if (rel.getId() == id) {
+                    found = true;
+                    break;
+                }
+            }
+            if (! found)
+                iter.remove();
+        }
+
+        env.put(VAR_ATTACHMENTS, dataRelations);
 
         return FMTemplateSelector.select("EditAttachment", "remove", env, request);
     }
 
-    private String actionRemoveAttachmentStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    private String actionRemoveAttachmentStep2(HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
 
-        Item item = (Item) relation.getChild().clone();
-        item.setOwner(user.getId());
-
-        Document document = (Document) item.getData();
-        Element inset = (Element) document.selectSingleNode("/data/inset");
         List list = Tools.asList(params.get(PARAM_ATTACHMENT));
         for (Iterator iter = list.iterator(); iter.hasNext();) {
-            String path = (String) iter.next();
-            Element element = (Element) inset.selectSingleNode("//*[.='"+path+"']");
-            if (element == null) {
-                ServletUtils.addError(Constants.ERROR_GENERIC, "Příloha '"+path+"' nebyla nalezena mezi daty!", env, null);
-                return actionManageAttachments(request, env);
-            }
-
-            deleteAttachment(path, env, user, request);
-            path = element.attributeValue("thumbnail");
-            if (path != null)
-                deleteAttachment(path, env, user, request);
-
-            element.detach();
+            int rid = Misc.parseInt((String) iter.next(), -1);
+            Relation dataRelation = (Relation) persistence.findById(new Relation(rid));
+            persistence.remove(dataRelation);
+            dataRelation.getParent().removeChildRelation(dataRelation);
+            AdminLogger.logEvent(user, "smazal přílohu " + dataRelation);
         }
-
-        if (Misc.isWiki(item)) {
-            Versioning versioning = VersioningFactory.getVersioning();
-            versioning.prepareObjectBeforeCommit(item, user.getId());
-            persistence.update(item);
-            versioning.commit(item, user.getId(), "Odstraněn screenshot");
-        } else
-            persistence.update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
@@ -238,45 +233,21 @@ public class EditAttachment implements AbcAction {
     }
 
     /**
-     * Removes all attachments in element inset. Error messages are set, if there was an error
-     * removing some file.
-     */
-    public static void removeAllAttachments(Element inset, Map env, User user, HttpServletRequest request) {
-        if (inset == null)
-            return;
-        Element images = inset.element("images");
-        if (images == null)
-            return;
-
-        String path;
-        for (Iterator iter = images.elements("image").iterator(); iter.hasNext();) {
-            Element element = (Element) iter.next();
-            path = element.getText();
-            deleteAttachment(path, env, user, request);
-
-            path = element.attributeValue("thumbnail");
-            if (path != null)
-                deleteAttachment(path, env, user, request);
-            element.detach();
-        }
-    }
-
-    /**
      * Uploads new screenshot and creates a thumbnail (if needed). Changes to Item are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param item item to be updated
+     * @param data data object to be updated
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean addScreenshot(Map params, Item item, Map env) throws IOException {
+    private boolean addScreenshot(Map params, Data data, Relation parentRelation, Map env) throws IOException {
         FileItem fileItem = (FileItem) params.get(PARAM_SCREENSHOT);
         PathGenerator pathGenerator = AbcConfig.getPathGenerator();
-        Element root = item.getData().getRootElement();
 
         if (fileItem == null) {
             ServletUtils.addError(PARAM_SCREENSHOT, "Zadejte prosím cestu k souboru.", env, null);
             return false;
         }
+        data.setSubType(fileItem.getContentType());
 
         String suffix = Misc.getFileSuffix(fileItem.getName()).toLowerCase();
         if (!(suffix.equals("jpg") || suffix.equals("jpeg") || suffix.equals("png") || suffix.equals("gif"))) {
@@ -284,8 +255,8 @@ public class EditAttachment implements AbcAction {
             return false;
         }
 
+        Item item = (Item)parentRelation.getChild();
         String name = getFileName(item);
-
         File imageFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, name, "." + suffix);
         try {
             fileItem.write(imageFile);
@@ -298,14 +269,18 @@ public class EditAttachment implements AbcAction {
         File thumbnailFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, name+"-mini", ".png");
         boolean thumbnail = ImageTool.createThumbnail(imageFile, thumbnailFile);
 
-        Element screenshots = DocumentHelper.makeElement(root, "inset/images");
-        Element screenshot = screenshots.addElement("image");
+        Document document = DocumentHelper.createDocument();
+        data.setData(document);
+
+        Element root = document.addElement("data");
         String path = Misc.getWebPath(imageFile.getAbsolutePath());
-        screenshot.setText(path);
+        Element screenshot = root.addElement("object").addAttribute("path", path);
+        screenshot.addElement("originalFilename").setText(fileItem.getName());
+        screenshot.addElement("size").setText(Long.toString(fileItem.getSize()));
 
         if (thumbnail) {
             path = Misc.getWebPath(thumbnailFile.getAbsolutePath());
-            screenshot.addAttribute("thumbnail", path);
+            screenshot.addElement("thumbnail").addAttribute("path", path);
         }
 
         return true;
@@ -322,6 +297,7 @@ public class EditAttachment implements AbcAction {
         tmpRel.setChild(item);
         item.setInitialized(true);
         String name = Tools.childName(tmpRel);
+        // todo these checks are already in PathGeneratorImpl
         name = Misc.filterDangerousCharacters(name);
         name = DiacriticRemover.getInstance().removeDiacritics(name);
         name = name.toLowerCase();
@@ -330,23 +306,17 @@ public class EditAttachment implements AbcAction {
     }
 
     /**
-     * Deletes specified file from hard drive.
-     * @param path absolute path within web application context
-     * @param env environment
-     * @param user user performing this operation
-     * @param request
+     * Creates valid normalized file name.
+     * @param name
+     * @return
      */
-    public static void deleteAttachment(String path, Map env, User user, HttpServletRequest request) {
-        File file = new File(AbcConfig.getDeployPath()+path);
-        if (! file.exists()) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nepodařilo se smazat soubor '"+path+"'!", env, request.getSession());
-            return;
-        }
-        if (! file.delete()) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nepodařilo se smazat soubor '" + path + "'!", env, request.getSession());
-            log.warn("Nepodařilo se smazat soubor "+file.getAbsolutePath());
-            return;
-        }
-        AdminLogger.logEvent(user, "remove | attachment "+path);
+    public static String getNormalizedFileName(String name) {
+        int i = name.lastIndexOf('/');
+        if (i != -1)
+            name = name.substring(i + 1);
+//        name = Misc.filterDangerousCharacters(name);
+//        name = DiacriticRemover.getInstance().removeDiacritics(name);
+//        name = name.toLowerCase();
+        return name;
     }
 }

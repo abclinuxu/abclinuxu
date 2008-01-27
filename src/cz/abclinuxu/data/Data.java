@@ -18,18 +18,14 @@
  */
 package cz.abclinuxu.data;
 
-/**
- * Class for storage various binary objects like images,
- * sounds or video
- */
-public class Data extends GenericObject {
-    /** owner of this object */
-    protected int owner;
-    /** data of this object */
-    protected byte[] data;
-    /** MIME type or "URL", if <code>data</code> contains URL */
-    protected String format;
+import cz.abclinuxu.utils.Misc;
 
+/**
+ * Class for storage various data objects like images, logs, configuration files ..
+ * Subtype shall contain content type, if known.
+ */
+public class Data extends GenericDataObject {
+    public static final int IMAGE = 1;
 
     public Data() {
         super();
@@ -39,76 +35,21 @@ public class Data extends GenericObject {
         super(id);
     }
 
-    /**
-     * @return owner's id
-     */
-    public int getOwner() {
-        return owner;
-    }
-
-    /**
-     * sets owner's id
-     */
-    public void setOwner(int owner) {
-        this.owner = owner;
-    }
-
-    /**
-     * @return binary data or URL
-     */
-    public byte[] getData() {
-        return data;
-    }
-
-    /**
-     * sets binary data or URL
-     */
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
-    /**
-     * @return MIME type or "URL", if <code>data</code> contains URL
-     */
-    public String getFormat() {
-        return format;
-    }
-
-    /**
-     * sets MIME type. Use "URL", if <code>data</code> contains URL
-     */
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    /**
-     * Initialize this object with values from <code>obj</code>, if
-     * this.getClass.equals(obj.getClass()).
-     */
-    public void synchronizeWith(GenericObject obj) {
-        if ( ! (obj instanceof Data) ) return;
-        if ( obj==this ) return;
-        super.synchronizeWith(obj);
-        Data b = (Data) obj;
-        data = b.getData();
-        owner = b.getOwner();
-        format = b.getFormat();
+    public Data(int id, int type) {
+        super(id);
+        this.type = type;
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer("Data: id=");
-        sb.append(id);
-        if ( owner!=0 ) sb.append(",owner="+owner);
-        if ( data!=null ) sb.append(",data="+data);
-        if ( format!=null ) sb.append(",format="+format);
-        return sb.toString();
+        return "Data: id=" + id;
     }
 
     public boolean preciseEquals(Object o) {
-        if ( !( o instanceof Data) ) return false;
-        Data p = (Data)o;
-        if ( id==p.id && owner==p.owner && data.equals(p.data) && format.equals(p.format) ) return true;
-        return false;
+        if (!(o instanceof Data)) return false;
+        if (id != ((GenericObject) o).getId()) return false;
+        if (type != ((GenericDataObject) o).type) return false;
+        if (owner != ((GenericDataObject) o).owner) return false;
+        return Misc.same(getDataAsString(), ((GenericDataObject) o).getDataAsString());
     }
 
     public int hashCode() {

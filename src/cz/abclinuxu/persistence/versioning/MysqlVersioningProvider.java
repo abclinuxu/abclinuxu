@@ -63,7 +63,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
     private String allVersions, insertVersion, fetchDocument, purgeDocument;
     private int committersCount;
 
-    final static String[] SKIPPED_ELEMENTS = {"monitor", "rating"};
+    static final String[] SKIPPED_ELEMENTS = {"monitor", "rating"};
 
     public MysqlVersioningProvider() {
         ConfigurationManager.getConfigurator().configureAndRememberMe(this);
@@ -228,7 +228,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
                 }
             }
 
-            Element versioning = (Element) DocumentHelper.makeElement(document, "/data/versioning");
+            Element versioning = DocumentHelper.makeElement(document, "/data/versioning");
             versioning.add(versioningInfo);
             Element properties = versioning.element("properties");
             if (properties != null) {

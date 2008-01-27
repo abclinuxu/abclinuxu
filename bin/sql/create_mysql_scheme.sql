@@ -68,6 +68,20 @@ ALTER TABLE zaznam ADD INDEX in_zmeneno (zmeneno);
 ALTER TABLE zaznam ADD INDEX in_typ (typ);
 ALTER TABLE zaznam ADD INDEX in_podtyp (podtyp);
 
+-- obecna struktura pro ukladani priloh ruznych typu (logy, konfiguraky ..)
+CREATE TABLE objekt (
+ cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
+ typ SMALLINT,                                   -- typ polozky (druh, novinka, ..)
+ podtyp VARCHAR(30) NULL,                        -- podtyp
+ data LONGTEXT NOT NULL,                         -- XML s cestou k soboru, nazvem, ikonou, poznamkou ...
+ pridal INT(6) NOT NULL,                         -- odkaz na uzivatele
+ vytvoreno DATETIME,                             -- cas vytvoreni
+ zmeneno TIMESTAMP NOT NULL                      -- cas posledni zmeny
+);
+ALTER TABLE objekt ADD INDEX in_vytvoreno (vytvoreno);
+ALTER TABLE objekt ADD INDEX in_typ (typ);
+ALTER TABLE objekt ADD INDEX in_podtyp (podtyp);
+
 
 -- tabulka s definicemi serveru, kterym zobrazujeme odkazy
 CREATE TABLE server (
@@ -87,16 +101,6 @@ CREATE TABLE odkaz (
  trvaly CHAR(1),                                 -- logicka, NULL pro FALSE, urcuje, zda muze byt link nahrazen novejsim ze seznamu clanku
  pridal INT(6) NOT NULL,                         -- odkaz na uzivatele
  kdy TIMESTAMP                                   -- cas pridani
-);
-
-
--- tabulka obsahujici objekty ( obrazky, zvuky, video )
--- pokud format obsahuje "URL", data obsahuje URL na externi objekt
-CREATE TABLE objekt (
- cislo INT AUTO_INCREMENT PRIMARY KEY,           -- identifikator objektu
- format VARCHAR(30) NOT NULL,                    -- mime-type nebo "URL"
- data BLOB,                                      -- URL nebo binarni data objektu
- vlastnik INT NOT NULL                           -- majitel objektu
 );
 
 -- tabulka obsahujici anketu

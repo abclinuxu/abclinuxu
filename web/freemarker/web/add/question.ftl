@@ -83,12 +83,12 @@ by vám mohli pomoci. Admini mohou špatně formulovaný titulek upravit.</p>
 
  <p>Registrovaní čtenáři si mohou nechat sledovat diskusi, takže jim budou emailem posílány
  reakce ostatních čtenářů. Zároveň si budete moci ve svém profilu snadno vyhledat
- tuto diskusi. Proto je výhodné se přihlásit. Nemáte-li u nás ještě účet,
+ tento dotaz. Proto je výhodné se přihlásit. Nemáte-li u nás ještě účet,
  <a href="${URL.noPrefix("/EditUser?action=add")}">zaregistrujte se</a>.
  </p>
 </#if>
 
-<form action="${URL.make("/EditDiscussion")}" method="POST" name="form">
+<form action="${URL.make("/EditDiscussion")}" method="POST" name="form" enctype="multipart/form-data">
     <table class="siroka" cellpadding="5">
         <#if ! USER?exists>
             <tr>
@@ -136,8 +136,15 @@ by vám mohli pomoci. Admini mohou špatně formulovaný titulek upravit.</p>
             </td>
         </tr>
         <tr>
+            <td>Příloha</td>
+            <td>
+                <input type="file" name="attachment" tabindex="6">
+                <@lib.showHelp>Například výpis logu, konfigurační soubor, snímek obrazovky a podobně.</@lib.showHelp>
+            </td>
+        </tr>
+        <tr>
             <td>&nbsp;</td>
-            <td><input tabindex="6" type="submit" name="preview" value="Náhled"></td>
+            <td><input tabindex="7" type="submit" name="preview" value="Náhled"></td>
         </tr>
     </table>
     <input type="hidden" name="action" value="addQuez2">

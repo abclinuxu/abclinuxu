@@ -20,7 +20,7 @@
 
 <h2>Zde můžete provést své úpravy</h2>
 
-<form action="${URL.make("/EditDiscussion")}" method="POST" name="form">
+<form action="${URL.make("/EditDiscussion")}" method="POST" name="form" enctype="multipart/form-data">
     <table class="siroka" cellpadding="5">
         <#if ! USER?exists>
             <tr>
@@ -67,15 +67,30 @@
                     <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vložit značku formátovaného textu. Vhodné pro konfigurační soubory či výpisy.">&lt;pre&gt;</a>
                     <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
                 </div>
-                <div class="error">${ERRORS.text?if_exists}</div>
+                <@lib.showError key="text" />
                 <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">Příloha</td>
+            <td>
+                <input type="file" name="attachment" tabindex="6">
+                <@lib.showHelp>Například výpis logu, konfigurační soubor, snímek obrazovky a podobně.</@lib.showHelp>
+                <@lib.showError key="attachment" />
+                <#if ATTACHMENTS?exists>
+                    <ul>
+                        <#list ATTACHMENTS as file>
+                            <li>${file.name} (${file.size} bytů)</li>
+                        </#list>
+                    </ul>
+                </#if>
             </td>
         </tr>
         <tr>
             <td>&nbsp;</td>
             <td>
-                <input tabindex="6" type="submit" name="preview" value="Zopakuj náhled">
-                <input tabindex="7" type="submit" name="finish" value="Dokonči">
+                <input tabindex="7" type="submit" name="preview" value="Zopakuj náhled">
+                <input tabindex="8" type="submit" name="finish" value="Dokonči">
             </td>
         </tr>
     </table>

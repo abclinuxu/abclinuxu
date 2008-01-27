@@ -33,7 +33,7 @@
 
 <fieldset>
     <legend>Příspěvek</legend>
-    <@lib.showThread COMMENT, 0, TOOL.createEmptyDiscussion(), false />
+    <@lib.showThread COMMENT, 0, TOOL.createEmptyDiscussionWithAttachments(RELATION.child), false />
 </fieldset>
 
 <#if TOOL.xpath(RELATION.child,"data/title")?exists>

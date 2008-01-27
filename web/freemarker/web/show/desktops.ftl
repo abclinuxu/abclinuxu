@@ -26,14 +26,15 @@
 <#list ITEMS.data as relation>
     <#assign item = relation.child, reads = TOOL.getCounterValue(item,"read"), usedBy = item.getProperty("favourited_by")>
     <#assign tmp=TOOL.groupByType(item.children, "Item"), diz=TOOL.analyzeDiscussion(tmp.discussion[0]), autor=TOOL.createUser(item.owner)>
+    <#assign desktop = TOOL.createScreenshot(relation)>
 
     <h2 class="st_nadpis">
-        <a href="${relation.url}" title="${TOOL.xpath(item,"/data/title")}">${TOOL.xpath(item,"/data/title")}</a>
+        <a href="${desktop.url}" title="${desktop.title}">${desktop.title}</a>
     </h2>
 
     <div>
-        <a href="${relation.url}" title="${TOOL.xpath(item,"/data/title")}" class="thumb">
-            <img src="${TOOL.xpath(item,"/data/listingThumbnail")}" alt="${TOOL.xpath(item,"/data/title")}" border="0">
+        <a href="${desktop.url}" title="${desktop.title}" class="thumb">
+            <img src="${desktop.thumbnailListingUrl}" alt="${desktop.title}" border="0">
         </a>
     </div>
 

@@ -21,7 +21,7 @@ včetně všech potomků!</p>
 
 <#if THREAD?exists>
  <h1>Náhled příspěvku</h1>
- <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussion(), false />
+ <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussionWithAttachments(DISCUSSION), false />
 </#if>
 
 

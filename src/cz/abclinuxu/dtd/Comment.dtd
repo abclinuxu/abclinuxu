@@ -1,7 +1,8 @@
-<!ELEMENT data (title?, author?, text, author_ip?, censored?)>
+<!ELEMENT data (title?, author?, text, author_ip?, censored?, attachment*)>
 <!ELEMENT title (#PCDATA)> <!-- title of this comment -->
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
 <!ELEMENT text (#PCDATA)> <!-- text of comment -->
 <!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT author_ip (#PCDATA)> <!-- IP address of the user -->
 <!ELEMENT censored (#PCDATA)> <!-- if present, the comment is being censored -->
+<!ELEMENT attachment (#PCDATA)> <!-- id of relation to Data containing attachment to this comment -->

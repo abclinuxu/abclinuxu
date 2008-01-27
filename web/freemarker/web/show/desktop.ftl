@@ -22,14 +22,15 @@
 <#include "../header.ftl">
 
 <@lib.showMessages/>
+<#assign desktop = TOOL.createScreenshot(RELATION)>
 
 <div class="desktopy">
 
-<h1>${TOOL.xpath(ITEM,"/data/title")}</h1>
+<h1>${desktop.title}</h1>
 
 <div>
-    <a href="${TOOL.xpath(ITEM,"/data/image")}" title="${TOOL.xpath(ITEM,"/data/title")}" class="thumb">
-        <img src="${TOOL.xpath(ITEM,"/data/detailThumbnail")}" alt="${TOOL.xpath(ITEM,"/data/title")}" border="0">
+    <a href="${desktop.imageUrl}" title="${desktop.title}" class="thumb">
+        <img src="${desktop.thumbnailDetailUrl}" alt="${desktop.title}" border="0">
     </a>
 </div>
 

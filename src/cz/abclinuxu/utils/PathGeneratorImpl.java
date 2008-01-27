@@ -54,8 +54,6 @@ public class PathGeneratorImpl implements PathGenerator {
      * (typically incorrect filesystem permissions)
      */
      public File getPath(GenericObject obj, Type usage, String prefix, String suffix) throws IOException {
-        if (! Type.SCREENSHOT.equals(usage))
-            throw new InternalException("Not implemented");
         if (prefix == null)
             prefix = "";
         else {
@@ -63,11 +61,19 @@ public class PathGeneratorImpl implements PathGenerator {
             prefix = prefix.toLowerCase();
             Matcher matcher = reInvalidChars.matcher(prefix);
             prefix = matcher.replaceAll("-");
+            // TODO more checks like in URLManager.normalizeCharacters()
         }
         if (suffix == null || suffix.length() == 0)
             throw new IllegalArgumentException("File suffix must be specified!");
 
-        StringBuffer sb = new StringBuffer("images/screenshots/");
+        StringBuffer sb = new StringBuffer();
+        if (Type.SCREENSHOT.equals(usage))
+            sb.append("images/screenshots/");
+        else if (Type.ATTACHMENT.equals(usage))
+            sb.append("data/prilohy/");
+        else
+            throw new InternalException("Type " + usage + "not implemented!");
+
         String id = String.valueOf(obj.getId());
 	    sb.append(id.charAt(id.length()-1)).append('/').append(id.charAt(id.length()-2)).append('/');
 

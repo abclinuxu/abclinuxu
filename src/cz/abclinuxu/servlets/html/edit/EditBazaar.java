@@ -260,10 +260,6 @@ public class EditBazaar implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         Item item = (Item) relation.getChild();
 
-        Element inset = (Element) item.getData().selectSingleNode("/data/inset");
-        if (inset != null)
-            EditAttachment.removeAllAttachments(inset, env, user, request);
-
         persistence.remove(relation);
         relation.getParent().removeChildRelation(relation);
 

@@ -92,7 +92,7 @@ public class ViewScreenshot implements AbcAction {
         if (user == null || user.getId() != item.getOwner())
             ReadRecorder.log(item, Constants.COUNTER_READ, env);
 
-        Map children = Tools.groupByType(item.getChildren());
+        Map children = Tools.groupByType(item.getChildren(), "Item");
         env.put(ShowObject.VAR_CHILDREN_MAP, children);
 
         env.put(Constants.VAR_RSS, FeedGenerator.getScreenshotsFeedUrl());

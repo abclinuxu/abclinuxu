@@ -1,0 +1,14 @@
+<!--
+    Every element referencing some path must have attribute path.
+    It will be used to delete that file, when this object will be removed from persistence.
+-->
+<!ELEMENT data (title?, description?, object)>
+<!ELEMENT title (#PCDATA)> <!-- optional title for the data file -->
+<!ELEMENT description (#PCDATA)> <!-- description of the data file -->
+<!ELEMENT object (thumbnail*, originalFilename?, size?)> <!-- holder for the object -->
+<!ATTLIST object path (#NMTOKEN) #REQUIRED> <!-- full web path to the file holding the object -->
+<!ELEMENT thumbnail (#PCDATA)> <!-- holder for the object's thumbnail -->
+<!ATTLIST thumbnail path (#NMTOKEN) #REQUIRED> <!-- full web path to the file holding the thumbnail -->
+<!ATTLIST thumbnail useType (#NMTOKEN) #OPTIONAL> <!-- type of the thumbnail -->
+<!ELEMENT originalFilename (#PCDATA)> <!-- name of uploaded file -->
+<!ELEMENT size (#PCDATA)> <!-- size of the datafile -->

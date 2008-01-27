@@ -117,6 +117,7 @@ public interface Constants {
     String TYPE_DOCUMENTS = "documents";
     String TYPE_CATEGORY = "category";
     String TYPE_RECORD = "record";
+    String TYPE_DATA = "data";
     String TYPE_USER = "user";
     String TYPE_POLL = "poll";
     String TYPE_LINK = "link";

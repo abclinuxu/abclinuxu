@@ -20,6 +20,7 @@ public class PersistenceMapping {
     public static final String TREE_ITEM = "P";
     public static final String TREE_RECORD = "Z";
     public static final String TREE_CATEGORY = "K";
+    public static final String TREE_DATA = "D";
     public static final String TREE_POLL = "A";
     public static final String TREE_SERVER = "S";
     public static final String TREE_LINK = "L";
@@ -31,6 +32,7 @@ public class PersistenceMapping {
         public static final Table ITEM = new Table("ITEM");
         public static final Table RECORD = new Table("RECORD");
         public static final Table CATEGORY = new Table("CATEGORY");
+        public static final Table DATA = new Table("DATA");
         public static final Table POLL = new Table("POLL");
         public static final Table SERVER = new Table("SERVER");
         public static final Table LINK = new Table("LINK");
@@ -75,7 +77,7 @@ public class PersistenceMapping {
             return new Link(id);
         } else if (type == 'S') {
             return new Server(id);
-        } else if (type == 'O') {
+        } else if (type == 'D') {
             return new Data(id);
         }
         throw new InvalidDataException("Nepodporovany typ tridy "+type+"!");
@@ -100,7 +102,7 @@ public class PersistenceMapping {
         } else if (obj instanceof Poll) {
             return TREE_POLL;
         } else if (obj instanceof Data) {
-            return "O";
+            return TREE_DATA;
         }
         throw new InvalidDataException("Nepodporovany typ tridy!");
     }

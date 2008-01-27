@@ -44,6 +44,7 @@ public interface PathGenerator {
     public class Type {
         private String value;
         public static final Type SCREENSHOT = new Type("screenshot");
+        public static final Type ATTACHMENT = new Type("attachment");
 
         private Type(String value) {
             this.value = value;

@@ -268,9 +268,9 @@
         <a href="/desktopy">Vaše desktopy</a>
       </div>
       <div class="s_sekce" style="text-align:center;">
-        <#list DESKTOPS as rel>
-          <a href="${rel.url}" title="${TOOL.xpath(rel.child,"/data/title")}" class="thumb">
-            <img width="200" src="${TOOL.xpath(rel.child,"/data/listingThumbnail")}" alt="${TOOL.xpath(rel.child,"/data/title")}" border="0" style="margin: 0.4em 0.3em 0.3em 0.3em">
+        <#list DESKTOPS as desktop>
+          <a href="${desktop.url}" title="${desktop.title}" class="thumb">
+            <img width="200" src="${desktop.thumbnailListingUrl}" alt="${desktop.title}" border="0" style="margin: 0.4em 0.3em 0.3em 0.3em">
           </a>
         </#list>
         <br>

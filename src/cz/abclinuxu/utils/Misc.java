@@ -172,8 +172,8 @@ public class Misc {
      * Associates value with given key in the map. Each key contains
      * list of values. If the list doesn't exist yet, it is created.
      */
-    public static void storeToMap(Map map, String key, Object value) {
-        List list = (List) map.get(key);
+    public static void storeToMap(Map<String, List> map, String key, Object value) {
+        List list = map.get(key);
         if (list == null) {
             list = new ArrayList(5);
             map.put(key,list);

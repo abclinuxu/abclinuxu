@@ -129,7 +129,7 @@
     <#if comment.author?exists>
         <#local who=TOOL.createUser(comment.author)>
     </#if>
-      <#local blacklisted = diz.isBlacklisted(comment)>
+      <#local blacklisted = diz.isBlacklisted(comment), attachments = comment.attachments>
       <div class="ds_hlavicka<#if diz.isUnread(comment)>_novy</#if><#if blacklisted> ds_hlavicka_blacklisted</#if><#if who?exists && USER?exists && who.id == USER.id> ds_hlavicka_me</#if>" id="${comment.id}">
         <#if comment.author?exists && showControls>
             <#assign avatar = TOOL.getUserAvatar(who?if_exists, USER?if_exists)?default("UNDEFINED")>
@@ -152,6 +152,14 @@
             <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle2" class="ds_control_sbalit2" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
         </#if>
         ${comment.title?if_exists}
+        <#if (attachments?size > 0)>
+            <br>Přílohy:
+            <#list attachments as id>
+                <#local attachment = diz.attachments(id)>
+                <a href="${TOOL.xpath(attachment, "/data/object/@path")}">${TOOL.xpath(attachment, "/data/object/originalFilename")}</a>
+                (${TOOL.xpath(attachment, "/data/object/size")} bytů)
+            </#list>
+        </#if>
         <#nested>
         <#if showControls>
             <div id="comment${comment.id}_controls"<#if blacklisted> class="ds_controls_blacklisted"</#if>>
@@ -411,4 +419,12 @@
             <a href="/revize?rid=${relation.id}&amp;prefix=${URL.prefix}" rel="nofollow">Historie změn</a>
         </#if>
     </p>
+</#macro>
+
+<#macro showHelp>
+    <a class="info" href="#">?<span class="tooltip"><#nested></span></a>
+</#macro>
+
+<#macro showError key>
+    <#if ERRORS[key]?exists><div class="error">${ERRORS[key]}</div></#if>
 </#macro>

@@ -21,6 +21,7 @@ package cz.abclinuxu.scheduler;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.SectionTreeCache;
 import cz.abclinuxu.data.view.HostingServer;
+import cz.abclinuxu.data.view.Screenshot;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.persistence.*;
@@ -78,7 +79,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     List freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
     List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities;
-    List freshScreenshots;
+    List<Screenshot> freshScreenshots;
     String indexFeeds, templateFeeds;
     Map defaultSizes, maxSizes, counter;
     Map<Server, List<Link>> feedLinks;
@@ -610,9 +611,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             int maximum = (Integer) maxSizes.get(KEY_SCREENSHOT);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List list = sqlTool.findItemRelationsWithType(Item.SCREENSHOT, qualifiers);
+            List<Relation> list = sqlTool.findItemRelationsWithType(Item.SCREENSHOT, qualifiers);
             Tools.syncList(list);
-            freshScreenshots = list;
+
+            List<Screenshot> result = new ArrayList<Screenshot>(list.size());
+            for (Relation relation : list) {
+                result.add(new Screenshot(relation));
+            }
+            freshScreenshots = result;
         } catch (Exception e) {
             log.error("Selhalo nacitani desktopu", e);
         }
@@ -755,7 +761,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         defaultSizes.put(KEY_SCREENSHOT, size);
         size = prefs.getInt(PREF_MAX + KEY_SCREENSHOT, 3);
         maxSizes.put(KEY_SCREENSHOT, size);
-        freshScreenshots = Collections.EMPTY_LIST;
+        freshScreenshots = Collections.emptyList();
 
         indexFeeds = prefs.get(PREF_INDEX_FEEDS, "");
         templateFeeds = prefs.get(PREF_TEMPLATE_FEEDS, "");

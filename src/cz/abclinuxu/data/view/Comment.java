@@ -134,6 +134,23 @@ public abstract class Comment implements Cloneable, Comparable {
     }
 
     /**
+     * Finds all attachments associated with this comment.
+     * @return list (never null) of relation identifiers.
+     */
+    public List<Integer> getAttachments() {
+        List elements = (List) getData().selectNodes("/data/attachment");
+        if (elements == null || elements.isEmpty())
+            return Collections.emptyList();
+
+        List<Integer> relations = new ArrayList<Integer>();
+        for (Iterator iter = elements.iterator(); iter.hasNext();) {
+            Element element = (Element) iter.next();
+            relations.add(Misc.parseInt(element.getText(), -1));
+        }
+        return relations;
+    }
+
+    /**
      * Appends reply to this comment.
      * @param comment comment to be added as child of this comment
      */
