@@ -1,9 +1,10 @@
 <#include "../header.ftl">
 
+<#assign desktop = TOOL.createScreenshot(RELATION)>
 <div class="desktopy">
 <div class="thumb uzivatele">
-    <a href="${RELATION.url}" title="${TOOL.xpath(ITEM,"/data/title")?if_exists}">
-        <img src="${TOOL.xpath(ITEM,"/data/listingThumbnail")}" alt="${TOOL.xpath(ITEM,"/data/title")?if_exists}" border="0">
+    <a href="${desktop.imageUrl}" title="${desktop.title}" class="thumb">
+        <img src="${desktop.thumbnailDetailUrl}" alt="${desktop.title}" border="0">
     </a>
 </div>
 
