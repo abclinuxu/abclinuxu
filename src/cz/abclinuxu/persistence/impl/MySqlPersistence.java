@@ -860,7 +860,7 @@ public class MySqlPersistence implements Persistence {
         if (obj instanceof GenericDataObject) {
             GenericDataObject gdo = (GenericDataObject) obj;
             sb.append("insert into ").append(getTable(obj)).append(" values(?,?,?,?,?,?,now())");
-            if ( !(obj instanceof Category) && gdo.getType()==0 ) {
+            if ( !(obj instanceof Category || obj instanceof Data) && gdo.getType()==0 ) {
                 log.warn("Type not set! "+obj.toString());
             }
             conditions.add(gdo.getId());
