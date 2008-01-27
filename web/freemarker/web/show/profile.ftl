@@ -135,9 +135,9 @@
 <#if LAST_DESKTOP?exists>
     <p>Můj současný desktop:</p>
     <p>
-        <#assign title=TOOL.xpath(LAST_DESKTOP.child,"/data/title")>
-        <a href="${LAST_DESKTOP.url}" title="${title?html}" class="thumb">
-            <img src="${TOOL.xpath(LAST_DESKTOP.child,"/data/detailThumbnail")}" alt="${title?html}" border="0">
+        <#assign desktop_title=LAST_DESKTOP.title>
+        <a href="${LAST_DESKTOP.url}" title="${desktop_title?html}" class="thumb">
+            <img src="${LAST_DESKTOP.thumbnailListingUrl}" alt="${desktop_title?html}" border="0">
         </a>
     </p>
 </#if>

@@ -26,6 +26,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.data.view.Screenshot;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.email.EmailSender;
@@ -156,12 +157,7 @@ public class ViewUser implements AbcAction {
         env.put(VAR_DESKTOPS, desktops);
 
         // find the last screenshot uploaded by this user
-        Qualifier[] qualifiers = new Qualifier[] { new CompareCondition(Field.OWNER, Operation.EQUAL, user.getId()),
-            Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 1) };
-        desktops = sqlTool.findItemRelationsWithType(Item.SCREENSHOT, qualifiers);
-
-        if (desktops.size() > 0)
-            env.put(VAR_LAST_DESKTOP, desktops.get(0));
+        setLastDesktop(user.getId(), env);
 
         return FMTemplateSelector.select("ViewUser","profile",env,request);
     }
@@ -284,5 +280,23 @@ public class ViewUser implements AbcAction {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/");
         return null;
+    }
+
+    /**
+     * Finds last published desktop for specified user and stores it in VAR_LAST_DESKTOP variable.
+     * @param user searched user
+     * @param env environment
+     */
+    public static void setLastDesktop(int user, Map env) {
+        SQLTool sqlTool = SQLTool.getInstance();
+        Qualifier[] qualifiers = new Qualifier[]{new CompareCondition(Field.OWNER, Operation.EQUAL, user),
+                                                 Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 1)};
+        List<Relation> desktops = sqlTool.findItemRelationsWithType(Item.SCREENSHOT, qualifiers);
+        if (! desktops.isEmpty()) {
+            Relation desktopRelation = desktops.get(0);
+            Tools.sync(desktopRelation.getChild());
+            env.put(VAR_LAST_DESKTOP, new Screenshot(desktopRelation));
+        }
+
     }
 }

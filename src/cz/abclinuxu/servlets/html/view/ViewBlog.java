@@ -81,7 +81,6 @@ public class ViewBlog implements AbcAction, Configurable {
     public static final String VAR_ARCHIVE = "ARCHIVE";
     public static final String VAR_DIGEST = "DIGEST";
     public static final String VAR_RELATION = "RELATION";
-    public static final String VAR_LAST_DESKTOP = "LAST_DESKTOP";
 
     static final String PREF_BLOG_URL = "regexp.blog.url";
     static final String PREF_SUMMARY_URL = "regexp.blog.summary.url";
@@ -617,14 +616,7 @@ public class ViewBlog implements AbcAction, Configurable {
      * Loads user's last desktop screenshot, if exists.
      */
     private static void fillLastDesktop(Category blog, Map env) {
-        SQLTool sqlTool = SQLTool.getInstance();
-
-        Qualifier[] qualifiers = new Qualifier[] { new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner()),
-            Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 1) };
-        List<Relation> desktops = sqlTool.findItemRelationsWithType(Item.SCREENSHOT, qualifiers);
-
-        if (desktops.size() > 0)
-            env.put(VAR_LAST_DESKTOP, desktops.get(0));
+        ViewUser.setLastDesktop(blog.getOwner(), env);
     }
 
     /**
