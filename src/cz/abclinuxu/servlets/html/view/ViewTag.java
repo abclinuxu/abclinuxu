@@ -73,7 +73,7 @@ public class ViewTag implements AbcAction {
             return FMTemplateSelector.select("Tags", "detail", env, request);
         } else {
             int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-            int count = Misc.getPageSize(30, 50, env, null);
+            int count = Misc.getPageSize(30, 500, env, null);
 
             TagTool.ListOrder orderBy = TagTool.ListOrder.BY_TITLE;
             String sBy = (String) params.get(Constants.PARAM_ORDER_BY);
