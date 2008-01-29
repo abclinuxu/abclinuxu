@@ -36,6 +36,7 @@
        <@lib.showOption "roles", "category admin", "Administrátor sekcí", "checkbox" /><br>
        <@lib.showOption "roles", "dictionary admin", "Administrátor slovníku", "checkbox" /><br>
        <@lib.showOption "roles", "software admin", "Administrátor softwarového katalogu", "checkbox" /><br>
+       <@lib.showOption "roles", "tag admin", "Administrátor štítků", "checkbox" /><br>
        <@lib.showOption "roles", "tip admin", "Administrátor tipů", "checkbox" /><br>
        <@lib.showOption "roles", "user admin", "Administrátor uživatelů", "checkbox" /><br>
        <@lib.showOption "roles", "news admin", "Administrátor zpráviček", "checkbox" /><br>
