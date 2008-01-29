@@ -453,7 +453,7 @@
                     <node name="OKSystemFetcher">
                         <map>
                             <entry key="file" value="WEB-INF/freemarker/include/oksystem.txt"/>
-                            <entry key="uri" value="http://portal.oksystem.cz/okskoleni/linuxRss"/>
+                            <entry key="uri" value="http://www.oksystem.cz/apps/rss/kurzy-linux.php"/>
                             <entry key="max" value="5" />
                         </map>
                     </node>
