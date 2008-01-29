@@ -40,84 +40,97 @@ import org.dom4j.DocumentHelper;
 public class MigrateAttachments {
     public static void main(String[] args) {
         SQLTool sqlTool = SQLTool.getInstance();
+//
+//        System.out.print("Starting to search for Bazaar items ..");
+//        int size = sqlTool.countItemsWithType(Item.BAZAAR);
+//        System.out.println(" found " + size + " items");
+//
+//        for (int i = 0, j = 50; i < size; i += j) {
+//            if (i + j > size) j = size - i;
+//            List<Item> items = sqlTool.findItemsWithType(Item.BAZAAR, i, j);
+//            for (Item item : items) {
+//                upgradeAttachment(item, true);
+//            }
+//        }
+//        System.out.println();
 
-        System.out.print("Starting to search for Bazaar items ..");
-        int size = sqlTool.countItemsWithType(Item.BAZAAR);
+        System.out.print("Starting to search for personality items ..");
+        int size = sqlTool.countItemsWithType(Item.PERSONALITY);
         System.out.println(" found " + size + " items");
 
         for (int i = 0, j = 50; i < size; i += j) {
             if (i + j > size) j = size - i;
-            List<Item> items = sqlTool.findItemsWithType(Item.BAZAAR, i, j);
+            List<Item> items = sqlTool.findItemsWithType(Item.PERSONALITY, i, j);
             for (Item item : items) {
                 upgradeAttachment(item, true);
             }
         }
         System.out.println();
-
-        System.out.print("Starting to search for Blog items ..");
-        size = sqlTool.countItemsWithType(Item.BLOG);
-        System.out.println(" found " + size + " items");
-
-        for (int i = 0, j = 50; i < size; i += j) {
-            if (i + j > size) j = size - i;
-            List<Item> items = sqlTool.findItemsWithType(Item.BLOG, i, j);
-            for (Item item : items) {
-                upgradeAttachment(item, true);
-            }
-        }
-        System.out.println();
-
-        System.out.print("Starting to search for unpublished Blog items ..");
-        size = sqlTool.countItemsWithType(Item.UNPUBLISHED_BLOG);
-        System.out.println(" found " + size + " items");
-
-        for (int i = 0, j = 50; i < size; i += j) {
-            if (i + j > size) j = size - i;
-            List<Item> items = sqlTool.findItemsWithType(Item.UNPUBLISHED_BLOG, i, j);
-            for (Item item : items) {
-                upgradeAttachment(item, true);
-            }
-        }
-        System.out.println();
-
-        System.out.print("Starting to search for Hardware items ..");
-        size = sqlTool.countItemsWithType(Item.HARDWARE);
-        System.out.println(" found " + size + " items");
-
-        for (int i = 0, j = 50; i < size; i += j) {
-            if (i + j > size) j = size - i;
-            List<Item> items = sqlTool.findItemsWithType(Item.HARDWARE, i, j);
-            for (Item item : items) {
-                upgradeAttachment(item, false);
-            }
-        }
-        System.out.println();
-
-        System.out.print("Starting to search for Software items ..");
-        size = sqlTool.countItemsWithType(Item.SOFTWARE);
-        System.out.println(" found " + size + " items");
-
-        for (int i = 0, j = 50; i < size; i += j) {
-            if (i + j > size) j = size - i;
-            List<Item> items = sqlTool.findItemsWithType(Item.SOFTWARE, i, j);
-            for (Item item : items) {
-                upgradeAttachment(item, false);
-            }
-        }
-        System.out.println();
-
-        System.out.print("Starting to search for Desktop items ..");
-        size = sqlTool.countItemsWithType(Item.SCREENSHOT);
-        System.out.println(" found " + size + " items");
-
-        for (int i = 0, j = 50; i < size; i += j) {
-            if (i + j > size) j = size - i;
-            List<Item> items = sqlTool.findItemsWithType(Item.SCREENSHOT, i, j);
-            for (Item item : items) {
-                upgradeScreenshot(item);
-            }
-        }
-        System.out.println();
+//
+//        System.out.print("Starting to search for Blog items ..");
+//        size = sqlTool.countItemsWithType(Item.BLOG);
+//        System.out.println(" found " + size + " items");
+//
+//        for (int i = 0, j = 50; i < size; i += j) {
+//            if (i + j > size) j = size - i;
+//            List<Item> items = sqlTool.findItemsWithType(Item.BLOG, i, j);
+//            for (Item item : items) {
+//                upgradeAttachment(item, true);
+//            }
+//        }
+//        System.out.println();
+//
+//        System.out.print("Starting to search for unpublished Blog items ..");
+//        size = sqlTool.countItemsWithType(Item.UNPUBLISHED_BLOG);
+//        System.out.println(" found " + size + " items");
+//
+//        for (int i = 0, j = 50; i < size; i += j) {
+//            if (i + j > size) j = size - i;
+//            List<Item> items = sqlTool.findItemsWithType(Item.UNPUBLISHED_BLOG, i, j);
+//            for (Item item : items) {
+//                upgradeAttachment(item, true);
+//            }
+//        }
+//        System.out.println();
+//
+//        System.out.print("Starting to search for Hardware items ..");
+//        size = sqlTool.countItemsWithType(Item.HARDWARE);
+//        System.out.println(" found " + size + " items");
+//
+//        for (int i = 0, j = 50; i < size; i += j) {
+//            if (i + j > size) j = size - i;
+//            List<Item> items = sqlTool.findItemsWithType(Item.HARDWARE, i, j);
+//            for (Item item : items) {
+//                upgradeAttachment(item, false);
+//            }
+//        }
+//        System.out.println();
+//
+//        System.out.print("Starting to search for Software items ..");
+//        size = sqlTool.countItemsWithType(Item.SOFTWARE);
+//        System.out.println(" found " + size + " items");
+//
+//        for (int i = 0, j = 50; i < size; i += j) {
+//            if (i + j > size) j = size - i;
+//            List<Item> items = sqlTool.findItemsWithType(Item.SOFTWARE, i, j);
+//            for (Item item : items) {
+//                upgradeAttachment(item, false);
+//            }
+//        }
+//        System.out.println();
+//
+//        System.out.print("Starting to search for Desktop items ..");
+//        size = sqlTool.countItemsWithType(Item.SCREENSHOT);
+//        System.out.println(" found " + size + " items");
+//
+//        for (int i = 0, j = 50; i < size; i += j) {
+//            if (i + j > size) j = size - i;
+//            List<Item> items = sqlTool.findItemsWithType(Item.SCREENSHOT, i, j);
+//            for (Item item : items) {
+//                upgradeScreenshot(item);
+//            }
+//        }
+//        System.out.println();
     }
 
     private static void upgradeAttachment(Item item, boolean setOwner) {
