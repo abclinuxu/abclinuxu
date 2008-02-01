@@ -248,8 +248,10 @@ public class EditTag implements AbcAction, Configurable {
         String id = (String) params.get(PARAM_PARENT);
         if (id != null)
             id = id.trim();
-        if (id == null || id.length() == 0)
+        if (id == null || id.length() == 0) {
             tag.setParent(null);
+            return true;
+	}
 
         Tag existingTag = TagTool.getById(id);
         if (existingTag == null) {
