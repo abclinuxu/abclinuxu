@@ -21,6 +21,11 @@
 
 <p>
     Počet dokumentů: ${TAG.usage}
+    <#assign PARENT = TOOL.findTag(TAG.parent)?default("UNDEFINED")>
+    <#if (PARENT?string != "UNDEFINED")>
+        <br>
+        Nadřazený štítek: <a href="/stitky/${PARENT.id}">${PARENT.title}</a>
+    </#if>
 </p>
 
 <#include "../footer.ftl">

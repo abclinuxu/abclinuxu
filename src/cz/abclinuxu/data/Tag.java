@@ -29,6 +29,7 @@ public class Tag {
     private String id;
     private String title;
     private Date created;
+    private String parent;
     private int usage;
 
     /**
@@ -69,6 +70,18 @@ public class Tag {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    /**
+     * Parent tag id.
+     * @return id of parent tag or null, if not set.
+     */
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
     }
 
     /**

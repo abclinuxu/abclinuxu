@@ -2095,11 +2095,12 @@ public class MySqlPersistence implements Persistence {
         PreparedStatement statement = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("insert into stitek values (?, ?, ?)");
+            statement = con.prepareStatement("insert into stitek values (?, ?, ?, ?)");
             statement.setString(1, tag.getId());
             statement.setString(2, tag.getTitle());
             tag.setCreated(new java.util.Date());
             statement.setTimestamp(3, new Timestamp(tag.getCreated().getTime()));
+            statement.setString(4, tag.getParent());
 
             int result = statement.executeUpdate();
             if (result == 0)
@@ -2122,9 +2123,10 @@ public class MySqlPersistence implements Persistence {
         PreparedStatement statement = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("update stitek set titulek=? where id=?");
+            statement = con.prepareStatement("update stitek set titulek=?, nadrazeny=? where id=?");
             statement.setString(1, tag.getTitle());
-            statement.setString(2, tag.getId());
+            statement.setString(2, tag.getParent());
+            statement.setString(3, tag.getId());
 
             int result = statement.executeUpdate();
             if (result == 0)
@@ -2140,7 +2142,7 @@ public class MySqlPersistence implements Persistence {
 
     public void remove(Tag tag) {
         Connection con = null;
-        PreparedStatement statement = null, statement2 = null;
+        PreparedStatement statement = null, statement2 = null, statement3 = null;
         try {
             con = getSQLConnection();
             statement = con.prepareStatement("delete from stitkovani where stitek=?");
@@ -2151,11 +2153,15 @@ public class MySqlPersistence implements Persistence {
             statement2.setString(1, tag.getId());
             statement2.executeUpdate();
 
+            statement2 = con.prepareStatement("update stitek set nadrazeny=NULL where nadrazeny=?");
+            statement2.setString(1, tag.getId());
+            statement2.executeUpdate();
+
             tagCache.remove(tag.getId());
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu smazat " + tag, e);
         } finally {
-            releaseSQLResources(con, new Statement[] {statement, statement2}, null);
+            releaseSQLResources(con, new Statement[] {statement, statement2, statement3}, null);
         }
     }
 
@@ -2173,7 +2179,8 @@ public class MySqlPersistence implements Persistence {
                 String id = resultSet.getString(1);
                 Tag tag = new Tag(id, resultSet.getString(2));
                 tag.setCreated(new java.util.Date(resultSet.getTimestamp(3).getTime()));
-                tag.setUsage(resultSet.getInt(4));
+                tag.setParent(resultSet.getString(4));
+                tag.setUsage(resultSet.getInt(5));
                 tags.put(id, tag);
                 tagCache.put(tag);
             }

@@ -15,3 +15,5 @@ ALTER TABLE data ADD INDEX in_podtyp (podtyp);
 
 update relace R1, relace R2 set R2.predchozi=R1.cislo where R2.typ_potomka='D' and
 R2.typ_predka=R1.typ_potomka and R2.predek=R1.potomek;
+
+alter table stitek add  nadrazeny VARCHAR(30) NULL;

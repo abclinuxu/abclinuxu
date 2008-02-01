@@ -1,11 +1,11 @@
 delete from akce;
 delete from anketa2;
 delete from citac;
+delete from data;
 delete from hledano;
 delete from kategorie;
 delete from komentar;
 delete from konstanty;
-delete from objekt;
 delete from odkaz;
 delete from polozka;
 delete from posledni_komentar;

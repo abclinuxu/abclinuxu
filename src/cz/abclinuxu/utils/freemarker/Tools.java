@@ -37,6 +37,7 @@ import cz.abclinuxu.utils.format.*;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Advertisement;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.scheduler.EnsureWatchedDiscussionsLimit;
 import cz.abclinuxu.security.ActionProtector;
 import org.dom4j.Document;
@@ -924,6 +925,15 @@ public class Tools implements Configurable {
      */
     public static Screenshot createScreenshot(Relation relation) {
         return new Screenshot(relation);
+    }
+
+    /**
+     * Finds tag with given id.
+     * @param id id of the tag
+     * @return Tag or null, if not found
+     */
+    public static Tag findTag(String id) {
+        return TagTool.getById(id);
     }
 
     /**

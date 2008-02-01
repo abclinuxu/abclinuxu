@@ -52,6 +52,7 @@ import java.util.prefs.Preferences;
 public class EditTag implements AbcAction, Configurable {
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_ID = "id";
+    public static final String PARAM_PARENT = "parent";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -120,6 +121,7 @@ public class EditTag implements AbcAction, Configurable {
 
         Tag tag = new Tag();
         boolean canContinue = setTitleAndId(params, tag, false, env);
+        canContinue &= setParentTag(params, tag, env);
         if (! canContinue)
             return FMTemplateSelector.select("Tags", "add", env, request);
 
@@ -139,6 +141,7 @@ public class EditTag implements AbcAction, Configurable {
             throw new NotFoundException("Štítek '" + id + "' nebyl nalezen!");
 
         params.put(PARAM_TITLE, tag.getTitle());
+        params.put(PARAM_PARENT, tag.getParent());
         return FMTemplateSelector.select("Tags", "edit", env, request);
     }
 
@@ -153,6 +156,7 @@ public class EditTag implements AbcAction, Configurable {
             throw new NotFoundException("Štítek '" + id + "' nebyl nalezen!");
 
         boolean canContinue = setTitleAndId(params, tag, true, env);
+        canContinue &= setParentTag(params, tag, env);
         if (!canContinue)
             return FMTemplateSelector.select("Tags", "edit", env, request);
 
@@ -229,6 +233,30 @@ public class EditTag implements AbcAction, Configurable {
             }
             tag.setId(id);
         }
+
+        return true;
+    }
+
+    /**
+     * Updates parent tag from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param tag a tag to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setParentTag(Map params, Tag tag, Map env) {
+        String id = (String) params.get(PARAM_PARENT);
+        if (id != null)
+            id = id.trim();
+        if (id == null || id.length() == 0)
+            tag.setParent(null);
+
+        Tag existingTag = TagTool.getById(id);
+        if (existingTag == null) {
+            ServletUtils.addError(PARAM_PARENT, "Štítek " + id + " nebyl nalezen!", env, null);
+            return false;
+        }
+        tag.setParent(id);
 
         return true;
     }

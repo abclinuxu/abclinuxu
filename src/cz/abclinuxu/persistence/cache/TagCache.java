@@ -64,6 +64,8 @@ public class TagCache implements Configurable {
      * @return the tag
      */
     public Tag get(String id) {
+        if (id == null)
+            return null;
         return (Tag) tagCache.get(id.toLowerCase());
     }
 
@@ -81,6 +83,7 @@ public class TagCache implements Configurable {
      */
     public void remove(String id) {
         Tag tag = tagCache.remove(id.toLowerCase());
+        // todo unset as parent where used
         // if (tag.getUsage() > 0) todo remove tag from mappingCache
     }
 

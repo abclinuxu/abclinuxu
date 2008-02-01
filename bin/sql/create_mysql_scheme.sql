@@ -250,7 +250,8 @@ CREATE TABLE konstanty (
 CREATE TABLE stitek (
   id VARCHAR(30) UNIQUE,                         -- ascii identifikator stitku
   titulek VARCHAR(30) NOT NULL,                  -- jmeno stitku
-  vytvoreno DATETIME NOT NULL                    -- cas vytvoreni
+  vytvoreno DATETIME NOT NULL,                   -- cas vytvoreni
+  nadrazeny VARCHAR(30) NULL                     -- id nadrazeneho stitku (vztah dabatabaze - mysql)
 );
 ALTER TABLE stitek ADD INDEX in_stitek_kdy (vytvoreno);
 
