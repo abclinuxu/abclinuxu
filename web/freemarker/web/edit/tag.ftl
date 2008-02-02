@@ -22,9 +22,13 @@
             </td>
         </tr>
         <tr>
-            <td>Nadřazený štítek</td>
+            <td>
+                Nadřazený štítek
+                <@lib.showHelp>Id štítku, například programovani z URL /stitky/programovani</@lib.showHelp>
+            </td>
             <td>
                 <input type="text" name="parent" value="${PARAMS.parent?if_exists}" tabindex="2">
+                <@lib.showError key="parent" />
             </td>
         </tr>
         <tr>
