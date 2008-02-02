@@ -25,10 +25,19 @@ import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.cache.TagCache;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.servlets.utils.url.URLManager;
+import cz.abclinuxu.exceptions.InvalidInputException;
+import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.apache.log4j.Logger;
 
@@ -37,11 +46,23 @@ import org.apache.log4j.Logger;
  * @author literakl
  * @since 16.12.2007
  */
-public class TagTool {
+public class TagTool implements Configurable {
     private static Logger log = Logger.getLogger(TagTool.class);
 
     private static TagCache cache = TagCache.getInstance();
     private static Persistence persistence = PersistenceFactory.getPersistence();
+
+    public static final String PREF_INVALID_TITLE_REGEXP = "regexp.invalid.title";
+    private static Pattern reInvalidTitle;
+
+    static {
+        ConfigurationManager.getConfigurator().configureAndRememberMe(new TagTool());
+    }
+
+    public void configure(Preferences prefs) throws ConfigurationException {
+        String tmp = prefs.get(PREF_INVALID_TITLE_REGEXP, null);
+        reInvalidTitle = Pattern.compile(tmp);
+    }
 
     public static void init() {
         persistence.getTags(); // rereads the tag cache
@@ -143,7 +164,7 @@ public class TagTool {
     /**
      * List tags in specified order.
      * @param from offset
-     * @param count number of returned tags
+     * @param count number of returned tags or -1 for all
      * @param order specified sort field - title, usage, creation time
      * @param ascending true when ascending order is requested
      * @return list of tags according to criteria
@@ -169,6 +190,25 @@ public class TagTool {
             tags.add(tag);
         }
         return tags;
+    }
+
+    /**
+     * Generates id from tag title. Use this method to receive consistent behavior.
+     * @param title title, it must have at least one character
+     * @return id generated from title
+     * @throws InvalidInputException if title contains illegal characters
+     */
+    public static String getNormalizedId(String title) throws InvalidInputException {
+        String id = DiacriticRemover.getInstance().removeDiacritics(title.toLowerCase());
+        Matcher matcher = reInvalidTitle.matcher(id);
+        if (matcher.find())
+            throw new InvalidInputException("Název štítku obsahuje nepovolené znaky!");
+
+        id = URLManager.enforceRelativeURL(id);
+        if ("edit".equals(id))
+            throw new InvalidInputException("Zakázaný název štítku!");
+
+        return id;
     }
 
     /**

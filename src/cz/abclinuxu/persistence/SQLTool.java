@@ -1823,11 +1823,10 @@ public final class SQLTool implements Configurable {
 
             if (user == null) {
                 statement.setNull(3, Types.INTEGER);
-                statement.setString(4, ip);
             } else {
                 statement.setInt(3, user.getId());
-                statement.setNull(4, Types.VARCHAR);
             }
+            statement.setString(4, ip);
 
             if (action.equals(TagTool.Action.ASSIGN) || action.equals(TagTool.Action.UNASSIGN)) {
                 statement.setString(5, PersistenceMapping.getGenericObjectType(document));

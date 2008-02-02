@@ -50,7 +50,7 @@
 
     <servlet>
         <servlet-name>SuggestSearch</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.misc.SuggestSearch</servlet-class>
+        <servlet-class>cz.abclinuxu.servlets.ajax.SuggestSearch</servlet-class>
         <load-on-startup>3</load-on-startup>
     </servlet>
 

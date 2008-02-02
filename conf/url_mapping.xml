@@ -6,11 +6,15 @@
         </mapping>
         <mapping priority="true">
             <pattern>/ajax/checkLogin</pattern>
-            <action>cz.abclinuxu.servlets.html.ajax.ConflictingUsers</action>
+            <action>cz.abclinuxu.servlets.ajax.ConflictingUsers</action>
         </mapping>
         <mapping priority="true">
             <pattern>/ajax/checkNick</pattern>
-            <action>cz.abclinuxu.servlets.html.ajax.ConflictingUsers</action>
+            <action>cz.abclinuxu.servlets.ajax.ConflictingUsers</action>
+        </mapping>
+        <mapping priority="true">
+            <pattern>/ajax/tags</pattern>
+            <action>cz.abclinuxu.servlets.ajax.TagList</action>
         </mapping>
         <mapping>
             <pattern>/show</pattern>

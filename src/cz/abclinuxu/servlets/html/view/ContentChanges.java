@@ -27,7 +27,7 @@ import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.ChangedContent;
 import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.OpaqueComparator;
+import cz.abclinuxu.utils.comparator.OpaqueComparator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;

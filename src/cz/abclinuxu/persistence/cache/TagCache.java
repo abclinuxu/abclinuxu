@@ -24,6 +24,9 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.TagTool;
+import cz.abclinuxu.utils.comparator.TagCreationComparator;
+import cz.abclinuxu.utils.comparator.TagTitleComparator;
+import cz.abclinuxu.utils.comparator.TagUsageComparator;
 
 import java.util.Comparator;
 import java.util.List;
@@ -106,7 +109,7 @@ public class TagCache implements Configurable {
     /**
      * List tags in specified order.
      * @param from offset
-     * @param count number of returned tags
+     * @param count number of returned tags or -1 for all
      * @param order specified sort field - title, usage, creation time
      * @param ascending true when ascending order is requested
      * @return list of tags according to criteria
@@ -115,14 +118,14 @@ public class TagCache implements Configurable {
         List<Tag> allTags = new ArrayList<Tag>(tagCache.values());
         Comparator<Tag> comparator = null;
         if (TagTool.ListOrder.BY_CREATION.equals(order))
-            comparator = new CreationComparator(ascending);
+            comparator = new TagCreationComparator(ascending);
         else if (TagTool.ListOrder.BY_USAGE.equals(order))
-            comparator = new UsageComparator(ascending);
+            comparator = new TagUsageComparator(ascending);
         else
-            comparator = new TitleComparator(ascending);
+            comparator = new TagTitleComparator(ascending);
 
         Collections.sort(allTags, comparator);
-        int toIndex = from + count, size = allTags.size();
+        int toIndex = (count == -1) ? allTags.size() : from + count, size = allTags.size();
         return allTags.subList(from, (toIndex > size) ? size : toIndex);
     }
 
@@ -219,54 +222,5 @@ public class TagCache implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         cacheSize = prefs.getInt(PREF_SIZE, 1000);
         concurrencyLevel = prefs.getInt(PREF_CONCURRENCY_LEVEL, 1000);
-    }
-
-    /**
-     * Compares two Tags by their usage property in specified order.
-     */
-    private static class UsageComparator implements Comparator {
-        boolean ascending;
-
-        public UsageComparator(boolean ascending) {
-            this.ascending = ascending;
-        }
-
-        public int compare(Object o1, Object o2) {
-            return ((ascending)? 1 : -1) * ((Tag) o1).getUsage() - ((Tag) o2).getUsage();
-        }
-    }
-
-    /**
-     * Compares two Tags by their title property in specified order.
-     */
-    private static class TitleComparator implements Comparator {
-//        Collator collator = Collator.getInstance();
-        CzechComparator collator = CzechComparator.getInstance();
-        boolean ascending;
-
-        public TitleComparator(boolean ascending) {
-            this.ascending = ascending;
-        }
-
-        public int compare(Object o1, Object o2) {
-            String s1 = ((Tag) o1).getTitle().toString();
-            String s2 = ((Tag) o2).getTitle().toString();
-            return ((ascending) ? 1 : -1) * collator.compare(s1, s2);
-        }
-    }
-
-    /**
-     * Compares two Tags by their created property in specified order.
-     */
-    private static class CreationComparator implements Comparator {
-        boolean ascending;
-
-        public CreationComparator(boolean ascending) {
-            this.ascending = ascending;
-        }
-
-        public int compare(Object o1, Object o2) {
-            return ((ascending) ? 1 : -1) * ((Tag) o1).getCreated().compareTo(((Tag) o2).getCreated());
-        }
     }
 }

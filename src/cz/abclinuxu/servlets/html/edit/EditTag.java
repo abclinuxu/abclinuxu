@@ -18,38 +18,31 @@
  */
 package cz.abclinuxu.servlets.html.edit;
 
+import cz.abclinuxu.data.Tag;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.exceptions.InvalidInputException;
+import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.security.ActionProtector;
+import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ViewTag;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.data.User;
-import cz.abclinuxu.data.Tag;
-import cz.abclinuxu.security.ActionProtector;
-import cz.abclinuxu.security.Roles;
-import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.TagTool;
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.prefs.Preferences;
 
 /**
  * Tag manipulation class.
  * @author literakl
  * @since 5.1.2008
  */
-public class EditTag implements AbcAction, Configurable {
+public class EditTag implements AbcAction {
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_ID = "id";
     public static final String PARAM_PARENT = "parent";
@@ -59,18 +52,6 @@ public class EditTag implements AbcAction, Configurable {
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
     public static final String ACTION_REMOVE_STEP2 = "rm2";
-
-    public static final String PREF_INVALID_TITLE_REGEXP = "regexp.invalid.title";
-    private static Pattern reInvalidTitle;
-
-    static {
-        ConfigurationManager.getConfigurator().configureAndRememberMe(new EditTag());
-    }
-
-    public void configure(Preferences prefs) throws ConfigurationException {
-        String tmp = prefs.get(PREF_INVALID_TITLE_REGEXP, null);
-        reInvalidTitle = Pattern.compile(tmp);
-    }
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -211,19 +192,14 @@ public class EditTag implements AbcAction, Configurable {
             return false;
         }
 
-        String id = DiacriticRemover.getInstance().removeDiacritics(title.toLowerCase());
-        Matcher matcher = reInvalidTitle.matcher(id);
-        if (matcher.find()) {
-            ServletUtils.addError(PARAM_TITLE, "Název štítku obsahuje nepovolené znaky!", env, null);
+        String id = null;
+        try {
+            id = TagTool.getNormalizedId(title);
+            tag.setTitle(title);
+        } catch (InvalidInputException e) {
+            ServletUtils.addError(PARAM_TITLE, e.getMessage(), env, null);
             return false;
         }
-        id = URLManager.enforceRelativeURL(id);
-        if ("edit".equals(id)) {
-            ServletUtils.addError(PARAM_TITLE, "Zakázaný název štítku!", env, null);
-            return false;
-        }
-
-        tag.setTitle(title);
 
         if (! setOnlyTitle) {
             Tag existingTag = TagTool.getById(id);
