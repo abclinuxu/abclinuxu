@@ -13,7 +13,7 @@
 <ul>
     <#list TAGS.data as tag>
         <li>
-            <a href="/stitky/${tag.id}">${tag.title}</a> (${tag.usage})
+            <a href="/stitky/${tag.id}">${tag.title}</a> (${tag.usage}) <#if tag.parent?exists>(${tag.parent}</#if>
         </li>
     </#list>
 </ul>
