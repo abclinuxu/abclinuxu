@@ -8,7 +8,10 @@
        <link href="/msie.css" type="text/css" rel="stylesheet">
     <![endif]-->
     <!--[if IE 7]>
-       <link href="/bugie.css" type="text/css" rel="stylesheet">
+       <link href="/msie7.css" type="text/css" rel="stylesheet">
+    <![endif]-->
+    <!--[if lt IE 7]>
+       <link href="/msie6.css" type="text/css" rel="stylesheet">
     <![endif]-->
     <link rel="icon" href="/images/site2/favicon.png" type="image/png">
     <#if IS_INDEX?exists>
@@ -28,6 +31,15 @@
     </#if>
     <meta name="keywords" lang="cs" content="linux,abclinuxu,hardware,software,ovladače,diskuse,nápověda,rada,pomoc">
     <meta name="keywords" lang="en" content="linux,hardware,software,drivers,forum,help,faq,advice">
+    <script type="text/javascript">
+    	Page = new Object();
+        <#if RELATION?exists>
+        	Page.relationID = ${RELATION.id};
+	    </#if>
+        <#if USER?exists>
+        	Page.userID = ${USER.id};
+	    </#if>
+    </script>
     <script type="text/javascript" src="/data/site/impact.js"></script>
     <script type="text/javascript" src="/data/site/scripts.js"></script>
     <script src="/data/site/prototype.js" type="text/javascript"></script>
@@ -36,7 +48,7 @@
     </#if>
 </head>
 
-<body onload="document.getElementById('menu').style.display='block';window.setTimeout(new Function('document.getElementById(\'menu\').style.display=\'table\''), 10)" id="www-abclinuxu-cz">
+<body id="www-abclinuxu-cz">
 
 <#import "macros.ftl" as lib>
 <@lib.advertisement id="netmonitor" />
@@ -238,6 +250,20 @@
                 <#if link_has_next> / </#if>
               </#list>
             </div>
+			<#if ASSIGNED_TAGS?exists && USER?exists && USER.hasRole("tag admin")>
+	            <div class="stitky">
+	              <a href="/stitky">Štítky</a>:
+	              <span id="prirazeneStitky">
+	              	<#if ASSIGNED_TAGS?size &gt; 0>
+	              		<#list ASSIGNED_TAGS as tag>
+	              			<a href="/stitky/${tag.id}">${tag.title}</a><#if tag_has_next>, </#if>
+	              		</#list>
+	              	<#else>
+	              		<i>není přiřazen žádný štítek</i>
+	              	</#if>
+	              </span>
+	            </div>
+             </#if>
           </div>
         </#if>
 

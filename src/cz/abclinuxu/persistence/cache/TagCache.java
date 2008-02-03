@@ -39,7 +39,6 @@ import org.apache.log4j.Logger;
 import com.whirlycott.cache.Cache;
 import com.whirlycott.cache.CacheManager;
 import com.whirlycott.cache.CacheException;
-import net.eithel.CzechComparator;
 
 /**
  * @author literakl

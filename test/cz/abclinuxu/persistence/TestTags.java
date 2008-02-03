@@ -23,6 +23,9 @@ import cz.abclinuxu.persistence.impl.MySqlPersistence;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Tag;
 import cz.abclinuxu.exceptions.DuplicateKeyException;
+import cz.abclinuxu.utils.comparator.TagTitleComparator;
+import cz.abclinuxu.utils.comparator.TagCreationComparator;
+import cz.abclinuxu.utils.comparator.TagUsageComparator;
 import junit.framework.TestCase;
 
 import java.sql.Connection;
@@ -31,6 +34,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
+import java.util.Collections;
 
 /**
  * @author literakl
@@ -144,6 +149,65 @@ public class TestTags extends TestCase {
 
         tags = persistence.getTags();
         assertEquals(2, tags.get(tagUbuntu.getId()).getUsage());
+    }
+
+    public void testComparators() {
+        List<Tag> tags = new ArrayList<Tag>();
+        Tag tag = new Tag("a", "a");
+        tag.setCreated(new Date(10));
+        tag.setUsage(10);
+        tags.add(tag);
+
+        tag = new Tag("b", "b");
+        tag.setCreated(new Date(5));
+        tag.setUsage(5);
+        tags.add(tag);
+
+        tag = new Tag("c", "c");
+        tag.setCreated(new Date(7));
+        tag.setUsage(0);
+        tags.add(tag);
+
+        tag = new Tag("d", "d");
+        tag.setCreated(new Date(11));
+        tag.setUsage(2);
+        tags.add(tag);
+
+        Collections.sort(tags, new TagTitleComparator(false));
+        assertEquals("a", tags.get(3).getId());
+        assertEquals("b", tags.get(2).getId());
+        assertEquals("c", tags.get(1).getId());
+        assertEquals("d", tags.get(0).getId());
+
+        Collections.sort(tags, new TagTitleComparator(true));
+        assertEquals("a", tags.get(0).getId());
+        assertEquals("b", tags.get(1).getId());
+        assertEquals("c", tags.get(2).getId());
+        assertEquals("d", tags.get(3).getId());
+
+        Collections.sort(tags, new TagCreationComparator(true));
+        assertEquals("a", tags.get(2).getId());
+        assertEquals("b", tags.get(0).getId());
+        assertEquals("c", tags.get(1).getId());
+        assertEquals("d", tags.get(3).getId());
+
+        Collections.sort(tags, new TagCreationComparator(false));
+        assertEquals("a", tags.get(1).getId());
+        assertEquals("b", tags.get(3).getId());
+        assertEquals("c", tags.get(2).getId());
+        assertEquals("d", tags.get(0).getId());
+
+        Collections.sort(tags, new TagUsageComparator(true));
+        assertEquals("a", tags.get(3).getId());
+        assertEquals("b", tags.get(2).getId());
+        assertEquals("c", tags.get(0).getId());
+        assertEquals("d", tags.get(1).getId());
+
+        Collections.sort(tags, new TagUsageComparator(false));
+        assertEquals("a", tags.get(0).getId());
+        assertEquals("b", tags.get(1).getId());
+        assertEquals("c", tags.get(3).getId());
+        assertEquals("d", tags.get(2).getId());
     }
 
     /**

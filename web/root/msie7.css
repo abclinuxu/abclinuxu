@@ -1,0 +1,26 @@
+#zh-kont, #zh-kont #zh-logo, #zh-kont #zh-text {
+        height: 50px;
+}
+
+.menu {
+	text-align: center;
+	padding: 1px 0px 2px;
+	overflow: visible;
+	white-space: normal;
+}
+
+.menu > li {
+	display: inline;
+}
+
+.menu > li > a {
+	display: inline;
+}
+
+.menu > li > ul {
+	margin-left: -5em;
+	margin-left: expression(-(parentNode.firstChild.offsetWidth+4)+"px");
+	margin-top: 1.4em;
+	text-align: left;
+	border: 1px solid silver;
+}

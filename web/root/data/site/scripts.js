@@ -247,7 +247,449 @@ function nextCommentClick(event) {
 	return false;
 }
 
-function init() {
+var Toolkit = {
+	createElement: function(document, tagName, className, id, text) {
+		var element = document.createElement(tagName);
+		if (className != null) {
+			element.className = className;
+		}
+		if (id != null) {
+			element.id = id;
+		}
+		if (text != null) {
+			element.appendChild(element.ownerDocument.createTextNode(text));
+		}
+
+		return element;
+	},
+
+	appendElement: function(parent, tagName, className, id, text) {
+		var element = this.createElement(parent.ownerDocument, tagName, className, id, text);
+		parent.appendChild(element);
+
+		return element;
+	},
+
+	addEventListener: function(element, type, func, obj) {
+		var params = new Array();
+
+		var handler;
+		if (typeof(func) == "function") {
+			for (var i = 3; i < arguments.length; i++) {
+				params.push(arguments[i]);
+			}
+
+			handler = function (event) {
+				var p = new Array(event).concat(params);
+				var result = func.apply(null, p);
+				if (result == false) {
+					event.returnValue = false;
+					if (event.preventDefault) event.preventDefault();
+				}
+				return result;
+			}
+		} else {
+			for (var i = 4; i < arguments.length; i++) {
+				params.push(arguments[i]);
+			}
+
+			handler = function (event) {
+				var p = new Array(event).concat(params);
+				var result = obj[func].apply(obj, p);
+				if (result == false) {
+					event.returnValue = false;
+					if (event.preventDefault) event.preventDefault();
+				}
+				return result;
+			}
+		}
+		Toolkit.addEventListenerImpl(element, type, handler);
+		return handler;
+	},
+
+	removeEventListener: function (element, type, handler) {
+		Toolkit.removeEventListenerImpl(element, type, handler);
+	}
+}
+
+if (document.documentElement.addEventListener) {
+	Toolkit.addEventListenerImpl = function(element, type, handler) {
+		element.addEventListener(type, handler, false);
+	};
+
+	Toolkit.removeEventListenerImpl = function(element, type, handler) {
+		element.removeEventListener(type, handler, false);
+	};
+} else {
+	Toolkit.addEventListenerImpl = function(element, type, handler) {
+		element.attachEvent("on"+type, handler);
+	};
+
+	Toolkit.removeEventListenerImpl = function(element, type, handler) {
+		element.detachEvent("on"+type, handler);
+	};
+}
+
+function ModalWindow(className, id, handler) {
+	this.window = document.createElement("div");
+	this.window.className = "modalWindow";
+	this.handler = handler;
+	if (className != null) {
+		this.window.className += " "+className;
+	}
+	if (id != null) {
+		this.window.id = id;
+	}
+	this.background = document.createElement("div");
+	this.background.className = "modalWindowBackground";
+
+	this.closeButton = Toolkit.appendElement(this.window, "span", "krizek", null, "×");
+	this.closeButton.title = "Zavřít okno";
+
+	Toolkit.addEventListener(this.closeButton, "click", "close", this);
+	Toolkit.addEventListener(this.background, "click", "close", this);
+	this.keypressHandler = Toolkit.addEventListener(document.body, "keypress", "keypress", this);
+
+	document.body.appendChild(this.background);
+	document.body.appendChild(this.window);
+}
+
+ModalWindow.prototype = {
+	keypress: function(event) {
+		if (event.keyCode == 27) {
+			this.close();
+		}
+	},
+
+	close: function() {
+		Toolkit.removeEventListener(document.body, "keypress", this.keypressHandler);
+		document.body.removeChild(this.background);
+		document.body.removeChild(this.window);
+		if (this.handler.onclose) {
+			this.handler.onclose();
+		}
+	}
+}
+
+
+function Stitky() {
+	var seznamStitku = document.getElementById("prirazeneStitky");
+	if (!seznamStitku) {
+		return;
+	}
+
+	var button =  Toolkit.appendElement(seznamStitku.parentNode, "button", "editTags", null, "Upravit");
+	Toolkit.addEventListener(button, "click", "showDialog", this);
+}
+
+Stitky.prototype = {
+	showDialog: function(event) {
+		new StitkyDialog(Page.relationID);
+	}
+}
+
+function StitkyDialog(nodeID) {
+	this.counter = 0;
+	this.lastRefresh = 0;
+	this.nodeID = nodeID;
+	this.stitkyElement = document.getElementById("prirazeneStitky");
+	this.dialog = new ModalWindow("modalStitky", null, this);
+	this.stitky = new Array();
+
+	Toolkit.appendElement(this.dialog.window, "h2", null, null, "Nastavit štítky");
+	var prirazeneStitkyParent = Toolkit.appendElement(this.dialog.window, "div", null, null, "Přiřazené štítky: ");
+	this.prirazeneStitkyElement = Toolkit.appendElement(prirazeneStitkyParent, "span");
+	var filtrElement = Toolkit.appendElement(this.dialog.window, "div", null, null, "Filtr: ");
+	this.filtrInput = Toolkit.appendElement(filtrElement, "input");
+	this.filtrInput.type = "text";
+	this.pridatButton = Toolkit.appendElement(filtrElement, "button", null, null, "Vytvořit štítek");
+	this.pridatButton.disabled = true;
+//	var vyberStitku = Toolkit.appendElement(this.dialog.window, "div", "vyberStitku");
+	var vyberStitku = Toolkit.appendElement(this.dialog.window, "table", "vyberStitku");
+	var row = vyberStitku.insertRow(0);
+//	this.stitkySeznam = Toolkit.appendElement(vyberStitku, "div", "stitkySeznam");
+	this.stitkySeznam = Toolkit.appendElement(row.insertCell(0), "select", "stitkySeznam");
+	this.stitkySeznam.size = this.seznamSize;
+	this.stitkyOblibene = Toolkit.appendElement(row.insertCell(1), "div", "stitkyOblibene");
+	Toolkit.appendElement(this.dialog.window, "p", "note", null, "Úpravy jsou prováděny v reálném čase, proto není nutné je jakkoliv potvrzovat nebo odesílat. Chcete-li okno pro nastavování štítků uzavřít, klikněte buď na křížek v pravém horním rohu, kamkoliv mimo okno, nebo stiskněte Escape.");
+
+	Toolkit.addEventListener(this.filtrInput, "keypress", "filtrChange", this);
+	Toolkit.addEventListener(this.pridatButton, "click", "pridatStitek", this);
+
+	new StitekAJAX(this, this.nodeID, "assigned");
+	new SeznamStitkuAJAX(this, this.nodeID);
+	new OblibeneStitkyAJAX(this, this.nodeID);
+}
+
+StitkyDialog.prototype = {
+	seznamSize: 8,
+
+	refreshStitky: function(element) {
+		this.prirazeneStitkyElement.parentNode.replaceChild(element, this.prirazeneStitkyElement);
+		this.prirazeneStitkyElement = element;
+	},
+
+	filtrChange: function(event) {
+		this.pridatButton.disabled = true;
+		var stitky = this;
+		if (this.delayTagListRefresh != null) {
+			window.clearTimeout(this.delayTagListRefresh);
+		}
+		this.delayTagListRefresh = window.setTimeout(function() {
+			stitky.refreshTagList();
+		}, 300);
+	},
+
+	refreshTagList: function() {
+		if (this.filtrInput.value != this.oldFiltr) {
+			this.oldFiltr = this.filtrInput.value;
+			new SeznamStitkuAJAX(this, this.nodeID, this.filtrInput.value);
+		}
+	},
+
+	pridatStitek: function() {
+		new StitekAJAX(this, this.nodeID, "create", null, this.filtrInput.value);
+		this.filtrInput.value = "";
+		this.filtrChange();
+	},
+
+	onclose: function() {
+		var element = Toolkit.createElement(this.stitkyElement.ownerDocument, "span", null, "prirazeneStitky");
+		if (this.stitky.length > 0) {
+			for (var i = 0; i < this.stitky.length; i++) {
+				if (i > 0) {
+					element.appendChild(element.ownerDocument.createTextNode(", "));
+				}
+				var a = Toolkit.appendElement(element, "a", null, null, this.stitky[i].title);
+				a.href = "/stitky/"+this.stitky[i].id;
+				a.title = "Zobrazit objekty, které mají přiřazen tento štítek";
+			}
+		} else {
+			Toolkit.appendElement(element, "i", null, null, "není přiřazen žádný štítek");
+		}
+		this.stitkyElement.parentNode.replaceChild(element, this.stitkyElement);
+	}
+}
+
+AJAX = {
+	init: function() {
+		if (window.XMLHttpRequest) {
+			this.request = new XMLHttpRequest();
+		} else if (window.ActiveXObject) {
+    		this.request = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		this.request.open("GET", document.location.protocol+"//"+document.location.host+this.getURL(), true);
+		this.request.onreadystatechange = this.createEventHandler();
+	},
+
+	createEventHandler: function() {
+		function func() {
+			func.object.readyStateChange();
+		}
+		func.object = this;
+		return func;
+	}
+
+}
+
+function Stitek(element) {
+	this.title = element.getAttribute("l");
+	this.id = element.getAttribute("i");
+}
+
+function StitekAJAX(stitky, nodeID, akce, stitekID, stitekName) {
+	this.stitky = stitky;
+	this.nodeID = nodeID;
+	this.counter = this.stitky.counter++;
+	this.stitekID = stitekID;
+	this.stitekName = stitekName;
+	this.akce = akce;
+
+	this.init();
+	this.request.send();
+}
+
+StitekAJAX.prototype = {
+	init: AJAX.init,
+	createEventHandler: AJAX.createEventHandler,
+
+//	servletPath: "/data/site/stitky.xml",
+	servletPath: "/ajax/tags/",
+
+
+	getURL: function() {
+		var url = this.servletPath;
+		url += this.akce;
+		url += "?rid="+this.nodeID;
+		if (this.stitekID) {
+			url += "&tagID="+this.stitekID;
+		}
+		if (this.stitekName) {
+			url += "&title="+this.stitekName;
+		}
+		return url;
+	},
+
+	readyStateChange: function() {
+		if (this.request.readyState == 4 && this.request.status == 200) {
+			this.zobrazitStitky(this.request.responseXML);
+		}
+	},
+
+	zobrazitStitky: function(doc) {
+		if (this.counter < this.stitky.lastRefresh) {
+			return;
+		}
+		if (!doc || !doc.documentElement) {
+			return; //odpověď není XML dokument;
+		}
+		var element = document.createElement("span");
+		var stitky = doc.documentElement.getElementsByTagName("s");
+		this.stitky.stitky = new Array();
+		for (var i = 0; i < stitky.length; i++) {
+			var stitek = new Stitek(stitky[i]);
+			var a = Toolkit.appendElement(element, "a", "stitek", null, stitek.title);
+			a.href = "javascript:";
+			a.title = "Kliknutím štítek odstraníte";
+			Toolkit.addEventListener(a, "click", "odebratStitek", this, stitek.id);
+			if (i < stitky.length-1) {
+				element.appendChild(document.createTextNode(", "));
+			}
+			this.stitky.stitky.push(stitek);
+		}
+		this.stitky.refreshStitky(element);
+		this.stitky.lastRefresh = this.counter;
+	},
+
+	odebratStitek: function(event, stitekID) {
+		new StitekAJAX(this.stitky, this.nodeID, "unassign", stitekID);
+		return false;
+	}
+}
+
+function SeznamStitkuAJAX(stitky, nodeID, filtr) {
+	this.stitky = stitky;
+	this.nodeID = nodeID;
+	this.filtr = filtr;
+
+	this.init();
+	this.request.send();
+}
+
+SeznamStitkuAJAX.prototype = {
+	init: AJAX.init,
+	createEventHandler: AJAX.createEventHandler,
+
+//	servletPath: "/data/site/stitky2.xml",
+	servletPath: "/ajax/tags/list",
+
+
+	getURL: function() {
+		var url = this.servletPath;
+		if (this.filtr) {
+			url += "?filter="+window.escape(this.filtr);
+		}
+		return url;
+	},
+
+	readyStateChange: function() {
+		if (this.request.readyState == 4 && this.request.status == 200) {
+			this.vypsatStitky(this.request.responseXML);
+		}
+	},
+
+	vypsatStitky: function(doc) {
+		if (!doc || !doc.documentElement) {
+			return; //odpověď není XML dokument;
+		}
+		this.stitky.pridatButton.disabled = !(doc.documentElement.getAttribute("allowCreate") == "true");
+//		var stitkySeznam = Toolkit.createElement(document, "div", "stitkySeznam");
+		var stitkySeznam = Toolkit.createElement(document, "select", "stitkySeznam");
+		stitkySeznam.size = this.stitky.seznamSize;
+		var stitky = doc.documentElement.getElementsByTagName("s");
+		for (var i = 0; i < stitky.length; i++) {
+			var stitek = new Stitek(stitky[i]);
+//			var a = Toolkit.appendElement(stitkySeznam, "a", null, null, stitek.title);
+//			a.href = "javascript:";
+			var a = Toolkit.appendElement(stitkySeznam, "option", null, null, stitek.title);
+			a.value = stitek.id;
+			a.title = "Kliknutím štítek „nalepíte“";
+//			Toolkit.addEventListener(a, "click", "pridatStitek", this, stitek.id);
+		}
+		Toolkit.addEventListener(stitkySeznam, "change", "pridatStitek", this, stitkySeznam);
+		this.stitky.stitkySeznam.parentNode.replaceChild(stitkySeznam, this.stitky.stitkySeznam);
+		this.stitky.stitkySeznam = stitkySeznam;
+	},
+
+//	pridatStitek: function(event, stitekID) {
+//		new StitekAJAX(this.stitky, this.nodeID, "assign", stitekID);
+//		return false;
+//	},
+
+	pridatStitek: function(event, seznam) {
+		new StitekAJAX(this.stitky, this.nodeID, "assign", seznam.options[seznam.selectedIndex].value);
+		return false;
+	}
+}
+
+function OblibeneStitkyAJAX(stitky, nodeID) {
+	this.stitky = stitky;
+	this.nodeID = nodeID;
+
+	this.init();
+	this.request.send();
+}
+
+OblibeneStitkyAJAX.prototype = {
+	init: AJAX.init,
+	createEventHandler: AJAX.createEventHandler,
+
+//	servletPath: "/data/site/stitky.xml",
+	servletPath: "/ajax/tags/favourite",
+
+	getURL: function() {
+		var url = this.servletPath;
+		return url;
+	},
+
+	readyStateChange: function() {
+		if (this.request.readyState == 4 && this.request.status == 200) {
+			this.vypsatStitky(this.request.responseXML);
+		}
+	},
+
+	vypsatStitky: function(doc) {
+		if (!doc || !doc.documentElement) {
+			return; //odpověď není XML dokument;
+		}
+		var stitky = doc.documentElement.getElementsByTagName("s");
+		var oblibene = this.stitky.stitkyOblibene;
+		for (var i = 0; i < stitky.length; i++) {
+			var stitek = new Stitek(stitky[i]);
+			var a = Toolkit.appendElement(oblibene, "a", null, null, stitek.title);
+			a.href = "javascript:";
+			a.title = "Kliknutím štítek „nalepíte“";
+			Toolkit.addEventListener(a, "click", "pridatStitek", this, stitek.id);
+			if (i < stitky.length-1) {
+				oblibene.appendChild(oblibene.ownerDocument.createTextNode(" "));
+			}
+		}
+	},
+
+	pridatStitek: function(event, stitekID) {
+		new StitekAJAX(this.stitky, this.nodeID, "assign", stitekID);
+		return false;
+	}
+}
+
+function init(event, gecko) {
+	if (gecko) {
+		document.getElementById('menu').style.display='block';
+		window.setTimeout(function () {
+			document.getElementById('menu').style.display = 'table'
+		}, 10);
+	}
+
 	if (document.getElementById) {
 		window.dsUtils = new Object();
 		dsUtils.re_comment = /\bds_hlavicka(?:_novy)?\b/;
@@ -259,6 +701,18 @@ function init() {
 		}
 		prepareCommentNext();
 	}
+
+	new Stitky();
 }
 
-window.onload = init;
+
+if (window.opera == null) {
+	if (window.attachEvent) {
+		Toolkit.addEventListener(window, "load", init, false);
+	} else {
+		Toolkit.addEventListener(document, "load", init, false);
+	}
+}
+Toolkit.addEventListener(window, "DOMContentLoaded", init, window.opera == null);
+//window.addEventListener("load", init, true);
+//window.onload = init;

@@ -1013,3 +1013,112 @@ div.autocomplete ul li span.informal { size: 80%;}
  .itbiz .list { margin: 0;
                 padding-left: 1.3em;
                 list-style-type: circle; }
+
+.modalWindow {
+ 	position: fixed;
+ 	z-index: 100;
+ 	top: 15%;
+ 	left: 15%;
+ 	bottom: 15%;
+ 	right: 15%;
+ 	background-color: white;
+ 	border: 1px solid black;
+}
+
+.modalWindowBackground {
+ 	position: fixed;
+ 	z-index: 99;
+ 	top: 0px;
+ 	left: 0px;
+ 	bottom: 0px;
+ 	right: 0px;
+ 	background-image: url('/images/site2/shadow60.png');
+}
+
+.krizek {
+	float: right;
+	font-weight: bold;
+	padding: 0.1em 0.3em;
+	font-size: larger;
+	border: 1px solid gray;
+	display: block;
+	cursor: pointer;
+}
+
+.krizek:hover {
+	background: #FFF8C3;
+	color: black;
+	text-decoration: none;
+}
+
+/*
+.closeButton {
+	position: absolute;
+	top: 3px;
+	right: 3px;
+	cursor: pointer;
+}
+*/
+
+.modalStitky {
+ 	padding: 5px;
+ 	overflow: hidden;
+}
+
+.modalStitky h2 {
+	margin-bottom: 1ex;
+}
+
+.vyberStitku {
+	position: relative;
+	min-height: 200px;
+}
+
+.stitkySeznam {
+	width: 15em;
+	margin: 0.5em 0;
+}
+
+/*
+.stitkySeznam {
+	width: 30%;
+	float: left;
+	overflow-y: scroll;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 70%;
+	bottom: 0px;
+}
+
+.stitkySeznam a {
+	display: block;
+}
+*/
+
+.stitkyOblibene {
+	width: auto;
+	padding: 0.1em 0.3em;
+	border: 1px solid gray;
+	margin: 0.5em;
+}
+
+.stitkyOblibene a {
+	padding: 0 0.5em;
+}
+
+.note {
+	font-size: 90%;
+	margin: 0;
+}
+
+.editTags {
+	margin-left: 1em;
+}
+
+/*
+.stitkyOblibene {
+	width: 70%;
+	margin-left: 30%;
+}
+*/

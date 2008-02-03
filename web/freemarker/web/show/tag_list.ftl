@@ -14,7 +14,9 @@
     <#list TAGS.data as tag>
         <li>
             <a href="/stitky/${tag.id}">${tag.title}</a> (${tag.usage})
-            <#if tag.parent?exists && USER?exists && USER.hasRole("tag admin")> - ${tag.parent}</#if>
+            <#if tag.parent?exists && USER?exists && USER.hasRole("tag admin")>
+                - ${TOOL.findTag(tag.parent).title}
+            </#if>
         </li>
     </#list>
 </ul>

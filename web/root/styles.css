@@ -405,4 +405,7 @@ div.autocomplete ul li.selected { background-color: #FFF8C3;}
 .itbiz .logo-it { color: #18286c; }
 .itbiz .logo-biz { color: #bc1d12; }
 .itbiz .header a:hover { text-decoration: none; }
-.itbiz a img:hover { background-color: transparent; }
+.itbiz a img:hover, a.stitek:hover { background-color: transparent; }
+
+.stitek:hover { text-decoration: line-through;}
+

@@ -18,28 +18,29 @@
  */
 package cz.abclinuxu.utils;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.prefs.Preferences;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
+
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.Tag;
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.persistence.SQLTool;
-import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.persistence.cache.TagCache;
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.exceptions.InvalidInputException;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.cache.TagCache;
+import cz.abclinuxu.servlets.utils.url.URLManager;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
-
-import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.prefs.Preferences;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
-import org.apache.log4j.Logger;
 
 /**
  * Main class to work with tags to be used by the application developer.
@@ -116,13 +117,13 @@ public class TagTool implements Configurable {
 
         Persistence persistence = TagTool.persistence;
         SQLTool sqlTool = SQLTool.getInstance();
-        while ( ! tags.isEmpty()) {
-            String id = tags.remove(0);
+        for (ListIterator<String> iter = tags.listIterator(); iter.hasNext();) {
+            String id = iter.next();
             Tag tag = getById(id);
             if (tag == null)
                 continue;
             if (tag.getParent() != null)
-                tags.add(tag.getParent());
+            	iter.add(tag.getParent());
 
             sqlTool.logTagAction(tag, Action.ASSIGN, user, ipAddress, obj);
         }

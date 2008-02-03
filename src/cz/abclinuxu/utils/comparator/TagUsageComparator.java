@@ -33,6 +33,12 @@ public class TagUsageComparator implements Comparator {
     }
 
     public int compare(Object o1, Object o2) {
-        return ((ascending)? 1 : -1) * ((Tag) o1).getUsage() - ((Tag) o2).getUsage();
+        return ((ascending)? 1 : -1) * compare(((Tag) o1).getUsage(), ((Tag) o2).getUsage());
+    }
+
+    private int compare(int first, int second) {
+        if (first == second)
+            return 0;
+        return (first > second) ? 1 : -1;
     }
 }
