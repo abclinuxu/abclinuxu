@@ -111,16 +111,18 @@ public class TagTool implements Configurable {
     public static void assignTags(GenericDataObject obj, List<String> tags, User user, String ipAddress) {
         if (tags == null)
             return;
+        else
+            tags = new ArrayList<String>(tags);
 
         Persistence persistence = TagTool.persistence;
         SQLTool sqlTool = SQLTool.getInstance();
-        for (Iterator<String> iter = tags.iterator(); iter.hasNext();) {
-            String id = iter.next();
+        while ( ! tags.isEmpty()) {
+            String id = tags.remove(0);
             Tag tag = getById(id);
-            if (tag == null) {
-                iter.remove();
+            if (tag == null)
                 continue;
-            }
+            if (tag.getParent() != null)
+                tags.add(tag.getParent());
 
             sqlTool.logTagAction(tag, Action.ASSIGN, user, ipAddress, obj);
         }
