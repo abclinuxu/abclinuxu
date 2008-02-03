@@ -40,6 +40,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import org.apache.log4j.Logger;
@@ -136,6 +137,9 @@ public class ShowObject implements AbcAction {
         env.put(VAR_CHILDREN_MAP, children);
         Tools.sync(upper);
 
+        // all these documents supports tags
+        env.put(Constants.VAR_ASSIGNED_TAGS, TagTool.getAssignedTags(item));
+
         int revision = Misc.parseInt((String) params.get(ShowRevisions.PARAM_REVISION), -1);
         if (revision != -1) {
             Versioning versioning = VersioningFactory.getVersioning();
@@ -195,8 +199,10 @@ public class ShowObject implements AbcAction {
                 return ViewGames.playTriviaGame(request, relation, env);
             case Item.BAZAAR:
                 return ViewBazaar.processAd(request, relation, env);
-            case Item.CONTENT:
+            case Item.CONTENT: {
+                env.remove(Constants.VAR_ASSIGNED_TAGS);
                 return ViewContent.show(request, env);
+            }
             case Item.TOC:
                 return ViewTOC.show(request, env);
             case Item.PERSONALITY:

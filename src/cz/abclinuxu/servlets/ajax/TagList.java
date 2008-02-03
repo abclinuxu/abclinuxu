@@ -20,6 +20,8 @@ package cz.abclinuxu.servlets.ajax;
 
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.edit.EditTag;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -27,6 +29,7 @@ import cz.abclinuxu.utils.comparator.TagTitleComparator;
 import cz.abclinuxu.data.Tag;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.GenericDataObject;
+import cz.abclinuxu.data.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,7 +49,8 @@ public class TagList implements AbcAction {
     private static Logger log = Logger.getLogger(TagList.class);
 
     public static final String PARAM_FILTER = "filter";
-    public static final String PARAM_RELATION = "node";
+    public static final String PARAM_RELATION = "rid";
+    public static final String PARAM_TAG_ID = "tagID";
 
     public static final String VAR_TAGS = "TAGS";
     public static final String VAR_CREATE_POSSIBLE = "CREATE_POSSIBLE";
@@ -81,10 +85,10 @@ public class TagList implements AbcAction {
             tags = TagTool.list(0, 30, TagTool.ListOrder.BY_USAGE, false);
             Collections.sort(tags, new TagTitleComparator(true));
 
-        } else if ("/ajax/tags/forObject".equals(url)) { // /ajax/tags/assigned?rid=1245
+        } else {
             int rid = Misc.parseInt((String) params.get(PARAM_RELATION), -1);
             if (rid == -1) {
-                log.debug("Relation parameter is empty in AJAX request for assigned tags: " + url);
+                log.debug("Relation parameter is empty in AJAX request: " + url);
                 return null;
             }
 
@@ -92,14 +96,38 @@ public class TagList implements AbcAction {
             try {
                 Tools.sync(relation);
             } catch (Exception e) {
-                log.debug("Cannot load relation " + rid + " for assigned tags!", e);
+                log.debug("Cannot load relation " + rid + " in AJAX request: " + url, e);
                 return null;
             }
-            if (! (relation.getChild() instanceof GenericDataObject)) {
+
+            if ( ! (relation.getChild() instanceof GenericDataObject)) {
                 log.debug("The relation " + rid + " does not contain GenericDataObject as child! " + relation.getChild());
                 return null;
             }
-            tags = TagTool.getAssignedTags((GenericDataObject) relation.getChild());
+
+            String ipAddress = ServletUtils.getClientIPAddress(request);
+            User user = (User) env.get(Constants.VAR_USER);
+
+            GenericDataObject object = (GenericDataObject) relation.getChild();
+            if ("/ajax/tags/assigned".equals(url)) {
+                // no action needed at this moment, it will be performed after the if statements
+
+            } else if ("/ajax/tags/assign".equals(url)) {
+                String tag = (String) params.get(PARAM_TAG_ID);
+                TagTool.assignTags(object, Collections.singletonList(tag), user, ipAddress);
+
+            } else if ("/ajax/tags/unassign".equals(url)) {
+                String tag = (String) params.get(PARAM_TAG_ID);
+                TagTool.unassignTags(object, Collections.singletonList(tag), user, ipAddress);
+
+            } else if ("/ajax/tags/create".equals(url)) {
+                Tag tag = new Tag();
+                EditTag.setTitleAndId(params, tag, false, env);
+                TagTool.create(tag, user, ipAddress);
+                TagTool.assignTags(object, Collections.singletonList(tag.getId()), user, ipAddress);
+            }
+
+            tags = TagTool.getAssignedTags(object);
         }
 
         env.put(VAR_TAGS, tags);

@@ -352,6 +352,15 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Loads tags assigned to child document of specified relation.
+     * @param relation existing relation, the child must be GenericDataObject
+     * @return List of tags (empty if no tags have been assigned)
+     */
+    public static List<Tag> getAssignedTags(Relation relation) {
+        return TagTool.getAssignedTags((GenericDataObject) relation.getChild());
+    }
+
+    /**
      * Loads revision information for specified object.
      * @param obj object that is wiki
      * @return view object encapsulating information from /data/versioning/revisions element

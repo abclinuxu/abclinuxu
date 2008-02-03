@@ -183,7 +183,7 @@ public class EditTag implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setTitleAndId(Map params, Tag tag, boolean setOnlyTitle, Map env) {
+    public static boolean setTitleAndId(Map params, Tag tag, boolean setOnlyTitle, Map env) {
         String title = (String) params.get(PARAM_TITLE);
         if (title != null)
             title = title.trim();

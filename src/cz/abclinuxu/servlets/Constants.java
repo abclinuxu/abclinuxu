@@ -189,6 +189,7 @@ public interface Constants {
     String VAR_ENVIRONMENT = "ENV";
     /** optional variable holding RSS url for current page */
     String VAR_RSS = "RSS";
+    String VAR_ASSIGNED_TAGS = "ASSIGNED_TAGS";
 
     /** parameter holding description of changes */
     String PARAM_REVISION_DESCRIPTION = "rev_descr";
