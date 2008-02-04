@@ -26,7 +26,11 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.data.Tag;
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.view.Link;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,10 +57,12 @@ public class ViewTag implements AbcAction {
     public static final String VAR_URL_AFTER_FROM = "URL_AFTER_FROM";
     public static final String VAR_TAG = "TAG";
     public static final String VAR_TAGS = "TAGS";
+    public static final String VAR_DOCUMENTS = "DOCUMENTS";
 
     private Pattern reTagId = Pattern.compile(UrlUtils.PREFIX_TAGS + "/" + "([^/?]+)");
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        SQLTool sqlTool = SQLTool.getInstance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String url = (String) env.get(Constants.VAR_REQUEST_URI);
 
@@ -70,6 +76,17 @@ public class ViewTag implements AbcAction {
             Tag tag = TagTool.getById(id);
             env.put(VAR_TAG, tag);
             parents.add(new Link(tag.getTitle(), UrlUtils.PREFIX_TAGS + "/" + tag.getId(), null));
+
+            int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
+            int count = Misc.getPageSize(30, 50, env, null);
+            int total = sqlTool.countRelationsWithTag(id, null); // todo je tag.getUsage() spolehlivym ekvivalentem?
+            // todo nevolat sqlTool, pokud je usage == 0
+//            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
+            Qualifier[] qualifiers = new Qualifier[]{new LimitQualifier(from, count)}; // todo sorting, issue: data from two tables - polozka, kategorie
+            List<Relation> relations = sqlTool.findRelationsWithTag(id, qualifiers);
+            Paging paging = new Paging(relations, from, count, total);
+            env.put(VAR_DOCUMENTS, paging);
+
             return FMTemplateSelector.select("Tags", "detail", env, request);
         } else {
             int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);

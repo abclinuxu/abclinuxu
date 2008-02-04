@@ -30,6 +30,7 @@ import cz.abclinuxu.data.Tag;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.exceptions.InvalidInputException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,18 +67,23 @@ public class TagList implements AbcAction {
             String filter = (String) params.get(PARAM_FILTER);
             filter =  (filter != null) ? filter.trim() : "";
             if (filter.length() > 0) {
+                filter = filter.toLowerCase();
                 List<Tag> tmp = new ArrayList<Tag>(tags.size() / 26);
                 for (Tag tag : tags) {
-                    if (tag.getTitle().toLowerCase().startsWith(filter.toLowerCase()))
+                    if (tag.getTitle().toLowerCase().startsWith(filter))
                         tmp.add(tag);
                 }
                 tags = tmp;
 
                 if (filter.length() > 2) {
-                    String id = TagTool.getNormalizedId(filter);
-                    Tag existingTag = TagTool.getById(id);
-                    if (existingTag == null)
-                        canBeCreated = true;
+                    try {
+                        String id = TagTool.getNormalizedId(filter);
+                        Tag existingTag = TagTool.getById(id);
+                        if (existingTag == null)
+                            canBeCreated = true;
+                    } catch (InvalidInputException e) {
+                        canBeCreated = false;
+                    }
                 }
             }
 

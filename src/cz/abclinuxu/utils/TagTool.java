@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Collections;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,6 +41,7 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.comparator.TagTitleComparator;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 /**
@@ -192,6 +194,7 @@ public class TagTool implements Configurable {
             }
             tags.add(tag);
         }
+        Collections.sort(tags, new TagTitleComparator(true));
         return tags;
     }
 

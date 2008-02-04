@@ -72,6 +72,7 @@ public final class SQLTool implements Configurable {
     public static final String STANDALONE_POLL_RELATIONS = "relations.standalone.polls";
     public static final String WIKI_RELATIONS_BY_USER = "relations.wiki.by.user";
     public static final String COUNT_WIKI_RELATIONS_BY_USER = "count.relations.wiki.by.user";
+    public static final String RELATIONS_WITH_TAGS = "relations.with.tag";
     public static final String USERS_WITH_WEEKLY_EMAIL = "users.with.weekly.email";
     public static final String USERS_WITH_FORUM_BY_EMAIL = "users.with.forum.by.email";
     public static final String USERS_WITH_ROLES = "users.with.roles";
@@ -471,6 +472,37 @@ public final class SQLTool implements Configurable {
         Map fieldMapping = new HashMap();
         fieldMapping.put(Field.UPPER, "R");
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is associated with given tag.
+     * Use Qualifiers to set additional parameters.
+     * @param tag id of tag to be searched
+     * @return List of initialized relations
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public List<Relation> findRelationsWithTag(String tag, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer((String) sql.get(RELATIONS_WITH_TAGS));
+        List params = new ArrayList();
+        params.add(tag);
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is associated with given tag.
+     * Use Qualifiers to set additional parameters.
+     * @param tag id of tag to be searched
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public int countRelationsWithTag(String tag, Qualifier[] qualifiers) {
+        StringBuffer sb = new StringBuffer((String) sql.get(RELATIONS_WITH_TAGS));
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(tag);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadNumber(sb.toString(), params);
     }
 
@@ -1970,6 +2002,7 @@ public final class SQLTool implements Configurable {
         store(NEWS_RELATIONS_BY_USER, prefs);
         store(WIKI_RELATIONS_BY_USER, prefs);
         store(COUNT_WIKI_RELATIONS_BY_USER, prefs);
+        store(RELATIONS_WITH_TAGS, prefs);
         store(RECORD_RELATIONS_BY_USER_AND_TYPE, prefs);
         store(QUESTION_RELATIONS_BY_USER, prefs);
         store(COMMENT_RELATIONS_BY_USER, prefs);

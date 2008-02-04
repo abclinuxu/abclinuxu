@@ -28,4 +28,12 @@
     </#if>
 </p>
 
+<ul>
+    <#list DOCUMENTS.data as relation>
+        <li>
+            <a href="${relation.url?default("/show/"+relation.id)}">${TOOL.childName(relation)}</a>
+        </li>
+    </#list>
+</ul>
+
 <#include "../footer.ftl">
