@@ -272,7 +272,7 @@
                     </node>
                     <node name="TagTool">
                         <map>
-                            <entry key="regexp.invalid.title" value="[^a-z0-9 +_.\-]"/>
+                            <entry key="regexp.invalid.title" value="[^a-z0-9 +_.!/=\-]"/>
                         </map>
                     </node>
                 </node>
@@ -334,6 +334,7 @@
                             <entry key="relations.categories" value="select R.cislo from kategorie K, relace R where K.cislo=R.potomek and typ_potomka='K'"/>
                             <entry key="relations.discussion" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3"/>
                             <entry key="relations.discussion.in.section" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.predchozi=? and P.typ=3"/>
+                            <entry key="relations.discussion.last.seen.by.user" value="select R.cislo from relace R, posledni_komentar K, polozka P where R.typ_potomka='P' and R.potomek=K.diskuse and P.cislo=K.diskuse and K.kdo=?" />
                             <entry key="relations.article" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and P.vytvoreno&lt;now()"/>
                             <entry key="relations.article.on.index" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and (P.podtyp!='NOTONINDEX' or P.podtyp is null) and P.vytvoreno&lt;now()"/>
                             <entry key="relations.article.within.period" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and P.vytvoreno&gt;? and P.vytvoreno&lt;?"/>
