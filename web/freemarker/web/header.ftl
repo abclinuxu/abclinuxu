@@ -88,8 +88,9 @@
                 <a href="${URL.noPrefix("/Profile/"+USER.id)}">${USER.name}</a> |
                 <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")?default("UNDEF")>
                 <#if blogName!="UNDEF"><a href="/blog/${blogName}">Blog</a> |</#if>
-                <a href="/History?type=comments&amp;uid=${USER.id}">Komentáře</a> |
-                <a href="/History?type=questions&amp;uid=${USER.id}">Dotazy</a> |
+                <a href="/History?type=comments&amp;uid=${USER.id}">Mé komentáře</a> |
+                <a href="/History?type=discussions&amp;uid=${USER.id}&amp;filter=last">Prohlédnuté diskuse</a> |
+                <a href="/History?type=questions&amp;uid=${USER.id}">Mé dotazy</a> |
                 <a href="/EditUser/${USER.id}?action=editBookmarks">Záložky</a> |
                 <a href="/Profile/${USER.id}?action=myPage">Nastavení</a> |
                 <a href="${URL.noPrefix("/Index?logout=true")}">Odhlásit</a>

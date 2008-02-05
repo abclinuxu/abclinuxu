@@ -48,6 +48,7 @@ public class History implements AbcAction {
     public static final String PARAM_TYPE = "type";
     /** specifies, which user created the data */
     public static final String PARAM_USER_SHORT = ViewUser.PARAM_USER_SHORT;
+    public static final String PARAM_FILTER = "filter";
 
     public static final String VALUE_TYPE_ARTICLES = "articles";
     public static final String VALUE_TYPE_NEWS = "news";
@@ -60,6 +61,8 @@ public class History implements AbcAction {
     public static final String VALUE_TYPE_PERSONALITIES = "personalities";
     public static final String VALUE_TYPE_WIKI = "wiki";
     public static final String VALUE_TYPE_FAQ = "faq";
+
+    public static final String VALUE_FILTER_LAST = "last";
 
     static final Qualifier[] QUALIFIERS_ARRAY = new Qualifier[]{};
 
@@ -81,6 +84,7 @@ public class History implements AbcAction {
         int count = Misc.parseInt((String)params.get(Constants.PARAM_COUNT),20);
         count = Misc.limit(count, 1, 50);
         int uid = Misc.parseInt((String)params.get(PARAM_USER_SHORT),0);
+        String filter = (String) params.get(PARAM_FILTER);
 
         List data;
         int total;
@@ -144,9 +148,15 @@ public class History implements AbcAction {
             type = VALUE_TYPE_SOFTWARE;
 
         } else if ( VALUE_TYPE_DISCUSSION.equalsIgnoreCase(type) ) {
-            qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
-            total = sqlTool.countDiscussionRelations();
-            data = sqlTool.findDiscussionRelations(qualifiers);
+            if (uid > 0 && VALUE_FILTER_LAST.equals(filter)) {
+                qualifiers = getQualifiers(params, Qualifier.SORT_BY_WHEN, Qualifier.ORDER_DESCENDING, from, count);
+                total = sqlTool.countLastSeenDiscussionRelationsBy(uid);
+                data = sqlTool.findLastSeenDiscussionRelationsBy(uid, qualifiers);
+            } else {
+                qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
+                total = sqlTool.countDiscussionRelations();
+                data = sqlTool.findDiscussionRelations(qualifiers);
+            }
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_DISCUSSION;
 
@@ -201,26 +211,26 @@ public class History implements AbcAction {
 
         Tools.syncList(found.getData());
 
-        StringBuffer sb = new StringBuffer("&amp;count=");
-        sb.append(found.getPageSize());
+        StringBuffer sb = new StringBuffer("&amp;count=").append(found.getPageSize());
         if (found.isQualifierSet(Qualifier.SORT_BY_CREATED.toString()))
-            sb.append("&amp;" + Constants.PARAM_ORDER_BY + "=" + Constants.ORDER_BY_CREATED);
+            sb.append("&amp;").append(Constants.PARAM_ORDER_BY).append("=").append(Constants.ORDER_BY_CREATED);
         else if (found.isQualifierSet(Qualifier.SORT_BY_UPDATED.toString()))
-            sb.append("&amp;" + Constants.PARAM_ORDER_BY + "=" + Constants.ORDER_BY_UPDATED);
+            sb.append("&amp;").append(Constants.PARAM_ORDER_BY).append("=").append(Constants.ORDER_BY_UPDATED);
         else if (found.isQualifierSet(Qualifier.SORT_BY_WHEN.toString()))
-            sb.append("&amp;" + Constants.PARAM_ORDER_BY + "=" + Constants.ORDER_BY_WHEN);
+            sb.append("&amp;").append(Constants.PARAM_ORDER_BY).append("=").append(Constants.ORDER_BY_WHEN);
         else if (found.isQualifierSet(Qualifier.SORT_BY_ID.toString()))
-            sb.append("&amp;" + Constants.PARAM_ORDER_BY + "=" + Constants.ORDER_BY_ID);
+            sb.append("&amp;").append(Constants.PARAM_ORDER_BY ).append("=").append(Constants.ORDER_BY_ID);
 
         if ( found.isQualifierSet(Qualifier.ORDER_DESCENDING.toString()) )
-            sb.append("&amp;" + Constants.PARAM_ORDER_DIR + "=" + Constants.ORDER_DIR_DESC);
+            sb.append("&amp;").append(Constants.PARAM_ORDER_DIR).append("=").append(Constants.ORDER_DIR_DESC);
         else if ( found.isQualifierSet(Qualifier.ORDER_ASCENDING.toString()) )
-            sb.append("&amp;" + Constants.PARAM_ORDER_DIR + "=" + Constants.ORDER_DIR_ASC);
+            sb.append("&amp;").append(Constants.PARAM_ORDER_DIR).append("=").append(Constants.ORDER_DIR_ASC);
 
-        if (uid > 0) {
-            sb.append("&amp;" + PARAM_USER_SHORT + "=");
-            sb.append(uid);
-        }
+        if (uid > 0)
+            sb.append("&amp;").append(PARAM_USER_SHORT).append("=").append(uid);
+
+        if (filter != null)
+            sb.append("&amp;").append(PARAM_FILTER).append("=").append(filter);
 
         env.put(VAR_URL_BEFORE_FROM, "/History?type="+type+"&amp;from=");
         env.put(VAR_URL_AFTER_FROM, sb.toString());

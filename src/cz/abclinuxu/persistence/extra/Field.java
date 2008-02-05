@@ -63,6 +63,7 @@ public class Field {
     public static final Field CHILD_TYPE = new Field("CHILD_TYPE", new PersistenceMapping.Table[]{PersistenceMapping.Table.RELATION});
     public static final Field CHILD = new Field("CHILD", new PersistenceMapping.Table[]{PersistenceMapping.Table.RELATION});
     public static final Field DAY = new Field("DAY", new PersistenceMapping.Table[]{PersistenceMapping.Table.STATISTICS});
+    public static final Field WHEN = new Field("WHEN", new PersistenceMapping.Table[]{PersistenceMapping.Table.LAST_SEEN_COMMENT});
 
     private final String myName; // for debug only
     private Set compatibility;

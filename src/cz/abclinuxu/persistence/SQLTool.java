@@ -57,6 +57,7 @@ public final class SQLTool implements Configurable {
     public static final String SECTION_RELATIONS_BY_TYPE = "relations.section.by.type";
     public static final String DISCUSSION_RELATIONS = "relations.discussion";
     public static final String DISCUSSION_RELATIONS_IN_SECTION = "relations.discussion.in.section";
+    public static final String LAST_SEEN_DISCUSSION_RELATIONS_BY_USER = "relations.discussion.last.seen.by.user";
     public static final String ARTICLE_RELATIONS = "relations.article";
     public static final String ARTICLES_ON_INDEX_RELATIONS = "relations.article.on.index";
     // todo calculate it dynamically with findqualifier
@@ -452,7 +453,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(ITEM_RELATIONS_BY_TYPE));
         List params = new ArrayList();
         params.add(type);
-        Map fieldMapping = new HashMap();
+        Map<Field, String> fieldMapping = new HashMap<Field, String>();
         fieldMapping.put(Field.UPPER, "R");
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadRelations(sb.toString(), params);
@@ -469,7 +470,7 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(type);
-        Map fieldMapping = new HashMap();
+        Map<Field, String> fieldMapping = new HashMap<Field, String>();
         fieldMapping.put(Field.UPPER, "R");
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadNumber(sb.toString(), params);
@@ -694,6 +695,35 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds relations, where child is discussion item previously seen by specified user.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public List<Relation> findLastSeenDiscussionRelationsBy(int who, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer((String) sql.get(LAST_SEEN_DISCUSSION_RELATIONS_BY_USER));
+        List params = new ArrayList();
+        params.add(who);
+        Map<Field, String> fieldMapping = new HashMap<Field, String>();
+        fieldMapping.put(Field.WHEN, "K");
+        appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is discussion item previously seen by specified user.
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public int countLastSeenDiscussionRelationsBy(int who) {
+        StringBuffer sb = new StringBuffer((String) sql.get(LAST_SEEN_DISCUSSION_RELATIONS_BY_USER));
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(who);
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
      * Finds relations, where child is article item in the section folder.
      * Items with property created set to future and subtype equal to NOINDEX are skipped.
      * Use Qualifiers to set additional parameters.
@@ -704,7 +734,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(ARTICLES_ON_INDEX_RELATIONS));
         List params = new ArrayList();
-        Map fieldMapping = new HashMap();
+        Map<Field, String> fieldMapping = new HashMap<Field, String>();
         fieldMapping.put(Field.UPPER, "R");
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadRelations(sb.toString(), params);
@@ -726,7 +756,7 @@ public final class SQLTool implements Configurable {
             params.add(section);
             sb.append(" and K.cislo=?");
         }
-        Map fieldMapping = new HashMap();
+        Map<Field, String> fieldMapping = new HashMap<Field, String>();
         fieldMapping.put(Field.UPPER, "R");
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadRelations(sb.toString(), params);
@@ -761,7 +791,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new java.sql.Date(from.getTime()));
         params.add(new java.sql.Date(until.getTime()));
-        Map fieldMapping = new HashMap();
+        Map<Field, String> fieldMapping = new HashMap<Field, String>();
         fieldMapping.put(Field.UPPER, "R");
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadRelations(sb.toString(), params);
@@ -878,7 +908,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(ARTICLE_RELATIONS_BY_AUTHOR));
         List params = new ArrayList();
         params.add(authorId);
-        Map fieldMapping = new HashMap();
+        Map<Field, String> fieldMapping = new HashMap<Field, String>();
         fieldMapping.put(Field.UPPER, "R");
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadRelations(sb.toString(), params);
@@ -1994,6 +2024,7 @@ public final class SQLTool implements Configurable {
         store(SECTION_RELATIONS_BY_TYPE, prefs);
         store(DISCUSSION_RELATIONS, prefs);
         store(DISCUSSION_RELATIONS_IN_SECTION, prefs);
+        store(LAST_SEEN_DISCUSSION_RELATIONS_BY_USER, prefs);
         store(ARTICLE_RELATIONS, prefs);
         store(ARTICLE_RELATIONS_WITHIN_PERIOD, prefs);
         store(ARTICLES_ON_INDEX_RELATIONS, prefs);
@@ -2083,41 +2114,29 @@ public final class SQLTool implements Configurable {
      * @param qualifiers list of query conditions and sort order and limit qualifiers. The order is important.
      * @param fieldMapping key is PersistenceMapping.Table, value is tableNick to be used.
      */
-    private void appendQualifiers(StringBuffer sb, Qualifier[] qualifiers, List params, String defaultTableNick, Map fieldMapping) {
+    private void appendQualifiers(StringBuffer sb, Qualifier[] qualifiers, List params, String defaultTableNick, Map<Field, String> fieldMapping) {
         if (qualifiers == null || qualifiers.length == 0)
             return;
         if (fieldMapping == null)
-            fieldMapping = Collections.EMPTY_MAP;
+            fieldMapping = Collections.emptyMap();
         Qualifier qualifier;
         for (int i = 0; i < qualifiers.length; i++) {
             qualifier = qualifiers[i];
             if (qualifier.equals(Qualifier.SORT_BY_CREATED)) {
                 sb.append(" order by ");
-                if (defaultTableNick != null) {
-                    sb.append(defaultTableNick);
-                    sb.append(".");
-                }
+                addTableNick(Field.CREATED, fieldMapping, defaultTableNick, sb);
                 sb.append("vytvoreno");
             } else if (qualifier.equals(Qualifier.SORT_BY_UPDATED)) {
                 sb.append(" order by ");
-                if (defaultTableNick != null) {
-                    sb.append(defaultTableNick);
-                    sb.append(".");
-                }
+                addTableNick(Field.UPDATED, fieldMapping, defaultTableNick, sb);
                 sb.append("zmeneno");
             } else if (qualifier.equals(Qualifier.SORT_BY_WHEN)) {
                 sb.append(" order by ");
-                if (defaultTableNick != null) {
-                    sb.append(defaultTableNick);
-                    sb.append(".");
-                }
+                addTableNick(Field.WHEN, fieldMapping, defaultTableNick, sb);
                 sb.append("kdy");
             } else if (qualifier.equals(Qualifier.SORT_BY_ID)) {
                 sb.append(" order by ");
-                if (defaultTableNick != null) {
-                    sb.append(defaultTableNick);
-                    sb.append(".");
-                }
+                addTableNick(Field.ID, fieldMapping, defaultTableNick, sb);
                 sb.append("cislo");
             } else if (qualifier.equals(Qualifier.ORDER_ASCENDING)) {
                 sb.append(" asc");
@@ -2137,6 +2156,22 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Appends table nick for specified field into stringbuffer. The priority is to search fieldMapping first,
+     * then use defaultTableNick if defined, otherwise do nothing.
+     */
+    private void addTableNick(Field field, Map<Field, String> fieldMapping, String defaultTableNick, StringBuffer sb) {
+        String tableNick = null;
+        if (fieldMapping != null)
+            tableNick = (String) fieldMapping.get(field);
+        if (tableNick == null)
+            tableNick = defaultTableNick;
+        if (tableNick != null) {
+            sb.append(tableNick);
+            sb.append(".");
+        }
+    }
+
+    /**
      * Changes first select clause to count. E.g. from id to count(id).
      */
     private void changeToCountStatement(StringBuffer sb) {
@@ -2150,7 +2185,7 @@ public final class SQLTool implements Configurable {
      * Append comparation condition to stringbuffer.
      */
     private void appendCompareCondition(StringBuffer sb, CompareCondition condition, List params,
-                                        String defaultTableNick, Map fieldMapping) {
+                                        String defaultTableNick, Map<Field, String> fieldMapping) {
         int where = sb.indexOf("where ") + "where ".length();
         if (where < sb.length())
             sb.append(" and "); // probably there was at least one condition after where

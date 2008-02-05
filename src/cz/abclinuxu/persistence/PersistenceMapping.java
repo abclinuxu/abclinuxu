@@ -43,6 +43,7 @@ public class PersistenceMapping {
         public static final Table ACTION = new Table("ACTION");
         public static final Table VERSION = new Table("VERSION");
         public static final Table COMMENT = new Table("COMMENT");
+        public static final Table LAST_SEEN_COMMENT = new Table("LAST_SEEN_COMMENT");
 
         private final String myName; // for debug only
 
