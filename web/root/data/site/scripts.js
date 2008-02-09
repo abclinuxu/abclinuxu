@@ -525,7 +525,7 @@ StitekAJAX.prototype = {
 			url += "&tagID="+this.stitekID;
 		}
 		if (this.stitekName) {
-			url += "&title="+this.stitekName;
+			url += "&title="+encodeURI(this.stitekName);
 		}
 		return url;
 	},
@@ -587,7 +587,7 @@ SeznamStitkuAJAX.prototype = {
 	getURL: function() {
 		var url = this.servletPath;
 		if (this.filtr) {
-			url += "?filter="+this.filtr;
++			url += "?filter="+encodeURI(this.filtr);
 		}
 		return url;
 	},
