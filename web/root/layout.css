@@ -230,7 +230,7 @@ blockquote {
 	white-space: nowrap;
 }
 
-.pwd-box {
+.pwd-box, .tag-box {
 	min-height: 1.9em;
 	border-bottom: 1px dotted;
 	font-size: small;
@@ -1010,9 +1010,9 @@ div.autocomplete ul li span.informal { size: 80%;}
                width: 49px;
                height: 18px;
                background: no-repeat; }
- .itbiz .list { margin: 0;
-                padding-left: 1.3em;
-                list-style-type: circle; }
+.itbiz .list { margin: 0;
+               padding-left: 1.3em;
+               list-style-type: circle; }
 
 .modalWindow {
  	position: fixed;
@@ -1051,17 +1051,8 @@ div.autocomplete ul li span.informal { size: 80%;}
 	text-decoration: none;
 }
 
-/*
-.closeButton {
-	position: absolute;
-	top: 3px;
-	right: 3px;
-	cursor: pointer;
-}
-*/
-
 .modalStitky {
- 	padding: 5px;
+ 	padding: 0.5em 0.5em 0.5em 1em;
  	overflow: hidden;
 }
 
@@ -1115,10 +1106,3 @@ div.autocomplete ul li span.informal { size: 80%;}
 .editTags {
 	margin-left: 1em;
 }
-
-/*
-.stitkyOblibene {
-	width: 70%;
-	margin-left: 30%;
-}
-*/

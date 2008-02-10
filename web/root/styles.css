@@ -37,7 +37,7 @@ a:hover {
 	background-color: white;
 }
 
-input, select, textarea, .button {
+input, select, textarea, .button, .editTags {
 	background-color: #EEEEEE;
 	color: black;
 }
@@ -219,7 +219,7 @@ a.thumb:hover,
 .swlist .meta,
 .faq .meta { color: gray; }
 
-.ds_toolbox, .pwd-box {
+.ds_toolbox, .pwd-box, .tag-box {
 	background-color: #ECECEC;
 	border-color: silver;
 }
@@ -407,5 +407,4 @@ div.autocomplete ul li.selected { background-color: #FFF8C3;}
 .itbiz .header a:hover { text-decoration: none; }
 .itbiz a img:hover, a.stitek:hover { background-color: transparent; }
 
-.stitek:hover { text-decoration: line-through;}
-
+.stitek:hover { text-decoration: line-through; }
