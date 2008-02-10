@@ -413,6 +413,8 @@ function StitkyDialog(nodeID) {
 	this.stitkyOblibene = Toolkit.appendElement(row.insertCell(1), "div", "stitkyOblibene");
 	Toolkit.appendElement(this.dialog.window, "p", "note", null, "Úpravy jsou prováděny v reálném čase, proto není nutné je jakkoliv potvrzovat nebo odesílat. Chcete-li okno pro nastavování štítků uzavřít, klikněte buď na křížek v pravém horním rohu, kamkoliv mimo okno, nebo stiskněte Escape.");
 
+	this.filtrInput.focus();
+
 	Toolkit.addEventListener(this.filtrInput, "keypress", "filtrChange", this);
 	Toolkit.addEventListener(this.pridatButton, "click", "pridatStitek", this);
 
@@ -422,7 +424,7 @@ function StitkyDialog(nodeID) {
 }
 
 StitkyDialog.prototype = {
-	seznamSize: 8,
+	seznamSize: 12,
 
 	refreshStitky: function(element) {
 		this.prirazeneStitkyElement.parentNode.replaceChild(element, this.prirazeneStitkyElement);
@@ -462,7 +464,7 @@ StitkyDialog.prototype = {
 				}
 				var a = Toolkit.appendElement(element, "a", null, null, this.stitky[i].title);
 				a.href = "/stitky/"+this.stitky[i].id;
-				a.title = "Zobrazit objekty, které mají přiřazen tento štítek";
+				a.title = "Zobrazit objekty, které mají přiřazen štítek „"+this.stitky[i].title+"“.";
 			}
 		} else {
 			Toolkit.appendElement(element, "i", null, null, "není přiřazen žádný štítek");
