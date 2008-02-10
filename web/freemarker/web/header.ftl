@@ -89,7 +89,7 @@
                 <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")?default("UNDEF")>
                 <#if blogName!="UNDEF"><a href="/blog/${blogName}">Blog</a> |</#if>
                 <a href="/History?type=comments&amp;uid=${USER.id}">Mé komentáře</a> |
-                <a href="/History?type=discussions&amp;uid=${USER.id}&amp;filter=last">Prohlédnuté diskuse</a> |
+                <a href="/History?type=discussions&amp;uid=${USER.id}&amp;filter=last">Navštívené diskuse</a> |
                 <a href="/History?type=questions&amp;uid=${USER.id}">Mé dotazy</a> |
                 <a href="/EditUser/${USER.id}?action=editBookmarks">Záložky</a> |
                 <a href="/Profile/${USER.id}?action=myPage">Nastavení</a> |
@@ -251,21 +251,22 @@
                 <#if link_has_next> / </#if>
               </#list>
             </div>
-			<#if ASSIGNED_TAGS?exists && USER?exists && USER.hasRole("tag admin")>
-	            <div class="stitky">
-	              <a href="/stitky">Štítky</a>:
-	              <span id="prirazeneStitky">
-	              	<#if ASSIGNED_TAGS?size &gt; 0>
-	              		<#list ASSIGNED_TAGS as tag>
-	              			<a href="/stitky/${tag.id}">${tag.title}</a><#if tag_has_next>, </#if>
-	              		</#list>
-	              	<#else>
-	              		<i>není přiřazen žádný štítek</i>
-	              	</#if>
-	              </span>
-	            </div>
-             </#if>
           </div>
+
+          <#if ASSIGNED_TAGS?exists && USER?exists && USER.hasRole("tag admin")>
+            <div class="tag-box">
+              <a href="/stitky">Štítky</a>:
+              <span id="prirazeneStitky">
+                <#if ASSIGNED_TAGS?size &gt; 0>
+                  <#list ASSIGNED_TAGS as tag>
+                    <a href="/stitky/${tag.id}" title="Zobrazit objekty, které mají přiřazen štítek „${tag.title}“.">${tag.title}</a><#if tag_has_next>, </#if>
+                  </#list>
+                <#else>
+                  <i>není přiřazen žádný štítek</i>
+                </#if>
+              </span>
+            </div>
+          </#if>
         </#if>
 
         <#if SYSTEM_CONFIG.isMaintainanceMode()>
