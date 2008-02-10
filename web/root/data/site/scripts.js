@@ -587,7 +587,7 @@ SeznamStitkuAJAX.prototype = {
 	getURL: function() {
 		var url = this.servletPath;
 		if (this.filtr) {
-+			url += "?filter="+encodeURI(this.filtr);
+			url += "?filter="+encodeURI(this.filtr);
 		}
 		return url;
 	},
