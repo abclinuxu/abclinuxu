@@ -12,3 +12,16 @@
 .sun-box p { padding: 0.3em 0 0.5em 0.5em; }
 .sun-box a { color: white; }
 .sun-box a:hover { background-color: #E97D19; }
+
+.sunnysoft-box { background: white;
+                 color: black;
+                 font-size: small;
+                 padding: 0.5em;
+                 border: 2px solid #0059ff;
+                 margin-bottom: 0.5em;
+                 clear: right;
+                 min-height: 65px;
+}
+.sunnysoft-box a { color: #0059ff; text-decoration: none; }
+.sunnysoft-box a:hover { color: white; background: #0059ff; text-decoration: underline; }
+.sunnysoft-box ul { margin: 0; }
