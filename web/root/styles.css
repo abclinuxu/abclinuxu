@@ -347,7 +347,7 @@ a.selected:hover {
 
 .search_fragments { color: gray; }
 
-.anketa-tr-dark { background-color: #E6E6E6; }
+.odd { background-color: #E6E6E6; }
 
 .game-results { background-color: #D3D3D3; }
 .game-wrong { color: #8B0000; } /* darkred */

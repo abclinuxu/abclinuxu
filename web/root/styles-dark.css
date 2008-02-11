@@ -371,7 +371,7 @@ a.selected:hover {
 
 .search_fragments { color: #9A9A9A; }
 
-.anketa-tr-dark { background-color: #494949; }
+.odd { background-color: #494949; }
 
 .game-results { background-color: gray; }
 .game-wrong { color: #FFC0CB; } /* pink */
