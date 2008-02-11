@@ -266,8 +266,6 @@ ${TOOL.xpath(ITEM, "/data/content")}
 
 <p><b>Nástroje</b>: <a rel="nofollow" href="${story_url}?varianta=print">Tisk</a></p>
 
-<@lib.advertisement id="obsah-box" />
-
 <#if (ITEM.type==12)>
     <h3>Komentáře</h3>
     <#if CHILDREN.discussion?exists>
