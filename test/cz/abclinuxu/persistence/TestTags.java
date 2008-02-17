@@ -42,7 +42,7 @@ import java.util.Collections;
  * @since 16.9.2007
  */
 public class TestTags extends TestCase {
-    Persistence persistence;
+    protected Persistence persistence;
 
     /**
      * Tests complete tag functionality

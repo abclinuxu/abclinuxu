@@ -78,7 +78,7 @@ public class ViewTag implements AbcAction {
             parents.add(new Link(tag.getTitle(), UrlUtils.PREFIX_TAGS + "/" + tag.getId(), null));
 
             int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-            int count = Misc.getPageSize(30, 50, env, null);
+            int count = Misc.getPageSize(50, 150, env, null);
             int total = sqlTool.countRelationsWithTag(id, null); // todo je tag.getUsage() spolehlivym ekvivalentem?
             // todo nevolat sqlTool, pokud je usage == 0
 //            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};

@@ -262,6 +262,7 @@ CREATE TABLE stitkovani (
   stitek VARCHAR(30) NOT NULL                    -- id stitku
 );
 ALTER TABLE stitkovani ADD UNIQUE INDEX in_stitkovani_vazba (typ,cislo,stitek);
+ALTER TABLE stitkovani ADD INDEX in_stitkovani_stitek (stitek);
 
 -- log akci kolem stitku
 CREATE TABLE stitky_log (

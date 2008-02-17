@@ -35,6 +35,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.email.EmailSender;
@@ -260,6 +261,7 @@ public class EditArticle implements AbcAction {
             Relation recordRelation = new Relation(item,record,relation.getId());
             persistence.create(recordRelation);
             recordRelation.getParent().addChildRelation(recordRelation);
+            TagTool.assignDetectedTags(item, user);
 
             if (upper.getId() != Constants.REL_ARTICLEPOOL && item.getData().selectSingleNode("/data/forbid_discussions") == null)
                 EditDiscussion.createEmptyDiscussion(relation, user, persistence);

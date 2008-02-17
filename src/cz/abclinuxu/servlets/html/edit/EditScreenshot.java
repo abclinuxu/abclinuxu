@@ -41,6 +41,7 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.PathGenerator;
 import cz.abclinuxu.utils.ImageTool;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
@@ -177,6 +178,7 @@ public class EditScreenshot implements AbcAction {
         Relation dataRelation = new Relation(item, data, relation.getId());
         persistence.create(dataRelation);
         dataRelation.getParent().addChildRelation(dataRelation);
+        TagTool.assignDetectedTags(item, user);
 
         EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 

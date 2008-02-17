@@ -34,6 +34,7 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 
@@ -171,6 +172,7 @@ public class EditSeries implements AbcAction {
         relation.setChild(item);
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
+        TagTool.assignDetectedTags(item, user);
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);

@@ -34,6 +34,7 @@ import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.parser.safehtml.WikiContentGuard;
 import cz.abclinuxu.utils.email.monitor.*;
 import org.apache.log4j.Logger;
@@ -197,6 +198,7 @@ public class EditContent implements AbcAction {
 
         relation.setChild(item);
         persistence.create(relation);
+        TagTool.assignDetectedTags(item, user);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();

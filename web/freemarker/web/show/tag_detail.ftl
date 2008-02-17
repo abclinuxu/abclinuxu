@@ -36,4 +36,15 @@
     </#list>
 </ul>
 
+<p>
+    <#if (DOCUMENTS.currentPage.row > 0) >
+        <#assign start=DOCUMENTS.currentPage.row-DOCUMENTS.pageSize><#if (start<0)><#assign start=0></#if>
+        <a href="/stitky/${TAG.id}?from=${start}">Předchozí stránka</a> &#8226;
+    </#if>
+    <#assign start=DOCUMENTS.currentPage.row + DOCUMENTS.pageSize>
+    <#if (start < DOCUMENTS.total) >
+        <a href="/stitky/${TAG.id}?from=${start}">Další stránka</a>
+    </#if>
+</p>
+
 <#include "../footer.ftl">

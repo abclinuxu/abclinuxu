@@ -30,6 +30,7 @@ import cz.abclinuxu.persistence.versioning.Versioning;
 import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
@@ -178,6 +179,7 @@ public class EditHardware implements AbcAction {
             relation.setUrl(url);
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
+        TagTool.assignDetectedTags(item, user);
 
         // run monitor
         MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.HARDWARE, relation, url);

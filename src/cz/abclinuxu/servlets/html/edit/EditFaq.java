@@ -36,6 +36,7 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.format.Format;
@@ -164,6 +165,7 @@ public class EditFaq implements AbcAction {
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);
         persistence.create(relation);
+        TagTool.assignDetectedTags(item, user);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();

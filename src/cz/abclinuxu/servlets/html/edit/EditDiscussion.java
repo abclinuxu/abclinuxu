@@ -36,6 +36,7 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.PathGenerator;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
@@ -333,6 +334,8 @@ public class EditDiscussion implements AbcAction {
         rel2.getParent().addChildRelation(rel2);
 
         storeAttachments(rel2, discussion, comment, env, request);
+
+        TagTool.assignDetectedTags(discussion, user);
 
         // run monitor
         String url = relation.getUrl();

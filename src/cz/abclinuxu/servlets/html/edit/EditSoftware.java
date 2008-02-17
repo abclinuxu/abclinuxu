@@ -35,6 +35,7 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.email.monitor.MonitorAction;
 import cz.abclinuxu.utils.email.monitor.UserAction;
@@ -199,6 +200,7 @@ public class EditSoftware implements AbcAction, Configurable {
 
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
+        TagTool.assignDetectedTags(item, user);
 
         // todo prvni revize nebude obsahovat RSS v tabulce verze
         setRssUrl(params, item, relation.getId());

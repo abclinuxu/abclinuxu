@@ -33,6 +33,7 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
@@ -171,6 +172,7 @@ public class EditBazaar implements AbcAction {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
+        TagTool.assignDetectedTags(item, user);
         EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
         FeedGenerator.updateBazaar();

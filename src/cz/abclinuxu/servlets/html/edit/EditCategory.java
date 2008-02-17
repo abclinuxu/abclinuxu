@@ -35,6 +35,7 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.parser.safehtml.WikiContentGuard;
@@ -155,6 +156,8 @@ public class EditCategory implements AbcAction {
 
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
+
+        TagTool.assignDetectedTags(category, user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));

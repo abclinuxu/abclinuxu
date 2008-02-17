@@ -23,6 +23,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Collections;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.StringTokenizer;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,6 +37,9 @@ import org.apache.log4j.Logger;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.Tag;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.view.ParsedDocument;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -42,6 +50,7 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.comparator.TagTitleComparator;
+import cz.abclinuxu.misc.DocumentParser;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 /**
@@ -68,6 +77,7 @@ public class TagTool implements Configurable {
     }
 
     public static void init() {
+        cache.clear();
         persistence.getTags(); // rereads the tag cache
     }
 
@@ -114,20 +124,24 @@ public class TagTool implements Configurable {
     public static void assignTags(GenericDataObject obj, List<String> tags, User user, String ipAddress) {
         if (tags == null)
             return;
-        else
-            tags = new ArrayList<String>(tags);
 
         Persistence persistence = TagTool.persistence;
         SQLTool sqlTool = SQLTool.getInstance();
+        HashSet<String> tagSet = new HashSet<String>(tags);
+        tags = new ArrayList<String>(tagSet); // duplicates are gone
         for (ListIterator<String> iter = tags.listIterator(); iter.hasNext();) {
             String id = iter.next();
             Tag tag = getById(id);
             if (tag == null)
                 continue;
-            if (tag.getParent() != null)
-            	iter.add(tag.getParent());
 
             sqlTool.logTagAction(tag, Action.ASSIGN, user, ipAddress, obj);
+
+            String parentTag = tag.getParent();
+            if (parentTag != null && ! tagSet.contains(parentTag)) {
+                iter.add(parentTag);
+                tagSet.add(parentTag);
+            }
         }
         persistence.assignTags(obj, tags);
     }
@@ -215,6 +229,55 @@ public class TagTool implements Configurable {
             throw new InvalidInputException("Zakázaný název štítku!");
 
         return id;
+    }
+
+    /**
+     * Attempts to find tags present in ParsedDocument. Only single word match is performed.
+     * Tags consisting of multiple words or special characters are not detected.
+     * @param doc document to be searched
+     * @return set of detected tags
+     */
+    public static Set<String> detectTags(ParsedDocument doc) {
+        DiacriticRemover diacriticsTool = DiacriticRemover.getInstance();
+        List<Tag> all = cache.list(0, -1, ListOrder.BY_USAGE, false);
+        Map<String, String> tags = new HashMap<String, String>(all.size() + 1, 1.0f);
+        for (Tag tag : all) {
+            tags.put(diacriticsTool.removeDiacritics(tag.getTitle().toLowerCase()), tag.getId().toLowerCase());
+        }
+
+        StringTokenizer stk = new StringTokenizer(doc.getContent(), " ,.;!\t\n\r");
+        Set<String> detectedTags = new HashSet<String>();
+        String token, tag;
+        while (stk.hasMoreTokens()) {
+            token = stk.nextToken();
+            token = diacriticsTool.removeDiacritics(token.toLowerCase());
+            tag = tags.get(token);
+            if (tag != null)
+                detectedTags.add(tag);
+        }
+        return detectedTags;
+    }
+
+    /**
+     * Automatically detects tags in given document and assigns them to it.
+     * @param obj document to be parsed and assigned by found tags
+     * @param user user performing the action
+     */
+    public static void assignDetectedTags(Item obj, User user) {
+        ParsedDocument parsedDocument = DocumentParser.parse(obj);
+        List<String> tags = new ArrayList<String>(detectTags(parsedDocument));
+        assignTags(obj, tags, user, null);
+    }
+
+    /**
+     * Automatically detects tags in given document and assigns them to it.
+     * @param obj document to be parsed and assigned by found tags
+     * @param user user performing the action
+     */
+    public static void assignDetectedTags(Category obj, User user) {
+        ParsedDocument parsedDocument = DocumentParser.parse(obj);
+        List<String> tags = new ArrayList<String>(detectTags(parsedDocument));
+        assignTags(obj, tags, user, null);
     }
 
     /**

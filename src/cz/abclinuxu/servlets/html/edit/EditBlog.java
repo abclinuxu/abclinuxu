@@ -34,6 +34,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.parser.safehtml.BlogHTMLGuard;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -74,7 +75,6 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 import org.dom4j.io.DOMWriter;
 import org.htmlparser.util.ParserException;
-import freemarker.template.SimpleHash;
 import freemarker.ext.dom.NodeModel;
 
 /**
@@ -206,14 +206,14 @@ public class EditBlog implements AbcAction, Configurable {
             if ( ! user.hasRole(Roles.BLOG_DIGEST_ADMIN) )
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             ActionProtector.ensureContract(request, EditBlog.class, true, false, false, true);
-            return actionToggleStoryDigest(response, blog, env);
+            return actionToggleStoryDigest(response, env);
         }
 
         if ( ACTION_TOGGLE_BAN.equals(action) ) {
             if ( ! user.hasRole(Roles.BLOG_DIGEST_ADMIN) )
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             ActionProtector.ensureContract(request, EditBlog.class, true, false, false, true);
-            return actionToggleStoryBan(response, blog, env);
+            return actionToggleStoryBan(response, env);
         }
 
         if ( user.getId()!=blog.getOwner() && !user.hasRole(Roles.ROOT) )
@@ -432,6 +432,8 @@ public class EditBlog implements AbcAction, Configurable {
                 persistence.update(relation);
             }
 
+            TagTool.assignDetectedTags(story, user);
+
             incrementArchiveRecord(blog.getData().getRootElement(), new Date());
             persistence.update(blog);
             FeedGenerator.updateBlog(blog);
@@ -491,6 +493,7 @@ public class EditBlog implements AbcAction, Configurable {
     protected String actionEditStoryStep2(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
+        User user = (User) env.get(Constants.VAR_USER);
         storeCategories(blog, env);
 
         Relation relation = (Relation) env.get(VAR_STORY);
@@ -513,7 +516,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         boolean delayed = params.get(PARAM_DELAY) != null;
         if (story.getType()==Item.UNPUBLISHED_BLOG && ! delayed)
-            publishDelayedStory(story, blog, relation);
+            publishDelayedStory(story, blog, relation, user);
         else
             persistence.update(story);
 
@@ -525,7 +528,7 @@ public class EditBlog implements AbcAction, Configurable {
         return null;
     }
 
-    protected void publishDelayedStory(Item story, Category blog, Relation relation) {
+    protected void publishDelayedStory(Item story, Category blog, Relation relation, User user) {
         Persistence persistence = PersistenceFactory.getPersistence();
         Date timeNow = new Date();
 
@@ -547,6 +550,8 @@ public class EditBlog implements AbcAction, Configurable {
             unpublishedStory.detach();
         persistence.update(blog);
 
+        TagTool.assignDetectedTags(story, user);
+
         sendDigestMessage(relation);
     }
 
@@ -554,11 +559,12 @@ public class EditBlog implements AbcAction, Configurable {
      * Automatically switch delayed story to published state.
      */
     protected String actionPublishDelayedStory(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Relation relation = (Relation) env.get(VAR_STORY);
         Item story = (Item) relation.getChild();
 
-        publishDelayedStory(story, blog, relation);
+        publishDelayedStory(story, blog, relation, user);
 
         FeedGenerator.updateBlog(blog);
         VariableFetcher.getInstance().refreshStories();
@@ -571,7 +577,7 @@ public class EditBlog implements AbcAction, Configurable {
      * Toggles flag whether the story is blog digest or not.
      * @return null, redirect
      */
-    private String actionToggleStoryDigest(HttpServletResponse response, Category blog, Map env) throws Exception {
+    private String actionToggleStoryDigest(HttpServletResponse response, Map env) throws Exception {
         User user = (User) env.get(Constants.VAR_USER);
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_STORY);
@@ -601,7 +607,7 @@ public class EditBlog implements AbcAction, Configurable {
      * Toggles flag whether the story is inappropriate for public or not.
      * @return null, redirect
      */
-    private String actionToggleStoryBan(HttpServletResponse response, Category blog, Map env) throws Exception {
+    private String actionToggleStoryBan(HttpServletResponse response, Map env) throws Exception {
         User user = (User) env.get(Constants.VAR_USER);
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_STORY);

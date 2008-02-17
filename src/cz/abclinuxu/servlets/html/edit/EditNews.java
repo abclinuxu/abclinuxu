@@ -38,6 +38,7 @@ import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.NewsGuard;
@@ -303,6 +304,7 @@ public class EditNews implements AbcAction {
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);
         persistence.update(relation);
+        TagTool.assignDetectedTags(item, user);
 
         AdminLogger.logEvent(user, "  approve | news " + relation.getUrl());
 

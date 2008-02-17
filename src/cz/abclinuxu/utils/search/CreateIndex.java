@@ -18,32 +18,45 @@
  */
 package cz.abclinuxu.utils.search;
 
-import cz.abclinuxu.persistence.*;
-import cz.abclinuxu.persistence.extra.*;
-import cz.abclinuxu.data.*;
-import cz.abclinuxu.data.view.DiscussionRecord;
-import cz.abclinuxu.data.view.Comment;
+import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Poll;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.view.ParsedDocument;
+import cz.abclinuxu.misc.DocumentParser;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.CompareCondition;
+import cz.abclinuxu.persistence.extra.Field;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.Operation;
+import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.scheduler.WhatHappened;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
-import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.exceptions.NotFoundException;
-import cz.abclinuxu.scheduler.WhatHappened;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.IndexWriter;
+import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.dom4j.Document;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.analysis.Analyzer;
 
-import java.util.*;
-import java.util.prefs.Preferences;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.prefs.Preferences;
 
 /**
  * This class is responsible for creating and maintaining Lucene's index.
@@ -57,7 +70,6 @@ public class CreateIndex implements Configurable {
     public static final String PREF_MAX_MERGE_DOCS = "max.merge.docs";
     public static final String PREF_MAX_FIELD_LENGTH = "max.field.length";
     public static final String PREF_INDEXING_PAGE_SIZE = "indexing.page.size";
-    public static final String PREF_ADD_TITLE_TO_CONTENT = "add.title.to.content";
     public static final String PREF_BOOST_SOFTWARE = "boost.hardware";
     public static final String PREF_BOOST_HARDWARE = "boost.software";
     public static final String PREF_BOOST_ARTICLE = "boost.article";
@@ -85,7 +97,6 @@ public class CreateIndex implements Configurable {
     static float boostHardware, boostSoftware, boostArticle, boostNews, boostQuestion, boostDiscussion;
     static float boostDriver, boostBlog, boostFaq, boostDictionary, boostSection, boostPoll;
     static float boostDocument, boostBazaar, boostPersonalities;
-    static boolean addTitleToContent;
     static int pageSize;
 
     static {
@@ -612,7 +623,7 @@ public class CreateIndex implements Configurable {
                     if ( hasBeenIndexed(child) )
                         continue;
 
-                    doc = indexStory(relation, blog);
+                    doc = indexStory(relation);
                     doc.setParent(relation.getUpper());
                     indexWriter.addDocument(doc.getDocument());
                 } catch (Exception e) {
@@ -626,24 +637,12 @@ public class CreateIndex implements Configurable {
      * Extracts data for indexing from blog.
      */
     static MyDocument indexBlog(Category category) {
-        StringBuffer sb = new StringBuffer();
-        String title;
-
         Element data = (Element) category.getData().selectSingleNode("//custom");
         Node node = data.element("page_title");
-        title = node.getText();
+        String title = node.getText();
+        ParsedDocument parsed = DocumentParser.parse(category);
 
-        node = data.element("title");
-        if ( node != null )
-            sb.append(node.getText());
-
-        node = data.element("intro");
-        if ( node != null ) {
-            sb.append(" ");
-            sb.append(node.getText());
-        }
-
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setURL("/blog/" + category.getSubType());
         doc.setType(MyDocument.TYPE_BLOG);
         doc.setCreated(category.getCreated());
@@ -656,31 +655,16 @@ public class CreateIndex implements Configurable {
      * Extracts data for indexing from blog.
      * @param relation story relation
      */
-    static MyDocument indexStory(Relation relation, Category category) throws IOException {
+    static MyDocument indexStory(Relation relation) throws IOException {
         Item story = (Item) relation.getChild();
         indexDiscussionFor(story);
-        StringBuffer sb = new StringBuffer();
-        String title, s;
 
-        storeUser(story.getOwner(), sb);
         Element data = story.getData().getRootElement();
         Node node = data.element("name");
-        title = node.getText();
+        String title = node.getText();
+        ParsedDocument parsed = DocumentParser.parse(story);
 
-        node = data.element("perex");
-        if (node != null) {
-            sb.append(" ");
-            s = node.getText();
-            sb.append(s);
-        }
-
-        node = data.element("content");
-        sb.append(" ");
-        s = node.getText();
-        sb.append(s);
-
-
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setURL(Tools.getUrlForBlogStory(relation));
         doc.setType(MyDocument.TYPE_BLOG);
         doc.setCreated(story.getCreated());
@@ -695,18 +679,13 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexCategory(Relation relation, String urlPrefix) {
         Category category = (Category) relation.getChild();
-        StringBuffer sb = new StringBuffer();
-        String title;
 
         Element data = category.getData().getRootElement();
         Node node = data.element("name");
-        title = node.getText();
+        String title = node.getText();
+        ParsedDocument parsed = DocumentParser.parse(category);
 
-        node = data.element("note");
-        if ( node != null )
-            sb.append(node.getText());
-
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setType(MyDocument.TYPE_CATEGORY);
         doc.setCreated(category.getCreated());
         doc.setUpdated(category.getUpdated());
@@ -725,9 +704,7 @@ public class CreateIndex implements Configurable {
      * Extracts data for indexing from discussion. Item must be synchronized.
      */
     static MyDocument indexDiscussion(Item discussion, String title) {
-        StringBuffer sb = new StringBuffer();
         boolean question = false;
-
         Document document = discussion.getData();
         Element data = document.getRootElement();
         if (title == null ) {
@@ -739,44 +716,9 @@ public class CreateIndex implements Configurable {
                 title = "Diskuse";
         }
 
-        Node node = data.element("text");
-        if ( node != null )
-            sb.append(node.getText());
+        ParsedDocument parsed = DocumentParser.parse(discussion);
 
-        if ( discussion.getChildren().size() > 0 ) {
-            Record record = (Record) ((Relation) discussion.getChildren().get(0)).getChild();
-            record = (Record) persistence.findById(record);
-            DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
-            LinkedList stack = new LinkedList(dizRecord.getThreads());
-
-            while (stack.size() > 0) {
-                Comment comment = (Comment) stack.removeFirst();
-                stack.addAll(comment.getChildren());
-                String s = comment.getTitle();
-                if ( s != null ) {
-                    sb.append(" ");
-                    sb.append(s);
-                }
-
-                node = comment.getData().getRootElement().element("text");
-                if ( node!=null ) {
-                    sb.append(" ");
-                    sb.append(node.getText());
-                }
-
-                s = comment.getAnonymName();
-                if ( s != null ) {
-                    sb.append(" ");
-                    sb.append(s);
-                } else {
-                    Integer id = comment.getAuthor();
-                    if (id != null)
-                        storeUser(id, sb);
-                }
-            }
-        }
-
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setCreated(discussion.getCreated());
         doc.setUpdated(discussion.getUpdated());
         doc.setCid(discussion);
@@ -798,39 +740,11 @@ public class CreateIndex implements Configurable {
     static MyDocument indexHardware(Relation relation) {
         Item make = (Item) relation.getChild();
         Element data = make.getData().getRootElement();
-
         Node node = data.element("name");
         String title = node.getText();
-        StringBuffer sb = new StringBuffer();
-        // todo wiki zaznamy by spise nemely ukladat autora posledni revize
-        storeUser(make.getOwner(), sb);
+        ParsedDocument parsed = DocumentParser.parse(make);
 
-        node = data.element("setup");
-        if (node != null) {
-            sb.append(" ");
-            sb.append(node.getText());
-        }
-
-        node = data.element("params");
-        if (node != null) {
-            sb.append(" ");
-            sb.append(node.getText());
-        }
-
-        node = data.element("identification");
-        if (node != null) {
-            sb.append(" ");
-            sb.append(node.getText());
-        }
-
-        node = data.element("note");
-        if (node != null) {
-            sb.append(" ");
-            sb.append(node.getText());
-        }
-        sb.append(" ");
-
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setCreated(make.getCreated());
         doc.setUpdated(make.getUpdated());
         doc.setType(MyDocument.TYPE_HARDWARE);
@@ -850,17 +764,9 @@ public class CreateIndex implements Configurable {
 
         Node node = data.element("name");
         String title = node.getText();
-        StringBuffer sb = new StringBuffer();
-        storeUser(make.getOwner(), sb);
+        ParsedDocument parsed = DocumentParser.parse(make);
 
-        node = data.element("description");
-        if (node != null) {
-            sb.append(" ");
-            sb.append(node.getText());
-        }
-        sb.append(" ");
-
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setCreated(make.getCreated());
         doc.setUpdated(make.getUpdated());
         doc.setType(MyDocument.TYPE_SOFTWARE);
@@ -875,18 +781,13 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexDriver(Relation relation) {
         Item driver = (Item) relation.getChild();
-        StringBuffer sb = new StringBuffer();
-        String title;
 
         Element data = driver.getData().getRootElement();
         Node node = data.element("name");
-        title = node.getText();
+        String title = node.getText();
+        ParsedDocument parsed = DocumentParser.parse(driver);
 
-        node = data.element("note");
-        if ( node!=null )
-            sb.append(node.getText());
-
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setType(MyDocument.TYPE_DRIVER);
         doc.setCreated(driver.getCreated());
         doc.setUpdated(driver.getUpdated());
@@ -902,50 +803,15 @@ public class CreateIndex implements Configurable {
     static MyDocument indexArticle(Relation relation) throws IOException {
         Item article = (Item) relation.getChild();
         indexDiscussionFor(article);
-        StringBuffer sb = new StringBuffer();
-
-        Set authors = article.getProperty(Constants.PROPERTY_AUTHOR);
-        for (Iterator iter = authors.iterator(); iter.hasNext();) {
-            int rid = Misc.parseInt((String)iter.next(), 0);
-            storeAuthor(rid, sb);
-        }
 
         Element data = article.getData().getRootElement();
-        if (data.attribute(WhatHappened.INDEXING_FORBIDDEN)!=null)
+        if (data.attribute(WhatHappened.INDEXING_FORBIDDEN) != null)
             return null;
-
         Node node = data.element("name");
         String title = node.getText();
+        ParsedDocument parsed = DocumentParser.parse(article);
 
-        node = data.element("perex");
-        if ( node != null ) {
-            sb.append(node.getText());
-            sb.append(" ");
-        }
-
-        for ( Iterator iter = article.getChildren().iterator(); iter.hasNext(); ) {
-            Relation child = (Relation) iter.next();
-
-            if ( child.getChild() instanceof Record ) {
-                Record record = (Record) persistence.findById(child.getChild());
-                if ( record.getType()==Record.ARTICLE ) {
-                    List nodes = record.getData().selectNodes("/data/content");
-                    if (nodes.size()==1) {
-                        sb.append(((Node)nodes.get(0)).getText());
-                        sb.append(" ");
-                    } else
-                        for ( Iterator iter2 = nodes.iterator(); iter2.hasNext(); ) {
-                            node = (Element) iter2.next();
-                            sb.append(node.getText());
-                            sb.append(" ");
-                            sb.append(((Element)node).attributeValue("title"));
-                            sb.append(" ");
-                        }
-                }
-            }
-        }
-
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setType(MyDocument.TYPE_ARTICLE);
         doc.setCreated(article.getCreated());
         doc.setUpdated(article.getUpdated());
@@ -962,19 +828,16 @@ public class CreateIndex implements Configurable {
     static MyDocument indexNews(Relation relation) throws IOException {
         Item news = (Item) relation.getChild();
         indexDiscussionFor(news);
-        StringBuffer sb = new StringBuffer();
 
-        storeUser(news.getOwner(), sb);
         Element data = news.getData().getRootElement();
         String content = data.element("content").getText();
-        sb.append(content);
-        sb.append(" ");
 
         String title = null;
         Node node = data.element("title");
         if ( node != null)
             title = node.getText();
         else {
+//            log.warn("Zpravicka nema titulek! " + relation); // todo zkontrolovat, zda se to deje
             String tmp = Tools.removeTags(content);
             title = Tools.limit(tmp, 50, " ..");
         }
@@ -984,15 +847,19 @@ public class CreateIndex implements Configurable {
         if (node != null)
             category = node.getText();
 
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        ParsedDocument parsed = DocumentParser.parse(news);
+
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setType(MyDocument.TYPE_NEWS);
         doc.setCreated(news.getCreated());
         doc.setUpdated(news.getUpdated());
         if (category != null)
             doc.setNewsCategory(category);
         String url = relation.getUrl();
-        if (url == null)
+        if (url == null) {
+            log.warn("Zpravicka nema url! " + relation); // todo zkontrolovat, zda se to deje
             url = UrlUtils.PREFIX_NEWS + "/show/" + relation.getId();
+        }
         doc.setURL(url);
         doc.setParent(relation.getUpper());
         doc.setCid(news);
@@ -1006,28 +873,12 @@ public class CreateIndex implements Configurable {
     static MyDocument indexBazaar(Relation relation) throws IOException {
         Item item = (Item) relation.getChild();
         indexDiscussionFor(item);
-        StringBuffer sb = new StringBuffer();
 
-        storeUser(item.getOwner(), sb);
         Element data = item.getData().getRootElement();
         String title = data.elementText("title");
+        ParsedDocument parsed = DocumentParser.parse(item);
 
-        String content = data.element("text").getText();
-        sb.append(content);
-
-        Node node = data.element("price");
-        if (node != null) {
-            sb.append(" ");
-            sb.append(node.getText());
-        }
-
-        node = data.element("contact");
-        if (node != null) {
-            sb.append(" ");
-            sb.append(node.getText());
-        }
-
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setType(MyDocument.TYPE_BAZAAR);
         doc.setCreated(item.getCreated());
         doc.setUpdated(item.getUpdated());
@@ -1047,21 +898,12 @@ public class CreateIndex implements Configurable {
     static MyDocument indexPoll(Relation relation) throws IOException {
         Poll poll = (Poll) relation.getChild();
         indexDiscussionFor(poll);
-        StringBuffer sb = new StringBuffer();
 
-        String tmp = poll.getText();
-        sb.append(tmp);
-        sb.append(" ");
-        for (int i = 0; i < poll.getChoices().length; i++) {
-            PollChoice choice = poll.getChoices()[i];
-            sb.append(choice.getText());
-            sb.append(" ");
-        }
+        String title = Tools.removeTags(poll.getText());
+        title = Tools.limit(title, 50, " ..");
+        ParsedDocument parsed = DocumentParser.parse(poll);
 
-        tmp = Tools.removeTags(tmp);
-        String title = Tools.limit(tmp, 50, " ..");
-
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setType(MyDocument.TYPE_POLL);
         doc.setCreated(poll.getCreated());
         doc.setUpdated(poll.getCreated());
@@ -1130,11 +972,11 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexDictionary(Relation relation) {
         Item dictionary = (Item) relation.getChild();
-        String title = Tools.xpath(dictionary, "/data/name");
-        String s = Tools.xpath(dictionary, "/data/description");
-        StringBuffer sb = new StringBuffer(s);
+        Element data = dictionary.getData().getRootElement();
+        String title = data.selectSingleNode("/data/name").getText();
+        ParsedDocument parsed = DocumentParser.parse(dictionary);
 
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setType(MyDocument.TYPE_DICTIONARY);
         doc.setCreated(dictionary.getCreated());
         doc.setUpdated(dictionary.getUpdated());
@@ -1151,11 +993,11 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexPersonality(Relation relation) {
         Item personality = (Item) relation.getChild();
-        String title = Tools.childName(relation);
-        String s = Tools.xpath(personality, "/data/description");
-        StringBuffer sb = new StringBuffer(s);
 
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        String title = Tools.childName(relation);
+        ParsedDocument parsed = DocumentParser.parse(personality);
+
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setType(MyDocument.TYPE_PERSONALITY);
         doc.setCreated(personality.getCreated());
         doc.setUpdated(personality.getUpdated());
@@ -1172,11 +1014,11 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexFaq(Relation relation) {
         Item faq = (Item) relation.getChild();
-        String title = Tools.xpath(faq, "/data/title");
-        String content = Tools.xpath(faq, "/data/text");
-        StringBuffer sb = new StringBuffer(content);
+        Element data = faq.getData().getRootElement();
+        String title = data.element("title").getText();
+        ParsedDocument parsed = DocumentParser.parse(faq);
 
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setType(MyDocument.TYPE_FAQ);
         doc.setCreated(faq.getCreated());
         doc.setUpdated(faq.getUpdated());
@@ -1193,11 +1035,11 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexDocument(Relation relation) {
         Item item = (Item) relation.getChild();
-        String title = Tools.xpath(item, "/data/name");
-        String content = Tools.xpath(item, "/data/content");
-        StringBuffer sb = new StringBuffer(content);
+        Element data = item.getData().getRootElement();
+        String title = data.element("name").getText();
+        ParsedDocument parsed = DocumentParser.parse(item);
 
-        MyDocument doc = new MyDocument(title, sb.toString(), addTitleToContent);
+        MyDocument doc = new MyDocument(title, parsed.getContent(), false);
         doc.setType(MyDocument.TYPE_DOCUMENT);
         doc.setCreated(item.getCreated());
         doc.setUpdated(item.getUpdated());
@@ -1224,46 +1066,6 @@ public class CreateIndex implements Configurable {
     }
 
     /**
-     * Appends user information into stringbuffer. If there is no such user,
-     * error is ignored and this method does nothing.
-     * @param id user id
-     * @param sb
-     */
-    private static void storeUser(int id, StringBuffer sb) {
-        try {
-            sb.append(" ");
-            User user = (User) persistence.findById(new User(id));
-            String nick = user.getNick();
-            if (nick!=null) {
-                sb.append(nick);
-                sb.append(" ");
-            }
-            sb.append(user.getName());
-            sb.append(" ");
-        } catch (NotFoundException e) {
-            // user could be deleted
-        }
-    }
-
-    /**
-     * Appends user information into stringbuffer. If there is no such user,
-     * error is ignored and this method does nothing.
-     * @param rid author relation id
-     * @param sb
-     */
-    private static void storeAuthor(int rid, StringBuffer sb) {
-        try {
-            sb.append(" ");
-            Relation relation = (Relation) persistence.findById(new Relation(rid));
-            Item author = (Item) persistence.findById(relation.getChild());
-            sb.append(Tools.childName(author));
-            sb.append(" ");
-        } catch (NotFoundException e) {
-            // user could be deleted
-        }
-    }
-
-    /**
      * Empty constructor.
      */
     public CreateIndex() {
@@ -1279,7 +1081,6 @@ public class CreateIndex implements Configurable {
         maxMergeDocs = prefs.getInt(PREF_MAX_MERGE_DOCS, 0);
         maxFieldLength = prefs.getInt(PREF_MAX_FIELD_LENGTH, 0);
         pageSize = prefs.getInt(PREF_INDEXING_PAGE_SIZE, 50);
-        addTitleToContent = prefs.getBoolean(PREF_ADD_TITLE_TO_CONTENT, true);
         boostArticle = prefs.getFloat(PREF_BOOST_ARTICLE, 1.0f);
         boostBazaar = prefs.getFloat(PREF_BOOST_BAZAAR, 1.0f);
         boostBlog = prefs.getFloat(PREF_BOOST_BLOG, 1.0f);

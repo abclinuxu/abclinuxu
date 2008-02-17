@@ -39,6 +39,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
@@ -135,6 +136,7 @@ public class ShowDictionary implements AbcAction {
         env.put(VAR_PREVIOUS, Tools.syncList(siblings));
         siblings = sqlTool.getNeighbourItemRelations(item.getSubType(), Item.DICTIONARY, false, 3);
         env.put(VAR_NEXT, Tools.syncList(siblings));
+        env.put(Constants.VAR_ASSIGNED_TAGS, TagTool.getAssignedTags(item));
         return FMTemplateSelector.select("Dictionary", "show", env, request);
     }
 

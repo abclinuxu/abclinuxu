@@ -36,6 +36,7 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -162,6 +163,7 @@ public class EditAuthor implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         associateWithUser(root, persistence, relation);
+        TagTool.assignDetectedTags(item, user);
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
