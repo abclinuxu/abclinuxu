@@ -253,7 +253,7 @@
             </div>
           </div>
 
-          <#if ASSIGNED_TAGS?exists && USER?exists && USER.hasRole("tag admin")>
+          <#if ASSIGNED_TAGS?exists>
             <div class="tag-box">
               <a href="/stitky">Štítky</a>:
               <span id="prirazeneStitky">
