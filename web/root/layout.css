@@ -1026,7 +1026,7 @@ div.autocomplete ul li span.informal { size: 80%;}
 }
 
 .modalWindowBackground {
- 	position: fixed;
+ 	position: absolute;
  	z-index: 99;
  	top: 0px;
  	left: 0px;

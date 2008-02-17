@@ -342,6 +342,7 @@ function ModalWindow(className, id, handler) {
 	}
 	this.background = document.createElement("div");
 	this.background.className = "modalWindowBackground";
+	this.background.style.height = document.body.clientHeight+"px";
 
 	this.closeButton = Toolkit.appendElement(this.window, "span", "krizek", null, "×");
 	this.closeButton.title = "Zavřít okno";
@@ -505,10 +506,10 @@ function StitekAJAX(stitky, nodeID, akce, stitekID, stitekName) {
 	this.counter = this.stitky.counter++;
 	this.stitekID = stitekID;
 	this.stitekName = stitekName;
-	this.akce = akce;
 
+	this.akce = akce;
 	this.init();
-	this.request.send();
+	this.request.send(null);
 }
 
 StitekAJAX.prototype = {
@@ -575,7 +576,7 @@ function SeznamStitkuAJAX(stitky, nodeID, filtr) {
 	this.filtr = filtr;
 
 	this.init();
-	this.request.send();
+	this.request.send(null);
 }
 
 SeznamStitkuAJAX.prototype = {
@@ -639,7 +640,7 @@ function OblibeneStitkyAJAX(stitky, nodeID) {
 	this.nodeID = nodeID;
 
 	this.init();
-	this.request.send();
+	this.request.send(null);
 }
 
 OblibeneStitkyAJAX.prototype = {
