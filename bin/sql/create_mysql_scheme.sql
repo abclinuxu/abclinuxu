@@ -248,7 +248,7 @@ CREATE TABLE konstanty (
 
 -- seznam stitku
 CREATE TABLE stitek (
-  id VARCHAR(30) UNIQUE,                         -- ascii identifikator stitku
+  id VARCHAR(30) PRIMARY KEY,                    -- ascii identifikator stitku
   titulek VARCHAR(30) NOT NULL,                  -- jmeno stitku
   vytvoreno DATETIME NOT NULL,                   -- cas vytvoreni
   nadrazeny VARCHAR(30) NULL                     -- id nadrazeneho stitku (vztah dabatabaze - mysql)
