@@ -39,9 +39,9 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.html.view.ViewUser;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.parser.safehtml.ProfileGuard;
 import cz.abclinuxu.utils.parser.safehtml.NoHTMLGuard;
+import cz.abclinuxu.utils.parser.safehtml.SignatureHTMLGuard;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -1738,7 +1738,7 @@ public class EditUser implements AbcAction, Configurable {
      * @param user user to be updated
      * @return false, if there is a major error.
      */
-    private boolean setSignature(Map params, User user, Map env) {
+    private boolean setSignature(Map params, User user, Map env) throws ParserException {
         String signature = (String) params.get(PARAM_SIGNATURE);
         signature = Misc.filterDangerousCharacters(signature);
         Element personal = DocumentHelper.makeElement(user.getData(), "/data/personal");
@@ -1754,9 +1754,10 @@ public class EditUser implements AbcAction, Configurable {
             return false;
         }
 
-        if (!verifyGuard(SafeHTMLGuard.class, signature, PARAM_SIGNATURE, env))
+        if (!verifyGuard(SignatureHTMLGuard.class, signature, PARAM_SIGNATURE, env))
             return false;
 
+        signature = Misc.addRelNofollowToLink(signature);
         DocumentHelper.makeElement(personal, "signature").setText(signature);
         return true;
     }

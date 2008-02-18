@@ -53,6 +53,8 @@ public class ProfileGuard {
         TAGS.put("STRONG", new CheckedTag("STRONG", true, null));
         TAGS.put("CITE", new CheckedTag("CITE", true, null));
         TAGS.put("HR", new CheckedTag("HR", false, null));
+        TAGS.put("ABBR", new CheckedTag("ABBR", true,  new String[]{"TITLE"}));
+        TAGS.put("ACRONYM", new CheckedTag("ACRONYM", true, new String[]{"TITLE"}));
     }
 
     /**

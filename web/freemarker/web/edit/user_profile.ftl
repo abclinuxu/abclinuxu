@@ -15,6 +15,10 @@ Pokud máte na internetu svou domovskou stránku,
 vyplňte její URL. Další položkou je rok, kdy jste
 začal používat Linux. Následuje možnost uložit
 až pět distribucí, které v současnosti používáte.
+Patička může obsahovat váš oblíbený citát, odkaz
+na vaše stránky a podobně, maximální délka je 120 znaků
+a smíte použít jen tyto HTML značky: A, ABBR, ACRONYM,
+CITE a CODE.
 Posledním políčkem je text <i>O&nbsp;mně</i>. Do něj
 můžete napsat informace o sobě, které chcete sdělit
 čtenářům. Může to být jen pár slov, ale i delší

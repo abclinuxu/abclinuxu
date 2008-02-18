@@ -34,6 +34,9 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import org.dom4j.Node;
+import org.htmlparser.lexer.Lexer;
+import org.htmlparser.nodes.TagNode;
+import org.htmlparser.util.ParserException;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -313,6 +316,34 @@ public class Misc {
     public static String getWebPath(String absolutePath) {
         String deployPath = AbcConfig.getDeployPath();
         return absolutePath.substring(deployPath.length() - 1);
+    }
+
+    /**
+     * Adds rel=nofollow attribute to all <A> tags in the text.
+     * @param text text that shall containt nofollow rel attribute.
+     * @return corrected text
+     * @throws ParserException
+     */
+    public static String addRelNofollowToLink(String text) throws ParserException {
+        Lexer lexer = new Lexer(text);
+        org.htmlparser.Node node = null;
+        TagNode tag = null;
+        String currentTagName = null;
+        StringBuffer sb = new StringBuffer();
+
+        while ((node = lexer.nextNode()) != null) {
+            if (!(node instanceof TagNode)) {
+                sb.append(node.getText());
+                continue;
+            }
+
+            tag = (TagNode) node;
+            currentTagName = tag.getTagName().toUpperCase();
+            if (currentTagName.equals("A") && !tag.isEndTag())
+                tag.setAttribute("rel", "\"nofollow\"");
+            sb.append('<').append(node.getText()).append('>');
+        }
+        return sb.toString();
     }
 
     /**

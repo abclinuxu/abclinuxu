@@ -1,7 +1,7 @@
 <h2 id="formatovani">Nápověda k formátování</h2>
 
 <p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html" rel="nofollow">značky</a>:
-A, ACRONYM, B, BR, BLOCKQUOTE, CITE, CODE, DIV, EM, I, HR, H1, H2, H3, LI,
+A, ABBR, ACRONYM, B, BR, BLOCKQUOTE, CITE, CODE, DIV, EM, I, HR, H1, H2, H3, LI,
 OL, P, PRE, STRONG, TT, UL, VAR.</p>
 
 <p>Nejrychlejší způsob formátování je rozdělovat

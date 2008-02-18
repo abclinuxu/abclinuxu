@@ -30,8 +30,10 @@ public class NewsGuard {
     static final Map TAGS = new HashMap();
     static {
         TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF", "TITLE"}));
+        TAGS.put("ABBR", new CheckedTag("ABBR", true,  new String[]{"TITLE"}));
+        TAGS.put("ACRONYM", new CheckedTag("ACRONYM", true, new String[]{"TITLE"}));
+        TAGS.put("CITE", new CheckedTag("CITE", true, null));
         TAGS.put("CODE", new CheckedTag("CODE", true, null));
-        TAGS.put("ACRONYM", new CheckedTag("ACRONYM", true, null));
     }
 
     /**
