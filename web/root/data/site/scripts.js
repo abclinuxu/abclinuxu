@@ -248,6 +248,9 @@ function nextCommentClick(event) {
 }
 
 var Toolkit = {
+	relax: function() {
+	},
+	
 	createElement: function(document, tagName, className, id, text) {
 		var element = document.createElement(tagName);
 		if (className != null) {
@@ -320,6 +323,10 @@ if (document.documentElement.addEventListener) {
 	Toolkit.removeEventListenerImpl = function(element, type, handler) {
 		element.removeEventListener(type, handler, false);
 	};
+
+	Toolkit.addEventListenerMSIE = Toolkit.relax;
+
+	Toolkit.removeEventListenerMSIE = Toolkit.relax;
 } else {
 	Toolkit.addEventListenerImpl = function(element, type, handler) {
 		element.attachEvent("on"+type, handler);
@@ -328,6 +335,10 @@ if (document.documentElement.addEventListener) {
 	Toolkit.removeEventListenerImpl = function(element, type, handler) {
 		element.detachEvent("on"+type, handler);
 	};
+
+	Toolkit.addEventListenerMSIE = Toolkit.addEventListenerImpl;
+
+	Toolkit.removeEventListenerMSIE = Toolkit.removeEventListenerImpl;
 }
 
 function ModalWindow(className, id, handler) {
@@ -380,22 +391,25 @@ function Stitky() {
 	}
 
 	var button =  Toolkit.appendElement(seznamStitku.parentNode, "button", "editTags", null, "Upravit");
-	Toolkit.addEventListener(button, "click", "showDialog", this);
+	Toolkit.addEventListener(button, "click", "showDialog", this, button);
 }
 
 Stitky.prototype = {
-	showDialog: function(event) {
-		new StitkyDialog(Page.relationID);
+	showDialog: function(event, button) {
+		new StitkyDialog(Page.relationID, button);
 	}
 }
 
-function StitkyDialog(nodeID) {
+function StitkyDialog(nodeID, button) {
 	this.counter = 0;
 	this.lastRefresh = 0;
 	this.nodeID = nodeID;
+	this.button = button;
 	this.stitkyElement = document.getElementById("prirazeneStitky");
 	this.dialog = new ModalWindow("modalStitky", null, this);
 	this.stitky = new Array();
+	
+	this.button.disabled = true;
 
 	Toolkit.appendElement(this.dialog.window, "h2", null, null, "Nastavit štítky");
 	var prirazeneStitkyParent = Toolkit.appendElement(this.dialog.window, "div", null, null, "Přiřazené štítky: ");
@@ -457,6 +471,7 @@ StitkyDialog.prototype = {
 	},
 
 	onclose: function() {
+		this.button.disabled = false;
 		var element = Toolkit.createElement(this.stitkyElement.ownerDocument, "span", null, "prirazeneStitky");
 		if (this.stitky.length > 0) {
 			for (var i = 0; i < this.stitky.length; i++) {
@@ -617,21 +632,27 @@ SeznamStitkuAJAX.prototype = {
 			var a = Toolkit.appendElement(stitkySeznam, "option", null, null, stitek.title);
 			a.value = stitek.id;
 			a.title = "Kliknutím štítek „nalepíte“";
-//			Toolkit.addEventListener(a, "click", "pridatStitek", this, stitek.id);
+//			Toolkit.addEventListener(a, "click", "pridatStitekMouse", this, stitek.id);
+//			Toolkit.addEventListener(a, "keypress", "pridatStitekKeyboard", this, stitek.id);
 		}
-		Toolkit.addEventListener(stitkySeznam, "change", "pridatStitek", this, stitkySeznam);
+		Toolkit.addEventListener(stitkySeznam, "click", "pridatStitekMouse", this, stitkySeznam);
+		Toolkit.addEventListener(stitkySeznam, "keypress", "pridatStitekKeyboard", this, stitkySeznam);
 		this.stitky.stitkySeznam.parentNode.replaceChild(stitkySeznam, this.stitky.stitkySeznam);
 		this.stitky.stitkySeznam = stitkySeznam;
 	},
 
-//	pridatStitek: function(event, stitekID) {
-//		new StitekAJAX(this.stitky, this.nodeID, "assign", stitekID);
-//		return false;
-//	},
-
-	pridatStitek: function(event, seznam) {
-		new StitekAJAX(this.stitky, this.nodeID, "assign", seznam.options[seznam.selectedIndex].value);
+	pridatStitekMouse: function(event, seznam) {
+		if (seznam.selectedIndex >= 0 && !event.ctrlKey) {
+			new StitekAJAX(this.stitky, this.nodeID, "assign", seznam.options[seznam.selectedIndex].value);
 		return false;
+		}
+	},
+	
+	pridatStitekKeyboard: function(event, seznam) {
+		if (seznam.selectedIndex >= 0 && (event.charCode == 32 || (event.charCode == 0 && event.keyCode == 13)) || (!event.charCode && (event.keyCode == 13 || event.keyCode == 32))) {
+			new StitekAJAX(this.stitky, this.nodeID, "assign", seznam.options[seznam.selectedIndex].value);
+			return false;
+		}
 	}
 }
 
