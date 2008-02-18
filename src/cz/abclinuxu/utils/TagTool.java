@@ -65,7 +65,9 @@ public class TagTool implements Configurable {
     private static Persistence persistence = PersistenceFactory.getPersistence();
 
     public static final String PREF_INVALID_TITLE_REGEXP = "regexp.invalid.title";
+    public static final String PREF_SKIPPED_TAGS_IN_DETECTOR = "detector.skipped.tags";
     private static Pattern reInvalidTitle;
+    private static Set forbiddenTags = new HashSet();
 
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new TagTool());
@@ -74,6 +76,12 @@ public class TagTool implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         String tmp = prefs.get(PREF_INVALID_TITLE_REGEXP, null);
         reInvalidTitle = Pattern.compile(tmp);
+
+        tmp = prefs.get(PREF_SKIPPED_TAGS_IN_DETECTOR, "");
+        StringTokenizer stk = new StringTokenizer(tmp, ",");
+        while (stk.hasMoreTokens()) {
+            forbiddenTags.add(stk.nextToken().toLowerCase());
+        }
     }
 
     public static void init() {
@@ -252,7 +260,7 @@ public class TagTool implements Configurable {
             token = stk.nextToken();
             token = diacriticsTool.removeDiacritics(token.toLowerCase());
             tag = tags.get(token);
-            if (tag != null)
+            if (tag != null && ! forbiddenTags.contains(tag))
                 detectedTags.add(tag);
         }
         return detectedTags;

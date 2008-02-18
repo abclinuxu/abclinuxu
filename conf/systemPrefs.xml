@@ -273,6 +273,7 @@
                     <node name="TagTool">
                         <map>
                             <entry key="regexp.invalid.title" value="[^a-z0-9 +_.!/=\-]"/>
+                            <entry key="detector.skipped.tags" value="vi,kde" />
                         </map>
                     </node>
                 </node>
