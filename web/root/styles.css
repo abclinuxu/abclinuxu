@@ -163,7 +163,7 @@ td.pad,code.kod,pre.kod {
 	border-color: gray;
 }
 
-.rtut {
+.rtut, .cl-teplomer {
 	background-color: #27648D;
 }
 
@@ -284,7 +284,7 @@ a.info:hover span.tooltip {
 .ank-sloup {
 	border-top-color: #81AECD;
 	border-bottom-color: #1B275E;
-	background-color: #0F598C;
+	background-color: #27648d;
 }
 
 .ank-sloup-okraj { border-color: #C0C0C0; }
