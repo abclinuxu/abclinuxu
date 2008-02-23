@@ -28,6 +28,7 @@ import cz.abclinuxu.data.view.SectionTreeCache;
 import cz.abclinuxu.data.view.SectionNode;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
@@ -152,6 +153,10 @@ public class ViewFaq implements AbcAction {
         }
 
         env.put(Constants.VAR_RSS, FeedGenerator.getFaqFeedUrl());
+
+        // FAQ document supports tags
+        env.put(Constants.VAR_ASSIGNED_TAGS, TagTool.getAssignedTags(item));
+        
         return FMTemplateSelector.select("ViewFaq", "view", env, request);
     }
 
