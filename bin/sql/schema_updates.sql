@@ -1,19 +1,5 @@
-drop table objekt;
-CREATE TABLE data (
- cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
- typ SMALLINT,                                   -- typ polozky (druh, novinka, ..)
- podtyp VARCHAR(30) NULL,                        -- podtyp
- data LONGTEXT NOT NULL,                         -- XML s cestou k soboru, nazvem, ikonou, poznamkou ...
- pridal INT(6) NOT NULL,                         -- odkaz na uzivatele
- vytvoreno DATETIME,                             -- cas vytvoreni
- zmeneno TIMESTAMP NOT NULL                      -- cas posledni zmeny
-);
-ALTER TABLE data ADD INDEX in_vytvoreno (vytvoreno);
-ALTER TABLE data ADD INDEX in_typ (typ);
-ALTER TABLE data ADD INDEX in_podtyp (podtyp);
-
-
-update relace R1, relace R2 set R2.predchozi=R1.cislo where R2.typ_potomka='D' and
-R2.typ_predka=R1.typ_potomka and R2.predek=R1.potomek;
-
-alter table stitek add  nadrazeny VARCHAR(30) NULL;
+alter table anketa2 add column volba11 SMALLINT DEFAULT 0 after volba10;
+alter table anketa2 add column volba12 SMALLINT DEFAULT 0 after volba11;
+alter table anketa2 add column volba13 SMALLINT DEFAULT 0 after volba12;
+alter table anketa2 add column volba14 SMALLINT DEFAULT 0 after volba13;
+alter table anketa2 add column volba15 SMALLINT DEFAULT 0 after volba14;

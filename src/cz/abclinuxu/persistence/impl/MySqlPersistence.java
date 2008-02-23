@@ -1035,7 +1035,7 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("insert into anketa2 values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            statement = con.prepareStatement("insert into anketa2 values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
             statement.setInt(1, poll.getId());
             statement.setBoolean(2, poll.isMultiChoice());
@@ -1065,11 +1065,11 @@ public class MySqlPersistence implements Persistence {
                 statement.setInt(7+i, choice.getCount());
                 root.addElement("choice").setText(choice.getText());
             }
-            for (; i<10; i++)
+            for (; i<15; i++)
                 statement.setInt(7+i, 0);
 
             String formatted = XMLHandler.getDocumentAsString(document);
-            statement.setString(17, formatted);
+            statement.setString(22, formatted);
 
             int result = statement.executeUpdate();
             if ( result==0 ) {
@@ -1572,7 +1572,7 @@ public class MySqlPersistence implements Persistence {
     }
 
     protected void syncPollFromRS(Poll poll, ResultSet resultSet) throws SQLException {
-        String tmp = resultSet.getString(17);
+        String tmp = resultSet.getString(22);
         try {
             tmp = insertEncoding(tmp);
             Document data = DocumentHelper.parseText(tmp);

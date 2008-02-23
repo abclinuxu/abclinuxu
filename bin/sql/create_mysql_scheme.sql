@@ -121,6 +121,11 @@ CREATE TABLE anketa2 (
  volba8 SMALLINT DEFAULT 0,                      -- pocet hlasu pro volbu
  volba9 SMALLINT DEFAULT 0,                      -- pocet hlasu pro volbu
  volba10 SMALLINT DEFAULT 0,                     -- pocet hlasu pro volbu
+ volba11 SMALLINT DEFAULT 0,                     -- pocet hlasu pro volbu
+ volba12 SMALLINT DEFAULT 0,                     -- pocet hlasu pro volbu
+ volba13 SMALLINT DEFAULT 0,                     -- pocet hlasu pro volbu
+ volba14 SMALLINT DEFAULT 0,                     -- pocet hlasu pro volbu
+ volba15 SMALLINT DEFAULT 0,                     -- pocet hlasu pro volbu
  data LONGTEXT NOT NULL                          -- XML s otazkou a odpovedmi
 );
 
