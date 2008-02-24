@@ -133,12 +133,13 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
 
     public void feedDataToMap(Map env) {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.WEEK_OF_YEAR, -1);
-        env.put(PREF_PEREX, perex);
         Integer week = calendar.get(Calendar.WEEK_OF_YEAR);
         Integer year = calendar.get(Calendar.YEAR);
         String computedTitle = MessageFormat.format(title, week, year);
         env.put(VAR_TITLE, computedTitle);
+        env.put(PREF_PEREX, perex);
+
+        calendar.add(Calendar.WEEK_OF_YEAR, -1);
         setData(env, calendar.getTime(), new Date());
     }
 
