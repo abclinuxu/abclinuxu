@@ -58,11 +58,13 @@ import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.imageio.ImageIO;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
 import java.io.File;
+import java.awt.image.BufferedImage;
 
 /**
  * Creates screenshot
@@ -373,8 +375,24 @@ public class EditScreenshot implements AbcAction {
             return false;
         }
 
-        // todo check that image has minimum dimension of 800x600
-
+        try {
+            BufferedImage img = ImageIO.read(fileItem.getInputStream());
+            if (img == null) {
+                ServletUtils.addError(PARAM_SCREENSHOT, "Obrázek nelze načíst, nepodporovaný formát.", env, null);
+                return false;
+            }
+            if (img.getWidth() < 800) {
+                ServletUtils.addError(PARAM_SCREENSHOT, "Obrázek musí mít rozměry nejméně 800x600 pixelů.", env, null);
+                return false;
+            }
+            if (img.getHeight() < 600) {
+                ServletUtils.addError(PARAM_SCREENSHOT, "Obrázek musí mít rozměry nejméně 800x600 pixelů.", env, null);
+                return false;
+            }
+        } catch (IOException e) {
+            ServletUtils.addError(PARAM_SCREENSHOT, "Obrázek nelze načíst: " + e.getMessage(), env, null);
+            return false;
+        }
         return true;
     }
 

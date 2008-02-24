@@ -24,9 +24,9 @@
 
 <#global CITACE = TOOL.getRelationCountersValue(ITEMS.data,"read")/>
 <#list ITEMS.data as relation>
-    <#assign item = relation.child, reads = TOOL.getCounterValue(item,"read"), usedBy = item.getProperty("favourited_by")>
-    <#assign tmp=TOOL.groupByType(item.children, "Item"), diz=TOOL.analyzeDiscussion(tmp.discussion[0]), autor=TOOL.createUser(item.owner)>
-    <#assign desktop = TOOL.createScreenshot(relation)>
+    <#assign desktop = TOOL.createScreenshot(relation), item = relation.child, autor=TOOL.createUser(item.owner)>
+    <#assign reads = TOOL.getCounterValue(item,"read"), usedBy = item.getProperty("favourited_by")>
+    <#assign tmp = TOOL.groupByType(item.children, "Item"), diz=TOOL.analyzeDiscussion(tmp.discussion[0])>
 
     <h2 class="st_nadpis">
         <a href="${desktop.url}" title="${desktop.title}">${desktop.title}</a>
