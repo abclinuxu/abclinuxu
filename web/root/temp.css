@@ -1,27 +1,10 @@
-.sun-box {
-	background: top repeat-x;
-	border: 1px solid;
-	margin-bottom: 0.5em;
-	font-size: small;
-	clear: right;
-	background-color: #5583A2;
-	background-image: url('/images/bannery/sun-back.png');
-	color: white;
-	border-color: #4B4B4B;
-}
-.sun-box p { padding: 0.3em 0 0.5em 0.5em; }
-.sun-box a { color: white; }
-.sun-box a:hover { background-color: #E97D19; }
-
-.sunnysoft-box { background: white;
-                 color: black;
-                 font-size: small;
-                 padding: 0.5em;
-                 border: 2px solid #0059ff;
-                 margin-bottom: 0.5em;
-                 clear: right;
-                 min-height: 65px;
-}
-.sunnysoft-box a { color: #0059ff; text-decoration: none; }
-.sunnysoft-box a:hover { color: white; background: #0059ff; text-decoration: underline; }
-.sunnysoft-box ul { margin: 0; }
+.bsupport-box { border: 1px dotted;
+                font-size: small;
+                padding: 0.3em;
+                border-color: #ff0000;
+                color: #ff0000; }
+.bsupport-box a { text-decoration: none;
+                  color: #ff0000; }
+.bsupport-box a:hover { text-decoration: underline;
+                        background-color: #ff0000;
+                        color: white; }
