@@ -27,7 +27,7 @@
         <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
     </#if>
     <#if RSS?exists>
-        <link rel="alternate" title="feed" href="http://www.abclinuxu.cz${RSS}" type="application/rss+xml">
+        <link rel="alternate" title="RSS zdroj aktuální sekce" href="http://www.abclinuxu.cz${RSS}" type="application/rss+xml">
     </#if>
     <meta name="keywords" lang="cs" content="linux,abclinuxu,hardware,software,ovladače,diskuse,nápověda,rada,pomoc">
     <meta name="keywords" lang="en" content="linux,hardware,software,drivers,forum,help,faq,advice">
