@@ -475,17 +475,17 @@ td.td-datum {
 	margin-top: 0.5em;
 }
 
-.ds_control_sbalit,
-.ds_control_sbalit2,
-.ds_avatar {
-	float: right;
-}
+.ds_attachments { border-top: 1px dotted; margin-top: 0.5em; }
+.ds_attachments span { font-style: italic; }
+.ds_attachments ul { margin: 0; }
 
 .ds_control_sbalit,
 .ds_control_sbalit2,
-.ds_control_sbalit3 {
-	cursor: pointer;
-}
+.ds_avatar { float: right; }
+
+.ds_control_sbalit,
+.ds_control_sbalit2,
+.ds_control_sbalit3 { cursor: pointer; }
 
 .ds_hlavicka,.ds_hlavicka_novy {
 	margin-top: 10px;

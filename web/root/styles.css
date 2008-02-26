@@ -225,12 +225,11 @@ a.thumb:hover,
 }
 
 .ds_hlavicka,
-.ds_hlavicka_novy {
-	background-color: #F0F0F0;
-	border-top-color: #E0E0E0;
-}
+.ds_attachments,
+.ds_hlavicka_novy { border-top-color: #E0E0E0; }
 
 .ds_hlavicka_blacklisted { color: gray; }
+.ds_hlavicka { background-color: #F0F0F0; }
 .ds_hlavicka_me { background-color: #E6F3FF; }
 .ds_hlavicka_novy { background-color: #FFF8C3; }
 
