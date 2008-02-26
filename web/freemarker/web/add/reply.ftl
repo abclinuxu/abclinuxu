@@ -6,7 +6,7 @@
  <p>
     Prohlédněte si vzhled vašeho komentáře. Zkontrolujte
     pravopis, obsah i tón vašeho textu. Někdy to vážně
-    chce chladnou hlavu. Opravte chyby a zvolte tlačítko <code>Náhled</code>.
+    chce chladnou hlavu. Opravte chyby a zvolte tlačítko <code>Náhled&nbsp;komentáře</code>.
     Pokud jste s příspěvkem spokojeni, stiskněte tlačítko <code>Dokonči</code>.
  </p>
 </#if>
@@ -90,7 +90,7 @@
    <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea>
   </p>
     <p>
-        <input type="file" name="attachment" tabindex="6">
+        Vložení přílohy: <input type="file" name="attachment" tabindex="6">
         <@lib.showHelp>Například výpis logu, konfigurační soubor, snímek obrazovky a podobně.</@lib.showHelp>
         <@lib.showError key="attachment" />
         <#if ATTACHMENTS?exists>
@@ -103,10 +103,10 @@
     </p>
   <p>
     <#if PREVIEW?exists>
-     <input tabindex="7" type="submit" name="preview" value="Zopakuj náhled">
+     <input tabindex="7" type="submit" name="preview" value="Zopakuj náhled komentáře">
      <input tabindex="8" type="submit" name="finish" value="Dokonči">
     <#else>
-     <input tabindex="7" type="submit" name="preview" value="Náhled">
+     <input tabindex="7" type="submit" name="preview" value="Náhled komentáře">
     </#if>
   </p>
 
