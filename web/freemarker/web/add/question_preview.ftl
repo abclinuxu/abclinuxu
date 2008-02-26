@@ -9,8 +9,8 @@
     si pravopis, obsah i tón vašeho textu. Uvědomte si, že
     toto není placená technická podpora, ale dobrovolná
     a neplacená práce ochotných lidí. Pokud se vám text nějak nelíbí,
-    opravte jej a zvolte Náhled. Pokud jste s ním spokojeni,
-    zvolte OK.
+    opravte jej a zvolte <tt>Náhled&nbsp;dotazu</tt>. Pokud jste s ním spokojeni,
+    zvolte <tt>Dokonči</tt>.
 </p>
 
 <#if PREVIEW?exists>
@@ -74,7 +74,7 @@
         <tr>
             <td valign="top">Příloha</td>
             <td>
-                <input type="file" name="attachment" tabindex="6">
+                Vložení přílohy: <input type="file" name="attachment" tabindex="6">
                 <@lib.showHelp>Například výpis logu, konfigurační soubor, snímek obrazovky a podobně.</@lib.showHelp>
                 <@lib.showError key="attachment" />
                 <#if ATTACHMENTS?exists>
@@ -89,7 +89,7 @@
         <tr>
             <td>&nbsp;</td>
             <td>
-                <input tabindex="7" type="submit" name="preview" value="Zopakuj náhled">
+                <input tabindex="7" type="submit" name="preview" value="Zopakuj náhled dotazu">
                 <input tabindex="8" type="submit" name="finish" value="Dokonči">
             </td>
         </tr>
