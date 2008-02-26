@@ -152,14 +152,6 @@
             <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle2" class="ds_control_sbalit2" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
         </#if>
         ${comment.title?if_exists}
-        <#if (attachments?size > 0)>
-            <br>Přílohy:
-            <#list attachments as id>
-                <#local attachment = diz.attachments(id)>
-                <a href="${TOOL.xpath(attachment, "/data/object/@path")}">${TOOL.xpath(attachment, "/data/object/originalFilename")}</a>
-                (${TOOL.xpath(attachment, "/data/object/size")} bytů)
-            </#list>
-        </#if>
         <#nested>
         <#if showControls>
             <div id="comment${comment.id}_controls"<#if blacklisted> class="ds_controls_blacklisted"</#if>>
@@ -180,6 +172,17 @@
             </div>
         <#elseif USER?exists && USER.hasRole("discussion admin")>
             <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}">Admin</a>
+        </#if>
+        <#if (attachments?size > 0)>
+            <div class="ds_attachments"><span><#if (attachments?size == 1)>Příloha:<#else>Přílohy:</#if></span>
+                <ul>
+                    <#list attachments as id>
+                        <li><#local attachment = diz.attachments(id)>
+                        <a href="${TOOL.xpath(attachment, "/data/object/@path")}">${TOOL.xpath(attachment, "/data/object/originalFilename")}</a>
+                        (${TOOL.xpath(attachment, "/data/object/size")} bytů)</li>
+                    </#list>
+                </ul>
+           </div>
         </#if>
     </div>
     <div id="comment${comment.id}" <#if who?exists>class="ds_text_user${who.id}"</#if><#if blacklisted?if_exists> style="display: none;"</#if>>
