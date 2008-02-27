@@ -763,7 +763,8 @@ public class FeedGenerator implements Configurable {
                 entry.setTitle(title);
                 description = new SyndContentImpl();
                 description.setType("text/plain");
-                description.setValue(Tools.limitWords(withoutTags, newsWordLimit, " ..."));
+                description.setValue(withoutTags);
+//                description.setValue(Tools.limitWords(withoutTags, newsWordLimit, " ..."));
                 entry.setDescription(description);
                 entry.setPublishedDate(item.getCreated());
                 entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
