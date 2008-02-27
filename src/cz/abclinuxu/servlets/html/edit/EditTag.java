@@ -132,9 +132,10 @@ public class EditTag implements AbcAction {
         String ipAddress = ServletUtils.getClientIPAddress(request);
 
         String id = (String) params.get(PARAM_ID);
-        Tag tag = (Tag) TagTool.getById(id).clone();
-        if (tag == null)
+        Tag origTag = TagTool.getById(id);
+        if (origTag == null)
             throw new NotFoundException("Štítek '" + id + "' nebyl nalezen!");
+        Tag tag = (Tag) origTag.clone();
 
         boolean canContinue = setTitleAndId(params, tag, true, env);
         canContinue &= setParentTag(params, tag, env);
