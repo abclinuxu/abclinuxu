@@ -250,7 +250,7 @@ a.thumb:hover,
 .ds_hlavicka_novy { background-color: #23597D; }
 .ds_hlavicka_odkazy { color: #1A425D; }
 
-.kt_citace { color: #FF8282 }
+.kt_citace, .cl_citace { color: #FF8282 }
 
 .s_odkaz { color: #1A425D; }
 

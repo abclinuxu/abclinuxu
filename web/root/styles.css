@@ -233,7 +233,7 @@ a.thumb:hover,
 .ds_hlavicka_me { background-color: #E6F3FF; }
 .ds_hlavicka_novy { background-color: #FFF8C3; }
 
-.kt_citace { color: #880000 }
+.kt_citace, .cl_citace { color: #880000 }
 
 .s_nadpis {
 	border-color: #C0C0C0;
