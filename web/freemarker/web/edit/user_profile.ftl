@@ -44,6 +44,7 @@ povídání.</p>
    <td width="120">Linux používám<br>od roku</td>
    <td>
     <input type="text" name="linuxFrom" value="${PARAMS.linuxFrom?if_exists?html}" size="40" tabindex="2">
+    <div class="error">${ERRORS.linuxFrom?if_exists}</div>
    </td>
   </tr>
   <tr>
