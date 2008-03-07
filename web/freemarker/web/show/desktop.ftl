@@ -26,11 +26,11 @@
 
 <div class="desktopy">
 
-<h1>${desktop.title}</h1>
+<h1>${desktop.title?html}</h1>
 
 <div>
-    <a href="${desktop.imageUrl}" title="${desktop.title}" class="thumb">
-        <img src="${desktop.thumbnailDetailUrl}" alt="${desktop.title}" border="0">
+    <a href="${desktop.imageUrl}" title="${desktop.title?html}" class="thumb">
+        <img src="${desktop.thumbnailDetailUrl}" alt="${desktop.title?html}" border="0">
     </a>
 </div>
 
