@@ -247,6 +247,10 @@ public class EditAttachment implements AbcAction {
             ServletUtils.addError(PARAM_SCREENSHOT, "Zadejte prosím cestu k souboru.", env, null);
             return false;
         }
+
+        if (! EditScreenshot.checkImage(params, env))
+            return false;
+
         data.setSubType(fileItem.getContentType());
 
         String suffix = Misc.getFileSuffix(fileItem.getName()).toLowerCase();

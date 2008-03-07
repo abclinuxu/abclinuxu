@@ -362,7 +362,7 @@ public class EditScreenshot implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean checkImage(Map params, Map env) {
+    static boolean checkImage(Map params, Map env) {
         FileItem fileItem = (FileItem) params.get(PARAM_SCREENSHOT);
         if (fileItem == null) {
             ServletUtils.addError(PARAM_SCREENSHOT, "Zadejte prosím cestu k souboru.", env, null);
