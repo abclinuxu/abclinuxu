@@ -56,7 +56,7 @@ spokojeni. Najdete jej v pravém menu.
             <#if (CATEGORIES?size>0)>
                 <select name="cid">
                     <#list CATEGORIES as category>
-                        <option value="${category.id}"<#if category==PARAMS.cid?default("UNDEF")> selected</#if>>${category.name}</option>
+                        <option value="${category.id}"<#if category.id==PARAMS.cid?default("UNDEF")> selected</#if>>${category.name}</option>
                     </#list>
                 </select>&nbsp;
             <#else>
