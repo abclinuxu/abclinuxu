@@ -136,7 +136,7 @@ public final class URLMapper implements Configurable {
             String newUrl = findMovedUrl(url);
             if (newUrl != null) {
                 UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-                urlUtils.redirect(response, newUrl);
+                urlUtils.redirect(response, newUrl, false);
                 return null;
             }
         }
