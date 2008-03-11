@@ -165,6 +165,7 @@ blockquote {
 .menu>li {
 	display: table-cell;
 	border-top: 1px solid;
+	letter-spacing: -0.05em;
 }
 
 .menu a {
