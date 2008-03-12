@@ -44,12 +44,14 @@ import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.imageio.ImageIO;
 import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Collections;
 import java.io.IOException;
 import java.io.File;
+import java.awt.image.BufferedImage;
 
 import org.apache.commons.fileupload.FileItem;
 import org.dom4j.Element;
@@ -248,7 +250,7 @@ public class EditAttachment implements AbcAction {
             return false;
         }
 
-        if (! EditScreenshot.checkImage(params, env))
+        if (!checkImage(params, env))
             return false;
 
         data.setSubType(fileItem.getContentType());
@@ -322,5 +324,37 @@ public class EditAttachment implements AbcAction {
 //        name = DiacriticRemover.getInstance().removeDiacritics(name);
 //        name = name.toLowerCase();
         return name;
+    }
+
+    /**
+     * Checks an image, whether it is valid or not.
+     * @param params map holding request's parameters
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    static boolean checkImage(Map params, Map env) {
+        FileItem fileItem = (FileItem) params.get(PARAM_SCREENSHOT);
+        if (fileItem == null) {
+            ServletUtils.addError(PARAM_SCREENSHOT, "Zadejte prosím cestu k souboru.", env, null);
+            return false;
+        }
+
+        String suffix = Misc.getFileSuffix(fileItem.getName()).toLowerCase();
+        if (!(suffix.equals("jpg") || suffix.equals("jpeg") || suffix.equals("png") || suffix.equals("gif"))) {
+            ServletUtils.addError(PARAM_SCREENSHOT, "Soubor musí být typu PNG, GIF nebo JPEG.", env, null);
+            return false;
+        }
+
+        try {
+            BufferedImage img = ImageIO.read(fileItem.getInputStream());
+            if (img == null) {
+                ServletUtils.addError(PARAM_SCREENSHOT, "Obrázek nelze načíst, nepodporovaný formát.", env, null);
+                return false;
+            }
+        } catch (IOException e) {
+            ServletUtils.addError(PARAM_SCREENSHOT, "Obrázek nelze načíst: " + e.getMessage(), env, null);
+            return false;
+        }
+        return true;
     }
 }
