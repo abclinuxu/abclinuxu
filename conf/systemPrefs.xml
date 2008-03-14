@@ -595,7 +595,7 @@
                         <node name="ServletUtils">
                             <map>
                                 <entry key="upload.path" value="/tmp/upload"/>
-                                <entry key="max.upload.size" value="750000"/>
+                                <entry key="max.upload.size" value="1048576"/>
                             </map>
                         </node>
                     </node>
