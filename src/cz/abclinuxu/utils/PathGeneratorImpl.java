@@ -61,6 +61,7 @@ public class PathGeneratorImpl implements PathGenerator {
             prefix = prefix.toLowerCase();
             Matcher matcher = reInvalidChars.matcher(prefix);
             prefix = matcher.replaceAll("-");
+            prefix = prefix.replaceAll("\\-{2,}", "-"); // eliminate multiple dashes
             // TODO more checks like in URLManager.normalizeCharacters()
         }
         if (suffix == null || suffix.length() == 0)
@@ -75,7 +76,7 @@ public class PathGeneratorImpl implements PathGenerator {
             throw new InternalException("Type " + usage + "not implemented!");
 
         String id = String.valueOf(obj.getId());
-	    sb.append(id.charAt(id.length()-1)).append('/').append(id.charAt(id.length()-2)).append('/');
+        sb.append(id.charAt(id.length()-1)).append('/').append(id.charAt(id.length()-2)).append('/');
 
         File dir = new File(AbcConfig.calculateDeployedPath(sb.toString()));
         if (!dir.exists())
