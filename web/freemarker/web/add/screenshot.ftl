@@ -5,7 +5,7 @@
 
 <p>
     Na této stránce můžete nahrát obrázek. Maximální velikost je omezena
-    na 750&nbsp;kB, podporovány jsou formáty JPG, PNG a GIF (pro obrázky
+    na 1&nbsp;MB, podporovány jsou formáty JPG, PNG a GIF (pro obrázky
     programů a desktopů je nejvhodnější formát PNG). Pokud obrázek
     přesahuje šířku či délku 200 pixelů, bude zároveň vytvořena a zobrazena
     jeho miniatura.
