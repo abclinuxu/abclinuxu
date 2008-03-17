@@ -334,6 +334,15 @@ td.pad,code.kod,pre.kod {
 	font-size: small;
 }
 
+.cl-tabulka {
+	border-collapse: collapse;
+	margin: 0 auto;
+}
+.cl-tabulka td {
+	border-width: 0 1px 1px 0;
+	border-style: solid;
+}
+
 .serial-nadpis {
 	padding: 0.1em 0.5em 0.5em 0.5em;
 	margin-bottom: 0.5em;
