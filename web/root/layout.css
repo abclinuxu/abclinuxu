@@ -17,11 +17,6 @@ img {
 	border: none;
 }
 
-.st a[href^="/slovnik/"]:after {
-	content: url('/images/site2/slovnik.png');
-	margin: 0 0.1em 0 0.2em;
-}
-
 .st .bez-slovniku a:after,
 .st a.bez-slovniku:after,
 .st .boxy .s_sekce li a:after {
@@ -696,6 +691,18 @@ a,
 .treeview a:hover,
 .cl-obsah a:hover {
 	text-decoration: underline
+}
+
+.obal a[href^="http://"]:after {
+	content: "\2197";
+	font-size: 50%;
+	vertical-align: super;
+}
+.obal .ps a[href^="http://"]:after { content: ""; }
+
+.st a[href^="/slovnik/"]:after {
+	content: url('/images/site2/slovnik.png');
+	margin: 0 0.1em 0 0.2em;
 }
 
 #ls_prepinac {
