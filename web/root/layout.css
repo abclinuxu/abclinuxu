@@ -693,12 +693,12 @@ a,
 	text-decoration: underline
 }
 
-.obal a[href^="http://"]:after {
+/*.obal a[href^="http://"]:after {
 	content: "\2197";
 	font-size: 50%;
 	vertical-align: super;
 }
-.obal .ps a[href^="http://"]:after { content: ""; }
+.obal .ps a[href^="http://"]:after { content: ""; }*/
 
 .st a[href^="/slovnik/"]:after {
 	content: url('/images/site2/slovnik.png');
