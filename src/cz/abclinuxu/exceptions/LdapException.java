@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005 Leos Literak
+ *  Copyright (C) 2008 Leos Literak
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -21,14 +21,14 @@ package cz.abclinuxu.exceptions;
 import cz.abclinuxu.AbcException;
 
 /**
- * Thrown, when there is some error while accessing persistent storage.
+ * Thrown, when there is some error while accessing LDAP storage.
  */
-public class PersistenceException extends AbcException {
-    public PersistenceException(String desc) {
+public class LdapException extends AbcException {
+    public LdapException(String desc) {
         super(desc);
     }
 
-    public PersistenceException(String desc, Exception e) {
+    public LdapException(String desc, Exception e) {
         super(desc, e);
     }
 }

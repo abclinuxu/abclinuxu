@@ -434,6 +434,20 @@
                             </map>
                         </node>
                     </node>
+                    <node name="ldap">
+                        <map/>
+                        <node name="LdapUserManager">
+                            <map>
+                                <entry key="server.uri" value="@LDAP_SERVER@"/>
+                                <entry key="admin.user" value="@LDAP_ADMIN_USER@"/>
+                                <entry key="admin.password" value="@LDAP_ADMIN_PASSWORD@"/>
+                                <entry key="supported.portals" value="www.abclinuxu.cz,www.abcprace.cz,www.abchost.cz,www.itbiz.cz,www.64bit.cz"/>
+                                <entry key="parent.context" value="ou=users,dc=stickfish,dc=net"/>
+                                <entry key="user.ldap.class" value="stickfishUser"/>
+                                <entry key="regexp.invalid.login" value="[^a-zA-Z0-9_.\-]"/>
+                            </map>
+                        </node>
+                    </node>
                 </node>
                 <node name="scheduler">
                     <map/>
@@ -665,11 +679,6 @@
                         </node>
                         <node name="edit">
                             <map/>
-                            <node name="EditUser">
-                                <map>
-                                    <entry key="regexp.invalid.login" value="[^a-zA-Z0-9_.\-]"/>
-                                </map>
-                            </node>
                             <node name="EditBlog">
                                 <map>
                                     <entry key="regexp.invalid.blogname" value="[^a-zA-Z0-9_]|(^[0-9_])"/>

@@ -24,7 +24,18 @@ Ujistete se, ze databaze je pristupna pres TCPIP, v defaultnim
 nastaveni je to zakazano (skip networking v konfiguraci ci spoustecim
 skriptu, podrobnosti ve FAQ na abicku).
 
-3) upravte si conf/conf_devel.properties
+3) nastavte LDAP
+ a) nainstalujte si openldap
+ b) cp portal/conf/ldap/stickfish.schema /etc/openldap/schema
+ c) pridejte do /etc/slapd.conf tyto radky:
+  include /etc/openldap/schema/stickfish.schema
+  suffix          "dc=stickfish,dc=net"
+  rootdn          "cn=Manager,dc=stickfish,dc=net"
+  rootpw          secret
+ d) restartujte openldap
+ e) ldapadd -x -D 'cn=manager,dc=stickfish,dc=net' -w secret < portal/conf/ldap/init.ldif
+
+4) upravte si conf/conf_devel.properties
 
 Dulezite je mit spravne vsechny cesty,
 adresare by mely existovat. Take nastavte
@@ -32,7 +43,7 @@ jmeno databaze, uzivatele a jeho heslo.
 Pod windows tento soubor zkopirujte o adresar
 vyse pod jmenem conf_deploy.properties
 
-4) zkompilujte projekt
+5) zkompilujte projekt
 
 Spustte ant ve zdrojacich
 $ ant
@@ -42,16 +53,16 @@ ant je neprevede do konfiguracnich souboru. Pak je lepsi
 bud smazat adresar $DEPLOY/WEB-INF nebo touchnout vsechny
 soubory v source/conf.
 
-5) nakonfigurujte jetty
+6) nakonfigurujte jetty
 
 Nastavte spravne promennou $JETTY_HOME v bin/jetty.sh.
 
-6) spustte jetty
+7) spustte jetty
 
 cd jetty/bin
 ./jetty.sh run
 
-7) otevrete prohlizec
+8) otevrete prohlizec
 
 http://localhost:8080
 

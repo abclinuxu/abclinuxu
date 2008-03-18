@@ -31,6 +31,7 @@ import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.ldap.LdapUserManager;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -83,7 +84,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Class for manipulation with User.
  */
-public class EditUser implements AbcAction, Configurable {
+public class EditUser implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditUser.class);
 
     public static final String PARAM_USER = ViewUser.PARAM_USER;
@@ -184,17 +185,6 @@ public class EditUser implements AbcAction, Configurable {
     public static final String ACTION_REMOVE_MERGE = "removeMerge";
     public static final String ACTION_REMOVE_MERGE_STEP2 = "removeMerge2";
     public static final String ACTION_REMOVE_MERGE_STEP3 = "removeMerge3";
-
-    public static final String PREF_INVALID_LOGIN_REGEXP = "regexp.invalid.login";
-    private static Pattern reLoginInvalid;
-    static {
-        ConfigurationManager.getConfigurator().configureAndRememberMe(new EditUser());
-    }
-
-    public void configure(Preferences prefs) throws ConfigurationException {
-        String tmp = prefs.get(PREF_INVALID_LOGIN_REGEXP, null);
-        reLoginInvalid = Pattern.compile(tmp);
-    }
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -1400,7 +1390,7 @@ public class EditUser implements AbcAction, Configurable {
             ServletUtils.addError(PARAM_LOGIN, "Přihlašovací jméno nesmí mít více než 16 znaků!", env, null);
             return false;
         }
-        Matcher matcher = reLoginInvalid.matcher(login);
+        Matcher matcher = LdapUserManager.reLoginInvalid.matcher(login);
         if ( matcher.find() ) {
             ServletUtils.addError(PARAM_LOGIN, "Přihlašovací jméno smí obsahovat pouze písmena A až Z, číslice, pomlčku, tečku a podtržítko!", env, null);
             return false;
