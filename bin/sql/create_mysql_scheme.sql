@@ -78,9 +78,9 @@ CREATE TABLE data (
  vytvoreno DATETIME,                             -- cas vytvoreni
  zmeneno TIMESTAMP NOT NULL                      -- cas posledni zmeny
 );
-ALTER TABLE objekt ADD INDEX in_vytvoreno (vytvoreno);
-ALTER TABLE objekt ADD INDEX in_typ (typ);
-ALTER TABLE objekt ADD INDEX in_podtyp (podtyp);
+ALTER TABLE data ADD INDEX in_vytvoreno (vytvoreno);
+ALTER TABLE data ADD INDEX in_typ (typ);
+ALTER TABLE data ADD INDEX in_podtyp (podtyp);
 
 
 -- tabulka s definicemi serveru, kterym zobrazujeme odkazy
