@@ -122,6 +122,7 @@ public class LdapUserManager implements Configurable {
         for (String attr : SF_USER_ALL_ATTRIBUTES) {
             MODIFIABLE_ATTRIBUTES.add(attr);
         }
+        MODIFIABLE_ATTRIBUTES.add(ATTRIB_PASSWORD);
         MODIFIABLE_ATTRIBUTES.remove(ATTRIB_LOGIN);
 //        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_LAST_LOGIN_DATE);
 //        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_REGISTRATION_DATE);
