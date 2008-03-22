@@ -69,7 +69,7 @@ ALTER TABLE zaznam ADD INDEX in_typ (typ);
 ALTER TABLE zaznam ADD INDEX in_podtyp (podtyp);
 
 -- obecna struktura pro ukladani priloh ruznych typu (logy, konfiguraky ..)
-CREATE TABLE objekt (
+CREATE TABLE data (
  cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
  typ SMALLINT,                                   -- typ polozky (druh, novinka, ..)
  podtyp VARCHAR(30) NULL,                        -- podtyp
