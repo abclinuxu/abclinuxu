@@ -97,7 +97,6 @@
     <li><a href="javascript:addBookmark();">Přidej mezi oblíbené</a></li>
     <li><a href="javascript:setHomepage();">Nastav jako domácí stránku</a></li>
   </ul></li>
-<li><a href="/hosting">Hosting</a></li>
 <li><a href="http://www.abcprace.cz">Práce</a></li>
 </ul>
 

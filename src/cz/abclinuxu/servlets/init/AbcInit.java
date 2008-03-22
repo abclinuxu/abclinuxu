@@ -60,7 +60,6 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_RSS_GENERATOR = "rss.generator";
     public static final String PREF_RSS_OKSYSTEM = "rss.oksystem";
     public static final String PREF_RSS_JOBPILOT = "rss.jobpilot";
-    public static final String PREF_ABCHOST_FETCHER = "abchost.fetcher";
     public static final String PREF_VARIABLE_FETCHER = "variable.fetcher";
     public static final String PREF_POOL_MONITOR = "pool.monitor";
     public static final String PREF_ABC_MONITOR = "abc.monitor";
@@ -129,7 +128,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         startFetchingVariables();
         startUpdateStatistics();
         startLinksUpdate();
-        startAbcHostUpdate();
         startOKSystemUpdate();
         startJobPilotUpdate();
         startGenerateLinks();
@@ -159,20 +157,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         int delay = getDelay(PREF_RSS_MONITOR);
         int period = getPeriod(PREF_RSS_MONITOR);
         slowScheduler.schedule(UpdateLinks.getInstance(), delay, period);
-    }
-
-    /**
-     * Update abchost fetcher.
-     */
-    protected void startAbcHostUpdate() {
-        if ( !isSet(PREF_ABCHOST_FETCHER) ) {
-            log.info("AbcHost fetcher configured not to run");
-            return;
-        }
-        log.info("Scheduling AbcHost fetcher");
-        int delay = getDelay(PREF_ABCHOST_FETCHER);
-        int period = getPeriod(PREF_ABCHOST_FETCHER);
-        slowScheduler.schedule(new AbcHostFetcher(), delay, period);
     }
 
     /**
@@ -430,7 +414,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         services.put(PREF_WEEKLY_SUMMARY, prefs.getBoolean(PREF_START + PREF_WEEKLY_SUMMARY, true));
         services.put(PREF_UPDATE_DATETOOL, prefs.getBoolean(PREF_START + PREF_UPDATE_DATETOOL, true));
         services.put(PREF_WATCHED_DISCUSSIONS_CLEANER, prefs.getBoolean(PREF_START + PREF_WATCHED_DISCUSSIONS_CLEANER, true));
-        services.put(PREF_ABCHOST_FETCHER, prefs.getBoolean(PREF_START + PREF_ABCHOST_FETCHER, true));
         services.put(PREF_RSS_OKSYSTEM, prefs.getBoolean(PREF_START + PREF_RSS_OKSYSTEM, true));
         services.put(PREF_RSS_JOBPILOT, prefs.getBoolean(PREF_START + PREF_RSS_JOBPILOT, true));
         services.put(PREF_UPDATE_STATISTICS, prefs.getBoolean(PREF_START + PREF_UPDATE_STATISTICS, true));
@@ -442,7 +425,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         delays.put(PREF_RSS_MONITOR, prefs.getInt(PREF_RSS_MONITOR + PREF_DELAY, 60));
         delays.put(PREF_VARIABLE_FETCHER, prefs.getInt(PREF_VARIABLE_FETCHER + PREF_DELAY, 60));
         delays.put(PREF_WATCHED_DISCUSSIONS_CLEANER, prefs.getInt(PREF_WATCHED_DISCUSSIONS_CLEANER + PREF_DELAY, 60));
-        delays.put(PREF_ABCHOST_FETCHER, prefs.getInt(PREF_ABCHOST_FETCHER + PREF_DELAY, 60));
         delays.put(PREF_RSS_OKSYSTEM, prefs.getInt(PREF_RSS_OKSYSTEM + PREF_DELAY, 60));
         delays.put(PREF_RSS_JOBPILOT, prefs.getInt(PREF_RSS_JOBPILOT + PREF_DELAY, 60));
         delays.put(PREF_UPDATE_STATISTICS, prefs.getInt(PREF_UPDATE_STATISTICS + PREF_DELAY, 60));
@@ -453,7 +435,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         periods.put(PREF_RSS_MONITOR, prefs.getInt(PREF_RSS_MONITOR + PREF_PERIOD, 60));
         periods.put(PREF_VARIABLE_FETCHER, prefs.getInt(PREF_VARIABLE_FETCHER + PREF_PERIOD, 60));
         periods.put(PREF_WATCHED_DISCUSSIONS_CLEANER, prefs.getInt(PREF_WATCHED_DISCUSSIONS_CLEANER + PREF_PERIOD, 60));
-        periods.put(PREF_ABCHOST_FETCHER, prefs.getInt(PREF_ABCHOST_FETCHER + PREF_PERIOD, 60));
         periods.put(PREF_RSS_OKSYSTEM, prefs.getInt(PREF_RSS_OKSYSTEM + PREF_PERIOD, 60));
         periods.put(PREF_RSS_JOBPILOT, prefs.getInt(PREF_RSS_JOBPILOT + PREF_PERIOD, 60));
         periods.put(PREF_UPDATE_STATISTICS, prefs.getInt(PREF_UPDATE_STATISTICS + PREF_PERIOD, 60));
@@ -464,17 +445,15 @@ public class AbcInit extends HttpServlet implements Configurable {
      * Test, whether given service is set to true.
      */
     protected boolean isSet(String name) {
-        Boolean aBoolean = (Boolean) services.get(name);
-        if (aBoolean != null)
-            return aBoolean;
-        return false;
+        Boolean aBoolean = services.get(name);
+        return aBoolean != null && aBoolean;
     }
 
     /**
      * @return configuration for delay of given service
      */
     protected int getDelay(String name) {
-        Integer integer = (Integer) delays.get(name);
+        Integer integer = delays.get(name);
         if (integer != null)
             return integer * 1000;
         return 60000;
@@ -484,7 +463,7 @@ public class AbcInit extends HttpServlet implements Configurable {
      * @return configuration for repeat period of given service
      */
     protected int getPeriod(String name) {
-        Integer integer = (Integer) periods.get(name);
+        Integer integer = periods.get(name);
         if (integer != null)
             return integer * 1000;
         return 600000;
