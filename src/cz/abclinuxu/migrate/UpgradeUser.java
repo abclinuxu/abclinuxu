@@ -50,6 +50,7 @@ public class UpgradeUser {
         List<User> users = new ArrayList<User>(50);
         Map<String, String> changes = new HashMap<String, String>();
         System.out.println("Found " + max + " users");
+        System.out.print("\n" + l + "\t\t");
         long start = System.currentTimeMillis();
         for (int i = 0; i < max; i += 50) {
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_ID, Qualifier.ORDER_ASCENDING, new LimitQualifier(i, 50)};
@@ -87,14 +88,14 @@ public class UpgradeUser {
                     ldapMgr.updateUser(user.getLogin(), changes);
 
                     System.out.print("#");
-                    if (++l % 60 == 0)
-                        System.out.println();
+                    if (++l % 50 == 0)
+                        System.out.print("\n" + l + "\t\t");
                 } catch (Exception e) {
                     System.err.println("Migration of user " + user.getId() + " failed. Reason: " + e.getMessage());
                 }
             }
         }
         long end = System.currentTimeMillis();
-        System.out.println("Migrated " + l + " users in " + (end-start)/1000 + " seconds");
+        System.out.println("\n\nMigrated " + l + " users in " + (end-start)/1000 + " seconds");
     }
 }
