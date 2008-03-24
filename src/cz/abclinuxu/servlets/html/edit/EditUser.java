@@ -198,7 +198,8 @@ public class EditUser implements AbcAction {
             managed = user;
         else
             managed = (User) PersistenceFactory.getPersistence().findById(managed);
-        env.put(VAR_MANAGED, managed.clone());
+        if (managed != null)
+            env.put(VAR_MANAGED, managed.clone());
 
         // registration doesn't require user to be logged in
         if (  action==null || action.equals(ACTION_REGISTER) )
