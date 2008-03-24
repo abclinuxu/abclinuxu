@@ -47,9 +47,6 @@ import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.email.forum.SubscribedUsers;
 import cz.abclinuxu.security.Roles;
@@ -62,6 +59,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
+import org.dom4j.Attribute;
 import org.htmlparser.util.ParserException;
 
 import javax.mail.internet.AddressException;
@@ -75,9 +73,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.io.File;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import java.util.prefs.Preferences;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
@@ -90,6 +86,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_USER = ViewUser.PARAM_USER;
     public static final String PARAM_USER_SHORT = ViewUser.PARAM_USER_SHORT;
     public static final String PARAM_LOGIN = "login";
+    public static final String PARAM_OPEN_ID = "openid";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_PASSWORD = "password";
@@ -186,6 +183,8 @@ public class EditUser implements AbcAction {
     public static final String ACTION_REMOVE_MERGE_STEP2 = "removeMerge2";
     public static final String ACTION_REMOVE_MERGE_STEP3 = "removeMerge3";
 
+    private LdapUserManager ldapManager = LdapUserManager.getInstance();
+
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
@@ -199,7 +198,7 @@ public class EditUser implements AbcAction {
             managed = user;
         else
             managed = (User) PersistenceFactory.getPersistence().findById(managed);
-        env.put(VAR_MANAGED, managed);
+        env.put(VAR_MANAGED, managed.clone());
 
         // registration doesn't require user to be logged in
         if (  action==null || action.equals(ACTION_REGISTER) )
@@ -368,12 +367,11 @@ public class EditUser implements AbcAction {
             date = Constants.isoFormat.format(new Date());
         }
         system.addElement("registration_date").setText(date);
-        Element email = DocumentHelper.makeElement(document, "/data/communication/email");
-        email.addAttribute("valid", "yes");
         managed.setData(document);
 
         boolean canContinue = true;
         canContinue &= setLogin(params, managed, env);
+        canContinue &= setOpenId(params, managed, env);
         canContinue &= setPassword(params, managed, env);
         canContinue &= setName(params, managed, env);
         canContinue &= setNick(params, managed, env);
@@ -387,6 +385,8 @@ public class EditUser implements AbcAction {
             return FMTemplateSelector.select("EditUser", "register", env, request);
 
         try {
+            ldapManager.registerUser(managed.getLogin(), managed.getPassword(), null,
+                                                       managed.getName(), LdapUserManager.SERVER_ABCLINUXU);
             persistence.create(managed);
         } catch (DuplicateKeyException e) {
             ServletUtils.addError(PARAM_LOGIN, "Přihlašovací jméno nebo přezdívka jsou již používány.", env, null);
@@ -396,14 +396,15 @@ public class EditUser implements AbcAction {
         HttpSession session = request.getSession();
         session.setAttribute(Constants.VAR_USER, managed);
 
-        Map data = new HashMap();
-        data.put(Constants.VAR_USER, managed);
-        data.put(EmailSender.KEY_FROM, "admin@abclinuxu.cz");
-        data.put(EmailSender.KEY_TO, managed.getEmail());
-        data.put(EmailSender.KEY_RECEPIENT_UID, Integer.toString(managed.getId()));
-        data.put(EmailSender.KEY_SUBJECT, "Privitani na portalu www.abclinuxu.cz");
-        data.put(EmailSender.KEY_TEMPLATE, "/mail/registrace.ftl");
-        EmailSender.sendEmail(data);
+        if (managed.getEmail() != null) {
+            Map data = new HashMap();
+            data.put(Constants.VAR_USER, managed);
+            data.put(EmailSender.KEY_TO, managed.getEmail());
+            data.put(EmailSender.KEY_RECEPIENT_UID, Integer.toString(managed.getId()));
+            data.put(EmailSender.KEY_SUBJECT, "Privitani na portalu www.abclinuxu.cz");
+            data.put(EmailSender.KEY_TEMPLATE, "/mail/registrace.ftl");
+            EmailSender.sendEmail(data);
+        }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?registrace=true&action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
@@ -441,7 +442,6 @@ public class EditUser implements AbcAction {
         if (!canContinue)
             return FMTemplateSelector.select("EditUser", "editBasic", env, request);
 
-        canContinue &= setLogin(params, managed, env);
         canContinue &= setName(params, managed, env);
         canContinue &= setNick(params, managed, env);
         canContinue &= setEmail(params, managed, env);
@@ -450,6 +450,22 @@ public class EditUser implements AbcAction {
             return FMTemplateSelector.select("EditUser", "editBasic", env, request);
 
         try {
+            Map<String, String> changes = new HashMap<String, String>();
+            changes.put(LdapUserManager.ATTRIB_NAME, managed.getName());
+            if (managed.getEmail() != null) {
+                changes.put(LdapUserManager.ATTRIB_EMAIL_ADRESS, managed.getEmail());
+                Node node = managed.getData().selectSingleNode("/data/communication/email/@valid");
+                String value = (node != null && "no".equalsIgnoreCase(node.getText())) ? "true" : "false";
+                changes.put(LdapUserManager.ATTRIB_EMAIL_BLOCKED, value);
+                node = managed.getData().selectSingleNode("/data/communication/email/@verified");
+                value = (node == null || "yes".equalsIgnoreCase(node.getText())) ? "true" : "false";
+                changes.put(LdapUserManager.ATTRIB_EMAIL_VERIFIED, value);
+            } else {
+                changes.put(LdapUserManager.ATTRIB_EMAIL_ADRESS, null);
+                changes.put(LdapUserManager.ATTRIB_EMAIL_BLOCKED, null);
+                changes.put(LdapUserManager.ATTRIB_EMAIL_VERIFIED, null);
+            }
+            ldapManager.updateUser(managed.getLogin(), changes);
             persistence.update(managed);
         } catch ( DuplicateKeyException e ) {
             ServletUtils.addError(PARAM_LOGIN, "Login nebo přezdívka je již používána", env, null);
@@ -478,16 +494,17 @@ public class EditUser implements AbcAction {
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
-            canContinue &= checkPassword(params, managed, env);
+            canContinue = checkPassword(params, managed, env);
 
         if (!canContinue)
             return FMTemplateSelector.select("EditUser", "changePassword", env, request);
 
-        canContinue &= setPassword(params,managed,env);
+        canContinue = setPassword(params, managed, env);
 
         if ( ! canContinue )
             return FMTemplateSelector.select("EditUser", "changePassword", env, request);
 
+        ldapManager.changePassword(managed.getLogin(), managed.getPassword());
         persistence.update(managed);
 
         Cookie cookie = ServletUtils.getCookie(request, Constants.VAR_USER);
@@ -543,12 +560,12 @@ public class EditUser implements AbcAction {
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
-            canContinue &= checkPassword(params, managed, env);
+            canContinue = checkPassword(params, managed, env);
 
         if (!canContinue)
             return FMTemplateSelector.select("EditUser", "editPersonal", env, request);
 
-        canContinue &= setSex(params, managed, env);
+        canContinue = setSex(params, managed, env);
         canContinue &= setBirthYear(params, managed, env);
         canContinue &= setCity(params, managed, env);
         canContinue &= setArea(params, managed, env);
@@ -557,6 +574,15 @@ public class EditUser implements AbcAction {
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "editPersonal", env, request);
 
+        Map<String, String> changes = new HashMap<String, String>();
+        String tmp = Tools.xpath(managed, "/data/personal/sex");
+        changes.put(LdapUserManager.ATTRIB_SEX, tmp);
+        tmp = Tools.xpath(managed, "/data/personal/city");
+        changes.put(LdapUserManager.ATTRIB_CITY, tmp);
+        tmp = Tools.xpath(managed, "/data/personal/country");
+        changes.put(LdapUserManager.ATTRIB_COUNTRY, tmp);
+
+        ldapManager.updateUser(managed.getLogin(), changes);
         persistence.update(managed);
 
         User sessionUser = (User) env.get(Constants.VAR_USER);
@@ -608,12 +634,12 @@ public class EditUser implements AbcAction {
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
-            canContinue &= checkPassword(params, managed, env);
+            canContinue = checkPassword(params, managed, env);
 
         if (!canContinue)
             return FMTemplateSelector.select("EditUser", "editProfile", env, request);
 
-        canContinue &= setMyPage(params, managed, env);
+        canContinue = setMyPage(params, managed, env);
         canContinue &= setLinuxUserFrom(params, managed, env);
         canContinue &= setSignature(params, managed, env);
         canContinue &= setAbout(params, managed, env);
@@ -622,6 +648,12 @@ public class EditUser implements AbcAction {
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "editProfile", env, request);
 
+
+        Map<String, String> changes = new HashMap<String, String>();
+        String tmp = Tools.xpath(managed, "/data/profile/home_page");
+        changes.put(LdapUserManager.ATTRIB_HOME_PAGE_URL, tmp);
+
+        ldapManager.updateUser(managed.getLogin(), changes);
         persistence.update(managed);
 
         User sessionUser = (User) env.get(Constants.VAR_USER);
@@ -992,11 +1024,9 @@ public class EditUser implements AbcAction {
         if (!canContinue)
             return FMTemplateSelector.select("EditUser", "editSubscription", env, request);
 
-        if (canContinue) {
-            canContinue &= setWeeklySummary(params, managed);
-            canContinue &= setMonthlySummary(params, managed);
-            canContinue &= setForumByEmail(params, managed);
-        }
+        canContinue &= setWeeklySummary(params, managed);
+        canContinue &= setMonthlySummary(params, managed);
+        canContinue &= setForumByEmail(params, managed);
 
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "editSubscription", env, request);
@@ -1311,8 +1341,8 @@ public class EditUser implements AbcAction {
      */
     private boolean verifyGuard(Class guard, String text, String paramName, Map env) {
         try {
-            Method method = guard.getMethod("check", new Class[] {String.class});
-            method.invoke(null, new Object[] {text});
+            Method method = guard.getMethod("check", String.class);
+            method.invoke(null, text);
         } catch(InvocationTargetException e) {
             Throwable e1 = e.getCause();
             if (e1 instanceof ParserException) {
@@ -1343,7 +1373,7 @@ public class EditUser implements AbcAction {
             ServletUtils.addError(ServletUtils.PARAM_LOG_PASSWORD, "Zadejte heslo!", env, null);
             return false;
         }
-        if ( ! user.validatePassword(password) ) {
+        if (!ldapManager.login(user.getLogin(), password, LdapUserManager.SERVER_ABCLINUXU)) {
             ServletUtils.addError(ServletUtils.PARAM_LOG_PASSWORD, "Nesprávné heslo!", env, null);
             return false;
         }
@@ -1386,10 +1416,8 @@ public class EditUser implements AbcAction {
             ServletUtils.addError(PARAM_LOGIN, "Přihlašovací jméno musí mít nejméně tři znaky!", env, null);
             return false;
         }
-        if ( login.length()>16 ) {
-            ServletUtils.addError(PARAM_LOGIN, "Přihlašovací jméno nesmí mít více než 16 znaků!", env, null);
-            return false;
-        }
+
+        login = login.toLowerCase();
         Matcher matcher = LdapUserManager.reLoginInvalid.matcher(login);
         if ( matcher.find() ) {
             ServletUtils.addError(PARAM_LOGIN, "Přihlašovací jméno smí obsahovat pouze písmena A až Z, číslice, pomlčku, tečku a podtržítko!", env, null);
@@ -1425,6 +1453,26 @@ public class EditUser implements AbcAction {
             return false;
 
         user.setName(name);
+        return true;
+    }
+
+    /**
+     * Updates openid from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setOpenId(Map params, User user, Map env) {
+        String openid = (String) params.get(PARAM_OPEN_ID);
+        openid = Misc.filterDangerousCharacters(openid);
+        if (openid != null && openid.length() == 0)
+            openid = null;
+
+        if (! verifyGuard(NoHTMLGuard.class, openid, PARAM_NAME, env))
+            return false;
+
+        user.setOpenId(openid);
         return true;
     }
 
@@ -1471,32 +1519,41 @@ public class EditUser implements AbcAction {
      */
     private boolean setEmail(Map params, User user, Map env) {
         String email = (String) params.get(PARAM_EMAIL);
-        if ( !isEmailValid(email) ) {
-            ServletUtils.addError(PARAM_EMAIL, "Neplatný email!", env, null);
-            return false;
+        if (email == null || email.trim().length() == 0) {
+            user.setEmail(null);
+            Element tagEmail = (Element) user.getData().selectSingleNode("/data/communication/email");
+            if (tagEmail != null)
+                tagEmail.detach();
+            return true;
         }
-        user.setEmail(email);
-        Element tagEmail = DocumentHelper.makeElement(user.getData(), "/data/communication/email");
-        tagEmail.attribute("valid").setText("yes");
-        return true;
-    }
 
-    /**
-     * Validate email.
-     * @return false, if email isnt right. Expected format is: yourname@yourdomain.com!
-     */
-    private boolean isEmailValid(String email) {
-        if (email == null)
-            return false;
-
-        boolean result = true;
         try {
             InternetAddress emailAddr = new InternetAddress(email);
             emailAddr.validate();
         } catch (AddressException ex) {
-            result = false;
+            ServletUtils.addError(PARAM_EMAIL, "Neplatný email!", env, null);
+            return false;
         }
-        return result;
+
+        Element tagEmail = DocumentHelper.makeElement(user.getData(), "/data/communication/email");
+        Attribute attribute = tagEmail.attribute("valid");
+        if (attribute != null)
+            attribute.setText("yes");
+        else {
+            attribute = DocumentHelper.createAttribute(tagEmail, "valid", "yes");
+            tagEmail.add(attribute);
+        }
+
+        attribute = tagEmail.attribute("verified");
+        if (attribute != null)
+            attribute.setText("yes");
+        else {
+            attribute = DocumentHelper.createAttribute(tagEmail, "verified", "yes"); // TODO
+            tagEmail.add(attribute);
+        }
+
+        user.setEmail(email);
+        return true;
     }
 
 

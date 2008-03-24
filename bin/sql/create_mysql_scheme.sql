@@ -12,8 +12,8 @@ CREATE TABLE uzivatel (
  cislo INT(6) AUTO_INCREMENT PRIMARY KEY,        -- jednoznacny identifikator
  login CHAR(16) NOT NULL UNIQUE,                 -- prihlasovaci jmeno
  jmeno VARCHAR(35) NOT NULL,                     -- realne jmeno uzivatele
- email VARCHAR(60) NOT NULL,                     -- email
- heslo VARCHAR(12) NOT NULL,     	             -- nekryptovane heslo
+ email VARCHAR(60) NULL,                         -- email
+ heslo VARCHAR(12) NULL,     	                 -- nekryptovane heslo, TODO odstranit
  prezdivka VARCHAR(20) NULL UNIQUE,              -- prezdivka
  data TEXT                                       -- XML s nazvem, ikonou, poznamkou ...
 );

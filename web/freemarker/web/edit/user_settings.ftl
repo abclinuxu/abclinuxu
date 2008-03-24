@@ -62,7 +62,7 @@
   </tr>
 
   <tr>
-   <td class="required">Nahrazovat emotikony</td>
+   <td class="required">Grafické emotikony</td>
    <td>
     <select name="emoticons" tabindex="4">
      <#assign emoticons=PARAMS.emoticons?default("yes")>
@@ -78,7 +78,7 @@
   </tr>
 
   <tr>
-   <td class="required">Zobrazovat signatury</td>
+   <td class="required">Zobrazovat patičku</td>
    <td>
     <select name="signatures" tabindex="5">
      <#assign emoticons=PARAMS.signatures?default("yes")>

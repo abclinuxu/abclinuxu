@@ -84,8 +84,15 @@ public class UpgradeUser {
                     tmp = Tools.xpath(user, "/data/communication/email[@valid]");
                     if ("no".equals(tmp))
                         changes.put(LdapUserManager.ATTRIB_EMAIL_BLOCKED, "true");
+                    else
+                        changes.put(LdapUserManager.ATTRIB_EMAIL_BLOCKED, "false");
+                    changes.put(LdapUserManager.ATTRIB_EMAIL_VERIFIED, "true");
+                    tmp = Tools.xpath(user, "/data/personal/sex");
+                    changes.put(LdapUserManager.ATTRIB_SEX, tmp);
 
                     ldapMgr.updateUser(user.getLogin(), changes);
+                    if (true) //todo remove
+                        System.exit(1);
 
                     System.out.print("#");
                     if (++l % 50 == 0)

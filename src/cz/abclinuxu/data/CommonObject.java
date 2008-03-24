@@ -223,7 +223,7 @@ public class CommonObject extends GenericObject implements XMLContainer {
     }
 
     public Object clone() {
-        GenericDataObject clone = (GenericDataObject) super.clone();
+        CommonObject clone = (CommonObject) super.clone();
         if (documentHandler != null)
             clone.documentHandler = (XMLHandler) documentHandler.clone(true);
 

@@ -11,6 +11,7 @@ import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.email.monitor.MonitorTools;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.ActionProtector;
@@ -53,17 +54,24 @@ public class EditMonitor implements AbcAction {
      * Reverts current monitor state for the user on this document.
      */
     protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
         GenericDataObject content = (GenericDataObject) persistence.findById(relation.getChild());
+
         User user = (User) env.get(Constants.VAR_USER);
+        if (Misc.hasValidEmail(user)) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Nemáte validní email. Buď jste jej nezadali, neaktivovali jej " +
+                                  "nebo byl zablokován kvůli nedoručeným emailům.", env, request.getSession());
+            urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+        }
 
         Date originalUpdated = content.getUpdated();
         MonitorTools.alterMonitor(content.getData().getRootElement(), user);
         persistence.update(content);
         SQLTool.getInstance().setUpdatedTimestamp(content, originalUpdated);
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
     }

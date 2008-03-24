@@ -4,10 +4,6 @@ objectClass: organization
 o: stickfish
 dc: stickfish
 
-dn: ou=portals,dc=stickfish,dc=net
-objectClass: organizationalUnit
-ou: portals
-
 dn: ou=users,dc=stickfish,dc=net
 objectClass: organizationalUnit
 ou: users

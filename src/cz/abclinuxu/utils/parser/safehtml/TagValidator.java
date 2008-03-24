@@ -36,18 +36,21 @@ public class TagValidator {
      * Performs check of html string.
      * @param s html to be checked.
      * @param allowedTags list of allowed tags and their policy.
-     * @throws cz.abclinuxu.utils.parser.safehtml.TagNotAllowedException If tag is not allowed or recognized.
-     * @throws cz.abclinuxu.utils.parser.safehtml.TagNotClosedException If tag is not closed.
-     * @throws cz.abclinuxu.utils.parser.safehtml.AttributeNotAllowedException If attribute is not allowed.
+     * @throws TagNotAllowedException If tag is not allowed or recognized.
+     * @throws TagNotClosedException If tag is not closed.
+     * @throws AttributeNotAllowedException If attribute is not allowed.
      */
     static void check(String s, Map allowedTags) throws HtmlCheckException, ParserException {
+        if (s == null)
+            return;
+
         Lexer lexer = new Lexer(s);
-        Node node = null;
-        TagNode tag = null;
-        CheckedTag checkedTag = null, lastTag = null;
-        String currentTagName = null;
-        Vector attributes = null;
-        List tagStack = new ArrayList();
+        Node node;
+        TagNode tag;
+        CheckedTag checkedTag, lastTag;
+        String currentTagName;
+        Vector attributes;
+        List<CheckedTag> tagStack = new ArrayList<CheckedTag>();
 
         while ((node=lexer.nextNode())!=null) {
             if (!(node instanceof TagNode))
@@ -63,7 +66,7 @@ public class TagValidator {
                 do {
                     if (tagStack.size() == 0)
                         throw new TagNotClosedException("Nenalezena otevírací značka " + currentTagName + "! Nejsou značky překříženy?");
-                    lastTag = (CheckedTag) tagStack.remove(tagStack.size() - 1);
+                    lastTag = tagStack.remove(tagStack.size() - 1);
                 } while(!lastTag.mustBeClosed && !lastTag.name.equals(currentTagName));
 
                 if (!lastTag.name.equals(currentTagName))
@@ -74,7 +77,7 @@ public class TagValidator {
             attributes = tag.getAttributesEx();
             removeTagAttribute(attributes);
 
-            if ( checkedTag.attributes==null && attributes.size()>0 )
+            if (checkedTag.attributes == null && attributes.size() > 0)
                 throw new AttributeNotAllowedException("Značka "+checkedTag.name+" nesmí obsahovat žádné atributy!");
 
             for ( Iterator iter = attributes.iterator(); iter.hasNext(); ) {
@@ -83,9 +86,8 @@ public class TagValidator {
                 String name = attribute.getName();
                 if ( name==null ) continue;
                 name = name.toUpperCase();
-                for ( int i = 0; i<checkedTag.attributes.length; i++ ) {
-                    String allowedAttribute = checkedTag.attributes[i];
-                    if ( name.equals(allowedAttribute) ) {
+                for (String allowedAttribute : checkedTag.attributes) {
+                    if (name.equals(allowedAttribute)) {
                         found = true;
                         break;
                     }
@@ -106,10 +108,9 @@ public class TagValidator {
             }
         }
 
-        for (Iterator iter = tagStack.iterator(); iter.hasNext();) {
-            checkedTag = (CheckedTag) iter.next();
-            if (checkedTag.mustBeClosed)
-                throw new TagNotClosedException("Značka " + checkedTag.name + " musí být uzavřena!");
+        for (CheckedTag checkedTag2 : tagStack) {
+            if (checkedTag2.mustBeClosed)
+                throw new TagNotClosedException("Značka " + checkedTag2.name + " musí být uzavřena!");
         }
     }
 

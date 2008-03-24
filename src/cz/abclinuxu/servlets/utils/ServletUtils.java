@@ -23,6 +23,7 @@ import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.ldap.LdapUserManager;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
@@ -39,7 +40,6 @@ import org.apache.commons.fileupload.DefaultFileItemFactory;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.FileUploadBase;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 
 import javax.servlet.http.Cookie;
@@ -79,8 +79,9 @@ public class ServletUtils implements Configurable {
 
     public static final String VAR_ERROR_MESSAGE = "ERROR";
 
-    static DefaultFileItemFactory uploadFactory;
-    static int uploadSizeLimit;
+    private static DefaultFileItemFactory uploadFactory;
+    private static int uploadSizeLimit;
+    private static LdapUserManager ldapManager = LdapUserManager.getInstance();
 
     /**
      * Combines request's parameters with parameters stored in special session
@@ -196,19 +197,13 @@ public class ServletUtils implements Configurable {
         String login = (String) params.get(PARAM_LOG_USER);
         if ( ! Misc.empty(login) ) {
             Integer id = SQLTool.getInstance().getUserByLogin(login);
-            if (id == null) {
-                ServletUtils.addError(PARAM_LOG_USER,"Přihlašovací jméno nebylo nalezeno. Pokud jste se dříve mohli přihlásit, asi váš login obsahoval zakázané znaky nebo byl v kolizi s jiným uživatelem. Viz tento <a href=\"/clanky/novinky/upozorneni-pro-nase-uzivatele-loginy\">článek</a>, <a href=\"/data/ruzne/kolize.ods\">seznam změn</a>.",env, null);
-                return;
-            }
-            user = new User(id);
-            user = (User) persistence.findById(user);
-
             String password = (String) params.get(PARAM_LOG_PASSWORD);
-            if ( ! user.validatePassword(password) ) {
-                ServletUtils.addError(PARAM_LOG_PASSWORD, "Špatné heslo!", env, null);
+            if ( ! ldapManager.login(login, password, LdapUserManager.SERVER_ABCLINUXU) ) {
+                ServletUtils.addError(PARAM_LOG_PASSWORD, "Přihlášení selhalo - neplatná kombinace uživatelského jména a hesla.", env, null);
                 return;
             }
 
+            user = (User) persistence.findById(new User(id));
             handleLoggedIn(user, false, response);
             params.put(ActionProtector.PARAM_TICKET, user.getSingleProperty(Constants.PROPERTY_TICKET));
 
@@ -219,7 +214,7 @@ public class ServletUtils implements Configurable {
 
             LoginCookie loginCookie = new LoginCookie(cookie);
             try {
-                user = (User) persistence.findById(new User(loginCookie.id));
+                user = (User) persistence.findById(new User(loginCookie.getId()));
             } catch (Exception e) {
                 deleteCookie(cookie, response);
                 log.warn("Nalezena cookie s neznámým uživatelem!");
@@ -227,7 +222,7 @@ public class ServletUtils implements Configurable {
                 return;
             }
 
-            if (user.getPassword().hashCode() != loginCookie.hash) {
+            if (!ldapManager.loginWithPasswordHash(login, loginCookie.getHash(), LdapUserManager.SERVER_ABCLINUXU)) {
                 deleteCookie(cookie, response);
                 log.warn("Nalezena cookie se špatným heslem!");
                 addError(Constants.ERROR_GENERIC, "Nalezena cookie se špatným heslem!", env, null);
@@ -267,9 +262,8 @@ public class ServletUtils implements Configurable {
         if ( cookies==null )
             return null;
 
-        for (int i = 0; i < cookies.length; i++) {
-            Cookie cookie = cookies[i];
-            if ( name.equals(cookie.getName()) )
+        for (Cookie cookie : cookies) {
+            if (name.equals(cookie.getName()))
                 return cookie;
         }
         return null;
@@ -384,18 +378,9 @@ public class ServletUtils implements Configurable {
      * @param response cookie will be placed here
      */
     private static void handleLoggedIn(User user, boolean cookieExists, HttpServletResponse response) {
-        if (! AbcConfig.isMaintainanceMode()) {
-            String now;
-            synchronized (Constants.isoFormat) {
-                now = Constants.isoFormat.format(new Date());
-            }
-            DocumentHelper.makeElement(user.getData(), "data/system/last_login_date").setText(now);
-            PersistenceFactory.getPersistence().update(user); // session bug here
-        }
-
         int limit = AbcConfig.getMaxWatchedDiscussionLimit();
         List rows = SQLTool.getInstance().getLastSeenComments(user.getId(), limit);
-        Map comments = new HashMap(limit + 1, 1.0f);
+        Map<Integer, Integer> comments = new HashMap(limit + 1, 1.0f);
         Object[] objects;
         for (Iterator iter = rows.iterator(); iter.hasNext();) {
             objects = (Object[]) iter.next();
@@ -409,7 +394,12 @@ public class ServletUtils implements Configurable {
             if (node != null)
                 valid = Misc.parseInt(node.getText(), valid);
             if (valid != 0) {
-                Cookie cookie = new LoginCookie(user).getCookie();
+                String[] attribs = new String[]{LdapUserManager.ATTRIB_PASSWORD_HASHCODE};
+                Map<String, String> result = ldapManager.getUserInformation(user.getLogin(), attribs);
+                String hash = result.get(LdapUserManager.ATTRIB_PASSWORD_HASHCODE);
+
+                LoginCookie loginCookie = new LoginCookie(user.getId(), hash);
+                Cookie cookie = loginCookie.getCookie();
                 cookie.setMaxAge(valid);
                 addCookie(cookie,response);
             }
@@ -487,49 +477,71 @@ public class ServletUtils implements Configurable {
     /**
      * This class holds logic for login cookie.
      */
-    static class LoginCookie {
-        public int id=-1, hash;
+    private static class LoginCookie {
+        private Integer id, hash;
+        private String sid, shash;
 
-        /**
-         * Initializes cookie from user.
-         */
-        public LoginCookie(User user) {
-            id = user.getId();
-            hash = user.getPassword().hashCode();
+        public LoginCookie(int id, int hash) {
+            this.id = id;
+            this.hash = hash;
+        }
+
+        public LoginCookie(int id, String shash) {
+            this.id = id;
+            this.shash = shash;
         }
 
         /**
          * Initializes cookie from cookie. (used for reverse operation)
          */
         public LoginCookie(Cookie cookie) {
-            String sid="",shash="";
             String value = cookie.getValue();
-            if ( value==null || value.length()<6 ) return;
+            if (value == null || value.length() < 6)
+                return;
 
             int position = value.indexOf(':');
-            if ( position!=-1 ) {
+            if (position != -1) {
                 sid = value.substring(0,position);
                 shash = value.substring(position+1);
             } else {
                 position = value.indexOf("%3A");
-                if ( position!=-1 ) {
+                if (position != -1) {
                     sid = value.substring(0,position);
                     shash = value.substring(position+3);
                 } else
                     return;
             }
-            id = Integer.parseInt(sid);
-            hash = Integer.parseInt(shash);
         }
 
         /**
          * Creates cookie from already supplied information.
          */
         public Cookie getCookie() {
-            String content = id+":"+hash;
-            Cookie cookie = new Cookie(Constants.VAR_USER,content);
+            StringBuffer sb = new StringBuffer();
+            if (sid != null)
+                sb.append(sid);
+            else
+                sb.append(id);
+            sb.append(":");
+            if (shash != null)
+                sb.append(shash);
+            else
+                sb.append(hash);
+            Cookie cookie = new Cookie(Constants.VAR_USER, sb.toString());
             cookie.setPath("/");
             return cookie;
+        }
+
+        public int getHash() {
+            if (hash != null)
+                return hash;
+            return Integer.parseInt(shash);
+        }
+
+        public int getId() {
+            if (id != null)
+                return id;
+            return Integer.parseInt(sid);
         }
     }
 }

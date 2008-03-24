@@ -2,13 +2,15 @@
 
 <@lib.showMessages/>
 
-<p>Tento krok vyžaduje, abyste se přihlásil(a) na svůj uživatelský účet.
-Pokud ještě žádný nemáte, můžete si jej
-<a href="${URL.noPrefix("/EditUser?action=register")}">vytvořit</a>.
-Zabere vám to jen okamžik a přinese spoustu výhod. Pokud u nás účet
-již máte, ale nepamatujete si přihlašovací údaje,
-<a href="${URL.noPrefix("/SelectUser?sAction=form&amp;action=forgottenPassword&amp;TITLE=Zaslání+zapomenutého+hesla&amp;url=/Profile")}">najděte si jej</a>
-a my vám zašleme heslo.
+<h1>Přihlášení</h1>
+
+<p>
+    Tento krok vyžaduje, abyste se přihlásil(a). Přihlašovací údaje jsou společné pro rodinu serverů
+    abclinuxu.cz, itbiz.cz, abcprace.cz, abchost.cz a 64bit.cz, takže můžete použít přihlašovací údaje
+    z kteréhokoliv těchto serverů. Pokud jste se ještě na žádném z techto serverů nezaregistrovali,
+    využijte jednoduchého <a href="${URL.noPrefix("/EditUser?action=register")}">registračního formuláře</a>.
+    Registrace je opravdu jednoduchá, zabere jen okamžik vašeho času a přinese vám mnoho výhod oproti
+    neregsitrovaným uživatelům. Pokud jste své přihlašovací údaje zapomněli, kontaktuje <a href="/pozadavky">administrátory</a>.
 </p>
 
 <form action="${REQUEST_URI}" method="POST">

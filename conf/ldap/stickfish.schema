@@ -11,50 +11,55 @@ attributeType ( 222.5.1.1  NAME 'openID'
 		EQUALITY caseIgnoreMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
-attributeType ( 222.5.1.2  NAME 'passwordQuestion'
+attributeType ( 222.5.1.2  NAME 'passwordHash'
+		DESC 'Hashcode of the password, used by cookie autologin'
+		EQUALITY caseIgnoreMatch
+		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributeType ( 222.5.1.3  NAME 'passwordQuestion'
 		DESC 'Question to verify the user when he asks for new password'
 		EQUALITY caseIgnoreMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
-attributeType ( 222.5.1.3  NAME 'passwordAnswer'
+attributeType ( 222.5.1.4  NAME 'passwordAnswer'
 		DESC 'Expected reply when user asks for new password'
 		EQUALITY caseIgnoreMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
-attributeType ( 222.5.1.4  NAME 'forgottenPasswordToken'
+attributeType ( 222.5.1.5  NAME 'forgottenPasswordToken'
 		DESC 'Generated one time token to log user in and let him change his password'
 		EQUALITY caseExactMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
-attributeType ( 222.5.1.5  NAME 'registrationPortalID'
+attributeType ( 222.5.1.6  NAME 'registrationPortalID'
 		DESC 'Complete hostname of the portal, where user has been registered'
 		EQUALITY caseIgnoreMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
-attributeType ( 222.5.1.6  NAME 'registrationDate'
+attributeType ( 222.5.1.7  NAME 'registrationDate'
 		DESC 'Date when user was registered in format YYYY-MM-DD HH:MM:SS'
 		EQUALITY caseIgnoreMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
-attributeType ( 222.5.1.7  NAME 'lastLoginDate'
+attributeType ( 222.5.1.8  NAME 'lastLoginDate'
 		DESC 'Date when user has logged in the last time in format YYYY-MM-DD HH:MM'
 		EQUALITY caseIgnoreMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
-attributeType ( 222.5.1.8  NAME 'visitedPortalID'
+attributeType ( 222.5.1.9  NAME 'visitedPortalID'
 		DESC 'Complete hostname of the portals, which user has visited'
 		EQUALITY caseIgnoreMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributeType ( 222.5.1.10  NAME 'emailVerified'
 		DESC 'Flag (true/false) indicating whether user proved he can read emails from email address'
-		EQUALITY booleanMatch
-		SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE )
+		EQUALITY caseIgnoreMatch
+		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
 attributeType ( 222.5.1.11  NAME 'emailBlocked'
 		DESC 'Flag (true/false) indicating that user email address is blocked (because it does not work)'
-		EQUALITY booleanMatch
-		SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE )
+		EQUALITY caseIgnoreMatch
+		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
 attributeType ( 222.5.1.12  NAME 'country'
 		DESC 'User supplied string identifying the country he lives'
@@ -68,6 +73,11 @@ attributeType ( 222.5.1.13  NAME 'city'
 
 attributeType ( 222.5.1.14  NAME 'homepageURL'
 		DESC 'User home page url'
+		EQUALITY caseIgnoreMatch
+		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributeType ( 222.5.1.15  NAME 'sex'
+		DESC 'Either man or woman'
 		EQUALITY caseIgnoreMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
@@ -149,10 +159,10 @@ objectClass ( 223.5.1.0 NAME 'stickfishUser'
 		DESC 'Stickfish customer data structure'
 		SUP top AUXILIARY
 		MUST ( cn $ sn $ registrationPortalID $ registrationDate)
-		MAY ( openID $ passwordQuestion $ passwordAnswer $ forgottenPasswordToken
+		MAY ( openID $ passwordHash $ passwordQuestion $ passwordAnswer $ forgottenPasswordToken
 		      $ emailAddress $ emailVerified $ emailBlocked
 		      $ lastLoginDate $ visitedPortalID
-		      $ country $ city $ homepageURL
+		      $ country $ city $ homepageURL $ sex
 		      $ deliveryAddressName $ deliveryAddressStreet $ deliveryAddressCity $ deliveryAddressZIP $ deliveryAddressCountry
 		      $ invoicingAddressName $ invoicingAddressStreet $ invoicingAddressCity $ invoicingAddressZIP
 		      $ invoicingAddressCountry $ invoicingCompany $ invoicingCompanyICO $invoicingCompanyDIC

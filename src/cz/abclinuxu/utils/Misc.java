@@ -34,6 +34,8 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import org.dom4j.Node;
+import org.dom4j.Element;
+import org.dom4j.DocumentHelper;
 import org.htmlparser.lexer.Lexer;
 import org.htmlparser.nodes.TagNode;
 import org.htmlparser.util.ParserException;
@@ -44,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -232,8 +233,7 @@ public class Misc {
     public static String trimUndefined(String s) {
         if (s==null)
             return s;
-        if (s!=null)
-            s = s.trim();
+        s = s.trim();
         if (s.length()==0)
             return null;
         return s;
@@ -326,9 +326,9 @@ public class Misc {
      */
     public static String addRelNofollowToLink(String text) throws ParserException {
         Lexer lexer = new Lexer(text);
-        org.htmlparser.Node node = null;
-        TagNode tag = null;
-        String currentTagName = null;
+        org.htmlparser.Node node;
+        TagNode tag;
+        String currentTagName;
         StringBuffer sb = new StringBuffer();
 
         while ((node = lexer.nextNode()) != null) {
@@ -352,13 +352,12 @@ public class Misc {
      * @return false if there is discussion with foreign comments.
      */
     public static boolean containsForeignComments(Item story) {
-        List children = story.getChildren();
+        List<Relation> children = story.getChildren();
         if (children == null)
             return false;
 
         Persistence persistence = PersistenceFactory.getPersistence();
-        for (Iterator iter = children.iterator(); iter.hasNext();) {
-            Relation relation = (Relation) iter.next();
+        for (Relation relation : children) {
             GenericObject child = (relation).getChild();
             if (!(child instanceof Item))
                 continue;
@@ -369,7 +368,7 @@ public class Misc {
                 continue;
 
             Discussion diz = Tools.createDiscussionTree(item, null, 0, false);
-            if (diz.getSize()==0)
+            if (diz.getSize() == 0)
                 return false;
 
             LinkedList stack = new LinkedList();
@@ -377,11 +376,27 @@ public class Misc {
             User owner = new User(story.getOwner());
             while (stack.size() > 0) {
                 Comment thread = (Comment) stack.removeFirst();
-                if (! owner.equals(thread.getAuthor()))
+                if (!owner.equals(thread.getAuthor()))
                     return true;
                 stack.addAll(thread.getChildren());
             }
         }
         return false;
+    }
+
+    /**
+     * Tests if given user has valid and verified email address.
+     * @param user initialized user
+     * @return true if email is set, is verified and is not blocked
+     */
+    public static boolean hasValidEmail(User user) {
+        if (user.getEmail() == null)
+            return false;
+
+        Element tagEmail = DocumentHelper.makeElement(user.getData(), "/data/communication/email");
+        if ("no".equals(tagEmail.attributeValue("valid")))
+            return false;
+        String value = tagEmail.attributeValue("verified");
+        return (value == null || "yes".equals(value));
     }
 }

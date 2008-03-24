@@ -34,19 +34,21 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 public class User extends CommonObject {
     /** login name of the user */
     private String login;
+    /** openid login */
+    private String openId;
     /** real name of the user */
     private String name;
     /** nickname of the user */
     private String nick;
     /** email of the user */
     private String email;
-    /** (noncrypted) password */
+    /** (noncrypted) password, not persisted */
     private String password;
 
     /** cache of granted user roles */
-    private Map roles = null;
+    private Map roles;
     /** map where key is discussion id and value is id of last seen comment */
-    private Map lastSeenDiscussions;
+    private Map<Integer, Integer> lastSeenDiscussions;
 
 
     public User() {
@@ -76,6 +78,21 @@ public class User extends CommonObject {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * @return openid
+     */
+    public String getOpenId() {
+        return openId;
+    }
+
+    /**
+     * Sets openid
+     * @param openId valid openid identifier
+     */
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 
     /**
@@ -114,6 +131,7 @@ public class User extends CommonObject {
     }
 
     /**
+     * User password. It is not persisted in database since migration to LDAP.
      * @return (noncrypted) password
      */
     public String getPassword() {
@@ -125,22 +143,6 @@ public class User extends CommonObject {
      */
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    /**
-     * verifies supplied password
-     * @return true, if supplied password is valid
-     */
-    public boolean validatePassword(String pass) {
-        if ( pass==null ) return false;
-        return password.equals(pass);
-    }
-
-    /**
-     * @return True, if user is an administrator
-     */
-    public boolean isAdmin() {
-        throw new RuntimeException("Deprecated method isAdmin called!");
     }
 
     /**
@@ -192,7 +194,7 @@ public class User extends CommonObject {
      * changes are not propagated to persistence.
      * @param map map to be copied, key is discussion id (integer), value is last seen comment id (integer).
      */
-    public void fillLastSeenComments(Map map) {
+    public void fillLastSeenComments(Map<Integer, Integer> map) {
         createLastSeenCommentsMap();
         lastSeenDiscussions.putAll(map);
     }

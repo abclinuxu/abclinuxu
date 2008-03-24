@@ -23,7 +23,6 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.exceptions.InvalidInputException;
-import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.exceptions.LdapException;
 
 import javax.naming.NamingException;
@@ -47,6 +46,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.prefs.Preferences;
@@ -96,10 +97,14 @@ public class LdapUserManager implements Configurable {
     public static final String ATTRIB_OPEN_ID = "openID";
     public static final String ATTRIB_PASSWORD = "userPassword";
     public static final String ATTRIB_PASSWORD_ANSWEAR = "passwordAnswer";
+    public static final String ATTRIB_PASSWORD_HASHCODE = "passwordHash";
     public static final String ATTRIB_PASSWORD_QUESTION = "passwordQuestion";
     public static final String ATTRIB_REGISTRATION_PORTAL = "registrationPortalID";
     public static final String ATTRIB_REGISTRATION_DATE = "registrationDate";
+    public static final String ATTRIB_SEX = "sex";
     public static final String ATTRIB_VISITED_PORTAL = "visitedPortalID";
+
+    public static final String SERVER_ABCLINUXU = "www.abclinuxu.cz";
 
     public static final String SF_USER_ALL_ATTRIBUTES[] = {
         ATTRIB_CITY, ATTRIB_COUNTRY, ATTRIB_DELIVERY_ADDRESS_CITY, ATTRIB_DELIVERY_ADDRESS_COUNTRY,
@@ -109,10 +114,11 @@ public class LdapUserManager implements Configurable {
         ATTRIB_INVOICING_ADDRESS_COUNTRY, ATTRIB_INVOICING_ADDRESS_DIC, ATTRIB_INVOICING_ADDRESS_ICO,
         ATTRIB_INVOICING_ADDRESS_NAME, ATTRIB_INVOICING_ADDRESS_STREET, ATTRIB_INVOICING_ADDRESS_ZIP,
         ATTRIB_LAST_LOGIN_DATE, ATTRIB_LOGIN, ATTRIB_NAME, ATTRIB_OPEN_ID, ATTRIB_PASSWORD_ANSWEAR,
-        ATTRIB_PASSWORD_QUESTION, ATTRIB_REGISTRATION_DATE, ATTRIB_REGISTRATION_PORTAL, ATTRIB_VISITED_PORTAL
+        ATTRIB_PASSWORD_HASHCODE, ATTRIB_PASSWORD_QUESTION, ATTRIB_REGISTRATION_DATE, ATTRIB_REGISTRATION_PORTAL,
+        ATTRIB_SEX, ATTRIB_VISITED_PORTAL
     };
     private static final String SF_USER_VISITED_PORTAL[] = new String[]{ATTRIB_VISITED_PORTAL};
-    private static final String SF_USER_LOGIN[] = new String[]{ATTRIB_NAME, ATTRIB_LOGIN};
+    private static final String SF_USER_LOGIN[] = new String[]{ATTRIB_NAME, ATTRIB_LOGIN, ATTRIB_PASSWORD_HASHCODE};
 
     private static LdapUserManager instance = new LdapUserManager();
 
@@ -122,7 +128,6 @@ public class LdapUserManager implements Configurable {
         for (String attr : SF_USER_ALL_ATTRIBUTES) {
             MODIFIABLE_ATTRIBUTES.add(attr);
         }
-        MODIFIABLE_ATTRIBUTES.add(ATTRIB_PASSWORD);
         MODIFIABLE_ATTRIBUTES.remove(ATTRIB_LOGIN);
 //        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_LAST_LOGIN_DATE);
 //        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_REGISTRATION_DATE);
@@ -137,7 +142,7 @@ public class LdapUserManager implements Configurable {
 
     public static Pattern reLoginInvalid;
 
-    SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    static final SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     String ldapServerUri;
     String adminUsername;
@@ -193,6 +198,9 @@ public class LdapUserManager implements Configurable {
             Attribute attr = new BasicAttribute(ATTRIB_PASSWORD, password);
             attrs.put(attr);
 
+            attr = new BasicAttribute(ATTRIB_PASSWORD_HASHCODE, Integer.toString(password.hashCode()));
+            attrs.put(attr);
+
             if (openId != null) {
                 checkDuplicateOpenId(openId, null, ctx);
                 attr = new BasicAttribute(ATTRIB_OPEN_ID, openId);
@@ -212,7 +220,7 @@ public class LdapUserManager implements Configurable {
             attr = new BasicAttribute(ATTRIB_REGISTRATION_DATE, value);
             attrs.put(attr);
 
-            ctx.createSubcontext(ATTRIB_LOGIN + "=" + login + "," + parentContext, attrs);
+            ctx.createSubcontext(ATTRIB_LOGIN + "=" + login.toLowerCase() + "," + parentContext, attrs);
         } catch (NameAlreadyBoundException e) {
             String message = "Login " + login + " je již používán.";
             throw new DuplicateKeyException(message);
@@ -241,13 +249,19 @@ public class LdapUserManager implements Configurable {
         try {
             ctx = connectLDAP(adminUsername, adminPassword, true);
             List<ModificationItem> modsList = new ArrayList<ModificationItem>();
+            BasicAttribute attr;
             for (String key : values.keySet()) {
                 if (!MODIFIABLE_ATTRIBUTES.contains(key))
                     throw new InvalidInputException("Atribut '" + key + "' je buď špatně zapsán, neexistuje nebo je zakázáno jej měnit!");
-                if (ATTRIB_OPEN_ID.equals(key))
+                if (ATTRIB_OPEN_ID.equals(key)) {
                     checkDuplicateOpenId(values.get(key), login, ctx);
+                } else if (ATTRIB_EMAIL_BLOCKED.equals(key) || ATTRIB_EMAIL_VERIFIED.equals(key)) {
+                    String value = values.get(key);
+                    if ( value != null && ! ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)))
+                        throw new InvalidInputException("Atribut '" + key + "' smí obsahovat jen hodnoty true a false!");
+                }
 
-                BasicAttribute attr = new BasicAttribute(key, values.get(key));
+                attr = new BasicAttribute(key, values.get(key));
                 if (ATTRIB_VISITED_PORTAL.equals(key)) // TODO odstranit po migraci
                     modsList.add(new ModificationItem(DirContext.ADD_ATTRIBUTE, attr));
                 else
@@ -257,6 +271,40 @@ public class LdapUserManager implements Configurable {
             if (modsList.isEmpty())
                 return;
 
+            ModificationItem[] mods = modsList.toArray(new ModificationItem[modsList.size()]);
+            ctx.modifyAttributes(ATTRIB_LOGIN + "=" + login + "," + parentContext, mods);
+        } catch (NamingException e) {
+            log.error("LDAP connection failed!", e);
+            throw new LdapException("Spojení s LDAP serverem selhalo. Důvod: " + e.getMessage());
+        } finally {
+            if (ctx != null)
+                try {
+                    ctx.close();
+                } catch (NamingException e) {
+                    log.error("LDAP connection failed!", e);
+                }
+        }
+    }
+
+    /**
+     * Updates password and passwordHash.
+     * @param login the login
+     * @param password the password
+     * @throws LdapException LDAP connection error
+     * @throws InvalidInputException unknown or unsupported attribute was supplied
+     */
+    public void changePassword(String login, String password) throws LdapException, InvalidInputException {
+        if (password == null || password.length() < 4)
+            throw new InvalidInputException("Přihlašovací heslo musí mít nejméně čtyři znaky!");
+
+        DirContext ctx = null;
+        try {
+            ctx = connectLDAP(adminUsername, adminPassword, true);
+            List<ModificationItem> modsList = new ArrayList<ModificationItem>();
+            BasicAttribute attr = new BasicAttribute(ATTRIB_PASSWORD, password);
+            modsList.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr));
+            attr = new BasicAttribute(ATTRIB_PASSWORD_HASHCODE, Integer.toString(password.hashCode()));
+            modsList.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr));
             ModificationItem[] mods = modsList.toArray(new ModificationItem[modsList.size()]);
             ctx.modifyAttributes(ATTRIB_LOGIN + "=" + login + "," + parentContext, mods);
         } catch (NamingException e) {
@@ -295,28 +343,7 @@ public class LdapUserManager implements Configurable {
             }
 
             ctx = connectLDAP(adminUsername, adminPassword, true);
-
-            Attributes attrs = new BasicAttributes(true);
-            attrs.put(ATTRIB_LOGIN, login);
-            attrs.put(ATTRIB_VISITED_PORTAL, portal);
-            NamingEnumeration results = ctx.search(parentContext, attrs, SF_USER_VISITED_PORTAL);
-            boolean portalAlreadyVisited = results.hasMore();
-
-            ModificationItem[] mods = new ModificationItem[(portalAlreadyVisited) ? 1 : 2];
-            String value;
-            synchronized (isoFormat) {
-                value = isoFormat.format(new Date());
-            }
-
-            BasicAttribute attr = new BasicAttribute(ATTRIB_LAST_LOGIN_DATE, value);
-            mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr);
-
-            if (!portalAlreadyVisited) {
-                attr = new BasicAttribute(ATTRIB_VISITED_PORTAL, portal);
-                mods[1] = new ModificationItem(DirContext.ADD_ATTRIBUTE, attr);
-            }
-
-            ctx.modifyAttributes(ATTRIB_LOGIN + "=" + login + "," + parentContext, mods);
+            recordLogin(login, portal, ctx);
             return true;
         } catch (NamingException e) {
             log.error("LDAP connection failed!", e);
@@ -332,13 +359,52 @@ public class LdapUserManager implements Configurable {
     }
 
     /**
+     * Verify user credentials (not password but only its hashcode) and record that the user has successfully logged to given portal.
+     * @param login user login
+     * @param passwordHash hashcode of the password
+     * @param portal preconfigured portal id
+     * @return true if login was successfull, false otherwise
+     * @throws LdapException LDAP connection error
+     */
+    public boolean loginWithPasswordHash(String login, int passwordHash, String portal) throws LdapException {
+        portal = checkPortal(portal);
+        DirContext ctx = null;
+        try {
+            ctx = connectLDAP(adminUsername, adminPassword, true);
+
+            Attributes searchAttrs = new BasicAttributes(true);
+            searchAttrs.put(ATTRIB_LOGIN, login);
+            searchAttrs.put(ATTRIB_PASSWORD_HASHCODE, Integer.toString(passwordHash));
+            NamingEnumeration results = ctx.search(parentContext, searchAttrs, SF_USER_LOGIN);
+            if (!results.hasMore())
+                return false;
+
+            SearchResult sr = (SearchResult) results.next();
+            searchAttrs = sr.getAttributes();
+
+            recordLogin(searchAttrs.get(ATTRIB_LOGIN).get(), portal, ctx);
+            return true;
+        } catch (NamingException e) {
+            log.error("Login with '" + login + "' has failed!", e);
+            throw new LdapException("Spojení s LDAP serverem selhalo. Důvod: " + e.getMessage());
+        } finally {
+            if (ctx != null)
+                try {
+                    ctx.close();
+                } catch (NamingException e) {
+                    log.error("LDAP connection failed!", e);
+                }
+        }
+    }
+
+    /**
      * Record that the user with specified openid has successfully logged to given portal.
      * @param openId openid of existing user
      * @param portal preconfigured portal id
-     * @throws NotFoundException given openid is not registered with any user
+     * @return true if openid was found
      * @throws LdapException LDAP connection error
      */
-    public void loginWithOpenId(String openId, String portal) throws LdapException, NamingException {
+    public boolean loginWithOpenId(String openId, String portal) throws LdapException {
         portal = checkPortal(portal);
         DirContext ctx = null;
         try {
@@ -346,44 +412,88 @@ public class LdapUserManager implements Configurable {
 
             Attributes searchAttrs = new BasicAttributes(ATTRIB_OPEN_ID, openId);
             NamingEnumeration results = ctx.search(parentContext, searchAttrs, SF_USER_LOGIN);
-            if (!results.hasMore()) {
-                String message = "Openid " + openId + " is not registered in the system";
-                throw new NotFoundException(message);
-            }
+            if (!results.hasMore())
+                return false;
 
             SearchResult sr = (SearchResult) results.next();
             searchAttrs = sr.getAttributes();
-            Attributes attrs = new BasicAttributes(true);
-
-            Object login = searchAttrs.get(ATTRIB_LOGIN).get();
-            attrs.put(ATTRIB_LOGIN, login);
-            attrs.put(ATTRIB_OPEN_ID, openId);
-            attrs.put(ATTRIB_VISITED_PORTAL, portal);
-            results = ctx.search(parentContext, attrs, SF_USER_VISITED_PORTAL);
-            boolean portalAlreadyVisited = results.hasMore();
-
-            ModificationItem[] mods = new ModificationItem[(portalAlreadyVisited) ? 1 : 2];
-            String value;
-            synchronized (isoFormat) {
-                value = isoFormat.format(new Date());
-            }
-
-            BasicAttribute attr = new BasicAttribute(ATTRIB_LAST_LOGIN_DATE, value);
-            mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr);
-
-            if (!portalAlreadyVisited) {
-                attr = new BasicAttribute(ATTRIB_VISITED_PORTAL, portal);
-                mods[1] = new ModificationItem(DirContext.ADD_ATTRIBUTE, attr);
-            }
-
-            ctx.modifyAttributes(ATTRIB_LOGIN + "=" + login + "," + parentContext, mods);
+            recordLogin(searchAttrs.get(ATTRIB_LOGIN).get(), portal, ctx);
+            return true;
         } catch (NamingException e) {
             log.error("Login with '" + openId + "' has failed!", e);
             throw new LdapException("Spojení s LDAP serverem selhalo. Důvod: " + e.getMessage());
         } finally {
             if (ctx != null)
-                ctx.close();
+                try {
+                    ctx.close();
+                } catch (NamingException e) {
+                    log.error("LDAP connection failed!", e);
+                }
         }
+    }
+
+    public Map<String, String> getUserInformation(String login, String[] attributes) throws LdapException {
+        DirContext ctx = null;
+        try {
+            ctx = connectLDAP(adminUsername, adminPassword, true);
+
+            Attributes searchAttrs = new BasicAttributes(ATTRIB_LOGIN, login);
+            NamingEnumeration results = ctx.search(parentContext, searchAttrs, attributes);
+            if (!results.hasMore())
+                return Collections.emptyMap();
+
+            SearchResult sr = (SearchResult) results.next();
+            searchAttrs = sr.getAttributes();
+            NamingEnumeration<? extends Attribute> all = searchAttrs.getAll();
+            Map<String, String> result = new HashMap<String, String>();
+            while (all.hasMoreElements()) {
+                Attribute attribute =  all.nextElement();
+                result.put(attribute.getID(), (String) attribute.get());
+            }
+            return result;
+        } catch (NamingException e) {
+            log.error("Login with '" + login + "' has failed!", e);
+            throw new LdapException("Spojení s LDAP serverem selhalo. Důvod: " + e.getMessage());
+        } finally {
+            if (ctx != null)
+                try {
+                    ctx.close();
+                } catch (NamingException e) {
+                    log.error("LDAP connection failed!", e);
+                }
+        }
+    }
+
+    /**
+     * Stores information about user's log in.
+     * @param login user login
+     * @param portal registered portal key
+     * @param ctx LDAP connection
+     * @throws NamingException LDAP error
+     */
+    private void recordLogin(Object login, String portal, DirContext ctx) throws NamingException {
+        Attributes attrs = new BasicAttributes(true);
+        NamingEnumeration results;
+        attrs.put(ATTRIB_LOGIN, login);
+        attrs.put(ATTRIB_VISITED_PORTAL, portal);
+        results = ctx.search(parentContext, attrs, SF_USER_VISITED_PORTAL);
+        boolean portalAlreadyVisited = results.hasMore();
+
+        ModificationItem[] mods = new ModificationItem[(portalAlreadyVisited) ? 1 : 2];
+        String value;
+        synchronized (isoFormat) {
+            value = isoFormat.format(new Date());
+        }
+
+        BasicAttribute attr = new BasicAttribute(ATTRIB_LAST_LOGIN_DATE, value);
+        mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr);
+
+        if (!portalAlreadyVisited) {
+            attr = new BasicAttribute(ATTRIB_VISITED_PORTAL, portal);
+            mods[1] = new ModificationItem(DirContext.ADD_ATTRIBUTE, attr);
+        }
+
+        ctx.modifyAttributes(ATTRIB_LOGIN + "=" + login + "," + parentContext, mods);
     }
 
     /**
@@ -395,7 +505,7 @@ public class LdapUserManager implements Configurable {
      * @throws NamingException LDAP error
      */
     private DirContext connectLDAP(String login, String password, boolean admin) throws NamingException {
-        DirContext ctx = null;
+        DirContext ctx;
         Properties props = new Properties();
         props.setProperty(Context.INITIAL_CONTEXT_FACTORY, LDAP_PROVIDER);
         props.setProperty(Context.PROVIDER_URL, ldapServerUri);

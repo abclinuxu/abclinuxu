@@ -50,6 +50,7 @@ public class ViewUser implements AbcAction {
     public static final String VAR_SOFTWARE = "SOFTWARE";
     public static final String VAR_LAST_DESKTOP = "LAST_DESKTOP";
     public static final String VAR_DESKTOPS = "DESKTOPS";
+    public static final String VAR_INVALID_EMAIL = "INVALID_EMAIL";
 
     public static final String PARAM_USER = "userId";
     public static final String PARAM_USER_SHORT = "uid";
@@ -104,15 +105,13 @@ public class ViewUser implements AbcAction {
 
         profile = (User) persistence.findById(profile);
         env.put(VAR_PROFILE, profile);
+        env.put(VAR_INVALID_EMAIL, Misc.hasValidEmail(profile));
 
         if (ACTION_SHOW_MY_OBJECTS.equals(action))
             return handleMyObjects(request, env);
 
         if (ACTION_SEND_EMAIL.equals(action))
             return handleSendEmail(request, response, env);
-
-        if (ACTION_SEND_PASSWORD.equals(action))
-            return handleSendForgottenPassword(request, response, env);
 
         return handleProfile(request,env);
     }
@@ -135,7 +134,7 @@ public class ViewUser implements AbcAction {
             int count = Misc.parseInt((element != null) ? element.getText() : null, ViewBlog.getDefaultPageSize());
 
             List qualifiers = new ArrayList();
-            qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(user.getId())));
+            qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, user.getId()));
             qualifiers.add(Qualifier.SORT_BY_CREATED);
             qualifiers.add(Qualifier.ORDER_DESCENDING);
             qualifiers.add(new LimitQualifier(0, count));
@@ -251,34 +250,6 @@ public class ViewUser implements AbcAction {
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Mail?url=/Profile/"+user.getId());
-        return null;
-    }
-
-    /**
-     * Sends forgotten password.
-     */
-    protected String handleSendForgottenPassword(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        User user = (User) env.get(VAR_PROFILE);
-
-        Map data = new HashMap();
-        data.put(Constants.VAR_USER, user);
-        data.put(EmailSender.KEY_FROM, "admin@abclinuxu.cz");
-        data.put(EmailSender.KEY_TO, user.getEmail());
-        data.put(EmailSender.KEY_RECEPIENT_UID, Integer.toString(user.getId()));
-        data.put(EmailSender.KEY_SUBJECT, "Zapomenute heslo");
-        data.put(EmailSender.KEY_TEMPLATE, "/mail/password.ftl");
-        data.put(EmailSender.KEY_STATS_KEY, Constants.EMAIL_FORGOTTEN_PASSWORD);
-        EmailSender.sendEmail(data);
-
-        String email = user.getEmail();
-        int position = email.indexOf("@");
-        if (position != -1 && position < email.length()) {
-            email = email.substring(0, position + 2).concat("<chráněno>");
-        }
-
-        ServletUtils.addMessage("Heslo bylo odesláno na adresu " + email + ".", env, request.getSession());
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/");
         return null;
     }
 
