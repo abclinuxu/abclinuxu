@@ -91,8 +91,6 @@ public class UpgradeUser {
                     changes.put(LdapUserManager.ATTRIB_SEX, tmp);
 
                     ldapMgr.updateUser(user.getLogin(), changes);
-                    if (true) //todo remove
-                        System.exit(1);
 
                     System.out.print("#");
                     if (++l % 50 == 0)
