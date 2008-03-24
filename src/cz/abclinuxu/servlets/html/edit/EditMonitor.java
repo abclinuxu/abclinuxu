@@ -38,8 +38,10 @@ public class EditMonitor implements AbcAction {
             env.put(VAR_RELATION, relation);
         }
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         // check permissions
         User user = (User) env.get(Constants.VAR_USER);
@@ -65,6 +67,7 @@ public class EditMonitor implements AbcAction {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Nemáte validní email. Buď jste jej nezadali, neaktivovali jej " +
                                   "nebo byl zablokován kvůli nedoručeným emailům.", env, request.getSession());
             urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+            return null;
         }
 
         Date originalUpdated = content.getUpdated();
