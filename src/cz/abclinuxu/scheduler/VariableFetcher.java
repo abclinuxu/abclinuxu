@@ -68,6 +68,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String KEY_PERSONALITIES = "personalities";
     public static final String KEY_BAZAAR = "bazaar";
     public static final String KEY_SCREENSHOT = "screenshot";
+    public static final String KEY_TRIVIA = "trivia";
     public static final String KEY_INDEX_LINKS = "links.in.index";
     public static final String KEY_TEMPLATE_LINKS = "links.in.template";
 
@@ -79,6 +80,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     List freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
     List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities;
+    List freshTrivias;
     List<Screenshot> freshScreenshots;
     String indexFeeds, templateFeeds;
     Map defaultSizes, maxSizes, counter;
@@ -232,6 +234,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public List getFreshNews(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_NEWS, "/data/settings/index_news");
         return getSubList(freshNews, userLimit);
+    }
+
+    /**
+     * List of the most fresh news relations according to user preference or system setting.
+     */
+    public List getFreshTrivia(Object user) {
+        int userLimit = getObjectCountForUser(user, KEY_TRIVIA, null);
+        return getSubList(freshTrivias, userLimit);
     }
 
     /**
@@ -415,6 +425,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshFeedLinks();
             refreshSectionCaches();
             refreshScreenshots();
+            refreshTrivia();
 
             cycle++;
             log.debug("Cachovani hotovo.");
@@ -568,6 +579,18 @@ public class VariableFetcher extends TimerTask implements Configurable {
             freshDictionary = data;
         } catch (Exception e) {
             log.error("Selhalo nacitani pojmu", e);
+        }
+    }
+
+    public void refreshTrivia() {
+        try {
+            int maximum = (Integer) maxSizes.get(KEY_TRIVIA);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
+            List data = sqlTool.findItemRelationsWithType(Item.TRIVIA, qualifiers);
+            Tools.syncList(data);
+            freshTrivias = data;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani kvizu", e);
         }
     }
 
@@ -762,6 +785,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
         size = prefs.getInt(PREF_MAX + KEY_SCREENSHOT, 3);
         maxSizes.put(KEY_SCREENSHOT, size);
         freshScreenshots = Collections.emptyList();
+
+        size = prefs.getInt(PREF_DEFAULT + KEY_TRIVIA, 3);
+        defaultSizes.put(KEY_TRIVIA, size);
+        size = prefs.getInt(PREF_MAX + KEY_TRIVIA, 10);
+        maxSizes.put(KEY_TRIVIA, size);
+        freshTrivias = Collections.EMPTY_LIST;
 
         indexFeeds = prefs.get(PREF_INDEX_FEEDS, "");
         templateFeeds = prefs.get(PREF_TEMPLATE_FEEDS, "");

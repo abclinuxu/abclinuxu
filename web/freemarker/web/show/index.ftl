@@ -257,6 +257,24 @@
       </div>
    </td>
 
+   <td>
+    <#assign TRIVIAS = VARS.getFreshTrivia(USER?if_exists)>
+      <div class="s_nadpis">
+        <a class="info" href="#">?<span class="tooltip">Nejčerstvější kvízy</span></a>
+        <a href="/hry">Kvízy</a>
+      </div>
+      <div class="s_sekce">
+        <ul>
+        <#list TRIVIAS as rel>
+             <li>
+                <a href="${rel.url}">${TOOL.childName(rel)}</a>
+             </li>
+        </#list>
+        </ul>
+        <span class="s_sekce_dalsi"><a href="/hry">další&nbsp;&raquo;</a></span>
+      </div>
+   </td>
+
   </tr>
 </table>
 
