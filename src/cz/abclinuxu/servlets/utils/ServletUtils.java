@@ -198,6 +198,11 @@ public class ServletUtils implements Configurable {
         if ( ! Misc.empty(login) ) {
             Integer id = SQLTool.getInstance().getUserByLogin(login);
             String password = (String) params.get(PARAM_LOG_PASSWORD);
+            if (password == null || password.length() == 0) {
+                ServletUtils.addError(PARAM_LOG_PASSWORD, "Přihlášení selhalo - zadejte heslo.", env, null);
+                return;
+            }
+
             if ( ! ldapManager.login(login, password, LdapUserManager.SERVER_ABCLINUXU) ) {
                 ServletUtils.addError(PARAM_LOG_PASSWORD, "Přihlášení selhalo - neplatná kombinace uživatelského jména a hesla.", env, null);
                 return;
