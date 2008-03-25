@@ -20,8 +20,11 @@
              tmp=TOOL.groupByType(trivia.children, "Item"),diz=TOOL.analyzeDiscussion(tmp.discussion[0])>
     <h2 class="st_nadpis"><a href="${relation.url}">${TOOL.childName(relation)}</a></h2>
     <p>${TOOL.xpath(trivia, "/data/description")}</p>
-    <p class="cl_inforadek">
-        Úroveň: <#if dif=="simple">jednoduchá<#elseif dif=="normal">normální<#elseif dif=="hard">složitá<#else>guru</#if> |
+    <p class="meta-vypis">
+        Úroveň: <#if dif=="simple">jednoduchá
+                <#elseif dif=="normal">normální
+                <#elseif dif=="hard">složitá
+                <#else>guru</#if> |
         Hráno: ${stats.count}&times; |
         Průměrné skóre: ${stats.percent} |
         <@lib.showCommentsInListing diz, "SMART", "/hry" />
@@ -29,13 +32,14 @@
             <a href="/EditTrivia/${relation.id}?action=edit">Upravit</a>
         </#if>
     </p>
-    <hr>
+    <hr />
 </#list>
 
 <p>
-    Pokud jste nalezli v některém kvízu chybu nebo vás napadly další otázky pro nový kvíz,
-    vložte prosím informace do <a rel="nofollow" href="http://bugzilla.abclinuxu.cz/show_bug.cgi?id=624">bugzilly</a>.
-    V případě zaslání kompletního kvízu a jeho přijetím redakcí získáte finanční odměnu.
+    Pokud jste nalezli v některém kvízu chybu, vložte prosím informace do diskuze.
+    Chcete-li se podílet na přípravě dalších kvízů, pošlete e-mail na
+    <a href="mailto:redakce@abclinuxu.cz">redakce@abclinuxu.cz</a>. Za každý kvíz,
+    který redakce přijme, získáte finanční odměnu.
 </p>
 
 <#include "../footer.ftl">
