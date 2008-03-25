@@ -105,7 +105,7 @@ public class ViewUser implements AbcAction {
 
         profile = (User) persistence.findById(profile);
         env.put(VAR_PROFILE, profile);
-        env.put(VAR_INVALID_EMAIL, Misc.hasValidEmail(profile));
+        env.put(VAR_INVALID_EMAIL, ! Misc.hasValidEmail(profile));
 
         if (ACTION_SHOW_MY_OBJECTS.equals(action))
             return handleMyObjects(request, env);
