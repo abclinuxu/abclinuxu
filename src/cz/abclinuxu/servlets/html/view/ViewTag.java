@@ -31,6 +31,7 @@ import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.exceptions.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -74,6 +75,9 @@ public class ViewTag implements AbcAction {
         if (matcher.find()) {
             String id = matcher.group(1);
             Tag tag = TagTool.getById(id);
+            if (tag == null)
+                throw new NotFoundException("Štítek '" + id + "' nebyl nalezen");
+
             env.put(VAR_TAG, tag);
             parents.add(new Link(tag.getTitle(), UrlUtils.PREFIX_TAGS + "/" + tag.getId(), null));
 
