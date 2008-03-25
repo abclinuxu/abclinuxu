@@ -63,7 +63,7 @@ public class EditMonitor implements AbcAction {
         GenericDataObject content = (GenericDataObject) persistence.findById(relation.getChild());
 
         User user = (User) env.get(Constants.VAR_USER);
-        if (Misc.hasValidEmail(user)) {
+        if (! Misc.hasValidEmail(user)) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Nemáte validní email. Buď jste jej nezadali, neaktivovali jej " +
                                   "nebo byl zablokován kvůli nedoručeným emailům.", env, request.getSession());
             urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
