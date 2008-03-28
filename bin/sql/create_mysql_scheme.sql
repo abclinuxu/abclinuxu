@@ -13,7 +13,7 @@ CREATE TABLE uzivatel (
  login CHAR(16) NOT NULL UNIQUE,                 -- prihlasovaci jmeno
  jmeno VARCHAR(35) NOT NULL,                     -- realne jmeno uzivatele
  email VARCHAR(60) NULL,                         -- email
- heslo VARCHAR(12) NULL,     	                 -- nekryptovane heslo, TODO odstranit
+ openid VARCHAR(255) NULL,     	                 -- openid url
  prezdivka VARCHAR(20) NULL UNIQUE,              -- prezdivka
  data TEXT                                       -- XML s nazvem, ikonou, poznamkou ...
 );

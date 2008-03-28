@@ -894,7 +894,7 @@ public class MySqlPersistence implements Persistence {
             conditions.add(user.getLogin());
             conditions.add(user.getName());
             conditions.add(user.getEmail());
-            conditions.add(user.getPassword());
+            conditions.add(user.getOpenId());
             conditions.add(user.getNick());
             conditions.add(user.getDataAsString().getBytes());
 
@@ -1162,7 +1162,7 @@ public class MySqlPersistence implements Persistence {
         user.setLogin(resultSet.getString(2));
         user.setName(resultSet.getString(3));
         user.setEmail(resultSet.getString(4));
-        user.setPassword(resultSet.getString(5));
+        user.setOpenId(resultSet.getString(5));
         user.setNick(resultSet.getString(6));
         user.setData(insertEncoding(resultSet.getString(7)));
         user.setInitialized(true);
@@ -1935,11 +1935,11 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("update uzivatel set login=?,jmeno=?,email=?,heslo=?,prezdivka=?,data=? where cislo=?");
+            statement = con.prepareStatement("update uzivatel set login=?,jmeno=?,email=?,openid=?,prezdivka=?,data=? where cislo=?");
             statement.setString(1,user.getLogin());
             statement.setString(2,user.getName());
             statement.setString(3,user.getEmail());
-            statement.setString(4,user.getPassword());
+            statement.setString(4,user.getOpenId());
             statement.setString(5,user.getNick());
             statement.setBytes(6,user.getDataAsString().getBytes());
             statement.setInt(7,user.getId());

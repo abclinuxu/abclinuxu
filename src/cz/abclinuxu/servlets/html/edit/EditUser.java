@@ -1470,7 +1470,7 @@ public class EditUser implements AbcAction {
         if (openid != null && openid.length() == 0)
             openid = null;
 
-        if (! verifyGuard(NoHTMLGuard.class, openid, PARAM_NAME, env))
+        if (! verifyGuard(NoHTMLGuard.class, openid, PARAM_OPEN_ID, env))
             return false;
 
         user.setOpenId(openid);

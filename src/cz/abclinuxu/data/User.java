@@ -89,7 +89,7 @@ public class User extends CommonObject {
 
     /**
      * Sets openid
-     * @param openId valid openid identifier
+     * @param openId valid openid url
      */
     public void setOpenId(String openId) {
         this.openId = openId;
