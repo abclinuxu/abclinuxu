@@ -36,6 +36,8 @@ import cz.abclinuxu.security.Roles;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.dom4j.Element;
 
@@ -63,6 +65,7 @@ public class ViewUser implements AbcAction {
     public static final String ACTION_SHOW_MY_OBJECTS = "objekty";
     public static final String ACTION_SEND_PASSWORD = "forgottenPassword";
 
+    private Pattern reTagId = Pattern.compile(UrlUtils.PREFIX_PEOPLE + "/" + "([^/?]+)");
 
     /**
      * Put your processing here. Return null, if you have redirected browser to another URL.
@@ -81,7 +84,17 @@ public class ViewUser implements AbcAction {
         if ( ACTION_LOGIN2.equals(action) )
             return handleLogin2(request,response,env);
 
-        User profile = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
+        User profile = null;
+        String url = (String) env.get(Constants.VAR_REQUEST_URI);
+        Matcher matcher = reTagId.matcher(url);
+        if (matcher.find()) {
+            String login = matcher.group(1);
+            Integer id = SQLTool.getInstance().getUserByLogin(login);
+            if (id != null)
+                profile = new User(id);
+        } else {
+            profile = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
+        }
 
         if ( ACTION_SHOW_MY_PROFILE.equals(action) ) {
             User user = (User) env.get(Constants.VAR_USER);
@@ -101,7 +114,7 @@ public class ViewUser implements AbcAction {
         }
 
         if (profile == null)
-            return ServletUtils.showErrorPage("Chybí parametr uid!", env, request);
+            return ServletUtils.showErrorPage("Uživatel nebyl nalezen nebo byl zadán nesprávný parametr!", env, request);
 
         profile = (User) persistence.findById(profile);
         env.put(VAR_PROFILE, profile);

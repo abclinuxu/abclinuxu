@@ -89,7 +89,7 @@
     <p>
         ${TOOL.xpath(ITEM,"data/content")}<br>
         <span style="font-size: smaller">
-        <a href="/Profile/${autor.id}">${autor.name}</a> | ${DATE.show(ITEM.created,"CZ_FULL")} |
+        <a href="<@showUser autor/>">${autor.name}</a> | ${DATE.show(ITEM.created,"CZ_FULL")} |
         <a href="${url}" title="${title}">Komentáře: ${diz.responseCount}</a><#rt>
         <#lt><#if diz.responseCount gt 0><@markNewComments diz/>, poslední ${DATE.show(diz.updated, "SMART")}</#if>
         </span>
@@ -103,7 +103,7 @@
     url=relation.url?default("/zpravicky/show/"+relation.id)>
     <span>${DATE.show(item.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[item.subType].name}</span>
     <p>${TOOL.xpath(item,"data/content")}</p>
-    <span><a href="/Profile/${autor.id}">${TOOL.nonBreakingSpaces(autor.name)}</a>
+    <span><a href="<@showUser autor/>">${TOOL.nonBreakingSpaces(autor.name)}</a>
     | <a href="${url}" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"
     >Komentářů: ${diz.responseCount}<@lib.markNewComments diz/></a></span>
 </#macro>
@@ -404,7 +404,7 @@
     </#if>
 </#macro>
 
-<#macro showUser user><a href="/Profile/${user.id}">${user.nick?default(user.name)}</a></#macro>
+<#macro showUser user><a href="/lide/${user.login}">${user.nick?default(user.name)}</a></#macro>
 
 <#macro showRevisions relation>
     <p class="documentHistory">

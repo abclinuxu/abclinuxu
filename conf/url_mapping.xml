@@ -54,6 +54,10 @@
             <param name="action" value="objekty"/>
         </mapping>
         <mapping>
+            <pattern>^/lide</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewUser</action>
+        </mapping>
+        <mapping>
             <pattern>^/Profile</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewUser</action>
         </mapping>

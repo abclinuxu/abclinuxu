@@ -85,7 +85,7 @@
         <div class="hl">
         <div class="hl_vpravo">
             <#if USER?exists>
-                <a href="${URL.noPrefix("/Profile/"+USER.id)}">${USER.name}</a> |
+                <a href="${URL.noPrefix("<@lib.showUser USER/>}">${USER.name}</a> |
                 <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")?default("UNDEF")>
                 <#if blogName!="UNDEF"><a href="/blog/${blogName}">Blog</a> |</#if>
                 <a href="/History?type=comments&amp;uid=${USER.id}">Mé komentáře</a> |
