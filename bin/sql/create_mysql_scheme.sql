@@ -18,6 +18,7 @@ CREATE TABLE uzivatel (
  data TEXT                                       -- XML s nazvem, ikonou, poznamkou ...
 );
 ALTER TABLE uzivatel ADD INDEX in_nick (prezdivka);
+ALTER TABLE uzivatel ADD INDEX in_openid (prezdivka);
 
 
 -- tabulka s kategoriemi
