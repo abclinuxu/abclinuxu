@@ -86,7 +86,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_USER = ViewUser.PARAM_USER;
     public static final String PARAM_USER_SHORT = ViewUser.PARAM_USER_SHORT;
     public static final String PARAM_LOGIN = "login";
-    public static final String PARAM_OPEN_ID = "openid";
+    public static final String PARAM_OPEN_ID = "openid_url";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_PASSWORD = "password";
