@@ -1,10 +1,13 @@
-.bsupport-box { border: 1px dotted;
-                font-size: small;
-                padding: 0.3em;
-                border-color: #ff0000;
-                color: #ff0000; }
-.bsupport-box a { text-decoration: none;
-                  color: #ff0000; }
-.bsupport-box a:hover { text-decoration: underline;
-                        background-color: #ff0000;
-                        color: white; }
+#ibm-vip .s_nadpis {
+	border-color: #C0C0C0;
+	background-color: black;
+	margin-bottom: 0;
+}
+
+#ibm-vip .s_nadpis img { margin-top: 1px; }
+#ibm-vip .s_nadpis a { color: white; }
+
+#ibm-vip .s_nadpis a:hover {
+	background-color: transparent;
+	color: blue;
+}
