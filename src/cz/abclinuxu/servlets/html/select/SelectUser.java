@@ -119,7 +119,7 @@ public class SelectUser implements AbcAction {
             return actionShowForm(request, env, params);
         }
 
-        List found = persistence.findByExample(Collections.singletonList(searched), null);
+        List<User> found = persistence.findUsersLike(searched);
         if (found.size() == 0) {
             ServletUtils.addMessage("Nenalezen žádný uživatel!", env, null);
             return actionShowForm(request, env, params);

@@ -38,6 +38,8 @@ public abstract class GenericDataObject extends CommonObject {
     protected int type = 0;
     /** subtype of this object. String, max. length is 30 */
     protected String subType;
+    /** title for this object, it may be null */
+    protected String title;
     /** when this object was created */
     protected Date created;
     /** last update of this object */
@@ -104,6 +106,21 @@ public abstract class GenericDataObject extends CommonObject {
     }
 
     /**
+     * @return title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * Sets title
+     * @param title the title
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
      * @return last updated date
      */
     public Date getUpdated() {
@@ -159,6 +176,7 @@ public abstract class GenericDataObject extends CommonObject {
         GenericDataObject b = (GenericDataObject) obj;
         owner = b.owner;
         type = b.type;
+        title = b.title;
         subType = b.subType;
         created = b.created;
         updated = b.updated;
@@ -204,6 +222,8 @@ public abstract class GenericDataObject extends CommonObject {
         if ( id != p.id )
             return false;
         if ( type != p.type )
+            return false;
+        if ( ! Misc.same(title, p.title) )
             return false;
         if ( ! Misc.same(subType, p.subType) )
             return false;

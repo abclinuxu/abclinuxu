@@ -71,7 +71,7 @@ public class BlogDecorator implements Decorator, Configurable {
         if ( name==null ) {
             Persistence persistence = PersistenceFactory.getPersistence();
             Item blog = (Item) persistence.findById(action.relation.getChild());
-            name = blog.getData().selectSingleNode("/data/name").getText();
+            name = blog.getTitle();
         }
         env.put(VAR_NAME, name);
 

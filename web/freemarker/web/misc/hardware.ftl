@@ -1,5 +1,5 @@
 <#macro showHardware(hardware)>
-    <h1>${TOOL.xpath(hardware,"/data/name")?if_exists}</h1>
+    <h1>${hardware.title?if_exists}</h1>
 
     <table class="hwdetail">
         <#if TOOL.xpath(hardware,"/data/support")?exists>

@@ -12,7 +12,7 @@
 
 <h1>Seznam uživatelů, kterým se líbí desktop</h1>
 
-<p><a href="${RELATION.url}">${TOOL.xpath(ITEM,"/data/title")?if_exists}</a> od uživatele <@lib.showUser autor/></p>
+<p><a href="${RELATION.url}">${ITEM.title?if_exists}</a> od uživatele <@lib.showUser autor/></p>
 
 <ul>
     <#list usedBy as a_user>

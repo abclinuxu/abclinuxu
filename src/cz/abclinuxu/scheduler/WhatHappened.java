@@ -52,6 +52,10 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.prefs.Preferences;
 
+import static cz.abclinuxu.servlets.Constants.PARAM_TITLE;
+import static cz.abclinuxu.servlets.Constants.PARAM_PEREX;
+import static cz.abclinuxu.servlets.Constants.PARAM_CONTENT;
+
 /**
  * Generates weekly summary article.
  */
@@ -101,14 +105,14 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             map.put(EditArticle.VAR_RELATION, articles);
             User articleAuthor = (User) persistence.findById(new User(1));
             map.put(Constants.VAR_USER, articleAuthor);
-            params.put(EditArticle.PARAM_TITLE, map.get(VAR_TITLE));
+            params.put(PARAM_TITLE, map.get(VAR_TITLE));
             params.put(EditArticle.PARAM_AUTHORS, Integer.toString(author));
-            params.put(EditArticle.PARAM_PEREX, map.get(PREF_PEREX));
+            params.put(PARAM_PEREX, map.get(PREF_PEREX));
             params.put(EditArticle.PARAM_DESIGNATED_SECTION, Integer.toString(sectionRid));
             synchronized (Constants.isoFormat) {
                 params.put(EditArticle.PARAM_PUBLISHED, Constants.isoFormat.format(new Date()));
             }
-            params.put(EditArticle.PARAM_CONTENT, content);
+            params.put(PARAM_CONTENT, content);
 
             EditArticle editArticle = new EditArticle();
             editArticle.actionAddStep2(null, null, map, false);
@@ -159,7 +163,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
             item = (Item) relation.getChild();
-            title = Tools.xpath(item, "data/name");
+            title = item.getTitle();
 
             Article article = new Article(title, item.getCreated(), relation.getUrl());
             Set authors = item.getProperty(Constants.PROPERTY_AUTHOR);
@@ -183,7 +187,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
             item = (Item) relation.getChild();
-            title = Tools.xpath(item, "data/title");
+            title = item.getTitle();
             content = Tools.xpath(item, "data/content");
             News newz = new News(title, content, item.getCreated(), relation.getUrl());
             User author = Tools.createUser(item.getOwner());

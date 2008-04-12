@@ -1,6 +1,6 @@
 <#import "../macros.ftl" as lib>
 <#assign intro=TOOL.xpath(BLOG,"//custom/intro")?default("UNDEF"),
-        title=TOOL.xpath(BLOG,"//custom/title")?default("UNDEF"),
+        title=BLOG.title?default("UNDEF"),
         owner=TOOL.createUser(BLOG.owner),
         ITEM=STORY.child,
         CHILDREN=TOOL.groupByType(ITEM.children),
@@ -34,7 +34,7 @@
             <#list UNPUBLISHED_STORIES as relation>
                 <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
                 <li>
-                    <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+                    <a href="${url}">${story.title}</a>
                 </li>
             </#list>
             </ul>
@@ -141,7 +141,7 @@
         <#list CURRENT_STORIES as relation>
             <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
             <li>
-                <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+                <a href="${url}">${story.title}</a>
             </li>
         </#list>
         </ul>
@@ -219,7 +219,7 @@
 
 <@lib.showMessages/>
 
-<h2>${TOOL.xpath(ITEM, "/data/name")}</h2>
+<h2>${ITEM.title}</h2>
 <p class="meta-vypis">
     <#if ITEM.type==15>Odloženo<#else>${DATE.show(ITEM.created, "SMART")}</#if> |
     Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;

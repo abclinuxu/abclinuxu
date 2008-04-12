@@ -37,7 +37,7 @@
 
 <#include "../header.ftl">
 
-<h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
+<h1>${ITEM.title}</h1>
 
 <div class="dict-item">
     ${TOOL.render(TOOL.xpath(ITEM,"/data/description"),USER?if_exists)}
@@ -50,11 +50,11 @@
 <p class="dalsi_pojmy">
     Další pojmy:
     <#list PREV?reverse as relation>
-        <a href="${relation.url}">${TOOL.xpath(relation.child,"/data/name")}</a> -
+        <a href="${relation.url}">${relation.child.title}</a> -
     </#list>
-    ${TOOL.xpath(ITEM,"/data/name")} <#if (NEXT?size>0)>-</#if>
+    ${ITEM.title} <#if (NEXT?size>0)>-</#if>
     <#list NEXT?if_exists as relation>
-        <a href="${relation.url}">${TOOL.xpath(relation.child,"/data/name")}</a>
+        <a href="${relation.url}">${relation.child.title}</a>
         <#if relation_has_next> - </#if>
     </#list>
 </p>

@@ -81,8 +81,10 @@ public class EditDriver implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation!=null ) {
@@ -135,7 +137,7 @@ public class EditDriver implements AbcAction {
         item.setData(document);
 
         boolean canContinue = true;
-        canContinue &= setName(params, document, env);
+        canContinue &= setName(params, item, env);
         canContinue &= setVersion(params, document, env);
         canContinue &= setURL(params, document, env);
         canContinue &= setNote(params, document, env);
@@ -148,8 +150,8 @@ public class EditDriver implements AbcAction {
         item.setOwner(user.getId());
         item.setCreated(new Date());
 
-        Element element = (Element) item.getData().selectSingleNode("/data/name");
-        String url = UrlUtils.PREFIX_DRIVERS + "/" + URLManager.enforceRelativeURL(element.getTextTrim());
+        String title = item.getTitle();
+        String url = UrlUtils.PREFIX_DRIVERS + "/" + URLManager.enforceRelativeURL(title);
         url = URLManager.protectFromDuplicates(url);
 
         Versioning versioning = VersioningFactory.getVersioning();
@@ -191,10 +193,8 @@ public class EditDriver implements AbcAction {
         Item driver = (Item) persistence.findById(relation.getChild());
 
         Document document = driver.getData();
-        Node node = document.selectSingleNode("data/name");
-        if (node != null)
-            params.put(PARAM_NAME, node.getText());
-        node = document.selectSingleNode("data/version");
+        params.put(PARAM_NAME, driver.getTitle());
+        Node node = document.selectSingleNode("data/version");
         if (node != null)
             params.put(PARAM_VERSION, node.getText());
         node = document.selectSingleNode("data/url");
@@ -226,7 +226,7 @@ public class EditDriver implements AbcAction {
         Document document = item.getData();
 
         boolean canContinue = true;
-        canContinue &= setName(params, document, env);
+        canContinue &= setName(params, item, env);
         canContinue &= setVersion(params, document, env);
         canContinue &= setURL(params, document, env);
         canContinue &= setNote(params, document, env);
@@ -271,15 +271,15 @@ public class EditDriver implements AbcAction {
     /**
      * Updates name of driver from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param document Document of discussion to be updated
+     * @param item driver to be updated
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setName(Map params, Document document, Map env) {
+    private boolean setName(Map params, Item item, Map env) {
         String tmp = (String) params.get(PARAM_NAME);
         tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
-            DocumentHelper.makeElement(document, "data/name").setText(tmp);
+            item.setTitle(tmp);
         } else {
             ServletUtils.addError(PARAM_NAME, "Zadejte název ovladače!", env, null);
             return false;

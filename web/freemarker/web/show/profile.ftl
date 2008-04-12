@@ -114,14 +114,14 @@
     <ul>
         <#list SOFTWARE as sw>
             <li>
-                <a href="${sw.url}">${TOOL.xpath(sw.child, "/data/name")}</a>
+                <a href="${sw.url}">${sw.child.title}</a>
             </li>
         </#list>
     </ul>
 </#if>
 
 <#if BLOG?exists>
-    <p>Můj blog: <a href="/blog/${BLOG.subType}">${TOOL.xpath(BLOG,"//custom/title")?default("blog")}</a></p>
+    <p>Můj blog: <a href="/blog/${BLOG.subType}">${BLOG.title?default("blog")}</a></p>
     <ul>
         <#list STORIES as relation>
             <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
@@ -132,7 +132,7 @@
                 <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
             </#if>
             <li>
-                <a href="${url}">${TOOL.xpath(story, "/data/name")}</a> | ${DATE.show(story.created, "CZ_DMY")}
+                <a href="${url}">${story.title}</a> | ${DATE.show(story.created, "CZ_DMY")}
                 | <span title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>">
                     komentářů: ${diz.responseCount}<@lib.markNewComments diz/>
                   </span>
@@ -156,7 +156,7 @@
     <ul>
         <#list DESKTOPS as ds>
             <li>
-                <a href="${ds.url}">${TOOL.xpath(ds.child, "/data/title")}</a>
+                <a href="${ds.url}">${ds.child.title}</a>
             </li>
         </#list>
     </ul>

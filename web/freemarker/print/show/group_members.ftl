@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1> ${TOOL.xpath(GROUP,"data/name")}</h1>
+<h1> ${GROUP.title}</h1>
 
 <p>${TOOL.xpath(GROUP.data,"/data/desc")}</p>
 

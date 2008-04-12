@@ -46,6 +46,15 @@ public class ItemComment extends Comment {
     public void setId(int id) {
         this.id = 0;
     }
+
+    public String getTitle() {
+        return item.getTitle();
+    }
+
+    public void setTitle(String title) {
+        item.setTitle(title);
+    }
+
     /**
      * @return id of an author, or null, if he was anonymous
      */

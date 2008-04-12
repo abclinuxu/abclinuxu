@@ -5,7 +5,7 @@
          forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF"),
          inPool=RELATION.upper==8082>
 
-<h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
+<h1>${ITEM.title}</h1>
 
 <p class="meta-vypis">
     ${DATE.show(ITEM.created,"SMART_DMY")} |

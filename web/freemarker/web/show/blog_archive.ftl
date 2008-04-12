@@ -1,6 +1,6 @@
 <#import "../macros.ftl" as lib>
 <#assign intro=TOOL.xpath(BLOG,"//custom/intro")?default("UNDEF")>
-<#assign title=TOOL.xpath(BLOG,"//custom/title")?default("UNDEF")>
+<#assign title=BLOG.title?default("UNDEF")>
 <#assign owner=TOOL.createUser(BLOG.owner)>
 
 <#assign plovouci_sloupec>
@@ -39,7 +39,7 @@
             <#list UNPUBLISHED_STORIES as relation>
                 <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
                 <li>
-                    <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+                    <a href="${url}">${story.title}</a>
                 </li>
             </#list>
             </ul>
@@ -53,7 +53,7 @@
         <#list CURRENT_STORIES as relation>
             <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
             <li>
-                <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+                <a href="${url}">${story.title}</a>
             </li>
         </#list>
         </ul>

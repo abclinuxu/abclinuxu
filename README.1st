@@ -20,7 +20,9 @@ FLUSH PRIVILEGES;
 
 $ bzcat misc/databaze.sql.bz2 | mysql -u you -p password password
 
-Ujistete se, ze databaze je pristupna pres TCPIP, v defaultnim
+kde you je vas uzivatelsky login na systemu.
+
+Ujistete se, ze databaze je pristupna pres TCP/IP, v defaultnim
 nastaveni je to zakazano (skip networking v konfiguraci ci spoustecim
 skriptu, podrobnosti ve FAQ na abicku).
 
@@ -33,7 +35,10 @@ skriptu, podrobnosti ve FAQ na abicku).
   rootdn          "cn=Manager,dc=stickfish,dc=net"
   rootpw          secret
  d) restartujte openldap
- e) ldapadd -x -D 'cn=manager,dc=stickfish,dc=net' -w secret < portal/conf/ldap/init.ldif
+ e) ldapadd -x -D 'cn=manager,dc=stickfish,dc=net' -w secret < portal/misc/init.ldif
+    ldapadd -x -D 'cn=manager,dc=stickfish,dc=net' -w secret < portal/misc/users.ldif
+ f) pokud budete reinicializovat LDAP, data smazte pomoci
+    ldapdelete -r -x -D 'cn=manager,dc=stickfish,dc=net' -w secret "dc=stickfish,dc=net"
 
 4) upravte si conf/conf_devel.properties
 

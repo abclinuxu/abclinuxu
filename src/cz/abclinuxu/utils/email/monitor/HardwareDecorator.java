@@ -72,7 +72,7 @@ public class HardwareDecorator implements Decorator, Configurable {
         if ( name==null ) {
             Persistence persistence = PersistenceFactory.getPersistence();
             Item obj = (Item) persistence.findById(action.relation.getChild());
-            name = obj.getData().selectSingleNode("/data/name").getText();
+            name = obj.getTitle();
         }
         env.put(VAR_NAME, name);
 

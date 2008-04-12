@@ -30,7 +30,7 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
 <ul>
  <#list DRIVERS as rel>
   <li><a href="${rel.url?default("/ovladace/show/"+rel.id)}">
-  ${TOOL.xpath(rel.child,"data/name")}</a></li>
+  ${TOOL.xpath(rel.child.title}</a></li>
  </#list>
  <li><a href="/ovladace">&gt;&gt;</a></li>
 </ul>
@@ -40,7 +40,7 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
 <ul>
  <#list HARDWARE as rel>
   <li><a href="/hardware/show/${rel.id}">
-  ${TOOL.xpath(rel.parent,"data/name")}</a></li>
+  ${TOOL.xpath(rel.child.title}</a></li>
  </#list>
  <li><a href="/History?type=hardware&from=0&count=25">&gt;&gt;</a></li>
 </ul>
@@ -52,7 +52,7 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
     <p>
         <#list FORUM as diz>
             <a href="/forum/show/${diz.relationId}">
-                ${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),50," ..")}
+                ${TOOL.limit(diz.discussion.title,50," ..")}
             </a>
             ${DATE.show(diz.updated,"CZ_SHORT")}, ${diz.responseCount}<@lib.markNewComments diz/> odp.,
             <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
@@ -87,14 +87,14 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
      <li>
      <#assign story=relation.child, blog=relation.parent>
      <#assign url=TOOL.getUrlForBlogStory(relation)>
-     <#assign title=TOOL.xpath(blog,"//custom/title")?default("UNDEF")>
+     <#assign title=blog.title")?default("UNDEF")>
      <#assign CHILDREN=TOOL.groupByType(story.children)>
      <#if CHILDREN.discussion?exists>
        <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
      <#else>
        <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
      </#if>
-     <a href="${url}">${TOOL.xpath(story, "/data/name")}<#if title!="UNDEF"> | ${title}</#if></a> |
+     <a href="${url}">${story.title}<#if title!="UNDEF"> | ${title}</#if></a> |
      Komentářů:&nbsp;${diz.responseCount}
      <#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>
      </li>

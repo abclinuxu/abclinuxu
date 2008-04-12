@@ -40,7 +40,7 @@
 
 <@lib.advertisement id="gg-hw-sekce" />
 
-<h1>${TOOL.xpath(CATEGORY,"/data/name")}</h1>
+<h1>${CATEGORY.title}</h1>
 
 <@lib.showMessages/>
 

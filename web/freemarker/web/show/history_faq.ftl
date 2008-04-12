@@ -3,7 +3,7 @@
 <ul>
     <#list FOUND.data as relation>
         <li>
-            <a href="${relation.url}">${TOOL.xpath(relation.child,"data/title")}</a>
+            <a href="${relation.url}">${relation.child.title}</a>
         </li>
     </#list>
 </ul>

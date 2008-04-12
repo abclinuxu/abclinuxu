@@ -100,8 +100,10 @@ public class EditRequest implements AbcAction, Configurable {
         String action = (String) params.get(PARAM_ACTION);
         User user = (User) env.get(Constants.VAR_USER);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_REQUEST, Relation.class, params, request);
         if ( relation!=null )

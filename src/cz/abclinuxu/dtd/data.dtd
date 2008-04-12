@@ -3,7 +3,6 @@
     It will be used to delete that file, when this object will be removed from persistence.
 -->
 <!ELEMENT data (title?, description?, object)>
-<!ELEMENT title (#PCDATA)> <!-- optional title for the data file -->
 <!ELEMENT description (#PCDATA)> <!-- description of the data file -->
 <!ELEMENT object (thumbnail*, originalFilename?, size?)> <!-- holder for the object -->
 <!ATTLIST object path (#NMTOKEN) #REQUIRED> <!-- full web path to the file holding the object -->

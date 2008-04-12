@@ -22,6 +22,7 @@ import java.util.*;
 
 import org.dom4j.Element;
 import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
 import cz.abclinuxu.data.XMLHandler;
 import cz.abclinuxu.utils.Misc;
 
@@ -121,6 +122,10 @@ public abstract class Comment implements Cloneable, Comparable {
         if (element!=null)
             return element.getText();
         return null;
+    }
+
+    public void setTitle(String title) {
+        DocumentHelper.makeElement(getData().getRootElement(), "title").setText(title);
     }
 
     /**

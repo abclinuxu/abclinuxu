@@ -13,7 +13,7 @@
     <#list TOP_VISITED as sw>
         <tr>
             <td>
-                <a href="${sw.url}">${TOOL.xpath(sw.child, "/data/name")}</a>
+                <a href="${sw.url}">${sw.child.title}</a>
             </td>
             <td class="td-meta">
                 <@lib.showCounter sw.child, visits, "visit" />&times;
@@ -32,7 +32,7 @@
     <#list TOP_USED as sw>
         <tr>
             <td>
-                <a href="${sw.url}">${TOOL.xpath(sw.child, "/data/name")}</a>
+                <a href="${sw.url}">${sw.child.title}</a>
             </td>
             <td class="td-meta">
                 <a href="${sw.url}?action=users">${sw.child.getProperty("used_by")?size}</a>
@@ -51,7 +51,7 @@
     <#list LAST_ADDED as sw>
         <tr>
             <td>
-                <a href="${sw.url}">${TOOL.xpath(sw.child, "/data/name")}</a>
+                <a href="${sw.url}">${sw.child.title}</a>
             </td>
             <td class="td-datum">
                 ${DATE.show(sw.child.created, "SMART")}
@@ -70,7 +70,7 @@
     <#list LAST_UPDATED as sw>
         <tr>
             <td>
-                <a href="${sw.url}">${TOOL.xpath(sw.child, "/data/name")}</a>
+                <a href="${sw.url}">${sw.child.title}</a>
             </td>
             <td class="td-datum">
                 ${DATE.show(sw.child.updated, "SMART")}

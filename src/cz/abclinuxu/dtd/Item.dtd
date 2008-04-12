@@ -1,7 +1,7 @@
 
 <!-- Item.HARDWARE -->
 <!ELEMENT data (name,support?,price?,driver?,driver_url?,outdated?,setup?,params?,identification?,note?)>
-<!ELEMENT name (#PCDATA)> <!-- maximum length is few words -->
+<!ELEMENT name (#PCDATA)> <!-- todo deprecated maximum length is few words -->
 <!ELEMENT support (#PCDATA)> <!-- if and how the piece of hardware is supported (complete, partial, none) -->
 <!ELEMENT price (#PCDATA)> <!-- user's evaluation of price -->
 <!ELEMENT driver (#PCDATA)> <!-- kind of driver: kernel, XFree, binary -->
@@ -18,7 +18,7 @@
 
 <!-- Item.SOFTWARE -->
 <!ELEMENT data (name, description, intro, url+)>
-<!ELEMENT name (#PCDATA)> <!-- maximum length is few words -->
+<!ELEMENT name (#PCDATA)> <!-- todo deprecated maximum length is few words -->
 <!ELEMENT description (#PCDATA)> <!-- long description -->
 <!ATTLIST description format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT intro (#PCDATA)> <!-- string describing this software displayed at software listing, typically first sentence from description -->
@@ -27,7 +27,7 @@
 
 <!-- Item.ARTICLE -->
 <!ELEMENT data (name,icon?,perex,editor?,forbid_discussions?,forbid_rating?,thumbnail?,talk?,section_rid?,series_rid?)>
-<!ELEMENT name (#PCDATA)> <!-- title of the Article -->
+<!ELEMENT name (#PCDATA)> <!-- todo deprecated title of the Article -->
 <!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
 <!ELEMENT perex (#PCDATA)> <!-- description of the article -->
 <!ELEMENT editor (#PCDATA)> <!-- who approved this article -->
@@ -52,7 +52,7 @@
 <!ELEMENT last_id (#PCDATA)> <!-- integer, id of last comment -->
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
 <!ELEMENT author_ip (#PCDATA)> <!-- IP address of the user -->
-<!ELEMENT title (#PCDATA)> <!-- title of this reaction, usually question -->
+<!ELEMENT title (#PCDATA)> <!-- todo deprecated title of this reaction, usually question -->
 <!ELEMENT text (#PCDATA)> <!-- its text -->
 <!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT frozen (#PCDATA)> <!-- if present, discussion is frozen and noone can add more comments -->
@@ -69,7 +69,7 @@
 
 <!-- Item.Driver -->
 <!ELEMENT data (name,version,url,note?)>
-<!ELEMENT name (#PCDATA)> <!-- driver's name -->
+<!ELEMENT name (#PCDATA)> <!-- todo deprecated driver's name -->
 <!ELEMENT version (#PCDATA)> <!-- driver's version -->
 <!ELEMENT url (#PCDATA)> <!-- its url -->
 <!ELEMENT note (#PCDATA)> <!-- its description -->
@@ -77,7 +77,7 @@
 
 <!-- Item.Survey -->
 <!ELEMENT anketa (title?,screen+,choices?)>
-<!ELEMENT title (#PCDATA)> <!-- name of survey -->
+<!ELEMENT title (#PCDATA)> <!-- todo deprecated name of survey -->
 <!ELEMENT choices (#PCDATA)> <!-- which parameters are choices (aka they are not texts) -->
 <!ELEMENT choice (#PCDATA)> <!-- name of choice parameter-->
 <!ELEMENT screen (#PCDATA)> <!-- definition of one screen -->
@@ -95,8 +95,8 @@
 <!ELEMENT suffix (#PCDATA)> <!-- file will end with this suffix -->
 
 <!-- Item.NEWS -->
-<!ELEMENT data (title?, category?, content, approved_by?)>
-<!ELEMENT title (#PCDATA)> <!-- title of the news  -->
+<!ELEMENT data (title, category?, content, approved_by?)>
+<!ELEMENT title (#PCDATA)> <!-- todo deprecated title of the news  -->
 <!ELEMENT content (#PCDATA)> <!-- text of the news -->
 <!ATTLIST content format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT approved_by (#PCDATA)> <!-- id of admin, who approved the news -->
@@ -104,7 +104,7 @@
 
 <!-- Item.GROUP -->
 <!ELEMENT data (name, desc)>
-<!ELEMENT name (#PCDATA)> <!-- word(s) giving name to group -->
+<!ELEMENT name (#PCDATA)> <!-- todo deprecated word(s) giving name to group -->
 <!ELEMENT desc (#PCDATA)> <!-- sentence describing group -->
 
 <!-- Item.Royalties -->
@@ -130,7 +130,7 @@
 
 <!-- Item.CONTENT -->
 <!ELEMENT data (name, content, class?, toc?)>
-<!ELEMENT name (#PCDATA)> <!-- HTML page's title -->
+<!ELEMENT name (#PCDATA)> <!-- todo deprecated HTML page's title -->
 <!ELEMENT content (#PCDATA)> <!-- content to be served -->
 <!ATTLIST content execute (yes|no) #REQUIRED> <!-- boolean, whether to execute content through template engine -->
 <!ELEMENT java_class (#PCDATA)> <!-- java class to feed data to content -->
@@ -143,7 +143,7 @@
 
 <!-- Item.BLOG -->
 <!ELEMENT data (name, perex?,content, category?)>
-<!ELEMENT name (#PCDATA)> <!-- blog story's title -->
+<!ELEMENT name (#PCDATA)> <!-- todo deprecated blog story's title -->
 <!ELEMENT perex (#PCDATA)> <!-- story's perex for long stories -->
 <!ATTLIST perex format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT content (#PCDATA)> <!-- content of the story -->
@@ -152,7 +152,7 @@
 
 <!-- Item.FAQ -->
 <!ELEMENT data (title,text,links?)>
-<!ELEMENT title (#PCDATA)> <!-- title of this reaction, usually question -->
+<!ELEMENT title (#PCDATA)> <!-- todo deprecated title of this reaction, usually question -->
 <!ELEMENT text (#PCDATA)> <!-- its text -->
 <!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 
@@ -176,7 +176,7 @@
 
 <!-- Item.BAZAAR -->
 <!ELEMENT data (title, text)>
-<!ELEMENT title (#PCDATA)> <!-- advertisement title -->
+<!ELEMENT title (#PCDATA)> <!-- todo deprecated advertisement title -->
 <!ELEMENT text (#PCDATA)> <!-- content of the advertisement -->
 <!ELEMENT price (#PCDATA)> <!-- requested price -->
 <!ELEMENT contact (#PCDATA)> <!-- contact for the person -->
@@ -194,7 +194,7 @@
 
 <!-- Item.TRIVIA -->
 <!ELEMENT data (title, description, difficulty, stats, question+)>
-<!ELEMENT title (#PCDATA)> <!-- title of the trivia game -->
+<!ELEMENT title (#PCDATA)> <!-- todo deprecated title of the trivia game -->
 <!ELEMENT description (#PCDATA)> <!-- description of the game -->
 <!ELEMENT difficulty (#PCDATA)> <!-- values: simple, normal, hard, guru -->
 <!ELEMENT question (content,answear+)> <!-- contact for the person -->
@@ -208,26 +208,27 @@
 
 <!-- Item.HANGMAN -->
 <!ELEMENT data (title, desc, word)>
-<!ELEMENT title (#PCDATA)> <!-- title of the trivia game -->
+<!ELEMENT title (#PCDATA)> <!-- todo deprecated title of the trivia game -->
 <!ELEMENT desc (#PCDATA)> <!-- description of the game -->
 <!ELEMENT word (#PCDATA)> <!-- word to be guessed -->
 
 <!-- Item.SERIES -->
 <!ELEMENT data (name, description?, icon?, article*)>
-<!ELEMENT name (#PCDATA)> <!-- title of article series -->
+<!ELEMENT name (#PCDATA)> <!-- todo deprecated title of article series -->
 <!ELEMENT description (#PCDATA)> <!-- description of the series -->
 <!ELEMENT icon (#PCDATA)> <!-- url to icon for this series -->
 <!ELEMENT article (#PCDATA)> <!-- id of relation for article associated with this series, articles are sorted by published date in ascending order -->
 <!ATTLIST article published (#NMTOKEN)> <!-- date in ISO format (YYYY-MM-DD), when this article was published -->
 
 <!-- Item.SCREENSHOT -->
-<!ELEMENT data (title, description?, image, listingThumbnail, detailThumbnail)>
-<!ELEMENT title (#PCDATA)> <!-- title for the screenshot -->
+<!ELEMENT data (title, description?, image)>
+<!ELEMENT title (#PCDATA)> <!-- todo deprecated title for the screenshot -->
 <!ELEMENT description (#PCDATA)> <!-- description of the screenshot -->
 
 <!-- common -->
 
-<!ELEMENT versioning (properties*, revisions?)> <!-- mandatory element under root that contains versioning specific data -->
+<!ELEMENT versioning (title?, properties*, revisions?)> <!-- mandatory element under root that contains versioning specific data -->
+<!ELEMENT title (#PCDATA)> <!-- GenericDataObject's title property -->
 <!ELEMENT properties (property*)> <!-- container for CommonObject properties, it is stored in version database table only -->
 <!ELEMENT property (key, value+)> <!-- property -->
 <!ELEMENT key (#PCDATA)> <!-- property key -->

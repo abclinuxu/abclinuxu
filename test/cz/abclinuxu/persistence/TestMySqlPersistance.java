@@ -31,6 +31,7 @@ import cz.abclinuxu.servlets.Constants;
 public class TestMySqlPersistance extends TestCase {
 
     Persistence persistence;
+    Random random = new Random(System.currentTimeMillis());
 
     public TestMySqlPersistance(String s) {
         super(s);
@@ -39,8 +40,6 @@ public class TestMySqlPersistance extends TestCase {
     protected void setUp() throws Exception {
         LogManager.getRootLogger().setLevel(Level.OFF);
         super.setUp();
-//        persistence = new MySqlPersistance(PersistanceFactory.defaultTestUrl);
-//        persistence.setCache(new LRUCache());
         persistence = PersistenceFactory.getPersistence(PersistenceFactory.defaultTestUrl, LRUCache.class);
     }
 
@@ -67,7 +66,7 @@ public class TestMySqlPersistance extends TestCase {
         a.setData("<name>make</name>");
         persistence.create(a);
 
-        Record b = new Record(0,Record.SOFTWARE);
+        Record b = new Record(0,Record.DISCUSSION);
         b.setOwner(2);
         b.setData("<name>sw b</name>");
         persistence.create(b);
@@ -146,7 +145,7 @@ public class TestMySqlPersistance extends TestCase {
         a.setData("<name>make</name>");
         persistence.create(a);
 
-        Record b = new Record(0,Record.SOFTWARE);
+        Record b = new Record(0,Record.DISCUSSION);
         b.setOwner(2);
         b.setData("<name>sw b</name>");
         persistence.create(b);
@@ -222,75 +221,6 @@ public class TestMySqlPersistance extends TestCase {
         assertTrue(!e.getSubType().equals(((GenericDataObject) fetched).getSubType()));
         assertEquals(e.getOwner(), ((GenericDataObject) fetched).getOwner());
         assertNotNull(((GenericDataObject) fetched).getData());
-    }
-
-    public void testFindByExample() throws Exception {
-        Record a = new Record(0,Record.HARDWARE);
-        a.setData("<name>HP DeskJet 840C</name>");
-        a.setOwner(1);
-        persistence.create(a);
-
-        Record b = new Record(0,Record.HARDWARE);
-        b.setData("<name>Lehponen XT</name>");
-        b.setOwner(3);
-        persistence.create(b);
-
-        Record c = new Record(0,Record.SOFTWARE);
-        c.setData("<name>Laserjet Control Panel</name>");
-        c.setOwner(2);
-        persistence.create(c);
-
-        // find a and b, don't find c
-        List examples = new ArrayList();
-        Record qa = new Record(0);
-        qa.setSearchString("%HP%");
-        examples.add(qa);
-        List found = persistence.findByExample(examples,null);
-        assertTrue(containsId(found,a.getId()));
-        assertTrue(containsId(found,b.getId()));
-        assertTrue( ! containsId(found,c.getId()));
-
-        // find only a
-        examples.clear();
-        qa.setSearchString("%HP%");
-        qa.setOwner(1);
-        examples.add(qa);
-        found = persistence.findByExample(examples,null);
-        assertTrue(containsId(found,a.getId()));
-        assertTrue( ! containsId(found,b.getId()));
-        assertTrue( ! containsId(found,c.getId()));
-
-        // qa finds a only, qb finds c only
-        Record qb = new Record(0,Record.SOFTWARE);
-        qb.setOwner(2);
-        examples.add(qb);
-        found = persistence.findByExample(examples,null);
-        assertTrue(containsId(found,a.getId()));
-        assertTrue( ! containsId(found,b.getId()));
-        assertTrue(containsId(found,c.getId()));
-
-        // find b only
-        examples.clear();
-        qa.setOwner(0);
-        examples.add(qa);
-        Record qc = new Record(0,Record.HARDWARE);
-        qc.setOwner(3);
-        examples.add(qc);
-        found = persistence.findByExample(examples,"0 AND 1");
-        assertTrue( ! containsId(found,a.getId()));
-        assertTrue( containsId(found,b.getId()));
-        assertTrue( ! containsId(found,c.getId()));
-
-        // find b and c
-        examples.add(qb);
-        found = persistence.findByExample(examples,"(0 AND 1) OR 2 ORDER BY data ASC");
-        assertTrue( ! containsId(found,a.getId()));
-        assertTrue( containsId(found,b.getId()));
-        assertTrue( containsId(found,c.getId()));
-
-        persistence.remove(a);
-        persistence.remove(b);
-        persistence.remove(c);
     }
 
     public void testFindByCommand() throws Exception {
@@ -397,7 +327,7 @@ public class TestMySqlPersistance extends TestCase {
         persistence.create(relProcDur);
         processors.addChildRelation(relProcDur);
 
-        Record duron1 = new Record(0,Record.HARDWARE);
+        Record duron1 = new Record(0,Record.DISCUSSION);
         duron1.setData("<price>fine</price>");
         persistence.create(duron1);
 
@@ -417,7 +347,7 @@ public class TestMySqlPersistance extends TestCase {
         persistence.create(relIntPent);
         intel.addChildRelation(relIntPent);
 
-        Record pentium1 = new Record(0,Record.HARDWARE);
+        Record pentium1 = new Record(0,Record.DISCUSSION);
         pentium1.setData("<price>expensive</price>");
         persistence.create(pentium1);
 
@@ -425,7 +355,7 @@ public class TestMySqlPersistance extends TestCase {
         persistence.create(relPentPent1);
         pentium.addChildRelation(relPentPent1);
 
-        Record pentium2 = new Record(0,Record.HARDWARE);
+        Record pentium2 = new Record(0,Record.DISCUSSION);
         pentium2.setData("<price>too expensive</price>");
         persistence.create(pentium2);
 
@@ -494,7 +424,7 @@ public class TestMySqlPersistance extends TestCase {
     }
 
     public void testIncrement() throws Exception {
-        Record a = new Record(0,Record.SOFTWARE);
+        Item a = new Item(0, Item.SOFTWARE);
         a.setData("<name>Disky</name>");
         persistence.create(a);
 
@@ -552,42 +482,132 @@ public class TestMySqlPersistance extends TestCase {
     }
 
     /**
-     * Bug - when relation changes parent and is updated, the content
-     * of previous and new parent in cache is not updated!
+     * Does CRUD for all objects. Simple no exception test, asserts shall be added.
+     * @throws Exception
      */
-    // Since Nursery introduction, this behaviour is normal. It is application developer responsibility
-    // to remove child relation from old parent and add it to new parent.
-//    public void testRelationCache() throws Exception {
-//        Category first = new Category(); first.setData("<data/>");
-//        Category second = new Category(); second.setData("<data/>");
-//        Item item = new Item(); item.setData("<data/>");
-//
-//        persistence.create(first);
-//        persistence.create(second);
-//        persistence.create(item);
-//
-//        Relation relation = new Relation(first,item,0);
-//        persistence.create(relation);
-//        first.addChildRelation(relation);
-//
-//        Category cacheFirst = (Category) persistence.findById(first);
-//        assertEquals(1,cacheFirst.getChildren().size());
-//
-//        relation.setParent(second);
-//        persistence.update(relation);
-//        cacheFirst = (Category) persistence.findById(first);
-//        assertEquals(0,cacheFirst.getChildren().size());
-//        Category cacheSecond = (Category) persistence.findById(second);
-//        assertEquals(1,cacheSecond.getChildren().size());
-//
-//        persistence.remove(relation);
-//        persistence.remove(item);
-//        cacheSecond = (Category) persistence.findById(second);
-//        assertEquals(0,cacheSecond.getChildren().size());
-//
-//        persistence.remove(first);
-//        persistence.remove(second);
-//    }
+    public void testAllTables() throws Exception {
+        Record record = new Record();
+        record.setType(Record.ARTICLE);
+        record.setOwner(1);
+        record.setData("<data><element>text</element></data>");
+        persistence.create(record);
+
+        Item item = new Item();
+        item.setTitle("titulek");
+        item.setType(Item.SOFTWARE);
+        item.setSubType("podtyp");
+        item.setOwner(2);
+        item.setData("<data><element>text</element></data>");
+        persistence.create(item);
+
+        Category category = new Category();
+        category.setTitle("titulek");
+        category.setType(Category.FORUM);
+        category.setSubType("podtyp");
+        category.setOwner(3);
+        category.setData("<data><element>text</element></data>");
+        persistence.create(category);
+
+        Data data = new Data();
+        data.setTitle("titulek");
+        data.setType(Data.IMAGE);
+        data.setOwner(4);
+        data.setData("<data><element>text</element></data>");
+        persistence.create(data);
+
+        Server server = new Server();
+        server.setId(random.nextInt());
+        server.setContact("email@server.com");
+        server.setName("abicko");
+        server.setUrl("http://www.abclinuxu.cz");
+        persistence.create(server);
+
+        Link link = new Link();
+        link.setFixed(true);
+        link.setOwner(5);
+        link.setServer(server.getId());
+        link.setText("odkaz");
+        link.setUrl("http://www.abclinuxu.cz");
+        persistence.create(link);
+
+        Poll poll = new Poll();
+        PollChoice[] choices = new PollChoice[3];
+        choices[0] = new PollChoice("jedna");
+        choices[1] = new PollChoice("dve");
+        choices[2] = new PollChoice("tri");
+        poll.setChoices(choices);
+        poll.setClosed(false);
+        poll.setMultiChoice(false);
+        poll.setOwner(6);
+        poll.setText("kolik?");
+        persistence.create(poll);
+
+        Relation relation = new Relation(category,item, 0);
+        relation.setData("<data><element>text</element></data>");
+        relation.setUrl("/odkaz" + random.nextInt());
+        persistence.create(relation);
+
+        User user = new User();
+        user.setLogin("login" + random.nextInt());
+        user.setEmail("email@server.com");
+        user.setName("name" + random.nextInt());
+        user.setNick("nick" + random.nextLong());
+        user.setData("<data><element>text</element></data>");
+        persistence.create(user);
+
+        persistence.clearCache();
+
+        Record record2 = (Record) persistence.findById(record);
+        Item item2 = (Item) persistence.findById(item);
+        Category category2 = (Category) persistence.findById(category);
+        Data data2 = (Data) persistence.findById(data);
+        Server server2 = (Server) persistence.findById(server);
+        Link link2 = (Link) persistence.findById(link);
+        Poll poll2 = (Poll) persistence.findById(poll);
+        Relation relation2 = (Relation) persistence.findById(relation);
+        User user2 = (User) persistence.findById(user);
+
+        record2.setOwner(user.getId());
+        record2.setData("<data><element>text2</element></data>");
+        persistence.update(record2);
+
+        item2.setOwner(user.getId());
+        item2.setData("<data><element>text2</element></data>");
+        persistence.update(item2);
+
+        category2.setOwner(user.getId());
+        category2.setData("<data><element>text2</element></data>");
+        persistence.update(category2);
+
+        data2.setOwner(user.getId());
+        data2.setData("<data><element>text2</element></data>");
+        persistence.update(data2);
+
+        server2.setContact(user.getName());
+        persistence.update(server2);
+
+        link2.setText(user.getLogin());
+        persistence.update(link2);
+
+        poll2.setText(user.getLogin());
+        persistence.update(poll2);
+
+        relation2.setUrl("http://www.stickfish.cz/" + random.nextInt());
+        persistence.update(relation2);
+
+        user2.setData("<data><element>text2</element></data>");
+        persistence.update(user2);
+
+        persistence.remove(record);
+        persistence.remove(item);
+        persistence.remove(category);
+        persistence.remove(data);
+        persistence.remove(server);
+        persistence.remove(link);
+        persistence.remove(poll);
+        persistence.remove(relation);
+        persistence.remove(user);
+    }
 
     /**
      * Searches list of GenericObjects for object with id equal to id.

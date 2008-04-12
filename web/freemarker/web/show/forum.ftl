@@ -15,7 +15,7 @@
 
 <#include "../header.ftl">
 
-<h1 align="center">Fórum ${TOOL.xpath(CATEGORY,"/data/name")}</h1>
+<h1 align="center">Fórum ${CATEGORY.title}</h1>
 
 <p>Toto diskusní fórum obsahuje celkem ${DIZS.total} diskusí.</p>
 

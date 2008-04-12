@@ -87,8 +87,10 @@ public class EditBazaar implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation != null) {
@@ -143,7 +145,7 @@ public class EditBazaar implements AbcAction {
         Document document = DocumentHelper.createDocument();
         item.setData(document);
 
-        boolean canContinue = setTitle(params, document, env);
+        boolean canContinue = setTitle(params, item, env);
         canContinue &= setContent(params, document, env);
         canContinue &= setType(params, item, env);
         canContinue &= setPrice(params, document, env);
@@ -198,10 +200,8 @@ public class EditBazaar implements AbcAction {
         Item ad = (Item) persistence.findById(relation.getChild());
 
         Document document = ad.getData();
-        Node node = document.selectSingleNode("data/title");
-        if (node != null)
-            params.put(PARAM_TITLE, node.getText());
-        node = document.selectSingleNode("data/text");
+        params.put(PARAM_TITLE, ad.getTitle());
+        Node node = document.selectSingleNode("data/text");
         if (node != null)
             params.put(PARAM_TEXT, node.getText());
         node = document.selectSingleNode("data/price");
@@ -227,7 +227,7 @@ public class EditBazaar implements AbcAction {
         Item item = (Item) persistence.findById(relation.getChild()).clone();
         Document document = item.getData();
 
-        boolean canContinue = setTitle(params, document, env);
+        boolean canContinue = setTitle(params, item, env);
         canContinue &= setContent(params, document, env);
         canContinue &= setType(params, item, env);
         canContinue &= setPrice(params, document, env);
@@ -280,11 +280,11 @@ public class EditBazaar implements AbcAction {
     /**
      * Updates name of advertisement from parameters. Changes are not synchronized with persistence.
      * @param params   map holding request's parameters
-     * @param document Document to be updated
+     * @param item item to be updated
      * @param env      environment
      * @return false, if there is a major error.
      */
-    private boolean setTitle(Map params, Document document, Map env) {
+    private boolean setTitle(Map params, Item item, Map env) {
         String tmp = (String) params.get(PARAM_TITLE);
         tmp = Misc.filterDangerousCharacters(tmp);
         if (tmp != null && tmp.length() > 0) {
@@ -295,7 +295,8 @@ public class EditBazaar implements AbcAction {
             }
             if (tmp.indexOf('\n') != -1)
                 tmp = tmp.replace('\n', ' ');
-            DocumentHelper.makeElement(document, "data/title").setText(tmp);
+
+            item.setTitle(tmp);
         } else {
             ServletUtils.addError(PARAM_TITLE, "Zadejte titulek inzerátu!", env, null);
             return false;

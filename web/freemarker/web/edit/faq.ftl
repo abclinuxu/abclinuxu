@@ -12,7 +12,7 @@ vrátit zpět.</p>
 <#if PARAMS.preview?exists>
     <fieldset>
         <legend>Náhled</legend>
-        <h1 style="margin-bottom: 1em;">${TOOL.xpath(PREVIEW, "/data/title")}</h1>
+        <h1 style="margin-bottom: 1em;">${PREVIEW.title?if_exists}</h1>
         <div>
             ${TOOL.render(TOOL.xpath(PREVIEW.data,"data/text"), USER?if_exists)}
         </div>

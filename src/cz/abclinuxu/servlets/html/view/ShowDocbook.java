@@ -79,7 +79,7 @@ public class ShowDocbook implements AbcAction {
         print("<?xml version='1.0' encoding='UTF-8'?>", 0, true);
         print("<!DOCTYPE article PUBLIC \"-//OASIS//DTD DocBook XML V4.1.2//EN\" \"http://www.oasis-open.org/docbook/xml/4.0/docbookx.dtd\">\n", 0, true);
         print("<article>", 0, true);
-        print("<title>"+Tools.xpath(doc, "/data/name")+"</title>", 0, true);
+        print("<title>" + article.getTitle() + "</title>", 0, true);
 
         print("<articleinfo>", 0, true);
         print("<date>"+Constants.czDayMonthYearSpaces.format(article.getCreated())+"</date>", 1, true);

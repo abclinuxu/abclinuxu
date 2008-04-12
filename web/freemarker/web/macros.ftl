@@ -16,7 +16,7 @@
     >
     <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
     <#if thumbnail!="UNDEF"><div class="cl_thumbnail">${thumbnail}</div></#if>
-    <h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(clanek,"data/name")}</a></h1>
+    <h1 class="st_nadpis"><a href="${url}">${clanek.title}</a></h1>
     <p>${TOOL.xpath(clanek,"/data/perex")}</p>
     <p class="meta-vypis">
         ${DATE.show(clanek.created, dateFormat[0])} |
@@ -82,15 +82,14 @@
    ITEM=TOOL.sync(relation.child),
    autor=TOOL.createUser(ITEM.owner),
    diz=TOOL.findComments(ITEM),
-   url=relation.url?default("/zpravicky/show/"+relation.id),
-   title=TOOL.xpath(ITEM, "/data/title")?default("Zprávička")
+   url=relation.url?default("/zpravicky/show/"+relation.id)
  >
-    <h3 class="st_nadpis"><a href="${url}" title="${title}">${title}</a></h3>
+    <h3 class="st_nadpis"><a href="${url}" title="${ITEM.title}">${ITEM.title}</a></h3>
     <p>
         ${TOOL.xpath(ITEM,"data/content")}<br>
         <span style="font-size: smaller">
         <@showUser autor/> | ${DATE.show(ITEM.created,"CZ_FULL")} |
-        <a href="${url}" title="${title}">Komentáře: ${diz.responseCount}</a><#rt>
+        <a href="${url}" title="${ITEM.title}">Komentáře: ${diz.responseCount}</a><#rt>
         <#lt><#if diz.responseCount gt 0><@markNewComments diz/>, poslední ${DATE.show(diz.updated, "SMART")}</#if>
         </span>
     </p>

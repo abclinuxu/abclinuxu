@@ -111,7 +111,7 @@ public class FeedGenerator implements Configurable {
                 DiscussionHeader diz = (DiscussionHeader) iter.next();
                 entry = new SyndEntryImpl();
                 entry.setLink("http://www.abclinuxu.cz/forum/show/" + diz.getRelationId());
-                title = Tools.xpath(diz.getDiscussion(), "data/title");
+                title = diz.getTitle();
                 title = title.concat(", odpovědí: " + diz.getResponseCount());
                 entry.setTitle(title);
                 entry.setPublishedDate(diz.getUpdated());
@@ -163,7 +163,7 @@ public class FeedGenerator implements Configurable {
 
                 entry = new SyndEntryImpl();
                 entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
-                entry.setTitle(Tools.xpath(item, "data/name"));
+                entry.setTitle(item.getTitle());
                 entry.setPublishedDate(item.getUpdated());
                 entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
                 entries.add(entry);
@@ -207,7 +207,7 @@ public class FeedGenerator implements Configurable {
 
                 entry = new SyndEntryImpl();
                 entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
-                entry.setTitle(Tools.xpath(item, "data/name"));
+                entry.setTitle(item.getTitle());
                 entry.setPublishedDate(item.getUpdated());
                 entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
                 entries.add(entry);
@@ -251,7 +251,7 @@ public class FeedGenerator implements Configurable {
 
                 entry = new SyndEntryImpl();
                 entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
-                entry.setTitle(Tools.xpath(item, "data/name"));
+                entry.setTitle(item.getTitle());
                 entry.setPublishedDate(item.getUpdated());
                 entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
                 entries.add(entry);
@@ -299,7 +299,7 @@ public class FeedGenerator implements Configurable {
                     url = "/hardware/show/" + found.getId();
                 url = "http://"+AbcConfig.getHostname() + url;
                 entry.setLink(url);
-                entry.setTitle(Tools.xpath(item,"data/name"));
+                entry.setTitle(item.getTitle());
                 entry.setPublishedDate(item.getUpdated());
                 entry.setAuthor((author.getNick()!=null) ? author.getNick() : author.getName());
                 entries.add(entry);
@@ -347,7 +347,7 @@ public class FeedGenerator implements Configurable {
                 String url = found.getUrl();
                 url = "http://"+AbcConfig.getHostname() + url;
                 entry.setLink(url);
-                entry.setTitle(Tools.xpath(item,"data/name"));
+                entry.setTitle(item.getTitle());
                 entry.setPublishedDate(item.getUpdated());
                 entry.setAuthor((author.getNick()!=null) ? author.getNick() : author.getName());
                 node = item.getData().selectSingleNode("/data/intro");
@@ -387,8 +387,6 @@ public class FeedGenerator implements Configurable {
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
-            SyndContent description;
-            Node node;
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0,feedLength)};
             List list = SQLTool.getInstance().findItemRelationsWithType(Item.SCREENSHOT, qualifiers);
@@ -402,7 +400,7 @@ public class FeedGenerator implements Configurable {
                 String url = found.getUrl();
                 url = "http://"+AbcConfig.getHostname() + url;
                 entry.setLink(url);
-                entry.setTitle(Tools.xpath(item,"data/title"));
+                entry.setTitle(item.getTitle());
                 entry.setPublishedDate(item.getCreated());
                 entry.setAuthor((author.getNick()!=null) ? author.getNick() : author.getName());
                 entries.add(entry);
@@ -437,7 +435,7 @@ public class FeedGenerator implements Configurable {
                 feed.setEncoding("UTF-8");
                 feed.setUri(url);
                 feed.setLink(url);
-                feed.setTitle("abclinuxu - " + Tools.childName(series));
+                feed.setTitle("abclinuxu - " + series.getTitle());
 
                 if (series instanceof Category)
                     createSectionEntries((Category) series, feed, feedLength);
@@ -522,7 +520,7 @@ public class FeedGenerator implements Configurable {
 
         SyndEntry entry = new SyndEntryImpl();
         entry.setLink("http://"+AbcConfig.getHostname() + r.getUrl());
-        entry.setTitle(Tools.xpath(item, "data/name"));
+        entry.setTitle(item.getTitle());
         entry.setPublishedDate(item.getCreated());
         entry.setAuthor(Tools.childName(author));
         description = new SyndContentImpl();
@@ -602,7 +600,7 @@ public class FeedGenerator implements Configurable {
                 SyndFeed feed = new SyndFeedImpl();
                 feed.setFeedType(TYPE_RSS_1_0);
                 feed.setEncoding("UTF-8");
-                feed.setTitle(Tools.limit(Tools.xpath(blog, "//custom/title"), 40, "..."));
+                feed.setTitle(Tools.limit(blog.getTitle(), 40, "..."));
                 feed.setLink("http://www.abclinuxu.cz/blog/"+blog.getSubType()+"/");
                 feed.setUri("http://www.abclinuxu.cz/blog/"+blog.getSubType()+"/");
                 feed.setDescription("Seznam čerstvých zápisů uživatele "+author.getName());
@@ -751,12 +749,7 @@ public class FeedGenerator implements Configurable {
 
                 String content = Tools.xpath(item, "data/content");
                 String withoutTags = Tools.removeTags(content);
-
-                Element element = (Element) item.getData().selectSingleNode("/data/title");
-                if (element!=null)
-                    title = element.getText();
-                else
-                    title = NewsCategories.get(item.getSubType()).getName();
+                title = item.getTitle();
 
                 entry = new SyndEntryImpl();
                 entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
@@ -810,9 +803,7 @@ public class FeedGenerator implements Configurable {
                 User author = (User) persistence.findById(new User(item.getOwner()));
                 content = Tools.xpath(item, "data/text");
                 withoutTags = Tools.removeTags(content);
-
-                Element element = (Element) item.getData().selectSingleNode("/data/title");
-                title = element.getText();
+                title = item.getTitle();
 
                 entry = new SyndEntryImpl();
                 entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
@@ -909,7 +900,7 @@ public class FeedGenerator implements Configurable {
                 entry.setLink("http://"+AbcConfig.getHostname() + url);
 
                 Item item = (Item) relation.getChild();
-                title = Tools.removeTags(Tools.childName(relation));
+                title = Tools.removeTags(item.getTitle());
                 entry.setTitle(title);
                 entry.setPublishedDate(item.getCreated());
                 entries.add(entry);
@@ -940,7 +931,7 @@ public class FeedGenerator implements Configurable {
         String url = "http://"+AbcConfig.getHostname() + Tools.getUrlForBlogStory(found);
 
         entry.setLink(url);
-        entry.setTitle(Tools.xpath(item, "data/name"));
+        entry.setTitle(item.getTitle());
         entry.setPublishedDate(item.getCreated());
         entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
         description = new SyndContentImpl();

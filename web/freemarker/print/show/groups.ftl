@@ -15,7 +15,7 @@ skupin pak mohou mít například větší práva, než ostatní uživatelé.
 
 <#list GROUPS as group>
  <dl>
-  <dt>${TOOL.xpath(group.data,"/data/name")}</dt>
+  <dt>${group.title}</dt>
   <dd>${TOOL.xpath(group.data,"/data/desc")}</dd>
   <dd>
    <a href="${URL.noPrefix("/Group?action=edit&gid="+group.id)}">Úprava</a>

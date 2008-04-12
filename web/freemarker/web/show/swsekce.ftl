@@ -110,7 +110,7 @@
 
 <@lib.advertisement id="gg-sw-sekce" />
 
-<h1>${TOOL.xpath(CATEGORY.data,"/data/name")}</h1>
+<h1>${CATEGORY.title}</h1>
 
 <@lib.showMessages/>
 

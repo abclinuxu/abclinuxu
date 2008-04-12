@@ -98,8 +98,10 @@ public class EditHardware implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         if ( action==null)
             throw new MissingArgumentException("Chybí parametr action!");
@@ -147,7 +149,7 @@ public class EditHardware implements AbcAction {
         item.setOwner(user.getId());
 
         boolean canContinue = true;
-        canContinue &= setName(params, root, env);
+        canContinue &= setName(params, item, env);
         canContinue &= setSupport(params, root);
         canContinue &= setDriver(params, root);
         canContinue &= setDriverUrl(params, root, env);
@@ -172,7 +174,7 @@ public class EditHardware implements AbcAction {
         versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
 
         Relation relation = new Relation(upper.getChild(), item, upper.getId());
-        String name = root.elementTextTrim("name");
+        String name = item.getTitle();
         String url = upper.getUrl() + "/" + URLManager.enforceRelativeURL(name);
         url = URLManager.protectFromDuplicates(url);
         if (url != null)
@@ -203,10 +205,8 @@ public class EditHardware implements AbcAction {
         Item item = (Item) relation.getChild();
         Element root = item.getData().getRootElement();
 
-        Node node = root.element("name");
-        if ( node!=null )
-            params.put(PARAM_NAME, node.getText());
-        node = root.element("support");
+        params.put(PARAM_NAME, item.getTitle());
+        Node node = root.element("support");
         if ( node!=null )
             params.put(PARAM_SUPPORT, node.getText());
         node = root.element("driver");
@@ -249,7 +249,7 @@ public class EditHardware implements AbcAction {
         Element root = item.getData().getRootElement();
 
         boolean canContinue = true;
-        canContinue &= setName(params, root, env);
+        canContinue &= setName(params, item, env);
         canContinue &= setSupport(params, root);
         canContinue &= setDriver(params, root);
         canContinue &= setDriverUrl(params, root, env);
@@ -298,18 +298,18 @@ public class EditHardware implements AbcAction {
     /**
      * Updates name from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param root root element of item to be updated
+     * @param item item to be updated
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setName(Map params, Element root, Map env) {
+    private boolean setName(Map params, Item item, Map env) {
         String tmp = (String) params.get(PARAM_NAME);
         tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
-            DocumentHelper.makeElement(root, "name").setText(tmp);
+            item.setTitle(tmp);
             return true;
         } else {
-            ServletUtils.addError(PARAM_NAME, "Zadejte název druhu!", env, null);
+            ServletUtils.addError(PARAM_NAME, "Zadejte název hardwaru!", env, null);
             return false;
         }
     }

@@ -9,9 +9,7 @@
 <ul>
     <#list SURVEYS as survey>
         <li>
-            <a href="${URL.noPrefix("/EditSurvey?action=edit&amp;surveyId="+survey.id)}">
-                ${TOOL.xpath(survey.data, "/anketa/title")}
-            </a>
+            <a href="${URL.noPrefix("/EditSurvey?action=edit&amp;surveyId="+survey.id)}">${survey.title}</a>
         </li>
     </#list>
 </ul>

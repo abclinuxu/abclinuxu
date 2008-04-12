@@ -126,15 +126,11 @@ public class DocumentParser {
     }
 
     private static ParsedDocument parseBlogSection(Category category) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(category.getTitle());
 
         Element data = (Element) category.getData().selectSingleNode("//custom");
         Node node = data.element("page_title");
         sb.append(node.getText());
-
-        node = data.element("title");
-        if (node != null)
-            sb.append(node.getText());
 
         node = data.element("intro");
         if (node != null)
@@ -144,13 +140,10 @@ public class DocumentParser {
     }
 
     private static ParsedDocument parseSection(Category category) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(category.getTitle());
 
         Element data = category.getData().getRootElement();
-        Node node = data.element("name");
-        sb.append(node.getText());
-
-        node = data.element("note");
+        Node node = data.element("note");
         if (node != null)
             sb.append(" ").append(node.getText());
 
@@ -158,13 +151,10 @@ public class DocumentParser {
     }
 
     private static ParsedDocument parseHardware(Item item) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(item.getTitle());
 
         Element data = item.getData().getRootElement();
-        Node node = data.element("name");
-        sb.append(node.getText());
-
-        node = data.element("setup");
+        Node node = data.element("setup");
         if (node != null)
             sb.append(" ").append(node.getText());
 
@@ -184,7 +174,7 @@ public class DocumentParser {
     }
 
     private static ParsedDocument parseArticle(Item article) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(article.getTitle());
 
         Set authors = article.getProperty(Constants.PROPERTY_AUTHOR);
         for (Iterator iter = authors.iterator(); iter.hasNext();) {
@@ -193,11 +183,7 @@ public class DocumentParser {
         }
 
         Element data = article.getData().getRootElement();
-
-        Node node = data.element("name");
-        sb.append(node.getText());
-
-        node = data.element("perex");
+        Node node = data.element("perex");
         if (node != null)
             sb.append(" ").append(node.getText());
 
@@ -227,14 +213,11 @@ public class DocumentParser {
     }
 
     private static ParsedDocument parseDiscussion(Item discussion) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(discussion.getTitle());
 
         Document document = discussion.getData();
         Element data = document.getRootElement();
-        Node node = data.element("title");
-        if (node != null)
-            sb.append(node.getText());
-        node = data.element("text");
+        Node node = data.element("text");
         if (node != null)
             sb.append(" ").append(node.getText());
 
@@ -283,13 +266,10 @@ public class DocumentParser {
     }
 
     private static ParsedDocument parseDriver(Item item) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(item.getTitle());
 
         Element data = item.getData().getRootElement();
-        Node node = data.element("name");
-        sb.append(node.getText());
-
-        node = data.element("note");
+        Node node = data.element("note");
         if (node != null)
             sb.append(" ").append(node.getText());
 
@@ -297,16 +277,10 @@ public class DocumentParser {
     }
 
     private static ParsedDocument parseNews(Item news) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(news.getTitle());
 
         Element data = news.getData().getRootElement();
-        Node node = data.element("title");
-        if (node == null) {
-//            log.warn("Zpravicka nema titulek! " + news.getId()); // todo zkontrolovat, zda se to deje
-        } else
-            sb.append(node.getText());
-
-        node = data.element("content");
+        Node node = data.element("content");
         sb.append(" ").append(node.getText());
 
         storeUser(news.getOwner(), sb);
@@ -314,37 +288,30 @@ public class DocumentParser {
     }
 
     private static ParsedDocument parseDictionary(Item item) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(item.getTitle());
 
         Element data = item.getData().getRootElement();
-        Node node = data.element("name");
-        sb.append(node.getText());
-        node = data.element("description");
+        Node node = data.element("description");
         sb.append(" ").append(node.getText());
 
         return normalize(sb);
     }
 
     private static ParsedDocument parseWikiContent(Item item) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(item.getTitle());
 
         Element data = item.getData().getRootElement();
-        Node node = data.element("name");
-        sb.append(node.getText());
-        node = data.element("content");
+        Node node = data.element("content");
         sb.append(" ").append(node.getText());
 
         return normalize(sb);
     }
 
     private static ParsedDocument parseBlogStory(Item story) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(story.getTitle());
 
         Element data = story.getData().getRootElement();
-        Node node = data.element("name");
-        sb.append(node.getText());
-
-        node = data.element("perex");
+        Node node = data.element("perex");
         if (node != null)
             sb.append(" ").append(node.getText());
 
@@ -356,25 +323,20 @@ public class DocumentParser {
     }
 
     private static ParsedDocument parseFaq(Item item) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(item.getTitle());
 
         Element data = item.getData().getRootElement();
-        Node node = data.element("title");
-        sb.append(node.getText());
-        node = data.element("text");
+        Node node = data.element("text");
         sb.append(node.getText());
 
         return normalize(sb);
     }
 
     private static ParsedDocument parseSoftware(Item item) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(item.getTitle());
         Element data = item.getData().getRootElement();
 
-        Node node = data.element("name");
-        sb.append(node.getText());
-
-        node = data.element("description");
+        Node node = data.element("description");
         if (node != null)
             sb.append(" ").append(node.getText());
 
@@ -382,11 +344,9 @@ public class DocumentParser {
     }
 
     private static ParsedDocument parseBazaar(Item item) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(item.getTitle());
 
         Element data = item.getData().getRootElement();
-        sb.append(data.elementText("title"));
-
         String content = data.element("text").getText();
         sb.append(" ").append(content);
 
@@ -422,13 +382,10 @@ public class DocumentParser {
     }
 
     private static ParsedDocument parseSeries(Item item) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(item.getTitle());
 
         Element data = item.getData().getRootElement();
-        Node node = data.element("name");
-        sb.append(node.getText());
-
-        node = data.element("description");
+        Node node = data.element("description");
         if (node != null)
             sb.append(" ").append(node.getText());
 
@@ -454,13 +411,10 @@ public class DocumentParser {
     }
 
     private static ParsedDocument parseScreenshot(Item item) {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(item.getTitle());
 
         Element data = item.getData().getRootElement();
-        Node node = data.element("title");
-        sb.append(node.getText());
-
-        node = data.element("description");
+        Node node = data.element("description");
         if (node != null)
             sb.append(" ").append(node.getText());
 

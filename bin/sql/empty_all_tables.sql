@@ -11,7 +11,7 @@ delete from polozka;
 delete from posledni_komentar;
 delete from pravo;
 delete from relace;
-delete from statistika;
+delete from spolecne;
 delete from server;
 delete from stara_adresa;
 delete from statistika;

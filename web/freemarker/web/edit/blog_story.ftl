@@ -29,7 +29,7 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
  <h2>Náhled vašeho zápisu</h2>
 
  <div style="padding-left: 30pt">
-    <h3>${TOOL.xpath(PREVIEW, "/data/name")}</h3>
+    <h3>${PREVIEW.title?if_exists}</h3>
     <p class="cl_inforadek">${DATE.show(PREVIEW.created, "CZ_SHORT")} |
         Přečteno: ${TOOL.getCounterValue(PREVIEW,"read")}x
         <#if PREVIEW.subType?exists>| ${CATEGORIES[PREVIEW.subType]?if_exists}</#if>

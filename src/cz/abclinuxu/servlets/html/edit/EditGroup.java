@@ -76,8 +76,10 @@ public class EditGroup implements AbcAction {
         String action = (String) params.get(PARAM_ACTION);
         User user = (User) env.get(Constants.VAR_USER);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
@@ -160,7 +162,7 @@ public class EditGroup implements AbcAction {
         if ( group.getType()!=Item.GROUP )
             return ServletUtils.showErrorPage("Toto není skupina!", env, request);
 
-        params.put(PARAM_NAME, group.getData().selectSingleNode("/data/name").getText());
+        params.put(PARAM_NAME, group.getTitle());
         params.put(PARAM_DESCRIPTION, group.getData().selectSingleNode("/data/desc").getText());
 
         return FMTemplateSelector.select("EditGroup", "create", env, request);
@@ -292,8 +294,7 @@ public class EditGroup implements AbcAction {
             ServletUtils.addError(PARAM_NAME, "Zadejte jméno skupiny!", env, null);
             return false;
         }
-        Node node = DocumentHelper.makeElement(group.getData(), "/data/name");
-        node.setText(name);
+        group.setTitle(name);
         return true;
     }
 

@@ -49,7 +49,7 @@ public class Screenshot {
     public Screenshot(Relation relation) {
         url = relation.getUrl();
         Item item = (Item) relation.getChild();
-        title = item.getData().selectSingleNode("/data/title").getText();
+        title = item.getTitle();
         Map children = Tools.groupByType(item.getChildren(), "Data");
         List list = (List) children.get(Constants.TYPE_DATA);
         if (list == null)

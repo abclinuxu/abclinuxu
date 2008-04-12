@@ -45,7 +45,7 @@ public class DumpCategoryTree {
             return;
 
         Category category = (Category) relation.getChild();
-        String name = Tools.xpath(category,"data/name")+" ("+relation.getId()+")";
+        String name = category.getTitle() + " (" + relation.getId() + ")";
         File current = new File(parent,name);
         current.mkdir();
 

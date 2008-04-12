@@ -57,6 +57,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Document;
+import static cz.abclinuxu.servlets.Constants.PARAM_RELATION;
 
 /**
  * @author literakl
@@ -68,7 +69,6 @@ public class EditAttachment implements AbcAction {
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_ATTACHMENTS = "ATTACHMENTS";
 
-    public static final String PARAM_RELATION = "rid";
     public static final String PARAM_SCREENSHOT = "screenshot";
     public static final String PARAM_ATTACHMENT = "attachment";
 
@@ -86,8 +86,10 @@ public class EditAttachment implements AbcAction {
         if (relation == null)
             throw new MissingArgumentException("Chybí parametr relationId!");
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         Tools.sync(relation);
         env.put(VAR_RELATION, relation);

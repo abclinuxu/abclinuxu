@@ -19,7 +19,7 @@
                     <span title="Počet lidí, kteří sledují tento dokument">(${TOOL.getMonitorCount(ITEM.data)})</span>
                     <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při úpravě dokumentu.</span></a>
                 </li>
-                <form action="/hledani"><input type="text" class="text" name="dotaz" value="${TOOL.xpath(ITEM,"/data/name")}">
+                <form action="/hledani"><input type="text" class="text" name="dotaz" value="${ITEM.title}">
                     <input type="submit" class="button" value="Hledej">
                 </form>
                 <#if USER?exists && USER.hasRole("remove relation")>
@@ -32,7 +32,7 @@
 
 <#include "../header.ftl">
 
-<h1>${TOOL.xpath(ITEM,"data/name")}</h1>
+<h1>${ITEM.title}</h1>
 
 <table class="swdetail">
   <tr>

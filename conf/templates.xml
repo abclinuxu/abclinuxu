@@ -3,7 +3,7 @@
 
     <servlet name="ViewAuthor">
         <action name="author" content="/show/author.ftl">
-            <var name="TITLE" value='Autor ${TOOL.xpath(AUTHOR,"/data/firstname")?if_exists} ${TOOL.xpath(AUTHOR,"/data/surname")}'  type="Lazy"/>
+            <var name="TITLE" value='Autor ${TOOL.childName(AUTHOR)}'  type="Lazy"/>
         </action>
         <action name="authors_list" content="/show/sekce_autori.ftl">
             <var name="TITLE" value="Seznam autorů" />
@@ -54,13 +54,13 @@
             <var name="TITLE" value="Vložení stránky"/>
         </action>
         <action name="edit" template="print" content="/add/content.ftl">
-            <var name="TITLE" value='Úprava stránky - ${TOOL.xpath(RELATION.child,"data/name")}' type="Lazy"/>
+            <var name="TITLE" value='Úprava stránky - ${RELATION.child.title}' type="Lazy"/>
         </action>
         <action name="addDerived" content="/add/derivedContent.ftl">
             <var name="TITLE" value="Vložení stránky"/>
         </action>
         <action name="editPublic" content="/edit/publicContent.ftl">
-            <var name="TITLE" value='Úprava stránky - ${TOOL.xpath(RELATION.child,"data/name")}' type="Lazy"/>
+            <var name="TITLE" value='Úprava stránky - ${RELATION.child.title}' type="Lazy"/>
         </action>
     </servlet>
 
@@ -200,7 +200,7 @@
 
     <servlet name="ViewBazaar">
         <action name="ad" content="/show/bazar_ad.ftl">
-            <var name="TITLE" value='${TOOL.xpath(ITEM, "/data/title")} - Bazar' type="Lazy"/>
+            <var name="TITLE" value='${ITEM.title} - Bazar' type="Lazy"/>
         </action>
         <action name="bazaar" content="/show/bazar.ftl">
             <var name="TITLE" value='Bazar'/>
@@ -224,7 +224,7 @@
             <var name="TITLE" value='Seriály'/>
         </action>
         <action name="series" content="/show/series.ftl">
-            <var name="TITLE" value='Seriál ${TOOL.xpath(ITEM, "/data/name")}' type="Lazy"/>
+            <var name="TITLE" value='Seriál ${ITEM.title}' type="Lazy"/>
         </action>
     </servlet>
 
@@ -239,7 +239,7 @@
             <var name="TITLE" value="Vyber seriál" />
         </action>
         <action name="addArticlesUrls" template="print" content="/add/series_article_urls.ftl">
-            <var name="TITLE" value="Vlož clánky do seriálu" />
+            <var name="TITLE" value="Vlož články do seriálu" />
         </action>
     </servlet>
 
@@ -404,7 +404,7 @@
             <var name="TITLE" value="Seznam skupin"/>
         </action>
         <action name="showMembers" content="/show/group_members.ftl" template="print">
-            <var name="TITLE" value='Skupina ${TOOL.xpath(GROUP,"data/name")}' type="Lazy"/>
+            <var name="TITLE" value='Skupina ${GROUP.title}' type="Lazy"/>
         </action>
     </servlet>
 
@@ -467,13 +467,13 @@
 
     <servlet name="ViewCategory">
         <action name="sekce" content="/show/sekce.ftl">
-            <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
+            <var name="TITLE" value='${CATEGORY.title}' type="Lazy" />
         </action>
         <action name="hwsekce" content="/show/hwsekce.ftl">
-            <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
+            <var name="TITLE" value='${CATEGORY.title}' type="Lazy" />
         </action>
         <action name="rubrika" content="/show/rubrika.ftl">
-            <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
+            <var name="TITLE" value='${CATEGORY.title}' type="Lazy" />
         </action>
         <action name="ankety" content="/show/ankety.ftl">
             <var name="TITLE" value="Archiv anket" />
@@ -482,7 +482,7 @@
             <var name="TITLE" value="Seznam ovladačů" />
         </action>
         <action name="rubriky" content="/show/rubriky.ftl">
-            <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
+            <var name="TITLE" value='${CATEGORY.title}' type="Lazy" />
         </action>
         <action name="waiting_news" content="/show/sekce_zpravicky.ftl">
             <var name="TITLE" value='Čekající zprávičky' />
@@ -497,13 +497,13 @@
 
     <servlet name="ViewSoftware">
         <action name="swsekce" content="/show/swsekce.ftl">
-            <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy"/>
+            <var name="TITLE" value='${CATEGORY.title}' type="Lazy"/>
         </action>
         <action name="software" content="/show/switem.ftl">
-            <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy"/>
+            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
         </action>
         <action name="sw_users" content="/show/sw_users.ftl">
-            <var name="TITLE" value='Seznam uživatelů ${TOOL.xpath(ITEM,"data/name")}' type="Lazy"/>
+            <var name="TITLE" value='Seznam uživatelů ${ITEM.title}' type="Lazy"/>
         </action>
         <action name="alternatives" content="/show/sw_alternatives.ftl">
             <var name="TITLE" value="Seznam alternativ pro aplikace z MS Windows"/>
@@ -521,7 +521,7 @@
 
     <servlet name="ViewContent">
         <action name="view" content="/show/content.ftl">
-            <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
+            <var name="TITLE" value='${ITEM.title}' type="Lazy" />
         </action>
         <action name="toc" content="/show/content_toc.ftl">
             <var name="TITLE" value="Obsah" />
@@ -536,10 +536,10 @@
 
     <servlet name="ViewFaq">
         <action name="view" content="/show/faq.ftl">
-            <var name="TITLE" value='${TOOL.xpath(ITEM,"data/title")}' type="Lazy" />
+            <var name="TITLE" value='${ITEM.title}' type="Lazy" />
         </action>
         <action name="list" content="/show/faq_section.ftl">
-            <var name="TITLE" value='${TOOL.xpath(RELATION.child,"data/name")}' type="Lazy" />
+            <var name="TITLE" value='${RELATION.child.title}' type="Lazy" />
         </action>
         <action name="start" content="/show/faq_all.ftl">
             <var name="TITLE" value="Často kladené otázky" />
@@ -554,19 +554,19 @@
 
     <servlet name="ShowObject">
         <action name="hardware" content="/show/hwitem.ftl">
-            <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
+            <var name="TITLE" value='${ITEM.title}' type="Lazy" />
         </action>
         <action name="discussion" content="/show/discussion.ftl">
-            <var name="TITLE" value='${TOOL.xpath(ITEM,"data/title")?default("Diskuse")}' type="Lazy" />
+            <var name="TITLE" value='${ITEM.title}' type="Lazy" />
         </action>
         <action name="article" content="/show/article.ftl">
-            <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
+            <var name="TITLE" value='${ITEM.title}' type="Lazy" />
         </action>
         <action name="driver" content="/show/driver.ftl">
-            <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")} - ${TOOL.xpath(ITEM,"data/version")}' type="Lazy" />
+            <var name="TITLE" value='${ITEM.title} - ${TOOL.xpath(ITEM,"data/version")}' type="Lazy" />
         </action>
         <action name="news" content="/show/zpravicka.ftl">
-            <var name="TITLE" value='${TOOL.xpath(ITEM, "/data/title")?default("Zprávička")}' type="Lazy"/>
+            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
         </action>
         <action name="poll" content="/show/anketa.ftl">
             <var name="TITLE" value="Anketa"/>
@@ -588,7 +588,7 @@
 
     <servlet name="ViewBlog">
         <action name="story" content="/show/story.ftl">
-            <var name="TITLE" value='${TOOL.childName(STORY)}' type="Lazy"/>
+            <var name="TITLE" value='${STORY.child.title}' type="Lazy"/>
         </action>
         <action name="blog" content="/show/blog.ftl">
             <var name="TITLE" value='${TOOL.xpath(BLOG,"/data/custom/page_title")}' type="Lazy"/>
@@ -679,7 +679,7 @@
             <var name="TITLE" value="Poradna" />
         </action>
         <action name="show" content="/show/forum.ftl">
-            <var name="TITLE" value='Poradna: ${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy"/>
+            <var name="TITLE" value='Poradna: ${CATEGORY.title}' type="Lazy"/>
         </action>
     </servlet>
 
@@ -700,13 +700,13 @@
 
     <servlet name="Screenshot">
         <action name="show" content="/show/desktop.ftl">
-            <var name="TITLE" value='${TOOL.xpath(ITEM,"data/title")} - desktop' type="Lazy"/>
+            <var name="TITLE" value='${ITEM.title} - desktop' type="Lazy"/>
         </action>
         <action name="showList" content="/show/desktops.ftl">
             <var name="TITLE" value="Snímky desktopů"/>
         </action>
         <action name="users" content="/show/desktop_users.ftl">
-            <var name="TITLE" value='Seznam fanoušků desktopu ${TOOL.xpath(ITEM,"data/title")}' type="Lazy"/>
+            <var name="TITLE" value='Seznam fanoušků desktopu ${ITEM.title}' type="Lazy"/>
         </action>
         <action name="add" content="/add/desktop.ftl">
             <var name="TITLE" value="Vložit nový desktop"/>

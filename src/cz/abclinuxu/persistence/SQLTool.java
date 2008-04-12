@@ -50,7 +50,6 @@ import java.util.Set;
 public final class SQLTool implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SQLTool.class);
 
-    public static final String RECORD_RELATIONS_BY_TYPE = "relations.record.by.type";
     public static final String ITEM_RELATIONS_BY_TYPE = "relations.item.by.type";
     public static final String ITEM_RELATIONS_BY_TYPE_WITH_FILTERS = "relations.item.by.type.with.filters";
     public static final String CATEGORY_RELATIONS = "relations.categories";
@@ -65,7 +64,6 @@ public final class SQLTool implements Configurable {
     public static final String NEWS_RELATIONS = "relations.news";
     // todo calculate it dynamically with findqualifier
     public static final String NEWS_RELATIONS_WITHIN_PERIOD = "relations.news.within.period";
-    public static final String RECORD_RELATIONS_BY_USER_AND_TYPE = "relations.record.by.user.and.type";
     public static final String NEWS_RELATIONS_BY_USER = "relations.news.by.user";
     public static final String QUESTION_RELATIONS_BY_USER = "relations.question.by.user";
     public static final String COMMENT_RELATIONS_BY_USER = "relations.comment.by.user";
@@ -373,6 +371,7 @@ public final class SQLTool implements Configurable {
 
             mergeUsersStep(con, CHANGE_REVISION_OWNER, from, to);
             mergeUsersStep(con, CHANGE_COMMENT_OWNER, from, to);
+            // todo mergovat nasledujici tri SQLka
             mergeUsersStep(con, CHANGE_ITEM_OWNER, from, to);
             mergeUsersStep(con, CHANGE_RECORD_OWNER, from, to);
             mergeUsersStep(con, CHANGE_CATEGORY_OWNER, from, to);
@@ -412,34 +411,6 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(uid);
         return loadNumber(sql.get(COUNT_PROPERTIES_BY_USER), params);
-    }
-
-    /**
-     * Finds relations, where child is record of specified type. Use Qualifiers
-     * to set additional parameters.
-     * @deprecated after removal of software and upgrade of hardware section nobody uses this method
-     * @return List of initialized relations
-     * @throws PersistenceException if there is an error with the underlying persistent storage.
-     */
-    public List<Relation> findRecordRelationsWithType(int type, Qualifier[] qualifiers) {
-        if (qualifiers==null) qualifiers = new Qualifier[]{};
-        StringBuffer sb = new StringBuffer((String)sql.get(RECORD_RELATIONS_BY_TYPE));
-        List params = new ArrayList();
-        params.add(type);
-        appendQualifiers(sb,qualifiers,params, null, null);
-        return loadRelations(sb.toString(),params);
-    }
-
-    /**
-     * Counts relations, where child is record of specified type.
-     * @throws PersistenceException if there is an error with the underlying persistent storage.
-     */
-    public int countRecordRelationsWithType(int type) {
-        StringBuffer sb = new StringBuffer((String) sql.get(RECORD_RELATIONS_BY_TYPE));
-        changeToCountStatement(sb);
-        List params = new ArrayList();
-        params.add(type);
-        return loadNumber(sb.toString(),params);
     }
 
     /**
@@ -867,35 +838,6 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Finds user's relations, where child is with given type.
-     * Use Qualifiers to set additional parameters.
-     * @return List of initialized relations
-     * @throws PersistenceException if there is an error with the underlying persistent storage.
-     */
-    public List<Relation> findRecordRelationsWithUserAndType(int userId, int type, Qualifier[] qualifiers) {
-        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuffer sb = new StringBuffer((String) sql.get(RECORD_RELATIONS_BY_USER_AND_TYPE));
-        List params = new ArrayList();
-        params.add(userId);
-        params.add(type);
-        appendQualifiers(sb, qualifiers, params, null, null);
-        return loadRelations(sb.toString(), params);
-    }
-
-    /**
-     * Counts user's relations, where child is with given type.
-     * @throws PersistenceException if there is an error with the underlying persistent storage.
-     */
-    public int countRecordRelationsWithUserAndType(int userId, int type) {
-        StringBuffer sb = new StringBuffer((String) sql.get(RECORD_RELATIONS_BY_USER_AND_TYPE));
-        changeToCountStatement(sb);
-        List params = new ArrayList();
-        params.add(userId);
-        params.add(type);
-        return loadNumber(sb.toString(), params);
-    }
-
-    /**
      * Finds relations, where child is article submitted by given author.
      * Items with property created set to future and outside of typical columns are skipped.
      * Use Qualifiers to set additional parameters.
@@ -1069,7 +1011,9 @@ public final class SQLTool implements Configurable {
         if (qualifiers == null) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(STANDALONE_POLL_RELATIONS));
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params, null, null);
+        Map<Field, String> fieldMapping = new HashMap<Field, String>();
+        fieldMapping.put(Field.CREATED, "A");
+        appendQualifiers(sb, qualifiers, params, null, fieldMapping);
         return loadRelations(sb.toString(), params);
     }
 
@@ -1622,6 +1566,9 @@ public final class SQLTool implements Configurable {
      * @return map where section id is a key and number of children is a value
      */
     public Map<Integer, Integer> getItemsCountInSections(List categories) {
+        if (categories.isEmpty())
+            return Collections.emptyMap();
+
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
@@ -1664,6 +1611,9 @@ public final class SQLTool implements Configurable {
      * is count of items in specified section and the second is relation id of last item.
      */
     public Map<Integer, Integer[]> getLastItemAndItemsCountInSections(List categories) {
+        if (categories.isEmpty())
+            return Collections.emptyMap();
+
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
@@ -2017,7 +1967,6 @@ public final class SQLTool implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        store(RECORD_RELATIONS_BY_TYPE, prefs);
         store(ITEM_RELATIONS_BY_TYPE, prefs);
         store(ITEM_RELATIONS_BY_TYPE_WITH_FILTERS, prefs);
         store(CATEGORY_RELATIONS, prefs);
@@ -2034,7 +1983,6 @@ public final class SQLTool implements Configurable {
         store(WIKI_RELATIONS_BY_USER, prefs);
         store(COUNT_WIKI_RELATIONS_BY_USER, prefs);
         store(RELATIONS_WITH_TAGS, prefs);
-        store(RECORD_RELATIONS_BY_USER_AND_TYPE, prefs);
         store(QUESTION_RELATIONS_BY_USER, prefs);
         store(COMMENT_RELATIONS_BY_USER, prefs);
         store(STANDALONE_POLL_RELATIONS, prefs);
@@ -2119,6 +2067,9 @@ public final class SQLTool implements Configurable {
             return;
         if (fieldMapping == null)
             fieldMapping = Collections.emptyMap();
+        if (params == null)
+            params = new ArrayList(3);
+
         Qualifier qualifier;
         for (int i = 0; i < qualifiers.length; i++) {
             qualifier = qualifiers[i];
@@ -2157,12 +2108,14 @@ public final class SQLTool implements Configurable {
 
     /**
      * Appends table nick for specified field into stringbuffer. The priority is to search fieldMapping first,
-     * then use defaultTableNick if defined, otherwise do nothing.
+     * then use defaultTableNick from the field if defined, then argument defaultTableNick otherwise do nothing.
      */
     private void addTableNick(Field field, Map<Field, String> fieldMapping, String defaultTableNick, StringBuffer sb) {
         String tableNick = null;
         if (fieldMapping != null)
             tableNick = (String) fieldMapping.get(field);
+        if (tableNick == null)
+            tableNick = field.getDefaultTableNick();
         if (tableNick == null)
             tableNick = defaultTableNick;
         if (tableNick != null) {
@@ -2228,13 +2181,8 @@ public final class SQLTool implements Configurable {
         }
     }
 
-    private void appendField(Field field, Map fieldMapping, String defaultTableNick, StringBuffer sb) {
-        if (fieldMapping.containsKey(field))
-            defaultTableNick = (String) fieldMapping.get(field);
-        if (defaultTableNick != null) {
-            sb.append(defaultTableNick);
-            sb.append(".");
-        }
+    private void appendField(Field field, Map<Field, String> fieldMapping, String defaultTableNick, StringBuffer sb) {
+        addTableNick(field, fieldMapping, defaultTableNick, sb);
 
         if (field==Field.CREATED)
             sb.append("vytvoreno");

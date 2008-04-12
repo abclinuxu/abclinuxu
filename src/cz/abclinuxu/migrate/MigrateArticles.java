@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import static cz.abclinuxu.servlets.Constants.PARAM_NAME;
 
 public class MigrateArticles {
     private Persistence persistence = PersistenceFactory.getPersistence();
@@ -133,7 +134,7 @@ public class MigrateArticles {
         map.put(Constants.VAR_USER, admin);
 
         params.put(EditAuthor.PARAM_SURNAME, surname);
-        params.put(EditAuthor.PARAM_NAME, firstname);
+        params.put(PARAM_NAME, firstname);
         params.put(EditAuthor.PARAM_NICKNAME, user.getNick());
         params.put(EditAuthor.PARAM_EMAIL, user.getEmail());
         params.put(EditAuthor.PARAM_UID, Integer.toString(user.getId()));

@@ -59,23 +59,12 @@ public interface Persistence {
     public GenericObject findById(GenericObject obj);
 
     /**
-     * Finds objects, that are similar to suppplied arguments.
-     * <br><u>Rules:</u><ul>
-     * <li>All objects in the list <code>objects</code>, must be of same class, which is extended of
-     * GenericObject. The subclasses of this class are allowed. E.g. {Record, Record, SoftwareRecord}
-     * is valid argument, {Link, Poll, Article} is wrong.
-     * <li>For each object, only initialized fields are used, <code>id</code> and <code>updated</code>
-     * fields are excluded, boolean fields are always used. If there are more such fields in one
-     * object, there is an AND relation between them.
-     * <li>If <code>relations</code> is null, OR relation is used between all objects.
-     * <li>For <code>relations</code> argument, you may use keywords AND, OR and parentheses
-     * and indexes to <code>objects</code> as logical variables. First index is 0.
-     * <li>Examples of <code>relations</code>:"0 AND 1", "0 OR 1", "0 OR (1 AND 2)", "(0 AND 1) OR (0 AND 2)"
-     * </ul>
-     * @return List of objects, which are of same class, as <code>objects</code>.
+     * Finds users, that are similar to supplied argument. Only initialized properties are used
+     * in search, <code>id</code> is excluded.
+     * @return List of unitialized users
      * @throws cz.abclinuxu.exceptions.PersistenceException When something goes wrong.
      */
-    public List findByExample(List objects, String relations);
+    public List<User> findUsersLike(User sample);
 
     /**
      * Finds objects, that fulfill <code>command</code>. Usage of this method requires deep knowledge
@@ -110,7 +99,7 @@ public interface Persistence {
      * @return List of Relations, starting at top level.
      * @throws cz.abclinuxu.exceptions.PersistenceException When something goes wrong.
      */
-    public List findParents(Relation relation);
+    public List<Relation> findParents(Relation relation);
 
     /**
      * Synchronizes list of GenericObjects. The list may hold objects of different kinds.
@@ -132,13 +121,13 @@ public interface Persistence {
      * @return list of initialized relations
      * @throws cz.abclinuxu.exceptions.PersistenceException
      */
-    public List findRelations(GenericObject child);
+    public List<Relation> findRelationsFor(GenericObject child);
 
     /**
      * Finds relation described by <code>example</code>. Just set child or parent.
      * @throws cz.abclinuxu.exceptions.PersistenceException When something goes wrong.
      */
-    public Relation[] findByExample(Relation example);
+    public Relation[] findRelationsLike(Relation sample);
 
     /**
      * Removes GenericObject from Persistant storage. If <code>obj</code> is Relation,

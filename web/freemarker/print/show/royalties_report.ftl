@@ -14,7 +14,7 @@
             <tr>
                 <td align="right">${TOOL.xpath(honorar,"/data/amount")}</td>
                 <td align="right">${DATE.show(honorar.created, "CZ_DMY")}</td>
-                <td><a href="${relaceClanku.url}">${TOOL.xpath(clanek,"/data/name")}</a></td>
+                <td><a href="${relaceClanku.url}">${clanek.title}</a></td>
             </tr>
         </#list>
 </#list>

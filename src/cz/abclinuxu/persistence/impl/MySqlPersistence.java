@@ -115,19 +115,37 @@ public class MySqlPersistence implements Persistence {
                     CommonObject commonObj = (CommonObject) obj;
                     saveCommonObjectProperties(commonObj, commonObj.getProperties(), false);
                 }
+
+                if (obj instanceof GenericDataObject) {
+                    GenericDataObject gdo = (GenericDataObject) obj;
+                    PreparedStatement commonStatement = con.prepareStatement("INSERT INTO spolecne (typ,cislo,jmeno,vytvoreno,zmeneno,pridal) VALUES (?,?,?,?,?,?)");
+                    commonStatement.setString(1, PersistenceMapping.getGenericObjectType(obj));
+                    commonStatement.setInt(2, obj.getId());
+                    commonStatement.setString(3, gdo.getTitle());
+                    java.util.Date d = (gdo.getCreated() != null) ? gdo.getCreated() : new java.util.Date();
+                    gdo.setCreated(d);
+                    gdo.setUpdated(new java.util.Date());
+                    commonStatement.setTimestamp(4, new Timestamp(gdo.getCreated().getTime()));
+                    commonStatement.setTimestamp(5, new Timestamp(gdo.getUpdated().getTime()));
+                    commonStatement.setInt(6, gdo.getOwner());
+                    commonStatement.executeUpdate();
+                    commonStatement.close();
+                }
             }
             obj.setInitialized(true);
             cache.store(obj);
 
             if (obj instanceof Record && ((Record) obj).getType() == Record.DISCUSSION) {
                 statement.close();
-                statement = con.prepareStatement("insert into komentar values (NULL,?,?,?,?,?,?)");
+                statement = con.prepareStatement("INSERT INTO komentar (cislo,zaznam,id,nadrazeny,vytvoreno,autor,data) VALUES (NULL,?,?,?,?,?,?)");
 
                 DiscussionRecord diz = (DiscussionRecord) ((Record)obj).getCustom();
-                for (Iterator iter = diz.getThreads().iterator(); iter.hasNext();) {
-                    RowComment comment = (RowComment) iter.next();
-                    comment.setRecord(obj.getId());
-                    storeComment(comment, statement);
+                if (diz != null) {
+                    for (Iterator iter = diz.getThreads().iterator(); iter.hasNext();) {
+                        RowComment comment = (RowComment) iter.next();
+                        comment.setRecord(obj.getId());
+                        storeComment(comment, statement);
+                    }
                 }
             }
 
@@ -220,15 +238,15 @@ public class MySqlPersistence implements Persistence {
         }
     }
 
-    public List findRelations(GenericObject child) throws PersistenceException {
+    public List findRelationsFor(GenericObject child) throws PersistenceException {
         Connection con; Statement statement = null;ResultSet resultSet = null;
         con = getSQLConnection();
         List found = new ArrayList(5);
 
-        StringBuffer sb = new StringBuffer("select * from relace where ");
+        StringBuffer sb = new StringBuffer("SELECT cislo,predchozi,typ_predka,predek,typ_potomka,potomek,url,data FROM relace WHERE ");
         sb.append("typ_potomka='");
         sb.append(PersistenceMapping.getGenericObjectType(child));
-        sb.append("' and potomek=");
+        sb.append("' AND potomek=");
         sb.append(child.getId());
 
         try {
@@ -246,66 +264,73 @@ public class MySqlPersistence implements Persistence {
             releaseSQLResources(con, statement, resultSet);
         }
     }
-    /**
-     * todo It always tries to parseInt, even on string. It catches NumberFormatException
-     * to recover! That's terribly slow and ugly!
-     */
-    public List findByExample(List objects, String relations) {
+
+    public List<User> findUsersLike(User sample) {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        if ( objects.size()==0 ) return new ArrayList();
-        if ( relations==null ) relations = makeOrRelation(objects);
-
+        StringBuffer sb = null;
         try {
-            List result = new ArrayList(), conditions = new ArrayList();
-            StringBuffer sb = new StringBuffer("SELECT cislo FROM ");
-            GenericObject obj = (GenericObject) objects.get(0);
-            Class kind = obj.getClass();
-
-            sb.append(getTable(obj));
-            sb.append(" where ");
-            StringTokenizer stk = new StringTokenizer(relations," ()",true);
-            while ( stk.hasMoreTokens() ) {
-                String token = stk.nextToken();
-                try {
-                    int index = Integer.parseInt(token);
-                    if ( obj.getClass()!=kind ) {
-                        throw new InvalidDataException("Různé typy objektů!");
-                    }
-                    sb.append('(');
-                    obj = (GenericObject) objects.get(index);
-                    appendFindParams(obj,sb, conditions);
-                    sb.append(')');
-                } catch ( NumberFormatException e ) {
-                    sb.append(token);
-                }
-            }
+            List<User> result = new ArrayList<User>();
+            List conditions = new ArrayList();
+            sb = new StringBuffer("SELECT cislo FROM uzivatel WHERE ");
+            appendFindParams(sample, sb, conditions);
 
             con = getSQLConnection();
             statement = con.prepareStatement(sb.toString());
-            for ( int i=0; i<conditions.size(); i++ ) {
+            for (int i = 0; i < conditions.size(); i++) {
                 Object o = conditions.get(i);
-                statement.setObject(i+1,o);
+                statement.setObject(i + 1, o);
             }
 
             resultSet = statement.executeQuery();
-            while ( resultSet.next() ) {
-                try {
-                    GenericObject o = (GenericObject) kind.newInstance();
-                    o.setId(resultSet.getInt(1));
-                    result.add(o);
-                } catch (Exception e) {
-                    log.error("Nemohu vytvořit instanci "+kind,e);
-                }
-            }
+            User o = new User(resultSet.getInt(1));
+            result.add(o);
             return result;
         } catch ( SQLException e ) {
-            StringBuffer sb = new StringBuffer(" Examples: ");
-            for (Iterator iter = objects.iterator(); iter.hasNext();) {
-                sb.append(iter.next().toString());
-            }
-            throw new PersistenceException("Nemohu provést zadané vyhledávání!"+sb,e);
+            throw new PersistenceException("Nemohu provést zadané vyhledávání!" + statement, e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
+        }
+    }
+
+    /**
+     * Append SQL statements to <code>sb</code> and parameter values to <code>conditions</code>
+     * as PreparedStatement requires.
+     */
+    private void appendFindParams(User user, StringBuffer sb, List conditions) {
+        boolean addAnd = false;
+        String tmp = user.getLogin();
+        if (tmp != null && tmp.length() > 0) {
+            if (addAnd) sb.append(" AND "); else addAnd = true;
+            sb.append("login LIKE ?");
+            conditions.add(tmp);
+        }
+
+        tmp = user.getName();
+        if (tmp != null && tmp.length() > 0) {
+            if (addAnd) sb.append(" AND "); else addAnd = true;
+            sb.append("jmeno LIKE ?");
+            conditions.add(tmp);
+        }
+
+        tmp = user.getEmail();
+        if (tmp != null && tmp.length() > 0) {
+            if (addAnd) sb.append(" AND ");
+            sb.append("email LIKE ?");
+            conditions.add(tmp);
+        }
+
+        tmp = user.getNick();
+        if (tmp != null && tmp.length() > 0) {
+            if (addAnd) sb.append(" AND ");
+            sb.append("prezdivka LIKE ?");
+            conditions.add(tmp);
+        }
+
+        tmp = user.getDataAsString();
+        if ((tmp != null && tmp.length() > 0)) {
+            if (addAnd) sb.append(" AND ");
+            sb.append("data LIKE ?");
+            conditions.add(tmp);
         }
     }
 
@@ -339,8 +364,8 @@ public class MySqlPersistence implements Persistence {
         return result;
     }
 
-    public List findParents(Relation relation) {
-        List result = new ArrayList(6);
+    public List<Relation> findParents(Relation relation) {
+        List<Relation> result = new ArrayList<Relation>(6);
         result.add(relation);
 
         int upper = relation.getUpper();
@@ -353,12 +378,12 @@ public class MySqlPersistence implements Persistence {
         return result;
     }
 
-    public Relation[] findByExample(Relation example) {
+    public Relation[] findRelationsLike(Relation example) {
         Statement statement = null; ResultSet resultSet = null;
         Connection con = getSQLConnection();
         List found = new ArrayList(5);
 
-        StringBuffer sb = new StringBuffer("select * from relace where ");
+        StringBuffer sb = new StringBuffer("SELECT cislo,predchozi,typ_predka,predek,typ_potomka,potomek,url,data FROM relace WHERE ");
         boolean addAnd = false;
 
         if ( example.getUpper()!=0 ) {
@@ -369,19 +394,19 @@ public class MySqlPersistence implements Persistence {
 
         GenericObject child = example.getChild();
         if ( child!=null ) {
-            if ( addAnd ) sb.append(" and "); else addAnd = true;
+            if ( addAnd ) sb.append(" AND "); else addAnd = true;
             sb.append("typ_potomka='");
             sb.append(PersistenceMapping.getGenericObjectType(child));
-            sb.append("' and potomek=");
+            sb.append("' AND potomek=");
             sb.append(child.getId());
         }
 
         GenericObject parent = example.getParent();
         if ( parent!=null ) {
-            if ( addAnd ) sb.append(" and ");
+            if ( addAnd ) sb.append(" AND ");
             sb.append("typ_predka='");
             sb.append(PersistenceMapping.getGenericObjectType(parent));
-            sb.append("' and predek=");
+            sb.append("' AND predek=");
             sb.append(parent.getId());
         }
 
@@ -409,7 +434,7 @@ public class MySqlPersistence implements Persistence {
     }
 
     public void remove(GenericObject obj) {
-        Connection con = null; PreparedStatement statement = null, statement2 = null; ResultSet resultSet = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         if ( log.isDebugEnabled() ) log.debug("Chystám se smazat "+obj);
 
         try {
@@ -419,39 +444,50 @@ public class MySqlPersistence implements Persistence {
 
             do {
                 obj = (GenericObject) queue.remove(0);
-                statement = con.prepareStatement("delete from "+getTable(obj)+" where cislo=?");
+                statement = con.prepareStatement("DELETE FROM "+getTable(obj)+" WHERE cislo=?");
                 statement.setInt(1, obj.getId());
                 statement.executeUpdate();
 
-                // unassign any tags for deleted object
                 if (obj instanceof GenericDataObject) {
+                    String objectType = PersistenceMapping.getGenericObjectType(obj);
+
+                    // remove referenced record from table spolecne
+                    statement.close();
+                    statement = con.prepareStatement("DELETE FROM spolecne WHERE typ=? AND cislo=?");
+                    statement.setString(1, objectType);
+                    statement.setInt(2, obj.getId());
+                    statement.executeUpdate();
+
+                    // unassign any tags for deleted object
                     GenericDataObject gdo = (GenericDataObject) obj;
                     List<String> tags = getAssignedTags(gdo);
                     for (String tag : tags) {
                         tagCache.unassignTag(gdo, tag);
                     }
 
-                    statement2 = con.prepareStatement("delete from stitkovani where typ=? and cislo=?");
-                    statement2.setString(1, PersistenceMapping.getGenericObjectType(obj));
-                    statement2.setInt(2, obj.getId());
-                    statement2.executeUpdate();
+                    statement.close();
+                    statement = con.prepareStatement("DELETE FROM stitkovani WHERE typ=? AND cislo=?");
+                    statement.setString(1, objectType);
+                    statement.setInt(2, obj.getId());
+                    statement.executeUpdate();
+                    statement.close();
                     tagCache.removeAssignment(gdo);
+
+                    // remove comments, they are not referenced via relation table
+                    if (obj instanceof Record) {
+                        Record record = (Record) findById(obj);
+                        if (record.getType() == Record.DISCUSSION) {
+                            statement.close();
+                            statement = con.prepareStatement("DELETE FROM komentar WHERE zaznam=?");
+                            statement.setInt(1, obj.getId());
+                            statement.executeUpdate();
+                        }
+                    }
                 }
 
                 // remove all properties from table vlastnost
                 if (obj instanceof CommonObject)
                     deleteCommonObjectProperties((CommonObject) obj, PersistenceMapping.getGenericObjectType(obj));
-
-                // remove comments, they are not referenced via relation table
-                if (obj instanceof Record) {
-                    Record record = (Record) findById(obj);
-                    if (record.getType() == Record.DISCUSSION) {
-                        statement = con.prepareStatement("delete from komentar where zaznam=?");
-                        statement.setInt(1, obj.getId());
-                        statement.executeUpdate();
-                    }
-                }
-
 
                 // remove referenced files from disk
                 if (obj instanceof Data) {
@@ -463,7 +499,7 @@ public class MySqlPersistence implements Persistence {
                 if ( obj instanceof Relation ) {
                     Relation rel = (Relation) obj;
 
-                    statement = con.prepareStatement("select predek from relace where typ_potomka=? and potomek=?");
+                    statement = con.prepareStatement("SELECT predek FROM relace WHERE typ_potomka=? AND potomek=?");
                     GenericObject child = rel.getChild();
                     statement.setString(1,PersistenceMapping.getGenericObjectType(child));
                     statement.setInt(2,child.getId());
@@ -565,7 +601,7 @@ public class MySqlPersistence implements Persistence {
         }
 
         try {
-            // loads them and merge fresh objects with objects from list, store them in cache
+            // loads them and merge fresh objects with objects FROM list, store them in cache
             if (relations != null)
                 syncRelations(relations, ignoreMissing);
             if (items != null)
@@ -639,7 +675,7 @@ public class MySqlPersistence implements Persistence {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select soucet from citac where typ=? and cislo=? and druh=?");
+            statement = con.prepareStatement("SELECT soucet FROM citac WHERE typ=? AND cislo=? AND druh=?");
             statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
             statement.setString(3, type);
@@ -664,7 +700,7 @@ public class MySqlPersistence implements Persistence {
             throw new InvalidInputException("Type contains illegal characters: '"+type+"'!");
 
         Map map = new HashMap(objects.size() + 1, 1.0f);
-        StringBuffer sql = new StringBuffer("select soucet, typ, cislo from citac where druh='"+type+"' and ");
+        StringBuffer sql = new StringBuffer("SELECT soucet, typ, cislo FROM citac WHERE druh='"+type+"' AND ");
         appendMatchAllObjectsCondition(sql, objects, "typ", "cislo");
         try {
             con = getSQLConnection();
@@ -745,7 +781,7 @@ public class MySqlPersistence implements Persistence {
         Relation relation;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from relace where typ_predka=? and predek=?");
+            statement = con.prepareStatement("SELECT cislo,predchozi,typ_predka,predek,typ_potomka,potomek,url,data FROM relace WHERE typ_predka=? AND predek=?");
             statement.setString(1,PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2,obj.getId());
             resultSet = statement.executeQuery();
@@ -775,7 +811,7 @@ public class MySqlPersistence implements Persistence {
             return Collections.emptyMap();
 
         Map<GenericObject, List<Relation>> map = new HashMap<GenericObject, List<Relation>>(objects.size()+1, 1.0f);
-        StringBuffer sql = new StringBuffer("select * from relace where ");
+        StringBuffer sql = new StringBuffer("SELECT cislo,predchozi,typ_predka,predek,typ_potomka,potomek,url,data FROM relace WHERE ");
         appendMatchAllObjectsCondition(sql, objects, "typ_predka", "predek");
         Relation relation;
         List<Relation> list;
@@ -834,13 +870,13 @@ public class MySqlPersistence implements Persistence {
             sb.append(typeColumn);
             sb.append("='");
             sb.append(table);
-            sb.append("' and ");
+            sb.append("' AND ");
             sb.append(idColumn);
             if (ids.size()==1) {
                 sb.append('=');
                 sb.append(ids.get(0));
             } else {
-                sb.append(" in (");
+                sb.append(" IN (");
                 for (Iterator iterIds = ids.iterator(); iterIds.hasNext();) {
                     sb.append(iterIds.next());
                     if (iterIds.hasNext())
@@ -859,7 +895,7 @@ public class MySqlPersistence implements Persistence {
     private void appendCreateParams(GenericObject obj, StringBuffer sb, List conditions ) {
         if (obj instanceof GenericDataObject) {
             GenericDataObject gdo = (GenericDataObject) obj;
-            sb.append("insert into ").append(getTable(obj)).append(" values(?,?,?,?,?,?,now())");
+            sb.append("INSERT INTO ").append(getTable(obj)).append(" (cislo,typ,podtyp,data) VALUES (?,?,?,?)");
             if ( !(obj instanceof Category || obj instanceof Data) && gdo.getType()==0 ) {
                 log.warn("Type not set! "+obj.toString());
             }
@@ -867,15 +903,9 @@ public class MySqlPersistence implements Persistence {
             conditions.add(gdo.getType());
             conditions.add(gdo.getSubType());
             conditions.add(gdo.getDataAsString().getBytes());
-            conditions.add(gdo.getOwner());
-
-            java.util.Date d = (gdo.getCreated() != null) ? gdo.getCreated() : new java.util.Date();
-            conditions.add(new Timestamp(d.getTime()));
-            gdo.setCreated(d);
-            gdo.setUpdated(new java.util.Date());
 
         } else if (obj instanceof Relation) {
-            sb.append("insert into relace values(?,?,?,?,?,?,?,?)");
+            sb.append("INSERT INTO relace (cislo,predchozi,typ_predka,predek,typ_potomka,potomek,url,data) VALUES (?,?,?,?,?,?,?,?)");
             Relation relation = (Relation)obj;
             conditions.add(relation.getId());
             conditions.add(relation.getUpper());
@@ -888,7 +918,7 @@ public class MySqlPersistence implements Persistence {
             conditions.add((tmp!=null)? tmp.getBytes():null);
 
         } else if (obj instanceof User) {
-            sb.append("insert into uzivatel values(?,?,?,?,?,?,?)");
+            sb.append("INSERT INTO uzivatel (cislo,login,jmeno,email,openid,prezdivka,data) VALUES (?,?,?,?,?,?,?)");
             User user = (User)obj;
             conditions.add(user.getId());
             conditions.add(user.getLogin());
@@ -899,7 +929,7 @@ public class MySqlPersistence implements Persistence {
             conditions.add(user.getDataAsString().getBytes());
 
         } else if (obj instanceof Link) {
-            sb.append("insert into odkaz values(?,?,?,?,?,?,?)");
+            sb.append("INSERT INTO odkaz (cislo,server,nazev,url,trvaly,pridal,kdy) VALUES (?,?,?,?,?,?,?)");
             Link link = (Link)obj;
             conditions.add(link.getId());
             conditions.add(link.getServer());
@@ -910,87 +940,14 @@ public class MySqlPersistence implements Persistence {
             if (link.getUpdated() == null)
                 link.setUpdated(new java.util.Date());
             conditions.add(new Timestamp(link.getUpdated().getTime()));
-        }
-    }
 
-    /**
-     * append SQL statements to <code>sb</code> and objects to <code>conditions</code>
-     * as PreparedStatement requires.
-     */
-    private void appendFindParams(GenericObject obj, StringBuffer sb, List conditions ) {
-        boolean addAnd = false;
-
-        if (obj instanceof GenericDataObject) {
-            GenericDataObject gdo = (GenericDataObject) obj;
-
-            if ( gdo.getId()>0 ) {
-                addAnd = true;
-                sb.append("cislo=?");
-                conditions.add(gdo.getId());
-            }
-
-            if ( gdo.getOwner()!=0 ) {
-                if ( addAnd ) sb.append(" and "); else addAnd = true;
-                sb.append("pridal=?");
-                conditions.add(gdo.getOwner());
-            }
-
-            String search = gdo.getSearchString();
-            if ( (search!=null && search.length()>0 )) {
-                if ( addAnd ) sb.append(" and "); else addAnd = true;
-                sb.append("data like ?");
-                conditions.add(search);
-            }
-
-            if ( gdo.getType()!=0 ) {
-                if ( addAnd ) sb.append(" and ");
-                sb.append("typ=?");
-                conditions.add(gdo.getType());
-            }
-
-        } else if ( obj instanceof User ) {
-            User user = (User) obj;
-
-            if ( user.getId()>0 ) {
-                addAnd = true;
-                sb.append("cislo=?");
-                conditions.add(user.getId());
-            }
-
-            String tmp = user.getLogin();
-            if ( tmp!=null && tmp.length()>0 ) {
-                if ( addAnd ) sb.append(" and "); else addAnd = true;
-                sb.append("login like ?");
-                conditions.add(tmp);
-            }
-
-            tmp = user.getName();
-            if ( tmp!=null && tmp.length()>0 ) {
-                if ( addAnd ) sb.append(" and "); else addAnd = true;
-                sb.append("jmeno like ?");
-                conditions.add(tmp);
-            }
-
-            tmp = user.getEmail();
-            if ( tmp!=null && tmp.length()>0 ) {
-                if ( addAnd ) sb.append(" and ");
-                sb.append("email like ?");
-                conditions.add(tmp);
-            }
-
-            tmp = user.getNick();
-            if ( tmp!=null && tmp.length()>0 ) {
-                if ( addAnd ) sb.append(" and ");
-                sb.append("prezdivka like ?");
-                conditions.add(tmp);
-            }
-
-            tmp = user.getDataAsString();
-            if ((tmp != null && tmp.length() > 0)) {
-                if (addAnd) sb.append(" and "); else addAnd = true;
-                sb.append("data like ?");
-                conditions.add(tmp);
-            }
+        } else if (obj instanceof Server) {
+            sb.append("INSERT INTO server (cislo,jmeno,url,kontakt) VALUES (?,?,?,?)");
+            Server server = (Server) obj;
+            conditions.add(server.getId());
+            conditions.add(server.getName());
+            conditions.add(server.getUrl());
+            conditions.add(server.getContact());
         }
     }
 
@@ -999,7 +956,7 @@ public class MySqlPersistence implements Persistence {
      * to <code>conditions</code> for each asterisk in perpared statement.
      */
     private void appendIncrementUpdateParams(GenericObject obj, StringBuffer sb, List conditions, String type) {
-        sb.append("update citac set soucet=soucet+1 where typ=? and cislo=? and druh=?");
+        sb.append("UPDATE citac SET soucet=soucet+1 WHERE typ=? AND cislo=? AND druh=?");
         conditions.add(PersistenceMapping.getGenericObjectType(obj));
         conditions.add(obj.getId());
         conditions.add(type);
@@ -1010,7 +967,7 @@ public class MySqlPersistence implements Persistence {
      * to <code>conditions</code> for each asterisk in perpared statement.
      */
     private void appendCounterInsertParams(GenericObject obj, StringBuffer sb, List conditions, String type) {
-        sb.append("insert into citac values(?,?,1,?)");
+        sb.append("INSERT INTO citac (typ,cislo,soucet,druh) VALUES (?,?,1,?)");
         conditions.add(PersistenceMapping.getGenericObjectType(obj));
         conditions.add(obj.getId());
         conditions.add(type);
@@ -1021,7 +978,7 @@ public class MySqlPersistence implements Persistence {
      * to <code>conditions</code> for each asterisk in perpared statement.
      */
     private void appendCounterDeleteParams(GenericObject obj, StringBuffer sb, List conditions, String type ) {
-        sb.append("delete from citac where typ=? and cislo=? and druh=?");
+        sb.append("DELETE FROM citac WHERE typ=? AND cislo=? AND druh=?");
         conditions.add(PersistenceMapping.getGenericObjectType(obj));
         conditions.add(obj.getId());
         conditions.add(type);
@@ -1035,8 +992,9 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("insert into anketa2 values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-
+            statement = con.prepareStatement("INSERT INTO anketa2 (cislo, vice, uzavrena, pridal, vytvoreno, hlasu, " +
+                    "volba1, volba2, volba3, volba4,volba5,volba6,volba7,volba8,volba9,volba10,volba11,volba12,volba13,volba14,volba15,data) " +
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             statement.setInt(1, poll.getId());
             statement.setBoolean(2, poll.isMultiChoice());
             statement.setBoolean(3, poll.isClosed());
@@ -1096,7 +1054,7 @@ public class MySqlPersistence implements Persistence {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from uzivatel where cislo=?");
+            statement = con.prepareStatement("SELECT cislo,login,jmeno,email,openid,prezdivka,data FROM uzivatel WHERE cislo=?");
             statement.setInt(1,obj.getId());
 
             resultSet = statement.executeQuery();
@@ -1123,7 +1081,8 @@ public class MySqlPersistence implements Persistence {
         try {
             Map<Integer, User>  objects = new HashMap<Integer, User>();
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from uzivatel where cislo in "+Misc.getInCondition(users.size()) + " order by cislo");
+            statement = con.prepareStatement("SELECT cislo,login,jmeno,email,openid,prezdivka,data FROM uzivatel WHERE cislo IN "
+                    + Misc.getInCondition(users.size()) + " ORDER BY cislo");
             int i = 1;
             for (Iterator iter = users.iterator(); iter.hasNext();) {
                 user = (User) iter.next();
@@ -1176,8 +1135,10 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from "+getTable(obj)+" where cislo=?");
-            statement.setInt(1,obj.getId());
+            statement = con.prepareStatement("SELECT P.cislo,P.typ,P.podtyp,P.data,S.pridal,S.vytvoreno,S.zmeneno,S.jmeno FROM "
+                    + getTable(obj) + " P, spolecne S WHERE S.cislo=P.cislo AND S.typ=? AND P.cislo=?");
+            statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
+            statement.setInt(2, obj.getId());
 
             resultSet = statement.executeQuery();
             if ( !resultSet.next() )
@@ -1218,10 +1179,13 @@ public class MySqlPersistence implements Persistence {
         GenericDataObject representant = (GenericDataObject) objs.iterator().next();
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from " + getTable(representant) + " where cislo in " + Misc.getInCondition(objs.size()));
+            statement = con.prepareStatement("SELECT P.cislo,P.typ,P.podtyp,P.data,S.pridal,S.vytvoreno,S.zmeneno,S.jmeno FROM "
+                    + getTable(representant) + "  P, spolecne S WHERE S.cislo=P.cislo AND S.typ=? AND P.cislo IN " + Misc.getInCondition(objs.size()));
             int i = 1;
             for (Iterator iter = objs.iterator(); iter.hasNext();) {
                 obj = (GenericDataObject) iter.next();
+                if (i == 1)
+                    statement.setString(i++, PersistenceMapping.getGenericObjectType(obj));
                 statement.setInt(i++, obj.getId());
                 objects.put(obj.getId(), obj);
             }
@@ -1271,6 +1235,7 @@ public class MySqlPersistence implements Persistence {
         item.setOwner(resultSet.getInt(5));
         item.setCreated(new java.util.Date(resultSet.getTimestamp(6).getTime()));
         item.setUpdated(new java.util.Date(resultSet.getTimestamp(7).getTime()));
+        item.setTitle(resultSet.getString(8));
         item.setInitialized(true);
     }
 
@@ -1286,7 +1251,7 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from komentar where zaznam=? order by cislo asc");
+            statement = con.prepareStatement("SELECT cislo,zaznam,id,nadrazeny,vytvoreno,autor,data FROM komentar WHERE zaznam=? ORDER BY cislo asc");
             statement.setInt(1, record.getId());
             resultSet = statement.executeQuery();
 
@@ -1362,7 +1327,7 @@ public class MySqlPersistence implements Persistence {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from relace where cislo=?");
+            statement = con.prepareStatement("SELECT cislo,predchozi,typ_predka,predek,typ_potomka,potomek,url,data FROM relace WHERE cislo=?");
             statement.setInt(1,obj.getId());
 
             resultSet = statement.executeQuery();
@@ -1388,7 +1353,8 @@ public class MySqlPersistence implements Persistence {
         ResultSet rs = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from relace where cislo in " + Misc.getInCondition(relations.size())+" order by cislo");
+            statement = con.prepareStatement("SELECT cislo,predchozi,typ_predka,predek,typ_potomka,potomek,url,data FROM relace WHERE cislo IN "
+                    + Misc.getInCondition(relations.size())+" ORDER BY cislo");
             int i = 1;
             for (Iterator iter = relations.iterator(); iter.hasNext();) {
                 Relation relation = (Relation) iter.next();
@@ -1448,7 +1414,7 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from odkaz where cislo=?");
+            statement = con.prepareStatement("SELECT cislo,server,nazev,url,trvaly,pridal,kdy FROM odkaz WHERE cislo=?");
             statement.setInt(1,obj.getId());
 
             resultSet = statement.executeQuery();
@@ -1474,7 +1440,8 @@ public class MySqlPersistence implements Persistence {
         ResultSet rs = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from odkaz where cislo in " + Misc.getInCondition(links.size()) + " order by cislo");
+            statement = con.prepareStatement("SELECT cislo,server,nazev,url,trvaly,pridal,kdy FROM odkaz WHERE cislo IN "
+                    + Misc.getInCondition(links.size()) + " ORDER BY cislo");
             int i = 1;
             for (Iterator iter = links.iterator(); iter.hasNext();) {
                 Link link = (Link) iter.next();
@@ -1520,7 +1487,8 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from anketa2 where cislo=?");
+            statement = con.prepareStatement("SELECT cislo,vice,uzavrena,pridal,vytvoreno,hlasu,volba1,volba2,volba3," +
+                    "volba4,volba5,volba6,volba7,volba8,volba9,volba10,volba11,volba12,volba13,volba14,volba15,data FROM anketa2 WHERE cislo=?");
             statement.setInt(1,obj.getId());
 
             resultSet = statement.executeQuery();
@@ -1547,7 +1515,9 @@ public class MySqlPersistence implements Persistence {
         ResultSet rs = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from anketa2 where cislo in " + Misc.getInCondition(polls.size()) + " order by cislo");
+            statement = con.prepareStatement("SELECT cislo,vice,uzavrena,pridal,vytvoreno,hlasu,volba1,volba2,volba3," +
+                    "volba4,volba5,volba6,volba7,volba8,volba9,volba10,volba11,volba12,volba13,volba14,volba15,data FROM anketa2 WHERE cislo IN "
+                    + Misc.getInCondition(polls.size()) + " ORDER BY cislo");
             int i = 1;
             for (Iterator iter = polls.iterator(); iter.hasNext();) {
                 Poll poll = (Poll) iter.next();
@@ -1617,7 +1587,7 @@ public class MySqlPersistence implements Persistence {
             con = getSQLConnection();
             statement = con.createStatement();
 
-            StringBuffer sql = new StringBuffer("update anketa2 set hlasu=hlasu+1, ");
+            StringBuffer sql = new StringBuffer("UPDATE anketa2 SET hlasu=hlasu+1, ");
             for (Iterator iter = choices.iterator(); iter.hasNext();) {
                 PollChoice choice = (PollChoice) iter.next();
                 String column = "volba" + (choice.getId() + 1);
@@ -1625,17 +1595,18 @@ public class MySqlPersistence implements Persistence {
                 if (iter.hasNext())
                     sql.append(',');
             }
-            sql.append(" where cislo=");
+            sql.append(" WHERE cislo=");
             sql.append(firstChoice.getPoll());
             statement.executeUpdate(sql.toString());
 
-            resultSet = statement.executeQuery("select * from anketa2 where cislo=" + firstChoice.getPoll());
+            resultSet = statement.executeQuery("SELECT hlasu,volba1,volba2,volba3,volba4,volba5,volba6,volba7,volba8,volba9," +
+                    "volba10,volba11,volba12,volba13,volba14,volba15 FROM anketa2 WHERE cislo=" + firstChoice.getPoll());
             resultSet.next();
             Poll poll = (Poll) findById(new Poll(firstChoice.getPoll()));
-            poll.setTotalVoters(resultSet.getInt(6));
+            poll.setTotalVoters(resultSet.getInt(1));
             for (int i = 0; i < poll.getChoices().length; i++) {
                 PollChoice choice = poll.getChoices()[i];
-                choice.setCount(resultSet.getInt(7 + choice.getId()));
+                choice.setCount(resultSet.getInt(1 + choice.getId()));
             }
 
             cache.store(poll);
@@ -1654,7 +1625,7 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from server where cislo=?");
+            statement = con.prepareStatement("SELECT cislo,jmeno,url,kontakt FROM server WHERE cislo=?");
             statement.setInt(1,obj.getId());
 
             resultSet = statement.executeQuery();
@@ -1680,7 +1651,8 @@ public class MySqlPersistence implements Persistence {
         ResultSet rs = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from server where cislo in " + Misc.getInCondition(servers.size()) + " order by cislo");
+            statement = con.prepareStatement("SELECT cislo,jmeno,url,kontakt FROM server WHERE cislo IN " +
+                    Misc.getInCondition(servers.size()) + " ORDER BY cislo");
             int i = 1;
             for (Iterator iter = servers.iterator(); iter.hasNext();) {
                 Server server = (Server) iter.next();
@@ -1727,17 +1699,24 @@ public class MySqlPersistence implements Persistence {
             con = getSQLConnection();
             statement = null;
 
-            statement = con.prepareStatement("update "+getTable(obj)+" set typ=?,podtyp=?,data=?,pridal=?,vytvoreno=? where cislo=?");
+            statement = con.prepareStatement("UPDATE "+getTable(obj)+" SET typ=?,podtyp=?,data=? WHERE cislo=?");
             statement.setInt(1,obj.getType());
             statement.setString(2,obj.getSubType());
             statement.setBytes(3,obj.getDataAsString().getBytes());
-            statement.setInt(4,obj.getOwner());
-            statement.setTimestamp(5,new Timestamp(obj.getCreated().getTime()));
-            statement.setInt(6,obj.getId());
+            statement.setInt(4,obj.getId());
 
             int result = statement.executeUpdate();
             if ( result!=1 )
                 throw new PersistenceException("Nepodařilo se uložit změny v "+obj.toString()+" do databáze!");
+
+            statement.close();
+            statement = con.prepareStatement("UPDATE spolecne SET jmeno=?,pridal=?,vytvoreno=? WHERE typ=? and cislo=?");
+            statement.setString(1, obj.getTitle());
+            statement.setInt(2, obj.getOwner());
+            statement.setTimestamp(3, new Timestamp(obj.getCreated().getTime()));
+            statement.setString(4, PersistenceMapping.getGenericObjectType(obj));
+            statement.setInt(5, obj.getId());
+            result = statement.executeUpdate();
 
             if (obj instanceof Record && obj.getType() == Record.DISCUSSION)
                 updateComments((DiscussionRecord) obj.getCustom(), obj.getId(), con);
@@ -1762,7 +1741,7 @@ public class MySqlPersistence implements Persistence {
         try {
             List deleted = discussion.getDeletedComments();
             if (deleted.size() > 0) {
-                String sql = "delete from komentar where cislo in " + Misc.getInCondition(deleted.size());
+                String sql = "DELETE FROM komentar WHERE cislo IN " + Misc.getInCondition(deleted.size());
                 statement1 = con.prepareStatement(sql);
                 int i = 1;
                 for (Iterator iter = deleted.iterator(); iter.hasNext();) {
@@ -1783,11 +1762,11 @@ public class MySqlPersistence implements Persistence {
 
                 if (comment.getRowId() == 0) {
                     if (statement2 == null)
-                        statement2 = con.prepareStatement("insert into komentar values (NULL,?,?,?,?,?,?)");
+                        statement2 = con.prepareStatement("INSERT INTO komentar (cislo,zaznam,id,nadrazeny,vytvoreno,autor,data) VALUES (NULL,?,?,?,?,?,?)");
                     storeComment(comment, statement2);
                 } else if (comment.is_dirty()) {
                     if (statement3 == null)
-                        statement3 = con.prepareStatement("update komentar set zaznam=?,nadrazeny=?,autor=?,vytvoreno=?,data=? where cislo=?");
+                        statement3 = con.prepareStatement("UPDATE komentar SET zaznam=?,nadrazeny=?,autor=?,vytvoreno=?,data=? WHERE cislo=?");
 
                     statement3.setInt(1, comment.getRecord());
                     if (comment.getParent() != null)
@@ -1820,7 +1799,7 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("update relace set typ_predka=?,predek=?,typ_potomka=?,potomek=?,data=?,predchozi=?,url=? where cislo=?");
+            statement = con.prepareStatement("UPDATE relace SET typ_predka=?,predek=?,typ_potomka=?,potomek=?,data=?,predchozi=?,url=? WHERE cislo=?");
 
             statement.setString(1,PersistenceMapping.getGenericObjectType(relation.getParent()));
             statement.setInt(2,relation.getParent().getId());
@@ -1860,7 +1839,7 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("update odkaz set server=?,nazev=?,url=?,trvaly=?,pridal=?,kdy=? where cislo=?");
+            statement = con.prepareStatement("UPDATE odkaz SET server=?,nazev=?,url=?,trvaly=?,pridal=?,kdy=? WHERE cislo=?");
             statement.setInt(1,link.getServer());
             statement.setString(2,link.getText());
             statement.setString(3,link.getUrl());
@@ -1896,7 +1875,7 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("update anketa2 set data=?,vice=?,uzavrena=? where cislo=?");
+            statement = con.prepareStatement("UPDATE anketa2 SET data=?,vice=?,uzavrena=? WHERE cislo=?");
 
             Document document = DocumentHelper.createDocument();
             Element root = document.addElement("data");
@@ -1935,7 +1914,7 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("update uzivatel set login=?,jmeno=?,email=?,openid=?,prezdivka=?,data=? where cislo=?");
+            statement = con.prepareStatement("UPDATE uzivatel SET login=?,jmeno=?,email=?,openid=?,prezdivka=?,data=? WHERE cislo=?");
             statement.setString(1,user.getLogin());
             statement.setString(2,user.getName());
             statement.setString(3,user.getEmail());
@@ -1975,7 +1954,7 @@ public class MySqlPersistence implements Persistence {
         ResultSet resultSet = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from vlastnost where typ_predka=? and predek=?");
+            statement = con.prepareStatement("SELECT typ_predka,predek,typ,hodnota FROM vlastnost WHERE typ_predka=? AND predek=?");
             statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
 
@@ -1995,7 +1974,7 @@ public class MySqlPersistence implements Persistence {
 
     /**
      * Loads properties for specified objects from database.
-     * @param objects map, where key is id (integer) and value is CommonObject with this id
+     * @param objects map, WHERE key is id (integer) and value is CommonObject with this id
      * @param objectType
      */
     protected void loadCommonObjectsProperties(Map objects, String objectType) throws SQLException {
@@ -2007,7 +1986,8 @@ public class MySqlPersistence implements Persistence {
         ResultSet resultSet = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from vlastnost where typ_predka=? and predek in " + Misc.getInCondition(objects.size()));
+            statement = con.prepareStatement("SELECT typ_predka,predek,typ,hodnota FROM vlastnost WHERE typ_predka=? AND predek IN "
+                                            + Misc.getInCondition(objects.size()));
             statement.setString(1, objectType);
             int i = 2, id;
             for (Iterator iter = objects.keySet().iterator(); iter.hasNext();) {
@@ -2039,7 +2019,7 @@ public class MySqlPersistence implements Persistence {
         PreparedStatement statement = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("delete from vlastnost where typ_predka=? and predek=?");
+            statement = con.prepareStatement("DELETE FROM vlastnost WHERE typ_predka=? AND predek=?");
             statement.setString(1, objectType);
             statement.setInt(2, obj.getId());
             statement.executeUpdate();
@@ -2065,7 +2045,7 @@ public class MySqlPersistence implements Persistence {
                 deleteCommonObjectProperties(obj, objectType);
 
             con = getSQLConnection();
-            statement = con.prepareStatement("insert into vlastnost values (?, ?, ?, ?)");
+            statement = con.prepareStatement("INSERT INTO vlastnost (typ_predka,predek,typ,hodnota) VALUES (?,?,?,?)");
             for (Iterator iter = properties.entrySet().iterator(); iter.hasNext();) {
                 Map.Entry entry = (Map.Entry) iter.next();
                 String key = (String) entry.getKey();
@@ -2095,7 +2075,7 @@ public class MySqlPersistence implements Persistence {
         PreparedStatement statement = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("insert into stitek values (?, ?, ?, ?)");
+            statement = con.prepareStatement("INSERT INTO stitek (id,titulek,vytvoreno,nadrazeny) VALUES (?,?,?,?)");
             statement.setString(1, tag.getId());
             statement.setString(2, tag.getTitle());
             tag.setCreated(new java.util.Date());
@@ -2123,7 +2103,7 @@ public class MySqlPersistence implements Persistence {
         PreparedStatement statement = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("update stitek set titulek=?, nadrazeny=? where id=?");
+            statement = con.prepareStatement("UPDATE stitek SET titulek=?, nadrazeny=? WHERE id=?");
             statement.setString(1, tag.getTitle());
             statement.setString(2, tag.getParent());
             statement.setString(3, tag.getId());
@@ -2145,15 +2125,15 @@ public class MySqlPersistence implements Persistence {
         PreparedStatement statement = null, statement2 = null, statement3 = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("delete from stitkovani where stitek=?");
+            statement = con.prepareStatement("DELETE FROM stitkovani WHERE stitek=?");
             statement.setString(1, tag.getId());
             statement.executeUpdate();
 
-            statement2 = con.prepareStatement("delete from stitek where id=?");
+            statement2 = con.prepareStatement("DELETE FROM stitek WHERE id=?");
             statement2.setString(1, tag.getId());
             statement2.executeUpdate();
 
-            statement2 = con.prepareStatement("update stitek set nadrazeny=NULL where nadrazeny=?");
+            statement2 = con.prepareStatement("UPDATE stitek SET nadrazeny=NULL WHERE nadrazeny=?");
             statement2.setString(1, tag.getId());
             statement2.executeUpdate();
 
@@ -2173,7 +2153,7 @@ public class MySqlPersistence implements Persistence {
             HashMap<String, Tag> tags = new HashMap<String, Tag>(100);
             con = getSQLConnection();
             statement = con.createStatement();
-            resultSet = statement.executeQuery("select *, (select count(*) from stitkovani where stitek=id) from stitek");
+            resultSet = statement.executeQuery("SELECT id,titulek,vytvoreno,nadrazeny, (SELECT count(*) FROM stitkovani WHERE stitek=id) FROM stitek");
             tags.clear();
             while (resultSet.next()) {
                 String id = resultSet.getString(1);
@@ -2205,7 +2185,7 @@ public class MySqlPersistence implements Persistence {
                 return tags;
 
             con = getSQLConnection();
-            statement = con.prepareStatement("select stitek from stitkovani where typ=? and cislo=?");
+            statement = con.prepareStatement("SELECT stitek FROM stitkovani WHERE typ=? AND cislo=?");
             statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
 
@@ -2233,7 +2213,7 @@ public class MySqlPersistence implements Persistence {
         PreparedStatement statement = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("replace into stitkovani values (?, ?, ?)");
+            statement = con.prepareStatement("REPLACE INTO stitkovani (typ,cislo,stitek) VALUES (?,?,?)");
             statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
 
@@ -2259,7 +2239,7 @@ public class MySqlPersistence implements Persistence {
         PreparedStatement statement = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("delete from stitkovani where typ=? and cislo=? and stitek=?");
+            statement = con.prepareStatement("DELETE FROM stitkovani WHERE typ=? AND cislo=? AND stitek=?");
             statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
 
@@ -2277,27 +2257,6 @@ public class MySqlPersistence implements Persistence {
     }
 
     /**
-     * @return String, where each object in list <code>objects</code>
-     * is represented by its index (starting at 0, maximum size is 10)
-     * and there is OR relation between all objects.
-     */
-    private String makeOrRelation(List objects) {
-        StringBuffer sb = new StringBuffer();
-        if (objects.size()==1) return "0";
-
-        int size = objects.size() - 1;
-        if (size>9) size = 9;
-
-        for (int i = 0; i<size; i++) {
-            sb.append(i);
-            sb.append(" OR ");
-        }
-
-        sb.append(size);
-        return sb.toString();
-    }
-
-    /**
      * @return id of last inserted row
      */
     private int getAutoId(Statement statement) throws AbcException {
@@ -2305,7 +2264,7 @@ public class MySqlPersistence implements Persistence {
             try {
                 statement = ProxoolFacade.getDelegateStatement(statement);
             } catch (ProxoolException e) {
-                throw new AbcException("Cannot obtain delegated statement from "+statement, e);
+                throw new AbcException("Cannot obtain delegated statement FROM "+statement, e);
             }
         if ( statement instanceof com.mysql.jdbc.PreparedStatement ) {
             com.mysql.jdbc.PreparedStatement mm = (com.mysql.jdbc.PreparedStatement) statement;

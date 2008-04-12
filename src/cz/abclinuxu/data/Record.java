@@ -21,16 +21,10 @@ package cz.abclinuxu.data;
 import cz.abclinuxu.utils.Misc;
 
 public class Record extends GenericDataObject {
-    /** deprecated */
-    public static final int HARDWARE = 1;
-    /** deprecated */
-    public static final int SOFTWARE = 2;
     /** part of the article, each article is consisted from article header and at least one record */
     public static final int ARTICLE = 3;
     /** one reaction in Discussion */
     public static final int DISCUSSION = 4;
-    /** deprecated */
-    public static final int DICTIONARY = 5;
 
     public Record() {
         super();
@@ -48,15 +42,11 @@ public class Record extends GenericDataObject {
     public String toString() {
         StringBuffer sb = new StringBuffer();
         switch ( type ) {
-            case 1: sb.append("HardwareRecord");break;
-            case 2: sb.append("SoftwareRecord");break;
             case 3: sb.append("ArticleRecord");break;
             case 4: sb.append("DiscussionRecord");break;
             default: sb.append("Unknown Record");
         }
         sb.append(": id=").append(id);
-        if ( owner!=0 ) sb.append(",owner=").append(owner);
-//        if ( documentHandler!=null ) sb.append(",data=").append(getDataAsString());
         return sb.toString();
     }
 

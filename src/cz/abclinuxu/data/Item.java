@@ -116,9 +116,8 @@ public class Item extends GenericDataObject {
             default: sb.append("Unknown Item");
         }
         sb.append(": id=").append(id);
-        if ( owner!=0 ) sb.append(",owner=").append(owner);
-        if ( subType!=null ) sb.append(",subtype=").append(subType);
-//        if ( documentHandler!=null ) sb.append(",data=").append(getDataAsString());
+        if (title != null)
+            sb.append(", title=").append(title);
         return sb.toString();
     }
 

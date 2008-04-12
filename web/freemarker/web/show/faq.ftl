@@ -36,7 +36,7 @@
 
 <#include "../header.ftl">
 
-<h1 style="margin-bottom:1em;">${TOOL.xpath(ITEM, "/data/title")}</h1>
+<h1 style="margin-bottom:1em;">${ITEM.title}</h1>
 
 <div>
     ${TOOL.render(TOOL.xpath(ITEM.data,"data/text"), USER?if_exists)}

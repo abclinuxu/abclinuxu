@@ -95,8 +95,10 @@ public class EditScreenshot implements AbcAction {
         if (action == null)
             throw new MissingArgumentException("Chybí parametr action!");
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         // check permissions
         if (user == null)
@@ -143,7 +145,7 @@ public class EditScreenshot implements AbcAction {
 
         if (action.equals(ACTION_REMOVE_STEP2)) {
             ActionProtector.ensureContract(request, ViewScreenshot.class, true, false, false, true);
-            return actionRemoveStep2(request, response, env);
+            return actionRemoveStep2(response, env);
         }
 
         return null;
@@ -161,7 +163,7 @@ public class EditScreenshot implements AbcAction {
         item.setOwner(user.getId());
         Relation relation = new Relation(new Category(Constants.CAT_SCREENSHOTS), item, Constants.REL_SCREENSHOTS);
 
-        boolean canContinue = setName(params, root, env);
+        boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= checkImage(params, env);
         canContinue &= setURL(relation, user);
@@ -201,8 +203,7 @@ public class EditScreenshot implements AbcAction {
 
         Item item = (Item) relation.getChild();
         Document document = item.getData();
-        Node node = document.selectSingleNode("data/title");
-        params.put(PARAM_NAME, node.getText());
+        params.put(PARAM_NAME, item.getTitle());
         Node desc = document.selectSingleNode("data/description");
         if (desc != null)
             params.put(PARAM_DESCRIPTION, desc.getText());
@@ -218,7 +219,7 @@ public class EditScreenshot implements AbcAction {
         Item item = (Item) relation.getChild().clone();
         Element root = item.getData().getRootElement();
 
-        boolean canContinue = setName(params, root, env);
+        boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root, env);
 
         if (!canContinue)
@@ -234,7 +235,7 @@ public class EditScreenshot implements AbcAction {
         return null;
     }
 
-    private String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    private String actionRemoveStep2(HttpServletResponse response, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
@@ -283,11 +284,11 @@ public class EditScreenshot implements AbcAction {
     /**
      * Updates name from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param root root element of item to be updated
+     * @param item item to be updated
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setName(Map params, Element root, Map env) {
+    private boolean setName(Map params, Item item, Map env) {
         String name = (String) params.get(PARAM_NAME);
         name = Misc.filterDangerousCharacters(name);
         if (name == null || name.length() == 0) {
@@ -295,7 +296,7 @@ public class EditScreenshot implements AbcAction {
             return false;
         }
 
-        DocumentHelper.makeElement(root, "title").setText(name);
+        item.setTitle(name);
         return true;
     }
 

@@ -5,4 +5,4 @@ mysql < create_mysql_scheme.sql
 2\
 mysql devel < init_devel_database.sql
 
-3) ../runJava.sh cz.abclinuxu.migrate.GenerateDevelDatabase
+3) ../runJava.sh cz.abclinuxu.misc.GenerateDevelDatabase

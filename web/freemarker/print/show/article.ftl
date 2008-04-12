@@ -3,7 +3,7 @@
 <#assign autors=TOOL.createAuthorsForArticle(RELATION.getChild())>
 <#assign forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF")>
 
-<h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
+<h1>${ITEM.title}</h1>
 
 <div class="barva">
     ${DATE.show(ITEM.created,"SMART_DMY")} |
@@ -69,7 +69,7 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
    <h3>Další články z této rubriky</h3>
     <div class="s_sekce">
      <#list SAME_SECTION_ARTICLES as relation>
-       <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.xpath(relation.child,"data/name")}</a><br>
+       <a href="${relation.url?default("/clanky/show/"+relation.id)}">${relation.child.title}</a><br>
      </#list>
     </div>
   </#if>

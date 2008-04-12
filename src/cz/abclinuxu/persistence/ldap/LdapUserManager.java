@@ -129,10 +129,10 @@ public class LdapUserManager implements Configurable {
             MODIFIABLE_ATTRIBUTES.add(attr);
         }
         MODIFIABLE_ATTRIBUTES.remove(ATTRIB_LOGIN);
-//        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_LAST_LOGIN_DATE);
-//        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_REGISTRATION_DATE);
-//        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_REGISTRATION_PORTAL);
-//        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_VISITED_PORTAL);
+        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_LAST_LOGIN_DATE);
+        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_REGISTRATION_DATE);
+        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_REGISTRATION_PORTAL);
+        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_VISITED_PORTAL);
     }
 
     private static final String LDAP_PROVIDER = "com.sun.jndi.ldap.LdapCtxFactory";
@@ -171,8 +171,7 @@ public class LdapUserManager implements Configurable {
      */
     public void registerUser(String login, String password, String openId, String name, String portal) throws DuplicateKeyException, InvalidInputException, LdapException {
         portal = checkPortal(portal);
-//        if (login == null || login.length() < 3) TODO vratit po migraci
-        if (login == null || login.length() < 1)
+        if (login == null || login.length() < 3)
             throw new InvalidInputException("Přihlašovací jméno musí mít nejméně tři znaky!");
 
         Matcher matcher = reLoginInvalid.matcher(login);
@@ -182,8 +181,7 @@ public class LdapUserManager implements Configurable {
         if (password == null || password.length() < 4)
             throw new InvalidInputException("Přihlašovací heslo musí mít nejméně čtyři znaky!");
 
-//        if (name == null || name.length() < 3) TODO vratit po migraci
-        if (name == null || name.length() < 1)
+        if (name == null || name.length() < 3)
             throw new InvalidInputException("Jméno musí mít nejméně tři znaky!");
 
         DirContext ctx = null;
@@ -462,6 +460,22 @@ public class LdapUserManager implements Configurable {
                     log.error("LDAP connection failed!", e);
                 }
         }
+    }
+
+    /**
+     * Retrieves parent context
+     * @return ldap parent context
+     */
+    public String getParentContext() {
+        return parentContext;
+    }
+
+    /**
+     * Retrieves LDAP class used to identify this user.
+     * @return ldap user class
+     */
+    public String getLdapClass() {
+        return ldapClass;
     }
 
     /**

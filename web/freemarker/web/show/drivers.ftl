@@ -45,7 +45,7 @@
             </#if>
             <tr>
                 <td>
-                    <a href="${relation.url}">${TOOL.xpath(relation.child,"data/name")}</a>
+                    <a href="${relation.url}">${relation.child.title}</a>
                 </td>
                 <td>${TOOL.xpath(relation.child,"data/version")}</td>
                 <td align="right">${DATE.show(relation.child.updated, "SMART")}</td>

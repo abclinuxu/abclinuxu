@@ -5,7 +5,7 @@
  <div class="clanek">
   ${DATE.show(clanek.created, "CZ_DM")}&nbsp;
   <a href="/clanky/show/${relation.id}" target="_content">
-   ${TOOL.xpath(clanek,"data/name")}</a>
+   ${clanek.title}</a>
  </div>
 </#macro>
 

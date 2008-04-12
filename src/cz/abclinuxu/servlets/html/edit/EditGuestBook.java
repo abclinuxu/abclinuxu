@@ -71,8 +71,10 @@ public class EditGuestBook implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistence();
         String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         if (ACTION_ADD.equals(action) || action==null)
             return FMTemplateSelector.select("EditGuestBook", "add", env, request);

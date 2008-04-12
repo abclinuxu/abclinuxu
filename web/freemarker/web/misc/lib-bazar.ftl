@@ -1,6 +1,6 @@
 <#macro showBazaarAd (AD who)>
     <h1>
-        ${TOOL.xpath(AD.data, "/data/title")}
+        ${AD.title}
     </h1>
 
     <table>

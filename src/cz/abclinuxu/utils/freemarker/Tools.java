@@ -225,34 +225,23 @@ public class Tools implements Configurable {
             persistence.synchronize(obj);
 
         if ( obj instanceof GenericDataObject ) {
-            Document data = ((GenericDataObject)obj).getData();
-            if ( data!=null ) {
-                Node node = data.selectSingleNode("data/name");
-                if ( node != null )
-                    return node.getText();
-                node = data.selectSingleNode("data/title");
-                if ( node != null )
-                    return node.getText();
-                node = data.selectSingleNode("data/custom/title");
-                if ( node != null )
-                    return node.getText();
-            }
+            GenericDataObject gdo = (GenericDataObject) obj;
+            String title = gdo.getTitle();
+            if (title != null)
+                return title;
         }
 
         if ((obj instanceof Item)) {
             int type = ((Item) obj).getType();
-            if (type == Item.DISCUSSION)
+            if (type == Item.AUTHOR || type == Item.PERSONALITY)
+                return getPersonName((Item) obj);
+            if (type == Item.DISCUSSION) {
+                log.warn("Discussion without title: " + obj.getId());
                 return "Diskuse";
-            if (type == Item.NEWS)
+            }
+            if (type == Item.NEWS) {
+                log.warn("News without title: " + obj.getId());
                 return "Zprávička";
-            if (type == Item.AUTHOR || type == Item.PERSONALITY) {
-                Element root = ((Item)obj).getData().getRootElement();
-                StringBuffer sb = new StringBuffer();
-                String name = root.elementTextTrim("firstname");
-                if (name != null)
-                    sb.append(name).append(' ');
-                sb.append(root.elementTextTrim("surname"));
-                return sb.toString();
             }
         }
 
@@ -272,6 +261,22 @@ public class Tools implements Configurable {
         name = name.substring(name.lastIndexOf('.')+1);
         name = name.concat(" "+obj.getId());
         return name;
+    }
+
+    /**
+     * Extracts person name from XML (first name and surname). It can be used only for Items of type
+     * Author and Personality.
+     * @param item initialized item
+     * @return name fetched from XML
+     */
+    public static String getPersonName(Item item) {
+        Element root = ((Item)item).getData().getRootElement();
+        StringBuffer sb = new StringBuffer();
+        String name = root.elementTextTrim("firstname");
+        if (name != null)
+            sb.append(name).append(' ');
+        sb.append(root.elementTextTrim("surname"));
+        return sb.toString();
     }
 
     /**
@@ -561,13 +566,13 @@ public class Tools implements Configurable {
         if (!user.isInitialized())
             sync(user);
         Element element = (Element) user.getData().selectSingleNode("//settings/blog");
-        if (element==null)
+        if (element == null)
             return null;
+
         Category blog = createCategory(element.getTextTrim());
-        String title = defaultTitle;
-        element = (Element) blog.getData().selectSingleNode("//custom/title");
-        if (element!=null)
-            title = element.getText();
+        String title = blog.getTitle();
+        if (title == null)
+            title = defaultTitle;
         String anchor = "<a href=\"/blog/"+blog.getSubType()+"\">"+title+"</a>";
         return anchor;
     }
@@ -1049,7 +1054,7 @@ public class Tools implements Configurable {
             } else if (!categoryYes && child instanceof Category) {
                 iterator.remove();
                 continue;
-            } else if (!(!(child instanceof Data) || dataYes)) {
+            } else if (!dataYes && child instanceof Data) {
                 iterator.remove();
                 continue;
             } else if (!pollYes && child instanceof Poll) {
@@ -1189,11 +1194,18 @@ public class Tools implements Configurable {
             if ( ! (obj instanceof Item) ) return false;
             if ( type==null ) return true;
             switch (((Item)obj).getType()) {
-                case Item.HARDWARE: return Constants.TYPE_MAKE.equalsIgnoreCase(type);
-                case Item.ARTICLE: return Constants.TYPE_ARTICLE.equalsIgnoreCase(type);
-                case Item.DISCUSSION: return Constants.TYPE_DISCUSSION.equalsIgnoreCase(type);
-                case Item.REQUEST: return Constants.TYPE_REQUEST.equalsIgnoreCase(type);
-                case Item.DRIVER: return Constants.TYPE_DRIVER.equalsIgnoreCase(type);
+                case Item.HARDWARE:
+                    return Constants.TYPE_MAKE.equalsIgnoreCase(type); // todo nema zde byt spise TYPE_HARDWARE?
+                case Item.SOFTWARE:
+                    return Constants.TYPE_SOFTWARE.equalsIgnoreCase(type);
+                case Item.ARTICLE:
+                    return Constants.TYPE_ARTICLE.equalsIgnoreCase(type);
+                case Item.DISCUSSION:
+                    return Constants.TYPE_DISCUSSION.equalsIgnoreCase(type);
+                case Item.REQUEST:
+                    return Constants.TYPE_REQUEST.equalsIgnoreCase(type);
+                case Item.DRIVER:
+                    return Constants.TYPE_DRIVER.equalsIgnoreCase(type);
                 default: return false;
             }
         }
@@ -1201,8 +1213,6 @@ public class Tools implements Configurable {
             if ( ! (obj instanceof Record) ) return false;
             if ( type==null ) return true;
             switch (((Record)obj).getType()) {
-                case Record.HARDWARE: return "Hardware".equalsIgnoreCase(type);
-                case Record.SOFTWARE: return "Software".equalsIgnoreCase(type);
                 case Record.ARTICLE: return "Article".equalsIgnoreCase(type);
                 case Record.DISCUSSION: return "Discussion".equalsIgnoreCase(type);
                 default: return false;
@@ -1516,29 +1526,7 @@ public class Tools implements Configurable {
         else
             discussion.lastCommentId = discussion.responseCount;
 
-        Node node = data.selectSingleNode("data/title");
-        if (node == null) {
-            GenericObject parent = relation.getParent();
-            if (!parent.isInitialized())
-                persistence.synchronize(parent);
-            if (parent instanceof Item) {
-                item = (Item) parent;
-                data = item.getData();
-                int type = item.getType();
-                if (type==Item.ARTICLE || type==Item.BLOG)
-                    node = data.selectSingleNode("data/name");
-                else if ( type==Item.NEWS || type==Item.BAZAAR || type==Item.TRIVIA || type==Item.SCREENSHOT ) {
-                    discussion.title = "Zprávička";
-                    node = data.selectSingleNode("data/title");
-                }
-                if (node != null)
-                    discussion.title = node.getText();
-            } else if ( parent instanceof Poll) {
-                discussion.title = ((Poll)parent).getText();
-            }
-        } else
-            discussion.title = node.getText();
-
+        discussion.title = item.getTitle();
         discussion.title = removeTags(discussion.title);
         return discussion;
     }
@@ -1932,7 +1920,6 @@ public class Tools implements Configurable {
     public static boolean isQuestion(Item item) {
         if (item.getType() != Item.DISCUSSION)
             return false;
-        return Constants.SUBTYPE_QUESTION.equals(item.getSubType()) ||
-                item.getData().selectSingleNode("/data/title") != null;
+        return Constants.SUBTYPE_QUESTION.equals(item.getSubType());
     }
 }

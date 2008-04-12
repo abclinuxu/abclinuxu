@@ -86,7 +86,7 @@
 <table border="0" class="siroka bez-slovniku">
  <#list FOUND.data as rel>
   <#if rel_index % 3 == 0><tr></#if>
-   <td><a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a></td>
+   <td><a href="${rel.url}">${rel.child.title}</a></td>
   <#if rel_index % 3 == 2></tr></#if>
  </#list>
 </table>

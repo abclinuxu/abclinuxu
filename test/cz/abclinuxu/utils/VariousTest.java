@@ -23,7 +23,6 @@ import cz.abclinuxu.servlets.html.edit.EditArticle;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import junit.textui.TestRunner;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +31,7 @@ import java.util.Map;
 import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
 import org.apache.regexp.RE;
+import static cz.abclinuxu.servlets.Constants.PARAM_CONTENT;
 
 /**
  * Miscallenous tests.
@@ -92,7 +92,7 @@ public class VariousTest extends TestCase {
                          "<page title=\"prvni\">"+obsahPrvniStranky+
                          "<page title=\"druha\">"+obsahDruheStranky+
                          "<page title=\"treti\">"+obsahTretiStranky;
-        params.put(EditArticle.PARAM_CONTENT,content);
+        params.put(PARAM_CONTENT,content);
 
         EditArticle.setArticleContent(params,record,null);
 

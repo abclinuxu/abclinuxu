@@ -68,8 +68,10 @@ public class EditSurvey implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         if ( user == null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
@@ -151,11 +153,7 @@ public class EditSurvey implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Document document = (Document) survey.getData().clone();
 
-        Node title = document.selectSingleNode("/anketa/title");
-        if ( title != null ) {
-            params.put(PARAM_TITLE,title.getText());
-            title.detach();
-        }
+        params.put(PARAM_TITLE, survey.getTitle());
 
         Element choices = (Element) document.selectSingleNode("/anketa/choices");
         if ( choices != null ) {
@@ -208,8 +206,7 @@ public class EditSurvey implements AbcAction {
             return false;
         }
 
-        Node node = DocumentHelper.makeElement(survey.getData(), "/anketa/title");
-        node.setText(name);
+        survey.setTitle(name);
         return true;
     }
 

@@ -30,8 +30,9 @@
   <h1>Mé diskuse</h1>
   <ol start="${DIZS.currentPage.row+1}">
   <#list DIZS.data as a>
-   <li><a href="${URL.make("/software/ViewRelation?rid="+a.id)}">
-   ${TOOL.xpath(a.child,"/data/title")}</a>
+   <li>
+    <a href="${URL.make("/software/ViewRelation?rid="+a.id)}">${a.child.title}</a>
+   </li>
   </#list>
   </ol>
   Celkem ${DIZS.total} otázek.

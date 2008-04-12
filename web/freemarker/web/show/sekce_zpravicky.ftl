@@ -17,7 +17,7 @@
  <#local
    ITEM=TOOL.sync(relation.child),
    autor=TOOL.createUser(ITEM.owner),
-   title=TOOL.xpath(ITEM, "/data/title")?default("Zprávička"),
+   title=ITEM.title,
    locked = TOOL.xpath(ITEM, "//locked_by")?exists,
    approved = TOOL.xpath(ITEM, "//approved_by")?exists
  >

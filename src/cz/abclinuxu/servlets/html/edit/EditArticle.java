@@ -53,17 +53,18 @@ import java.util.*;
 
 import freemarker.ext.dom.NodeModel;
 
+import static cz.abclinuxu.servlets.Constants.PARAM_NAME;
+import static cz.abclinuxu.servlets.Constants.PARAM_RELATION;
+import static cz.abclinuxu.servlets.Constants.PARAM_TITLE;
+import static cz.abclinuxu.servlets.Constants.PARAM_PEREX;
+import static cz.abclinuxu.servlets.Constants.PARAM_CONTENT;
+
 /**
  * Class for manipulation of articles.
  */
 public class EditArticle implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditArticle.class);
 
-    public static final String PARAM_RELATION = "relationId";
-    public static final String PARAM_RELATION_SHORT = "rid";
-    public static final String PARAM_TITLE = "title";
-    public static final String PARAM_PEREX = "perex";
-    public static final String PARAM_CONTENT = "content";
     public static final String PARAM_PUBLISHED = "published";
     public static final String PARAM_AUTHORS = "authors";
     public static final String PARAM_FORBID_DISCUSSIONS = "forbid_discussions";
@@ -71,7 +72,6 @@ public class EditArticle implements AbcAction {
     public static final String PARAM_RELATED_ARTICLES = "related";
     public static final String PARAM_RESOURCES = "resources";
     public static final String PARAM_THUMBNAIL = "thumbnail";
-    public static final String PARAM_NAME = "name";
     public static final String PARAM_MODERATOR = "moderator";
     public static final String PARAM_ADDRESSES = "addresses";
     public static final String PARAM_QUESTION_ID = "id";
@@ -116,10 +116,12 @@ public class EditArticle implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relationId!");
 
@@ -288,10 +290,8 @@ public class EditArticle implements AbcAction {
         Item item = (Item) relation.getChild();
         Document document = item.getData();
 
-        Node node = document.selectSingleNode("/data/name");
-        if ( node!=null )
-            params.put(PARAM_TITLE,node.getText());
-        node = document.selectSingleNode("/data/perex");
+        params.put(PARAM_TITLE, item.getTitle());
+        Node node = document.selectSingleNode("/data/perex");
         if ( node!=null )
             params.put(PARAM_PEREX,node.getText());
         synchronized (Constants.isoFormat) {
@@ -661,8 +661,8 @@ public class EditArticle implements AbcAction {
             ServletUtils.addError(PARAM_TITLE, "Vyplňte titulek článku!", env, null);
             return false;
         }
-        Element element = DocumentHelper.makeElement(item.getData(), "/data/name");
-        element.setText(name);
+
+        item.setTitle(name);
         return true;
     }
 
@@ -714,7 +714,7 @@ public class EditArticle implements AbcAction {
         if (parentRelation.getUrl() == null)
             return null;
 
-        String title = Tools.xpath(item, "data/name");
+        String title = item.getTitle();
         String url = parentRelation.getUrl() + "/" + URLManager.enforceRelativeURL(title);
         url = URLManager.protectFromDuplicates(url);
         return url;

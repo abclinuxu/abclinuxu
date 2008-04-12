@@ -11,7 +11,7 @@
         <div class="s_sekce">
             <ul>
             <#list SOFTWARE as rel>
-                 <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+                 <li><a href="${rel.url}">${rel.child.title}</a></li>
             </#list>
             </ul>
             <span class="s_sekce_dalsi"><a href="/History?type=software">další&nbsp;&raquo;</a></span>
@@ -27,7 +27,7 @@
         <div class="s_sekce">
             <ul>
             <#list HARDWARE as rel>
-                 <li><a href="${rel.url?default("/hardware/show/"+rel.id)}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+                 <li><a href="${rel.url?default("/hardware/show/"+rel.id)}">${rel.child.title}</a></li>
             </#list>
             </ul>
             <span class="s_sekce_dalsi"><a href="/History?type=hardware">další&nbsp;&raquo;</a></span>
@@ -88,7 +88,7 @@
     <tbody>
      <#list FORUM as diz>
       <tr>
-        <td><a href="/forum/show/${diz.relationId}">${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60,"...")}</a></td>
+        <td><a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,60,"...")}</a></td>
         <td class="td-meta"><@lib.showDiscussionState diz /></td>
         <td class="td-meta">${diz.responseCount}</td>
         <td class="td-datum">${DATE.show(diz.updated,"CZ_SHORT")}</td>
@@ -143,7 +143,7 @@
 </#if>
 
 <#macro printStory relation>
-    <#assign story=relation.child, blog=relation.parent, title=TOOL.xpath(blog,"//custom/title")?default("UNDEF"),
+    <#assign story=relation.child, blog=relation.parent, title=blog.title?default("UNDEF"),
              url=TOOL.getUrlForBlogStory(relation), CHILDREN=TOOL.groupByType(story.children),
              author=TOOL.createUser(blog.owner)>
     <#if CHILDREN.discussion?exists>
@@ -151,7 +151,7 @@
     <#else>
         <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
     </#if>
-    <a href="${url}" title="${author.nick?default(author.name)?html}<#if title!="UNDEF">, ${title}</#if>">${TOOL.xpath(story, "/data/name")}</a>
+    <a href="${url}" title="${author.nick?default(author.name)?html}<#if title!="UNDEF">, ${title}</#if>">${story.title}</a>
     <span title="Počet&nbsp;komentářů<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>">
         (${diz.responseCount}<@lib.markNewComments diz/>)
     </span>
@@ -172,7 +172,7 @@
         <ul>
         <#list FAQ as rel>
              <li>
-                <a href="${rel.url}">${TOOL.xpath(rel.child,"data/title")}</a>
+                <a href="${rel.url}">${rel.child.title}</a>
              </li>
         </#list>
         </ul>
@@ -189,7 +189,7 @@
         <ul>
           <#list DICTIONARY as rel>
             <li>
-                <a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a>
+                <a href="${rel.url}">${rel.child.title}</a>
             </li>
           </#list>
         </ul>
@@ -207,7 +207,7 @@
         <ul>
             <#list PERSONALITY as rel>
                 <li>
-                    <a href="${rel.url}">${TOOL.childName(rel.child)}</a>
+                    <a href="${rel.url}">${rel.child.title}</a>
                 </li>
             </#list>
         </ul>
@@ -226,7 +226,7 @@
         <ul>
         <#list BAZAAR as rel>
              <li>
-                <a href="/bazar/show/${rel.id}">${TOOL.xpath(rel.child,"data/title")}</a>
+                <a href="/bazar/show/${rel.id}">${rel.child.title}</a>
                 <#if rel.child.subType=='sell'>
                     <span class="prodej">(P)</span>
                 <#else>
@@ -249,7 +249,7 @@
         <ul>
         <#list DRIVERS as rel>
              <li>
-                <a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a>
+                <a href="${rel.url}">${rel.child.title}</a>
              </li>
         </#list>
         </ul>
@@ -267,7 +267,7 @@
         <ul>
         <#list TRIVIAS as rel>
              <li>
-                <a href="${rel.url}">${TOOL.childName(rel)}</a>
+                <a href="${rel.url}">${rel.child.title}</a>
              </li>
         </#list>
         </ul>

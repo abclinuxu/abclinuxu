@@ -16,7 +16,7 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  */
-package cz.abclinuxu.migrate;
+package cz.abclinuxu.misc;
 
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Item;
@@ -126,12 +126,16 @@ public class GenerateDevelDatabase {
                 wikiAuthors.add(new User(id));
             }
             persistance.releaseSQLResources(con, statement, resultSet);
+
+            /* prenest uzivatele vcetne jejich blogu */
+            for (User user : wikiAuthors) {
+                app.dump(user);
+            }
+
+            /* prenest obsah tabulky spolecne pro vybrane polozky, zaznamy a kategorie */
+            // TODO
         } catch (SQLException e) {
             log.error(e, e);
-        }
-
-        for (User user : wikiAuthors) {
-            app.dump(user);
         }
     }
 

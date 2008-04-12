@@ -29,7 +29,7 @@
   </thead>
   <tbody>
   <#list BLOGS.data as info>
-    <#assign title=TOOL.xpath(info.blog,"//custom/title")?default("blog")>
+    <#assign title=info.blog.title?default("blog")>
       <tr>
         <td><a href="/blog/${info.blog.subType}">${title}</a></td>
         <td><@lib.showUser info.author /></td>

@@ -181,12 +181,12 @@ public class AdminServlet implements AbcAction {
         } catch (NumberFormatException e) {
             user = new User();
             user.setLogin(s);
-            List found = persistence.findByExample(Collections.singletonList(user), null);
+            List<User> found = persistence.findUsersLike(user);
             if (found.size() != 1) {
                 ServletUtils.addError(Constants.ERROR_GENERIC, "Uživatel s tímto loginem nebyl nalezen.", env, null);
                 return FMTemplateSelector.select("Admin", "show", env, request);
             }
-            user = (User) found.get(0);
+            user = found.get(0);
         }
         user = (User) persistence.findById(user);
 

@@ -1,6 +1,6 @@
 <#import "../macros.ftl" as lib>
 <#assign intro=TOOL.xpath(BLOG,"//custom/intro")?default("UNDEF")>
-<#assign title=TOOL.xpath(BLOG,"//custom/title")?default("UNDEF")>
+<#assign title=BLOG.title?default("UNDEF")>
 <#assign owner=TOOL.createUser(BLOG.owner)>
 <#if USER?exists && TOOL.xpath(BLOG,"//monitor/id[text()='"+USER.id+"']")?exists>
     <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj blog">
@@ -33,7 +33,7 @@
             <#list UNPUBLISHED_STORIES as relation>
                 <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
                 <li>
-                    <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+                    <a href="${url}">${story.title}</a>
                 </li>
             </#list>
             </ul>
@@ -72,7 +72,7 @@
         <#list CURRENT_STORIES as relation>
             <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
             <li>
-                <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+                <a href="${url}">${story.title}</a>
             </li>
         </#list>
         </ul>
@@ -173,11 +173,11 @@
     <div class="cl">
         <#if SUMMARY?exists>
             <h3 class="st_nadpis">
-                <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+                <a href="${url}">${story.title}</a>
             </h3>
         <#else>
             <h2 class="st_nadpis">
-                <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+                <a href="${url}">${story.title}</a>
             </h2>
         </#if>
         <p class="meta-vypis">

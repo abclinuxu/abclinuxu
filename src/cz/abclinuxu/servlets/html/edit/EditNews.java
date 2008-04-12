@@ -99,8 +99,10 @@ public class EditNews implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         // check permissions
         if ( user==null )
@@ -233,10 +235,8 @@ public class EditNews implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
 
-        Element element = (Element) item.getData().selectSingleNode("/data/title");
-        if (element!=null)
-            params.put(PARAM_TITLE, element.getText());
-        element = (Element) item.getData().selectSingleNode("/data/content");
+        params.put(PARAM_TITLE, item.getTitle());
+        Element element = (Element) item.getData().selectSingleNode("/data/content");
         params.put(PARAM_CONTENT,element.getText());
         params.put(PARAM_CATEGORY,item.getSubType());
 
@@ -299,8 +299,8 @@ public class EditNews implements AbcAction {
         element.setText(Integer.toString(user.getId()));
         persistence.update(item);
 
-        element = (Element) item.getData().selectSingleNode("/data/title");
-        String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceRelativeURL(element.getTextTrim());
+        String title = item.getTitle();
+        String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceRelativeURL(title);
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);
         persistence.update(relation);
@@ -462,8 +462,7 @@ public class EditNews implements AbcAction {
             return false;
         }
 
-        Element element = DocumentHelper.makeElement(item.getData(), "/data/title");
-        element.setText(text);
+        item.setTitle(text);
         return true;
     }
 

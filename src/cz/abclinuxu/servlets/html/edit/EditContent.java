@@ -84,8 +84,10 @@ public class EditContent implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         // check permissions
         if ( user==null )
@@ -294,9 +296,8 @@ public class EditContent implements AbcAction {
         Item item = (Item) relation.getChild();
 
         Document document = item.getData();
-        Element element = (Element) document.selectSingleNode("/data/name");
-        params.put(PARAM_TITLE, element.getText());
-        element = (Element) document.selectSingleNode("/data/content");
+        params.put(PARAM_TITLE, item.getTitle());
+        Element element = (Element) document.selectSingleNode("/data/content");
         params.put(PARAM_CONTENT, element.getText());
 
         env.put(VAR_START_TIME, new Long(System.currentTimeMillis()));
@@ -350,9 +351,8 @@ public class EditContent implements AbcAction {
         Item item = (Item) relation.getChild();
 
         Document document = item.getData();
-        Element element = (Element) document.selectSingleNode("/data/name");
-        params.put(PARAM_TITLE, element.getText());
-        element = (Element) document.selectSingleNode("/data/content");
+        params.put(PARAM_TITLE, item.getTitle());
+        Element element = (Element) document.selectSingleNode("/data/content");
     	if (element != null) {
             params.put(PARAM_CONTENT, element.getText());
             params.put(PARAM_EXECUTE_AS_TEMPLATE, element.attributeValue("execute"));
@@ -449,8 +449,7 @@ public class EditContent implements AbcAction {
             ServletUtils.addError(PARAM_TITLE, "Vyplňte titulek stránky!", env, null);
             return false;
         }
-        Element element = DocumentHelper.makeElement(item.getData(), "/data/name");
-        element.setText(name);
+        item.setTitle(name);
         return true;
     }
 
@@ -490,8 +489,7 @@ public class EditContent implements AbcAction {
     }
 
     private boolean setDerivedURL(Item item, Relation relation, Relation parentRelation) {
-        Element element = (Element) item.getData().selectSingleNode("/data/name");
-        String title = element.getTextTrim();
+        String title = item.getTitle();
         String url = parentRelation.getUrl() + "/" + URLManager.enforceRelativeURL(title);
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);

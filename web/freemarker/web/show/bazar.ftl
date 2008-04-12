@@ -34,7 +34,7 @@
     <#list ADS.data as ad>
         <tr>
             <td>
-                <a href="/bazar/show/${ad.id}">${TOOL.xpath(ad.child, "/data/title")}</a>
+                <a href="/bazar/show/${ad.id}">${ad.child.title}</a>
             </td>
             <td class="td-meta">
                 <#if ad.child.subType=='sell'>

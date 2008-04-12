@@ -108,8 +108,10 @@ public class EditRelation implements AbcAction {
         String action = (String) params.get(PARAM_ACTION);
         User user = (User) env.get(Constants.VAR_USER);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         if (ACTION_SET_URL.equals(action))
             return actionSetUrlStep1(request, env);
@@ -371,7 +373,7 @@ public class EditRelation implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_CURRENT);
 
-        Relation[] parents = persistence.findByExample(new Relation(null,relation.getChild(),0));
+        Relation[] parents = persistence.findRelationsLike(new Relation(null,relation.getChild(),0));
         env.put(VAR_PARENTS,parents);
         return FMTemplateSelector.select("EditRelation","remove",env,request);
     }

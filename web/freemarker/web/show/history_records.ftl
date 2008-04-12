@@ -4,13 +4,13 @@
 <#if TYPE=="hardware">
  <#list FOUND.data as relation>
   <li>
-   <a href="/hardware/show/${relation.id}">${TOOL.xpath(relation.child,"data/name")}</a>
+   <a href="${relation.url}">${relation.child.title}</a>
   </li>
  </#list>
 <#elseif TYPE=="software">
  <#list FOUND.data as relation>
   <li>
-   <a href="${relation.url}">${TOOL.xpath(relation.child,"data/name")}</a>
+   <a href="${relation.url}">${relation.child.title}</a>
   </li>
  </#list>
 </#if>

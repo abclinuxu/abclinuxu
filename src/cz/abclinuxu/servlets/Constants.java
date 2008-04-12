@@ -209,6 +209,14 @@ public interface Constants {
      * specifies direction of sort order
      */
     String PARAM_ORDER_DIR = "orderDir";
+
+    String PARAM_RELATION = "rid";
+    String PARAM_TITLE = "title";
+    String PARAM_NAME = "name";
+    String PARAM_DESCRIPTION = "desc";
+    String PARAM_PEREX = "perex";
+    String PARAM_CONTENT = "content";
+
     String ORDER_BY_CREATED = "create";
     String ORDER_BY_UPDATED = "update";
     String ORDER_BY_WHEN = "date";

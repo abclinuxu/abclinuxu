@@ -71,7 +71,7 @@ public class FaqDecorator implements Decorator, Configurable {
         if ( name==null ) {
             Persistence persistence = PersistenceFactory.getPersistence();
             Item driver = (Item) persistence.findById(action.relation.getChild());
-            name = driver.getData().selectSingleNode("/data/title").getText();
+            name = driver.getTitle();
         }
         env.put(VAR_NAME, name);
 

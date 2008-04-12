@@ -25,6 +25,7 @@ import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.freemarker.Tools;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -72,7 +73,7 @@ public class PersonalityDecorator implements Decorator, Configurable {
         if ( name==null ) {
             Persistence persistence = PersistenceFactory.getPersistence();
             Item obj = (Item) persistence.findById(action.relation.getChild());
-            name = obj.getData().selectSingleNode("/data/name").getText();
+            name = Tools.childName(obj);
         }
         env.put(VAR_NAME, name);
 

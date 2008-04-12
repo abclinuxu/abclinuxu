@@ -159,7 +159,7 @@ public class EditSeries implements AbcAction {
         item.setOwner(user.getId());
         Relation relation = new Relation(new Category(Constants.CAT_SERIES), null, Constants.REL_SERIES);
 
-        boolean canContinue = setName(params, root, env);
+        boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root);
         canContinue &= setIcon(params, root);
         canContinue &= setUrl(params, relation, env);
@@ -188,9 +188,8 @@ public class EditSeries implements AbcAction {
         Item item = (Item) relation.getChild();
         Element root = item.getData().getRootElement();
 
-        Node node = root.element("name");
-        params.put(PARAM_NAME, node.getText());
-        node = root.element("description");
+        params.put(PARAM_NAME, item.getTitle());
+        Node node = root.element("description");
         if (node != null)
             params.put(PARAM_DESCRIPTION, node.getText());
         node = root.element("icon");
@@ -209,7 +208,7 @@ public class EditSeries implements AbcAction {
         Item item = (Item) relation.getChild().clone();
         Element root = item.getData().getRootElement();
 
-        boolean canContinue = setName(params, root, env);
+        boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root);
         canContinue &= setIcon(params, root);
 
@@ -415,15 +414,15 @@ public class EditSeries implements AbcAction {
     /**
      * Updates name from parameters. Changes are not synchronized with persistance.
      * @param params map holding request's parameters
-     * @param root root element of item to be updated
+     * @param item item to be updated
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setName(Map params, Element root, Map env) {
+    private boolean setName(Map params, Item item, Map env) {
         String tmp = (String) params.get(PARAM_NAME);
         if (tmp != null && tmp.length() > 0) {
             tmp = Misc.filterDangerousCharacters(tmp);
-            DocumentHelper.makeElement(root, "name").setText(tmp);
+            item.setTitle(tmp);
             return true;
         } else {
             ServletUtils.addError(PARAM_NAME, "Zadejte jméno seriálu!", env, null);

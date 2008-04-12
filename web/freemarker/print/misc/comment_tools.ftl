@@ -36,7 +36,7 @@
     <@lib.showThread COMMENT, 0, TOOL.createEmptyDiscussionWithAttachments(RELATION.child), false />
 </fieldset>
 
-<#if TOOL.xpath(RELATION.child,"data/title")?exists>
+<#if TOOL.isQuestion(RELATION.child)>
     <p>
         Tato otázka je v diskusním fóru <a href="/forum/dir/${RELATION.upper}">${TOOL.childName(RELATION.upper)}</a>.
         Pokud si myslíte, že spíše patří do jiného fóra,

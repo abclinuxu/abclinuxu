@@ -69,7 +69,7 @@
                url=relation.url?default("/clanky/show/"+relation.id),
                rating=TOOL.ratingFor(clanek.data)?default("UNDEF")>
       <tr>
-        <td><a href="${url}">${TOOL.xpath(clanek,"data/name")}</a></td>
+        <td><a href="${url}">${clanek.title}</a></td>
         <td class="td-datum">${DATE.show(clanek.created, "SMART_DMY")}</td>
         <td class="td-meta td-right"><@lib.showCounter clanek, .globals["CITACE"]?if_exists, "read" />&times;</td>
         <td class="td-meta td-right">

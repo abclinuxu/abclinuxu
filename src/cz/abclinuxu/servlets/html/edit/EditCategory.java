@@ -79,8 +79,10 @@ public class EditCategory implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation == null)
@@ -134,7 +136,7 @@ public class EditCategory implements AbcAction {
         category.setData(document);
         category.setOwner(user.getId());
 
-        boolean canContinue = setName(params, document, env);
+        boolean canContinue = setName(params, category, env);
         canContinue &= setDescription(params, document, env);
         canContinue &= setType(params, category, env);
         canContinue &= setSubType(params, category);
@@ -148,7 +150,7 @@ public class EditCategory implements AbcAction {
 
         String upperUrl = upper.getUrl();
         if (upperUrl != null) {
-            String name = document.selectSingleNode("/data/name").getText();
+            String name = category.getTitle();
             String url = upperUrl + "/" + URLManager.enforceRelativeURL(name);
             url = URLManager.protectFromDuplicates(url);
             relation.setUrl(url);
@@ -173,10 +175,8 @@ public class EditCategory implements AbcAction {
         Category category = (Category) env.get(VAR_CATEGORY);
 
         Document document = category.getData();
-        Node node = document.selectSingleNode("data/name");
-        if (node != null)
-            params.put(PARAM_NAME, node.getText());
-        node = document.selectSingleNode("data/note");
+        params.put(PARAM_NAME, category.getTitle());
+        Node node = document.selectSingleNode("data/note");
         if (node != null)
             params.put(PARAM_NOTE, node.getText());
         node = document.selectSingleNode("data/writeable");
@@ -200,7 +200,7 @@ public class EditCategory implements AbcAction {
         Category category = (Category) env.get(VAR_CATEGORY);
         Document document = category.getData();
 
-        boolean canContinue = setName(params, document, env);
+        boolean canContinue = setName(params, category, env);
         canContinue &= setDescription(params, document, env);
         canContinue &= setType(params, category, env);
         canContinue &= setSubType(params, category);
@@ -226,19 +226,18 @@ public class EditCategory implements AbcAction {
     /**
      * Updates name of category from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param document Document of discussion to be updated
+     * @param category category to be updated
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setName(Map params, Document document, Map env) {
+    private boolean setName(Map params, Category category, Map env) {
         String tmp = (String) params.get(PARAM_NAME);
         tmp = Misc.filterDangerousCharacters(tmp);
-        if (tmp != null && tmp.length() > 0) {
-            DocumentHelper.makeElement(document, "data/name").setText(tmp);
-        } else {
+        if (Misc.empty(tmp)) {
             ServletUtils.addError(PARAM_NAME, "Zadejte jméno sekce!", env, null);
             return false;
         }
+        category.setTitle(tmp);
         return true;
     }
 

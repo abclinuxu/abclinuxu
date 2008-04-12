@@ -116,7 +116,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
             item = (Item) relation.getChild();
-            title = Tools.xpath(item, "data/name");
+            title = item.getTitle();
             Article article = new Article(title, item.getCreated(), relation.getUrl());
             Set authors = item.getProperty(Constants.PROPERTY_AUTHOR);
             for (Iterator iterIn = authors.iterator(); iterIn.hasNext();) {
@@ -136,7 +136,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
             item = (Item) relation.getChild();
-            title = Tools.xpath(item, "data/title");
+            title = item.getTitle();
             content = Tools.xpath(item, "data/content");
             content = formatter.format(content);
             News newz = new News(title, content, item.getCreated(), relation.getUrl());

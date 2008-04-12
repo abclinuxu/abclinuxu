@@ -63,8 +63,9 @@ public class Category extends GenericDataObject {
     public String toString() {
         StringBuffer sb = new StringBuffer("Category: id=").append(id);
         sb.append(", type=").append(type);
-        if ( owner!=0 ) sb.append(", owner=").append(owner);
-        if ( isOpen() ) sb.append(", otevrena"); else sb.append(", uzavrena");
+        sb.append(": id=").append(id);
+        if (title != null)
+            sb.append(", title=").append(title);
         return sb.toString();
     }
 

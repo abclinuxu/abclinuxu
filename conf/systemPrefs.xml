@@ -329,53 +329,51 @@
                     </node>
                     <node name="SQLTool">
                         <map>
-                            <entry key="relations.record.by.type" value="select R.cislo from zaznam Z, relace R where typ=? and Z.cislo=R.potomek and typ_potomka='Z'"/>
-                            <entry key="relations.item.by.type" value="select R.cislo from polozka P, relace R where typ=? and P.cislo=R.potomek and typ_potomka='P'"/>
-			                <entry key="relations.item.by.type.with.filters" value="select distinct R.cislo from polozka P, relace R, vlastnost V where P.typ=? and P.cislo=R.potomek and R.typ_potomka='P'"/>
-                            <entry key="relations.categories" value="select R.cislo from kategorie K, relace R where K.cislo=R.potomek and typ_potomka='K'"/>
-                            <entry key="relations.discussion" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3"/>
-                            <entry key="relations.discussion.in.section" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.predchozi=? and P.typ=3"/>
-                            <entry key="relations.discussion.last.seen.by.user" value="select R.cislo from relace R, posledni_komentar K, polozka P where R.typ_potomka='P' and R.potomek=K.diskuse and P.cislo=K.diskuse and K.kdo=?" />
-                            <entry key="relations.article" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and P.vytvoreno&lt;now()"/>
-                            <entry key="relations.article.on.index" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and (P.podtyp!='NOTONINDEX' or P.podtyp is null) and P.vytvoreno&lt;now()"/>
-                            <entry key="relations.article.within.period" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and P.vytvoreno&gt;? and P.vytvoreno&lt;?"/>
-                            <entry key="relations.article.by.author" value="select R.cislo from relace R, polozka P, vlastnost V, kategorie K where R.typ_potomka='P' and R.potomek=P.cislo and P.typ=2 and V.typ_predka='P' and P.cislo=V.predek and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and V.typ='author' and V.hodnota=? and P.vytvoreno&lt;now()"/>
-                            <entry key="relations.news" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek"/>
-                            <entry key="relations.news.within.period" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek and vytvoreno&gt;? and vytvoreno&lt;?"/>
-                            <entry key="relations.news.by.user" value="select R.cislo from polozka P, relace R where P.pridal=? and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek"/>
-                            <entry key="relations.record.by.user.and.type" value="select R.cislo from relace R left join zaznam Z on R.potomek=Z.cislo where R.typ_potomka='Z' and Z.pridal=? and Z.typ=?"/>
-                            <entry key="relations.question.by.user" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and P.typ=3 and P.pridal=?"/>
+                            <entry key="relations.item.by.type" value="select R.cislo from polozka P, relace R, spolecne S where P.typ=? and P.cislo=R.potomek and typ_potomka='P' and S.typ='P' and S.cislo=R.potomek"/>
+			                <entry key="relations.item.by.type.with.filters" value="select distinct R.cislo from polozka P, relace R, vlastnost V, spolecne S where P.typ=? and P.cislo=R.potomek and R.typ_potomka='P' and S.cislo=R.potomek and S.typ='P'"/>
+                            <entry key="relations.categories" value="select R.cislo from kategorie K, relace R, spolecne S where K.cislo=R.potomek and typ_potomka='K' and S.cislo=R.potomek and S.typ='K'"/>
+                            <entry key="relations.discussion" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek, spolecne S where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3 and S.cislo=R.potomek and S.typ='P'"/>
+                            <entry key="relations.discussion.in.section" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek, spolecne S where R.predchozi=? and P.typ=3 and S.cislo=R.potomek and S.typ='P'"/>
+                            <entry key="relations.discussion.last.seen.by.user" value="select R.cislo from relace R, posledni_komentar K, spolecne S where R.typ_potomka='P' and R.potomek=K.diskuse and S.typ='P' and S.cislo=K.diskuse and K.kdo=?" />
+                            <entry key="relations.article" value="select R.cislo from polozka P, relace R, kategorie K, spolecne S where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&lt;now()"/>
+                            <entry key="relations.article.on.index" value="select R.cislo from polozka P, relace R, kategorie K, spolecne S where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and (P.podtyp!='NOTONINDEX' or P.podtyp is null) and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&lt;now()"/>
+                            <entry key="relations.article.within.period" value="select R.cislo from polozka P, relace R, kategorie K, spolecne S where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&gt;? and S.vytvoreno&lt;?"/>
+                            <entry key="relations.article.by.author" value="select R.cislo from relace R, polozka P, vlastnost V, kategorie, spolecne S K where R.typ_potomka='P' and R.potomek=P.cislo and P.typ=2 and V.typ_predka='P' and P.cislo=V.predek and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and V.typ='author' and V.hodnota=? and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&lt;now()"/>
+                            <entry key="relations.news" value="select R.cislo from polozka P, relace R, spolecne S where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek and S.typ='P' and S.cislo=P.cislo"/>
+                            <entry key="relations.news.within.period" value="select R.cislo from polozka P, relace R, spolecne S where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&gt;? and S.vytvoreno&lt;?"/>
+                            <entry key="relations.news.by.user" value="select R.cislo from polozka P, relace R, spolecne S where S.typ='P' and R.potomek=S.cislo and S.pridal=? and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek"/>
+                            <entry key="relations.question.by.user" value="select R.cislo from relace R, polozka P, spolecne S where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and P.typ=3 and S.typ='P' and R.potomek=S.cislo and S.pridal=?"/>
                             <entry key="relations.comment.by.user" value="select R.predchozi,max(vytvoreno) from relace R, komentar K where R.typ_potomka='Z' and R.potomek=K.zaznam and K.autor=? group by K.zaznam order by 2"/>
                             <entry key="relations.wiki.by.user" value="select distinct R.cislo from verze V, relace R where kdo=? and R.potomek=V.cislo and R.typ_potomka=V.typ"/>
-                            <entry key="relations.with.tag" value="select R.cislo from relace R, stitkovani S where R.typ_potomka=S.typ and R.potomek=S.cislo and S.stitek=?" />
+                            <entry key="relations.with.tag" value="select R.cislo from relace R, stitkovani T, spolecne S where R.typ_potomka=T.typ and R.potomek=T.cislo and  R.typ_potomka=S.typ and R.potomek=S.cislo and T.stitek=?" />
                             <entry key="count.relations.wiki.by.user" value="select count(distinct R.cislo) from verze V, relace R where kdo=? and R.potomek=V.cislo and R.typ_potomka=V.typ"/>
                             <entry key="count.relations.comment.by.user" value="select count(distinct R.predchozi) from relace R, komentar K where R.typ_predka='P' and R.typ_potomka='Z' and R.potomek=K.zaznam and K.autor=?"/>
-                            <entry key="relations.section.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek) where typ_potomka='K' and K.typ=?"/>
+                            <entry key="relations.section.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek), spolecne S where R.typ_potomka='K' and K.typ=? and S.typ='K' and S.cislo=R.potomek"/>
                             <entry key="relations.standalone.polls" value="select R.cislo from relace R, anketa2 A where typ_potomka='A' and potomek=A.cislo and predchozi=250"/>
                             <entry key="relation.by.url" value="select cislo from relace where url=?"/>
                             <entry key="max.user" value="select max(cislo) from uzivatel"/>
                             <entry key="user.by.login" value="select cislo from uzivatel where login=?" />
-                            <entry key="insert.last.comment" value="replace into posledni_komentar values(?,?,?,NULL);"/>
+                            <entry key="insert.last.comment" value="replace into posledni_komentar (kdo,diskuse,posledni,kdy) values(?,?,?,NULL);"/>
                             <entry key="get.last.comment" value="select posledni from posledni_komentar where kdo=? and diskuse=?" />
                             <entry key="get.last.comments" value="select diskuse, posledni, kdy from posledni_komentar where kdo=? order by kdy desc limit ?,?" />
                             <entry key="delete.old.comments" value="delete from posledni_komentar where kdo=? and kdy&lt;=?" />
                             <entry key="items.with.type" value="select cislo from polozka where typ=?"/>
                             <entry key="records.with.type" value="select cislo from zaznam where typ=?"/>
-                            <entry key="count.articles.by.author" value="select count(P.cislo) from polozka as P, vlastnost as V where P.typ=2 and P.cislo=V.predek and V.typ_predka='P' and V.typ='author' and V.hodnota=? and P.vytvoreno&lt;now()"/>
-                            <entry key="count.articles.by.authors" value="select V.hodnota, count(P.cislo) from polozka as P, vlastnost as V where P.typ=2 and P.cislo=V.predek and V.typ_predka='P' and V.typ='author' group by (V.hodnota)" />
-                            <entry key="insert.user.action" value="insert into akce values(?,?,?,NULL)" />
+                            <entry key="count.articles.by.author" value="select count(P.cislo) from polozka P, vlastnost V, spolecne S where P.typ=2 and P.cislo=V.predek and V.typ_predka='P' and V.typ='author' and V.hodnota=? and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&lt;now()"/>
+                            <entry key="count.articles.by.authors" value="select V.hodnota, count(P.cislo) from polozka P, vlastnost V where P.typ=2 and P.cislo=V.predek and V.typ_predka='P' and V.typ='author' group by (V.hodnota)" />
+                            <entry key="insert.user.action" value="insert into akce (kdo,relace,typ,kdy) values(?,?,?,NULL)" />
                             <entry key="get.user.action" value="select kdy from akce where kdo=? and relace=? and typ=?" />
                             <entry key="remove.user.action" value="delete from akce where kdo=? and relace=? and typ=?" />
                             <entry key="items.count.in.section" value="select R1.potomek, count(R2.cislo) from relace R1, relace R2 where R1.potomek in ? and R1.typ_potomka='K' and R1.cislo=R2.predchozi and R2.typ_potomka='P' group by R1.potomek" />
-                            <entry key="item.last.and.count.in.section" value="select R1.potomek, count(R2.cislo), (select R3.cislo from relace R3, polozka P where R3.typ_predka='K' and R3.predek=R1.potomek and R3.typ_potomka='P' and R3.potomek=P.cislo order by P.zmeneno desc limit 1) from relace R1, relace R2 where R1.potomek in ? and R1.typ_potomka='K' and R1.cislo=R2.predchozi and R2.typ_potomka='P' group by R1.potomek" />
-                            <entry key="insert.search.query" value="insert into hledano values(?,1)" />
+                            <entry key="item.last.and.count.in.section" value="select R1.potomek, count(R2.cislo), (select R3.cislo from relace R3, polozka P, spolecne S where R3.typ_predka='K' and R3.predek=R1.potomek and R3.typ_potomka='P' and R3.potomek=P.cislo and S.typ='P' and S.cislo=P.cislo order by S.zmeneno desc limit 1) from relace R1, relace R2 where R1.potomek in ? and R1.typ_potomka='K' and R1.cislo=R2.predchozi and R2.typ_potomka='P' group by R1.potomek" />
+                            <entry key="insert.search.query" value="insert into hledano (retezec,pocet) values(?,1)" />
                             <entry key="update.search.query" value="update hledano set pocet=pocet+1 where retezec=?" />
-                            <entry key="get.search.query.for" value="select * from hledano where retezec like concat(?,'%') order by pocet desc" />
-                            <entry key="insert.statistika" value="insert into statistika values(curdate(),?,?)" />
+                            <entry key="get.search.query.for" value="select retezec,pocet from hledano where retezec like concat(?,'%') order by pocet desc" />
+                            <entry key="insert.statistika" value="insert into statistika (den,typ,pocet) values(curdate(),?,?)" />
                             <entry key="update.statistika" value="update statistika set pocet=pocet+? where typ=? and den=curdate()" />
-                            <entry key="get.statistika" value="select * from statistika where "/>
+                            <entry key="get.statistika" value="select den,typ,pocet from statistika where "/>
                             <entry key="get.statistika.by.month" value="select typ,sum(pocet),date_format(den,&quot;%Y-%m&quot;) from statistika group by typ,3 order by 3 asc"/>
-                            <entry key="insert.stara_adresa" value="insert into stara_adresa values(?,?,?)" />
+                            <entry key="insert.stara_adresa" value="insert into stara_adresa (puvodni,rid,nova) values(?,?,?)" />
                             <entry key="select.stara.adresa" value="select rid,nova from stara_adresa where puvodni=?" />
                             <entry key="get.property.values" value="select distinct hodnota from vlastnost where typ=?" />
                             <entry key="delete.property" value="delete from vlastnost where typ_predka=? and predek=? and typ=?"/>
@@ -383,11 +381,11 @@
                             <entry key="users.count.forum.comments" value="select K.autor, count(distinct K.zaznam) from komentar K, relace R1, relace R2, kategorie F where R1.typ_potomka='Z' and R1.potomek=K.zaznam  and R1.predchozi=R2.cislo and R2.typ_predka='K' and  R2.predek=F.cislo and F.typ=2 group by K.autor" />
                             <entry key="users.count.articles" value="select V2.hodnota, count(P.cislo) from polozka P, vlastnost V1, relace R, vlastnost V2 where P.typ=2 and V1.predek=P.cislo and V1.typ='author' and V1.hodnota=R.cislo and V2.typ_predka='P' and V2.predek=R.potomek and V2.typ='user' group by V2.hodnota" />
                             <entry key="users.count.wiki.records" value="select kdo,count(distinct cislo,typ) from verze group by kdo" />
-                            <entry key="users.count.news" value="select pridal,count(*) from polozka where typ=7 group by pridal" />
+                            <entry key="users.count.news" value="select pridal,count(*) from polozka P, spolecne S where P.typ=7 and S.typ='P' and S.cislo=P.cislo group by S.pridal" />
                             <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
                             <entry key="users.with.forum.by.email" value="select cislo from uzivatel where data like '%&lt;email valid=&quot;yes&quot;%&lt;forum&gt;yes%&lt;/email%'"/>
                             <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'"/>
-                            <entry key="users.with.login" value="select cislo from uzivatel where login collate utf8_czech_ci = ?"/>
+                            <entry key="users.with.login" value="select cislo from uzivatel where login collate utf8_czech_ci = ?"/><!-- todo asi uz zbytecne -->
                             <entry key="users.with.nick" value="select cislo from uzivatel where prezdivka collate utf8_czech_ci = ?"/>
                             <entry key="users.in.group" value="select cislo from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%')"/>
                             <entry key="top.used.relations" value="select R.cislo,count(*) from relace R, vlastnost V where V.typ='used_by' and R.typ_potomka='P' and R.potomek=V.predek group by R.potomek order by 2 desc"/>
@@ -397,12 +395,12 @@
                             <entry key="delete.user.ticket" value="delete from vlastnost where predek=? and typ='ticket'"/>
                             <entry key="change.revision.owner" value="update verze set kdo=? where kdo=?"/>
                             <entry key="change.comment.owner" value="update komentar set autor=? where autor=?"/>
-                            <entry key="change.item.owner" value="update polozka set pridal=?, zmeneno=zmeneno where pridal=?"/>
-                            <entry key="change.record.owner" value="update zaznam set pridal=?, zmeneno=zmeneno where pridal=?"/>
-                            <entry key="change.category.owner" value="update kategorie set pridal=?, zmeneno=zmeneno where pridal=?"/>
+                            <entry key="change.item.owner" value="update spolecne set pridal=?, zmeneno=zmeneno where typ='P' and pridal=?"/>
+                            <entry key="change.record.owner" value="update spolecne set pridal=?, zmeneno=zmeneno where typ='Z' and pridal=?"/>
+                            <entry key="change.category.owner" value="update spolecne set pridal=?, zmeneno=zmeneno where typ='K' and pridal=?"/>
                             <entry key="change.property.owner" value="update vlastnost set hodnota=? where hodnota=? and (typ='user' or typ='used_by' or typ='favourited_by')"/>
                             <entry key="count.properties.by.user" value="select count(*) from vlastnost where hodnota=? and (typ='user' or typ='used_by' or typ='favourited_by')"/>
-                            <entry key="tag.log.action" value="insert into stitky_log values (?,NULL,?,?,?,?,?,?)"/>
+                            <entry key="tag.log.action" value="insert into stitky_log (akce,kdy,stitek,autor,ip,typ,cislo,titulek) values (?,NULL,?,?,?,?,?,?)"/>
                         </map>
                     </node>
                     <node name="versioning">

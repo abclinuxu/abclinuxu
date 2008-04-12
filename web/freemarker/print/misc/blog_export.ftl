@@ -1,5 +1,5 @@
 <#macro exportStory(story)><#assign owner=TOOL.createUser(BLOG.owner), ITEM=story.child, category = ITEM.subType?default("UNDEF")><#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
-TITLE: ${TOOL.xpath(ITEM, "/data/name")}
+TITLE: ${ITEM.title}
 AUTHOR: ${owner.nick?default(owner.name)}
 DATE: ${DATE.show(ITEM.created, "US_FULL")}<#if category!="UNDEF">
 CATEGORY: ${category}</#if>

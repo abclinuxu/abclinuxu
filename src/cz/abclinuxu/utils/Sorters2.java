@@ -125,20 +125,9 @@ public class Sorters2 {
         Collator collator = Collator.getInstance();
 
         public int compare(Object o1, Object o2) {
-            String s1 = getValue((Relation) o1,"data/name").toLowerCase();
-            String s2 = getValue((Relation) o2,"data/name").toLowerCase();
+            String s1 = Tools.childName((Relation) o1).toLowerCase();
+            String s2 = Tools.childName((Relation) o2).toLowerCase();
             return collator.compare(s1, s2);
-        }
-        /**
-         * Extracts value of relation.
-         */
-        private String getValue(Relation r, String xpath) {
-            String s = Tools.xpath(r,xpath);
-            if ( s==null ) {
-                s = Tools.xpath(r.getChild(),xpath);
-                if ( s==null ) s = "";
-            }
-            return s;
         }
     }
 

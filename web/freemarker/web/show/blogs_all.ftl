@@ -54,17 +54,17 @@
 <#list STORIES.data as relation>
     <#assign story=relation.child, blog=relation.parent, author=TOOL.createUser(blog.owner),
              url=TOOL.getUrlForBlogStory(relation),
-             title=TOOL.xpath(blog,"//custom/title")?default("blog"),
+             title=blog.title?default("blog"),
              category = story.subType?default("UNDEF"), tmp=TOOL.groupByType(story.children)>
     <#if category!="UNDEF"><#assign category=TOOL.xpath(blog, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
     <div class="cl">
         <#if SUMMARY?exists>
             <h3 class="st_nadpis">
-                <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+                <a href="${url}">${story.title}</a>
             </h3>
         <#else>
             <h2 class="st_nadpis">
-                <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+                <a href="${url}">${story.title}</a>
             </h2>
         </#if>
         <p class="meta-vypis">

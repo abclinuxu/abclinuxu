@@ -132,8 +132,10 @@ public class EditDiscussion implements AbcAction {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         String action = Misc.getString(params, PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         if ( relation != null ) {
             relation = (Relation) persistence.findById(relation);
@@ -313,7 +315,7 @@ public class EditDiscussion implements AbcAction {
         ItemComment comment = new ItemComment(discussion);
 
         boolean canContinue = true;
-        canContinue &= setTitle(params, root, env);
+        canContinue &= setTitle(params, discussion, env);
         canContinue &= setText(params, root, true, env);
         canContinue &= setCommentAuthor(params, user, comment, root, env);
         canContinue &= setUserIPAddress(root, request);
@@ -466,7 +468,7 @@ public class EditDiscussion implements AbcAction {
         canContinue &= setCreated(comment);
         canContinue &= setParent(params, comment);
         canContinue &= setCommentAuthor(params, user, comment, root, env);
-        canContinue &= setTitle(params, root, env);
+        canContinue &= setTitle(params, comment, env);
         canContinue &= setText(params, root, false, env);
         canContinue &= setUserIPAddress(root, request);
         canContinue &= setCommentAttachment(params, env, request);
@@ -703,7 +705,7 @@ public class EditDiscussion implements AbcAction {
         root = comment.getData().getRootElement();
 
         boolean canContinue = true;
-        canContinue &= setTitle(params, root, env);
+        canContinue &= setTitle(params, comment, env);
         canContinue &= setText(params, root, false, env);
         canContinue &= setCommentAuthor(params, null, comment, root, env);
 
@@ -1060,7 +1062,7 @@ public class EditDiscussion implements AbcAction {
         if (url == null)
             url = urlUtils.getPrefix()+"/show/"+currentDizRelation.getId();
         newParams.put(PARAM_TEXT, "<p class=\"threadMoved\">Diskuse vznikla z vlákna <a href=\""+url+"\">této</a> diskuse.</p>");
-        setTitle(newParams, newItemRoot, env);
+        setTitle(newParams, newDiz, env);
         setTextNoHTMLCheck(newParams, newItemRoot, env);
         setCommentAuthor(newParams, user, topComment, newItemRoot, env);
 
@@ -1167,11 +1169,11 @@ public class EditDiscussion implements AbcAction {
     /**
      * Updates title from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param root root element of discussion to be updated
+     * @param comment comment to be updated
      * @param env environment
      * @return false, if there is a major error.
      */
-    static boolean setTitle(Map params, Element root, Map env) {
+    static boolean setTitle(Map params, Comment comment, Map env) {
         String tmp = tmp = Misc.getString(params, PARAM_TITLE);
         if ( tmp != null && tmp.length() > 0 ) {
             if ( tmp.indexOf("<") != -1 ) {
@@ -1182,7 +1184,33 @@ public class EditDiscussion implements AbcAction {
             if (tmp.indexOf('\n') != -1)
                 tmp = tmp.replace('\n', ' ');
             tmp = Misc.filterDangerousCharacters(tmp);
-            DocumentHelper.makeElement(root,"title").setText(tmp);
+           comment.setTitle(tmp);
+        } else {
+            ServletUtils.addError(PARAM_TITLE, "Zadejte titulek!", env, null);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Updates title from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param item discussion to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    static boolean setTitle(Map params, Item item, Map env) {
+        String tmp = tmp = Misc.getString(params, PARAM_TITLE);
+        if ( tmp != null && tmp.length() > 0 ) {
+            if ( tmp.indexOf("<") != -1 ) {
+                params.put(PARAM_TITLE, "");
+                ServletUtils.addError(PARAM_TITLE, "Použití HTML značek je zakázáno!", env, null);
+                return false;
+            }
+            if (tmp.indexOf('\n') != -1)
+                tmp = tmp.replace('\n', ' ');
+            tmp = Misc.filterDangerousCharacters(tmp);
+            item.setTitle(tmp);
         } else {
             ServletUtils.addError(PARAM_TITLE, "Zadejte titulek!", env, null);
             return false;

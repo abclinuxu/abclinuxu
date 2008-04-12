@@ -44,7 +44,6 @@ import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexWriter;
-import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
@@ -659,9 +658,7 @@ public class CreateIndex implements Configurable {
         Item story = (Item) relation.getChild();
         indexDiscussionFor(story);
 
-        Element data = story.getData().getRootElement();
-        Node node = data.element("name");
-        String title = node.getText();
+        String title = story.getTitle();
         ParsedDocument parsed = DocumentParser.parse(story);
 
         MyDocument doc = new MyDocument(title, parsed.getContent(), false);
@@ -679,10 +676,7 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexCategory(Relation relation, String urlPrefix) {
         Category category = (Category) relation.getChild();
-
-        Element data = category.getData().getRootElement();
-        Node node = data.element("name");
-        String title = node.getText();
+        String title = category.getTitle();
         ParsedDocument parsed = DocumentParser.parse(category);
 
         MyDocument doc = new MyDocument(title, parsed.getContent(), false);
@@ -704,17 +698,8 @@ public class CreateIndex implements Configurable {
      * Extracts data for indexing from discussion. Item must be synchronized.
      */
     static MyDocument indexDiscussion(Item discussion, String title) {
-        boolean question = false;
-        Document document = discussion.getData();
-        Element data = document.getRootElement();
-        if (title == null ) {
-            Node node = data.element("title");
-            if (node != null) {
-                title = node.getText();
-                question = true;
-            } else
-                title = "Diskuse";
-        }
+        boolean question = Tools.isQuestion(discussion);
+        title = discussion.getTitle();//todo overit
 
         ParsedDocument parsed = DocumentParser.parse(discussion);
 
@@ -723,7 +708,7 @@ public class CreateIndex implements Configurable {
         doc.setUpdated(discussion.getUpdated());
         doc.setCid(discussion);
         if (question) {
-            doc.setQuestionSolved(Tools.isQuestionSolved(document));
+            doc.setQuestionSolved(Tools.isQuestionSolved(discussion.getData()));
             doc.setType(MyDocument.TYPE_QUESTION);
             doc.setBoost(boostQuestion);
         } else {
@@ -739,9 +724,7 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexHardware(Relation relation) {
         Item make = (Item) relation.getChild();
-        Element data = make.getData().getRootElement();
-        Node node = data.element("name");
-        String title = node.getText();
+        String title = make.getTitle();
         ParsedDocument parsed = DocumentParser.parse(make);
 
         MyDocument doc = new MyDocument(title, parsed.getContent(), false);
@@ -760,10 +743,7 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexSoftware(Relation relation) {
         Item make = (Item) relation.getChild();
-        Element data = make.getData().getRootElement();
-
-        Node node = data.element("name");
-        String title = node.getText();
+        String title = make.getTitle();
         ParsedDocument parsed = DocumentParser.parse(make);
 
         MyDocument doc = new MyDocument(title, parsed.getContent(), false);
@@ -781,10 +761,7 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexDriver(Relation relation) {
         Item driver = (Item) relation.getChild();
-
-        Element data = driver.getData().getRootElement();
-        Node node = data.element("name");
-        String title = node.getText();
+        String title = driver.getTitle();
         ParsedDocument parsed = DocumentParser.parse(driver);
 
         MyDocument doc = new MyDocument(title, parsed.getContent(), false);
@@ -807,8 +784,8 @@ public class CreateIndex implements Configurable {
         Element data = article.getData().getRootElement();
         if (data.attribute(WhatHappened.INDEXING_FORBIDDEN) != null)
             return null;
-        Node node = data.element("name");
-        String title = node.getText();
+
+        String title = article.getTitle();
         ParsedDocument parsed = DocumentParser.parse(article);
 
         MyDocument doc = new MyDocument(title, parsed.getContent(), false);
@@ -831,19 +808,10 @@ public class CreateIndex implements Configurable {
 
         Element data = news.getData().getRootElement();
         String content = data.element("content").getText();
-
-        String title = null;
-        Node node = data.element("title");
-        if ( node != null)
-            title = node.getText();
-        else {
-//            log.warn("Zpravicka nema titulek! " + relation); // todo zkontrolovat, zda se to deje
-            String tmp = Tools.removeTags(content);
-            title = Tools.limit(tmp, 50, " ..");
-        }
+        String title = news.getTitle();
 
         String category = null;
-        node = data.element("category");
+        Node node = data.element("category");
         if (node != null)
             category = node.getText();
 
@@ -857,7 +825,7 @@ public class CreateIndex implements Configurable {
             doc.setNewsCategory(category);
         String url = relation.getUrl();
         if (url == null) {
-            log.warn("Zpravicka nema url! " + relation); // todo zkontrolovat, zda se to deje
+            log.error("Zpravicka nema url! " + relation); // todo zkontrolovat, zda se to deje
             url = UrlUtils.PREFIX_NEWS + "/show/" + relation.getId();
         }
         doc.setURL(url);
@@ -874,8 +842,7 @@ public class CreateIndex implements Configurable {
         Item item = (Item) relation.getChild();
         indexDiscussionFor(item);
 
-        Element data = item.getData().getRootElement();
-        String title = data.elementText("title");
+        String title = item.getTitle();
         ParsedDocument parsed = DocumentParser.parse(item);
 
         MyDocument doc = new MyDocument(title, parsed.getContent(), false);
@@ -972,8 +939,7 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexDictionary(Relation relation) {
         Item dictionary = (Item) relation.getChild();
-        Element data = dictionary.getData().getRootElement();
-        String title = data.selectSingleNode("/data/name").getText();
+        String title = dictionary.getTitle();
         ParsedDocument parsed = DocumentParser.parse(dictionary);
 
         MyDocument doc = new MyDocument(title, parsed.getContent(), false);
@@ -1014,8 +980,7 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexFaq(Relation relation) {
         Item faq = (Item) relation.getChild();
-        Element data = faq.getData().getRootElement();
-        String title = data.element("title").getText();
+        String title = faq.getTitle();
         ParsedDocument parsed = DocumentParser.parse(faq);
 
         MyDocument doc = new MyDocument(title, parsed.getContent(), false);
@@ -1035,8 +1000,7 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexDocument(Relation relation) {
         Item item = (Item) relation.getChild();
-        Element data = item.getData().getRootElement();
-        String title = data.element("name").getText();
+        String title = item.getTitle();
         ParsedDocument parsed = DocumentParser.parse(item);
 
         MyDocument doc = new MyDocument(title, parsed.getContent(), false);

@@ -52,6 +52,9 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static cz.abclinuxu.servlets.Constants.PARAM_NAME;
+import static cz.abclinuxu.servlets.Constants.PARAM_DESCRIPTION;
+
 /**
  * Used to define and edit advertisement areas and their codes.
  * @author literakl
@@ -60,10 +63,8 @@ import java.util.regex.Pattern;
 public class EditAdvertisement implements AbcAction, Configurable {
     public static final String PREF_IDENTIFIER_REGEXP = "regexp.valid.identifier";
 
-    public static final String PARAM_NAME = "name";
     public static final String PARAM_IDENTIFIER = "identifier";
     public static final String PARAM_NEW_IDENTIFIER = "newIdentifier";
-    public static final String PARAM_DESCRIPTION = "desc";
     public static final String PARAM_MAIN_CODE = "main_code";
     public static final String PARAM_CODE = "code";
     public static final String PARAM_REGEXP = "regexp";
@@ -100,6 +101,11 @@ public class EditAdvertisement implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
+
+        if (ServletUtils.handleMaintainance(request, env)) {
+            response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         // check permissions
         if (user == null)

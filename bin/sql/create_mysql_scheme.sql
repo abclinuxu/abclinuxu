@@ -83,6 +83,21 @@ ALTER TABLE data ADD INDEX in_vytvoreno (vytvoreno);
 ALTER TABLE data ADD INDEX in_typ (typ);
 ALTER TABLE data ADD INDEX in_podtyp (podtyp);
 
+-- tabulka obsahujici udaje spolecne vice jinym tabulkam
+CREATE TABLE spolecne (
+ typ CHAR(1) NOT NULL,
+ cislo INT NOT NULL,
+ jmeno VARCHAR(255) NULL,
+ vytvoreno DATETIME,                             -- cas vytvoreni
+ zmeneno TIMESTAMP NOT NULL,                     -- cas posledni zmeny
+ pridal INT(6) NOT NULL                          -- odkaz na uzivatele
+);
+ALTER TABLE spolecne ADD INDEX in_predek (typ,cislo);
+ALTER TABLE spolecne ADD INDEX in_jmeno (jmeno);
+ALTER TABLE spolecne ADD INDEX in_vytvoreno (vytvoreno);
+ALTER TABLE spolecne ADD INDEX in_zmeneno (zmeneno);
+ALTER TABLE spolecne ADD INDEX in_pridal (pridal);
+
 
 -- tabulka s definicemi serveru, kterym zobrazujeme odkazy
 CREATE TABLE server (
@@ -162,7 +177,7 @@ CREATE TABLE vlastnost (
  predek INT NOT NULL,
  typ VARCHAR(16) NOT NULL,
  hodnota VARCHAR(255) NOT NULL
-) collate latin2_general_ci;
+);
 ALTER TABLE vlastnost ADD INDEX in_predek (typ_predka,predek);
 ALTER TABLE vlastnost ADD INDEX in_typ (typ,hodnota);
 

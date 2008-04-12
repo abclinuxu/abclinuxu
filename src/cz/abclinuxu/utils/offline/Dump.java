@@ -233,10 +233,10 @@ public class Dump implements Configurable {
             if ( ! record.isInitialized() )
                 persistence.synchronize(record);
 
-            if ( record.getType()== Record.HARDWARE )
-                name = FMTemplateSelector.select("ShowObject", "hardware", env, "offline");
-            else
-                return;
+//            if ( record.getType()== Record.HARDWARE )
+//                name = FMTemplateSelector.select("ShowObject", "hardware", env, "offline");
+//            else
+//                return;
 
             FMUtils.executeTemplate(name,env,file);
         }

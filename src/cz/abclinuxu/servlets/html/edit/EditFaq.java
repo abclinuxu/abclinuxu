@@ -80,8 +80,10 @@ public class EditFaq implements AbcAction {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         if (relation != null) {
             Tools.sync(relation);
@@ -144,7 +146,7 @@ public class EditFaq implements AbcAction {
         Relation relation = new Relation(parentRelation.getChild(), item, parentRelation.getId());
 
         boolean canContinue = true;
-        canContinue &= setQuestion(params, item, root, env);
+        canContinue &= setQuestion(params, item, env);
         canContinue &= setText(params, root, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
@@ -160,7 +162,7 @@ public class EditFaq implements AbcAction {
         persistence.create(item);
         versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
 
-        String title = root.elementText("title");
+        String title = item.getTitle();
         String url = parentRelation.getUrl() + "/" + URLManager.enforceRelativeURL(title);
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);
@@ -194,9 +196,8 @@ public class EditFaq implements AbcAction {
         Item item = (Item) relation.getChild();
 
         Element root = item.getData().getRootElement();
-        Element element = (Element) root.element("title");
-        params.put(PARAM_TITLE, element.getText());
-        element = (Element) root.element("text");
+        params.put(PARAM_TITLE, item.getTitle());
+        Element element = (Element) root.element("text");
         params.put(PARAM_TEXT, element.getText());
         return FMTemplateSelector.select("EditFaq", "edit", env, request);
     }
@@ -216,7 +217,7 @@ public class EditFaq implements AbcAction {
         Element root = item.getData().getRootElement();
 
         boolean canContinue = true;
-        canContinue &= setQuestion(params, item, root, env);
+        canContinue &= setQuestion(params, item, env);
         canContinue &= setText(params, root, env);
         canContinue &= ServletUtils.checkNoChange(item, origItem, env);
         String changesDescription = Misc.getRevisionString(params, env);
@@ -256,11 +257,10 @@ public class EditFaq implements AbcAction {
      * Updates question from parameters. Changes are not synchronized with persistence.
      *
      * @param params map holding request's parameters
-     * @param root   root element of discussion to be updated
      * @param env    environment
      * @return false, if there is a major error.
      */
-    static boolean setQuestion(Map params, Item faq, Element root, Map env) {
+    static boolean setQuestion(Map params, Item faq, Map env) {
         String tmp = (String) params.get(PARAM_TITLE);
         tmp = Misc.filterDangerousCharacters(tmp);
         if (tmp != null && tmp.length() > 0) {
@@ -272,7 +272,7 @@ public class EditFaq implements AbcAction {
             if (tmp.indexOf('\n') != -1)
                 tmp = tmp.replace('\n', ' ');
 
-            DocumentHelper.makeElement(root, "title").setText(tmp);
+            faq.setTitle(tmp);
             faq.setSubType(Tools.limit(tmp, 30, ""));
         } else {
             ServletUtils.addError(PARAM_TITLE, "Zadejte titulek dotazu!", env, null);

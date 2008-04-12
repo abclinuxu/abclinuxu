@@ -20,7 +20,7 @@
 
 <#include "../header.ftl">
 
-<h1>Sekce ${TOOL.xpath(CATEGORY,"/data/name")}</h1>
+<h1>Sekce ${CATEGORY.title}</h1>
 
 <@lib.showMessages/>
 

@@ -1,7 +1,7 @@
 <#include "../header.ftl">
 <#assign CATEGORY=RELATION.child>
 
-<h1>${TOOL.xpath(CATEGORY,"data/name")} - často kladené otázky</h1>
+<h1>${CATEGORY.title} - často kladené otázky</h1>
 
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
     ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}

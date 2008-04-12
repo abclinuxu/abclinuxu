@@ -79,8 +79,10 @@ public class EditDictionary implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         if ( action==null)
             throw new MissingArgumentException("Chybí parametr action!");
@@ -127,9 +129,9 @@ public class EditDictionary implements AbcAction {
         Relation relation = new Relation(new Category(Constants.CAT_DICTIONARY), item, Constants.REL_DICTIONARY);
 
         boolean canContinue = true;
-        canContinue &= setName(params, item, root, env);
+        canContinue &= setName(params, item, env);
         canContinue &= setDescription(params, root, env);
-        canContinue &= setURL(relation, root, env);
+        canContinue &= setURL(relation, item, env);
         if (!canContinue || params.get(PARAM_PREVIEW)!=null)
             return FMTemplateSelector.select("Dictionary", "add", env, request);
 
@@ -164,8 +166,7 @@ public class EditDictionary implements AbcAction {
 
         Item item = (Item) relation.getChild();
         Document document = item.getData();
-        Node node = document.selectSingleNode("data/name");
-        params.put(PARAM_NAME, node.getText());
+        params.put(PARAM_NAME, item.getTitle());
         Node desc = document.selectSingleNode("data/description");
         params.put(PARAM_DESCRIPTION, desc.getText());
 
@@ -185,7 +186,7 @@ public class EditDictionary implements AbcAction {
         Element root = item.getData().getRootElement();
 
         boolean canContinue = true;
-        canContinue &= setName(params, item, root, env);
+        canContinue &= setName(params, item, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= ServletUtils.checkNoChange(item, origItem, env);
         String changesDescription = Misc.getRevisionString(params, env);
@@ -216,11 +217,10 @@ public class EditDictionary implements AbcAction {
     /**
      * Updates name from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param root root element of item to be updated
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setName(Map params, Item item, Element root, Map env) {
+    private boolean setName(Map params, Item item, Map env) {
         String name = (String) params.get(PARAM_NAME);
         name = Misc.filterDangerousCharacters(name);
         if ( name == null || name.length() == 0 ) {
@@ -234,7 +234,7 @@ public class EditDictionary implements AbcAction {
             return false;
         }
 
-        DocumentHelper.makeElement(root, "name").setText(name);
+        item.setTitle(name);
 
         String normalizedName = DiacriticRemover.getInstance().removeDiacritics(name);
         normalizedName = normalizedName.toLowerCase();
@@ -245,12 +245,12 @@ public class EditDictionary implements AbcAction {
     /**
      * Updates URL, checks for duplicates.
      * Changes are not synchronized with persistence.
-     * @param root root element of item
+     * @param item item to be updated
      * @param relation relation
      * @return false, if there is a major error.
      */
-    private boolean setURL(Relation relation,  Element root, Map env) {
-        String name = root.elementText("name");
+    private boolean setURL(Relation relation,  Item item, Map env) {
+        String name = item.getTitle();
         name = Misc.filterDangerousCharacters(name);
         if (name == null)
             return false;

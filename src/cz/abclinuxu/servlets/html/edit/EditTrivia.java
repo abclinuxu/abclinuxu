@@ -84,8 +84,10 @@ public class EditTrivia implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if (relation != null) {
@@ -134,7 +136,7 @@ public class EditTrivia implements AbcAction {
         item.setOwner(user.getId());
 
         boolean canContinue = true;
-        canContinue &= setName(params, root, env);
+        canContinue &= setName(params, item, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setDifficulty(params, root, env);
         canContinue &= setQuestions(params, root, env);
@@ -148,7 +150,7 @@ public class EditTrivia implements AbcAction {
         versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
 
         Relation relation = new Relation(upper.getChild(), item, upper.getId());
-        String name = root.elementTextTrim("title");
+        String name = item.getTitle();
         String url = upper.getUrl() + "/" + URLManager.enforceRelativeURL(name);
         url = URLManager.protectFromDuplicates(url);
         if (url != null)
@@ -173,9 +175,8 @@ public class EditTrivia implements AbcAction {
         Item item = (Item) relation.getChild();
         Element root = item.getData().getRootElement();
 
-        Node node = root.element("title");
-        params.put(PARAM_TITLE, node.getText());
-        node = root.element("description");
+        params.put(PARAM_TITLE, item.getTitle());
+        Node node = root.element("description");
         if (node != null)
             params.put(PARAM_DESCRIPTION, node.getText());
         node = root.element("difficulty");
@@ -220,7 +221,7 @@ public class EditTrivia implements AbcAction {
         Element root = item.getData().getRootElement();
 
         boolean canContinue = true;
-        canContinue &= setName(params, root, env);
+        canContinue &= setName(params, item, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setDifficulty(params, root, env);
         canContinue &= setQuestions(params, root, env);
@@ -245,15 +246,14 @@ public class EditTrivia implements AbcAction {
     /**
      * Updates name from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param root   root element of item to be updated
+     * @param item   item to be updated
      * @param env    environment
      * @return false, if there is a major error.
      */
-    private boolean setName(Map params, Element root, Map env) {
+    private boolean setName(Map params, Item item, Map env) {
         String tmp = (String) params.get(PARAM_TITLE);
         if (tmp != null && tmp.length() > 0) {
-            tmp = Misc.filterDangerousCharacters(tmp);
-            DocumentHelper.makeElement(root, "title").setText(tmp);
+            item.setTitle(tmp);
             return true;
         } else {
             ServletUtils.addError(PARAM_TITLE, "Zadejte název kvízu!", env, null);

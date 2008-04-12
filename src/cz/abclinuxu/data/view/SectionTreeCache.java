@@ -271,22 +271,10 @@ public class SectionTreeCache {
             relation = (Relation) iter.next();
             category = (Category) relation.getChild();
             section = sectionsMap.get(relation.getId());
-
-            String name = null;
-            document = relation.getData();
-            if (document != null) {
-                element = (Element) document.selectSingleNode("/data/name");
-                if (element != null)
-                    name = element.getText();
-            }
-            if (name == null) {
-                document = category.getData();
-                element = (Element) document.selectSingleNode("/data/name");
-                name = element.getText();
-            }
-            section.setName(name);
+            section.setName(category.getTitle());
 
             if (loadDescriptions) {
+                document = category.getData();
                 element = (Element) document.selectSingleNode("/data/note");
                 if (element != null)
                     section.setDescription(element.getText());

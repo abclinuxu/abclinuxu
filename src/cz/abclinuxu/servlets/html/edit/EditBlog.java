@@ -160,8 +160,10 @@ public class EditBlog implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistence();
         String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         if ( ACTION_ADD_BLOG.equals(action) )
             return FMTemplateSelector.select("EditBlog", "addBlog", env, request);
@@ -349,7 +351,7 @@ public class EditBlog implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditBlog", "addBlog", env, request);
 
         DocumentHelper.makeElement(root, "/custom/page_title").setText(blog.getSubType());
-        DocumentHelper.makeElement(root, "/custom/title").setText(blog.getSubType());
+        blog.setTitle(blog.getSubType());
         blog.setData(document);
         persistence.create(blog);
 
@@ -396,7 +398,7 @@ public class EditBlog implements AbcAction, Configurable {
             return actionAddStoryStep1(request, blog, env);
         }
 
-        boolean canContinue = setStoryTitle(params, root, env);
+        boolean canContinue = setStoryTitle(params, story, env);
         canContinue &= setStoryContent(params, root, env);
         canContinue &= setStoryCategory(params, story);
 
@@ -468,10 +470,9 @@ public class EditBlog implements AbcAction, Configurable {
         Relation relation = (Relation) env.get(VAR_STORY);
         Item story = (Item) relation.getChild();
         Document document = story.getData();
-        Node node = document.selectSingleNode("/data/name");
-        params.put(PARAM_TITLE, node.getText());
+        params.put(PARAM_TITLE, story.getTitle());
         String text = null;
-        node = document.selectSingleNode("/data/perex");
+        Node node = document.selectSingleNode("/data/perex");
         if (node!=null)
             text = node.getText();
         node = document.selectSingleNode("/data/content");
@@ -501,7 +502,7 @@ public class EditBlog implements AbcAction, Configurable {
         Document document = story.getData();
         Element root = document.getRootElement();
 
-        boolean canContinue = setStoryTitle(params, root, env);
+        boolean canContinue = setStoryTitle(params, story, env);
         canContinue &= setStoryContent(params, root, env);
         canContinue &= setStoryCategory(params, story);
 
@@ -658,6 +659,7 @@ public class EditBlog implements AbcAction, Configurable {
 
     /**
      * Final step of renaming blog.
+     * todo je to podporovano? nemelo by se to smazat>
      */
     protected String actionRenameBlogStep2(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -732,7 +734,7 @@ public class EditBlog implements AbcAction, Configurable {
         // run monitor
         if (unpublishedStory == null) {
             MonitorAction action = new MonitorAction(user, UserAction.REMOVE, ObjectType.BLOG, story, null);
-            String name = item.getData().selectSingleNode("/data/name").getText();
+            String name = item.getTitle();
             action.setProperty(Decorator.PROPERTY_NAME, name);
             MonitorPool.scheduleMonitorAction(action);
         }
@@ -755,9 +757,7 @@ public class EditBlog implements AbcAction, Configurable {
         Document document = blog.getData();
         Node node = document.selectSingleNode("//custom/page_title");
         params.put(PARAM_PAGE_TITLE, node.getText());
-        node = document.selectSingleNode("//custom/title");
-        if ( node!=null )
-            params.put(PARAM_TITLE, node.getText());
+        params.put(PARAM_TITLE, blog.getTitle());
         node = document.selectSingleNode("//custom/intro");
         if ( node!=null )
             params.put(PARAM_INTRO, node.getText());
@@ -774,7 +774,7 @@ public class EditBlog implements AbcAction, Configurable {
         Element root = blog.getData().getRootElement();
 
         boolean canContinue = setPageTitle(params, root, env);
-        canContinue &= setBlogTitle(params, root, env);
+        canContinue &= setBlogTitle(params, blog, env);
         canContinue &= setBlogIntro(params, root, env);
 
         if ( !canContinue )
@@ -1274,27 +1274,18 @@ public class EditBlog implements AbcAction, Configurable {
     /**
      * Sets title for blog. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param root XML document
+     * @param category category
      * @return false, if there is a major error.
      */
-    boolean setBlogTitle(Map params, Element root, Map env) {
-        Element custom = root.element("custom");
-        Element title = custom.element("title");
+    boolean setBlogTitle(Map params, Category category, Map env) {
         String s = (String) params.get(PARAM_TITLE);
         s = Misc.filterDangerousCharacters(s);
-        if (Misc.empty(s)) {
-            if (title!=null)
-                title.detach();
-        } else {
-            if ( s.indexOf("<")!=-1 ) {
-                params.put(PARAM_TITLE, "");
-                ServletUtils.addError(PARAM_TITLE, "Použití HTML značek je v titulku zakázáno!", env, null);
-                return false;
-            }
-            if (title==null)
-                title = custom.addElement("title");
-            title.setText(s);
+        if (! Misc.empty(s) && s.indexOf("<")!=-1 ) {
+            params.put(PARAM_TITLE, "");
+            ServletUtils.addError(PARAM_TITLE, "Použití HTML značek je v titulku zakázáno!", env, null);
+            return false;
         }
+        category.setTitle(s);
         return true;
     }
 
@@ -1436,10 +1427,10 @@ public class EditBlog implements AbcAction, Configurable {
     /**
      * Sets title for story. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param root XML document
+     * @param item item
      * @return false, if there is a major error.
      */
-    boolean setStoryTitle(Map params, Element root, Map env) {
+    boolean setStoryTitle(Map params, Item item, Map env) {
         String s = (String) params.get(PARAM_TITLE);
         if (Misc.empty(s)) {
             ServletUtils.addError(PARAM_TITLE, "Prosím zadejte hodnotu.", env, null);
@@ -1457,10 +1448,7 @@ public class EditBlog implements AbcAction, Configurable {
             return false;
         }
 
-        Element title = root.element("name");
-        if (title==null)
-            title = root.addElement("name");
-        title.setText(s);
+        item.setTitle(s);
         return true;
     }
 
@@ -1615,8 +1603,8 @@ public class EditBlog implements AbcAction, Configurable {
      */
     public static String generateStoryURL(Category blog, Item story) {
         try {
-            Element title = (Element) story.getData().selectSingleNode("/data/name");
-            String normalized = URLManager.enforceRelativeURL(title.getTextTrim());
+            String title = story.getTitle();
+            String normalized = URLManager.enforceRelativeURL(title);
             String storyUrl;
 
             storyUrl = Tools.getUrlForBlogStory(blog.getSubType(), story.getCreated(), 0) + normalized;
@@ -1630,11 +1618,10 @@ public class EditBlog implements AbcAction, Configurable {
 
     void sendDigestMessage(Relation relation) {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Category blog = (Category) relation.getParent();
         Item story = (Item) relation.getChild();
         Map data = new HashMap();
 
-        String title = Tools.xpath(story, "/data/name");
+        String title = story.getTitle();
         data.put(VAR_RELATION, relation);
         data.put(EmailSender.KEY_TO, AbcConfig.getBlogWatchEmail());
 //        data.put(EmailSender.KEY_RECEPIENT_UID, Integer.toString(user.getId())); TODO

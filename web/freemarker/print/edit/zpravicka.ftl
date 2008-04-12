@@ -29,7 +29,7 @@ a vygeneruje se z něj URL.</p>
 
 <h1>Náhled</h1>
 
-    <h2>${TOOL.xpath(RELATION.child,"/data/title")?if_exists}</h2>
+    <h2>${RELATION.child.title?if_exists}</h2>
     <@lib.showNews RELATION />
 
 <form action="${URL.make("/edit")}" method="POST" name="newsForm">

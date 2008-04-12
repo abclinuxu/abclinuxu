@@ -1,6 +1,6 @@
 <#include "../header.ftl">
 
-<h1>Seznam uživatelů pro <a href="${RELATION.url}">${TOOL.xpath(ITEM,"/data/name")?if_exists}</a></h1>
+<h1>Seznam uživatelů pro <a href="${RELATION.url}">${ITEM.title}</a></h1>
 
 <#assign usedby = ITEM.getProperty("used_by")>
 <ul>

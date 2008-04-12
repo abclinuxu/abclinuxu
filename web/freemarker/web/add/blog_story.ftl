@@ -28,7 +28,7 @@ spokojeni. Najdete jej v pravém menu.
  <h2>Náhled vašeho zápisu</h2>
 
  <div style="padding-left: 30pt">
-    <h2>${TOOL.xpath(PREVIEW, "/data/name")?if_exists}</h2>
+    <h3>${PREVIEW.title?if_exists}</h3>
     <p class="cl_inforadek">${DATE.show(PREVIEW.created, "CZ_SHORT")} |
         Přečteno: 0x
         <#if PARAMS.cid?exists>| ${CATEGORIES[PARAMS.cid]?if_exists}</#if>

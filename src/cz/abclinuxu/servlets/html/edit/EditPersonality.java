@@ -86,8 +86,10 @@ public class EditPersonality implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env))
+        if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         if ( action==null)
             throw new MissingArgumentException("Chybí parametr action!");
@@ -147,6 +149,8 @@ public class EditPersonality implements AbcAction {
             item.setInitialized(true);
             return FMTemplateSelector.select("EditPersonality", "add", env, request);
         }
+
+        item.setTitle(Tools.getPersonName(item));
 
         Versioning versioning = VersioningFactory.getVersioning();
         versioning.prepareObjectBeforeCommit(item, user.getId());
@@ -232,7 +236,6 @@ public class EditPersonality implements AbcAction {
         canContinue &= setFirstname(params, root, env);
         canContinue &= setSurname(params, item, root, env);
         canContinue &= setDescription(params, root, env);
-        canContinue &= setURL(relation, root, env); // local URL
         canContinue &= setWebUrl(params, root, env); // "more information" website (e.g. Wikipedia)
         canContinue &= setBirthDate(params, root);
         canContinue &= setDeathDate(params, root);
@@ -246,6 +249,8 @@ public class EditPersonality implements AbcAction {
             env.put(VAR_PREVIEW, item);
             return FMTemplateSelector.select("EditPersonality", "edit", env, request);
         }
+
+        item.setTitle(Tools.getPersonName(item));
 
         Versioning versioning = VersioningFactory.getVersioning();
         versioning.prepareObjectBeforeCommit(item, user.getId());

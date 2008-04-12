@@ -19,7 +19,7 @@
                     <span title="Počet lidí, kteří sledují tento záznam">(${TOOL.getMonitorCount(ITEM.data)})</span>
                     <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při úpravě záznamu.</span></a>
                 </li>
-                <form action="/hledani"><input type="text" class="text" name="dotaz" value="${TOOL.xpath(ITEM,"/data/name")}">
+                <form action="/hledani"><input type="text" class="text" name="dotaz" value="${ITEM.title}">
                     <input type="submit" class="button" value="Hledej">
                 </form>
                 <#if USER?exists>
@@ -57,9 +57,9 @@
     <p class="galerie">
         <#list images as image>
             <#if image.thumbnailPath?exists>
-                <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${TOOL.xpath(ITEM,"/data/name")?if_exists}" border="0"></a>
+                <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${ITEM.title}" border="0"></a>
             <#else>
-                <img src="${image.path}" alt="${TOOL.xpath(ITEM,"/data/name")?if_exists}">
+                <img src="${image.path}" alt="${ITEM.title}">
             </#if>
         </#list>
     </p>

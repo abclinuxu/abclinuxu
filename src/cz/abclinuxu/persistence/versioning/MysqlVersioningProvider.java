@@ -27,6 +27,7 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.data.GenericDataObject;
+import cz.abclinuxu.data.Item;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -167,6 +168,9 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
             }
         }
 
+        // store title
+        DocumentHelper.makeElement(copy, "/versioning/title").setText(obj.getTitle());
+
         try {
             con = persistance.getSQLConnection();
             statement = con.prepareStatement(insertVersion);
@@ -187,7 +191,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
 
     /**
      * Loads given document in selected version from versioning.
-     * @param obj object to be loaded and updated to contain same data like in specified revision, it must be initialized
+     * @param obj object to be loaded and updated to contain same data like in specified revision. It must be initialized
      * @param version version to be fetched
      * @throws VersionNotFoundException Thrown when either document or specified version doesn't exist.
      */
@@ -243,6 +247,27 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
                         Element value = (Element) iterIn.next();
                         obj.addProperty(key, value.getText());
                     }
+                }
+            }
+
+            Element elementTitle = versioning.element("title");
+            if (elementTitle != null) {
+                obj.setTitle(elementTitle.getText());
+                elementTitle.detach();
+            } else {
+                // todo docasne reseni, nez se zmigruji data v tabulce historie na novy format
+                elementTitle = (Element) document.selectSingleNode("/data/name");
+                if (elementTitle == null)
+                    elementTitle = (Element) document.selectSingleNode("/data/title");
+                if (elementTitle != null)
+                    obj.setTitle(elementTitle.getText());
+                else if (obj.getType() == Item.PERSONALITY) {
+                    StringBuffer sb = new StringBuffer();
+                    String name = document.getRootElement().elementTextTrim("firstname");
+                    if (name != null)
+                        sb.append(name).append(' ');
+                    sb.append(document.getRootElement().elementTextTrim("surname"));
+                    obj.setTitle(sb.toString());
                 }
             }
         } catch (SQLException e) {

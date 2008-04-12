@@ -1,5 +1,5 @@
 <#macro showSoftware(software, showGallery)>
-    <h1>${TOOL.xpath(software,"/data/name")?if_exists}</h1>
+    <h1>${software.title?if_exists}</h1>
 
     <div>
         ${TOOL.render(TOOL.element(software.data,"data/description"),USER?if_exists)}
@@ -101,9 +101,9 @@
             <p class="galerie">
                 <#list images as image>
                     <#if image.thumbnailPath?exists>
-                        <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${TOOL.xpath(software,"/data/name")?if_exists}" border="0"></a>
+                        <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${software.title?if_exists}" border="0"></a>
                     <#else>
-                        <img src="${image.path}" alt="${TOOL.xpath(software,"/data/name")?if_exists}">
+                        <img src="${image.path}" alt="${software.title?if_exists}">
                     </#if>
                 </#list>
             </p>

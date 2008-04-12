@@ -161,11 +161,13 @@ public class ViewUser implements AbcAction {
         Set<String> property = Collections.singleton(Integer.toString(user.getId()));
         Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_USED_BY, property);
         List<Relation> softwares = sqlTool.findItemRelationsWithTypeWithFilters(Item.SOFTWARE, null, filters);
+        Tools.syncList(softwares);
         env.put(VAR_SOFTWARE, softwares);
 
         // find user's favourite desktop screenshots
         filters = Collections.singletonMap(Constants.PROPERTY_FAVOURITED_BY, property);
         List<Relation> desktops = sqlTool.findItemRelationsWithTypeWithFilters(Item.SCREENSHOT, null, filters);
+        Tools.syncList(desktops);
         env.put(VAR_DESKTOPS, desktops);
 
         // find the last screenshot uploaded by this user

@@ -37,6 +37,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
+import cz.abclinuxu.utils.freemarker.Tools;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -46,6 +47,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Collections;
+import static cz.abclinuxu.servlets.Constants.PARAM_RELATION;
+import static cz.abclinuxu.servlets.Constants.PARAM_NAME;
 
 /**
  * This class is responsible for adding and
@@ -54,9 +57,7 @@ import java.util.Collections;
 public class EditAuthor implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditAuthor.class);
 
-    public static final String PARAM_RELATION = "rid";
     public static final String PARAM_SURNAME = "surname";
-    public static final String PARAM_NAME = "name";
     public static final String PARAM_NICKNAME = "nickname";
     public static final String PARAM_BIRTH_NUMBER = "birthNumber";
     public static final String PARAM_ACCOUNT_NUMBER = "accountNumber";
@@ -80,6 +81,11 @@ public class EditAuthor implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
+
+        if (ServletUtils.handleMaintainance(request, env)) {
+            response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
 
         if (action == null)
             throw new MissingArgumentException("Chybí parametr action!");
@@ -152,6 +158,7 @@ public class EditAuthor implements AbcAction {
             return FMTemplateSelector.select("EditAuthor", "add", env, request);
         }
 
+        item.setTitle(Tools.getPersonName(item));
         persistence.create(item);
 
         Relation relation = new Relation(new Category(Constants.CAT_AUTHORS), item, Constants.REL_AUTHORS);
@@ -239,6 +246,7 @@ public class EditAuthor implements AbcAction {
             return FMTemplateSelector.select("EditAuthor", "edit", env, request);
         }
 
+        item.setTitle(Tools.getPersonName(item));
         persistence.update(item);
 
         String url = proposeAuthorsUrl(root);

@@ -74,7 +74,7 @@ public class ItemDecorator implements Decorator, Configurable {
         if (name==null) {
             Persistence persistence = PersistenceFactory.getPersistence();
             Item driver = (Item) persistence.findById(action.relation.getChild());
-            name = driver.getData().selectSingleNode("/data/name").getText();
+            name = driver.getTitle();
         }
         env.put(VAR_NAME,name);
 
