@@ -1608,7 +1608,7 @@ public class MySqlPersistence implements Persistence {
             poll.setTotalVoters(resultSet.getInt(1));
             for (int i = 0; i < poll.getChoices().length; i++) {
                 PollChoice choice = poll.getChoices()[i];
-                choice.setCount(resultSet.getInt(1 + choice.getId()));
+                choice.setCount(resultSet.getInt(2 + choice.getId()));
             }
 
             cache.store(poll);
