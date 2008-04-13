@@ -282,8 +282,10 @@ public class MySqlPersistence implements Persistence {
             }
 
             resultSet = statement.executeQuery();
-            User o = new User(resultSet.getInt(1));
-            result.add(o);
+            while (resultSet.next()) {
+                User o = new User(resultSet.getInt(1));
+                result.add(o);
+            }
             return result;
         } catch ( SQLException e ) {
             throw new PersistenceException("Nemohu provést zadané vyhledávání!" + statement, e);
