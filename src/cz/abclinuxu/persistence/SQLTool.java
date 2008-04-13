@@ -1245,10 +1245,11 @@ public final class SQLTool implements Configurable {
         PreparedStatement statement = null;
         try {
             con = persistance.getSQLConnection();
-            String sql = "update "+persistance.getTable(obj)+" set zmeneno=? where cislo=?";
+            String sql = "update spolecne set zmeneno=? where typ=? and cislo=?";
             statement = con.prepareStatement(sql);
             statement.setTimestamp(1, new Timestamp(date.getTime()));
-            statement.setInt(2, obj.getId());
+            statement.setString(2, PersistenceMapping.getGenericObjectType(obj));
+            statement.setInt(3, obj.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání!", e);
