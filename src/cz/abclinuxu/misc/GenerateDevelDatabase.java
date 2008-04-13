@@ -92,6 +92,7 @@ public class GenerateDevelDatabase {
         Poll poll = (Poll) relation.getChild();
         poll.setClosed(false);
         app.dump(relation);
+        System.out.println();
 
         List<User> wikiAuthors = new ArrayList<User>(100);
 
@@ -100,26 +101,36 @@ public class GenerateDevelDatabase {
         Statement statement = con.createStatement();
         try {
             /* prenest vsechny sekce krome blogu */
-            statement.execute("insert into devel.kategorie select * from abc.kategorie where typ!=3");
-            statement.execute("insert into devel.relace select R.* from abc.relace R, abc.kategorie K where typ_potomka='K' and potomek=K.cislo and typ!=3");
+            int count = statement.executeUpdate("insert into devel.kategorie select * from abc.kategorie where typ!=3");
+            System.out.println(count);
+            count = statement.executeUpdate("insert into devel.relace select R.* from abc.relace R, abc.kategorie K where typ_potomka='K' and potomek=K.cislo and typ!=3");
+            System.out.println(count);
 
             /* prenest servery vcetne jejich odkazu */
-            statement.execute("insert into devel.server (cislo,jmeno,url) select cislo,jmeno,url from abc.server");
-            statement.execute("update devel.server set kontakt=''");
-            statement.execute("insert into devel.odkaz select * from abc.odkaz");
-            statement.execute("insert into devel.relace select * from abc.relace where typ_predka='S'");
+            count = statement.executeUpdate("insert into devel.server (cislo,jmeno,url) select cislo,jmeno,url from abc.server");
+            System.out.println(count);
+            count = statement.executeUpdate("update devel.server set kontakt=''");
+            System.out.println(count);
+            count = statement.executeUpdate("insert into devel.odkaz select * from abc.odkaz");
+            System.out.println(count);
+            count = statement.executeUpdate("insert into devel.relace select * from abc.relace where typ_predka='S'");
+            System.out.println(count);
 
             /* zkopirovat komentare k diskusim */
-            statement.execute("insert into devel.komentar select K.* from abc.komentar K, devel.zaznam Z where K.zaznam=Z.cislo");
+            count = statement.executeUpdate("insert into devel.komentar select K.* from abc.komentar K, devel.zaznam Z where K.zaznam=Z.cislo");
+            System.out.println(count);
 
             /* dynamic RSS polozka */
-            statement.execute("insert into devel.polozka values(59516,0,NULL,'<data><title>Dynamicka konfigurace</title></data>',1,now(),NULL)");
+            count = statement.executeUpdate("insert into devel.polozka values(59516,0,NULL,'<data><title>Dynamicka konfigurace</title></data>')");
+            System.out.println(count);
 
             /* konstanty data objektu */
-            statement.execute("insert into devel.konstanty select * from abc.konstanty");
+            count = statement.executeUpdate("insert into devel.konstanty select * from abc.konstanty");
+            System.out.println(count);
 
             /* prenest historii wiki dokumentu */
-            statement.execute("insert into devel.verze select V.* from abc.verze V, devel.relace R where R.typ_potomka=V.typ and R.potomek=V.cislo");
+            count = statement.executeUpdate("insert into devel.verze select V.* from abc.verze V, devel.relace R where R.typ_potomka=V.typ and R.potomek=V.cislo");
+            System.out.println(count);
             ResultSet resultSet = statement.executeQuery("select kdo from devel.verze");
             while (resultSet.next()) {
                 int id = resultSet.getInt(1);
@@ -130,16 +141,22 @@ public class GenerateDevelDatabase {
             for (User user : wikiAuthors) {
                 app.dump(user);
             }
+            System.out.println();
 
             /* prenest obsah tabulky spolecne pro vybrane polozky, zaznamy a kategorie */
-            statement.execute("replace into devel.spolecne select AC.* from abc.spolecne AC, devel.kategorie DK where AC.typ='K' and DK.cislo=AC.cislo");
-            statement.execute("replace into devel.spolecne select AC.* from abc.spolecne AC, devel.polozka DP where AC.typ='P' and DP.cislo=AC.cislo");
-            statement.execute("replace into devel.spolecne select AC.* from abc.spolecne AC, devel.zaznam DZ where AC.typ='Z' and DZ.cislo=AC.cislo");
-            statement.execute("replace into devel.spolecne select AC.* from abc.spolecne AC, devel.data DD where AC.typ='D' and DD.cislo=AC.cislo");
+            count = statement.executeUpdate("replace into devel.spolecne select AC.* from abc.spolecne AC, devel.kategorie DK where AC.typ='K' and DK.cislo=AC.cislo");
+            System.out.println(count);
+            count = statement.executeUpdate("replace into devel.spolecne select AC.* from abc.spolecne AC, devel.polozka DP where AC.typ='P' and DP.cislo=AC.cislo");
+            System.out.println(count);
+            count = statement.executeUpdate("replace into devel.spolecne select AC.* from abc.spolecne AC, devel.zaznam DZ where AC.typ='Z' and DZ.cislo=AC.cislo");
+            System.out.println(count);
+            count = statement.executeUpdate("replace into devel.spolecne select AC.* from abc.spolecne AC, devel.data DD where AC.typ='D' and DD.cislo=AC.cislo");
+            System.out.println(count);
 
             persistance.releaseSQLResources(con, statement, resultSet);
         } catch (SQLException e) {
-            log.error(e, e);
+            e.printStackTrace();
+            System.exit(1);
         }
     }
 
