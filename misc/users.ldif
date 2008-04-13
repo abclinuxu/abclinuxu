@@ -1,0 +1,1892 @@
+dn: cn=literakl,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: literakl
+sn: Leoš Literák
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=nijel,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: nijel
+sn: Michal Čihař
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=hwsoft,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: hwsoft
+sn: Petr Laščák
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=mike,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: mike
+sn: Michal Kubeček
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=lzap,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: lzap
+sn: Lukáš Zapletal
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=vkramar,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: vkramar
+sn: Václav Kramář
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=mtii,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: mtii
+sn: Martin Tichacek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=stafia,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: stafia
+sn: Stanislav Fiala
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=zajsoft,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: zajsoft
+sn: Miroslav Zajíc
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=gf256,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: gf256
+sn: Pavel Kysilka
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=maros,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: maros
+sn: Marián Kyral
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=butrus,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: butrus
+sn: Petr Tomášek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=pad,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: pad
+sn: Pavel Dobeš
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=vrabcak,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: vrabcak
+sn: Tomáš Tichý
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=skoladavid,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: skoladavid
+sn: David
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=m1c4a1,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: m1c4a1
+sn: Michal Špondr
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=christof,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: christof
+sn: Adam Rambousek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=the.max,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: the.max
+sn: david toman
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=tsunami,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: tsunami
+sn: Zdeněk Burda
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=jiri.b,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: jiri.b
+sn: Jirka B.
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=dracula,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: dracula
+sn: dracula
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=hassmanm,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: hassmanm
+sn: Martin Hassman
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=djaara,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: djaara
+sn: Jaroslav Bartoň
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=delphym,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: delphym
+sn: Daniel Mladek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=zabza,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: zabza
+sn: zabza
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=corwin78,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: corwin78
+sn: Michal Breškovec
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=valoun,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: valoun
+sn: Ondra Válek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=radfoj,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: radfoj
+sn: Radomír Fojtík
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=mraky,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: mraky
+sn: mraky
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=kratky,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: kratky
+sn: Robert Krátký
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=egg,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: egg
+sn: Vojtěch Hála
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=rstrade,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: rstrade
+sn: Dalibor Smolík
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=emdot,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: emdot
+sn: Martin Krauskopf (Emdot)
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=ffirewall,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: ffirewall
+sn: FFirewall
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=jkufner,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: jkufner
+sn: Josef Kufner
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=zstepanek,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: zstepanek
+sn: Zdeněk Štěpánek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=toka,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: toka
+sn: Tomáš Kavalek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=b0rmann,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: b0rmann
+sn: Andrej Ramašeuski
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=yin,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: yin
+sn: Matej 'Yin' Gagyi
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=8an,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: 8an
+sn: Lukáš Turek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=lefti,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: lefti
+sn: lefti
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=sniper,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: sniper
+sn: Ondrej
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=pasmen,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: pasmen
+sn: Tomáš Linhart
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=mimi_vx,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: mimi_vx
+sn: Mimi MIONS
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=zmatkar,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: zmatkar
+sn: ZmaTkar
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=ales.kapica,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: ales.kapica
+sn: Aleš Kapica
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=sfmortal,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: sfmortal
+sn: Martin Korous
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=haaja,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: haaja
+sn: Luboš Hájek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=jezekdavid,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: jezekdavid
+sn: David Ježek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=finn,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: finn
+sn: finn
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=saljack,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: saljack
+sn: Saljack
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=jose17,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: jose17
+sn: Jozef Říha
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=maxdevaine,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: maxdevaine
+sn: Max Devaine
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=tinkertrain,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: tinkertrain
+sn: Tinkertrain
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=cubeekk,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: cubeekk
+sn: Jakub Stonavský
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=shteffi,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: shteffi
+sn: Shteffi
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=blupix,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: blupix
+sn: Jiří Němec
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=marvec,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: marvec
+sn: Martin V.
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=rom,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: rom
+sn: roman
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=hubitch,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: hubitch
+sn: hubitch
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=xkesh,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: xkesh
+sn: Martin Tesař
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=zelial,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: zelial
+sn: zelial
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=kyosuke,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: kyosuke
+sn: Jakub Hegenbart
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=bwpow,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: bwpow
+sn: Samuel 'BWPOW' Kupka
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=michalvyskocil,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: michalvyskocil
+sn: Michal Vyskočil
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=blackhex,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: blackhex
+sn: Radek Bartoň
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=alium,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: alium
+sn: Alois Nešpor
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=vogo,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: vogo
+sn: Vojtěch Gondžala
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=redakce,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: redakce
+sn: Redakce
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=dejv,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: dejv
+sn: David Jaša
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=georgeino,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: georgeino
+sn: Jiří "Geo" Lužnický
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=zdila,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: zdila
+sn: Martin Zdila
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=lubosd,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: lubosd
+sn: Luboš Doležel
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=gunsenroses,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: gunsenroses
+sn: marian
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=marmax,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: marmax
+sn: Marian Stranecky
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=radekhladik,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: radekhladik
+sn: Radek Hladik
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=cosmic2,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: cosmic2
+sn: Tomas
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=spike411,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: spike411
+sn: Lukáš Polívka
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=vanek,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: vanek
+sn: Petr Vaněk
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=pavlikd,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: pavlikd
+sn: Dusan
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=wake,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: wake
+sn: Dominik Sauer
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=vencour,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: vencour
+sn: Vencour
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=bee,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: bee
+sn: Marek Bernát
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=kozzi,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: kozzi
+sn: Daniel Kozák
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=smajchl,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: smajchl
+sn: Michal Bůžek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=kovin,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: kovin
+sn: Petr Kovács
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=malevicovi,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: malevicovi
+sn: M&M Malevičovi
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=6xx,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: 6xx
+sn: Lukáš Jirkovský
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=odefix,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: odefix
+sn: OLDŘICH ŽÁK
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=cezz,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: cezz
+sn: Miroslav Prašil
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=mhb,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: mhb
+sn: Martin "mhb" Böhm
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=peterz,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: peterz
+sn: Petr Zelenka
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=hanzz,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: hanzz
+sn: Jan Kaluza
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=kavol,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: kavol
+sn: kavol
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=dunric,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: dunric
+sn: Dunric
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=jan.balak,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: jan.balak
+sn: Jan Balák
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=petr_p,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: petr_p
+sn: petr_p
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=sudji,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: sudji
+sn: Vilém Souček
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=masozravapalma,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: masozravapalma
+sn: Anežka Bubeníčková
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=landam,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: landam
+sn: Martin Landa
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=filip.jirsak,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: filip.jirsak
+sn: Filip Jirsák
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=wirth,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: wirth
+sn: Honza
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=trekker.dk,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: trekker.dk
+sn: trekker.dk
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=jiri.jakes,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: jiri.jakes
+sn: Jiří Jakeš
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=pajdus_gaj,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: pajdus_gaj
+sn: Petr Gajdůšek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=jeanvega,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: jeanvega
+sn: Jean VEGA
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=pzad,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: pzad
+sn: pzad
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=tomfi,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: tomfi
+sn: Tomáš
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=zenek,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: zenek
+sn: zenek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=dwatzke,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: dwatzke
+sn: David Watzke
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=janosh,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: janosh
+sn: Zdeněk Jančík
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=konecny.ondrej,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: konecny.ondrej
+sn: Ondřej Konečný
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=brandt,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: brandt
+sn: Helmut
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=hmisanek,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: hmisanek
+sn: Honza
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=merlyn,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: merlyn
+sn: Milan Bartoš
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=dum8d0g,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: dum8d0g
+sn: Martin Kopta
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=cemnotar,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: cemnotar
+sn: Jiří Mudruňka
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=darmonlor,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: darmonlor
+sn: Darmonlor
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=multi,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: multi
+sn: josef
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=cubic,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: cubic
+sn: Jakub Pavlista
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=jozin,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: jozin
+sn: tata
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=filo,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: filo
+sn: filo
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=rtn,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: rtn
+sn: PAVEL STANĚK
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=floydie,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: floydie
+sn: Floydie
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=fcelda,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: fcelda
+sn: fcelda
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=chulda,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: chulda
+sn: Tomas Janecek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=utrum,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: utrum
+sn: Radek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=holba,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: holba
+sn: zdenek
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=prdel,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: prdel
+sn: michal
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=johann_v_n,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: johann_v_n
+sn: experiment
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=emfou,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: emfou
+sn: Michal Jozef
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=lama-barney,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: lama-barney
+sn: Branislav Zahradník
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=botanicus,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: botanicus
+sn: Jakub Šťastný
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=kyknos,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: kyknos
+sn: Jakub Friedl
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=miloslav,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: miloslav
+sn: miloslav
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=andree,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: andree
+sn: Andreeee ;-)
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=messa,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: messa
+sn: Messa
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=michich,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: michich
+sn: Michal Schmidt
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=martin.petr,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: martin.petr
+sn: Martin Petr
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=kabakov,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: kabakov
+sn: kabakov
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=morpher,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: morpher
+sn: morpher
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=limoto,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: limoto
+sn: Jakub Lužný
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=ati,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: ati
+sn: ourednik
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=dvh,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: dvh
+sn: Dusan Halicky
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=marek.org,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: marek.org
+sn: Marek Stopka
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=picekm,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: picekm
+sn: freshmouse
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=ikarlos,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: ikarlos
+sn: ikarlos
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=gessle,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: gessle
+sn: Gessle
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=sendy-blu,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: sendy-blu
+sn: Stana
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=kubishta,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: kubishta
+sn: Jakub Talaš
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=infernits,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: infernits
+sn: Infernits
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=yac,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: yac
+sn: Jakub Ružička
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=xkucf03,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: xkucf03
+sn: František Kučera
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=inti,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: inti
+sn: Vladimír Černý
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=andering,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: andering
+sn: andrej
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=sturik,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: sturik
+sn: Lukáš
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=heydax,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: heydax
+sn: heydax
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=pushkin,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: pushkin
+sn: Karel Hruška
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=ses,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: ses
+sn: Jiří Jursa
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=lutze,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: lutze
+sn: Lu-Tze
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=vlastikroot,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: vlastikroot
+sn: Vlastimil Labský
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=okias,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: okias
+sn: okias
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=shidoshi,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: shidoshi
+sn: George
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=tomas011,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: tomas011
+sn: tomos kapo
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=oldrich,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: oldrich
+sn: Oldřich Šmehlík
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=posel,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: posel
+sn: Petr
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=hrachj,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: hrachj
+sn: Jenda
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=ash,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: ash
+sn: Ash__
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=unger,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: unger
+sn: robo
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=linux.pathfinder,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: linux.pathfinder
+sn: Linux.pathfinder
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=xeelee,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: xeelee
+sn: Lukáš Findeis
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
+dn: cn=aldys,ou=users,dc=stickfish,dc=net
+objectClass: stickfishUser
+objectClass: person
+cn: aldys
+sn: aldys
+userPassword: secret
+passwordHash: -906277200
+emailAddress: root@localhost
+registrationDate: 2008-04-04 23:23:SS
+registrationPortalID: www.abclinuxu.cz
+
