@@ -268,8 +268,12 @@ public class EditDiscussion implements AbcAction {
         if ( user!=null )
             discussion.setOwner(user.getId());
 
+        GenericObject parent = persistence.findById(relation.getChild());
+        String title = Tools.childName(parent) + " (diskuse)";
+        discussion.setTitle(title);
+
         persistence.create(discussion);
-        Relation relChild = new Relation(relation.getChild(), discussion, relation.getId());
+        Relation relChild = new Relation(parent, discussion, relation.getId());
         String url = relation.getUrl();
         if (url!=null) {
             if (url.charAt(url.length()-1)!='/') // zadne url by nemelo koncit na /
@@ -405,7 +409,7 @@ public class EditDiscussion implements AbcAction {
 
         // display discussed comment, only if it has title
         Comment parentThread = getDiscussedComment(params, discussion, persistence);
-        if ( parentThread.getTitle() != null )
+        if ( Tools.isQuestion(discussion) && parentThread.getTitle() != null )
             env.put(VAR_THREAD, parentThread);
         else {
             if (relation.getParent() instanceof Category) {
@@ -481,7 +485,7 @@ public class EditDiscussion implements AbcAction {
 
             // display discussed comment, only if it has title
             Comment thread = getDiscussedComment(params, discussion, persistence);
-            if (thread.getTitle() != null)
+            if (Tools.isQuestion(discussion) && thread.getTitle() != null) // todo druha podminka je asi zbytecna
                 env.put(VAR_THREAD, thread);
 
             return FMTemplateSelector.select("EditDiscussion", "reply", env, request);
