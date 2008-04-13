@@ -58,7 +58,7 @@ public class GenerateLdapImport {
         Writer writer = new FileWriter(file);
 
         String dbUrl = (defaultSchema) ? PersistenceFactory.defaultUrl : PersistenceFactory.defaultDevelUrl;
-        MySqlPersistence persistence = (MySqlPersistence) PersistenceFactory.getPersistence();
+        MySqlPersistence persistence = (MySqlPersistence) PersistenceFactory.getPersistence(dbUrl);
         Connection con = persistence.getSQLConnection();
         PreparedStatement statement;
         ResultSet resultSet;

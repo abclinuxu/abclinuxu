@@ -26,10 +26,7 @@ CREATE TABLE kategorie (
  cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
  typ SMALLINT,                                   -- typ kategorie
  podtyp VARCHAR(30) NULL,                        -- podtyp
- data LONGTEXT NOT NULL,                         -- XML s nazvem, ikonou, poznamkou ...
- pridal INT(6) NOT NULL,                         -- odkaz na uzivatele
- vytvoreno DATETIME,                             -- cas vytvoreni
- zmeneno TIMESTAMP NOT NULL                      -- cas posledni zmeny
+ data LONGTEXT NOT NULL                          -- XML s nazvem, ikonou, poznamkou ...
 );
 ALTER TABLE kategorie ADD INDEX in_podtyp (podtyp);
 ALTER TABLE kategorie ADD INDEX in_typ (typ);
@@ -42,12 +39,8 @@ CREATE TABLE polozka (
  cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
  typ SMALLINT,                                   -- typ polozky (druh, novinka, ..)
  podtyp VARCHAR(30) NULL,                        -- podtyp
- data LONGTEXT NOT NULL,                         -- XML s nazvem, ikonou, poznamkou ...
- pridal INT(6) NOT NULL,                         -- odkaz na uzivatele
- vytvoreno DATETIME,                             -- cas vytvoreni
- zmeneno TIMESTAMP NOT NULL                      -- cas posledni zmeny
+ data LONGTEXT NOT NULL                          -- XML s nazvem, ikonou, poznamkou ...
 );
-ALTER TABLE polozka ADD INDEX in_vytvoreno (vytvoreno);
 ALTER TABLE polozka ADD INDEX in_typ (typ);
 ALTER TABLE polozka ADD INDEX in_podtyp (podtyp);
 
@@ -60,12 +53,8 @@ CREATE TABLE zaznam (
  cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
  typ SMALLINT,                                   -- typ zaznamu (HW, SW, clanek ..)
  podtyp VARCHAR(30) NULL,                        -- podtyp
- data LONGTEXT NOT NULL,                         -- XML s nazvem, poznamkou ...
- pridal INT(6) NOT NULL,                         -- odkaz na uzivatele
- vytvoreno DATETIME,                             -- cas vytvoreni
- zmeneno TIMESTAMP NOT NULL                      -- cas posledni zmeny
+ data LONGTEXT NOT NULL                          -- XML s nazvem, poznamkou ...
 );
-ALTER TABLE zaznam ADD INDEX in_zmeneno (zmeneno);
 ALTER TABLE zaznam ADD INDEX in_typ (typ);
 ALTER TABLE zaznam ADD INDEX in_podtyp (podtyp);
 
@@ -74,12 +63,8 @@ CREATE TABLE data (
  cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
  typ SMALLINT,                                   -- typ polozky (druh, novinka, ..)
  podtyp VARCHAR(30) NULL,                        -- podtyp
- data LONGTEXT NOT NULL,                         -- XML s cestou k soboru, nazvem, ikonou, poznamkou ...
- pridal INT(6) NOT NULL,                         -- odkaz na uzivatele
- vytvoreno DATETIME,                             -- cas vytvoreni
- zmeneno TIMESTAMP NOT NULL                      -- cas posledni zmeny
+ data LONGTEXT NOT NULL                          -- XML s cestou k soboru, nazvem, ikonou, poznamkou ...
 );
-ALTER TABLE data ADD INDEX in_vytvoreno (vytvoreno);
 ALTER TABLE data ADD INDEX in_typ (typ);
 ALTER TABLE data ADD INDEX in_podtyp (podtyp);
 

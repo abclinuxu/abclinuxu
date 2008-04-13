@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -61,6 +62,7 @@ public class ViewTag implements AbcAction {
     public static final String VAR_DOCUMENTS = "DOCUMENTS";
 
     private Pattern reTagId = Pattern.compile(UrlUtils.PREFIX_TAGS + "/" + "([^/?]+)");
+    static final Qualifier[] QUALIFIERS_ARRAY = new Qualifier[]{};
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         SQLTool sqlTool = SQLTool.getInstance();
@@ -71,8 +73,15 @@ public class ViewTag implements AbcAction {
         parents.add(new Link("Štítky", UrlUtils.PREFIX_TAGS, null));
         env.put(ShowObject.VAR_PARENTS, parents);
 
+        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
+        int count = Misc.getPageSize(50, 150, env, null);
+        boolean ascendingOrder = true;
+        String sDir = (String) params.get(Constants.PARAM_ORDER_DIR);
+        if (sDir != null && Constants.ORDER_DIR_DESC.equals(sDir))
+            ascendingOrder = false;
+
         Matcher matcher = reTagId.matcher(url);
-        if (matcher.find()) {
+        if (matcher.find()) { // tag detail
             String id = matcher.group(1);
             Tag tag = TagTool.getById(id);
             if (tag == null)
@@ -81,21 +90,34 @@ public class ViewTag implements AbcAction {
             env.put(VAR_TAG, tag);
             parents.add(new Link(tag.getTitle(), UrlUtils.PREFIX_TAGS + "/" + tag.getId(), null));
 
-            int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-            int count = Misc.getPageSize(50, 150, env, null);
-            int total = sqlTool.countRelationsWithTag(id, null); // todo je tag.getUsage() spolehlivym ekvivalentem?
-            // todo nevolat sqlTool, pokud je usage == 0
-//            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
-            Qualifier[] qualifiers = new Qualifier[]{new LimitQualifier(from, count)}; // todo sorting, issue: data from two tables - polozka, kategorie
-            List<Relation> relations = sqlTool.findRelationsWithTag(id, qualifiers);
-            Paging paging = new Paging(relations, from, count, total);
-            env.put(VAR_DOCUMENTS, paging);
+            int total = tag.getUsage();
+            List<Relation> relations;
+            if (total != 0) {
+                Qualifier[] qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
+                relations = sqlTool.findRelationsWithTag(id, qualifiers);
+            } else
+                relations = Collections.emptyList();
+            Paging found = new Paging(relations, from, count, total);
+            env.put(VAR_DOCUMENTS, found);
+
+            StringBuffer sb = new StringBuffer("&amp;count=").append(found.getPageSize());
+            if (found.isQualifierSet(Qualifier.SORT_BY_CREATED.toString()))
+                sb.append("&amp;").append(Constants.PARAM_ORDER_BY).append("=").append(Constants.ORDER_BY_CREATED);
+            else if (found.isQualifierSet(Qualifier.SORT_BY_UPDATED.toString()))
+                sb.append("&amp;").append(Constants.PARAM_ORDER_BY).append("=").append(Constants.ORDER_BY_UPDATED);
+            else if (found.isQualifierSet(Qualifier.SORT_BY_TITLE.toString()))
+                sb.append("&amp;").append(Constants.PARAM_ORDER_BY).append("=").append(Constants.ORDER_BY_TITLE);
+
+            if (found.isQualifierSet(Qualifier.ORDER_DESCENDING.toString()))
+                sb.append("&amp;").append(Constants.PARAM_ORDER_DIR).append("=").append(Constants.ORDER_DIR_DESC);
+            else if (found.isQualifierSet(Qualifier.ORDER_ASCENDING.toString()))
+                sb.append("&amp;").append(Constants.PARAM_ORDER_DIR).append("=").append(Constants.ORDER_DIR_ASC);
+
+            env.put(VAR_URL_BEFORE_FROM, "/stitky/" + tag.getId() + "?from=");
+            env.put(VAR_URL_AFTER_FROM, sb.toString());
 
             return FMTemplateSelector.select("Tags", "detail", env, request);
-        } else {
-            int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-            int count = Misc.getPageSize(30, 500, env, null);
-
+        } else { // list of tags
             TagTool.ListOrder orderBy = TagTool.ListOrder.BY_TITLE;
             String sBy = (String) params.get(Constants.PARAM_ORDER_BY);
             if (sBy != null) {
@@ -104,11 +126,6 @@ public class ViewTag implements AbcAction {
                 else if (Constants.ORDER_BY_COUNT.equals(sBy))
                     orderBy = TagTool.ListOrder.BY_USAGE;
             }
-
-            boolean ascendingOrder = true;
-            String sDir = (String) params.get(Constants.PARAM_ORDER_DIR);
-            if (sDir != null && Constants.ORDER_DIR_DESC.equals(sDir))
-                ascendingOrder = false;
 
             List<Tag> tags = TagTool.list(from, count, orderBy, ascendingOrder);
             Paging paging = new Paging(tags, from, count, TagTool.getTagsCount());
@@ -133,5 +150,48 @@ public class ViewTag implements AbcAction {
 
             return FMTemplateSelector.select("Tags", "list", env, request);
         }
+    }
+
+    /**
+     * Gets qualifiers, which user might overwrote in params.
+     * @param params Map of parameters.
+     * @param sortBy Optional sortBy Qualifier.
+     * @param sortDir Optional sort direction Qualifier.
+     * @param fromRow Optional first row of data to be fetched.
+     * @param rowCount 0 means do not set LimiQualifier. Otherwise it sets size of page to be fetched.
+     * @return Qualifiers.
+     */
+    public static Qualifier[] getQualifiers(Map params, Qualifier sortBy, Qualifier sortDir, int fromRow, int rowCount) {
+        String sBy = (String) params.get(Constants.PARAM_ORDER_BY);
+        if (sBy != null && sortBy != null) {
+            if (Constants.ORDER_BY_CREATED.equals(sBy))
+                sortBy = Qualifier.SORT_BY_CREATED;
+            else if (Constants.ORDER_BY_UPDATED.equals(sBy))
+                sortBy = Qualifier.SORT_BY_UPDATED;
+            else if (Constants.ORDER_BY_TITLE.equals(sBy))
+                sortBy = Qualifier.SORT_BY_TITLE;
+        }
+
+        String sDir = (String) params.get(Constants.PARAM_ORDER_DIR);
+        if (sDir != null) {
+            if (Constants.ORDER_DIR_ASC.equals(sDir))
+                sortDir = Qualifier.ORDER_ASCENDING;
+            else if (Constants.ORDER_DIR_DESC.equals(sDir))
+                sortDir = Qualifier.ORDER_DESCENDING;
+        }
+
+        LimitQualifier limit = null;
+        if (rowCount > 0)
+            limit = new LimitQualifier(fromRow, rowCount);
+
+        List qualifiers = new ArrayList(3);
+        if (sortBy != null)
+            qualifiers.add(sortBy);
+        if (sortDir != null)
+            qualifiers.add(sortDir);
+        if (limit != null)
+            qualifiers.add(limit);
+
+        return (Qualifier[]) qualifiers.toArray(QUALIFIERS_ARRAY);
     }
 }

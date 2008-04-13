@@ -25,6 +25,7 @@ public class Qualifier {
     public static final Qualifier SORT_BY_CREATED = new Qualifier("SORT_BY_CREATED");
     public static final Qualifier SORT_BY_UPDATED = new Qualifier("SORT_BY_UPDATED");
     public static final Qualifier SORT_BY_WHEN = new Qualifier("SORT_BY_WHEN");
+    public static final Qualifier SORT_BY_TITLE = new Qualifier("SORT_BY_TITLE");
     public static final Qualifier SORT_BY_ID = new Qualifier("SORT_BY_ID");
     public static final Qualifier ORDER_ASCENDING = new Qualifier("ORDER_ASCENDING");
     public static final Qualifier ORDER_DESCENDING = new Qualifier("ORDER_DESCENDING");

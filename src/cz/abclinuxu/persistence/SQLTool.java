@@ -862,7 +862,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countArticleRelationsByAuthor(int authorId) {
-	    StringBuffer sb = new StringBuffer((String) sql.get(COUNT_ARTICLES_BY_AUTHOR));
+	    StringBuffer sb = new StringBuffer(sql.get(COUNT_ARTICLES_BY_AUTHOR));
         List params = new ArrayList();
         params.add(authorId);
         return loadNumber(sb.toString(), params);
@@ -2089,6 +2089,10 @@ public final class SQLTool implements Configurable {
                 sb.append(" order by ");
                 addTableNick(Field.ID, fieldMapping, defaultTableNick, sb);
                 sb.append("cislo");
+            } else if (qualifier.equals(Qualifier.SORT_BY_TITLE)) {
+                sb.append(" order by ");
+                addTableNick(Field.TITLE, fieldMapping, defaultTableNick, sb);
+                sb.append("jmeno");
             } else if (qualifier.equals(Qualifier.ORDER_ASCENDING)) {
                 sb.append(" asc");
             } else if (qualifier.equals(Qualifier.ORDER_DESCENDING)) {
@@ -2113,7 +2117,7 @@ public final class SQLTool implements Configurable {
     private void addTableNick(Field field, Map<Field, String> fieldMapping, String defaultTableNick, StringBuffer sb) {
         String tableNick = null;
         if (fieldMapping != null)
-            tableNick = (String) fieldMapping.get(field);
+            tableNick = fieldMapping.get(field);
         if (tableNick == null)
             tableNick = field.getDefaultTableNick();
         if (tableNick == null)

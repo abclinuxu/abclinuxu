@@ -125,7 +125,6 @@ public class GenerateDevelDatabase {
                 int id = resultSet.getInt(1);
                 wikiAuthors.add(new User(id));
             }
-            persistance.releaseSQLResources(con, statement, resultSet);
 
             /* prenest uzivatele vcetne jejich blogu */
             for (User user : wikiAuthors) {
@@ -133,7 +132,12 @@ public class GenerateDevelDatabase {
             }
 
             /* prenest obsah tabulky spolecne pro vybrane polozky, zaznamy a kategorie */
-            // TODO
+            statement.execute("replace into devel.spolecne select AC.* from abc.spolecne AC, devel.kategorie DK where AC.typ='K' and DK.cislo=AC.cislo");
+            statement.execute("replace into devel.spolecne select AC.* from abc.spolecne AC, devel.polozka DP where AC.typ='P' and DP.cislo=AC.cislo");
+            statement.execute("replace into devel.spolecne select AC.* from abc.spolecne AC, devel.zaznam DZ where AC.typ='Z' and DZ.cislo=AC.cislo");
+            statement.execute("replace into devel.spolecne select AC.* from abc.spolecne AC, devel.data DD where AC.typ='D' and DD.cislo=AC.cislo");
+
+            persistance.releaseSQLResources(con, statement, resultSet);
         } catch (SQLException e) {
             log.error(e, e);
         }

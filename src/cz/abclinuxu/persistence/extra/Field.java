@@ -42,6 +42,9 @@ public class Field {
                                            PersistenceMapping.Table.COMMENT, PersistenceMapping.Table.RELATION,
                                            PersistenceMapping.Table.SERVER, PersistenceMapping.Table.LINK,
                                            PersistenceMapping.Table.USER, PersistenceMapping.Table.DATA});
+    public static final Field TITLE = new Field("TITLE", "S",
+            new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
+                                           PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
     public static final Field DATA = new Field("DATA", null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.POLL,

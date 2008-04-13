@@ -609,7 +609,7 @@ public class FeedGenerator implements Configurable {
                 SyndEntry entry;
 
                 List qualifiers = new ArrayList();
-                qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(blog.getOwner())));
+                qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner()));
                 qualifiers.add(Qualifier.SORT_BY_CREATED);
                 qualifiers.add(Qualifier.ORDER_DESCENDING);
                 qualifiers.add(new LimitQualifier(0, feedLength));
