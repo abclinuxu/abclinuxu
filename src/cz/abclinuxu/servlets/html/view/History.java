@@ -28,6 +28,9 @@ import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.exceptions.*;
+import cz.abclinuxu.exceptions.SecurityException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -149,6 +152,12 @@ public class History implements AbcAction {
 
         } else if ( VALUE_TYPE_DISCUSSION.equalsIgnoreCase(type) ) {
             if (uid > 0 && VALUE_FILTER_LAST.equals(filter)) {
+                User user = (User) env.get(Constants.VAR_USER);
+                if (user == null)
+                    return FMTemplateSelector.select("ViewUser", "login", env, request);
+                if (user.getId() != uid)
+                    throw new SecurityException("Není povoleno šmírovat jiné uživatele!");
+
                 qualifiers = getQualifiers(params, Qualifier.SORT_BY_WHEN, Qualifier.ORDER_DESCENDING, from, count);
                 total = sqlTool.countLastSeenDiscussionRelationsBy(uid);
                 data = sqlTool.findLastSeenDiscussionRelationsBy(uid, qualifiers);
