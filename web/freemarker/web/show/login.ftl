@@ -10,7 +10,7 @@
     z kteréhokoliv těchto serverů. Pokud jste se ještě na žádném z techto serverů nezaregistrovali,
     využijte jednoduchého <a href="${URL.noPrefix("/EditUser?action=register")}">registračního formuláře</a>.
     Registrace je opravdu jednoduchá, zabere jen okamžik vašeho času a přinese vám mnoho výhod oproti
-    neregsitrovaným uživatelům. Pokud jste své přihlašovací údaje zapomněli, kontaktuje <a href="/pozadavky">administrátory</a>.
+    neregistrovaným uživatelům. Pokud jste své přihlašovací údaje zapomněli, kontaktuje <a href="/pozadavky">administrátory</a>.
 </p>
 
 <form action="${REQUEST_URI}" method="POST">
