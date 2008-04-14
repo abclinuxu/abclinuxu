@@ -409,7 +409,7 @@ public class EditDiscussion implements AbcAction {
 
         // display discussed comment, only if it has title
         Comment parentThread = getDiscussedComment(params, discussion, persistence);
-        if ( Tools.isQuestion(discussion) && parentThread.getTitle() != null )
+        if ( Tools.isQuestion(discussion) || parentThread.getId() != 0 )
             env.put(VAR_THREAD, parentThread);
         else {
             if (relation.getParent() instanceof Category) {
@@ -485,7 +485,7 @@ public class EditDiscussion implements AbcAction {
 
             // display discussed comment, only if it has title
             Comment thread = getDiscussedComment(params, discussion, persistence);
-            if (Tools.isQuestion(discussion) && thread.getTitle() != null) // todo druha podminka je asi zbytecna
+            if (Tools.isQuestion(discussion) || thread.getId() != 0)
                 env.put(VAR_THREAD, thread);
 
             return FMTemplateSelector.select("EditDiscussion", "reply", env, request);
@@ -497,7 +497,7 @@ public class EditDiscussion implements AbcAction {
             duplicate = dizRecord.findComment(comment) != null;
             dizRecord.addThread(comment);
         } else {
-            Comment parent = dizRecord.getComment(comment.getParent().intValue());
+            Comment parent = dizRecord.getComment(comment.getParent());
             duplicate = parent.findComment(comment) != null;
             parent.addChild(comment);
         }
