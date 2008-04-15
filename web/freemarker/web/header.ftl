@@ -222,11 +222,15 @@
             </div></div> <!-- ps, s -->
         </div> <!-- obal_ps -->
         <#if URL.prefix=='/hardware' || URL.prefix=='/software'>
-             </div>
+             </div> <!-- hw-sloupec, sw-sloupec -->
         </#if>
     </#if>
 
         <div class="st" id="st"><a name="obsah"></a>
+
+        <#if URL.prefix=='/clanky'>
+             <@lib.advertisement id="clanky-top" />
+        </#if>
 
         <#if PARENTS?exists>
           <div class="pwd-box">
