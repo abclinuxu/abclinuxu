@@ -1712,7 +1712,7 @@ public class MySqlPersistence implements Persistence {
                 throw new PersistenceException("Nepodařilo se uložit změny v "+obj.toString()+" do databáze!");
 
             statement.close();
-            statement = con.prepareStatement("UPDATE spolecne SET jmeno=?,pridal=?,vytvoreno=? WHERE typ=? and cislo=?");
+            statement = con.prepareStatement("UPDATE spolecne SET jmeno=?,pridal=?,vytvoreno=?,zmeneno=now() WHERE typ=? and cislo=?");
             statement.setString(1, obj.getTitle());
             statement.setInt(2, obj.getOwner());
             statement.setTimestamp(3, new Timestamp(obj.getCreated().getTime()));
