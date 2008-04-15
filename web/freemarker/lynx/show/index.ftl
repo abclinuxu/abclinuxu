@@ -30,7 +30,7 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
 <ul>
  <#list DRIVERS as rel>
   <li><a href="${rel.url?default("/ovladace/show/"+rel.id)}">
-  ${TOOL.xpath(rel.child.title}</a></li>
+  ${TOOL.xpath(rel.child.title)}</a></li>
  </#list>
  <li><a href="/ovladace">&gt;&gt;</a></li>
 </ul>
