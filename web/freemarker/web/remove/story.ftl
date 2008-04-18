@@ -16,7 +16,7 @@ všechny případné komentáře zápisu.
  <h1 class="st_nadpis">Náhled vašeho zápisu</h1>
 
 <div style="padding-left: 30pt">
-    <h2>${STORY.child.title)}</h2>
+    <h2>${STORY.child.title}</h2>
     <p class="cl_inforadek">${DATE.show(STORY.child.created, "CZ_SHORT")} |
         Přečteno: ${TOOL.getCounterValue(STORY.child,"read")}x
         <#assign category = STORY.child.subType?default("UNDEF")>
