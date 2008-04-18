@@ -520,7 +520,7 @@
                             <entry key="feedUri17" value="http://www.suseportal.cz/node/feed"/>
                             <entry key="feedUri18" value="http://www.chip.cz/texty/feed.rss"/>
                             <entry key="feedUri19" value="http://www.svethardware.cz/export.jsp?format=rss"/>
-                            <entry key="feedUri20" value="http://www.linuxexpres.cz/modules/rss/rss.php"/>
+                            <entry key="feedUri20" value="http://www.linuxexpres.cz/rss/clanky"/>
                             <entry key="feedUri21" value="http://linuxsoft.cz/export/linuxsoft_article_cz.rss"/>
                             <entry key="feedUri22" value="http://kernel.org/kdist/rss.xml"/>
                         </map>
