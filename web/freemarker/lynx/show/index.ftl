@@ -40,7 +40,7 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
 <ul>
  <#list HARDWARE as rel>
   <li><a href="/hardware/show/${rel.id}">
-  ${TOOL.xpath(rel.child.title}</a></li>
+  ${TOOL.xpath(rel.child.title)}</a></li>
  </#list>
  <li><a href="/History?type=hardware&from=0&count=25">&gt;&gt;</a></li>
 </ul>
