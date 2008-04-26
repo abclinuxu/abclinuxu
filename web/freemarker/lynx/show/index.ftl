@@ -87,7 +87,7 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
      <li>
      <#assign story=relation.child, blog=relation.parent>
      <#assign url=TOOL.getUrlForBlogStory(relation)>
-     <#assign title=blog.title")?default("UNDEF")>
+     <#assign title=blog.title?default("UNDEF")>
      <#assign CHILDREN=TOOL.groupByType(story.children)>
      <#if CHILDREN.discussion?exists>
        <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
