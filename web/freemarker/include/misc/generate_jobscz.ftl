@@ -4,7 +4,7 @@
 <div class="s_sekce">
     <ul>
     <#list ITEMS as item>
-        <li><a href="${item.url}?partner=abclinuxu" rel="nofollow">${item.positionName}</a></li>
+        <li><a href="http://www.${item.url}?partner=abclinuxu" rel="nofollow">${item.positionName}</a></li>
     </#list>
     </ul>
 </div>
