@@ -4,7 +4,7 @@
 
 <p>
     Tato stránka slouží k nahrání snímku vašeho desktopu. Maximální velikost obrázku
-    je omezena na půl megabajtu, podporovány jsou formáty JPG, PNG a GIF (pro obrázky
+    je omezena na 1&nbsp;megabajt, podporovány jsou formáty JPG, PNG a GIF (pro obrázky
     desktopů je obvykle nejvhodnější formát PNG). Nahraný obrázek již nepůjde změnit,
     budete moci upravit jen titulek a popis. Desktop je možné smazat, jen dokud pod ním
     nejsou cizí komentáře. Jméno distribuce do titulku obvykle nepatří, důležitější
