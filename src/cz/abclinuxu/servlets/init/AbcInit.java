@@ -42,6 +42,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+//import javax.xml.ws.Endpoint;
 import java.io.IOException;
 import java.util.*;
 import java.util.prefs.Preferences;
@@ -60,6 +61,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_RSS_GENERATOR = "rss.generator";
     public static final String PREF_RSS_OKSYSTEM = "rss.oksystem";
     public static final String PREF_RSS_JOBPILOT = "rss.jobpilot";
+    public static final String PREF_RSS_JOBSCZ = "rss.jobcz";
     public static final String PREF_VARIABLE_FETCHER = "variable.fetcher";
     public static final String PREF_POOL_MONITOR = "pool.monitor";
     public static final String PREF_ABC_MONITOR = "abc.monitor";
@@ -71,12 +73,14 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_UPDATE_STATISTICS = "update.statistics";
     public static final String PREF_JOB_OFFER_MANAGER = "job.offer.manager";
     public static final String PREF_USER_SCORE_SETTER = "user.score.setter";
+    public static final String PREF_USERS_DEPLOY_PATH = "deploy.path.users";
 
     Timer scheduler, slowScheduler;
     VariableFetcher fetcher;
-    private Map<String,Boolean> services = new HashMap<String, Boolean>(16, 1.0f);
-    private Map<String,Integer> delays = new HashMap<String, Integer>(16, 1.0f);
-    private Map<String, Integer> periods = new HashMap<String, Integer>(16, 1.0f);
+    private Map<String,Boolean> services = new HashMap<String, Boolean>(20, 1.0f);
+    private Map<String,Integer> delays = new HashMap<String, Integer>(20, 1.0f);
+    private Map<String, Integer> periods = new HashMap<String, Integer>(20, 1.0f);
+    String endpointUrlServices;
     static AbcInit instance;
 
     public AbcInit() {
@@ -94,6 +98,9 @@ public class AbcInit extends HttpServlet implements Configurable {
         String tmp = getInitParameter("PREFERENCES");
         ConfigurationManager.init(tmp);
         ConfigurationManager.getConfigurator().configureMe(this);
+
+//        Endpoint.publish(endpointUrlServices, new UserAccountServiceImpl());
+//        Endpoint.publish("/hello", new HelloWorldImpl());
 
         fetcher = VariableFetcher.getInstance();
         fetcher.run();
@@ -130,6 +137,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         startLinksUpdate();
         startOKSystemUpdate();
         startJobPilotUpdate();
+        startJobsCzUpdate();
         startGenerateLinks();
         startPoolMonitor();
         startSendingWeeklyEmails();
@@ -185,6 +193,20 @@ public class AbcInit extends HttpServlet implements Configurable {
         int delay = getDelay(PREF_RSS_JOBPILOT);
         int period = getPeriod(PREF_RSS_JOBPILOT);
         slowScheduler.schedule(new JobPilotFetcher(), delay, period);
+    }
+
+    /**
+     * Update Jobs.cz RSS.
+     */
+    protected void startJobsCzUpdate() {
+        if ( !isSet(PREF_RSS_JOBSCZ) ) {
+            log.info("Jobs.cz RSS monitor configured not to run");
+            return;
+        }
+        log.info("Scheduling Jobs.cz RSS monitor");
+        int delay = getDelay(PREF_RSS_JOBSCZ);
+        int period = getPeriod(PREF_RSS_JOBSCZ);
+        slowScheduler.schedule(new JobsCzFetcher(), delay, period);
     }
 
     /**
@@ -416,6 +438,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         services.put(PREF_WATCHED_DISCUSSIONS_CLEANER, prefs.getBoolean(PREF_START + PREF_WATCHED_DISCUSSIONS_CLEANER, true));
         services.put(PREF_RSS_OKSYSTEM, prefs.getBoolean(PREF_START + PREF_RSS_OKSYSTEM, true));
         services.put(PREF_RSS_JOBPILOT, prefs.getBoolean(PREF_START + PREF_RSS_JOBPILOT, true));
+        services.put(PREF_RSS_JOBSCZ, prefs.getBoolean(PREF_START + PREF_RSS_JOBSCZ, true));
         services.put(PREF_UPDATE_STATISTICS, prefs.getBoolean(PREF_START + PREF_UPDATE_STATISTICS, true));
         services.put(PREF_JOB_OFFER_MANAGER, prefs.getBoolean(PREF_START + PREF_JOB_OFFER_MANAGER, false));
         services.put(PREF_USER_SCORE_SETTER, prefs.getBoolean(PREF_START + PREF_USER_SCORE_SETTER, false));
@@ -427,6 +450,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         delays.put(PREF_WATCHED_DISCUSSIONS_CLEANER, prefs.getInt(PREF_WATCHED_DISCUSSIONS_CLEANER + PREF_DELAY, 60));
         delays.put(PREF_RSS_OKSYSTEM, prefs.getInt(PREF_RSS_OKSYSTEM + PREF_DELAY, 60));
         delays.put(PREF_RSS_JOBPILOT, prefs.getInt(PREF_RSS_JOBPILOT + PREF_DELAY, 60));
+        delays.put(PREF_RSS_JOBSCZ, prefs.getInt(PREF_RSS_JOBSCZ + PREF_DELAY, 60));
         delays.put(PREF_UPDATE_STATISTICS, prefs.getInt(PREF_UPDATE_STATISTICS + PREF_DELAY, 60));
         delays.put(PREF_JOB_OFFER_MANAGER, prefs.getInt(PREF_JOB_OFFER_MANAGER + PREF_DELAY, 60));
 
@@ -437,8 +461,11 @@ public class AbcInit extends HttpServlet implements Configurable {
         periods.put(PREF_WATCHED_DISCUSSIONS_CLEANER, prefs.getInt(PREF_WATCHED_DISCUSSIONS_CLEANER + PREF_PERIOD, 60));
         periods.put(PREF_RSS_OKSYSTEM, prefs.getInt(PREF_RSS_OKSYSTEM + PREF_PERIOD, 60));
         periods.put(PREF_RSS_JOBPILOT, prefs.getInt(PREF_RSS_JOBPILOT + PREF_PERIOD, 60));
+        periods.put(PREF_RSS_JOBSCZ, prefs.getInt(PREF_RSS_JOBSCZ + PREF_PERIOD, 60));
         periods.put(PREF_UPDATE_STATISTICS, prefs.getInt(PREF_UPDATE_STATISTICS + PREF_PERIOD, 60));
         periods.put(PREF_JOB_OFFER_MANAGER, prefs.getInt(PREF_JOB_OFFER_MANAGER + PREF_PERIOD, 60));
+
+        endpointUrlServices = prefs.get(PREF_USERS_DEPLOY_PATH, "/users");
     }
 
     /**
@@ -446,7 +473,7 @@ public class AbcInit extends HttpServlet implements Configurable {
      */
     protected boolean isSet(String name) {
         Boolean aBoolean = services.get(name);
-        return aBoolean != null && aBoolean;
+        return aBoolean != null && aBoolean.booleanValue();
     }
 
     /**

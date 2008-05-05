@@ -477,6 +477,12 @@
                             <entry key="max" value="5" />
                         </map>
                     </node>
+                    <node name="JobsCzFetcher">
+                        <map>
+                            <entry key="file" value="WEB-INF/freemarker/include/jobscz.txt"/>
+                            <entry key="uri" value="http://exporter.lmc.cz/telcoit_titulka_xml.exp"/>
+                        </map>
+                    </node>
                     <node name="JobPilotFetcher">
                         <map>
                             <entry key="file" value="WEB-INF/freemarker/include/jobpilot.txt"/>
@@ -621,6 +627,9 @@
                                 <entry key="start.rss.jobpilot" value="@START.RSS.JOBPILOT@"/>
                                 <entry key="rss.jobpilot.delay" value="180"/>
                                 <entry key="rss.jobpilot.period" value="7200"/>
+                                <entry key="start.rss.jobscz" value="@START.RSS.JOBSCZ@"/>
+                                <entry key="rss.jobscz.delay" value="50"/>
+                                <entry key="rss.jobscz.period" value="1800"/>
                                 <entry key="start.variable.fetcher" value="@START.VARIABLE.FETCHER@"/>
                                 <entry key="variable.fetcher.delay" value="0"/>
                                 <entry key="variable.fetcher.period" value="@VARIABLE.FETCHER.PERIOD@"/>
@@ -642,6 +651,7 @@
                                 <entry key="start.job.offer.manager" value="@START.PRACE.MANAGER@"/>
                                 <entry key="job.offer.manager.delay" value="180"/>
                                 <entry key="job.offer.manager.period" value="3600"/>
+                                <entry key="deploy.url.users" value="@URL.WS.USERS@"/>
                             </map>
                         </node>
                     </node>
@@ -656,6 +666,22 @@
                         <node name="SuggestSearch">
                             <map>
                                 <entry key="results.limit" value="10"/>
+                            </map>
+                        </node>
+                    </node>
+                    <node name="ws">
+                        <map/>
+                        <node name="UserAccountServiceImpl">
+                            <map>
+                                <entry key="known.clients" value="itbiz,64bit,abcprace,abchost"/>
+                                <entry key="client.itbiz.id" value="www.itbiz.cz"/>
+                                <entry key="client.itbiz.password" value="@WS_ITBIZ_PASSWORD@"/>
+                                <entry key="client.64bit.id" value="www.64bit.cz"/>
+                                <entry key="client.64bit.password" value="@WS_64BIT_PASSWORD@"/>
+                                <entry key="client.abcprace.id" value="www.abcprace.cz"/>
+                                <entry key="client.abcprace.password" value="@WS_ABCPRACE_PASSWORD@"/>
+                                <entry key="client.abchost.id" value="www.abchost.cz"/>
+                                <entry key="client.abchost.password" value="@WS_ABCHOST_PASSWORD@"/>
                             </map>
                         </node>
                     </node>
