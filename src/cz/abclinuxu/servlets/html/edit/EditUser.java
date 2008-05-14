@@ -1342,7 +1342,7 @@ public class EditUser implements AbcAction {
      * @param paramName error message will be associated with this parameter
      * @return true if everything is ok, false if guard throws exception
      */
-    private boolean verifyGuard(Class guard, String text, String paramName, Map env) {
+    private static boolean verifyGuard(Class guard, String text, String paramName, Map env) {
         try {
             Method method = guard.getMethod("check", String.class);
             method.invoke(null, text);
@@ -1444,10 +1444,10 @@ public class EditUser implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setName(Map params, User user, Map env) {
+    public static boolean setName(Map params, User user, Map env) {
         String name = (String) params.get(PARAM_NAME);
         name = Misc.filterDangerousCharacters(name);
-        if ( name==null || name.length()<4 ) {
+        if ( name==null || name.length()<3 ) {
             ServletUtils.addError(PARAM_NAME, "Jméno je příliš krátké!", env, null);
             return false;
         }
@@ -1466,7 +1466,7 @@ public class EditUser implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setOpenId(Map params, User user, Map env) {
+    public static boolean setOpenId(Map params, User user, Map env) {
         String openid = (String) params.get(PARAM_OPEN_ID);
         openid = Misc.filterDangerousCharacters(openid);
         if (openid != null && openid.length() == 0)
@@ -1520,7 +1520,7 @@ public class EditUser implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setEmail(Map params, User user, Map env) {
+    public static boolean setEmail(Map params, User user, Map env) {
         String email = (String) params.get(PARAM_EMAIL);
         if (email == null || email.trim().length() == 0) {
             user.setEmail(null);
@@ -1567,7 +1567,7 @@ public class EditUser implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setSex(Map params, User user, Map env) {
+    public static boolean setSex(Map params, User user, Map env) {
         String sex = (String) params.get(PARAM_SEX);
         if ( !("man".equals(sex) || "woman".equals(sex)) ) {
             ServletUtils.addError(PARAM_SEX, "Zadejte své pohlaví!", env, null);
@@ -1609,7 +1609,7 @@ public class EditUser implements AbcAction {
      * @param user user to be updated
      * @return false, if there is a major error.
      */
-    private boolean setCity(Map params, User user, Map env) {
+    public static boolean setCity(Map params, User user, Map env) {
         String city = (String) params.get(PARAM_CITY);
         city = Misc.filterDangerousCharacters(city);
         Element personal = DocumentHelper.makeElement(user.getData(), "/data/personal");
@@ -1657,7 +1657,7 @@ public class EditUser implements AbcAction {
      * @param user user to be updated
      * @return false, if there is a major error.
      */
-    private boolean setCountry(Map params, User user, Map env) {
+    public static boolean setCountry(Map params, User user, Map env) {
         String country = (String) params.get(PARAM_COUNTRY);
         country = Misc.filterDangerousCharacters(country);
         Element personal = DocumentHelper.makeElement(user.getData(), "/data/personal");
@@ -1682,7 +1682,7 @@ public class EditUser implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setMyPage(Map params, User user, Map env) {
+    public static boolean setMyPage(Map params, User user, Map env) {
         String page = (String) params.get(PARAM_HOME_PAGE);
         Element profile = DocumentHelper.makeElement(user.getData(), "/data/profile");
         if ( page==null || page.length()==0 ) {

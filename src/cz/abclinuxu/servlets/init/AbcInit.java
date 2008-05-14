@@ -20,6 +20,7 @@ package cz.abclinuxu.servlets.init;
 
 import cz.abclinuxu.scheduler.*;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.ws.UserAccountServiceImpl;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.Sorters2;
@@ -42,7 +43,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-//import javax.xml.ws.Endpoint;
+import javax.xml.ws.Endpoint;
 import java.io.IOException;
 import java.util.*;
 import java.util.prefs.Preferences;
@@ -99,8 +100,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         ConfigurationManager.init(tmp);
         ConfigurationManager.getConfigurator().configureMe(this);
 
-//        Endpoint.publish(endpointUrlServices, new UserAccountServiceImpl());
-//        Endpoint.publish("/hello", new HelloWorldImpl());
+        Endpoint.publish(endpointUrlServices, new UserAccountServiceImpl());
 
         fetcher = VariableFetcher.getInstance();
         fetcher.run();

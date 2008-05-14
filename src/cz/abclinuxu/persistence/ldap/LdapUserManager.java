@@ -71,6 +71,8 @@ public class LdapUserManager implements Configurable {
     public static final String PREF_LDAP_CLASS = "user.ldap.class";
     public static final String PREF_INVALID_LOGIN_REGEXP = "regexp.invalid.login";
 
+    // any change to attributes must be performed in stickfish.schema and UserAccount.java too
+
     public static final String ATTRIB_CITY = "city";
     public static final String ATTRIB_COUNTRY = "country";
     public static final String ATTRIB_DELIVERY_ADDRESS_CITY = "deliveryAddressCity";
@@ -84,10 +86,10 @@ public class LdapUserManager implements Configurable {
     public static final String ATTRIB_FORGOTTEN_PASSWORD_TOKEN = "forgottenPasswordToken";
     public static final String ATTRIB_HOME_PAGE_URL = "homepageURL";
     public static final String ATTRIB_INVOICING_ADDRESS_CITY = "invoicingAddressCity";
-    public static final String ATTRIB_INVOICING_ADDRESS_COMPANY = "invoicingCompany";
+    public static final String ATTRIB_INVOICING_COMPANY = "invoicingCompany";
     public static final String ATTRIB_INVOICING_ADDRESS_COUNTRY = "invoicingAddressCountry";
-    public static final String ATTRIB_INVOICING_ADDRESS_DIC = "invoicingCompanyDIC";
-    public static final String ATTRIB_INVOICING_ADDRESS_ICO = "invoicingCompanyICO";
+    public static final String ATTRIB_INVOICING_COMPANY_DIC = "invoicingCompanyDIC";
+    public static final String ATTRIB_INVOICING_COMPANY_ICO = "invoicingCompanyICO";
     public static final String ATTRIB_INVOICING_ADDRESS_NAME = "invoicingAddressName";
     public static final String ATTRIB_INVOICING_ADDRESS_STREET = "invoicingAddressStreet";
     public static final String ATTRIB_INVOICING_ADDRESS_ZIP = "invoicingAddressZIP";
@@ -110,8 +112,8 @@ public class LdapUserManager implements Configurable {
         ATTRIB_CITY, ATTRIB_COUNTRY, ATTRIB_DELIVERY_ADDRESS_CITY, ATTRIB_DELIVERY_ADDRESS_COUNTRY,
         ATTRIB_DELIVERY_ADDRESS_NAME, ATTRIB_DELIVERY_ADDRESS_STREET, ATTRIB_DELIVERY_ADDRESS_ZIP,
         ATTRIB_EMAIL_ADRESS, ATTRIB_EMAIL_BLOCKED, ATTRIB_EMAIL_VERIFIED, ATTRIB_FORGOTTEN_PASSWORD_TOKEN,
-        ATTRIB_HOME_PAGE_URL, ATTRIB_INVOICING_ADDRESS_CITY, ATTRIB_INVOICING_ADDRESS_COMPANY,
-        ATTRIB_INVOICING_ADDRESS_COUNTRY, ATTRIB_INVOICING_ADDRESS_DIC, ATTRIB_INVOICING_ADDRESS_ICO,
+        ATTRIB_HOME_PAGE_URL, ATTRIB_INVOICING_ADDRESS_CITY, ATTRIB_INVOICING_COMPANY,
+        ATTRIB_INVOICING_ADDRESS_COUNTRY, ATTRIB_INVOICING_COMPANY_DIC, ATTRIB_INVOICING_COMPANY_ICO,
         ATTRIB_INVOICING_ADDRESS_NAME, ATTRIB_INVOICING_ADDRESS_STREET, ATTRIB_INVOICING_ADDRESS_ZIP,
         ATTRIB_LAST_LOGIN_DATE, ATTRIB_LOGIN, ATTRIB_NAME, ATTRIB_OPEN_ID, ATTRIB_PASSWORD_ANSWEAR,
         ATTRIB_PASSWORD_HASHCODE, ATTRIB_PASSWORD_QUESTION, ATTRIB_REGISTRATION_DATE, ATTRIB_REGISTRATION_PORTAL,

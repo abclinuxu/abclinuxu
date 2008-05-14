@@ -17,6 +17,13 @@
     </filter-mapping>
 
     <servlet>
+        <servlet-name>CXFServlet</servlet-name>
+        <display-name>CXF Web services Servlet</display-name>
+        <servlet-class>cz.abclinuxu.servlets.ws.AbcCxfServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>AbcInit</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.init.AbcInit</servlet-class>
         <init-param>
@@ -27,13 +34,13 @@
           <param-name>TEMPLATES</param-name>
           <param-value>WEB-INF/conf/templates.xml</param-value>
         </init-param>
-        <load-on-startup>1</load-on-startup>
+        <load-on-startup>2</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>Controller</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.Controller</servlet-class>
-        <load-on-startup>2</load-on-startup>
+        <load-on-startup>3</load-on-startup>
     </servlet>
 
     <servlet>
@@ -88,6 +95,11 @@
     <servlet-mapping>
         <servlet-name>jsp</servlet-name>
         <url-pattern>/download/abicko.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CXFServlet</servlet-name>
+        <url-pattern>/services/*</url-pattern>
     </servlet-mapping>
 
     <!-- static resources -->
