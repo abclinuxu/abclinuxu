@@ -651,7 +651,7 @@
                                 <entry key="start.job.offer.manager" value="@START.PRACE.MANAGER@"/>
                                 <entry key="job.offer.manager.delay" value="180"/>
                                 <entry key="job.offer.manager.period" value="3600"/>
-                                <entry key="deploy.url.users" value="@URL.WS.USERS@"/>
+                                <entry key="deploy.path.users" value="@URL.WS.USERS@"/>
                             </map>
                         </node>
                     </node>
