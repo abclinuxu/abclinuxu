@@ -74,6 +74,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_UPDATE_STATISTICS = "update.statistics";
     public static final String PREF_JOB_OFFER_MANAGER = "job.offer.manager";
     public static final String PREF_USER_SCORE_SETTER = "user.score.setter";
+    public static final String PREF_WEB_SERVICES = "web.services";
     public static final String PREF_USERS_DEPLOY_PATH = "deploy.path.users";
 
     Timer scheduler, slowScheduler;
@@ -100,7 +101,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         ConfigurationManager.init(tmp);
         ConfigurationManager.getConfigurator().configureMe(this);
 
-        Endpoint.publish(endpointUrlServices, new UserAccountServiceImpl());
+        startWebServices();
 
         fetcher = VariableFetcher.getInstance();
         fetcher.run();
@@ -297,6 +298,18 @@ public class AbcInit extends HttpServlet implements Configurable {
     }
 
     /**
+     * Deploys web services
+     */
+    private void startWebServices() {
+        if (!isSet(PREF_WEB_SERVICES)) {
+            log.info("Web services configured not to be deployed");
+            return;
+        }
+        log.info("Deploying web services");
+        Endpoint.publish(endpointUrlServices, new UserAccountServiceImpl());
+    }
+
+    /**
      * Sends notifications, when monitored object is changed.
      */
     protected void startObjectMonitor() {
@@ -442,6 +455,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         services.put(PREF_UPDATE_STATISTICS, prefs.getBoolean(PREF_START + PREF_UPDATE_STATISTICS, true));
         services.put(PREF_JOB_OFFER_MANAGER, prefs.getBoolean(PREF_START + PREF_JOB_OFFER_MANAGER, false));
         services.put(PREF_USER_SCORE_SETTER, prefs.getBoolean(PREF_START + PREF_USER_SCORE_SETTER, false));
+        services.put(PREF_WEB_SERVICES, prefs.getBoolean(PREF_START + PREF_WEB_SERVICES, false));
 
         delays.put(PREF_POOL_MONITOR, prefs.getInt(PREF_POOL_MONITOR + PREF_DELAY, 60));
         delays.put(PREF_RSS_GENERATOR, prefs.getInt(PREF_RSS_GENERATOR + PREF_DELAY, 60));

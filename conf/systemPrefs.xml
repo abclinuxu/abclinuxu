@@ -643,6 +643,7 @@
                                 <entry key="start.weekly.summary" value="@START.WEEKLY.SUMMARY@"/>
                                 <entry key="start.datetool.service" value="@START_UPDATE_DATETOOL@"/>
                                 <entry key="start.watched.discussions.cleaner" value="@START_DISCUSSION_CLEANER@"/>
+                                <entry key="start.web.services" value="@START.WEB.SERVICES@"/>
                                 <entry key="watched.discussions.cleaner.type" value="120"/>
                                 <entry key="watched.discussions.cleaner.period" value="21600"/>
                                 <entry key="start.update.statistics" value="@START_UPDATE_STATISTICS@"/>
