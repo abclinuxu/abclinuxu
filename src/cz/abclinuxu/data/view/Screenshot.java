@@ -53,7 +53,7 @@ public class Screenshot {
         Map children = Tools.groupByType(item.getChildren(), "Data");
         List list = (List) children.get(Constants.TYPE_DATA);
         if (list == null)
-            throw new InvalidDataException("Screenshot " + item.getId() + " neobsahuje objekt Data!");
+            throw new InvalidDataException("Screenshot " + item.getId() + " neobsahuje objekt Data! (relace = " + relation.getId());
 
         Relation dataRelation = (Relation) list.get(0);
         Data data = (Data) dataRelation.getChild();
