@@ -1,7 +1,6 @@
 
 <!-- Item.HARDWARE -->
-<!ELEMENT data (name,support?,price?,driver?,driver_url?,outdated?,setup?,params?,identification?,note?)>
-<!ELEMENT name (#PCDATA)> <!-- todo deprecated maximum length is few words -->
+<!ELEMENT data (support?,price?,driver?,driver_url?,outdated?,setup?,params?,identification?,note?)>
 <!ELEMENT support (#PCDATA)> <!-- if and how the piece of hardware is supported (complete, partial, none) -->
 <!ELEMENT price (#PCDATA)> <!-- user's evaluation of price -->
 <!ELEMENT driver (#PCDATA)> <!-- kind of driver: kernel, XFree, binary -->
@@ -17,8 +16,7 @@
 <!ATTLIST note format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 
 <!-- Item.SOFTWARE -->
-<!ELEMENT data (name, description, intro, url+)>
-<!ELEMENT name (#PCDATA)> <!-- todo deprecated maximum length is few words -->
+<!ELEMENT data (description, intro, url+)>
 <!ELEMENT description (#PCDATA)> <!-- long description -->
 <!ATTLIST description format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT intro (#PCDATA)> <!-- string describing this software displayed at software listing, typically first sentence from description -->
@@ -26,9 +24,8 @@
 <!ATTLIST url useType (#NMTOKEN)> <!-- type of given url (homepage, download, rss) -->
 
 <!-- Item.ARTICLE -->
-<!ELEMENT data (name,icon?,perex,editor?,forbid_discussions?,forbid_rating?,thumbnail?,talk?,section_rid?,series_rid?)>
+<!ELEMENT data (icon?,perex,editor?,forbid_discussions?,forbid_rating?,thumbnail?,talk?,section_rid?,series_rid?)>
 <!ATTLIST data do_not_index (#NMTOKEN) #OPTIONAL> <!-- if true, fulltext indexing must ignore this article  -->
-<!ELEMENT name (#PCDATA)> <!-- todo deprecated title of the Article -->
 <!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
 <!ELEMENT perex (#PCDATA)> <!-- description of the article -->
 <!ELEMENT editor (#PCDATA)> <!-- who approved this article -->
@@ -48,12 +45,11 @@
 
 
 <!-- Item.Discussion -->
-<!ELEMENT data (comments, last_id?, author?, author_ip?, text, title?, frozen?, solved?)>
+<!ELEMENT data (comments, last_id?, author?, author_ip?, text, frozen?, solved?)>
 <!ELEMENT comments (#PCDATA)> <!-- integer, number of comments or replies -->
 <!ELEMENT last_id (#PCDATA)> <!-- integer, id of last comment -->
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
 <!ELEMENT author_ip (#PCDATA)> <!-- IP address of the user -->
-<!ELEMENT title (#PCDATA)> <!-- todo deprecated title of this reaction, usually question -->
 <!ELEMENT text (#PCDATA)> <!-- its text -->
 <!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT frozen (#PCDATA)> <!-- if present, discussion is frozen and noone can add more comments -->
@@ -70,15 +66,13 @@
 
 <!-- Item.Driver -->
 <!ELEMENT data (name,version,url,note?)>
-<!ELEMENT name (#PCDATA)> <!-- todo deprecated driver's name -->
 <!ELEMENT version (#PCDATA)> <!-- driver's version -->
 <!ELEMENT url (#PCDATA)> <!-- its url -->
 <!ELEMENT note (#PCDATA)> <!-- its description -->
 <!ATTLIST note format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 
 <!-- Item.Survey -->
-<!ELEMENT anketa (title?,screen+,choices?)>
-<!ELEMENT title (#PCDATA)> <!-- todo deprecated name of survey -->
+<!ELEMENT anketa (screen+,choices?)>
 <!ELEMENT choices (#PCDATA)> <!-- which parameters are choices (aka they are not texts) -->
 <!ELEMENT choice (#PCDATA)> <!-- name of choice parameter-->
 <!ELEMENT screen (#PCDATA)> <!-- definition of one screen -->
@@ -96,16 +90,14 @@
 <!ELEMENT suffix (#PCDATA)> <!-- file will end with this suffix -->
 
 <!-- Item.NEWS -->
-<!ELEMENT data (title, category?, content, approved_by?)>
-<!ELEMENT title (#PCDATA)> <!-- todo deprecated title of the news  -->
+<!ELEMENT data (category?, content, approved_by?)>
 <!ELEMENT content (#PCDATA)> <!-- text of the news -->
 <!ATTLIST content format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT approved_by (#PCDATA)> <!-- id of admin, who approved the news -->
 <!ELEMENT locked_by (#PCDATA)> <!-- id of admin, who locked this news -->
 
 <!-- Item.GROUP -->
-<!ELEMENT data (name, desc)>
-<!ELEMENT name (#PCDATA)> <!-- todo deprecated word(s) giving name to group -->
+<!ELEMENT data (desc)>
 <!ELEMENT desc (#PCDATA)> <!-- sentence describing group -->
 
 <!-- Item.Royalties -->
@@ -115,8 +107,7 @@
 <!ELEMENT note (#PCDATA)> <!-- additional information -->
 
 <!-- Item.DICTIONARY -->
-<!ELEMENT data (name, description)>
-<!ELEMENT name (#PCDATA)> <!-- word to be explained -->
+<!ELEMENT data (description)>
 <!ELEMENT description (#PCDATA)> <!-- explanation -->
 
 <!-- Item.PERSONALITY -->
@@ -130,8 +121,7 @@
 <!ATTLIST date type (#NMTOKEN)> <!-- type of the date (birth, death) -->
 
 <!-- Item.CONTENT -->
-<!ELEMENT data (name, content, class?, toc?)>
-<!ELEMENT name (#PCDATA)> <!-- todo deprecated HTML page's title -->
+<!ELEMENT data (content, class?, toc?)>
 <!ELEMENT content (#PCDATA)> <!-- content to be served -->
 <!ATTLIST content execute (yes|no) #REQUIRED> <!-- boolean, whether to execute content through template engine -->
 <!ELEMENT java_class (#PCDATA)> <!-- java class to feed data to content -->
@@ -143,8 +133,7 @@
 <!ATTLIST node rid (#NMTOKEN) #REQUIRED> <!-- integer, id of the content relation -->
 
 <!-- Item.BLOG -->
-<!ELEMENT data (name, perex?,content, category?)>
-<!ELEMENT name (#PCDATA)> <!-- todo deprecated blog story's title -->
+<!ELEMENT data (perex?,content, category?)>
 <!ELEMENT perex (#PCDATA)> <!-- story's perex for long stories -->
 <!ATTLIST perex format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT content (#PCDATA)> <!-- content of the story -->
@@ -152,8 +141,7 @@
 <!ELEMENT category (#NMTOKEN)> <!-- integer, if od the category. See blog/categories -->
 
 <!-- Item.FAQ -->
-<!ELEMENT data (title,text,links?)>
-<!ELEMENT title (#PCDATA)> <!-- todo deprecated title of this reaction, usually question -->
+<!ELEMENT data (text,links?)>
 <!ELEMENT text (#PCDATA)> <!-- its text -->
 <!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 
@@ -176,8 +164,7 @@
 <!ATTLIST code dynamic (yes,no) #OPTIONAL)> <!-- boolean, determines whether this code must be preprocessed with freemarker, defaults to false -->
 
 <!-- Item.BAZAAR -->
-<!ELEMENT data (title, text)>
-<!ELEMENT title (#PCDATA)> <!-- todo deprecated advertisement title -->
+<!ELEMENT data (text)>
 <!ELEMENT text (#PCDATA)> <!-- content of the advertisement -->
 <!ELEMENT price (#PCDATA)> <!-- requested price -->
 <!ELEMENT contact (#PCDATA)> <!-- contact for the person -->
@@ -194,8 +181,7 @@
 <!ELEMENT address (#PCDATA)> <!-- author's home address -->
 
 <!-- Item.TRIVIA -->
-<!ELEMENT data (title, description, difficulty, stats, question+)>
-<!ELEMENT title (#PCDATA)> <!-- todo deprecated title of the trivia game -->
+<!ELEMENT data (description, difficulty, stats, question+)>
 <!ELEMENT description (#PCDATA)> <!-- description of the game -->
 <!ELEMENT difficulty (#PCDATA)> <!-- values: simple, normal, hard, guru -->
 <!ELEMENT question (content,answear+)> <!-- contact for the person -->
@@ -208,22 +194,19 @@
 <!ELEMENT count (#PCDATA)> <!-- count of all plays -->
 
 <!-- Item.HANGMAN -->
-<!ELEMENT data (title, desc, word)>
-<!ELEMENT title (#PCDATA)> <!-- todo deprecated title of the trivia game -->
+<!ELEMENT data (desc, word)>
 <!ELEMENT desc (#PCDATA)> <!-- description of the game -->
 <!ELEMENT word (#PCDATA)> <!-- word to be guessed -->
 
 <!-- Item.SERIES -->
-<!ELEMENT data (name, description?, icon?, article*)>
-<!ELEMENT name (#PCDATA)> <!-- todo deprecated title of article series -->
+<!ELEMENT data (description?, icon?, article*)>
 <!ELEMENT description (#PCDATA)> <!-- description of the series -->
 <!ELEMENT icon (#PCDATA)> <!-- url to icon for this series -->
 <!ELEMENT article (#PCDATA)> <!-- id of relation for article associated with this series, articles are sorted by published date in ascending order -->
 <!ATTLIST article published (#NMTOKEN)> <!-- date in ISO format (YYYY-MM-DD), when this article was published -->
 
 <!-- Item.SCREENSHOT -->
-<!ELEMENT data (title, description?, image)>
-<!ELEMENT title (#PCDATA)> <!-- todo deprecated title for the screenshot -->
+<!ELEMENT data (description?, image)>
 <!ELEMENT description (#PCDATA)> <!-- description of the screenshot -->
 
 <!-- common -->
