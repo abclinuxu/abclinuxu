@@ -35,6 +35,7 @@ import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.scheduler.WhatHappened;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.edit.EditArticle;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.Configurable;
@@ -782,7 +783,7 @@ public class CreateIndex implements Configurable {
         indexDiscussionFor(article);
 
         Element data = article.getData().getRootElement();
-        if (data.attribute(WhatHappened.INDEXING_FORBIDDEN) != null)
+        if (data.attribute(EditArticle.INDEXING_FORBIDDEN) != null)
             return null;
 
         String title = article.getTitle();

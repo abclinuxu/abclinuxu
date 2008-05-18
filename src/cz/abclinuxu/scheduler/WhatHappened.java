@@ -61,8 +61,6 @@ import static cz.abclinuxu.servlets.Constants.PARAM_CONTENT;
  */
 public class WhatHappened extends TimerTask implements AbcAction, Configurable {
     static Logger log = Logger.getLogger(WhatHappened.class);
-    /** article ahving this article must not be indexed for fulltext search */
-    public static final String INDEXING_FORBIDDEN = "do_not_index";
 
     public static final String PREF_TITLE = "title";
     public static final String PREF_PEREX = "perex";
@@ -115,11 +113,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             params.put(PARAM_CONTENT, content);
 
             EditArticle editArticle = new EditArticle();
-            editArticle.actionAddStep2(null, null, map, false);
-            relation = (Relation) map.get(EditArticle.VAR_RELATION);
-            Item article = (Item) relation.getChild();
-            article.getData().getRootElement().addAttribute(INDEXING_FORBIDDEN, "true");
-            persistence.update(article);
+            editArticle.actionAddStep2(null, null, map, false, true);
             log.debug("Weekly summary article finished");
         } catch (Exception e) {
             log.error("WhatHappened generation failed!", e);

@@ -27,6 +27,7 @@
 
 <!-- Item.ARTICLE -->
 <!ELEMENT data (name,icon?,perex,editor?,forbid_discussions?,forbid_rating?,thumbnail?,talk?,section_rid?,series_rid?)>
+<!ATTLIST data do_not_index (#NMTOKEN) #OPTIONAL> <!-- if true, fulltext indexing must ignore this article  -->
 <!ELEMENT name (#PCDATA)> <!-- todo deprecated title of the Article -->
 <!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
 <!ELEMENT perex (#PCDATA)> <!-- description of the article -->

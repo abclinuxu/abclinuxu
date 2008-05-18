@@ -64,6 +64,10 @@ import static cz.abclinuxu.servlets.Constants.PARAM_CONTENT;
  */
 public class EditArticle implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditArticle.class);
+    /**
+     * article having this attribute in root element must not be indexed for fulltext search
+     */
+    public static final String INDEXING_FORBIDDEN = "do_not_index";
 
     public static final String PARAM_PUBLISHED = "published";
     public static final String PARAM_AUTHORS = "authors";
@@ -102,6 +106,7 @@ public class EditArticle implements AbcAction {
     public static final String ACTION_ADD_SERIES_STEP2 = "addSeries2";
 
     private static REProgram reBreak;
+
     static {
         try {
             reBreak = new RECompiler().compile("<page title=\"([^\"]+)\">");
@@ -140,7 +145,7 @@ public class EditArticle implements AbcAction {
 
         if ( ACTION_ADD_ITEM_STEP2.equals(action) ) {
             ActionProtector.ensureContract(request, EditArticle.class, true, true, true, false);
-            return actionAddStep2(request, response, env, true);
+            return actionAddStep2(request, response, env, true, false);
         }
 
         if ( ACTION_EDIT_ITEM.equals(action) )
@@ -207,7 +212,7 @@ public class EditArticle implements AbcAction {
         return FMTemplateSelector.select("EditArticle","add",env,request);
     }
 
-    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
+    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect, boolean noIndexing) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation upper = (Relation) env.get(VAR_RELATION);
@@ -249,6 +254,9 @@ public class EditArticle implements AbcAction {
         }
 
         try {
+            if (noIndexing)
+                item.getData().getRootElement().addAttribute(INDEXING_FORBIDDEN, "true");
+
             persistence.create(item);
             Relation relation = new Relation(upper.getChild(),item,upper.getId());
             if (upper.getId() != Constants.REL_ARTICLEPOOL) {
@@ -263,7 +271,9 @@ public class EditArticle implements AbcAction {
             Relation recordRelation = new Relation(item,record,relation.getId());
             persistence.create(recordRelation);
             recordRelation.getParent().addChildRelation(recordRelation);
-            TagTool.assignDetectedTags(item, user);
+
+            if (! noIndexing)
+                TagTool.assignDetectedTags(item, user);
 
             if (upper.getId() != Constants.REL_ARTICLEPOOL && item.getData().selectSingleNode("/data/forbid_discussions") == null)
                 EditDiscussion.createEmptyDiscussion(relation, user, persistence);
