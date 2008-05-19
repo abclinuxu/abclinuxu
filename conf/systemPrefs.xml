@@ -522,7 +522,7 @@
                             <entry key="feedUri13" value="http://www.czilla.cz/rss/rss.html"/>
                             <entry key="feedUri14" value="http://www.openoffice.cz/rss.xml"/>
                             <entry key="feedUri15" value="http://slashdot.org/index.rss"/>
-                            <entry key="feedUri16" value="http://itbiz.cz/rss-clanky.xml"/>
+                            <entry key="feedUri16" value="http://www.itbiz.cz/atom/feed"/>
                             <entry key="feedUri17" value="http://www.suseportal.cz/node/feed"/>
                             <entry key="feedUri18" value="http://www.chip.cz/texty/feed.rss"/>
                             <entry key="feedUri19" value="http://www.svethardware.cz/export.jsp?format=rss"/>
