@@ -181,6 +181,7 @@
                 </div>
             </div>
 
+            <@lib.advertisement id="sl-jobscz" />
             <@lib.advertisement id="sl-abcprace" />
 
             <#if ! IS_INDEX?exists>
