@@ -96,47 +96,34 @@ ${TOOL.render(TEXT,USER?if_exists)}
     </div>
 </#if>
 
-<#if SERIES?exists>
- <table class="cl-serial">
-  <tr class="hlav">
-    <th colspan="2">Seriál <a href="${SERIES.series.url}">${TOOL.childName(SERIES.series)}</a> (dílů: ${SERIES.total})</th>
-  </tr>
-  <tr class="dil">
-    <td>první díl</td>
-    <td>poslední díl</td>
-  </tr>
-  <tr>
-    <td><#if SERIES.first?exists><a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a><#else>&bull;</#if></td>
-    <td><#if (SERIES.total > 1)><a href="${SERIES.last.url}">${TOOL.childName(SERIES.last)}</a><#else>&bull;</#if></td>
-  </tr>
-  <tr class="dil">
-    <td>&laquo; předchozí díl</td>
-    <td>následující díl &raquo;</td>
-  </tr>
-  <tr>
-    <td><#if SERIES.previous?exists><a href="${SERIES.previous.url}">${TOOL.childName(SERIES.previous)}</a><#else>&bull;</#if></td>
-    <td><#if SERIES.next?exists><a href="${SERIES.next.url}">${TOOL.childName(SERIES.next)}</a><#else>&bull;</#if></td>
-  </tr>
- </table>
-</#if>
-
 <div class="cl_perex souvisejici">
+    <#if SERIES?exists>
+        <h3>Seriál <a href="${SERIES.series.url}" title="${TOOL.childName(SERIES.series)}">${TOOL.childName(SERIES.series)}</a> (dílů: ${SERIES.total})</h3>
+        <#if SERIES.first?exists><a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a> (první díl)<br /></#if>
+        <#if SERIES.previous?exists>
+            &lt;&mdash;&laquo; <a href="${SERIES.previous.url}">${TOOL.childName(SERIES.previous)}</a><br />
+        </#if>
+        <#if SERIES.next?exists>
+            &raquo;&mdash;&gt; <a href="${SERIES.next.url}">${TOOL.childName(SERIES.next)}</a><br />
+        </#if>
+        <#if (SERIES.total > 1)><a href="${SERIES.last.url}">${TOOL.childName(SERIES.last)}</a> (poslední díl)<br /></#if>
+    </#if>
     <#if RELATED?exists>
         <h3>Související články</h3>
         <#list RELATED as link>
-            <a href="${link.url}">${link.title}</a> ${link.description?if_exists}<br>
+            <a href="${link.url}">${link.title}</a> ${link.description?if_exists}<br />
         </#list>
     </#if>
     <#if RESOURCES?exists>
         <h3>Odkazy a zdroje</h3>
         <#list RESOURCES as link>
-            <a href="${link.url}" rel="nofollow">${link.title}</a> ${link.description?if_exists}<br>
+            <a href="${link.url}" rel="nofollow">${link.title}</a> ${link.description?if_exists}<br />
         </#list>
     </#if>
     <#if SAME_SECTION_ARTICLES?exists>
         <h3>Další články z této rubriky</h3>
         <#list SAME_SECTION_ARTICLES as relation>
-            <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.childName(relation)}</a><br>
+            <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.childName(relation)}</a><br />
         </#list>
     </#if>
 </div>
