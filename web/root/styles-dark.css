@@ -164,11 +164,6 @@ td.pad,code.kod,pre.kod {
 	background-color: #494949;
 }
 
-.cl-serial { border-color: #4B4B4B; }
-.cl-serial tr.hlav { background-color: black; }
-.cl-serial tr.dil { background-color: #2E2E2E; }
-.serial-nadpis { background-color: #494949; }
-
 .rating {
 	background-color: #494949;
 	border-color: #1A425D;
