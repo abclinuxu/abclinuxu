@@ -7,22 +7,23 @@
 <p>Tento formulář slouží pro vkládání nových zápisů do vašeho blogu.
 Každý zápis musí mít titulek, který by měl stručně a jasně popisovat,
 o čem váš zápis bude pojednávat. Titulek bude zobrazen i ve vašem RSS.
-Text zápisu pište ve validním HTML
-(<a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>,
-<a href="http://www.jakpsatweb.cz/html/">příručka</a>).
-</p>
+Mějte také na paměti, že z titulku bude automaticky vygenerována
+textová adresa pro váš zápisek. Text zápisu pište ve validním HTML
+(<a href="http://www.kosek.cz/clanky/html/01.html" rel="nofollow">rychlokurz</a>,
+<a href="http://www.jakpsatweb.cz/html/" rel="nofollow">příručka</a>).</p>
 
 <p>Delší příspěvky lze rozdělit na úvodní část, která se zobrazí
 ve výpisu a zbytek textu. Při zobrazení zápisu budou obě části automaticky
-spojeny do jednoho celku. Pro dělení použijte speciální značku <code>&lt;break&gt;</code>.
+spojeny do jednoho celku. Pro dělení použijte speciální značku <b><code>&lt;break&gt;</code></b>.
 Dávejte si pozor na to, aby tato značka nebyla mezi párovými HTML značkami.
-Systém zlom vyžaduje až od limitu stopadesáti slov.
-</p>
+Systém zlom vyžaduje až od limitu stopadesáti slov. Do úvodní části zápisku
+(před značku <b><code>&lt;break&gt;</code></b>) prosím nevkládejte velké obrázky
+ani prázdné odstavce.</p>
 
 <p>Pokud nechcete příspěvek ihned publikovat, použijte tlačítko
-Odlož. Můžete se k příspěvku kdykoliv vrátit a vydat jej, až budete
-spokojeni. Najdete jej v pravém menu.
-</p>
+<b>Odlož</b>. Můžete se k příspěvku kdykoliv vrátit a vydat jej, až budete
+spokojeni. Příkaz pro publikování odloženého zápisku najdete
+v pravém sloupci v části nadepsané <b>Správa zápisku</b>.</p>
 
 <#if PREVIEW?exists>
  <h2>Náhled vašeho zápisu</h2>
