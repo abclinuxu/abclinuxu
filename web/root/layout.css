@@ -266,11 +266,16 @@ h4 {font-size: 105%;}
 	margin: 0.4em 0 0.2em 0;
 }
 
-td.pad,code.kod,pre.kod {
+td.pad, code.kod, pre.kod {
 	margin: 0.7em;
 	padding: 0.3em 0.7em;
 	border: 1px solid;
 	display: block;
+}
+
+pre {
+	padding: 0.3em 0.7em;
+	overflow: auto;
 }
 
 .kod .rmargin {
@@ -316,17 +321,6 @@ td.pad,code.kod,pre.kod {
 
 .cl-obrazky {
 	text-align: center;
-}
-
-.cl-serial {
-	border-collapse: collapse;
-	border: 1px solid;
-	text-align: center;
-}
-
-.cl-serial td {
-	width: 50%;
-	font-size: small;
 }
 
 .cl-tabulka {
