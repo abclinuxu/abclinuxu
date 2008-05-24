@@ -50,8 +50,8 @@ public class Item extends GenericDataObject {
     public static final int CONTENT = 11;
     /** one story of the blog */
     public static final int BLOG = 12;
-    /** one entry in guestbook */
-    public static final int GUESTBOOK = 13;
+    /** message */
+    public static final int MESSAGE = 13;
     /** one frequently asked question */
     public static final int FAQ = 14;
     /** blog story waiting for publishing */
@@ -74,6 +74,8 @@ public class Item extends GenericDataObject {
     public static final int PERSONALITY = 23;
     /** screenshot */
     public static final int SCREENSHOT = 24;
+    /** generic type for imported data, its content depends on data source */
+    public static final int IMPORT = 25;
 
     public Item() {
         super();
@@ -102,6 +104,7 @@ public class Item extends GenericDataObject {
             case ROYALTIES: sb.append("Royalties");break;
             case DICTIONARY: sb.append("Dictionary");break;
             case CONTENT: sb.append("Content");break;
+            case MESSAGE: sb.append("Message");break;
             case BLOG:
             case UNPUBLISHED_BLOG: sb.append("Blog");break;
             case FAQ: sb.append("FAQ");break;
@@ -113,6 +116,7 @@ public class Item extends GenericDataObject {
             case SERIES: sb.append("Series");break;
             case PERSONALITY: sb.append("Personality");break;
             case SCREENSHOT: sb.append("Screenshot");break;
+            case IMPORT: sb.append("Import");break;
             default: sb.append("Unknown Item");
         }
         sb.append(": id=").append(id);

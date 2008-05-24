@@ -209,6 +209,13 @@
 <!ELEMENT data (description?, image)>
 <!ELEMENT description (#PCDATA)> <!-- description of the screenshot -->
 
+<!-- Item.MESSAGE -->
+<!ELEMENT data (message, sender?, email?, uid?)>
+<!ELEMENT message (#PCDATA)> <!-- plain text of the message to the user -->
+<!ELEMENT email (#PCDATA)> <!-- optional email address of the sender -->
+<!ELEMENT sender (#PCDATA)> <!-- optional name of the sender -->
+<!ELEMENT uid (#PCDATA)> <!-- user account id of sender, if he is logged in -->
+
 <!-- common -->
 
 <!ELEMENT versioning (title?, properties*, revisions?)> <!-- mandatory element under root that contains versioning specific data -->
