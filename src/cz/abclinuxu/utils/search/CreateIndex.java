@@ -812,9 +812,9 @@ public class CreateIndex implements Configurable {
         String title = news.getTitle();
 
         String category = null;
-        Node node = data.element("category");
-        if (node != null)
-            category = node.getText();
+        NewsCategory nc = NewsCategories.get(news.getSubType());
+        if (nc != null)
+            category = nc.getKey();
 
         ParsedDocument parsed = DocumentParser.parse(news);
 
