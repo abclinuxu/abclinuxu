@@ -5,7 +5,7 @@
 <h1>Úvod</h1>
 
 <p>
-    Nápovědu najdete ve <a href="https://wiki.stickfish.cz/bin/view/Projects/SurveyFormat">wiki</a>
+    Nápovědu najdete ve <a href="https://wiki.stickfish.com/bin/view/Projects/SurveyFormat">wiki</a>
 </p>
 
 <h1>Anketa</h1>
