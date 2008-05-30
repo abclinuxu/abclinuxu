@@ -274,7 +274,7 @@ a.info:hover span.tooltip {
 
 .s ul span.regular-color { color: white; }
 
-.ramec span { color: #DEDEDE }
+.ramec span, .s ul span { color: #DEDEDE }
 
 .ramec {
 	border-color: #4B4B4B;
