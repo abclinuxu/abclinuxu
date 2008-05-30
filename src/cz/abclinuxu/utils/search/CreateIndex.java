@@ -24,6 +24,8 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Poll;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.view.ParsedDocument;
+import cz.abclinuxu.data.view.NewsCategory;
+import cz.abclinuxu.data.view.NewsCategories;
 import cz.abclinuxu.misc.DocumentParser;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
