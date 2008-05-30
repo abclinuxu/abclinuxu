@@ -2,6 +2,8 @@
 
  <#assign plovouci_sloupec>
 
+    <@lib.advertisement id="ps-upoutavka" />
+
     <#assign SOFTWARE = VARS.getFreshSoftware(USER?if_exists)>
     <#if (SOFTWARE?size>0) >
         <div class="s_nadpis">
