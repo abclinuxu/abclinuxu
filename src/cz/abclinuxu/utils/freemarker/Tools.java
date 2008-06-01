@@ -1741,11 +1741,11 @@ public class Tools implements Configurable {
      * @param obj value that can be list
      * @return obj casted to List or List containing obj
      */
-    public static List asList(Object obj) {
+    public static List<?> asList(Object obj) {
         if (obj == null)
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         if (obj instanceof List)
-            return (List) obj;
+            return (List<?>) obj;
         if (obj instanceof Collection)
             return new ArrayList((Collection) obj);
         return Collections.singletonList(obj);

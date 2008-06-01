@@ -51,6 +51,13 @@ public class NewsCategory {
     }
 
     /**
+     * @return locale specific short name
+     */
+    public String getLabel() {
+        return name;
+    }
+
+    /**
      * @return locale specific description
      */
     public String getDesc() {

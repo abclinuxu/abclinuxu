@@ -27,12 +27,12 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.index.Term;
-import cz.abclinuxu.servlets.html.view.Search;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 
-import java.util.Iterator;
+import cz.abclinuxu.utils.forms.DocumentTypesSet;
+import cz.abclinuxu.utils.forms.NewsCategoriesSet;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.prefs.Preferences;
@@ -59,9 +59,12 @@ public class AbcQueryParser implements Configurable {
      * Parses query.
      * @param queryString string holding the query.
      * @param analyzer Analyzer to use
+     * @param types DocumentTypes searched
+     * @param categories NewsCategories searched
      * @throws ParseException if query parsing fails
      */
-    public static Query parse(String queryString, Analyzer analyzer, Search.Types types, Search.NewsCategoriesSet categories) throws ParseException {
+    public static Query parse(String queryString, Analyzer analyzer, 
+            DocumentTypesSet types, NewsCategoriesSet categories) throws ParseException {
         QueryParser queryParser = null;
         if (useMutliFieldQueryParser)
             queryParser = new MultiFieldQueryParser(fields, analyzer, boostMap);
@@ -79,9 +82,7 @@ public class AbcQueryParser implements Configurable {
         TermQuery termQuery;
 
         if ( !(types.isNothingSelected() || types.isEverythingSelected()) ) {
-            String type;
-            for ( Iterator iter = types.getMap().keySet().iterator(); iter.hasNext(); ) {
-                type = (String) iter.next();
+            for (String type: types.selectedSet()) {
                 termQuery = new TermQuery(new Term(MyDocument.TYPE, type));
                 typeQuery.add(termQuery, BooleanClause.Occur.SHOULD);
             }
@@ -90,16 +91,13 @@ public class AbcQueryParser implements Configurable {
         }
 
         if ( !(categories.isNothingSelected() || categories.isEverythingSelected()) ) {
-            String category;
-            for ( Iterator iter = categories.getSelected().iterator(); iter.hasNext(); ) {
-                category = (String) iter.next();
+            for (String category: categories.selectedSet()) {
                 termQuery = new TermQuery(new Term(MyDocument.NEWS_CATEGORY, category));
                 categoryQuery.add(termQuery, BooleanClause.Occur.SHOULD);
             }
             combined.add(categoryQuery, BooleanClause.Occur.MUST);
             combination = true;
         }
-
         return (combination)? combined : query;
     }
 

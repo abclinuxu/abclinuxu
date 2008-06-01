@@ -1,3 +1,12 @@
+<#assign html_header>
+    <script type="text/javascript" src="/data/site/search.js"></script>
+    <script language="javascript1.2" type="text/javascript">
+    <!--
+        var doctypeSet = new MultipleChoiceState(false);
+    // -->
+    </script>
+</#assign>
+
 <#if USER?exists && USER.hasRole("tag admin")>
     <#assign plovouci_sloupec>
         <div class="s_sekce">
@@ -35,7 +44,22 @@
     </#list>
 </ul>
 
-<form action="/stitky/${TAG.id}">
+<form action="/stitky/${TAG.id}" id="tagPreciseForm">
+    <table border="0" width="100%">
+            <#list TYPES as type>
+            <#if type_index%4==0><tr></#if>
+            <td>
+                <label>
+                    <input type="checkbox" name="typ" value="${type.key}" <#if type.set>checked</#if>>
+                ${type.label}</label>
+            </td>
+            <#if type_index%4==3></tr></#if>
+            </#list>
+            <tr>
+                <td colspan="4" align="left"><button type="button" onclick="toggleCheckBoxes(this.form,doctypeSet)">Vše/nic</button></td>
+            </tr>
+    </table>
+
     <table border="0">
         <tr>
             <th>Pozice</th>
@@ -49,15 +73,15 @@
             <td><input type="text" size="3" value="${DOCUMENTS.pageSize}" name="count" tabindex="2"></td>
             <td>
                 <select name="orderBy" tabindex="3">
-                    <option value="title"<#if PARAMS.orderBy?if_exists=="title"> selected</#if>>titulku</option>
-                    <option value="update"<#if PARAMS.orderBy?if_exists=="update"> selected</#if>>data poslední změny</option>
-                    <option value="create"<#if PARAMS.orderBy?if_exists=="create"> selected</#if>>data vytvoření</option>
+                    <@lib.showOption4 "title","titulku",PARAMS.orderBy?if_exists/>
+                    <@lib.showOption4 "update","data poslední změny",PARAMS.orderBy?if_exists/>
+                    <@lib.showOption4 "create","data vytvoření",PARAMS.orderBy?if_exists/>
                 </select>
             </td>
             <td>
                 <select name="orderDir" tabindex="4">
-                    <option value="asc"<#if PARAMS.orderDir?if_exists=="asc"> selected</#if>>vzestupně</option>
-                    <option value="desc"<#if PARAMS.orderDir?if_exists=="desc"> selected</#if>>sestupně</option>
+                    <@lib.showOption4 "asc","vzestupně",PARAMS.orderDir?if_exists/>
+                    <@lib.showOption4 "desc","sestupně",PARAMS.orderDir?if_exists/>
                 </select>
             </td>
             <td><input type="submit" value="Zobrazit"></td>

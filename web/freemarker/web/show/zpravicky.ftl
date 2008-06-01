@@ -35,10 +35,7 @@
    <#list CATEGORIES as category>
     <#if category_index%3==0><tr></#if>
      <td>
-        <label>
-            <input type="checkbox" name="category" value="${category.key}" <#if category.set>checked</#if>>
-            ${category.name}
-        </label>
+      <label><@lib.showOption3 "category",category.key,category.label,"checkbox",category.set/></label>
      </td>
     <#if category_index%3==2></tr></#if>
    </#list>

@@ -27,6 +27,7 @@ import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 
+import cz.abclinuxu.utils.forms.NewsCategoriesSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class ShowNewsPage implements AbcAction {
         env.put("NEWS", news);
 
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        env.put(VAR_CATEGORIES, Search.getNewsCategories(params));
+        env.put(VAR_CATEGORIES, new NewsCategoriesSet(params.get(Search.PARAM_CATEGORY)));
         env.put(Constants.VAR_RSS, FeedGenerator.getNewsFeedUrl());
 
         return FMTemplateSelector.select("ViewCategory", "news", env, request);

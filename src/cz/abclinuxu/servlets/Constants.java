@@ -124,6 +124,8 @@ public interface Constants {
 
     // more types, see EditRelated, Item and Item.dtd
     String TYPE_AUTHOR = "author";
+    String TYPE_BAZAAR = "bazaar";
+    String TYPE_BLOG = "blog";
     String TYPE_CONTENT = "content";
     String TYPE_DICTIONARY = "dictionary";
     String TYPE_EXTERNAL_DOCUMENT = "external";
@@ -131,6 +133,7 @@ public interface Constants {
     String TYPE_HARDWARE = "hardware";
     String TYPE_OTHER = "other";
     String TYPE_PERSONALITY = "personality";
+    String TYPE_QUESTION = "question";
     String TYPE_SECTION = "section";
     String TYPE_SERIES = "series";
     String TYPE_SOFTWARE = "software";

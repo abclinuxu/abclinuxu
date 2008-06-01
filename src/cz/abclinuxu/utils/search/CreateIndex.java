@@ -35,7 +35,6 @@ import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
-import cz.abclinuxu.scheduler.WhatHappened;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditArticle;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;

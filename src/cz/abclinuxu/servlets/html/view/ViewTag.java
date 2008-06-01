@@ -27,12 +27,22 @@ import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.data.Tag;
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.exceptions.NotFoundException;
 
+import cz.abclinuxu.persistence.extra.CompareCondition;
+import cz.abclinuxu.persistence.extra.Field;
+import cz.abclinuxu.persistence.extra.Operation;
+import cz.abclinuxu.persistence.extra.OperationIn;
+import cz.abclinuxu.persistence.extra.NestedCondition;
+import cz.abclinuxu.persistence.extra.LogicalOperation;
+import cz.abclinuxu.persistence.extra.QualifierTool;
+import cz.abclinuxu.utils.forms.DocumentTypesSet;
+import cz.abclinuxu.utils.forms.DocumentTypesSet.SelectedDocumentType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -52,6 +62,8 @@ public class ViewTag implements AbcAction {
     public static final String PARAM_FROM = "from";
     /** how many object to display */
     public static final String PARAM_COUNT = "count";
+    /** what type of document display when tag is selected */
+    public static final String PARAM_TYPE = "typ";
 
     /** Starting part of URL, until value of from parameter */
     public static final String VAR_URL_BEFORE_FROM = "URL_BEFORE_FROM";
@@ -60,6 +72,7 @@ public class ViewTag implements AbcAction {
     public static final String VAR_TAG = "TAG";
     public static final String VAR_TAGS = "TAGS";
     public static final String VAR_DOCUMENTS = "DOCUMENTS";
+    public static final String VAR_TYPES = "TYPES";
 
     private Pattern reTagId = Pattern.compile(UrlUtils.PREFIX_TAGS + "/" + "([^/?]+)");
     static final Qualifier[] QUALIFIERS_ARRAY = new Qualifier[]{};
@@ -80,6 +93,10 @@ public class ViewTag implements AbcAction {
         if (sDir != null && Constants.ORDER_DIR_DESC.equals(sDir))
             ascendingOrder = false;
 
+        // store document types
+        DocumentTypesSet types = new DocumentTypesSet(params.get(PARAM_TYPE), true);
+        env.put(VAR_TYPES, types);
+
         Matcher matcher = reTagId.matcher(url);
         if (matcher.find()) { // tag detail
             String id = matcher.group(1);
@@ -92,26 +109,37 @@ public class ViewTag implements AbcAction {
 
             int total = tag.getUsage();
             List<Relation> relations;
+            Paging found;
             if (total != 0) {
-                Qualifier[] qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
+                Qualifier[] qualifiers = getQualifiers(params, types, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
+                total = sqlTool.countRelationsWithTag(id, QualifierTool.removeOrderQualifiers(qualifiers));
                 relations = sqlTool.findRelationsWithTag(id, qualifiers);
-            } else
+                found = new Paging(relations, from, count, total, qualifiers);
+            } else {
                 relations = Collections.emptyList();
-            Paging found = new Paging(relations, from, count, total);
+                found = new Paging(relations, from, count, total);
+            }
             env.put(VAR_DOCUMENTS, found);
 
             StringBuffer sb = new StringBuffer("&amp;count=").append(found.getPageSize());
-            if (found.isQualifierSet(Qualifier.SORT_BY_CREATED.toString()))
+            if (found.isQualifierSet(Qualifier.SORT_BY_CREATED.toString())) {
                 sb.append("&amp;").append(Constants.PARAM_ORDER_BY).append("=").append(Constants.ORDER_BY_CREATED);
-            else if (found.isQualifierSet(Qualifier.SORT_BY_UPDATED.toString()))
+                params.put(Constants.PARAM_ORDER_BY, Constants.ORDER_BY_CREATED);
+            } else if (found.isQualifierSet(Qualifier.SORT_BY_UPDATED.toString())) {
                 sb.append("&amp;").append(Constants.PARAM_ORDER_BY).append("=").append(Constants.ORDER_BY_UPDATED);
-            else if (found.isQualifierSet(Qualifier.SORT_BY_TITLE.toString()))
+                params.put(Constants.PARAM_ORDER_BY, Constants.ORDER_BY_UPDATED);
+            } else if (found.isQualifierSet(Qualifier.SORT_BY_TITLE.toString())) {
                 sb.append("&amp;").append(Constants.PARAM_ORDER_BY).append("=").append(Constants.ORDER_BY_TITLE);
+                params.put(Constants.PARAM_ORDER_BY, Constants.ORDER_BY_TITLE);
+            }
 
-            if (found.isQualifierSet(Qualifier.ORDER_DESCENDING.toString()))
+            if (found.isQualifierSet(Qualifier.ORDER_DESCENDING.toString())) {
                 sb.append("&amp;").append(Constants.PARAM_ORDER_DIR).append("=").append(Constants.ORDER_DIR_DESC);
-            else if (found.isQualifierSet(Qualifier.ORDER_ASCENDING.toString()))
+                params.put(Constants.PARAM_ORDER_DIR, Constants.ORDER_DIR_DESC);
+            } else if (found.isQualifierSet(Qualifier.ORDER_ASCENDING.toString())) {
                 sb.append("&amp;").append(Constants.PARAM_ORDER_DIR).append("=").append(Constants.ORDER_DIR_ASC);
+                params.put(Constants.PARAM_ORDER_DIR, Constants.ORDER_DIR_ASC);
+            }
 
             env.put(VAR_URL_BEFORE_FROM, "/stitky/" + tag.getId() + "?from=");
             env.put(VAR_URL_AFTER_FROM, sb.toString());
@@ -161,7 +189,7 @@ public class ViewTag implements AbcAction {
      * @param rowCount 0 means do not set LimiQualifier. Otherwise it sets size of page to be fetched.
      * @return Qualifiers.
      */
-    public static Qualifier[] getQualifiers(Map params, Qualifier sortBy, Qualifier sortDir, int fromRow, int rowCount) {
+    public static Qualifier[] getQualifiers(Map params, DocumentTypesSet types, Qualifier sortBy, Qualifier sortDir, int fromRow, int rowCount) {
         String sBy = (String) params.get(Constants.PARAM_ORDER_BY);
         if (sBy != null && sortBy != null) {
             if (Constants.ORDER_BY_CREATED.equals(sBy))
@@ -184,7 +212,10 @@ public class ViewTag implements AbcAction {
         if (rowCount > 0)
             limit = new LimitQualifier(fromRow, rowCount);
 
-        List qualifiers = new ArrayList(3);
+        Qualifier documentType = getDocumentTypeQualifier(types);
+        List qualifiers = new ArrayList(4);
+        if (documentType != null)
+            qualifiers.add(documentType);
         if (sortBy != null)
             qualifiers.add(sortBy);
         if (sortDir != null)
@@ -193,5 +224,42 @@ public class ViewTag implements AbcAction {
             qualifiers.add(limit);
 
         return (Qualifier[]) qualifiers.toArray(QUALIFIERS_ARRAY);
+    }
+
+    private static Qualifier getDocumentTypeQualifier(DocumentTypesSet selectedTypes) {
+        if (selectedTypes.isEverythingSelected() || selectedTypes.isNothingSelected())
+            return null;
+
+        NestedCondition questions = null, discussions = null;
+        List<Integer> typeIds = new ArrayList<Integer>();
+        for (SelectedDocumentType type : selectedTypes.values()) {
+            if (type.isSet()) {
+                if (Constants.TYPE_QUESTION.equals(type.getKey())) {
+                    CompareCondition typeDiscussion = new CompareCondition(Field.TYPE, Operation.EQUAL, Item.DISCUSSION);
+                    CompareCondition subtypeQuestion = new CompareCondition(Field.SUBTYPE, Operation.EQUAL, Constants.SUBTYPE_QUESTION);
+                    questions = new NestedCondition(new Qualifier[]{typeDiscussion, subtypeQuestion}, LogicalOperation.AND);
+                    continue;
+                } else if (Constants.TYPE_DISCUSSION.equals(type.getKey())) {
+                    CompareCondition typeDiscussion = new CompareCondition(Field.TYPE, Operation.EQUAL, Item.DISCUSSION);
+                    CompareCondition subtypeIsNull = new CompareCondition(Field.SUBTYPE, Operation.IS_NULL, null);
+                    discussions = new NestedCondition(new Qualifier[]{typeDiscussion, subtypeIsNull}, LogicalOperation.AND);
+                    continue;
+                }
+                typeIds.add(type.getType());
+            }
+        }
+
+        List<Qualifier> qualifiers = new ArrayList<Qualifier>();
+        if (! typeIds.isEmpty())
+            qualifiers.add(new CompareCondition(Field.TYPE, new OperationIn(typeIds.size()), typeIds));
+        if (questions != null)
+            qualifiers.add(questions);
+        if (discussions != null)
+            qualifiers.add(discussions);
+
+        if (qualifiers.size() == 1)
+            return qualifiers.get(0);
+        else
+            return new NestedCondition(qualifiers, LogicalOperation.OR);
     }
 }

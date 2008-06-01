@@ -1,20 +1,13 @@
+<#assign html_header>
+    <script type="text/javascript" src="/data/site/search.js"></script>
+    <script language="javascript1.2" type="text/javascript">
+        newsCategoriesSet = new MultipleChoiceState(true);
+    </script>
+</#assign>
+
 <#include "../header.ftl">
 
 <@lib.showMessages/>
-
-<script language="javascript1.2" type="text/javascript">
-    stav = true;
-    function toggleCheckBoxes(sender) {
-        stav = !stav;
-        if (sender.form.elements.length) {
-            for (var i = 0; i < sender.form.elements.length; i++) {
-                if (sender.form.elements[i].type == 'checkbox') {
-                    sender.form.elements[i].checked = stav;
-                }
-            }
-        }
-    }
-</script>
 
 <h1>Hledání</h1>
 
@@ -31,11 +24,11 @@
    <#list CATEGORIES as category>
     <#if category_index%3==0><tr></#if>
      <td>
-      <label><input type="checkbox" name="category" value="${category.key}" <#if category.set>checked</#if>>${category.name}</label>
+      <label><@lib.showOption3 "category",category.key,category.label,"checkbox",category.set/></label>
      </td>
     <#if category_index%3==2></tr></#if>
    </#list>
-   <tr><td colspan="3"><button type="button" onclick="toggleCheckBoxes(this)">Vše/nic</button></td></tr>
+   <tr><td colspan="3"><button type="button" onclick="toggleCheckBoxes(this.form,newsCategoriesSet)">Vše/nic</button></td></tr>
   </table>
  <input type="hidden" name="parent" value="42932">
  <input type="hidden" name="type" value="zpravicka">

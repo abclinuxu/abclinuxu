@@ -18,12 +18,14 @@ USE devel;
 GRANT ALL ON *.* TO 'you'@'localhost' IDENTIFIED BY 'password' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 
-$ bzcat misc/databaze.sql.bz2 | mysql -u you -p password password
+$ bzcat misc/databaze.sql.bz2 | mysql -u 'you' --password='password' 'devel'
 
-kde you je vas uzivatelsky login na systemu.
+kde 'you' je uzivatel, ktery se bude pripojovat k databazi, 
+'password' heslo, ktere jste mu zadali behem udelovani opravneni 
+a 'devel' jmeno databaze.
 
 Ujistete se, ze databaze je pristupna pres TCP/IP, v defaultnim
-nastaveni je to zakazano (skip networking v konfiguraci ci spoustecim
+nastaveni je to zakazano (skip-networking v konfiguraci ci spoustecim
 skriptu, podrobnosti ve FAQ na abicku).
 
 3) nastavte LDAP
@@ -45,8 +47,9 @@ skriptu, podrobnosti ve FAQ na abicku).
 Dulezite je mit spravne vsechny cesty,
 adresare by mely existovat. Take nastavte
 jmeno databaze, uzivatele a jeho heslo.
-Pod windows tento soubor zkopirujte o adresar
-vyse pod jmenem conf_deploy.properties
+
+Soubor 'conf_devel.properties' zkopirujte o adresar vyse pod jmenem
+'conf_deploy.properties' (Windows) nebo na nej vytvorte symlink.
 
 5) zkompilujte projekt
 

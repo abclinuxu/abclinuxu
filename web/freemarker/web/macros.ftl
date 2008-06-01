@@ -388,6 +388,16 @@
     </label>
 </#macro>
 
+<#macro showOption3 (param value caption type condition)>
+    <label>
+        <input type="${type}" name="${param}" value="${value}"<#if condition> checked</#if>> ${caption}
+    </label>
+</#macro>
+
+<#macro showOption4 (value caption values)>
+    <option value="${value}"<#if TOOL.isWithin(values, value)> selected</#if>>${caption}</option>
+</#macro>
+
 <#macro advertisement (id)>${TOOL.getAdvertisement(id, .vars)}</#macro>
 
 <#macro showDiscussionState diz>

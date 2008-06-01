@@ -26,8 +26,6 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
-import cz.abclinuxu.data.view.NewsCategories;
-import cz.abclinuxu.data.view.NewsCategory;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.utils.search.AbcCzechAnalyzer;
@@ -35,6 +33,8 @@ import cz.abclinuxu.utils.search.AbcQueryParser;
 import cz.abclinuxu.utils.search.MyDocument;
 import cz.abclinuxu.data.view.SearchResult;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.utils.forms.DocumentTypesSet;
+import cz.abclinuxu.utils.forms.NewsCategoriesSet;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
@@ -116,9 +116,9 @@ public class Search implements AbcAction {
             env.put(VAR_UPDATED, lastUpdated);
         }
 
-        Types types = new Types(params.get(PARAM_TYPE), ! toAdvanced);
+        DocumentTypesSet types = new DocumentTypesSet(params.get(PARAM_TYPE), ! toAdvanced);
         env.put(VAR_TYPES, types);
-        NewsCategoriesSet newsCategoriesSet = getNewsCategories(params);
+        NewsCategoriesSet newsCategoriesSet = new NewsCategoriesSet(params.get(PARAM_CATEGORY));
         env.put(VAR_NEWS_CATEGORIES, newsCategoriesSet);
         if (toAdvanced)
             params.put(PARAM_ADVANCED_MODE, "true");
@@ -265,199 +265,5 @@ public class Search implements AbcAction {
             return FMTemplateSelector.select("Search", "show", env, request);
     }
 
-    /**
-     * Converts selected categories to list.
-     */
-    private static List getSelectedCategories(Map params) {
-        return Tools.asList(params.get(PARAM_CATEGORY));
-    }
-
-    public static NewsCategoriesSet getNewsCategories(Map params) {
-        List selected = getSelectedCategories(params);
-        return new NewsCategoriesSet(selected);
-    }
-
-    public static class NewsCategoriesSet extends AbstractCollection {
-        List list;
-        List selected;
-
-        public NewsCategoriesSet(List selected) {
-            this.selected = selected;
-            Collection categories = NewsCategories.getAllCategories();
-            list = new ArrayList(categories.size());
-            for ( Iterator iter = categories.iterator(); iter.hasNext(); ) {
-                NewsCategory newsCategory = (NewsCategory) iter.next();
-                add(new SelectedNewsCategory(newsCategory, selected));
-            }
-        }
-
-        public boolean isNothingSelected() {
-            return selected.size()==0;
-        }
-
-        public boolean isEverythingSelected() {
-            return selected.size()==list.size();
-        }
-
-        public List getSelected() {
-            return selected;
-        }
-
-        public Iterator iterator() {
-            return list.iterator();
-        }
-
-        public int size() {
-            return list.size();
-        }
-
-        public boolean add(Object o) {
-            return list.add(o);
-        }
-    }
-
-    public static class SelectedNewsCategory extends NewsCategory {
-        boolean set;
-
-        public SelectedNewsCategory(NewsCategory category, List selected) {
-            super(category.getKey(), category.getName(), category.getDesc());
-            setSet(selected);
-        }
-
-        public boolean isSet() {
-            return set;
-        }
-
-        public void setSet(boolean set) {
-            this.set = set;
-        }
-
-        public void setSet(List selected) {
-            if (selected.size()==0)
-                set = true;
-            else
-                set = selected.contains(getKey());
-        }
-    }
-
-    public static class Types {
-        Map map = new HashMap();
-        /** when true, none selected is considered as all types were selected */
-        boolean noneIsAll;
-
-        public Types(Object param, boolean noneIsAll) {
-            this.noneIsAll = noneIsAll;
-            List params = Tools.asList(param);
-            for ( Iterator iter = params.iterator(); iter.hasNext(); ) {
-                String s = (String) iter.next();
-                map.put(s, Boolean.TRUE);
-            }
-        }
-
-        public boolean isNothingSelected() {
-            return map.size()==0;
-        }
-
-        public boolean isEverythingSelected() {
-            return map.size()==MyDocument.ALL_TYPES_COUNT;
-        }
-
-        public boolean isArticle() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_ARTICLE);
-        }
-
-        public boolean isBlog() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_BLOG);
-        }
-
-        public boolean isBazaar() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_BAZAAR);
-        }
-
-        public boolean isSection() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_CATEGORY);
-        }
-
-        public boolean isDictionary() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_DICTIONARY);
-        }
-
-        public boolean isPersonality() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_PERSONALITY);
-        }
-
-        public boolean isDiscussion() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_DISCUSSION);
-        }
-
-        public boolean isDocument() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_DOCUMENT);
-        }
-
-        public boolean isDriver() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_DRIVER);
-        }
-
-        public boolean isFaq() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_FAQ);
-        }
-
-        public boolean isHardware() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_HARDWARE);
-        }
-
-        public boolean isNews() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_NEWS);
-        }
-
-        public boolean isPoll() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_POLL);
-        }
-
-        public boolean isQuestion() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_QUESTION);
-        }
-
-        public boolean isSoftware() {
-            if (noneIsAll && map.isEmpty())
-                return true;
-            return map.containsKey(MyDocument.TYPE_SOFTWARE);
-        }
-
-        public Map getMap() {
-            return Collections.unmodifiableMap(map);
-        }
-
-        public int size() {
-            return map.size();
-        }
-    }
+    
 }

@@ -43,7 +43,7 @@ public final class NewsCategories implements Configurable {
         singleton = new NewsCategories();
     }
 
-    private Map map;
+    private Map<String, NewsCategory> map;
     private String filename;
 
     /**
@@ -66,7 +66,7 @@ public final class NewsCategories implements Configurable {
      * @return
      */
     public static final NewsCategory get(String key) {
-        return (NewsCategory) singleton.map.get(key.toUpperCase());
+        return singleton.map.get(key.toUpperCase());
     }
 
     /**
@@ -86,7 +86,15 @@ public final class NewsCategories implements Configurable {
         Set set = singleton.map.keySet();
         return new ArrayList(set);
     }
-
+    
+    /**
+     * Gets map of all existing categories.
+     * @return existing categories
+     */
+     public static final Map<String, NewsCategory> getAllCategoriesAsMap() {
+         return new LinkedHashMap<String, NewsCategory>(singleton.map);
+     }
+    
     /**
      * Configures this instance.
      */
@@ -103,7 +111,8 @@ public final class NewsCategories implements Configurable {
         try {
             Document document = new SAXReader().read(filename);
             String key, name, desc;
-            Map aMap = new LinkedHashMap(11, 1.0f);
+            Map<String, NewsCategory> aMap = 
+                    new LinkedHashMap<String, NewsCategory>(11, 1.0f);
             List categoryTags = document.getRootElement().elements("category");
             for ( Iterator iter = categoryTags.iterator(); iter.hasNext(); ) {
                 Element tagCategory = (Element) iter.next();
