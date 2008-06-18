@@ -75,6 +75,10 @@
 	  <priority value="info" />
 	</category>
 
+	<category name="cz.abclinuxu.servlets.ws.UserAccountServiceImpl">
+	  <priority value="debug" />
+	</category>
+
 	<category name="javawebparts.filter.CompressionFilter">
 	  <priority value="warn" />
 	</category>

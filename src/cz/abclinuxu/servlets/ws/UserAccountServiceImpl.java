@@ -66,6 +66,9 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             throws DuplicateKeyException, InvalidInputException, AccessDeniedException, LdapException {
         try {
             verifyAccess(portal, portalPassword);
+            if (log.isDebugEnabled())
+                log.debug("registerUser(" + login + ")");
+
             mgr.registerUser(login, password, openId, name, portal);
         } catch (AbcException e) {
             log.warn("Chyba webové služby", e);
@@ -81,6 +84,9 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             throws AccessDeniedException, LdapException {
         try {
             verifyAccess(portal, portalPassword);
+            if (log.isDebugEnabled())
+                log.debug("login(" + login + ")");
+
             return mgr.login(login, password, portal);
         } catch (AbcException e) {
             log.warn("Chyba webové služby", e);
@@ -96,6 +102,9 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             throws AccessDeniedException, LdapException {
         try {
             verifyAccess(portal, portalPassword);
+            if (log.isDebugEnabled())
+                log.debug("loginWithPasswordHash(" + login + ")");
+
             return mgr.loginWithPasswordHash(login, passwordHash, portal);
         } catch (AbcException e) {
             log.warn("Chyba webové služby", e);
@@ -111,6 +120,9 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             throws AccessDeniedException, LdapException, InvalidInputException {
         try {
             verifyAccess(portal, portalPassword);
+            if (log.isDebugEnabled())
+                log.debug("changePassword(" + login + ")");
+
             mgr.changePassword(login, password);
         } catch (AbcException e) {
             log.warn("Chyba webové služby", e);
@@ -126,6 +138,8 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             throws AccessDeniedException, LdapException, InvalidInputException {
         try {
             verifyAccess(portal, portalPassword);
+            if (log.isDebugEnabled())
+                log.debug("updateUser(" + account.login + ")");
 
             Integer id = SQLTool.getInstance().getUserByLogin(account.login);
             Persistence persistence = PersistenceFactory.getPersistence();
@@ -265,6 +279,8 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             throws AccessDeniedException, LdapException {
         try {
             verifyAccess(portal, portalPassword);
+            if (log.isDebugEnabled())
+                log.debug("getUserInformation(" + login + ")");
 
             Map<String, String> map = mgr.getUserInformation(login, attributes);
             UserAccount account = new UserAccount();
@@ -307,9 +323,15 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
     }
 
     private void verifyAccess(String portalId, String portalPassword) throws AccessDeniedException {
+        if (log.isDebugEnabled())
+            log.debug("verify access for " + portalId);
+        if (portalId == null)
+            throw new AccessDeniedException("Přístup ke službě odepřen - chybí identifikace portálu!", false);
         ClientInfo client = clients.get(portalId.toLowerCase());
         if (client == null ||  ! client.password.equals(portalPassword))
             throw new AccessDeniedException("Přístup ke službě odepřen!", false);
+        if (log.isDebugEnabled())
+            log.debug("access verified for " + portalId);
     }
 
     private InvalidInputException createException(String param, Map env, String ldapAttribute) {
