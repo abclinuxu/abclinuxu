@@ -20,7 +20,6 @@ package cz.abclinuxu.utils.feeds;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.DiscussionHeader;
-import cz.abclinuxu.data.view.NewsCategories;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -62,6 +61,7 @@ public class FeedGenerator implements Configurable {
     static final String PREF_DRIVERS = "ovladace";
     static final String PREF_HARDWARE = "hardware";
     static final String PREF_SOFTWARE = "software";
+    static final String PREF_SCREENSHOTS = "screenshots";
     static final String PREF_BLOG = "blog";
     static final String PREF_BLOGS = "blogs";
     static final String PREF_BLOG_DIGEST = "blog.digest";
@@ -970,6 +970,7 @@ public class FeedGenerator implements Configurable {
         fileNews = prefs.get(PREF_NEWS, null);
         filePersonalities = prefs.get(PREF_PERSONALITIES, null);
         filePolls = prefs.get(PREF_POLLS, null);
+        fileScreenshots = prefs.get(PREF_SCREENSHOTS, null);
         fileSoftware = prefs.get(PREF_SOFTWARE, null);
         dirBlogs = prefs.get(PREF_BLOGS, null);
         fileTrafika = prefs.get(PREF_TRAFIKA, null);

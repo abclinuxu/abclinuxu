@@ -221,6 +221,7 @@
                                 <entry key="ovladace" value="auto/ovladace.rss"/>
                                 <entry key="hardware" value="auto/hardware.rss"/>
                                 <entry key="software" value="auto/software.rss"/>
+                                <entry key="" value="auto/desktopy.rss"/>
                                 <entry key="zpravicky" value="auto/zpravicky.rss"/>
                                 <entry key="faq" value="auto/faq.rss"/>
                                 <entry key="blog" value="auto/blog.rss"/>
