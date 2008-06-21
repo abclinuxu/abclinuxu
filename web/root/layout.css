@@ -258,8 +258,10 @@ h4 {font-size: 105%;}
 	text-decoration: underline;
 }
 
-.st hr {
-	margin: 5px 0 0 -5px;
+.st hr { /* fix kvuli Opere 9.50 */
+        margin: 5px 0px 0px 0px;
+        position: relative;
+        left: -5px;
 }
 
 .st p {
