@@ -35,7 +35,7 @@ function doCopy {
 	# If original file exists...
 	if [ -f "$ORIGFILESDIR/$1" ]; then
 		# copy it
-		cp "$ORIGFILESDIR/$1" "$TARGETDIR/${1}.$ORIGEXT"
+		cp -p "$ORIGFILESDIR/$1" "$TARGETDIR/${1}.$ORIGEXT"
 		# and create a diff
 		diff -u "$TARGETDIR/${1}.$ORIGEXT" "$TARGETDIR/$1" >\
 		"$TARGETDIR/${1}.$PATCHEXT"

@@ -29,7 +29,7 @@ import java.util.Map;
  * @author kapy
  */
 public class NewsCategoriesSet extends 
-        MultipleChoice<String, NewsCategoriesSet.SelectedNewsCategory> {
+        MapMultipleChoice<String, NewsCategoriesSet.SelectedNewsCategory> {
     
     /** All possible categories */
     protected Map<String, NewsCategory> allCategories;
@@ -46,14 +46,14 @@ public class NewsCategoriesSet extends
        
         // no item selected means all selected
         if(checked.size()==0 && noneIsAll) {
-            for(NewsCategory nc: allCategories.values()) {
+            for (NewsCategory nc: allCategories.values()) {
                 SelectedNewsCategory snc = new SelectedNewsCategory(nc, true);
                 choices.put(nc.getKey(), snc);
             }
         }
         // check manually selection
         else {
-            for(NewsCategory nc: allCategories.values()) {
+            for (NewsCategory nc: allCategories.values()) {
                 String key = nc.getKey();
                 SelectedNewsCategory snc;
                 // checkbox was checked

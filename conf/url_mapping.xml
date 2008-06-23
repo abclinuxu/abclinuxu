@@ -57,6 +57,10 @@
             <pattern>^/lide</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewUser</action>
         </mapping>
+	<mapping>
+	    <pattern>^/jobs</pattern>
+	    <action>cz.abclinuxu.servlets.html.view.ViewJobsCz</action>
+	</mapping>    
         <mapping>
             <pattern>^/Profile</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewUser</action>

@@ -19,52 +19,65 @@
 
 package cz.abclinuxu.utils.forms;
 
-import java.util.AbstractCollection;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 
 /**
- * Abstract template for multiple form values. Implements AbstractColletion
- * to allow Freemarker to iterate throught its values.
+ * Abstract template for multiple values in form. Uses List as backend.
  * @param <V> Values stored, must implement Selectable interface
  * @see Selectable
  * @author kapy
+ * @since 03.07.2008
  */
-public abstract class MultipleChoice<V extends Selectable> extends AbstractCollection {
+public abstract class ListMultipleChoice<V extends Selectable> extends MultipleChoice<V> {
     
-
-    /** Size of map including selected items only */
-    protected int selected = 0;
-    /** Consired emptyness the same as all items were selected */
-    protected boolean noneIsAll;  
-    
+    /** Map to store chosen values */
+    protected List<V> choices = new ArrayList<V>();
    
     /**
-     * Returns collection filled by selected items
+     * Returns collection filled by keys of selected items
      * @return Collection of selected items
      */
-    public abstract Collection selectedSet(); 
+    public Collection selectedSet() {
+        List<V> list = new ArrayList<V>();
+        for (V element:choices) {
+            // check whether element is checked
+            if (element != null && element.isSet())
+                list.add(element);
+        }
+        return list;
+    }
     
     /**
      * Returns collection af all values stored in collection,
      * including not selected ones
-     * @return All values available
+     * @return
      */
-    public abstract Collection<V> values();
-    
+    public Collection<V> values() {
+        return choices;
+    }    
+
     /**
-     * Returns flag of collection emptyness
-     * @return <code>true</code> if no items inserted is selected, 
-     * <code>false</code> otherwise
+     * Iterator over all stored items.
+     * @return Iterator throught stored values
      */
-    public boolean isNothingSelected() {
-        return selected==0;
+    @Override
+    public Iterator iterator() {
+        return choices.iterator();
+    }
+
+    /**
+     * Size of collection of all items
+     * @return Size of collection
+     */
+    @Override
+    public int size() {
+        return choices.size();
     }
     
-    /**
-     * Returns flag which means that every item stored is selected
-     * @return <code>true</code> if all items vere selected, 
-     * <code>false</code> otherwise
-     */
-    public abstract boolean isEverythingSelected();
     
 }
+

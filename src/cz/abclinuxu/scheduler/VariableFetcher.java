@@ -21,6 +21,8 @@ package cz.abclinuxu.scheduler;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.SectionTreeCache;
 import cz.abclinuxu.data.view.HostingServer;
+import cz.abclinuxu.data.view.JobsCzHolder;
+import cz.abclinuxu.data.view.JobsCzItem;
 import cz.abclinuxu.data.view.Screenshot;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
@@ -69,6 +71,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String KEY_BAZAAR = "bazaar";
     public static final String KEY_SCREENSHOT = "screenshot";
     public static final String KEY_TRIVIA = "trivia";
+    public static final String KEY_JOBSCZ = "jobscz";
     public static final String KEY_INDEX_LINKS = "links.in.index";
     public static final String KEY_TEMPLATE_LINKS = "links.in.template";
 
@@ -89,6 +92,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     Relation currentPoll;
     int sectionCacheFrequency;
     HostingServer hostingServer;
+    JobsCzHolder jobsCzHolder;
 
     SQLTool sqlTool;
     int cycle;
@@ -251,6 +255,11 @@ public class VariableFetcher extends TimerTask implements Configurable {
         int userLimit = getObjectCountForUser(user, KEY_SCREENSHOT, "/data/settings/index_screenshots");
         return getSubList(freshScreenshots, userLimit);
     }
+    
+    public List<JobsCzItem> getFreshJobsCz(Object user) {
+        int userLimit = getObjectCountForUser(user, KEY_JOBSCZ, null);
+        return getSubList(jobsCzHolder.getJobsList(), userLimit);
+    }
 
     /**
      * Finds list of servers and their links to be displayed for this user. If user does not want
@@ -356,7 +365,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public HostingServer getHostingServer() {
         return hostingServer;
     }
-
+    
+    /**
+     * @return Jobs.cz holder
+     */
+     public JobsCzHolder getJobsCzHolder() {
+         return jobsCzHolder;
+     }
+    
     /**
      * Finds number of objects for given user. If o is not User or xpath is not set, then default value
      * will be returned. Otherwise user's preference will be returned (unless it is smaller than 0
@@ -426,6 +442,9 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshSectionCaches();
             refreshScreenshots();
             refreshTrivia();
+            
+            // jobs are refreshed from another thread (JobsCzFetcher)
+            // refreshJobsCz();
 
             cycle++;
             log.debug("Cachovani hotovo.");
@@ -646,6 +665,21 @@ public class VariableFetcher extends TimerTask implements Configurable {
             log.error("Selhalo nacitani desktopu", e);
         }
     }
+    
+    /**
+     * Fetches jobs from available XML file, if 
+     * fetching fails, do not change current holder
+     * @param uri URI of XML to be parsed
+     */
+    public void refreshJobsCz(String uri) {
+        try {
+            JobsCzHolder newHolder = new JobsCzHolder();
+            newHolder.fetch(uri);
+            jobsCzHolder = newHolder;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani pracovnich pozic serveru jobs.cz", e);
+        }
+    }
 
     public void refreshCurrentPoll() {
         try {
@@ -786,6 +820,10 @@ public class VariableFetcher extends TimerTask implements Configurable {
         maxSizes.put(KEY_SCREENSHOT, size);
         freshScreenshots = Collections.emptyList();
 
+        size = prefs.getInt(PREF_DEFAULT + KEY_JOBSCZ, 10);
+        defaultSizes.put(KEY_JOBSCZ, size);
+        jobsCzHolder = JobsCzHolder.EMPTY_HOLDER;
+        
         size = prefs.getInt(PREF_DEFAULT + KEY_TRIVIA, 3);
         defaultSizes.put(KEY_TRIVIA, size);
         size = prefs.getInt(PREF_MAX + KEY_TRIVIA, 10);

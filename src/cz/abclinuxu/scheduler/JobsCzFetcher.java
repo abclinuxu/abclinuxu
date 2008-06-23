@@ -18,25 +18,22 @@
  */
 package cz.abclinuxu.scheduler;
 
+import cz.abclinuxu.data.view.JobsCzItem;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.FMUtils;
-import cz.abclinuxu.utils.freemarker.Tools;
 
-import java.util.prefs.Preferences;
 import java.util.*;
 import java.io.*;
 
+import java.util.prefs.Preferences;
 import org.apache.log4j.Logger;
-import org.dom4j.io.SAXReader;
-import org.dom4j.Document;
-import org.dom4j.Element;
 
 /**
- * Fetches Unixshop RSS.
+ * Fetches jobs.cz RSS.
  */
 public class JobsCzFetcher extends TimerTask implements Configurable {
     static Logger log = Logger.getLogger(JobsCzFetcher.class);
@@ -47,50 +44,16 @@ public class JobsCzFetcher extends TimerTask implements Configurable {
     String fileName, uri;
 
     public void run() {
-        log.debug("Fetching Jobs.cz RSS starts ..");
+        // refresh list
+        log.debug("Refreshing list for jobs.cz server");
+        VariableFetcher.getInstance().refreshJobsCz(uri);
+        
+        // create include file
+        List<JobsCzItem> result = VariableFetcher.getInstance().getFreshJobsCz(null);
+        Map env = new HashMap();
+        env.put("ITEMS", result);
+        String file = AbcConfig.calculateDeployedPath(fileName);
         try {
-            ArrayList result = new ArrayList();
-            SAXReader reader = new SAXReader();
-            Document document = reader.read(uri);
-            List elements = document.selectNodes("/positionList/position");
-            if (elements != null) {
-                for (Iterator iter = elements.iterator(); iter.hasNext();) {
-                    Element element = (Element) iter.next();
-                    String title = element.elementText("positionName");
-                    title = Tools.encodeSpecial(title);
-
-                    JobItem jobItem = new JobItem();
-                    jobItem.setUrl(element.elementText("url"));
-                    jobItem.setPositionName(title);
-                    jobItem.setCompanyName(element.elementText("companyName"));
-
-                    List subElements = element.selectNodes("workLocalityList/locality");
-                    if (subElements != null && subElements.size() > 0) {
-                        String[] strings = new String[subElements.size()];
-                        for (int j = 0; j < subElements.size(); j++) {
-                            Element elementIn = (Element) subElements.get(j);
-                            strings[j] = elementIn.getText();
-                        }
-                        jobItem.setLocalities(strings);
-                    }
-
-                    subElements = element.selectNodes("skillList/skill");
-                    if (subElements != null && subElements.size() > 0) {
-                        String[] strings = new String[subElements.size()];
-                        for (int i = 0; i < subElements.size(); i++) {
-                            Element elementIn = (Element) subElements.get(i);
-                            strings[i] = elementIn.getText();
-                        }
-                        jobItem.setSkills(strings);
-                    }
-
-                    result.add(jobItem);
-                }
-            }
-
-            Map env = new HashMap();
-            env.put("ITEMS", result);
-            String file = AbcConfig.calculateDeployedPath(fileName);
             FMUtils.executeTemplate("/include/misc/generate_jobscz.ftl", env, new File(file));
             log.debug("Jobs.cz include file generated");
         } catch (IOException e) {
@@ -116,49 +79,5 @@ public class JobsCzFetcher extends TimerTask implements Configurable {
     public static void main(String[] args) throws Exception {
         new JobsCzFetcher().run();
     }
-
-    public static class JobItem {
-        String url, positionName, companyName;
-        String[] skills, localities;
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-
-        public String getPositionName() {
-            return positionName;
-        }
-
-        public void setPositionName(String positionName) {
-            this.positionName = positionName;
-        }
-
-        public String getCompanyName() {
-            return companyName;
-        }
-
-        public void setCompanyName(String companyName) {
-            this.companyName = companyName;
-        }
-
-        public String[] getSkills() {
-            return skills;
-        }
-
-        public void setSkills(String[] skills) {
-            this.skills = skills;
-        }
-
-        public String[] getLocalities() {
-            return localities;
-        }
-
-        public void setLocalities(String[] localities) {
-            this.localities = localities;
-        }
-    }
 }
+

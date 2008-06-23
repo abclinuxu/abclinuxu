@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * @author kapy
  */
-public class DocumentTypesSet extends MultipleChoice<String, DocumentTypesSet.SelectedDocumentType> {
+public class DocumentTypesSet extends MapMultipleChoice<String, DocumentTypesSet.SelectedDocumentType> {
     /**
      * All possible values of document types
      */
