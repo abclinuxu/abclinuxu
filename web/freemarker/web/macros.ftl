@@ -205,6 +205,7 @@
 
 <#macro showCensored(comment dizId relId)>
     <div class="cenzura">
+        <img src="/images/site2/skryty-komentar-krizek.png" width="40" height="40" alt="skrytý komentář" style="float:right;">
         <#assign admin = TOOL.xpath(comment.data,"//censored/@admin")?default("5473")>
         Náš <a href="/Profile/${admin}">administrátor</a> shledal tento komentář
         <a href="/faq/abclinuxu.cz/proc-je-komentar-oznacen-jako-zavadny">závadným</a>.
