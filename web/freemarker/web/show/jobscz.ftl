@@ -15,6 +15,18 @@
     <script language="javascript1.2" type="text/javascript">
     <!--
         var doctypeSet = new MultipleChoiceState(false);
+        function resetSelect(obj)
+	{
+		for(var i=0;i<obj.length; i++)
+			obj.options[i].selected = false;
+	}
+        function cancelSearchOptions()
+	{
+		var form = document.getElementById('jobSearch');
+		resetSelect(document.getElementById('jobLocality'));
+		resetSelect(document.getElementById('jobSkill'));
+		form.submit();
+	}
     // -->
     </script>
 </#assign>
@@ -25,17 +37,17 @@
 
 <h1>Nabídka volných pracovních pozic serveru jobs.cz</h1>
 
-<form action="/jobs">
+<form id="jobSearch" action="/jobs">
     <table border="0" width="60%">
         <tr>
             <td>
-                <select name="locality" multiple size="6">
+                <select name="locality" id="jobLocality" multiple size="6">
                 <#list LOCS as loc>
                     <option value="${loc.locality}" <#if loc.set>selected="selected"</#if>>${loc.locality}</option>
                 </#list>    
             </td>    
             <td>
-                <select name="skill" multiple size="6">
+                <select name="skill" id="jobSkill" multiple size="6">
                 <#list SKILLS as skill>
                     <option value="${skill.skill}" <#if skill.set>selected="selected"</#if>>${skill.skill}</option>
                 </#list> 
@@ -44,7 +56,7 @@
         <tr>
             <td colspan="2" class="right">
                 <input type="submit" value="Vybrat"/>
-                <input type="reset" />
+                <input type="button" value="Reset" onclick="javascript: cancelSearchOptions();" />
             </td>
         </tr>
     </table>
