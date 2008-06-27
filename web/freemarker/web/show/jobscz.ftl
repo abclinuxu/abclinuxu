@@ -44,6 +44,7 @@
         <tr>
             <td colspan="2" class="right">
                 <input type="submit" value="Vybrat"/>
+                <input type="reset" />
             </td>
         </tr>
     </table>
@@ -69,7 +70,7 @@
             </#list>
             </td>
         </tr>
-    <table>
+    </table>
 </#list>
 
 
