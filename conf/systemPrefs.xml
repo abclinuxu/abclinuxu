@@ -481,7 +481,7 @@
                     <node name="JobsCzFetcher">
                         <map>
                             <entry key="file" value="WEB-INF/freemarker/include/jobscz.txt"/>
-                            <entry key="uri" value="http://exporter.lmc.cz/telcoit_titulka_xml.exp"/>
+                            <entry key="uri" value="http://exporter.lmc.cz/export_it.xml"/>
                         </map>
                     </node>
                     <node name="JobPilotFetcher">
