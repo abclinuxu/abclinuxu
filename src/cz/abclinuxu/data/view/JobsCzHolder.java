@@ -85,7 +85,7 @@ public class JobsCzHolder {
             jobItem.setCreateDate(element.elementText("createDate"));
             
             // locations
-            List subElements = element.selectNodes("workLocalityList/locality");
+            List subElements = element.selectNodes("localityList/locality");
             if (subElements != null && subElements.size() > 0) {
                 String[] strings = new String[subElements.size()];
                 for (int j = 0; j < subElements.size(); j++) {
