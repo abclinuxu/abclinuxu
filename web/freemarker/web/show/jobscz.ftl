@@ -25,16 +25,20 @@
 
 <h1>Nabídka volných pracovních pozic serveru jobs.cz</h1>
 
+<br />
+
 <form id="jobSearch" action="/jobs">
     <table border="0" width="60%">
         <tr>
             <td>
+                <p>oblast</p>
                 <select name="locality" id="jobLocality" multiple size="6">
                 <#list LOCS as loc>
                     <option value="${loc.locality}" <#if loc.set>selected="selected"</#if>>${loc.locality}</option>
                 </#list>
             </td>
             <td>
+                <p>obor</p>
                 <select name="skill" id="jobSkill" multiple size="6">
                 <#list SKILLS as skill>
                     <option value="${skill.skill}" <#if skill.set>selected="selected"</#if>>${skill.skill}</option>
@@ -42,7 +46,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2">
+            <td colspan="2" style="text-align:right">
                 <input type="submit" value="Vybrat"/>&nbsp;
                 <input type="button" value="Zrušit filtr" onclick="javascript: cancelSearchOptions();" />
             </td>
@@ -53,24 +57,15 @@
 <hr />
 
 <#list JOBS.data as job>
-    <table class="jobTable siroka">
-        <tr>
-            <td colspan="2">
-            <span class="st_nadpis"><b><a href="${job.url}?fc=a-jobs&amp;fg=a-produkt&amp;fs=abclinuxu.cz&amp;fm=aliance&amp;ff=box&amp;fi=stickfish&amp;fb=it" rel="nofollow">${job.positionName}</a></b></span>
-            <td>
-        </tr>
-        <tr>
-            <td style="width:70%;"><small>${job.companyName}</small></td>
-            <td style="text-align:right">${job.createDate}</td>
-        </tr>
-        <tr>
-            <td style="text-align:right" colspan="2">
+    <div>
+        <h4 class="st_nadpis"><a href="${job.url}?fc=a-jobs&amp;fg=a-produkt&amp;fs=abclinuxu.cz&amp;fm=aliance&amp;ff=box&amp;fi=stickfish&amp;fb=it" rel="nofollow">${job.positionName}</a></h4>
+        <div style="float:right">${job.createDate}<br />
             <#list job.localities as locality>
                 ${locality}<#if locality_has_next>,</#if>
             </#list>
-            </td>
-        </tr>
-    </table>
+        </div>
+        <div style="font-size:small">${job.companyName}</div>
+    </div>
     <hr />
 </#list>
 
