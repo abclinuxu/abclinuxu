@@ -59,14 +59,15 @@
 <#list JOBS.data as job>
     <div>
         <h4 class="st_nadpis"><a href="${job.url}?fc=a-jobs&amp;fg=a-produkt&amp;fs=abclinuxu.cz&amp;fm=aliance&amp;ff=box&amp;fi=stickfish&amp;fb=it" rel="nofollow">${job.positionName}</a></h4>
-        <div style="float:right">${job.createDate}<br />
+        <div style="float:right;font-size:small">
+            ${job.createDate}<br />
             <#list job.localities as locality>
                 ${locality}<#if locality_has_next>,</#if>
             </#list>
         </div>
         <div style="font-size:small">${job.companyName}</div>
     </div>
-    <hr />
+    <hr style="clear:right" />
 </#list>
 
 
