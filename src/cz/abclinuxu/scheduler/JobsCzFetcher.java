@@ -39,14 +39,15 @@ public class JobsCzFetcher extends TimerTask implements Configurable {
     static Logger log = Logger.getLogger(JobsCzFetcher.class);
 
     static final String PREF_FILE = "file";
-    static final String PREF_URI = "uri";
+    static final String PREF_URI_PAGE = "uriPage";
+	static final String PREF_URI_HP = "uriHP";
 
-    String fileName, uri;
+    String fileName, uriPage, uriHP;
 
     public void run() {
         // refresh list
         log.debug("Refreshing list for jobs.cz server");
-        VariableFetcher.getInstance().refreshJobsCz(uri);
+        VariableFetcher.getInstance().refreshJobsCz(uriPage, uriHP);
         
         // create include file
         List<JobsCzItem> result = VariableFetcher.getInstance().getFreshJobsCz(null);
@@ -57,9 +58,9 @@ public class JobsCzFetcher extends TimerTask implements Configurable {
             FMUtils.executeTemplate("/include/misc/generate_jobscz.ftl", env, new File(file));
             log.debug("Jobs.cz include file generated");
         } catch (IOException e) {
-            log.error("IO problems for " + uri + ": " + e.getMessage());
+            log.error("IO problems for " + uriHP + ": " + e.getMessage());
         } catch (Exception e) {
-            log.error("Cannot parse links from " + uri, e);
+            log.error("Cannot parse links from " + uriHP, e);
         }
     }
 
@@ -72,7 +73,8 @@ public class JobsCzFetcher extends TimerTask implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        uri = prefs.get(PREF_URI, null);
+        uriPage = prefs.get(PREF_URI_PAGE, null);
+		uriHP = prefs.get(PREF_URI_HP, null);
         fileName = prefs.get(PREF_FILE, null);
     }
 
