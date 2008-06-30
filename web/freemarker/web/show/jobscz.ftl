@@ -23,6 +23,8 @@
 
 <@lib.showMessages/>
 
+<img src="/images/bannery/jobscz-logo.gif" width="200" height="75" alt="jobs.cz logo" style="float:right;margin:0.5em">
+
 <h1>Nabídka volných pracovních pozic serveru jobs.cz</h1>
 
 <br />
