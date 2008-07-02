@@ -337,8 +337,13 @@ public class EditNews implements AbcAction {
         map.put(VAR_AUTHOR, author);
         map.put(VAR_ADMIN, user);
         map.put(EmailSender.KEY_FROM, user.getEmail());
-	    map.put(EmailSender.KEY_CC, "admini@abclinuxu.cz"); // inform group of admins too
-        map.put(EmailSender.KEY_TO, author.getEmail());
+
+        if (author.getEmail() != null) {
+            map.put(EmailSender.KEY_CC, "admini@abclinuxu.cz"); // inform group of admins too
+            map.put(EmailSender.KEY_TO, author.getEmail());
+        } else
+            map.put(EmailSender.KEY_TO, "admini@abclinuxu.cz");
+
         map.put(EmailSender.KEY_RECEPIENT_UID, Integer.toString(author.getId()));
         map.put(EmailSender.KEY_SUBJECT, "zpravicka byla smazana");
         map.put(EmailSender.KEY_TEMPLATE, "/mail/rm_zpravicka.ftl");
