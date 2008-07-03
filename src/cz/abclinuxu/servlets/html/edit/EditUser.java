@@ -400,6 +400,12 @@ public class EditUser implements AbcAction {
         session.setAttribute(Constants.VAR_USER, managed);
 
         if (managed.getEmail() != null) {
+            Map<String, String> changes = new HashMap<String, String>();
+            changes.put(LdapUserManager.ATTRIB_EMAIL_ADRESS, managed.getEmail());
+            changes.put(LdapUserManager.ATTRIB_EMAIL_BLOCKED, "false");
+            changes.put(LdapUserManager.ATTRIB_EMAIL_VERIFIED, "false");
+            ldapManager.updateUser(managed.getLogin(), changes);
+
             Map data = new HashMap();
             data.put(Constants.VAR_USER, managed);
             data.put(EmailSender.KEY_TO, managed.getEmail());
