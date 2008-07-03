@@ -30,6 +30,7 @@ import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.AuthenticationException;
+import javax.naming.InvalidNameException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttributes;
@@ -336,6 +337,8 @@ public class LdapUserManager implements Configurable {
             try {
                 ctx = connectLDAP(login, password, false); // verify password
             } catch (AuthenticationException e) {
+                return false;
+            } catch (InvalidNameException e) {
                 return false;
             } finally {
                 if (ctx != null)
