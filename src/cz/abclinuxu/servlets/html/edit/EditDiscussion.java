@@ -1331,7 +1331,13 @@ public class EditDiscussion implements AbcAction {
             files = new ArrayList<FileItem>(2);
         env.put(VAR_ATTACHMENTS, files);
 
-        FileItem fileItem = (FileItem) params.get(PARAM_ATTACHMENT);
+        Object o = params.get(PARAM_ATTACHMENT);
+        if (! (o instanceof FileItem)) {
+            log.warn("Parametr " + PARAM_ATTACHMENT + " neni FileItem, ale " + o.getClass() + ", hodnota je " + o);
+            ServletUtils.addError(PARAM_ATTACHMENT, "Vstupní parametr má nečekanou hodnotu! Kontaktujte prosím adminy s popisem vaší akce.", env, null);
+            return false;
+        }
+        FileItem fileItem = (FileItem) o;
         if (fileItem == null || fileItem.getName() == null || fileItem.getSize() == 0)
             return true;
 
