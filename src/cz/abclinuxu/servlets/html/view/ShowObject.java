@@ -25,6 +25,7 @@ import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.DiscussionRecord;
+import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.data.view.NewsCategories;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
@@ -144,6 +145,10 @@ public class ShowObject implements AbcAction {
         if (revision != -1) {
             Versioning versioning = VersioningFactory.getVersioning();
             versioning.load(item, revision);
+            
+            List parents = (List) env.get(ShowObject.VAR_PARENTS);
+            Link link = new Link("Revize "+revision, relation.getUrl()+"?revize="+revision, null);
+            parents.add(link);
         }
 
         switch (item.getType()) {

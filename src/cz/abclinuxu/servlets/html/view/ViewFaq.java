@@ -24,6 +24,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.data.view.SectionTreeCache;
 import cz.abclinuxu.data.view.SectionNode;
 import cz.abclinuxu.utils.InstanceUtils;
@@ -141,7 +142,6 @@ public class ViewFaq implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         List parents = persistence.findParents(relation);
-        env.put(ShowObject.VAR_PARENTS, parents);
 
         Item item = (Item) relation.getChild();
         env.put(VAR_ITEM, item);
@@ -150,7 +150,11 @@ public class ViewFaq implements AbcAction {
         if (revision != -1) {
             Versioning versioning = VersioningFactory.getVersioning();
             versioning.load(item, revision);
+            
+            Link link = new Link("Revize "+revision, relation.getUrl()+"?revize="+revision, null);
+            parents.add(link);
         }
+        env.put(ShowObject.VAR_PARENTS, parents);
 
         env.put(Constants.VAR_RSS, FeedGenerator.getFaqFeedUrl());
 

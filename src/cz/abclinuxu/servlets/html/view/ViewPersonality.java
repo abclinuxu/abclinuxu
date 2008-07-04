@@ -22,6 +22,7 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.extra.Qualifier;
@@ -116,6 +117,10 @@ public class ViewPersonality implements AbcAction {
         if (revision != -1) {
             Versioning versioning = VersioningFactory.getVersioning();
             versioning.load(item, revision);
+            
+            List parents = (List) env.get(ShowObject.VAR_PARENTS);
+            Link link = new Link("Revize "+revision, relation.getUrl()+"?revize="+revision, null);
+            parents.add(link);
         }
 
         SQLTool sqlTool = SQLTool.getInstance();
