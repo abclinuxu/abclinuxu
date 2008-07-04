@@ -14,7 +14,12 @@
     <#if nickname!="UNDEFINED">(${nickname})</#if>
 </h1>
 
-<p><#if uid != 0><a href=/Profile/${uid} title="${name?default("")} ${surname?default("")}">Profil autora na abclinuxu</a></#if></p>
+<p>
+<#if uid != 0>
+    <#assign uauthor=TOOL.createUser(uid)>
+    <a href="/lide/${uauthor.login}" title="${name?default("")} ${surname?default("")}">Profil autora na abclinuxu</a>
+</#if>
+</p>
 
 <#if USER?exists && USER.hasRole("article admin")>
     <p>
