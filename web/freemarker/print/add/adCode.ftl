@@ -41,6 +41,12 @@
             </td>
         </tr>
         <tr>
+            <td width="90">Dynamický kód</td>
+            <td>
+                <input type="checkbox" name="dynamic"<#if PARAMS.dynamic?if_exists>checked</#if> tabindex="3">
+            </td>
+        </tr>
+        <tr>
             <td width="90">Reklamní kód</td>
             <td>
                 <textarea name="code" rows="15" class="siroka" tabindex="3">${PARAMS.code?if_exists?html}</textarea>
