@@ -100,6 +100,9 @@ public class SendEmail implements AbcAction {
                 } else if ( SendEmail.PARAM_DISABLE_CODE.equals(name2)) {
                     params.put(VAR_KOD, kod);
                     session.removeAttribute(name);
+                } else if ( EmailSender.KEY_BODY.equals(name2)) {
+                    params.put(PARAM_MESSAGE, session.getAttribute(name));
+                    session.removeAttribute(name);
                 }
             }
         }

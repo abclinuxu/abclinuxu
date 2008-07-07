@@ -223,6 +223,9 @@ public class EditNews implements AbcAction {
         User user = (User) persistence.findById(new User(item.getOwner()));
 
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_TO, user.getEmail());
+        session.setAttribute(SendEmail.PREFIX+SendEmail.PARAM_DISABLE_CODE, Boolean.TRUE);
+        session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_SUBJECT, item.getTitle());
+        session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_BODY, "http://www.abclinuxu.cz/zpravicky/edit?action=edit&rid="+relation.getId());
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_BCC, "admini@abclinuxu.cz"); // inform group of admins too
 
         String url = response.encodeRedirectURL("/Mail?url=/zpravicky/dir/37672");
