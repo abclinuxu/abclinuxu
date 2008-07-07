@@ -555,7 +555,7 @@ public class EditUser implements AbcAction {
         String token = (String) params.get(PARAM_TOKEN);
         Persistence persistence = PersistenceFactory.getPersistence();
 
-        if (token == null || token.isEmpty()) {
+        if (token == null || token.length() == 0) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Chybí token!", env, request.getSession());
             return FMTemplateSelector.select("EditUser", "changeForgottenPassword", env, request);
         }
@@ -1396,7 +1396,7 @@ public class EditUser implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String login = (String) params.get(PARAM_LOGIN);
 
-        if (login == null || login.isEmpty()) {
+        if (login == null || login.length() == 0) {
             ServletUtils.addError(PARAM_LOGIN, "Zadejte uživatelské jméno!", env, null);
             return FMTemplateSelector.select("EditUser", "forgottenPassword", env, request);
         }
