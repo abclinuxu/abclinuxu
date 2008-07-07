@@ -565,7 +565,7 @@ public class EditUser implements AbcAction {
         Map resetToken = Collections.singletonMap(LdapUserManager.ATTRIB_FORGOTTEN_PASSWORD_TOKEN, null);
 
         if (!token.equals(realToken)) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Token je neplatný!", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Token je neplatný, vygenerujte si nový!", env, request.getSession());
             ldapManager.updateUser(managed.getLogin(), resetToken);
             response.sendRedirect(response.encodeRedirectURL("/"));
             return null;
