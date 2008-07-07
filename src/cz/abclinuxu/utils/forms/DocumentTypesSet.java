@@ -101,5 +101,9 @@ public class DocumentTypesSet extends MapMultipleChoice<String, DocumentTypesSet
         public void setSet(boolean set) {
             this.set = set;
         }
+
+        public String toString() {
+            return getKey() + ((set) ? " (selected)" : " (not selected)");
+        }
     }
 }
