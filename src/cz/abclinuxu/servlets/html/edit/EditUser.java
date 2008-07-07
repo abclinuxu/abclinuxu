@@ -135,6 +135,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_PREFIX = "prefix";
     public static final String PARAM_UID1 = "uid1";
     public static final String PARAM_UID2 = "uid2";
+    public static final String PARAM_TOKEN = "token";
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
@@ -182,6 +183,10 @@ public class EditUser implements AbcAction {
     public static final String ACTION_REMOVE_MERGE = "removeMerge";
     public static final String ACTION_REMOVE_MERGE_STEP2 = "removeMerge2";
     public static final String ACTION_REMOVE_MERGE_STEP3 = "removeMerge3";
+    public static final String ACTION_FORGOTTEN_PASSWORD = "forgottenPassword";
+    public static final String ACTION_FORGOTTEN_PASSWORD_STEP2 = "forgottenPassword2";
+    public static final String ACTION_CHANGE_FORGOTTEN_PASSWORD = "changeForgottenPassword";
+    public static final String ACTION_CHANGE_FORGOTTEN_PASSWORD_STEP2 = "changeForgottenPassword2";
 
     private LdapUserManager ldapManager = LdapUserManager.getInstance();
 
@@ -209,6 +214,19 @@ public class EditUser implements AbcAction {
         else if ( action.equals(ACTION_REGISTER_STEP2) ) {
             ActionProtector.ensureContract(request, EditUser.class, false, true, true, false);
             return actionAddStep2(request,response,env);
+        }
+        if (ACTION_FORGOTTEN_PASSWORD.equals(action))
+            return FMTemplateSelector.select("EditUser","forgottenPassword",env,request);
+        if (ACTION_FORGOTTEN_PASSWORD_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditUser.class, false, true, true, false);
+            return actionForgottenPasswordStep2(request,response,env);
+        }
+
+        if ( action.equals(ACTION_CHANGE_FORGOTTEN_PASSWORD) )
+            return FMTemplateSelector.select("EditUser", "changeForgottenPassword", env, request);
+        if ( action.equals(ACTION_CHANGE_FORGOTTEN_PASSWORD_STEP2) ) {
+            ActionProtector.ensureContract(request, EditUser.class, false, true, true, false);
+            return actionChangeForgottenPassword2(request, response, env);
         }
 
         // all other actions require user to be logged in and to have rights for this action
@@ -528,6 +546,43 @@ public class EditUser implements AbcAction {
         ServletUtils.addMessage("Heslo bylo změněno.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
+        return null;
+    }
+
+    protected String actionChangeForgottenPassword2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User managed = (User) env.get(VAR_MANAGED);
+        String token = (String) params.get(PARAM_TOKEN);
+        Persistence persistence = PersistenceFactory.getPersistence();
+
+        if (token == null || token.isEmpty()) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Chybí token!", env, request.getSession());
+            return FMTemplateSelector.select("EditUser", "changeForgottenPassword", env, request);
+        }
+
+        Map<String, String> info = ldapManager.getUserInformation(managed.getLogin(), new String[] { LdapUserManager.ATTRIB_FORGOTTEN_PASSWORD_TOKEN });
+        String realToken = info.get(LdapUserManager.ATTRIB_FORGOTTEN_PASSWORD_TOKEN);
+        Map resetToken = Collections.singletonMap(LdapUserManager.ATTRIB_FORGOTTEN_PASSWORD_TOKEN, null);
+
+        if (!token.equals(realToken)) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Token je neplatný!", env, request.getSession());
+            ldapManager.updateUser(managed.getLogin(), resetToken);
+            response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
+        }
+
+        if (!setPassword(params, managed, env))
+            return FMTemplateSelector.select("EditUser", "changeForgottenPassword", env, request);
+
+        ldapManager.changePassword(managed.getLogin(), managed.getPassword());
+        ldapManager.updateUser(managed.getLogin(), resetToken);
+
+        persistence.update(managed);
+
+        ServletUtils.addMessage("Heslo bylo změněno, nyní se můžete přihlásit.", env, request.getSession());
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/Profile?action=login");
         return null;
     }
 
@@ -1334,6 +1389,47 @@ public class EditUser implements AbcAction {
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Group?action=members&gid="+group);
+        return null;
+    }
+
+    protected String actionForgottenPasswordStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String login = (String) params.get(PARAM_LOGIN);
+
+        if (login == null || login.isEmpty()) {
+            ServletUtils.addError(PARAM_LOGIN, "Zadejte uživatelské jméno!", env, null);
+            return FMTemplateSelector.select("EditUser", "forgottenPassword", env, request);
+        }
+
+        Integer id = SQLTool.getInstance().getUserByLogin(login);
+        if (id == null || id.intValue() == 0) {
+            ServletUtils.addError(PARAM_LOGIN, "Uživatel nenalezen!", env, null);
+            return FMTemplateSelector.select("EditUser", "forgottenPassword", env, request);
+        }
+
+        User managed = Tools.createUser(id.intValue());
+
+        if (managed.getEmail() == null) {
+            ServletUtils.addError(PARAM_LOGIN, "Uživatel nemá přiřazenou e-mailovou adresu!", env, null);
+            return FMTemplateSelector.select("EditUser", "forgottenPassword", env, request);
+        }
+
+        String token = generateTicket(managed.getId());
+        Map changes = Collections.singletonMap(LdapUserManager.ATTRIB_FORGOTTEN_PASSWORD_TOKEN, token);
+        ldapManager.updateUser(managed.getLogin(), changes);
+
+        Map data = new HashMap();
+        data.put(Constants.VAR_USER, managed);
+        data.put(EmailSender.KEY_TO, managed.getEmail());
+        data.put(EmailSender.KEY_RECEPIENT_UID, Integer.toString(managed.getId()));
+        data.put(EmailSender.KEY_SUBJECT, "Zapomenute heslo na AbcLinuxu.cz");
+        data.put(EmailSender.KEY_TEMPLATE, "/mail/forgotten_password.ftl");
+        data.put(PARAM_TOKEN, token);
+        EmailSender.sendEmail(data);
+
+        ServletUtils.addMessage("E-mail byl odeslán.", env, request.getSession());
+
+        response.sendRedirect(response.encodeRedirectURL("/"));
         return null;
     }
 

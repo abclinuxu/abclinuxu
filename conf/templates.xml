@@ -337,6 +337,12 @@
         <action name="invalidateEmail" content="/edit/invalidate_emails.ftl" template="print">
             <var name="TITLE" value="Zneplatnění emailu uživatelům"/>
         </action>
+        <action name="forgottenPassword" content="/edit/forgotten_password.ftl">
+            <var name="TITLE" value="Zapomenuté heslo"/>
+        </action>
+        <action name="changeForgottenPassword" content="/edit/user_password_forgotten.ftl">
+            <var name="TITLE" value="Změna hesla" />
+        </action>
         <action name="removeMerge" content="/remove/user.ftl" template="print">
             <var name="TITLE" value="Odstranění či sloučení uživatele"/>
         </action>
