@@ -44,10 +44,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.analysis.TokenStream;
 
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.config.ConfigurationManager;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -55,20 +51,17 @@ import java.io.StringReader;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.prefs.Preferences;
 
 /**
  * Performs search across the data.
  */
-public class Search implements AbcAction, Configurable {
+public class Search implements AbcAction {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Search.class);
 
     /** contains relation, that match the expression */
     public static final String VAR_RESULT = "RESULT";
     /** query to be searched */
     public static final String VAR_QUERY = "QUERY";
-    /** extra google query string */
-    public static final String VAR_EXTRA_QUERY = "EXTRA_QUERY";
     /** total number of found documents */
     public static final String VAR_TOTAL = "TOTAL";
     /** holds map of chosen types */
@@ -82,7 +75,6 @@ public class Search implements AbcAction, Configurable {
     public static final String VAR_CURRENT_URL = "CURRENT_URL";
     /** base url without any parameters */
     public static final String VAR_BASE_URL = "BASE_URL";
-    public static final String VAR_GOOGLE_PARAMS = "GOOGLE_PARAMS";
 
     /** expression to be searched */
     public static final String PARAM_QUERY = "dotaz";
@@ -94,28 +86,15 @@ public class Search implements AbcAction, Configurable {
     public static final String PARAM_CATEGORY = "category";
     public static final String PARAM_ACTION = "action";
     public static final String PARAM_ADVANCED_MODE = "advancedMode";
-    public static final String PARAM_GOOGLE="google";
 
     public static final String ACTION_TO_ADVANCED_MODE = "toAdvanced";
 
-    public static final String PREF_GOOGLE_PARAMS_CX = "google_params.cx";
-    public static final String PREF_GOOGLE_PARAMS_COF = "google_params.cof";
-
     static IndexReader indexReader;
     static Date lastUpdated;
-    static Map<String,String> googleParams;
 
-    public Search() {
-        ConfigurationManager.getConfigurator().configureAndRememberMe(this);
-    }
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-
-        if (params.containsKey(PARAM_GOOGLE))
-            return performGoogleSearch(request, env);
-        else
-            return performSearch(request, env);
+        return performSearch(request, env);
     }
 
     public static String performSearch(HttpServletRequest request, Map env) throws Exception {
@@ -213,35 +192,6 @@ public class Search implements AbcAction, Configurable {
         return choosePage(onlyNews, request, env);
     }
 
-    public static String performGoogleSearch(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        boolean toAdvanced = ACTION_TO_ADVANCED_MODE.equals(params.get(PARAM_ACTION));
-
-        DocumentTypesSet types = new DocumentTypesSet(params.get(PARAM_TYPE), ! toAdvanced);
-        env.put(VAR_TYPES, types);
-
-        String queryString = (String) params.get(PARAM_QUERY);
-        env.put(VAR_QUERY, queryString);
-
-        String extraQueryString = "";
-
-        if (!types.isEverythingSelected()) {
-            for(DocumentTypesSet.SelectedDocumentType doc : types.values()) {
-                if (!doc.isSet())
-                    continue;
-
-                if (extraQueryString.length() != 0)
-                    extraQueryString += " OR ";
-                extraQueryString += doc.getGoogleQuery();
-            }
-        }
-
-        env.put(VAR_EXTRA_QUERY, extraQueryString);
-        env.put(VAR_GOOGLE_PARAMS, googleParams);
-
-        return FMTemplateSelector.select("Search", "show", env, request);
-    }
-
     /**
      * Finds out sorting parameters for current query
      * @param params query parameters
@@ -315,9 +265,5 @@ public class Search implements AbcAction, Configurable {
             return FMTemplateSelector.select("Search", "show", env, request);
     }
 
-    public void configure(Preferences prefs) throws ConfigurationException {
-        googleParams = new HashMap(2);
-        googleParams.put("cx", prefs.get(PREF_GOOGLE_PARAMS_CX, null));
-        googleParams.put("cof", prefs.get(PREF_GOOGLE_PARAMS_COF, null));
-    }
+    
 }
