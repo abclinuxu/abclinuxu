@@ -173,7 +173,7 @@ public class Discussion {
      * @return id of first (having smallest id) unread comment
      */
     public Integer getFirstUnread() {
-        if (lastRead == null)
+        if (lastRead == null || unreadComments.size() == 0)
             return null;
         return (Integer) unreadComments.get(0);
     }

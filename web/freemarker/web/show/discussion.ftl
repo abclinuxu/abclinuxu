@@ -17,7 +17,7 @@
 
 <div class="ds_toolbox">
  <b>Nástroje:</b>
-   <#if DIZ.hasUnreadComments>
+   <#if DIZ.hasUnreadComments && DIZ.firstUnread?exists>
      <a href="#${DIZ.firstUnread}" title="Skočit na první nepřečtený komentář" rel="nofollow">První nepřečtený komentář</a>,
    </#if>
    <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}" rel="nofollow">${monitorState}</a>
