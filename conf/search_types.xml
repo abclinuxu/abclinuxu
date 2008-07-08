@@ -2,35 +2,28 @@
 <!-- this document contains definition of document types used in application -->
 <document-types>
     <document-type>
-        <key>poll</key>
+        <key>anketa</key>
         <label>Ankety</label>
-        <type-id>6</type-id>
     </document-type>
     <document-type>
-        <key>bazaar</key>
+        <key>bazar</key>
         <label>Bazar</label>
-        <type-id>18</type-id>
     </document-type>
     <document-type>
         <key>blog</key>
         <label>Blogy</label>
-        <type-id>12</type-id>
     </document-type>
     <document-type>
-        <key>article</key>
+        <key>clanek</key>
         <label>Články</label>
-        <type-id>2</type-id>
     </document-type>
     <document-type>
-        <key>discussion</key>
+        <key>diskuse</key>
         <label>Diskuze</label>
-        <type-id>3</type-id>
-        <subtype>NULL</subtype>
     </document-type>
     <document-type>
-        <key>documents</key>
+        <key>dokument</key>
         <label>Dokumenty</label>
-        <type-id>11</type-id>
     </document-type>
     <document-type>
         <key>faq</key>
@@ -40,37 +33,33 @@
     <document-type>
         <key>hardware</key>
         <label>Hardware</label>
-        <type-id>1</type-id>
     </document-type>
     <document-type>
-        <key>personality</key>
+        <key>osobnost</key>
         <label>Osobnosti</label>
-        <type-id>23</type-id>
     </document-type>
     <document-type>
-        <key>driver</key>
+        <key>ovladac</key>
         <label>Ovladače</label>
-        <type-id>5</type-id>
     </document-type>
     <document-type>
-        <key>dictionary</key>
+        <key>pojem</key>
         <label>Pojmy</label>
-        <type-id>10</type-id>
     </document-type>
     <document-type>
-        <key>question</key>
+        <key>poradna</key>
         <label>Poradna</label>
-        <type-id>3</type-id>
-        <subtype>question</subtype>
+    </document-type>
+    <document-type>
+        <key>sekce</key>
+        <label>Sekce</label>
     </document-type>
     <document-type>
         <key>software</key>
         <label>Software</label>
-        <type-id>17</type-id>
     </document-type>
     <document-type>
-        <key>news</key>
+        <key>zpravicka</key>
         <label>Zprávičky</label>
-        <type-id>7</type-id>
     </document-type>
 </document-types>

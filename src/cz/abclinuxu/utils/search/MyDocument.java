@@ -32,22 +32,22 @@ import java.util.Date;
  * You must set URL before you get Document.
  */
 public class MyDocument {
+    // following constants are keys from DocumentTypes.searchTypes property
     public static final String TYPE_ARTICLE = "clanek";
     public static final String TYPE_BAZAAR = "bazar";
     public static final String TYPE_BLOG = "blog";
     public static final String TYPE_CATEGORY = "sekce";
     public static final String TYPE_DICTIONARY = "pojem";
-    public static final String TYPE_PERSONALITY = "osobnost";
     public static final String TYPE_DISCUSSION = "diskuse";
     public static final String TYPE_DOCUMENT = "dokument";
     public static final String TYPE_DRIVER = "ovladac";
     public static final String TYPE_FAQ = "faq";
     public static final String TYPE_HARDWARE = "hardware";
     public static final String TYPE_NEWS = "zpravicka";
+    public static final String TYPE_PERSONALITY = "osobnost";
     public static final String TYPE_POLL = "anketa";
     public static final String TYPE_QUESTION = "poradna";
     public static final String TYPE_SOFTWARE = "software";
-    public static final int ALL_TYPES_COUNT = 14;
 
     /** Object's text to be tokenized and indexed. */
     public static final String CONTENT = "obsah";

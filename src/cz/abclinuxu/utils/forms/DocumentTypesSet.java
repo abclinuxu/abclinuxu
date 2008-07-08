@@ -41,10 +41,10 @@ public class DocumentTypesSet extends MapMultipleChoice<String, DocumentTypesSet
      * @param noneIsAll Flag, if set to <code>true</code> and nothing was selected,
      * it is considered as everything was selected
      */
-    public DocumentTypesSet(Object param, boolean noneIsAll) {
+    public DocumentTypesSet(Object param, boolean noneIsAll, DocumentTypes.Types type) {
         this.noneIsAll = noneIsAll;
         List<String> checked = (List<String>) Tools.asList(param);
-        allTypes = DocumentTypes.getAllTypesAsMap();
+        allTypes = DocumentTypes.getInstance(type).get();
 
         for (DocumentType dt : allTypes.values()) {
             String key = dt.getKey();

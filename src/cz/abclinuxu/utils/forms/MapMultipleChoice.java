@@ -20,10 +20,10 @@ package cz.abclinuxu.utils.forms;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 /**
  * Abstract template for multiple form values. Uses Map as backend.
@@ -33,10 +33,10 @@ import java.util.Map;
  * @author kapy
  */
 public abstract class MapMultipleChoice<K,V extends Selectable> extends MultipleChoice<V> {
-    
+
     /** Map to store chosen values */
-    protected Map<K,V> choices = new HashMap<K,V>();
-   
+    protected Map<K,V> choices = new LinkedHashMap<K,V>();
+
     /**
      * Returns collection filled by keys of selected items
      * @return Collection of selected items
@@ -51,7 +51,7 @@ public abstract class MapMultipleChoice<K,V extends Selectable> extends Multiple
         }
         return list;
     }
-    
+
     /**
      * Returns collection af all values stored in collection,
      * including not selected ones
@@ -59,7 +59,7 @@ public abstract class MapMultipleChoice<K,V extends Selectable> extends Multiple
      */
     public Collection<V> values() {
         return choices.values();
-    }    
+    }
 
     /**
      * Iterator over all stored items.
@@ -78,6 +78,6 @@ public abstract class MapMultipleChoice<K,V extends Selectable> extends Multiple
     public int size() {
         return choices.size();
     }
-    
-    
+
+
 }

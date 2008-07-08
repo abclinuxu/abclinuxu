@@ -25,6 +25,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
 import java.util.prefs.Preferences;
 
 import org.dom4j.io.SAXReader;
@@ -36,71 +37,78 @@ import org.dom4j.Element;
  * @author kapy
  */
 public class DocumentTypes implements Configurable {
-
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(NewsCategories.class);
 
-    public static final String PREF_DOCUMENT_TYPES_FILE = "document_types.file";
+    public enum Types { TAGS, SEARCH };
 
-    static DocumentTypes singleton;
+    public static final String PREF_FILE_TAGS = "types_tags.file";
+    public static final String PREF_FILE_SEARCH = "types_search.file";
 
+    static DocumentTypes tagsTypes, searchTypes;
     static {
-        singleton = new DocumentTypes();
+        tagsTypes = new DocumentTypes();
+        searchTypes = new DocumentTypes();
+        ConfigurationManager.getConfigurator().configureAndRememberMe(tagsTypes);
     }
 
     private Map<String, DocumentType> map;
-    private String filename;
 
     /**
      * private constructor, inaccessible outside of this class.
      */
     private DocumentTypes() {
-        ConfigurationManager.getConfigurator().configureAndRememberMe(this);
     }
 
     /**
      * @return singleton object of this class.
      */
-    public static DocumentTypes getInstance() {
-        return singleton;
+    public static DocumentTypes getInstance(Types type) {
+        if (type == Types.TAGS)
+            return tagsTypes;
+        else
+            return searchTypes;
     }
 
     /**
      * Finds NewsCategory for given key. Case-insensitive match is performed.
      * @param key
-     * @return
+     * @return found DocumentType or null
      */
-    public static final DocumentType get(String key) {
-        return singleton.map.get(key.toUpperCase());
+    public DocumentType get(String key) {
+        return map.get(key.toUpperCase());
     }
 
     /**
-     * Gets map of all existing types.
+     * Gets map of all existing types. The order is preserved.
      * @return existing types
      */
-    public static final Map<String, DocumentType> getAllTypesAsMap() {
-        return new LinkedHashMap<String, DocumentType>(singleton.map);
+    public Map<String, DocumentType> get() {
+        return new LinkedHashMap<String, DocumentType>(map);
     }
 
     /**
      * Configures this instance.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        filename = prefs.get(PREF_DOCUMENT_TYPES_FILE, null);
-        loadDocumentTypes();
+        String filename = prefs.get(PREF_FILE_TAGS, null);
+        loadDocumentTypes(tagsTypes, filename);
+        filename = prefs.get(PREF_FILE_SEARCH, null);
+        loadDocumentTypes(searchTypes, filename);
     }
 
     /**
      * Loads all document types from external file.
      */
-    private void loadDocumentTypes() {
-        log.info("Loading list of document types from file " + filename);
+    private void loadDocumentTypes(DocumentTypes types, String filename) {
+        log.info("Loading list of document types from file '" + filename + "'");
         try {
             Document document = new SAXReader().read(filename);
             String key, label, typeString, subType;
             int type;
             Map<String, DocumentType> aMap = new LinkedHashMap<String, DocumentType>(15, 1.0f);
             List documentTypes = document.getRootElement().elements("document-type");
-            for (Element element : (List<Element>) documentTypes) {
+            for (Iterator iter = documentTypes.iterator(); iter.hasNext();) {
+                Element element = (Element) iter.next();
                 key = element.elementTextTrim("key");
                 label = element.elementTextTrim("label");
                 subType = element.elementTextTrim("subtype");
@@ -113,10 +121,10 @@ public class DocumentTypes implements Configurable {
                 DocumentType dt = new DocumentType(key, label, type, subType);
                 aMap.put(key, dt);
             }
-            map = aMap;
+            types.map = aMap;
             log.info("Loaded " + map.size() + " document types.");
         } catch (Exception e) {
-            log.error("Cannot load list of document types.", e);
+            log.error("Cannot load list of document types!", e);
         }
     }
 }

@@ -32,6 +32,7 @@ import cz.abclinuxu.utils.search.AbcCzechAnalyzer;
 import cz.abclinuxu.utils.search.AbcQueryParser;
 import cz.abclinuxu.utils.search.MyDocument;
 import cz.abclinuxu.data.view.SearchResult;
+import cz.abclinuxu.data.view.DocumentTypes;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.utils.forms.DocumentTypesSet;
 import cz.abclinuxu.utils.forms.NewsCategoriesSet;
@@ -116,7 +117,7 @@ public class Search implements AbcAction {
             env.put(VAR_UPDATED, lastUpdated);
         }
 
-        DocumentTypesSet types = new DocumentTypesSet(params.get(PARAM_TYPE), ! toAdvanced);
+        DocumentTypesSet types = new DocumentTypesSet(params.get(PARAM_TYPE), ! toAdvanced, DocumentTypes.Types.SEARCH);
         env.put(VAR_TYPES, types);
         NewsCategoriesSet newsCategoriesSet = new NewsCategoriesSet(params.get(PARAM_CATEGORY));
         env.put(VAR_NEWS_CATEGORIES, newsCategoriesSet);
@@ -264,6 +265,4 @@ public class Search implements AbcAction {
         } else
             return FMTemplateSelector.select("Search", "show", env, request);
     }
-
-    
 }

@@ -29,6 +29,7 @@ import cz.abclinuxu.data.Tag;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.view.Link;
+import cz.abclinuxu.data.view.DocumentTypes;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
@@ -94,7 +95,7 @@ public class ViewTag implements AbcAction {
             ascendingOrder = false;
 
         // store document types
-        DocumentTypesSet types = new DocumentTypesSet(params.get(PARAM_TYPE), true);
+        DocumentTypesSet types = new DocumentTypesSet(params.get(PARAM_TYPE), true, DocumentTypes.Types.TAGS);
         env.put(VAR_TYPES, types);
 
         Matcher matcher = reTagId.matcher(url);

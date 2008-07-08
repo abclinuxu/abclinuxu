@@ -787,7 +787,8 @@
                         </node>
                         <node name="DocumentTypes">
                             <map>
-                                <entry key="document_types.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/document_types.xml"/>
+                                <entry key="types_tags.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/document_types.xml"/>
+                                <entry key="types_search.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/search_types.xml"/>
                             </map>
                         </node>
                         <node name="PropertySet">

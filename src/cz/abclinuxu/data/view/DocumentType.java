@@ -96,4 +96,8 @@ public class DocumentType {
     public String getSubtype() {
         return subtype;
     }
+
+    public String toString() {
+        return label;
+    }
 }
