@@ -20,6 +20,7 @@
     <p>${TOOL.xpath(clanek,"/data/perex")}</p>
     <p class="meta-vypis">
         ${DATE.show(clanek.created, dateFormat[0])} |
+
         <#list autors as autor>
             <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
         </#list> |
@@ -145,11 +146,10 @@
         <#else>
             ${comment.anonymName?if_exists}
         </#if><br>
-        <#if blacklisted>
-            <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle2" class="ds_control_sbalit" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
-        <#else>
-            <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle2" class="ds_control_sbalit2" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
-        </#if>
+        <span class="<#if blacklisted>ds_control_sbalit<#else>ds_control_sbalit2</#if>" id="comment${comment.id}_toggle2">
+            <a onClick="schovej_vlakno(${comment.id})" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
+            <a onClick="rozbal_vse(${comment.id})" title="Schová nebo rozbalí vše pod tímto komentářem">Rozbalit vše</a>
+        </span>
         ${comment.title?if_exists}
         <#nested>
         <#if showControls>

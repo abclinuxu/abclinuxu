@@ -48,6 +48,21 @@ function schovej_vlakno(id) {
     prepareCommentNext();
 }
 
+function rozbal_vse(id) {
+    cur = document.getElementById('comment'+id);
+    divs = cur.getElementsByTagName('div');
+
+    if (cur.style.display == 'none')
+        schovej_vlakno(id);
+
+    for (var i=0;i<divs.length;i++) {
+        m = divs[i].id.match(/comment(\d+)/);
+
+        if (m && divs[i].style.display == 'none')
+            schovej_vlakno(m[1]);
+    }
+}
+
 function addSidebar() {
     if ((typeof window.sidebar == "object") && (typeof window.sidebar.addPanel == "function")) {
         window.sidebar.addPanel("www.abclinuxu.cz",'http://www.abclinuxu.cz/?varianta=sidebar',"");
