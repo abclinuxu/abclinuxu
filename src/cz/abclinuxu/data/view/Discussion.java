@@ -144,6 +144,10 @@ public class Discussion {
         LinkedList stack = new LinkedList(threads);
         while (stack.size() > 0) {
             current = (Comment) stack.removeFirst();
+            
+            if (isBlacklisted(current))
+                continue;
+            
             if (current.getChildren() != null)
                 stack.addAll(0, current.getChildren());
             if (current.getId() > lastId)
