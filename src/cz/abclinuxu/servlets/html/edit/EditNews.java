@@ -92,6 +92,8 @@ public class EditNews implements AbcAction {
     public static final String PARAM_PREVIEW = "preview";
     public static final String PARAM_PUBLISH_DATE = "publish";
     public static final String PARAM_TITLE = "title";
+    public static final String PARAM_FORBID_DISCUSSIONS = "forbidDiscussions";
+    public static final String PARAM_UID = "uid";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -185,7 +187,12 @@ public class EditNews implements AbcAction {
         canContinue &= setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setCategory(params, item);
-        canContinue &= setPublishDate(params, item, env);
+
+        if (user.hasRole("news admin")) {
+            canContinue &= setOwner(params, item, env);
+            canContinue &= setForbidDiscussions(params, item);
+            canContinue &= setPublishDate(params, item, env);
+        }
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null) {
             Relation relation = new Relation(null,item,0);
@@ -201,7 +208,8 @@ public class EditNews implements AbcAction {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
-        EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+        if (!user.hasRole("news admin") || params.get(PARAM_FORBID_DISCUSSIONS) == null)
+            EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -243,6 +251,10 @@ public class EditNews implements AbcAction {
         params.put(PARAM_CONTENT,element.getText());
         params.put(PARAM_CATEGORY,item.getSubType());
 
+        element = (Element) item.getData().selectSingleNode("/data/forbid_discussions");
+        if (element != null)
+            params.put(PARAM_FORBID_DISCUSSIONS, element.getText());
+
         env.put(VAR_CATEGORIES, NewsCategories.getAllCategories());
 
         return FMTemplateSelector.select("EditNews", "edit", env, request);
@@ -253,12 +265,18 @@ public class EditNews implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
+        User user = (User) env.get(Constants.VAR_USER);
 
         boolean canContinue = true;
         canContinue &= setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setCategory(params, item);
-        canContinue &= setPublishDate(params, item, env);
+
+        if (user.hasRole("news admin")) {
+            canContinue &= setOwner(params, item, env);
+            canContinue &= setForbidDiscussions(params, item);
+            canContinue &= setPublishDate(params, item, env);
+        }
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null) {
             env.put(VAR_RELATION, relation);
@@ -267,7 +285,6 @@ public class EditNews implements AbcAction {
         }
 
         persistence.update(item);
-        User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "  edit | news "+relation.getId());
 
         FeedGenerator.updateNews();
@@ -496,5 +513,43 @@ public class EditNews implements AbcAction {
             ServletUtils.addError(PARAM_PUBLISH_DATE, "Chybný formát datumu!", env, null);
             return false;
         }
+    }
+
+    /**
+    * Sets the news item's owner from parameters. Changes are not synchronized with persistence.
+    *
+    * @param params map holding request's parameters
+    * @param item   news to be updated
+    * @return false, if there is a major error.
+    */
+    private boolean setOwner(Map params, Item item, Map env) {
+        String suid = (String) params.get(PARAM_UID);
+        User user = (User) env.get(Constants.VAR_USER);
+
+        if (!Misc.empty(suid) && user.hasRole("news admin")) {
+            try {
+                User owner = Tools.createUser(suid);
+                item.setOwner(owner.getId());
+            } catch (Exception e) {
+                ServletUtils.addError(PARAM_UID, "Neplatné UID uživatele!", env, null);
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    private boolean setForbidDiscussions(Map params, Item item) {
+        String content = (String) params.get(PARAM_FORBID_DISCUSSIONS);
+        Element element = (Element) item.getData().selectSingleNode("/data/forbid_discussions");
+        if ( element!=null )
+            element.detach();
+
+        if ( content==null || content.length()==0 )
+            return true;
+
+        element = DocumentHelper.makeElement(item.getData(), "/data/forbid_discussions");
+        element.setText(content);
+        return true;
     }
 }

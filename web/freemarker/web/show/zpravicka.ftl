@@ -3,7 +3,9 @@
 <@lib.showMessages/>
 
 <#assign title=ITEM.title, autor=TOOL.createUser(ITEM.owner),
-         locked = TOOL.xpath(ITEM, "//locked_by")?exists, approved = TOOL.xpath(ITEM, "//approved_by")?exists>
+         locked = TOOL.xpath(ITEM, "//locked_by")?exists,
+         approved = TOOL.xpath(ITEM, "//approved_by")?exists,
+         forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF")>
 
 <@lib.advertisement id="arbo-sq" />
 
@@ -52,10 +54,11 @@
 <p><b>Nástroje</b>:
 <a href="${RELATION.url?default("/zpravicky/show/"+RELATION.id)}?varianta=print" rel="nofollow">Tisk</a></p>
 
-<h3>Komentáře</h3>
 <#if CHILDREN.discussion?exists>
+    <h3>Komentáře</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>
-<#else>
+<#elseif forbidDiscussion!="yes">
+    <h3>Komentáře</h3>
    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vložit první komentář</a>
 </#if>
 

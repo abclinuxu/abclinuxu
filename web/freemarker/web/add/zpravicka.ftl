@@ -53,11 +53,30 @@ s vysvětlením. Teprve po schválení bude zprávička zveřejněna.</p>
     </p>
 
     <#if USER?exists && USER.hasRole("news admin")>
-        Datum zveřejnění:
-        <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish?if_exists}">
-        <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
-        Formát 2005-01-25 07:12
-        <div class="error">${ERRORS.publish?if_exists}</div>
+        <table>
+        <tr>
+            <td>Datum zveřejnění:</td>
+            <td>
+                <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish?if_exists}">
+                <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
+                Formát 2005-01-25 07:12
+                <div class="error">${ERRORS.publish?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
+            <td>Vydat pod UID</td>
+            <td>
+                <input type="text" size="5" name="uid">
+                <div class="error">${ERRORS.uid?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>
+                <label><input type="checkbox" name="forbidDiscussions" value="yes" <#if PARAMS.forbidDiscussions?exists>checked</#if>/>Zakázat diskuzi</label>
+            </td>
+        </tr>
+        </table>
     </#if>
 
     <h3>Kategorie</h3>
