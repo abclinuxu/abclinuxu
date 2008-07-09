@@ -44,4 +44,4 @@ Disallow: /revize
 Disallow: /muj_obsah
 Disallow: /zmeny
 Disallow: /presmeruj
-
+Disallow: /hledani
