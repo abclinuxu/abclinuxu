@@ -4,62 +4,77 @@
     <document-type>
         <key>anketa</key>
         <label>Ankety</label>
+        <google-query>inurl:/ankety</google-query>
     </document-type>
     <document-type>
         <key>bazar</key>
         <label>Bazar</label>
+        <google-query>inurl:/bazar</google-query>
     </document-type>
     <document-type>
         <key>blog</key>
         <label>Blogy</label>
+        <google-query>inurl:/blog</google-query>
     </document-type>
     <document-type>
         <key>clanek</key>
         <label>Články</label>
+        <google-query>inurl:/clanky</google-query>
     </document-type>
     <document-type>
         <key>diskuse</key>
         <label>Diskuze</label>
+        <google-query>intitle:diskuse</google-query>
     </document-type>
     <document-type>
         <key>dokument</key>
         <label>Dokumenty</label>
+        <google-query>inurl:/doc</google-query>
     </document-type>
     <document-type>
         <key>faq</key>
         <label>FAQ</label>
         <type-id>14</type-id>
+        <google-query>inurl:/faq</google-query>
     </document-type>
     <document-type>
         <key>hardware</key>
         <label>Hardware</label>
+        <google-query>inurl:/hardware</google-query>
     </document-type>
     <document-type>
         <key>osobnost</key>
         <label>Osobnosti</label>
+        <google-query>inurl:/kdo-je</google-query>
     </document-type>
     <document-type>
         <key>ovladac</key>
         <label>Ovladače</label>
+        <google-query>inurl:/ovladace</google-query>
     </document-type>
     <document-type>
         <key>pojem</key>
         <label>Pojmy</label>
+        <google-query>inurl:/slovnik</google-query>
     </document-type>
     <document-type>
         <key>poradna</key>
         <label>Poradna</label>
+        <google-query>inurl:/forum</google-query>
     </document-type>
     <document-type>
         <key>sekce</key>
         <label>Sekce</label>
+        <google-query>"Sleduj sekci"</google-query>
     </document-type>
     <document-type>
         <key>software</key>
         <label>Software</label>
+        <google-query>inurl:/software</google-query>
     </document-type>
     <document-type>
         <key>zpravicka</key>
         <label>Zprávičky</label>
+        <google-query>inurl:/zpravicky</google-query>
     </document-type>
 </document-types>

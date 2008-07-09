@@ -82,7 +82,7 @@ public class DocumentTypesSet extends MapMultipleChoice<String, DocumentTypesSet
          * @param set Initial value of selection flag
          */
         public SelectedDocumentType(DocumentType type, boolean set) {
-            super(type.getKey(), type.getLabel(), type.getType(), type.getSubtype());
+            super(type.getKey(), type.getLabel(), type.getType(), type.getSubtype(), type.getGoogleQuery());
             this.set = set;
         }
 

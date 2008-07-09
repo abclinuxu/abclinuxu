@@ -15,6 +15,7 @@
               <input type="text" name="dotaz" value="${QUERY?if_exists?html}" class="text" size="50" tabindex="1">
 
               <input type="submit" value="Hledej" tabindex="2">
+              <input type="submit" name="google" value="Hledej Googlem" tabindex="3">
               <a href="/SelectUser?sAction=form&amp;url=/Profile">Hledat uživatele</a>
               <#if ERRORS.dotaz?exists><div class="error">${ERRORS.dotaz}</div></#if>
               <#if PARAMS.advancedMode?default("false")=="true">
@@ -23,7 +24,7 @@
                   <#list TYPES as type>
                     <#if type_index%4==0><tr></#if>
                     <td>
-                      <label><@lib.showOption3 "typ",type.key,type.label,"checkbox",type.set/></label>
+                      <@lib.showOption3 "typ",type.key,type.label,"checkbox",type.set/>
                     </td>
                     <#if type_index%4==3></tr></#if>
                   </#list>
@@ -173,6 +174,9 @@
         &gt;&gt; ${RESULT.total}
     </#if>
 
+</#if>
+<#if EXTRA_QUERY?exists>
+<iframe src="http://www.google.com/cse?cx=${GOOGLE_PARAMS.cx?html}&amp;cof=${GOOGLE_PARAMS.cof?html}&amp;q=${QUERY?html}+${EXTRA_QUERY?html}&amp;ie=UTF-8" width="100%" height="1300"></iframe>
 </#if>
 
 <#include "../footer.ftl">

@@ -750,6 +750,12 @@
                                     <entry key="fresh.stories.size" value="5"/>
                                 </map>
                             </node>
+                            <node name="Search">
+                                <map>
+                                    <entry key="google_params.cx" value="partner-pub-8402017874937628:e8dt38mr2ly"/>
+                                    <entry key="google_params.cof" value="FORID:10"/>
+                                </map>
+                            </node>
                         </node>
                         <node name="various">
                             <map/>

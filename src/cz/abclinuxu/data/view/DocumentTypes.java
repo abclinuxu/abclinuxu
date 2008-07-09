@@ -103,7 +103,7 @@ public class DocumentTypes implements Configurable {
         log.info("Loading list of document types from file '" + filename + "'");
         try {
             Document document = new SAXReader().read(filename);
-            String key, label, typeString, subType;
+        String key, label, typeString, subType, googleQuery;
             int type;
             Map<String, DocumentType> aMap = new LinkedHashMap<String, DocumentType>(15, 1.0f);
             List documentTypes = document.getRootElement().elements("document-type");
@@ -112,13 +112,14 @@ public class DocumentTypes implements Configurable {
                 key = element.elementTextTrim("key");
                 label = element.elementTextTrim("label");
                 subType = element.elementTextTrim("subtype");
+                googleQuery = element.elementTextTrim("google-query");
 
                 typeString = element.elementTextTrim("type-id");
                 if (typeString != null && !"".equals(typeString))
                     type = Integer.parseInt(typeString);
                 else
                     type = DocumentType.TYPE_UNKNOWN;
-                DocumentType dt = new DocumentType(key, label, type, subType);
+                DocumentType dt = new DocumentType(key, label, type, subType, googleQuery);
                 aMap.put(key, dt);
             }
             types.map = aMap;

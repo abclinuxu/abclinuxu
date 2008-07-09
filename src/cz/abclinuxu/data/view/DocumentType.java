@@ -40,6 +40,9 @@ public class DocumentType {
     private int type;
     private String subtype;
 
+    /** Google search equivalent */
+    private String googleQuery;
+
     /**
      * Creates new DocumentType holder using provided values
      * @param key Unique identification
@@ -48,11 +51,12 @@ public class DocumentType {
      * @param subtype optional additional qualifier. "NULL" is special value meaning that subtype must be null,
      * java null means that this proeprty is undefined and it will be ignored in search
      */
-    public DocumentType(String key, String label, int type, String subtype) {
+    public DocumentType(String key, String label, int type, String subtype, String googleQuery) {
         this.key = key;
         this.label = label;
         this.type = type;
         this.subtype = subtype;
+        this.googleQuery = googleQuery;
     }
 
     /**
@@ -62,7 +66,7 @@ public class DocumentType {
      * @param type Numeric identification of type in SQL relations
      */
     public DocumentType(String key, String label, int type) {
-        this(key, label, type, null);
+        this(key, label, type, null, null);
     }
 
     /**
@@ -97,7 +101,16 @@ public class DocumentType {
         return subtype;
     }
 
+    /**
+     * Google equivalent getter
+     * @return google query fragment
+     */
+    public String getGoogleQuery() {
+    return googleQuery;
+    }
+
     public String toString() {
         return label;
     }
+
 }
