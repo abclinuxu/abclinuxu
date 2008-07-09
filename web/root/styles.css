@@ -209,11 +209,6 @@ a.thumb:hover,
 .prodej { color: #006400; }  /* darkgreen */
 .koupe { color: #8B0000; }  /* darkred */
 
-.swlist hr { border-top-color: #C0C0C0; }
-
-.swlist .meta,
-.faq .meta { color: gray; }
-
 .ds_toolbox, .pwd-box, .tag-box {
 	background-color: #ECECEC;
 	border-color: silver;
@@ -338,8 +333,6 @@ a.selected:hover {
 .dict-item,
 .questionToFaq,
 .bazar-ad { background-color: #ECECEC; }
-
-.search_fragments { color: gray; }
 
 .odd { background-color: #E6E6E6; }
 

@@ -146,11 +146,6 @@ td.pad,code.kod,pre.kod {
 	background-color: #575757;
 }
 
-.cl_inforadek,
-.ank-vypis,
-.serialy-vypis,
-.treeview li span { color: #9A9A9A; }
-
 .cl_highlight {
 	border-color: silver;
 	background-color: #23597D;
@@ -225,10 +220,8 @@ a.thumb:hover,
 .prodej { color: #90EE90; }  /* lightgreen */
 .koupe { color: #FFC0CB; }  /* pink */
 
-.swlist hr { border-top-color: #4B4B4B; }
-
-.swlist .meta,
-.faq .meta { color: #9A9A9A; }
+.meta-vypis,
+.treeview li span { color: #9A9A9A; }
 
 .ds_toolbox, .pwd-box {
 	background-color: black;
@@ -362,8 +355,6 @@ a.selected:hover {
 .dict-item,
 .questionToFaq,
 .bazar-ad { background-color: #494949; }
-
-.search_fragments { color: #9A9A9A; }
 
 .odd { background-color: #494949; }
 

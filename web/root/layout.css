@@ -456,18 +456,6 @@ td.td-datum {
 	cursor: pointer;
 }
 
-.swlist hr {
-	border-top: 1px solid;
-	margin-bottom: 0.2em;
-}
-
-.swlist .intro,
-.swlist .meta,
-.faq .meta {
-	font-size: small;
-	margin-left: 2em;
-}
-
 .ds_toolbox {
 	border: 1px solid;
 	border-width: 1px 0 1px 0;
