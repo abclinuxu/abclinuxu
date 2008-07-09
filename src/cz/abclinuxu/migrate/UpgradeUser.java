@@ -25,12 +25,11 @@ import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.ldap.LdapUserManager;
-import cz.abclinuxu.utils.freemarker.Tools;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * This utility will upgrade users
@@ -48,7 +47,6 @@ public class UpgradeUser {
         int max = sqlTool.getMaximumUserId(), l = 0;
         String tmp;
         List<User> users = new ArrayList<User>(50);
-        Map<String, String> changes = new HashMap<String, String>();
         System.out.println("Found " + max + " users");
         System.out.print("\n" + l + "\t\t");
         long start = System.currentTimeMillis();
@@ -62,34 +60,8 @@ public class UpgradeUser {
             persistence.synchronizeList(users);
 
             for (User user : users) {
-                changes.clear();
+                Map changes = Collections.singletonMap(LdapUserManager.ATTRIB_EMAIL_ADRESS, user.getEmail());
                 try {
-                    ldapMgr.registerUser(user.getLogin(), user.getPassword(), null, user.getName(), "www.abclinuxu.cz");
-
-                    tmp = Tools.xpath(user, "/data/personal/city");
-                    if (tmp != null)
-                        changes.put(LdapUserManager.ATTRIB_CITY, tmp);
-                    tmp = Tools.xpath(user, "/data/personal/country");
-                    if (tmp != null)
-                        changes.put(LdapUserManager.ATTRIB_COUNTRY, tmp);
-                    tmp = Tools.xpath(user, "/data/profile/home_page");
-                    if (tmp != null)
-                        changes.put(LdapUserManager.ATTRIB_HOME_PAGE_URL, tmp);
-                    tmp = Tools.xpath(user, "/data/system/registration_date");
-                    if (tmp == null)
-                        tmp = "2003-07-12 00:01";
-                    changes.put(LdapUserManager.ATTRIB_REGISTRATION_DATE, tmp);
-                    changes.put(LdapUserManager.ATTRIB_REGISTRATION_PORTAL, "www.abclinuxu.cz");
-                    changes.put(LdapUserManager.ATTRIB_VISITED_PORTAL, "www.abclinuxu.cz");
-                    tmp = Tools.xpath(user, "/data/communication/email[@valid]");
-                    if ("no".equals(tmp))
-                        changes.put(LdapUserManager.ATTRIB_EMAIL_BLOCKED, "true");
-                    else
-                        changes.put(LdapUserManager.ATTRIB_EMAIL_BLOCKED, "false");
-                    changes.put(LdapUserManager.ATTRIB_EMAIL_VERIFIED, "true");
-                    tmp = Tools.xpath(user, "/data/personal/sex");
-                    changes.put(LdapUserManager.ATTRIB_SEX, tmp);
-
                     ldapMgr.updateUser(user.getLogin(), changes);
 
                     System.out.print("#");
