@@ -64,7 +64,7 @@
             <#if doc.highlightedText?exists>
                 <p class="search_fragments">${doc.highlightedText}</p>
             </#if>
-            <p class="search_details">
+            <p class="meta-vypis">
             <#if doc.typ='sekce'>
                 Sekce
             <#elseif doc.typ='hardware'>
