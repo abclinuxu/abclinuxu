@@ -124,7 +124,7 @@ public class EditSeries implements AbcAction {
 
         if (action.equals(ACTION_ADD_ARTICLE_STEP2)) {
             ActionProtector.ensureContract(request, EditSeries.class, true, true, true, false);
-            return actionAttachArticleStep2(response, env, false);
+            return actionAttachArticleStep2(request, response, env, false);
         }
 
         if (action.equals(ACTION_ADD_ARTICLES_URLS))
@@ -261,7 +261,7 @@ public class EditSeries implements AbcAction {
         return FMTemplateSelector.select("EditSeries", "addArticle", env, request);
     }
 
-    public static String actionAttachArticleStep2(HttpServletResponse response, Map env, boolean noRedirect) throws Exception {
+    public static String actionAttachArticleStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean noRedirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation seriesRelation = (Relation) env.get(VAR_RELATION);
@@ -281,6 +281,12 @@ public class EditSeries implements AbcAction {
             persistence.synchronize(articleRelation.getChild());
             Item articleItem = (Item) articleRelation.getChild().clone();
             Element articleRoot = articleItem.getData().getRootElement();
+
+            if (articleRoot.element("series_rid") != null) {
+                ServletUtils.addError(Constants.ERROR_GENERIC, "Článek "+rid+" už je přiřazen k nějakému seriálu!", env, request.getSession());
+                continue;
+            }
+
             addArticleToSeries(articleItem, articleRelation, articles);
             articleRoot.addElement("series_rid").setText(Integer.toString(seriesRelation.getId()));
             persistence.update(articleItem);
@@ -371,7 +377,7 @@ public class EditSeries implements AbcAction {
         }
 
         params.put(PARAM_ARTICLE_RELATION, articleRelations);
-        return actionAttachArticleStep2(response, env, false);
+        return actionAttachArticleStep2(request, response, env, false);
     }
 
     private String actionRemoveArticle(HttpServletResponse response, Map env) throws Exception {
@@ -392,7 +398,14 @@ public class EditSeries implements AbcAction {
         Item articleItem = (Item) articleRelation.getChild().clone();
         Element articleRoot = articleItem.getData().getRootElement();
 
-        Element articleElement = (Element) seriesRoot.selectObject("article[text()='"+articleRid+"']");
+        Object obj = seriesRoot.selectObject("article[text()='"+articleRid+"']");
+        Element articleElement;
+
+        if (obj instanceof List)
+            articleElement = (Element) ((List) obj).get(0);
+        else
+            articleElement = (Element) obj;
+
         if (articleElement == null)
             throw new MissingArgumentException("Seriál neobsahuje článek "+articleRid+"!");
 
