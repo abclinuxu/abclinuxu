@@ -125,6 +125,13 @@
    </td>
   </tr>
   <tr>
+   <td width="90">URL</td>
+   <td>
+      /clanky/nejaka-sekce/<input type="text" name="url" value="${PARAMS.url?if_exists}">
+      <div class="error">${ERRORS.url?if_exists}</div>
+   </td>
+  </tr>
+  <tr>
    <td width="90">Ikonka</td>
    <td>
     Pokud chcete, aby se ve výpise článků zobrazovala ikonka, vložte zde její HTML kód.
