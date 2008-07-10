@@ -60,7 +60,7 @@ public class UpgradeUser {
             persistence.synchronizeList(users);
 
             for (User user : users) {
-	        if (user.getEmail) == null)
+	        if (user.getEmail() == null)
 		   continue;
 
                 Map changes = Collections.singletonMap(LdapUserManager.ATTRIB_EMAIL_ADRESS, user.getEmail());
