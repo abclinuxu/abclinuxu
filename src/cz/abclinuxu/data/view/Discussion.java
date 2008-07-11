@@ -159,7 +159,7 @@ public class Discussion {
      * @return true if user has seen this discussion and there are unread comments
      */
     public boolean getHasUnreadComments() {
-        return lastRead != null && greatestId > lastRead;
+        return lastRead != null && greatestId > lastRead && !Misc.empty(unreadComments);
     }
 
     /**
