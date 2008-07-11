@@ -82,6 +82,7 @@ public class EditArticle implements AbcAction {
     public static final String PARAM_NOT_ON_INDEX = "notOnIndex";
     public static final String PARAM_DESIGNATED_SECTION = "section";
     public static final String PARAM_SERIES = "series";
+    public static final String PARAM_URL = "url";
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_TALK_XML = "XML";
@@ -234,6 +235,7 @@ public class EditArticle implements AbcAction {
         canContinue &= setTitle(params, item, env);
         canContinue &= setAuthors(params, item, env);
         canContinue &= setEditor(item, env);
+        canContinue &= setUrl(params, item);
         canContinue &= setPerex(params, item, env);
         canContinue &= setPublishDate(params, item, env);
         canContinue &= setForbidDiscussions(params, item);
@@ -317,6 +319,9 @@ public class EditArticle implements AbcAction {
         node = document.selectSingleNode("/data/thumbnail");
         if ( node!=null )
             params.put(PARAM_THUMBNAIL, node.getText());
+        node = document.selectSingleNode("/data/url");
+        if ( node!=null )
+            params.put(PARAM_URL, node.getText());
         params.put(PARAM_NOT_ON_INDEX, item.getSubType());
         if (relation.getUpper()==Constants.REL_ARTICLEPOOL) {
             List sections = getSections();
@@ -351,6 +356,7 @@ public class EditArticle implements AbcAction {
         canContinue &= setTitle(params, item, env);
         canContinue &= setAuthors(params, item, env);
         canContinue &= setEditor(item, env);
+        canContinue &= setUrl(params, item);
         canContinue &= setPerex(params, item, env);
         canContinue &= setPublishDate(params, item, env);
         canContinue &= setForbidDiscussions(params, item);
@@ -718,16 +724,45 @@ public class EditArticle implements AbcAction {
      * @param persistence
      */
     public static String getUrl(Item item, int upper, Persistence persistence) {
+        Node node = item.getData().selectSingleNode("/data/url");
+
         if (upper == 0)
             return null;
         Relation parentRelation = (Relation) persistence.findById(new Relation(upper));
         if (parentRelation.getUrl() == null)
             return null;
 
-        String title = item.getTitle();
-        String url = parentRelation.getUrl() + "/" + URLManager.enforceRelativeURL(title);
+        String lastPart;
+        String url = parentRelation.getUrl() + "/";
+
+        if (node != null && !Misc.empty(node.getText()))
+            lastPart = node.getText();
+        else
+            lastPart = item.getTitle();
+        url += URLManager.enforceRelativeURL(lastPart);
+
         url = URLManager.protectFromDuplicates(url);
         return url;
+    }
+
+    /**
+     * Sets the URL for the specified article. Changes are not synchronized with persistence.
+     * @param params a map holding a request's parameters
+     * @param item an item that is to be updated
+     */
+    private boolean setUrl(Map params, Item item) {
+        String urlPart = (String) params.get(PARAM_URL);
+
+        if (!Misc.empty(urlPart)) {
+            Element element = DocumentHelper.makeElement(item.getData(), "/data/url");
+            element.setText(urlPart);
+        } else {
+            Node node = item.getData().selectSingleNode("/data/url");
+            if (node != null)
+                node.detach();
+        }
+
+        return true;
     }
 
     /**
