@@ -19,6 +19,7 @@
 package cz.abclinuxu.scheduler;
 
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.data.view.CloudTag;
 import cz.abclinuxu.data.view.SectionTreeCache;
 import cz.abclinuxu.data.view.HostingServer;
 import cz.abclinuxu.data.view.JobsCzHolder;
@@ -29,11 +30,13 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.utils.TagTool.ListOrder;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.freemarker.Tools;
 
 import java.util.*;
@@ -74,6 +77,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String KEY_JOBSCZ = "jobscz";
     public static final String KEY_INDEX_LINKS = "links.in.index";
     public static final String KEY_TEMPLATE_LINKS = "links.in.template";
+    public static final String KEY_TAGCLOUD = "tagcloud";
 
     public static final String PREF_DEFAULT = "default.";
     public static final String PREF_MAX = "max.";
@@ -84,9 +88,11 @@ public class VariableFetcher extends TimerTask implements Configurable {
     List freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
     List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities;
     List freshTrivias;
+    List<CloudTag> freshCloudTags;
+
     List<Screenshot> freshScreenshots;
     String indexFeeds, templateFeeds;
-    Map defaultSizes, maxSizes, counter;
+    Map<String, Integer> defaultSizes, maxSizes, counter;
     Map<Server, List<Link>> feedLinks;
     SectionTreeCache forumTree, faqTree, softwareTree, hardwareTree, articleTree;
     Relation currentPoll;
@@ -139,7 +145,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * Map where key is one of KEY_ constants and value is Integer
      * with default number of objects for that object.
      */
-    public Map getDefaultSizes() {
+    public Map<String, Integer> getDefaultSizes() {
         return defaultSizes;
     }
 
@@ -147,7 +153,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * Map where key is one of KEY_ constants and value is Integer
      * with maximum number of objects for that object.
      */
-    public Map getMaxSizes() {
+    public Map<String, Integer> getMaxSizes() {
         return maxSizes;
     }
 
@@ -255,10 +261,15 @@ public class VariableFetcher extends TimerTask implements Configurable {
         int userLimit = getObjectCountForUser(user, KEY_SCREENSHOT, "/data/settings/index_screenshots");
         return getSubList(freshScreenshots, userLimit);
     }
-    
+
     public List<JobsCzItem> getFreshJobsCz(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_JOBSCZ, null);
         return getSubList(jobsCzHolderHP.getJobsList(), userLimit);
+    }
+
+    public List<CloudTag> getFreshCloudTags(Object user) {
+    	int userLimit = getObjectCountForUser(user, KEY_TAGCLOUD, null);
+        return getSubList(freshCloudTags, userLimit);
     }
 
     /**
@@ -365,14 +376,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public HostingServer getHostingServer() {
         return hostingServer;
     }
-    
+
     /**
      * @return Jobs.cz holder
      */
      public JobsCzHolder getJobsCzHolder() {
          return jobsCzHolderPage;
      }
-    
+
     /**
      * Finds number of objects for given user. If o is not User or xpath is not set, then default value
      * will be returned. Otherwise user's preference will be returned (unless it is smaller than 0
@@ -441,8 +452,9 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshFeedLinks();
             refreshSectionCaches();
             refreshScreenshots();
+            refreshCloudTags();
             refreshTrivia();
-            
+
             // jobs are refreshed from another thread (JobsCzFetcher)
             // refreshJobsCz();
 
@@ -665,11 +677,11 @@ public class VariableFetcher extends TimerTask implements Configurable {
             log.error("Selhalo nacitani desktopu", e);
         }
     }
-    
+
     /**
-     * Fetches jobs from available XML file, if 
+     * Fetches jobs from available XML file, if
      * fetching fails, do not change current holder
-     * @param uri URI of XML to be parsed
+     * @param uriPage URI of XML to be parsed
      */
     public void refreshJobsCz(String uriPage, String uriHP) {
         try {
@@ -683,6 +695,31 @@ public class VariableFetcher extends TimerTask implements Configurable {
         } catch (Exception e) {
             log.error("Selhalo nacitani pracovnich pozic serveru jobs.cz", e);
         }
+    }
+
+    /**
+     * Constructs list of most used tags
+     */
+    public void refreshCloudTags() {
+    	try {
+    		int count = (Integer) defaultSizes.get(KEY_TAGCLOUD);
+    		List<Tag> tags = TagTool.list(0, count, ListOrder.BY_USAGE, false);
+
+    		// get max & min
+            int minOccurs = tags.get(tags.size() - 1).getUsage();
+    		int maxOccurs = tags.get(0).getUsage();
+
+    		List<CloudTag> result = new ArrayList<CloudTag>(tags.size());
+            for (Tag tag : tags) {
+    			CloudTag ct = new CloudTag(tag, minOccurs, maxOccurs);
+    			result.add(ct);
+    		}
+    		// sort by name
+    		Collections.sort(result);
+    		freshCloudTags = result;
+    	} catch(Exception e) {
+    		log.error("Selhalo nacitani tag cloud");
+    	}
     }
 
     public void refreshCurrentPoll() {
@@ -748,9 +785,9 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * @throws ConfigurationException
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        counter = new HashMap(10, 1.0f);
-        defaultSizes = new HashMap(10, 1.0f);
-        maxSizes = new HashMap(10, 1.0f);
+        counter = new HashMap<String, Integer>(10, 1.0f);
+        defaultSizes = new HashMap<String, Integer>(17, 1.0f);
+        maxSizes = new HashMap<String, Integer>(15, 1.0f);
 
         int size = prefs.getInt(PREF_DEFAULT + KEY_ARTICLE, 9);
         defaultSizes.put(KEY_ARTICLE, size);
@@ -827,7 +864,11 @@ public class VariableFetcher extends TimerTask implements Configurable {
         size = prefs.getInt(PREF_DEFAULT + KEY_JOBSCZ, 10);
         defaultSizes.put(KEY_JOBSCZ, size);
         jobsCzHolderHP = jobsCzHolderPage = JobsCzHolder.EMPTY_HOLDER;
-        
+
+        size = prefs.getInt(PREF_DEFAULT + KEY_TAGCLOUD, 20);
+        defaultSizes.put(KEY_TAGCLOUD, size);
+        freshCloudTags = Collections.emptyList();
+
         size = prefs.getInt(PREF_DEFAULT + KEY_TRIVIA, 3);
         defaultSizes.put(KEY_TRIVIA, size);
         size = prefs.getInt(PREF_MAX + KEY_TRIVIA, 10);

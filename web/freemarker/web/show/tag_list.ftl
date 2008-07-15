@@ -10,6 +10,11 @@
 
 <h1>Štítky</h1>
 
+<#if TAGS.thisPage.row == 0>
+    <#assign cloudTags=VARS.getFreshCloudTags(USER?if_exists) />
+    <@lib.showTagCloud list=cloudTags title="Oblíbené štítky" cssStyle="width: 500px"/>
+</#if>
+
 <ul>
     <#list TAGS.data as tag>
         <li>

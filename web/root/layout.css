@@ -1088,6 +1088,22 @@ div.autocomplete ul li span.informal { size: 80%;}
 }
 */
 
+/* tag cloud */
+#tagcloud_container { }
+#tagcloud { margin: 0; }
+#tagcloud>li { display: inline; }
+#tagcloud>li.class0 { font-size: 85%; }
+#tagcloud>li.class1 { font-size: 95%; }
+#tagcloud>li.class2 { font-size: 105%; }
+#tagcloud>li.class3 { font-size: 115%; }
+#tagcloud>li.class4 { font-size: 125%; }
+#tagcloud>li.class5 { font-size: 135%; }
+#tagcloud>li.class6 { font-size: 145%; }
+#tagcloud>li.class7 { font-size: 160%; }
+#tagcloud>li.class8 { font-size: 180%; }
+#tagcloud>li.class9 { font-size: 200%; }
+#tagcloud a { text-decoration: none;}
+
 .stitkyOblibene {
 	width: auto;
 	padding: 0.1em 0.3em;

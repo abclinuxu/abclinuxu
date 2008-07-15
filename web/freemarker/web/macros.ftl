@@ -441,3 +441,16 @@
 <#macro showError key>
     <#if ERRORS[key]?exists><div class="error">${ERRORS[key]}</div></#if>
 </#macro>
+
+<#macro showTagCloud list title cssStyle)>
+    <div id="tagcloud_container"<#if (cssStyle?length gte 1)> style="${cssStyle}"</#if>>
+    <#if title?exists ><div id="title">${title}</div></#if>
+	<ul id="tagcloud">
+		<#list list as tag>
+			<li class="${tag.cssClass}">
+			    <a href="/stitky/${tag.id}" title="Štítek ${tag.title}: ${tag.usage} použití">${tag.title}</a>
+			</li>
+		</#list>
+	</ul>
+    </div>
+</#macro>

@@ -26,11 +26,11 @@ import java.util.Date;
  * @since 14.9.2007
  */
 public class Tag {
-    private String id;
-    private String title;
-    private Date created;
-    private String parent;
-    private int usage;
+    protected String id;
+    protected String title;
+    protected Date created;
+    protected String parent;
+    protected int usage;
 
     /**
      * Creates new instance of Tag.
@@ -46,6 +46,18 @@ public class Tag {
      * Creates new uninitialized instance of Tag.
      */
     public Tag() {
+    }
+    
+    /**
+     * Creates new Tag by cloning
+     * @param clone
+     */
+    protected Tag(Tag clone) {
+    	this.created = clone.created;
+    	this.id = clone.id;
+    	this.parent = clone.parent;
+    	this.title = clone.title;
+    	this.usage = clone.usage;
     }
 
     /**

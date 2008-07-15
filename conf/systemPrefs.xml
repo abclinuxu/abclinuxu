@@ -565,6 +565,7 @@
                             <entry key="feeds.for.template" value="7,16,21" />
                             <entry key="default.links.in.template" value="2"/>
                             <entry key="max.links.in.template" value="5" />
+                            <entry key="default.tagcloud" value="30" />
                             <entry key="default.jobscz" value="10"/>
                             <entry key="section.cache.rebuild.frequency" value="10" />
                         </map>

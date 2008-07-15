@@ -289,6 +289,26 @@ public class TagTool implements Configurable {
     }
 
     /**
+     * Computes weight of tag
+     * @param tag Tag which weight will be computed
+     * @param maxOccurs Top threshold
+     * @param minOccurs Bottom threshold
+     * @return Weight (importance) of tag, number between <code>0.0</code>
+     *         and <code>1.0</code>
+     */
+    public static float tagWeight(Tag tag, int minOccurs, int maxOccurs) {
+        int current = tag.getUsage();
+
+        // linear
+        // float scale = (float) maxOccurs - minOccurs;
+        // float linear = (current - minOccurs) / scale;
+
+        // logarithmic
+        float logarithmic = new Double(((Math.log(current) - Math.log(minOccurs)) / (Math.log(maxOccurs) - Math.log(minOccurs)))).floatValue();
+        return logarithmic;
+    }
+
+    /**
      * Constants for logging the action.
      */
     public static class Action {
