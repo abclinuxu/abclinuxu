@@ -132,7 +132,7 @@ public class Discussion {
      */
     public void setUnreadComments(Integer lastRead) {
         this.lastRead = lastRead;
-        if (! getHasUnreadComments())
+        if (lastRead == null || greatestId <= lastRead)
             return;
 
         int lastId = lastRead;
