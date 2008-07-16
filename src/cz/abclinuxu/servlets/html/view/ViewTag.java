@@ -74,6 +74,7 @@ public class ViewTag implements AbcAction {
     public static final String VAR_TAGS = "TAGS";
     public static final String VAR_DOCUMENTS = "DOCUMENTS";
     public static final String VAR_TYPES = "TYPES";
+	public static final String VAR_CREATOR = "CREATOR";
 
     private Pattern reTagId = Pattern.compile(UrlUtils.PREFIX_TAGS + "/" + "([^/?]+)");
     static final Qualifier[] QUALIFIERS_ARRAY = new Qualifier[]{};
@@ -144,6 +145,10 @@ public class ViewTag implements AbcAction {
 
             env.put(VAR_URL_BEFORE_FROM, "/stitky/" + tag.getId() + "?from=");
             env.put(VAR_URL_AFTER_FROM, sb.toString());
+			
+			Map creator = sqlTool.getTagCreator(id);
+			if (creator != null)
+				env.put(VAR_CREATOR, creator);
 
             return FMTemplateSelector.select("Tags", "detail", env, request);
         } else { // list of tags
