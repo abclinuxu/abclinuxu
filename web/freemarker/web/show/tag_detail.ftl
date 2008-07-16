@@ -29,6 +29,22 @@
 <h1>Štítek ${TAG.title}</h1>
 
 <p>
+    Autor štítku:
+    <#if CREATOR?exists>
+        <#if CREATOR.user?exists>
+            <@lib.showUser CREATOR.user/>
+        <#else>
+            neregistrovaný uživatel
+        </#if>
+        <#if USER?exists && USER.hasRole("tag admin")>
+            (${CREATOR.ip?default("Neznámá IP")})
+        </#if>
+    <#else>
+        neznámý
+    </#if>
+</p>
+
+<p>
     <#assign PARENT = TOOL.findTag(TAG.parent)?default("UNDEFINED")>
     <#if (PARENT?string != "UNDEFINED")>
         <br>
