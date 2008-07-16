@@ -114,6 +114,7 @@ public final class SQLTool implements Configurable {
     public static final String TOP_COUNTED_RELATIONS = "top.counted.relations";
     public static final String LAST_REVISIONS = "last.versions";
     public static final String TAG_LOG_ACTION = "tag.log.action";
+    public static final String TAG_GET_CREATOR = "tag.get.creator";
 
     public static final String DELETE_USER = "delete.user";
     public static final String DELETE_USER_TICKET = "delete.user.ticket";
@@ -1862,6 +1863,48 @@ public final class SQLTool implements Configurable {
             persistance.releaseSQLResources(con, statement, null);
         }
     }
+	
+	/**
+	 * Gets the creator of the tag
+	 * @param tag
+	 * @return Map containg one or two values: ip (String) and possibly user (User)
+	 */
+	public Map getTagCreator(String tag) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement((String) sql.get(TAG_GET_CREATOR));
+            statement.setString(1, tag);
+
+            resultSet = statement.executeQuery();
+
+            if (!resultSet.next())
+                return null;
+
+            HashMap<String,Object> info = new HashMap<String,Object>(2);
+            String ip = resultSet.getString(1);
+            Integer uid = resultSet.getInt(2);
+
+            info.put("ip", ip);
+
+            if (uid != null && uid != 0) {
+                User user = new User(uid.intValue());
+                persistance.synchronize(user);
+
+                info.put("user", user);
+            }
+
+            return info;
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba při hledání autora štítku!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+	}
 
     /**
      * Inserts deprecated URL into table of replacement. Either newUrl or
@@ -2044,6 +2087,7 @@ public final class SQLTool implements Configurable {
         store(CHANGE_PROPERTY_OWNER, prefs);
         store(COUNT_PROPERTIES_BY_USER, prefs);
         store(TAG_LOG_ACTION, prefs);
+        store(TAG_GET_CREATOR, prefs);
     }
 
     /**
