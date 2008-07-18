@@ -112,7 +112,7 @@
 <#if SOFTWARE?size gt 0>
     <p>Používám tento software:</p>
     <ul>
-        <#list SOFTWARE as sw>
+        <#list SORT.byName(SOFTWARE) as sw>
             <li>
                 <a href="${sw.url}">${sw.child.title}</a>
             </li>
