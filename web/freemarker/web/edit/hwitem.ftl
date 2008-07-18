@@ -79,21 +79,6 @@
         </tr>
 
         <tr>
-            <td>Cena</td>
-            <td>
-                <select name="price" tabindex="5">
-                    <#assign price=PARAMS.price?if_exists>
-                    <option>nehodnotím</option>
-                    <option value="verylow"<#if price=="verylow"> SELECTED</#if>>velmi nízká</option>
-                    <option value="low"<#if price=="low"> SELECTED</#if>>nízká</option>
-                    <option value="good"<#if price=="good"> SELECTED</#if>>přiměřená</option>
-                    <option value="high"<#if price=="high"> SELECTED</#if>>vysoká</option>
-                    <option value="toohigh"<#if price=="toohigh"> SELECTED</#if>>přemrštěná</option>
-                </select>
-            </td>
-        </tr>
-
-        <tr>
             <td>Zastaralý</td>
             <td>
                 <input type="radio" name="outdated" value="yes"<#if PARAMS.outdated?if_exists=="yes"> checked</#if> tabindex="6"> ano

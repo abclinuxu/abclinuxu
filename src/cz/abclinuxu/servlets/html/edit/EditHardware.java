@@ -59,7 +59,6 @@ public class EditHardware implements AbcAction {
     public static final String PARAM_NAME = "name";
     public static final String PARAM_DRIVER = "driver";
     public static final String PARAM_DRIVER_URL = "driverUrl";
-    public static final String PARAM_PRICE = "price";
     public static final String PARAM_SUPPORT = "support";
     public static final String PARAM_SETUP = "setup";
     public static final String PARAM_TECHPARAM = "params";
@@ -153,7 +152,6 @@ public class EditHardware implements AbcAction {
         canContinue &= setSupport(params, root);
         canContinue &= setDriver(params, root);
         canContinue &= setDriverUrl(params, root, env);
-        canContinue &= setPrice(params, root);
         canContinue &= setOutdated(params, root);
         canContinue &= setParameters(params, root, env);
         canContinue &= setIdentification(params, root, env);
@@ -215,9 +213,6 @@ public class EditHardware implements AbcAction {
         node = root.element("driver_url");
         if ( node!=null )
             params.put(PARAM_DRIVER_URL, node.getText());
-        node = root.element("price");
-        if ( node!=null )
-            params.put(PARAM_PRICE, node.getText());
         node = root.element("outdated");
         if ( node!=null )
             params.put(PARAM_OUTDATED, node.getText());
@@ -253,7 +248,6 @@ public class EditHardware implements AbcAction {
         canContinue &= setSupport(params, root);
         canContinue &= setDriver(params, root);
         canContinue &= setDriverUrl(params, root, env);
-        canContinue &= setPrice(params, root);
         canContinue &= setOutdated(params, root);
         canContinue &= setParameters(params, root, env);
         canContinue &= setIdentification(params, root, env);
@@ -327,24 +321,6 @@ public class EditHardware implements AbcAction {
         else {
             Element element = root.element("driver");
             if (element!=null)
-                element.detach();
-        }
-        return true;
-    }
-
-    /**
-     * Updates price from parameters. Changes are not synchronized with persistence.
-     * @param params map holding request's parameters
-     * @param root root element of record to be updated
-     * @return false, if there is a major error.
-     */
-    private boolean setPrice(Map params, Element root) {
-        String tmp = (String) params.get(PARAM_PRICE);
-        if ( tmp!=null && tmp.length()>0 )
-            DocumentHelper.makeElement(root, "price").setText(tmp);
-        else {
-            Element element = root.element("price");
-            if (element != null)
                 element.detach();
         }
         return true;

@@ -46,21 +46,6 @@
                 <td>ano</td>
             </tr>
         </#if>
-
-        <#if TOOL.xpath(hardware,"data/price")?exists>
-            <tr>
-                <td><b>Cena:</b></td>
-                <td>
-                    <#switch TOOL.xpath(hardware,"data/price")>
-                        <#case "verylow">velmi nízká<#break>
-                        <#case "low">nízká<#break>
-                        <#case "good">přiměřená<#break>
-                        <#case "high">vysoká<#break>
-                        <#case "toohigh">přemrštěná<#break>
-                    </#switch>
-                </td>
-            </tr>
-        </#if>
     </table>
 
     <#if TOOL.xpath(hardware,"data/params")?exists>

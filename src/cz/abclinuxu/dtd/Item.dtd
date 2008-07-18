@@ -1,8 +1,7 @@
 
 <!-- Item.HARDWARE -->
-<!ELEMENT data (support?,price?,driver?,driver_url?,outdated?,setup?,params?,identification?,note?)>
+<!ELEMENT data (support?,driver?,driver_url?,outdated?,setup?,params?,identification?,note?)>
 <!ELEMENT support (#PCDATA)> <!-- if and how the piece of hardware is supported (complete, partial, none) -->
-<!ELEMENT price (#PCDATA)> <!-- user's evaluation of price -->
 <!ELEMENT driver (#PCDATA)> <!-- kind of driver: kernel, XFree, binary -->
 <!ELEMENT driver_url (#PCDATA)> <!-- URL where driver can be downloaded -->
 <!ELEMENT outdated (#PCDATA)> <!-- yes will mean that this piece of hardware is really old -->
