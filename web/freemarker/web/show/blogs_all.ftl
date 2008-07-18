@@ -78,12 +78,16 @@
             <@lib.showShortRating relation, "| " />
         </p>
         <#if ! SUMMARY?exists>
-            <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>
+            <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF"), showmore=false>
             <#if text!="UNDEF">
                 ${text}
-                <div class="signature"><a href="${url}">více...</a></div>
+                <#assign showmore=true>
             <#else>
+                <#if TOOL.groupByType(story.children).poll?exists || TOOL.screenshotsFor(story)?size gt 0><#assign showmore=true></#if>
                 ${TOOL.xpath(story, "/data/content")}
+            </#if>
+            <#if showmore>
+                <div class="signature"><a href="${url}">více...</a></div>
             </#if>
         </#if>
     </div>
