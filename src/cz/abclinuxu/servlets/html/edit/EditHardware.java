@@ -76,12 +76,6 @@ public class EditHardware implements AbcAction {
     public static final String VAL_HW_DRIVER_OTHER = "other";
     public static final String VAL_HW_DRIVER_NONE = "none";
 
-    public static final String VAL_HW_PRICE_VERYLOW = "verylow";
-    public static final String VAL_HW_PRICE_LOW = "low";
-    public static final String VAL_HW_PRICE_GOOD = "good";
-    public static final String VAL_HW_PRICE_HIGH = "high";
-    public static final String VAL_HW_PRICE_TOOHIGH = "toohigh";
-
     public static final String VALUE_SUPPORT_COMPLETE = "complete";
     public static final String VALUE_SUPPORT_PARTIAL = "partial";
     public static final String VALUE_SUPPORT_NONE = "none";
