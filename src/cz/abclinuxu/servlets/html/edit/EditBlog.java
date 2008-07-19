@@ -628,7 +628,7 @@ public class EditBlog implements AbcAction, Configurable {
         persistence.update(story);
         SQLTool.getInstance().setUpdatedTimestamp(story, originalUpdated);
 
-        FeedGenerator.updateBlogDigest();
+        FeedGenerator.updateBlog(null);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, Tools.getUrlForBlogStory(relation));
