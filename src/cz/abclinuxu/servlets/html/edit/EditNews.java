@@ -188,7 +188,7 @@ public class EditNews implements AbcAction {
         canContinue &= setContent(params, item, env);
         canContinue &= setCategory(params, item);
 
-        if (user.hasRole("news admin")) {
+        if (user.hasRole("news admin") && canContinue) {
             canContinue &= setOwner(params, item, env);
             canContinue &= setForbidDiscussions(params, item);
             canContinue &= setPublishDate(params, item, env);
