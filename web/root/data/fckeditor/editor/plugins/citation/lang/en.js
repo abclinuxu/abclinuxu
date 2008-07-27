@@ -1,0 +1,1 @@
+FCKLang['ToolbarAbcCitationTitle'] = 'Citace';
