@@ -97,7 +97,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     SectionTreeCache forumTree, faqTree, softwareTree, hardwareTree, articleTree;
     Relation currentPoll;
     int sectionCacheFrequency;
-    HostingServer hostingServer;
+    HostingServer hostingServer, _64bitServer;
     JobsCzHolder jobsCzHolderHP, jobsCzHolderPage;
 
     SQLTool sqlTool;
@@ -377,6 +377,10 @@ public class VariableFetcher extends TimerTask implements Configurable {
         return hostingServer;
     }
 
+    public HostingServer getOffer64bit() {
+        return _64bitServer;
+    }
+
     /**
      * @return Jobs.cz holder
      */
@@ -471,6 +475,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
      */
     public void setHostingServer(HostingServer server) {
         hostingServer = server;
+    }
+
+    /**
+     * Sets a product from 64bit.cz
+     * @param server
+     */
+    public void setOffer64bit(HostingServer server) {
+        _64bitServer = server;
     }
 
     private void refreshSectionCaches() {
