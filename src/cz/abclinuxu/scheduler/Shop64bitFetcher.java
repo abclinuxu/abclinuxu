@@ -62,7 +62,7 @@ public class Shop64bitFetcher extends TimerTask implements Configurable {
             List<HostingServer> servers = new ArrayList<HostingServer>();
             for (Iterator iter = productsElement.elements().iterator(); iter.hasNext();) {
                 Element element = (Element) iter.next();
-//                servers.add(parse(element));
+                servers.add(parseServer(element));
             }
 
             List<HostingService> services = new ArrayList<HostingService>();
@@ -106,6 +106,23 @@ public class Shop64bitFetcher extends TimerTask implements Configurable {
         if (el != null)
             service.setPrice(parsePrice(el));
         return service;
+    }
+    
+    private HostingServer parseServer(Element element) {
+        HostingServer server;
+        boolean action = "true".equals(element.attributeValue("action"));
+        boolean _new = "true".equals(element.attributeValue("new"));
+        
+        String name = element.elementText("name");
+        String url = element.elementText("url");
+        
+        server = new HostingServer(name, url);
+        server.setAction(action);
+        server.setNewArrival(_new);
+        server.setDescription(element.attributeValue("config"));
+        server.setPrice(parsePrice(element.element("price")));
+        
+        return server;
     }
 
     public Shop64bitFetcher() {
