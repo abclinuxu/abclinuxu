@@ -78,7 +78,7 @@ public class Shop64bitFetcher extends TimerTask implements Configurable {
             }
 
             int random = new Random(System.currentTimeMillis()).nextInt(servers.size());
-            VariableFetcher.getInstance().setHostingServer(servers.get(random));
+            VariableFetcher.getInstance().setOffer64bit(servers.get(random));
 
             log.debug("AbcHost content generated");
         } catch (DocumentException e) {
