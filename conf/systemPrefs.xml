@@ -404,7 +404,7 @@
                             <entry key="tag.log.action" value="insert into stitky_log (akce,kdy,stitek,autor,ip,typ,cislo,titulek) values (?,NULL,?,?,?,?,?,?)"/>
                             <entry key="tag.get.creator" value="select ip,autor from stitky_log where stitek=? and akce='add' order by kdy desc limit 1"/>
                             <entry key="most.commented.relations" value="select RA.cislo, count(*) from relace RZ, zaznam Z, komentar K, relace RA, polozka PA, relace RD, polozka PD where RA.potomek = PA.cislo and RD.potomek = PD.cislo and RD.predchozi = RA.cislo and PA.typ=? and PD.typ=3 and RD.typ_potomka = 'P' and RA.typ_potomka = 'P' and RZ.predchozi = RD.cislo and RZ.typ_potomka='Z' and RZ.potomek = Z.cislo and Z.typ=4 and K.zaznam = Z.cislo group by RZ.cislo order by 2"/>
-                            <centry key="most.read.relations" value="select R.cislo, C.soucet from relace R, citac C, spolecne S, polozka P where R.potomek=C.cislo and R.typ_potomka='P' and R.potomek=S.cislo and R.potomek=P.cislo and C.druh='read' and S.typ='P' and P.typ=? order by 2"/>
+                            <entry key="most.read.relations" value="select R.cislo, C.soucet from relace R, citac C, spolecne S, polozka P where R.potomek=C.cislo and R.typ_potomka='P' and R.potomek=S.cislo and R.potomek=P.cislo and C.druh='read' and S.typ='P' and P.typ=? order by 2"/>
                         </map>
                     </node>
                     <node name="versioning">
@@ -654,6 +654,8 @@
                                 <entry key="start.datetool.service" value="@START_UPDATE_DATETOOL@"/>
                                 <entry key="start.watched.discussions.cleaner" value="@START_DISCUSSION_CLEANER@"/>
                                 <entry key="start.web.services" value="@START.WEB.SERVICES@"/>
+                                <entry key="start.update.top.statistics" value="@START.TOP.STATISTICS@"/>
+                                <entry key="update.top.statistics.delay" value="50"/>
                                 <entry key="watched.discussions.cleaner.type" value="120"/>
                                 <entry key="watched.discussions.cleaner.period" value="21600"/>
                                 <entry key="start.update.statistics" value="@START_UPDATE_STATISTICS@"/>
