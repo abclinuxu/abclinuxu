@@ -37,6 +37,7 @@ import cz.abclinuxu.utils.email.monitor.InstantSender;
 import cz.abclinuxu.utils.email.forum.CommentSender;
 import cz.abclinuxu.persistence.extra.JobOfferManager;
 import cz.abclinuxu.data.view.PropertySet;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import freemarker.template.Configuration;
 
 import javax.servlet.ServletException;
@@ -63,6 +64,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_RSS_OKSYSTEM = "rss.oksystem";
     public static final String PREF_RSS_JOBPILOT = "rss.jobpilot";
     public static final String PREF_RSS_JOBSCZ = "rss.jobcz";
+    public static final String PREF_RSS_64BIT = "rss.64bit";
     public static final String PREF_VARIABLE_FETCHER = "variable.fetcher";
     public static final String PREF_POOL_MONITOR = "pool.monitor";
     public static final String PREF_ABC_MONITOR = "abc.monitor";
@@ -139,6 +141,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         startOKSystemUpdate();
         startJobPilotUpdate();
         startJobsCzUpdate();
+        start64bitFetcher();
         startGenerateLinks();
         startPoolMonitor();
         startSendingWeeklyEmails();
@@ -208,6 +211,18 @@ public class AbcInit extends HttpServlet implements Configurable {
         int delay = getDelay(PREF_RSS_JOBSCZ);
         int period = getPeriod(PREF_RSS_JOBSCZ);
         slowScheduler.schedule(new JobsCzFetcher(), delay, period);
+    }
+    
+    protected void start64bitFetcher() {
+        if ( !isSet(PREF_RSS_64BIT) ) {
+            log.info("64bit.cz RSS monitor configured not to run");
+            return;
+        }
+        
+        log.info("Scheduling the 64bit.cz RSS monitor");
+        int delay = getDelay(PREF_RSS_64BIT);
+        int period = getPeriod(PREF_RSS_64BIT);
+        slowScheduler.schedule(new Shop64bitFetcher(), delay, period);
     }
 
     /**
@@ -420,6 +435,7 @@ public class AbcInit extends HttpServlet implements Configurable {
 
         try {
             cfg.setSharedVariable(Constants.VAR_TOOL,new Tools());
+            cfg.setSharedVariable(Constants.VAR_FEEDS,new FeedGenerator());
             cfg.setSharedVariable(Constants.VAR_DATE_TOOL,new DateTool());
             cfg.setSharedVariable(Constants.VAR_SORTER,new Sorters2());
             cfg.setSharedVariable(Constants.VAR_FETCHER, VariableFetcher.getInstance());
@@ -452,6 +468,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         services.put(PREF_RSS_OKSYSTEM, prefs.getBoolean(PREF_START + PREF_RSS_OKSYSTEM, true));
         services.put(PREF_RSS_JOBPILOT, prefs.getBoolean(PREF_START + PREF_RSS_JOBPILOT, true));
         services.put(PREF_RSS_JOBSCZ, prefs.getBoolean(PREF_START + PREF_RSS_JOBSCZ, true));
+        services.put(PREF_RSS_64BIT, prefs.getBoolean(PREF_START + PREF_RSS_64BIT, true));
         services.put(PREF_UPDATE_STATISTICS, prefs.getBoolean(PREF_START + PREF_UPDATE_STATISTICS, true));
         services.put(PREF_JOB_OFFER_MANAGER, prefs.getBoolean(PREF_START + PREF_JOB_OFFER_MANAGER, false));
         services.put(PREF_USER_SCORE_SETTER, prefs.getBoolean(PREF_START + PREF_USER_SCORE_SETTER, false));
@@ -465,6 +482,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         delays.put(PREF_RSS_OKSYSTEM, prefs.getInt(PREF_RSS_OKSYSTEM + PREF_DELAY, 60));
         delays.put(PREF_RSS_JOBPILOT, prefs.getInt(PREF_RSS_JOBPILOT + PREF_DELAY, 60));
         delays.put(PREF_RSS_JOBSCZ, prefs.getInt(PREF_RSS_JOBSCZ + PREF_DELAY, 60));
+        delays.put(PREF_RSS_64BIT, prefs.getInt(PREF_RSS_64BIT + PREF_DELAY, 60));
         delays.put(PREF_UPDATE_STATISTICS, prefs.getInt(PREF_UPDATE_STATISTICS + PREF_DELAY, 60));
         delays.put(PREF_JOB_OFFER_MANAGER, prefs.getInt(PREF_JOB_OFFER_MANAGER + PREF_DELAY, 60));
 
@@ -476,6 +494,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         periods.put(PREF_RSS_OKSYSTEM, prefs.getInt(PREF_RSS_OKSYSTEM + PREF_PERIOD, 60));
         periods.put(PREF_RSS_JOBPILOT, prefs.getInt(PREF_RSS_JOBPILOT + PREF_PERIOD, 60));
         periods.put(PREF_RSS_JOBSCZ, prefs.getInt(PREF_RSS_JOBSCZ + PREF_PERIOD, 60));
+        periods.put(PREF_RSS_64BIT, prefs.getInt(PREF_RSS_64BIT + PREF_PERIOD, 60));
         periods.put(PREF_UPDATE_STATISTICS, prefs.getInt(PREF_UPDATE_STATISTICS + PREF_PERIOD, 60));
         periods.put(PREF_JOB_OFFER_MANAGER, prefs.getInt(PREF_JOB_OFFER_MANAGER + PREF_PERIOD, 60));
 
