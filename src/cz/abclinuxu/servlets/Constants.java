@@ -158,6 +158,8 @@ public interface Constants {
     String VAR_PARAMS = "PARAMS";
     /** holds url manipulation tool */
     String VAR_URL_UTILS = "URL";
+    /** holds a FeedGenerator instance */
+    String VAR_FEEDS = "FEEDS";
     /** holds map of errors for last request */
     String VAR_ERRORS = "ERRORS";
     /** holds list of messages for last request */
