@@ -1,10 +1,3 @@
-FCKConfig.LinkBrowser = false;
-FCKConfig.ImageBrowser = false;
-FCKConfig.FlashBrowser = false;
-FCKConfig.LinkUpload = false;
-FCKConfig.ImageUpload = false;
-FCKConfig.FlashUpload = false;
-
 FCKConfig.StylesXmlPath = '/data/fckeditor/SafeHTMLGuard_styles.xml';
 FCKConfig.Plugins.Add( 'citation', null, '/data/fckeditor/editor/plugins/' );
 
