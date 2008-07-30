@@ -34,6 +34,7 @@ public class NewsGuard {
         TAGS.put("ACRONYM", new CheckedTag("ACRONYM", true, new String[]{"TITLE"}));
         TAGS.put("CITE", new CheckedTag("CITE", true, null));
         TAGS.put("CODE", new CheckedTag("CODE", true, null));
+        TAGS.put("Q", new CheckedTag("Q", true, new String[]{"ID"}));
     }
 
     /**
