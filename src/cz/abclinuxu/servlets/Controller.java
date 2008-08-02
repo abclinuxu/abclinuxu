@@ -28,6 +28,7 @@ import cz.abclinuxu.scheduler.UpdateStatistics;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.forms.RichTextEditor;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -154,6 +155,7 @@ public class Controller extends HttpServlet implements Configurable {
         ServletUtils.setCurrentURL(ServletUtils.getURL(request));
         ServletUtils.handleMessages(request, env);
         ServletUtils.handleLogin(request, response, env);
+        env.put(Constants.VAR_RICH_TEXT_EDITOR, new RichTextEditor(env));
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {

@@ -34,7 +34,7 @@ verze 2.0
 <!ELEMENT type (#PCDATA)> <!-- typ objektu -->
 
 <!ELEMENT settings (emoticons?,cookie_valid?,index_discussions?, index_stories?, index_links?, template_links?, return_to_forum?,
-                    blog?, css?, guidepost?, blacklist?, feeds?, hp_all_stories?)>
+                    blog?, css?, guidepost?, blacklist?, feeds?, hp_all_stories?, rte?)>
 <!ELEMENT emoticons (#PCDATA)> <!-- yes or no, zda nahrazovat emotikony obrazkem -->
 <!ELEMENT signatures (#PCDATA)> <!-- yes or no, zda zobrazovat signatury -->
 <!ELEMENT guidepost (#PCDATA)> <!-- yes or no, zda zobrazovat rozcestnik -->
@@ -56,6 +56,7 @@ verze 2.0
 <!ELEMENT uid (#PCDATA)> <!-- ID of a blocked user in blacklist -->
 <!ELEMENT name (#PCDATA)> <!-- name of anonym visitor blocked in blacklist -->
 <!ELEMENT hp_all_stories (#PCDATA)> <!-- yes or no, whether to display all stories, including banned by administrator -->
+<!ELEMENT rte (#PCDATA)> <!-- textarea or wysiwyg, this settings controls rich text editor component behaviour --> 
 
 <!ELEMENT system (registration_date?,last_login_date?,group?)>
 <!ELEMENT registration_date (#PCDATA)> <!-- ISO format, kdy se zaregistroval -->

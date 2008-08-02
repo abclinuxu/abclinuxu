@@ -38,6 +38,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Advertisement;
 import cz.abclinuxu.utils.TagTool;
+import cz.abclinuxu.utils.forms.RichTextEditor;
 import cz.abclinuxu.scheduler.EnsureWatchedDiscussionsLimit;
 import cz.abclinuxu.security.ActionProtector;
 import org.dom4j.Document;
@@ -1127,59 +1128,86 @@ public class Tools implements Configurable {
      * This method performs visualization enhancements. If string
      * doesn't contain already HTML breaks (&lt;p>, &lt;br>), it inserts them.
      * It also replaces smilies with appropriate images.
+     * @param str   text to be rendered
+     * @param o     optional User instance
      */
     public String render(String str, Object o) {
-        if ( Misc.empty(str) ) return "";
+        if ( Misc.empty(str) )
+            return "";
 
-        Map params = new HashMap(1,1.0f);
-        boolean renderEmoticons = true;
-        if ( o!=null && (o instanceof User) ) {
-            Node node = ((User)o).getData().selectSingleNode("/data/settings/emoticons");
-            if ( node!=null && "no".equals(node.getText()) )
-                renderEmoticons = false;
-        }
-        if (renderEmoticons)
-            params.put(Renderer.RENDER_EMOTICONS, Boolean.TRUE);
-
+        boolean renderEmoticons = allowEmoticons(o), simple = false;
         Format format = FormatDetector.detect(str);
         if (format.equals(Format.SIMPLE))
-            return SimpleFormatRenderer.getInstance().render(str,params);
-        else
-            return HTMLFormatRenderer.getInstance().render(str,params);
+            simple = true;
+
+        return renderText(str, renderEmoticons, simple);
     }
 
     /**
      * This method renders given Element. It may contain attribute, which specify
      * format of the text.
+     * @param el   DOM4J element to be rendered
+     * @param o    optional User instance
      */
     public String render(Object el, Object o) {
-        if (el==null || !(el instanceof Element))
+        if (el == null || !(el instanceof Element))
             return "";
 
-        Map params = new HashMap(1,1.0f);
-        boolean renderEmoticons = true;
-        if ( o!=null && (o instanceof User) ) {
-            Node node = ((User)o).getData().selectSingleNode("/data/settings/emoticons");
-            if ( node!=null && "no".equals(node.getText()) )
-                renderEmoticons = false;
-        }
-        if (renderEmoticons)
-            params.put(Renderer.RENDER_EMOTICONS, Boolean.TRUE);
-
-        Format format = null;
+        boolean renderEmoticons = allowEmoticons(o);
         Element element = (Element) el;
         String input = element.getText();
-        int f = Misc.parseInt(element.attributeValue("format"),-1);
-        switch(f) {
-            case -1: format = FormatDetector.detect(input); break;
-            case 0: format = Format.SIMPLE; break;
-            case 1: format = Format.HTML;
-        }
+        boolean simple = detectSimpleFormat(element);
 
-        if (Format.SIMPLE.equals(format))
-            return SimpleFormatRenderer.getInstance().render(input,params);
+        return renderText(input, renderEmoticons, simple);
+    }
+
+    public static boolean detectSimpleFormat(Element element) {
+        int f = Misc.parseInt(element.attributeValue("format"), -1);
+        switch (f) {
+            case -1: {
+                String input = element.getText();
+                Format format = FormatDetector.detect(input);
+                if (format.equals(Format.SIMPLE))
+                    return true;
+                else
+                    return false;
+            }
+            case 0: return true;
+        }
+        return false;
+    }
+
+    /**
+     * Detects whether emoticons shall be rendered as image. Default is true.
+     * @param o probably User instance
+     * @return true when emoticons shall be rendered as image
+     */
+    public boolean allowEmoticons(Object o) {
+        boolean renderEmoticons = true;
+        if (o != null && (o instanceof User)) {
+            Node node = ((User)o).getData().selectSingleNode("/data/settings/emoticons");
+            if (node != null && "no".equals(node.getText()))
+                renderEmoticons = false;
+        }
+        return renderEmoticons;
+    }
+
+    /**
+     * Renders text.
+     * @param text string to be rendered
+     * @param emoticons when true, emoticons will be replaced by images
+     * @param simpleFormat when true, empty lines will be replaced by <p> tag
+     * @return text
+     */
+    public static String renderText(String text, boolean emoticons, boolean simpleFormat) {
+        Map params = new HashMap(1, 1.0f);
+        if (emoticons)
+            params.put(Renderer.RENDER_EMOTICONS, Boolean.TRUE);
+
+        if (simpleFormat)
+            return SimpleFormatRenderer.getInstance().render(text, params);
         else
-            return HTMLFormatRenderer.getInstance().render(input,params);
+            return HTMLFormatRenderer.getInstance().render(text, params);
     }
 
     /**
@@ -1885,6 +1913,30 @@ public class Tools implements Configurable {
             }
             syncList(fetchRelations);
         }
+    }
+
+    /**
+     * Stores new editor instance in rich text editor
+     * @param rte rich text editor
+     * @param textAreaId id of associated text area
+     * @param formId if od associated form
+     */
+    public static void addRichTextEditor(RichTextEditor rte, String textAreaId, String formId, String inputMode) {
+        addRichTextEditor(rte, textAreaId, formId, inputMode, null);
+    }
+
+    /**
+     * Stores new editor instance in rich text editor
+     * @param rte rich text editor
+     * @param textAreaId id of associated text area
+     * @param formId if od associated form
+     * @param commentedText optional HTML containing commented text, used for quotations
+     */
+    public static void addRichTextEditor(RichTextEditor rte, String textAreaId, String formId, String inputMode, String commentedText) {
+        RichTextEditor.EditorInstance editor = new RichTextEditor.EditorInstance(textAreaId, formId, inputMode);
+        if (commentedText != null)
+            editor.setCommentedContent(commentedText);
+        rte.addInstance(editor);
     }
 
     /**

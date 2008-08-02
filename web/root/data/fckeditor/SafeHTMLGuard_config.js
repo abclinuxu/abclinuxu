@@ -2,17 +2,17 @@ FCKConfig.StylesXmlPath = '/data/fckeditor/SafeHTMLGuard_styles.xml';
 FCKConfig.Plugins.Add( 'citation', null, '/data/fckeditor/editor/plugins/' );
 
 FCKConfig.ToolbarSets['SafeHTMLGuard'] = [
-	['Style'],['Bold','Italic','-','OrderedList','UnorderedList','Table','-','Link','Unlink','Anchor','-','SpecialChar'],
+	['Bold','Italic','-','Link','Unlink','Anchor','-','OrderedList','UnorderedList','Table','Style','-','SpecialChar'],
 	['Undo','Redo','RemoveFormat','ShowBlocks'],['AbcCitation'],['Source'],['About']
 ] ;
 
 FCKConfig.ToolbarSets['BlogGuard'] = [
-	['Style'],['Bold','Italic','-','OrderedList','UnorderedList','Table','-','Link','Unlink','Anchor','-','Image','SpecialChar'],
+	['Bold','Italic','-','Link','Unlink','Anchor','-','Image','OrderedList','UnorderedList','Table','Style','-','SpecialChar'],
 	['Undo','Redo','RemoveFormat','ShowBlocks'],['AbcCitation'],['Source'],['About']
 ] ;
 
 FCKConfig.ToolbarSets['WikiContentGuard'] = [
-	['Style'],['Bold','Italic','-','OrderedList','UnorderedList','Table','-','Link','Unlink','Anchor','-','Image','SpecialChar'],
+	['Bold','Italic','-','Link','Unlink','Anchor','-','Image','OrderedList','UnorderedList','Table','Style','-','SpecialChar'],
 	['Undo','Redo','RemoveFormat','ShowBlocks'],['AbcCitation'],['Source'],['About']
 ] ;
 

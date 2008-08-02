@@ -100,6 +100,7 @@ public class EditDiscussion implements AbcAction {
     public static final String VAR_FORUM_QUESTION = "FORUM_QUESTION";
     public static final String VAR_USER_VERIFIED = "USER_VERIFIED";
     public static final String VAR_ATTACHMENTS = "ATTACHMENTS";
+    public static final String VAR_COMMENTED_TEXT = "COMMENTED_TEXT";
 
     public static final String ACTION_ADD_DISCUSSION = "addDiz";
     public static final String ACTION_ADD_QUESTION = "addQuez";
@@ -389,6 +390,7 @@ public class EditDiscussion implements AbcAction {
             throw new MissingArgumentException("Chybí parametr dizId!");
         discussion = (Item) persistence.findById(discussion);
         env.put(VAR_DISCUSSION, discussion);
+        boolean question = Tools.isQuestion(discussion);
 
         String xpath = "/data/frozen";
         Element element = (Element) discussion.getData().selectSingleNode(xpath);
@@ -399,7 +401,7 @@ public class EditDiscussion implements AbcAction {
         int daysCreated = Days.daysBetween(new DateTime(discussion.getCreated()), now).getDays();
         int daysUpdated = Days.daysBetween(new DateTime(discussion.getUpdated()), now).getDays();
         if (daysCreated > 20 && daysUpdated > 2) {
-            if (Tools.isQuestion(relation))
+            if (question)
                 ServletUtils.addMessage("Pozor, chystáte se komentovat " + daysCreated + " dní starý dotaz. " +
                         "Pokud se nechystáte vložit či doplnit řešení tohoto dotazu, ale naopak se chcete na něco zeptat, " +
                         "položte raději nový dotaz.", env, null);
@@ -409,9 +411,9 @@ public class EditDiscussion implements AbcAction {
 
         // display discussed comment, only if it has title
         Comment parentThread = getDiscussedComment(params, discussion, persistence);
-        if ( Tools.isQuestion(discussion) || parentThread.getId() != 0 )
-            env.put(VAR_THREAD, parentThread);
-        else {
+        if ( question || parentThread.getId() != 0 ) {
+            initializeParentComment(env, parentThread);
+        } else {
             if (relation.getParent() instanceof Category) {
                 Category category = (Category) relation.getParent();
                 if (category.getType()!=Category.FORUM)
@@ -424,6 +426,12 @@ public class EditDiscussion implements AbcAction {
         request.getSession().removeAttribute(VAR_ATTACHMENTS);
         params.put(PARAM_AUTHOR, detectSpambotCookie(request, env, user));
         return FMTemplateSelector.select("EditDiscussion","reply",env,request);
+    }
+
+    private void initializeParentComment(Map env, Comment parentThread) {
+        env.put(VAR_THREAD, parentThread);
+        Element element = (Element) parentThread.getData().selectSingleNode("//text");
+        env.put(VAR_COMMENTED_TEXT, Tools.renderText(element.getText(), false, Tools.detectSimpleFormat(element)));
     }
 
     /**
@@ -486,7 +494,7 @@ public class EditDiscussion implements AbcAction {
             // display discussed comment, only if it has title
             Comment thread = getDiscussedComment(params, discussion, persistence);
             if (Tools.isQuestion(discussion) || thread.getId() != 0)
-                env.put(VAR_THREAD, thread);
+                initializeParentComment(env, thread);
 
             return FMTemplateSelector.select("EditDiscussion", "reply", env, request);
         }

@@ -1,4 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd" >
+<#import "macros.ftl" as lib>
 <html lang="cs">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -46,11 +47,11 @@
     <#if html_header?exists>
         ${html_header}
     </#if>
+    <@lib.initRTE />
 </head>
 
 <body id="www-abclinuxu-cz">
 
-<#import "macros.ftl" as lib>
 <@lib.advertisement id="netmonitor" />
 
 <@lib.advertisement id="ad-init" />

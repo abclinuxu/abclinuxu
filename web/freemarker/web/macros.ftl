@@ -442,6 +442,38 @@
     <#if ERRORS[key]?exists><div class="error">${ERRORS[key]}</div></#if>
 </#macro>
 
+<#macro initRTE>
+    <#if (RTE.wysiwygMode && RTE.instances?size > 0)>
+        <script type="text/javascript" src="/data/fckeditor/fckeditor.js"></script>
+        <script type="text/javascript">
+        window.onload = function() {
+            <#list RTE.instances as editor>
+                var aFCKeditor = new FCKeditor('${editor.id}');
+                aFCKeditor.BasePath = '/data/fckeditor/';
+                <#if editor.inputMode == "news">
+                    aFCKeditor.Config['CustomConfigurationsPath'] = aFCKeditor.BasePath + 'NewsGuard_config.js';
+                    aFCKeditor.ToolbarSet = 'NewsGuard';
+                <#else>
+                    aFCKeditor.Config['CustomConfigurationsPath'] = aFCKeditor.BasePath + 'SafeHTMLGuard_config.js';
+                    <#if editor.inputMode == "wiki">
+                        aFCKeditor.ToolbarSet = 'WikiContentGuard';
+                    <#elseif editor.inputMode == "blog">
+                        aFCKeditor.ToolbarSet = 'BlogGuard';
+                    <#else>
+                        aFCKeditor.ToolbarSet = 'SafeHTMLGuard';
+                    </#if>
+                </#if>
+                <#if editor.commentedContent?exists>
+                    aFCKeditor.Config['AbcCitationContent'] = '${editor.commentedContent?js_string}';
+                </#if>
+                aFCKeditor.Config['ProcessHTMLEntities'] = false ;
+                aFCKeditor.ReplaceTextarea();
+            </#list>
+        }
+        </script>
+    </#if>
+</#macro>
+
 <#macro showTagCloud list title cssStyle)>
     <div id="tagcloud_container"<#if (cssStyle?length gte 1)> style="${cssStyle}"</#if>>
     <#if title?exists ><div id="title">${title}</div></#if>

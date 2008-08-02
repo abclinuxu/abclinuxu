@@ -195,6 +195,8 @@ public interface Constants {
     /** optional variable holding RSS url for current page */
     String VAR_RSS = "RSS";
     String VAR_ASSIGNED_TAGS = "ASSIGNED_TAGS";
+    /** always present instance of RichTextEditor class */
+    String VAR_RICH_TEXT_EDITOR = "RTE";
 
     /** parameter holding description of changes */
     String PARAM_REVISION_DESCRIPTION = "rev_descr";
@@ -306,6 +308,13 @@ public interface Constants {
     String BAZAAR_BUY = "buy";
     String BAZAAR_SELL = "sell";
     String BAZAAR_GIVE = "give";
+
+    // see RichTextEditor
+    String INPUT_MODE_COMMENT = "comment";
+    String INPUT_MODE_GENERIC = "generic";
+    String INPUT_MODE_NEWS = "news";
+    String INPUT_MODE_BLOG = "blog";
+    String INPUT_MODE_WIKI = "wiki";
 
     // type of counter
     String COUNTER_READ = "read";

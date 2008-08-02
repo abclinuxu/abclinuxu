@@ -1,3 +1,9 @@
+<#--<#import "/web/rte-macro.ftl" as rte>
+<#if COMMENTED_TEXT?exists>
+    <@rte.addRTE textAreaId="text" formId="replyForm" inputMode="comment" commentedText="${COMMENTED_TEXT}" />
+<#else>
+    <@rte.addRTE textAreaId="text" formId="replyForm" inputMode="comment" />
+</#if>-->
 <#include "../header.ftl">
 
 <@lib.showMessages/>
