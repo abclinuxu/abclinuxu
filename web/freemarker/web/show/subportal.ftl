@@ -90,6 +90,6 @@
 </#if>
 
 <#assign forum_rid=TOOL.xpath(RELATION.child,"/data/forum")>
-<@lib.showForum forum_rid?eval, VARS.defaultSizes.question, false />
+<@lib.showForum forum_rid?eval, VARS.defaultSizes.question, false, true />
 
 <#include "../footer.ftl">

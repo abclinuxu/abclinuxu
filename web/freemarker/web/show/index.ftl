@@ -77,7 +77,7 @@
 <#list forums.entrySet() as forum>
     <#if forum.value gt 0>
         <div style="clear: right"></div>
-        <@lib.showForum forum.key, forum.value, true/>
+        <@lib.showForum forum.key, forum.value, true, (forum_index==0)/>
     </#if>
 </#list>
 

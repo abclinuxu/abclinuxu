@@ -499,7 +499,7 @@
     </#list>
 </#macro>
 
-<#macro showForum rid numQuestions onHP>
+<#macro showForum rid numQuestions onHP showAdvertisement>
     <#local forum = VARS.getFreshQuestions(numQuestions, rid),
             feed = FEEDS.getForumFeedUrl(rid)?default("UNDEF"),
             FORUM=TOOL.analyzeDiscussions(forum)>
@@ -512,8 +512,10 @@
         </#if>
 
         <#if USER?exists>
-                <#local uforums=TOOL.getUserForums(USER)>
-                <#list uforums.keySet() as key><#if key==rid><#local onHP=true></#if></#list>
+                <#if !onHP>
+                    <#local uforums=TOOL.getUserForums(USER)>
+                    <#list uforums.keySet() as key><#if key==rid><#local onHP=true></#if></#list>
+                </#if>
                 <#if onHP>
                     <input type="image" title="Odlepit z úvodní stránky" src="/images/actions/remove.png" style="background-color:transparent">
                 <#else>
@@ -550,15 +552,19 @@
         </tbody>
       </table>
 
-      <div style="margin:0.5em 0 0 0; float:right">
-         <#--<@lib.advertisement id="arbo-full" />-->
-         <@lib.advertisement id="gg-hp-blogy" />
-      </div>
+      <#if showAdvertisement>
+          <div style="margin:0.5em 0 0 0; float:right">
+             <#--<@lib.advertisement id="arbo-full" />-->
+             <@lib.advertisement id="gg-hp-blogy" />
+          </div>
+      </#if>
 
       <ul>
         <li><a href="/forum/EditDiscussion?action=addQuez&amp;rid=${rid}">Položit dotaz</a></li>
         <li><a href="/forum/dir/${rid}?from=${FORUM?size}&amp;count=20">Starší dotazy</a></li>
       </ul>
+
+      <#if showAdvertisement><div style="clear: right"></div></#if>
 </#macro>
 
 <#macro showRegion region>
