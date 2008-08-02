@@ -236,6 +236,8 @@ public class Search implements AbcAction, Configurable {
                 extraQueryString += doc.getGoogleQuery();
             }
         }
+        
+        setCurrentUrl(false, params, env);
 
         env.put(VAR_EXTRA_QUERY, extraQueryString);
         env.put(VAR_GOOGLE_PARAMS, googleParams);
