@@ -18,6 +18,7 @@
  */
 package cz.abclinuxu.data;
 
+import cz.abclinuxu.servlets.Constants;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.Method;
@@ -34,6 +35,10 @@ public abstract class GenericDataObject extends CommonObject {
 
     /** identifier of owner of this object */
     protected int owner;
+	/** identifier of the group that owns this object */
+	protected int group;
+	/** permission mask for this object */
+	protected int permissions;
     /** Type of the object. You must set it before storing with Persistance! */
     protected int type = 0;
     /** subtype of this object. String, max. length is 30 */
@@ -73,6 +78,34 @@ public abstract class GenericDataObject extends CommonObject {
     public void setOwner(int owner) {
         this.owner = owner;
     }
+	
+	/**
+     * @return group's id
+     */
+    public int getGroup() {
+        return group;
+    }
+
+    /**
+     * sets group's id
+     */
+    public void setGroup(int group) {
+        this.group = group;
+    }
+	
+	/**
+	 * @return object's permissions
+	 */
+	public int getPermissions() {
+		return permissions;
+	}
+	
+	/**
+	 * @param permissions New object's permissions
+	 */
+	public void setPermissions(int permissions) {
+		this.permissions = permissions;
+	}
 
     /**
      * @return Type of Record
@@ -175,6 +208,8 @@ public abstract class GenericDataObject extends CommonObject {
 
         GenericDataObject b = (GenericDataObject) obj;
         owner = b.owner;
+		group = b.group;
+		permissions = b.permissions;
         type = b.type;
         title = b.title;
         subType = b.subType;

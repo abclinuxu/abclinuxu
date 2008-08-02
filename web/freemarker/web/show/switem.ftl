@@ -10,9 +10,11 @@
                     <a href="${RELATION.url?default("/hardware/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
                 </li>
             <#else>
+            <#if TOOL.permissionsFor(USER, RELATION).canModify()>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
-                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
                 <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Přidat obrázek</a></li>
+            </#if>
+                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
                 <li><a href="${RELATION.url?default("/software/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
                     <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
@@ -22,13 +24,9 @@
                 <form action="/hledani"><input type="text" class="text" name="dotaz" value="${ITEM.title}">
                     <input type="submit" class="button" value="Hledej">
                 </form>
-                <#if USER?exists && USER.hasRole("attachment admin")>
+                <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canDelete()>
                     <li><a href="${URL.make("/inset/"+RELATION.id+"?action=manage")}">Správa příloh</a></li>
-                </#if>
-                <#if USER?exists && USER.hasRole("move relation")>
                     <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Přesunout</a></li>
-                </#if>
-                <#if USER?exists && USER.hasRole("remove relation")>
                     <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/software")}">Smazat</a></li>
                 </#if>
             </#if>

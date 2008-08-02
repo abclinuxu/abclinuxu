@@ -26,6 +26,8 @@ import java.util.Date;
  */
 public class EditMonitor implements AbcAction {
     public static final String PARAM_RELATION_SHORT = "rid";
+    public static final String PARAM_REDIRECT = "redirect";
+    
     public static final String VAR_RELATION = "RELATION";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -57,6 +59,7 @@ public class EditMonitor implements AbcAction {
      */
     protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
@@ -74,8 +77,12 @@ public class EditMonitor implements AbcAction {
         MonitorTools.alterMonitor(content.getData().getRootElement(), user);
         persistence.update(content);
         SQLTool.getInstance().setUpdatedTimestamp(content, originalUpdated);
+        
+        String redirectUrl = (String) params.get(PARAM_REDIRECT);
+        if (Misc.empty(redirectUrl))
+            redirectUrl = urlUtils.getRelationUrl(relation);
 
-        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+        urlUtils.redirect(response, redirectUrl);
         return null;
     }
 }

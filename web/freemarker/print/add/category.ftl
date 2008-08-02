@@ -21,6 +21,7 @@
                     <option value="faq"<#if PARAMS.type?if_exists=="faq"> SELECTED</#if>>Sekce FAQ</option>
                     <option value="section"<#if PARAMS.type?if_exists=="section"> SELECTED</#if>>Rubrika</option>
                     <option value="blog"<#if PARAMS.type?if_exists=="blog"> SELECTED</#if>>Blog</option>
+                    <option value="subportal"<#if PARAMS.type?if_exists=="subportal"> SELECTED</#if>>Subportál</option>
                     <option value="generic"<#if PARAMS.type?default("generic")=="generic"> SELECTED</#if>>Sekce</option>
                 </select>
             </td>
@@ -32,9 +33,26 @@
             </td>
         </tr>
         <tr>
-            <td width="120">Otevřená</td>
+            <td width="120">Skupina</td>
             <td>
-                <input type="checkbox" name="open" value="true"<#if PARAMS.open?default("true")=="true"> checked</#if> tabindex="4">
+                <input type="text" name="group" value="${PARAMS.group}" tabindex="4">
+                <div class="error">${ERRORS.group?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
+            <td width="120">Oprávnění skupiny</td>
+            <td>
+                <#list GROUP_PERMISSIONS as perm>
+                    <@lib.showOption3 "groupPermissions",perm.permission,perm.permission,"checkbox",perm.set/>
+                </#list>
+            </td>
+        </tr>
+        <tr>
+            <td width="120">Oprávnění ostatních</td>
+            <td>
+                <#list OTHERS_PERMISSIONS as perm>
+                    <@lib.showOption3 "othersPermissions",perm.permission,perm.permission,"checkbox",perm.set/>
+                </#list>
             </td>
         </tr>
         <tr>

@@ -88,7 +88,7 @@ public class EditFaq implements AbcAction {
         if (relation != null) {
             Tools.sync(relation);
             env.put(VAR_RELATION, relation);
-        } else if (!ACTION_ADD.equals(action))
+        } else // if (!ACTION_ADD.equals(action)) // it's always in a subsection
             throw new MissingArgumentException("Chybí parametr rid!");
 
 
@@ -97,13 +97,23 @@ public class EditFaq implements AbcAction {
         if (user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
-        if (ACTION_ADD.equals(action))
+        if (ACTION_ADD.equals(action)) {
+			if (!Tools.permissionsFor(user, relation).canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             return actionAddStep1(request, env);
+		}
 
         if (ACTION_ADD_STEP2.equals(action)) {
+			if (!Tools.permissionsFor(user, relation).canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             ActionProtector.ensureContract(request, EditFaq.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
         }
+		
+		if (!Tools.permissionsFor(user, relation).canModify())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (ACTION_EDIT.equals(action))
             return actionEditStep1(request, env);
@@ -140,6 +150,8 @@ public class EditFaq implements AbcAction {
 
         Item item = new Item(0, Item.FAQ);
         item.setOwner(user.getId());
+		item.setGroup(section.getGroup());
+		
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         item.setData(document);

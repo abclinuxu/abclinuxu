@@ -27,7 +27,6 @@ import cz.abclinuxu.servlets.utils.url.URLMapper;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -79,6 +78,7 @@ public class EditSeries implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
+		Relation parent = new Relation(Constants.REL_SERIES);
 
         if (action == null)
             throw new MissingArgumentException("Chybí parametr action!");
@@ -86,17 +86,21 @@ public class EditSeries implements AbcAction {
         // check permissions
         if (user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-
-        if (!user.hasRole(Roles.ARTICLE_ADMIN))
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
+		
         if (action.equals(ACTION_ADD_ARTICLE))
             return actionAttachArticleStep1(request, env);
 
-        if (action.equals(ACTION_ADD))
+        if (action.equals(ACTION_ADD)) {
+			if (!Tools.permissionsFor(user, parent).canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             return actionAddStep1(request, env);
+		}
 
         if (action.equals(ACTION_ADD_STEP2)) {
+			if (!Tools.permissionsFor(user, parent).canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             ActionProtector.ensureContract(request, EditSeries.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
         }
@@ -109,17 +113,23 @@ public class EditSeries implements AbcAction {
         persistence.synchronize(relation.getChild());
         env.put(VAR_RELATION,relation);
 
+		if (action.equals(ACTION_REMOVE)) {
+			if (!Tools.permissionsFor(user, relation).canDelete())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
+            ActionProtector.ensureContract(request, EditSeries.class, true, false, false, true);
+            return actionRemove(response, env);
+        }
+		
+		if (!Tools.permissionsFor(user, relation).canModify())
+			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+		
         if (action.equals(ACTION_EDIT))
             return actionEditStep1(request, env);
 
         if (action.equals(ACTION_EDIT_STEP2)) {
             ActionProtector.ensureContract(request, EditSeries.class, true, true, true, false);
             return actionEditStep2(request, response, env);
-        }
-
-        if (action.equals(ACTION_REMOVE)) {
-            ActionProtector.ensureContract(request, EditSeries.class, true, false, false, true);
-            return actionRemove(response, env);
         }
 
         if (action.equals(ACTION_ADD_ARTICLE_STEP2)) {
@@ -151,13 +161,18 @@ public class EditSeries implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
+		Relation parent = new Relation(Constants.REL_SERIES);
+		
+		Tools.sync(parent);
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         Item item = new Item(0, Item.SERIES);
         item.setData(document);
         item.setOwner(user.getId());
-        Relation relation = new Relation(new Category(Constants.CAT_SERIES), null, Constants.REL_SERIES);
+		item.setGroup( ((Category) parent.getChild()).getGroup() );
+		
+        Relation relation = new Relation(parent.getChild(), null, parent.getId());
 
         boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root);
@@ -265,10 +280,14 @@ public class EditSeries implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation seriesRelation = (Relation) env.get(VAR_RELATION);
+		User user = (User) env.get(Constants.VAR_USER);
 
         Item seriesItem = (Item) seriesRelation.getChild().clone();
         Element seriesRoot = seriesItem.getData().getRootElement();
         List articles = seriesRoot.elements("article");
+		
+		if (!user.isMemberOf(seriesItem.getGroup()))
+			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         List articleRelations = Tools.asList(params.get(PARAM_ARTICLE_RELATION));
         if ( articleRelations.size() == 0 )
@@ -280,6 +299,10 @@ public class EditSeries implements AbcAction {
             Relation articleRelation = (Relation) persistence.findById(new Relation(rid));
             persistence.synchronize(articleRelation.getChild());
             Item articleItem = (Item) articleRelation.getChild().clone();
+			
+			if (!user.isMemberOf(articleItem.getGroup()))
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             Element articleRoot = articleItem.getData().getRootElement();
 
             if (articleRoot.element("series_rid") != null) {

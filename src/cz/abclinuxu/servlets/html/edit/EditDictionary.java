@@ -91,19 +91,30 @@ public class EditDictionary implements AbcAction {
         if ( relation!=null ) {
             Tools.sync(relation);
             env.put(VAR_RELATION,relation);
-        }
+        } else
+			relation = new Relation(Constants.REL_DICTIONARY); // for perm. checks only
 
         // check permissions
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
-        if ( action.equals(ACTION_ADD) )
+        if ( action.equals(ACTION_ADD) ) {
+			if (!Tools.permissionsFor(user, relation).canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             return FMTemplateSelector.select("Dictionary", "add", env, request);
+		}
 
         if ( action.equals(ACTION_ADD_STEP2) ) {
+			if (!Tools.permissionsFor(user, relation).canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             ActionProtector.ensureContract(request, EditDictionary.class, true, false, true, false);
             return actionAddStep2(request, response, env, true);
         }
+		
+		if (!Tools.permissionsFor(user, relation).canModify())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if ( action.equals(ACTION_EDIT) )
             return actionEdit(request, env);
@@ -120,13 +131,18 @@ public class EditDictionary implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
+		Relation parent = new Relation(Constants.REL_DICTIONARY);
+		
+		Tools.sync(parent);
 
         Document documentItem = DocumentHelper.createDocument();
         Element root = documentItem.addElement("data");
         Item item = new Item(0, Item.DICTIONARY);
         item.setData(documentItem);
         item.setOwner(user.getId());
-        Relation relation = new Relation(new Category(Constants.CAT_DICTIONARY), item, Constants.REL_DICTIONARY);
+		item.setGroup( ((Category) parent.getChild()).getGroup() );
+		
+        Relation relation = new Relation(parent.getChild(), item, parent.getId());
 
         boolean canContinue = true;
         canContinue &= setName(params, item, env);

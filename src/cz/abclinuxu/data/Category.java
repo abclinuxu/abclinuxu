@@ -39,6 +39,10 @@ public class Category extends GenericDataObject {
     public static final int FAQ = 5;
     /** section that holds software entries */
     public static final int SOFTWARE_SECTION = 6;
+	/** subportal governed by a special interest-group */
+	public static final int SUBPORTAL = 7;
+    /** section of events */
+    public static final int EVENT = 8;
 
 
     public Category() {
@@ -47,17 +51,6 @@ public class Category extends GenericDataObject {
 
     public Category(int id) {
         super(id);
-    }
-
-    /**
-     * @return whether normal users may add content to this category
-     */
-    public boolean isOpen() {
-        Document document = getData();
-        if (document == null)
-            return false;
-        Element element = (Element) document.selectSingleNode("/data/writeable");
-        return element != null && Boolean.valueOf(element.getText()).booleanValue();
     }
 
     public String toString() {

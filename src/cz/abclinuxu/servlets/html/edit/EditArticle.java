@@ -24,7 +24,6 @@ import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
-import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
@@ -42,6 +41,8 @@ import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.scheduler.VariableFetcher;
+import cz.abclinuxu.security.Permissions;
+import cz.abclinuxu.security.Roles;
 import org.apache.regexp.*;
 import org.dom4j.*;
 import org.dom4j.io.DOMWriter;
@@ -105,6 +106,7 @@ public class EditArticle implements AbcAction {
     public static final String ACTION_SUBMIT_REPLY = "submitReply";
     public static final String ACTION_ADD_SERIES = "addSeries";
     public static final String ACTION_ADD_SERIES_STEP2 = "addSeries2";
+	public static final String ACTION_TOGGLE_HP = "toggleHP";
 
     private static REProgram reBreak;
 
@@ -138,19 +140,33 @@ public class EditArticle implements AbcAction {
         // check permissions
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if ( !user.hasRole(Roles.ARTICLE_ADMIN) )
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-        if ( ACTION_ADD_ITEM.equals(action) )
+        
+		Permissions permissions = Tools.permissionsFor(user, relation);
+		
+        if ( ACTION_ADD_ITEM.equals(action) ) {
+			if (!permissions.canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             return actionAddStep1(request, env);
+		}
 
         if ( ACTION_ADD_ITEM_STEP2.equals(action) ) {
+			if (!permissions.canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             ActionProtector.ensureContract(request, EditArticle.class, true, true, true, false);
             return actionAddStep2(request, response, env, true, false);
         }
+		
+		if (!permissions.canModify())
+			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        if ( ACTION_EDIT_ITEM.equals(action) )
+        if ( ACTION_EDIT_ITEM.equals(action) ) {
+			if (!permissions.canModify())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             return actionEditItem(request, env);
+		}
 
         if ( ACTION_EDIT_ITEM_STEP2.equals(action) ) {
             ActionProtector.ensureContract(request, EditArticle.class, true, true, true, false);
@@ -198,18 +214,60 @@ public class EditArticle implements AbcAction {
             ActionProtector.ensureContract(request, EditArticle.class, true, true, true, false);
             return actionSetTalkAddressesStep2(request, response, env);
         }
+		
+		if (ACTION_TOGGLE_HP.equals(action)) {
+			if (!user.hasRole(Roles.ROOT))
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			return actionToggleHP(request, response, env);
+		}
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
+	
+	private String actionToggleHP(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+		Relation relation = (Relation) env.get(VAR_RELATION);
+		Item item = (Item) relation.getChild();
+		Persistence persistence = PersistenceFactory.getPersistence();
+		
+		if ("SUBPORTAL".equals(item.getSubType()) )
+			item.setSubType(null);
+		else
+			item.setSubType("SUBPORTAL");
+		
+		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, UrlUtils.getRelationUrl(relation, null), false);
+		
+		persistence.update(item);
+		
+		VariableFetcher.getInstance().refreshArticles();
+		
+		return null;
+	}
 
     private String actionAddStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         synchronized (Constants.isoFormat) {
             params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
         }
-        List sections = getSections();
-        env.put(VAR_AUTHORS, getAuthorRelations());
-        env.put(VAR_SECTIONS, sections);
+		
+		Relation rel = (Relation) env.get(VAR_RELATION);
+        boolean subportal = false;
+		List sections;
+        
+        Tools.sync(rel.getParent());
+        
+        if (rel.getParent() instanceof Category)
+            subportal = ((Category) rel.getParent()).getType() == Category.SUBPORTAL;
+		
+		if (! subportal ) {
+			sections = getSections();
+			env.put(VAR_AUTHORS, getAuthorRelations());
+		} else {
+			sections = getSubportalSections(rel);
+		}
+		
+		env.put(VAR_SECTIONS, sections);
+		
         return FMTemplateSelector.select("EditArticle","add",env,request);
     }
 
@@ -218,6 +276,7 @@ public class EditArticle implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation upper = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
+		Category upperCat = (Category) Tools.sync(upper.getParent());
 
         Item item = new Item(0,Item.ARTICLE);
         Document document = DocumentHelper.createDocument();
@@ -233,25 +292,39 @@ public class EditArticle implements AbcAction {
 
         boolean canContinue = true;
         canContinue &= setTitle(params, item, env);
-        canContinue &= setAuthors(params, item, env);
+        
+		if (upperCat.getType() != Category.SUBPORTAL) {
+			canContinue &= setAuthors(params, item, env);
+			canContinue &= setNotOnIndex(params, item);
+			canContinue &= setForbidDiscussions(params, item);
+			canContinue &= setForbidRating(params, item);
+		} else
+			item.setSubType("SUBPORTAL");
+		
         canContinue &= setEditor(item, env);
         canContinue &= setUrl(params, item);
         canContinue &= setPerex(params, item, env);
         canContinue &= setPublishDate(params, item, env);
-        canContinue &= setForbidDiscussions(params, item);
-        canContinue &= setForbidRating(params, item);
         canContinue &= setThumbnail(params, item);
         canContinue &= setArticleContent(params, record, env);
         canContinue &= setRelatedArticles(params, record, env);
         canContinue &= setResources(params, record, env);
-        canContinue &= setNotOnIndex(params, item);
-        canContinue &= setDesignatedSection(params, item);
+		canContinue &= setDesignatedSection(params, item, env);
 
         if ( !canContinue ) {
-            List sections = getSections();
-            env.put(VAR_SECTIONS, sections);
-            env.put(VAR_AUTHORS, getAuthorRelations());
-            params.put(PARAM_AUTHORS, Tools.asSet(params.get(PARAM_AUTHORS)));
+			
+			List sections;
+		
+			if (upperCat.getType() != Category.SUBPORTAL) {
+				sections = getSections();
+				env.put(VAR_AUTHORS, getAuthorRelations());
+				params.put(PARAM_AUTHORS, Tools.asSet(params.get(PARAM_AUTHORS)));
+			} else {
+				sections = getSubportalSections(upper);
+			}
+
+			env.put(VAR_SECTIONS, sections);
+		
             return FMTemplateSelector.select("EditArticle", "edit", env, request);
         }
 
@@ -259,6 +332,12 @@ public class EditArticle implements AbcAction {
             if (noIndexing)
                 item.getData().getRootElement().addAttribute(INDEXING_FORBIDDEN, "true");
 
+			Category cat = (Category) upper.getChild();
+			item.setGroup(cat.getGroup());
+			item.setPermissions(cat.getPermissions());
+			record.setGroup(cat.getGroup());
+			record.setPermissions(cat.getPermissions());
+			
             persistence.create(item);
             Relation relation = new Relation(upper.getChild(),item,upper.getId());
             if (upper.getId() != Constants.REL_ARTICLEPOOL) {
@@ -301,6 +380,11 @@ public class EditArticle implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
         Document document = item.getData();
+		Relation upper = new Relation(relation.getUpper());
+		Category upperCat;
+		
+		Tools.sync(upper);
+		upperCat = (Category) Tools.sync(upper.getParent());
 
         params.put(PARAM_TITLE, item.getTitle());
         Node node = document.selectSingleNode("/data/perex");
@@ -330,6 +414,10 @@ public class EditArticle implements AbcAction {
             if (node != null)
                 params.put(PARAM_DESIGNATED_SECTION, Integer.valueOf(node.getText()));
         }
+		if (upperCat.getType() == Category.SUBPORTAL)
+			env.put(VAR_SECTIONS, getSubportalSections(upper));
+		else
+			env.put(VAR_AUTHORS, getAuthorRelations());
 
         Relation child = InstanceUtils.findFirstChildRecordOfType(item,Record.ARTICLE);
         Record record = (Record) child.getChild();
@@ -338,7 +426,6 @@ public class EditArticle implements AbcAction {
         addArticleContent(document, params);
         addLinks(document, "/data/related/link", params, PARAM_RELATED_ARTICLES);
         addLinks(document, "/data/resources/link", params, PARAM_RESOURCES);
-        env.put(VAR_AUTHORS, getAuthorRelations());
 
         return FMTemplateSelector.select("EditArticle","edit",env,request);
     }
@@ -347,6 +434,12 @@ public class EditArticle implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
+		Category upperCat;
+        Relation upper = new Relation(relation.getUpper());
+        
+        Tools.sync(upper);
+		
+		upperCat = (Category) Tools.sync(upper.getParent());
 
         Item item = (Item) relation.getChild();
         Relation child = InstanceUtils.findFirstChildRecordOfType(item, Record.ARTICLE);
@@ -354,26 +447,40 @@ public class EditArticle implements AbcAction {
 
         boolean canContinue = true;
         canContinue &= setTitle(params, item, env);
-        canContinue &= setAuthors(params, item, env);
+		
+		if (upperCat.getType() != Category.SUBPORTAL) {
+			canContinue &= setAuthors(params, item, env);
+			canContinue &= setForbidDiscussions(params, item);
+			canContinue &= setForbidRating(params, item);
+			canContinue &= setNotOnIndex(params, item);
+		} else
+			item.setSubType("SUBPORTAL");
+		
         canContinue &= setEditor(item, env);
         canContinue &= setUrl(params, item);
         canContinue &= setPerex(params, item, env);
         canContinue &= setPublishDate(params, item, env);
-        canContinue &= setForbidDiscussions(params, item);
-        canContinue &= setForbidRating(params, item);
         canContinue &= setThumbnail(params, item);
         canContinue &= setArticleContent(params, record, env);
         canContinue &= setRelatedArticles(params, record, env);
         canContinue &= setResources(params, record, env);
-        canContinue &= setNotOnIndex(params, item);
+        
         if (relation.getUpper()==Constants.REL_ARTICLEPOOL)
-            canContinue &= setDesignatedSection(params, item);
+            canContinue &= setDesignatedSection(params, item, env);
 
         if ( !canContinue ) {
-            List sections = getSections();
+			List sections;
+			
+			if (upperCat.getType() != Category.SUBPORTAL) {
+				sections = getSections();
+				env.put(VAR_AUTHORS, getAuthorRelations());
+				params.put(PARAM_AUTHORS, Tools.asSet(params.get(PARAM_AUTHORS)));
+			} else {
+				sections = getSubportalSections(upper);
+			}
+            
             env.put(VAR_SECTIONS, sections);
-            env.put(VAR_AUTHORS, getAuthorRelations());
-            params.put(PARAM_AUTHORS, Tools.asSet(params.get(PARAM_AUTHORS)));
+            
             return FMTemplateSelector.select("EditArticle","edit",env,request);
         }
 
@@ -929,8 +1036,17 @@ public class EditArticle implements AbcAction {
      * @param item   article  to be updated
      * @return false, if there is a major error.
      */
-    private boolean setDesignatedSection(Map params, Item item) {
+    private boolean setDesignatedSection(Map params, Item item, Map env) {
+		User user = (User) env.get(Constants.VAR_USER);
+		
         String content = (String) params.get(PARAM_DESIGNATED_SECTION);
+		int section = Misc.parseInt(content, 0);
+		
+		if (!Tools.permissionsFor(user, section).canModify()) {
+			ServletUtils.addError(PARAM_DESIGNATED_SECTION, "Pro tuto sekci nemáte práva!", env, null);
+			return false;
+		}
+		
         if (content!=null) {
             Element element = DocumentHelper.makeElement(item.getData(), "/data/section_rid");
             element.setText(content);
@@ -1140,4 +1256,21 @@ public class EditArticle implements AbcAction {
         sections.remove(new Relation(4731));
         return sections;
     }
+	
+	/**
+	 * @param rel Article section relation inside the subportal
+	 * @return a list of sections available in the subportal
+	 */
+	private List getSubportalSections(Relation rel) {
+		int destination;
+		Relation section;
+		Relation subportal = new Relation(rel.getUpper()); // get the subportal
+
+		Tools.sync(subportal);
+		// get the section's relation ID
+		destination = Misc.parseInt(Tools.xpath(subportal.getChild(), "/data/articles"), 0);
+		section = new Relation(destination);
+		Tools.sync(section);
+		return Collections.singletonList(section);
+	}
 }

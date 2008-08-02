@@ -1,9 +1,10 @@
+<#import "../macros.ftl" as lib>
 <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
     <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj dokument">
 </#if>
-<#assign public=(ITEM.subType?if_exists=='public')>
-<#if public>
+<#if (USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()) || SUBPORTAL?exists>
     <#assign plovouci_sloupec>
+      <#if SUBPORTAL?exists><@lib.showSubportal SUBPORTAL, true/></#if>
       <div class="s_sekce">
        <ul>
         <#if PARAMS.revize?exists>
@@ -25,13 +26,16 @@
 <#include "../header.ftl">
 <#if USER?exists>
     <p>
-        <#if USER.hasRole("content admin")>
+        <#assign public=TOOL.permissionsFor(null, RELATION).canModify()>
+        <#if TOOL.permissionsFor(USER, RELATION.upper).canModify()>
             <a href="${URL.make("/editContent/"+RELATION.id+"?action=edit")}">Uprav vše</a> &#8226;
             <a href="${URL.make("/editContent/"+RELATION.id+"?action=alterPublic"+TOOL.ticket(USER?if_exists, false))}">
                 <#if public>Zruš<#else>Nastav</#if> veřejnou editovatelnost</a> &#8226;
+        </#if>
+        <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
             <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/doc")}">Smaž</a>
         </#if>
-        <#if ((public && USER.hasRole("derive content")) || USER.hasRole("content admin"))>
+        <#if TOOL.permissionsFor(USER, RELATION).canCreate()>
             &#8226; <a href="${URL.make("/editContent/"+RELATION.id+"?action=addDerivedPage")}">Vytvoř podstránku</a>
         </#if>
     </p>

@@ -71,7 +71,28 @@ public class ContentChanges implements AbcAction {
 
         Tools.sync(relation);
         env.put(ShowObject.VAR_RELATION, relation);
-        List result = new ArrayList(), stack = new ArrayList(), children;
+
+        String column = (String) params.get(PARAM_SORT_BY);
+        if (column==null)
+            column = COLUMN_DATE;
+
+        boolean orderDesc = true;
+        String order = (String) params.get(PARAM_ORDER);
+        if (ORDER_ASCENDING.equalsIgnoreCase(order))
+            orderDesc = false;
+		
+		List result = changedContentList(relation, persistence, column, orderDesc);
+
+        env.put(VAR_DATA, result);
+        env.put(VAR_SORT_COLUMN, column);
+        env.put(VAR_ORDER_DESCENDING, Boolean.valueOf(orderDesc));
+        return FMTemplateSelector.select("ContentChanges", "show", env, request);
+    }
+	
+	public static List<ChangedContent> changedContentList(Relation relation, Persistence persistence,
+			String sortColumn, boolean orderDesc) {
+		
+		List result = new ArrayList(), stack = new ArrayList(), children;
         stack.add(relation);
 
         while (stack.size()>0) {
@@ -89,33 +110,21 @@ public class ContentChanges implements AbcAction {
 
             result.add(createChangedContent(childRelation, persistence));
         }
-
-        String column = (String) params.get(PARAM_SORT_BY);
-        if (column==null)
-            column = COLUMN_DATE;
-
-        boolean orderDesc = true;
-        String order = (String) params.get(PARAM_ORDER);
-        if (ORDER_ASCENDING.equalsIgnoreCase(order))
-            orderDesc = false;
-
-        Comparator comparator = new ChangesComparator(column);
+		
+		Comparator comparator = new ChangesComparator(sortColumn);
         if (orderDesc)
             comparator = new OpaqueComparator(comparator);
         Collections.sort(result, comparator);
-
-        env.put(VAR_DATA, result);
-        env.put(VAR_SORT_COLUMN, column);
-        env.put(VAR_ORDER_DESCENDING, Boolean.valueOf(orderDesc));
-        return FMTemplateSelector.select("ContentChanges", "show", env, request);
-    }
+		
+		return result;
+	}
 
     /**
      * Creates new instance of ChangedContent.
      * @param relation initialized relation
      * @return ChangedContent
      */
-    private ChangedContent createChangedContent(Relation relation, Persistence persistence) {
+    private static ChangedContent createChangedContent(Relation relation, Persistence persistence) {
         Item item = (Item) relation.getChild();
         User user = (User) persistence.findById(new User(item.getOwner()));
         String userName = user.getNick();

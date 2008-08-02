@@ -35,6 +35,7 @@ public class ObjectType {
     public static final ObjectType BLOG = new ObjectType("blog"); // a blog story
     public static final ObjectType SOFTWARE = new ObjectType("software"); // a software item
     public static final ObjectType HARDWARE = new ObjectType("hardware"); // a hardware item
+    public static final ObjectType ARTICLE = new ObjectType("article"); // a hardware item
 
     private ObjectType(String name) {
         this.name = name;

@@ -41,6 +41,7 @@ import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.data.view.DriverCategories;
 
+import cz.abclinuxu.utils.freemarker.Tools;
 import org.dom4j.*;
 import org.htmlparser.util.ParserException;
 
@@ -96,13 +97,23 @@ public class EditDriver implements AbcAction {
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
-        if ( ACTION_ADD.equals(action) )
+        if ( ACTION_ADD.equals(action) ) {
+			if (!Tools.permissionsFor(user, new Relation(Constants.REL_DRIVERS)).canCreate())
+				return FMTemplateSelector.select("ViewUser", "login", env, request);
+			
             return actionAddStep1(request, env);
+		}
 
         if ( ACTION_ADD_STEP2.equals(action) ) {
+			if (!Tools.permissionsFor(user, new Relation(Constants.REL_DRIVERS)).canCreate())
+				return FMTemplateSelector.select("ViewUser", "login", env, request);
+			
             ActionProtector.ensureContract(request, EditDriver.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
         }
+		
+		if (!Tools.permissionsFor(user, relation).canModify())
+			return FMTemplateSelector.select("ViewUser", "login", env, request);
 
         if ( ACTION_EDIT.equals(action) )
             return actionEdit(request, env);
@@ -131,10 +142,13 @@ public class EditDriver implements AbcAction {
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
+		Relation parent = new Relation(Constants.REL_DRIVERS);
 
         Item item = new Item(0, Item.DRIVER);
         Document document = DocumentHelper.createDocument();
         item.setData(document);
+		
+		Tools.sync(parent);
 
         boolean canContinue = true;
         canContinue &= setName(params, item, env);
@@ -148,6 +162,11 @@ public class EditDriver implements AbcAction {
 
         User user = (User) env.get(Constants.VAR_USER);
         item.setOwner(user.getId());
+		
+		Category cat = (Category) parent.getChild();
+		item.setGroup(cat.getGroup());
+		item.setPermissions(cat.getPermissions());
+		
         item.setCreated(new Date());
 
         String title = item.getTitle();
@@ -159,7 +178,7 @@ public class EditDriver implements AbcAction {
         persistence.create(item);
         versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
 
-        Relation relation = new Relation(new Category(Constants.CAT_DRIVERS), item, Constants.REL_DRIVERS);
+        Relation relation = new Relation(parent.getChild(), item, parent.getId());
         relation.setUrl(url);
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);

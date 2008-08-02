@@ -112,6 +112,13 @@
   <tr>
    <td class="required">Počet diskusí na úvodní stránce</td>
    <td>
+   <#assign forums=TOOL.getUserForums(USER)>
+   <table>
+    <#list forums.entrySet() as forum>
+        <tr><td>${TOOL.childName(TOOL.createRelation(forum.key))}</td><td><input type="text" name="discussions_${forum.key}" value="${forum.value}" size="3" tabindex="7"></td></tr>
+    </#list>
+   </table>
+   <!--
     <select name="discussions" tabindex="7">
      <#assign discussions=PARAMS.discussions?default("20")>
      <option value="-2"<#if discussions=="-2">SELECTED</#if>>default</option>
@@ -125,12 +132,13 @@
      <option value="40"<#if discussions=="40">SELECTED</#if>>40</option>
      <option value="50"<#if discussions=="50">SELECTED</#if>>50</option>
     </select>
+    -->
    </td>
   </tr>
   <tr>
    <td colspan="2">Zde máte možnost ovlivnit počet zobrazených diskusí
-   na úvodní stránce. Automaticky se zobrazí jen ${DEFAULT_DISCUSSIONS}
-   nejčerstvějších diskusí, na této stránce máte možnost zvolit si vlastní počet.
+   na úvodní stránce. Nula znamená, že se dané fórum na úvodní stránce
+   zobrazovat nebude.
    </td>
   </tr>
 

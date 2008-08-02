@@ -8,7 +8,7 @@
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <#if CATEGORY.isOpen()>
+            <#if TOOL.permissionsFor(USER, RELATION).canCreate()>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=add")}">Vložit novou položku</a></li>
             </#if>
             <li><a href="/pozadavky?url=${URL.getRelationUrl(RELATION)?url}&categoryPosition=4#form">Požádat o vytvoření podsekce</a></li>
@@ -19,15 +19,17 @@
                 <span title="Počet lidí, kteří sledují tuto sekci">(${TOOL.getMonitorCount(CATEGORY.data)})</span>
                 <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při nové položce v této a v podřazených sekcích.</span></a>
             </li>
-            <#if USER?exists && USER.hasRole("category admin")>
+            <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
                 <hr />
                 <li>
                     <a href="${URL.noPrefix("/EditCategory/"+RELATION.id+"?action=add")}">mkdir</a>,
                     <a href="${URL.noPrefix("/EditCategory/"+RELATION.id+"?action=edit")}">edit</a>,
-                    <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix="+URL.prefix)}">rmdir</a>
+                    <#if TOOL.permissionsFor(USER, RELATION.upper).canModify()>
+                        <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix="+URL.prefix)}">rmdir</a>
+                    </#if>
                 </li>
             </#if>
-            <#if USER?exists && USER.hasRole("move relation")>
+            <#if USER?exists && TOOL.permissionsFor(USER, RELATION.upper).canModify()>
                 <li>
                     <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Přesunout sekci</a>
                 </li>

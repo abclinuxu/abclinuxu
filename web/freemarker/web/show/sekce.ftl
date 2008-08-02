@@ -1,16 +1,17 @@
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <#if USER?exists && USER.hasRole("category admin")>
+            <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify() >
+            <#assign has_mrights=true>
                 <li>
                     <a href="${URL.make("/EditCategory/"+RELATION.id+"?action=add")}">mkdir</a>,
                     <a href="${URL.make("/EditCategory/"+RELATION.id+"?action=edit")}">edit</a>,
-                    <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix="+URL.prefix)}">rmdir</a>,
+                    <#if TOOL.permissionsFor(USER, RELATION.upper).canModify() >
+                        <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix="+URL.prefix)}">rmdir</a>,
+                    </#if>
                     <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=setURL2")}">url</a>,
                     <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;url=/EditRelation&amp;action=add&amp;prefix="+URL.prefix)}">link</a>
                 </li>
-            </#if>
-            <#if USER?exists && USER.hasRole("move relation")>
                 <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Přesunout</a></li>
                 <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=moveAll&amp;prefix="+URL.prefix)}">Přesuň obsah</a></li>
             </#if>
@@ -24,7 +25,7 @@
 
 <@lib.showMessages/>
 
-<#if USER?exists && USER.hasRole("category admin")>
+<#if has_mrights?exists>
     <table>
         <tr>
             <th align="left">Typ</th>
@@ -56,6 +57,12 @@
             <th align="left">Poslední změna</th>
             <td>${DATE.show(CATEGORY.created, "SMART")}</td>
         </tr>
+        <#if GROUP?exists>
+        <tr>
+            <th align="left">Skupina</th>
+            <td>${GROUP.title}</td>
+        </tr>
+        </#if>
     </table>
 </#if>
 

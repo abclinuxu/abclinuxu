@@ -23,6 +23,7 @@
     <div class="error">${ERRORS.title?if_exists}</div>
    </td>
   </tr>
+  <#if AUTHORS?exists>
   <tr>
    <td width="90" class="required">Autor</td>
    <td>
@@ -37,6 +38,7 @@
     <div class="error">${ERRORS.authors?if_exists}</div>
    </td>
   </tr>
+  </#if>
   <tr>
    <td width="90" class="required">Zveřejni dne</td>
    <td>
@@ -107,6 +109,7 @@
     <div class="error">${ERRORS.resources?if_exists}</div>
    </td>
   </tr>
+  <#if AUTHORS?exists>
   <tr>
    <td width="90">Volby</td>
    <td>
@@ -124,6 +127,7 @@
     </label>
    </td>
   </tr>
+  </#if>
   <tr>
    <td width="90">URL</td>
    <td>

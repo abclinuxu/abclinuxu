@@ -55,6 +55,8 @@ public interface Constants {
     int CAT_SERIES = 1647;
     int CAT_SURVEY = 1679;
     int CAT_PERSONALITIES = 1863;
+	int CAT_SUBPORTALS = 2116;
+	int CAT_EVENTS = 2117;
 
     int ITEM_DIZ_TODO = 11606;
     /** item holding dynamic configuration */
@@ -100,6 +102,8 @@ public interface Constants {
     int REL_SERIES = 164193;
     int REL_SURVEY = 168884;
     int REL_PERSONALITIES = 190499;
+	int REL_SUBPORTALS = 233273;
+	int REL_EVENTS = 233274;
 
     int GROUP_ADMINI = 11246;
     int GROUP_AUTORI = 11247;
@@ -139,6 +143,7 @@ public interface Constants {
     String TYPE_SOFTWARE = "software";
     String TYPE_SCREENSHOT = "screenshot";
     String TYPE_STORY = "story";
+    String TYPE_EVENT = "event";
 
     // template variables
 
@@ -302,6 +307,8 @@ public interface Constants {
     String PROPERTY_SCORE = "score";
     String PROPERTY_TICKET = "ticket";
     String PROPERTY_USED_BY = "used_by";
+	String PROPERTY_MEMBER = "member";
+	String PROPERTY_REGION = "region";
     String PROPERTY_FAVOURITED_BY = "favourited_by";
 
     // see EditBazaar

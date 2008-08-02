@@ -10,9 +10,11 @@
                     <a href="${RELATION.url?default("/hardware/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
                 </li>
             <#else>
+            <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
-                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
                 <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Přidej obrázek</a></li>
+            </#if>
+                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
                 <li><a href="${RELATION.url?default("/hardware/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
                     <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
@@ -23,14 +25,14 @@
                     <input type="submit" class="button" value="Hledej">
                 </form>
                 <#if USER?exists>
-                    <#if USER.hasRole("move relation")>
+                    <#if TOOL.permissionsFor(USER, RELATION.upper).canModify()>
                         <hr />
                         <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Přesunout položku</a></li>
                     </#if>
-                    <#if USER.hasRole("remove relation")>
+                    <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
                         <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/hardware")}">Smazat</a></li>
                     </#if>
-                    <#if USER.hasRole("attachment admin")>
+                    <#if TOOL.permissionsFor(USER, RELATION.upper).canModify()>
                         <li><a href="${URL.make("/inset/"+RELATION.id+"?action=manage")}">Správa příloh</a></li>
                     </#if>
                 </#if>

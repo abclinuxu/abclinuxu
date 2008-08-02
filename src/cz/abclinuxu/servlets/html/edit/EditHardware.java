@@ -110,13 +110,23 @@ public class EditHardware implements AbcAction {
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
-        if ( action.equals(ACTION_ADD) )
+        if ( action.equals(ACTION_ADD) ) {
+			if (!Tools.permissionsFor(user, relation).canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             return FMTemplateSelector.select("EditHardware", "add", env, request);
+		}
 
         if ( action.equals(ACTION_ADD_STEP2) ) {
+			if (!Tools.permissionsFor(user, relation).canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             ActionProtector.ensureContract(request, EditHardware.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
         }
+		
+		if (!Tools.permissionsFor(user, relation).canModify())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if ( action.equals(ACTION_EDIT) )
             return actionEditStep1(request, env);
@@ -140,6 +150,11 @@ public class EditHardware implements AbcAction {
         Item item = new Item(0, Item.HARDWARE);
         item.setData(document);
         item.setOwner(user.getId());
+		
+		if (upper.getChild() instanceof GenericDataObject) {
+			GenericDataObject gdo = (GenericDataObject) upper.getChild();
+			item.setGroup(gdo.getGroup());
+		}
 
         boolean canContinue = true;
         canContinue &= setName(params, item, env);

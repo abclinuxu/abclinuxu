@@ -74,28 +74,82 @@ public class FeedGenerator implements Configurable {
     static final String PREF_PERSONALITIES = "personalities";
     static final String PREF_NEWS_WORD_LIMIT = "news.word.limit";
     static final String PREF_ARTICLE_SERIES = "article.series";
+    static final String PREF_FORUMS = "forums";
 
-    static String fileDiscussions, fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileBlogDigest;
+    static String fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileBlogDigest;
     static String fileNews, fileFaq, filePolls, fileTrafika, fileSoftware, fileBazaar, fileDictionary;
-    static String fileScreenshots, filePersonalities;
+    static String fileScreenshots, filePersonalities, fileDiscussions;
     static Map<Integer, String> filesArticleSeries;
+    static Map<Integer, String> filesForums;
     static int feedLength = 10, highFrequencyFeedLength = 25, newsWordLimit;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new FeedGenerator());
     }
 
     /**
-     * Generates RSS feed for discussion forum
+     * Generates RSS feed for all discussion forums
      */
     public static void updateForum() {
+        findSubportalForums();
+        
+        for (Map.Entry<Integer, String> forum : filesForums.entrySet()) {
+            updateForum(forum.getKey(), forum.getValue());
+        }
+        
+        updateForumAll();
+    }
+    
+    public static void findSubportalForums() {
         try {
+            Category subportals = new Category(Constants.CAT_SUBPORTALS);
+            List<Relation> children;
+            
+            children = Tools.syncList(subportals.getChildren());
+            
+            for (Relation sportal : children) {
+                Category cat = (Category) sportal.getChild();
+                int forum = Integer.parseInt(Tools.xpath(cat, "//forum"));
+                
+                filesForums.put(forum, "auto/skupiny"+sportal.getUrl()+"/poradna.rss");
+            }
+        } catch (Exception e) {
+            log.error("Chyba pri nacitani poraden v podportalech", e);
+        }
+    }
+    
+    /**
+     * Generates a RSS feed combinig all forums
+     */
+    public static void updateForumAll() {
+        
+    }
+    
+    /**
+     * Generates RSS feed for a discussion forum
+     */
+    public static void updateForum(int relation) {
+        updateForum(relation, filesForums.get(relation));
+    }
+    
+    /**
+     * Generates RSS feed for a discussion forum
+     */
+    public static void updateForum(int relationId, String file) {
+        try {
+            Relation relation = new Relation(relationId);
+            Category cat;
+            
+            Tools.sync(relation);
+            cat = (Category) relation.getChild();
+            
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
             feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - diskusní fórum");
-            feed.setLink("http://www.abclinuxu.cz/poradna");
-            feed.setUri("http://www.abclinuxu.cz/poradna");
-            feed.setDescription("Seznam aktuálních diskusí na fóru portálu www.abclinuxu.cz");
+            feed.setTitle("abclinuxu - "+cat.getTitle());
+            
+            feed.setLink("http://www.abclinuxu.cz" + relation.getUrl());
+            feed.setUri("http://www.abclinuxu.cz" + relation.getUrl());
+            feed.setDescription("Seznam aktuálních diskusí v \"" + cat.getTitle() + "\" na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
 
@@ -103,7 +157,8 @@ public class FeedGenerator implements Configurable {
             SyndContent description;
             String question, title;
 
-            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, highFrequencyFeedLength)};
+            Qualifier[] qualifiers = new Qualifier[]{new CompareCondition(Field.UPPER, Operation.EQUAL, relationId),
+                    Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, highFrequencyFeedLength)};
             List list = SQLTool.getInstance().findDiscussionRelations(qualifiers);
             Tools.syncList(list);
             List discussions = new Tools().analyzeDiscussions(list);
@@ -125,7 +180,12 @@ public class FeedGenerator implements Configurable {
                 entries.add(entry);
             }
 
-            String path = AbcConfig.calculateDeployedPath(fileDiscussions);
+            String path = AbcConfig.calculateDeployedPath(file);
+            
+            File dir = new File(path).getParentFile();
+            if (!dir.exists())
+                dir.mkdirs();
+            
             Writer writer = getWriter(path);
             SyndFeedOutput output = new SyndFeedOutput();
             output.output(feed, writer);
@@ -977,8 +1037,17 @@ public class FeedGenerator implements Configurable {
         newsWordLimit = prefs.getInt(PREF_NEWS_WORD_LIMIT, 10);
 
         try {
-            Preferences subprefs = prefs.node(PREF_ARTICLE_SERIES);
+            Preferences subprefs = prefs.node(PREF_FORUMS);
             String[] keys = subprefs.keys();
+            filesForums = new HashMap<Integer, String>(keys.length);
+            
+            for (int i = 0; i < keys.length; i++) {
+                Integer key = new Integer(keys[i]);
+                filesForums.put(key, subprefs.get(keys[i], null));
+            }
+            
+            subprefs = prefs.node(PREF_ARTICLE_SERIES);
+            keys = subprefs.keys();
             filesArticleSeries = new HashMap<Integer, String>(keys.length);
 
             for (int i = 0; i < keys.length; i++) {
@@ -988,6 +1057,8 @@ public class FeedGenerator implements Configurable {
         } catch(BackingStoreException e) {
             throw new ConfigurationException(e.getMessage(), e.getCause());
         }
+        
+        findSubportalForums();
     }
 
     /**
@@ -1087,6 +1158,15 @@ public class FeedGenerator implements Configurable {
      */
     public static String getSeriesFeedUrl(int relationId) {
         String s = filesArticleSeries.get(relationId);
+        return (s != null) ? "/" + s : null;
+    }
+    
+    /**
+     * @param relationId relation id of the forum
+     * @return The URL of the associated feed or null
+     */
+    public static String getForumFeedUrl(int relationId) {
+        String s = filesForums.get(relationId);
         return (s != null) ? "/" + s : null;
     }
 

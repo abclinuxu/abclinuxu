@@ -33,10 +33,10 @@ import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -96,7 +96,9 @@ public class Royalties implements AbcAction {
         // check permissions
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if ( !user.hasRole(Roles.ARTICLE_ADMIN) )
+		
+		Permissions articlePerms = Tools.permissionsFor(user, new Relation(Constants.REL_ARTICLES));
+        if ( !articlePerms.canModify() )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if ( action==null || action.length()==0 )

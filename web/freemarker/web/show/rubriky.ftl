@@ -2,15 +2,21 @@
 
 <@lib.showMessages/>
 
-<#if USER?exists && USER.hasRole("category admin")>
+<#if USER?exists>
  <p>
- <a href="${URL.make("/edit?action=add&rid="+RELATION.id)}"
- title="Vytvoř podkategorii"><img src="/images/actions/attach.png" ALT="Přidej článek" class="ikona22"></a>
- <a href="${URL.make("/EditCategory?action=edit&rid="+RELATION.id+"&categoryId="+CATEGORY.id)}"
- title="Uprav kategorii"><img src="/images/actions/pencil.png" class="ikona22" ALT="Uprav sekci"></a>
+ <#if TOOL.permissionsFor(USER, RELATION).canCreate()>
+     <a href="${URL.make("/EditCategory?action=add&rid="+RELATION.id)}"
+     title="Vytvoř podkategorii"><img src="/images/actions/attach.png" ALT="Přidej článek" class="ikona22"></a>
+ </#if>
+ <#if TOOL.permissionsFor(USER, RELATION).canModify()>
+     <a href="${URL.make("/EditCategory?action=edit&rid="+RELATION.id+"&categoryId="+CATEGORY.id)}"
+     title="Uprav kategorii"><img src="/images/actions/pencil.png" class="ikona22" ALT="Uprav sekci"></a>
+ </#if>
+ <#if TOOL.permissionsFor(USER, RELATION.upper).canModify()>
  <a href="${URL.noPrefix("/EditRelation?action=remove&rid="+RELATION.id+"&prefix="+URL.prefix)}"
  title="Smaž kategorii"><img src="/images/actions/delete.png" ALT="Smaž sekci" class="ikona"></a>
  </p>
+ </#if>
 </#if>
 
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>

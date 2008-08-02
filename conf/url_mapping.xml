@@ -209,6 +209,14 @@
             <pattern>^/ovladace/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditDriver</action>
         </mapping>
+        <mapping priority="true">
+            <pattern>^/akce/edit</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditEvent</action>
+        </mapping>
+        <mapping>
+            <pattern>^/akce</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewEvent</action>
+        </mapping>
         <mapping>
             <pattern>^/zpravicky/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditNews</action>
@@ -216,6 +224,10 @@
         <mapping>
             <pattern>^/bazar/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditBazaar</action>
+        </mapping>
+        <mapping>
+            <pattern>^/forum/edit</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditForum</action>
         </mapping>
         <mapping>
             <pattern>^/zmeny</pattern>
@@ -284,6 +296,10 @@
         <mapping>
             <pattern>/newton</pattern>
             <action>cz.abclinuxu.servlets.html.various.NewtonExport</action>
+        </mapping>
+        <mapping priority="true">
+            <pattern>^/skupiny/edit</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditSubportal</action>
         </mapping>
     </format>
     <format version="wap">

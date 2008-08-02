@@ -2,12 +2,16 @@
 
 <@lib.showMessages/>
 
-<#if USER?exists && USER.hasRole("article admin")>
-    <a href="/clanky/edit/${RELATION.id}?action=add">Přidej článek</a>
-</#if>
-<#if USER?exists && USER.hasRole("category admin")>
- <a href="${URL.make("/EditCategory?action=edit&rid="+RELATION.id+"&categoryId="+CATEGORY.id)}">Uprav sekci</a>
- <a href="${URL.noPrefix("/EditRelation?action=remove&rid="+RELATION.id+"&prefix="+URL.prefix)}">Smaž sekci</a>
+<#if USER?exists>
+    <#if TOOL.permissionsFor(USER, RELATION).canCreate()>
+        <a href="/clanky/edit/${RELATION.id}?action=add">Přidej článek</a>
+    </#if>
+    <#if TOOL.permissionsFor(USER, RELATION).canModify()>
+     <a href="${URL.make("/EditCategory?action=edit&rid="+RELATION.id+"&categoryId="+CATEGORY.id)}">Uprav sekci</a>
+    </#if>
+    <#if TOOL.permissionsFor(USER, RELATION.upper).canModify()>
+     <a href="${URL.noPrefix("/EditRelation?action=remove&rid="+RELATION.id+"&prefix="+URL.prefix)}">Smaž sekci</a>
+    </#if>
 </#if>
 
 <@lib.advertisement id="gg-sky" />

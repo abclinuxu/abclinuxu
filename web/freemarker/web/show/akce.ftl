@@ -1,0 +1,139 @@
+<#import "../macros.ftl" as lib>
+
+<#assign region=ITEM.getProperty("region").toArray()[0], subtype=ITEM.subType>
+
+<#if subtype=="community"><#assign subtype="Komunitní">
+<#elseif subtype=="educational"><#assign subtype="Školní">
+<#elseif subtype=="company"><#assign subtype="Firemní">
+</#if>
+
+<#assign plovouci_sloupec>
+    <#if SUBPORTAL?exists>
+        <@lib.showSubportal SUBPORTAL, true/>
+        <#assign counter=VARS.getSubportalCounter(SUBPORTAL)>
+    </#if>
+    <#if USER?exists && (USER.id == ITEM.owner || TOOL.permissionsFor(USER, RELATION).canModify())>
+        <div class="s_nadpis">Správa akce</div>
+        <div class="s_sekce">
+            <ul>
+                <li><a href="${URL.noPrefix("/akce/edit/${RELATION.id}?action=edit")}">Upravit</a></li>
+                <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
+                    <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/akce")}">Smazat</a></li>
+                </#if>
+                <li><a href="${URL.noPrefix("/akce/inset/"+RELATION.id+"?action=addFile")}">Přidat přílohu</a></li>
+                <li><a href="${URL.noPrefix("/akce/inset/"+RELATION.id+"?action=manage")}">Správa příloh</a></li>
+            </ul>
+        </div>
+    </#if>
+
+    <div class="s_nadpis">Informace o akci</div>
+    <div class="s_sekce">
+        Datum: ${DATE.show(ITEM.created,"CZ_DMY")}<br>
+        Začátek: ${DATE.show(ITEM.created,"TIME")}<br>
+        Kraj: <@lib.showRegion region/><br>
+        Typ akce: ${subtype}
+    </div>
+</#assign>
+
+<#include "../header.ftl">
+
+<h1>${TOOL.childName(ITEM)}</h1>
+
+<div class="meta-vypis">Aktualizováno: ${DATE.show(ITEM.updated,"SMART")}
+    | <@lib.showUser TOOL.createUser(ITEM.owner) />
+    |  Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;</div>
+
+<#assign descShort=TOOL.xpath(ITEM,"/data/descriptionShort"),
+        desc=TOOL.xpath(ITEM,"/data/description")?default("UNDEF"),
+        icon=TOOL.xpath(ITEM,"/data/icon")?default("UNDEF")>
+<#if ITEM.type==27>
+Stav: čeká na schválení
+    <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+    <div>
+            <a href="${URL.noPrefix("/akce/edit/"+RELATION.id+"?action=approve"+TOOL.ticket(USER,false))}">Schválit</a>
+            |
+            <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/akce")}">Smazat</a>
+    </div>
+    </#if>
+
+    <hr />
+</#if>
+
+<#if icon!="UNDEF">
+<div style="float: right">
+<img src="${icon}" alt="Logo akce">
+</div>
+</#if>
+
+<#if desc!="UNDEF">
+<div style="cl_perex">
+    ${TOOL.render(descShort,USER?if_exists)}
+</div>
+<p>
+    ${TOOL.render(desc,USER?if_exists)}
+</p>
+<#else>
+<p>
+    ${TOOL.render(descShort,USER?if_exists)}
+</p>
+</#if>
+
+<#assign attachments=TOOL.attachmentsFor(ITEM)>
+<#if (attachments?size > 0)>
+    <#assign wrote_div=false>
+
+        <#list attachments as attachment>
+            <#assign hidden=TOOL.xpath(attachment.child, "/data/object/@hidden")?default("false")>
+            <#if hidden=="false" || TOOL.permissionsFor(USER, RELATION).canModify()>
+                <#if !wrote_div>
+                    <div class="ds_attachments"><span>Přílohy:</span><ul>
+                    <#assign wrote_div=true>
+                </#if>
+
+                <li>
+                <a href="${TOOL.xpath(attachment.child, "/data/object/@path")}">${TOOL.xpath(attachment.child, "/data/object/originalFilename")}</a>
+                (${TOOL.xpath(attachment.child, "/data/object/size")} bytů) <#if hidden=="true"><i>skrytá</i></#if></li>
+            </#if>
+        </#list>
+
+        <#if wrote_div></ul></div></#if>
+</#if>
+
+<hr />
+<#assign regs=TOOL.xpathValue(ITEM.data, "count(//registrations/registration)")>
+
+<p>
+    <b>Účast potvrdilo:</b>
+        <#if regs?eval gt 0>
+            <a href="?action=participants">${regs?eval} uživatelů</a>
+        <#else>
+            zatím bohužel nikdo
+        </#if>
+    <br />
+
+    <#if USER?exists>
+        <#assign myreg=TOOL.xpath(ITEM.data, "/data/registrations/registration[@uid="+USER.id+"]")?default("UNDEF")>
+    <#else>
+        <#assign myreg="UNDEF">
+    </#if>
+
+    <#if DATE.show("ISO").compareTo(DATE.show(ITEM.created,"ISO",false)) lt 0>
+        <form action="/akce/edit" method="post">
+            <input type="hidden" name="rid" value="${RELATION.id}">
+            <#if myreg=="UNDEF">
+                <input type="submit" value="Registrovat svou účast">
+                <input type="hidden" name="action" value="register">
+            <#else>
+                <input type="submit" value="Odvolat svou účast">
+                <input type="hidden" name="action" value="deregister2">
+            </#if>
+        </form>
+    </#if>
+</p>
+
+<#if CHILDREN.discussion?exists>
+    <h3>Komentáře</h3>
+    <@lib.showDiscussion CHILDREN.discussion[0]/>
+</#if>
+
+<#include "../footer.ftl">

@@ -10,9 +10,11 @@
                     <a class="bez-slovniku" href="${RELATION.url}">Návrat na aktuální verzi</a>
                 </li>
             <#else>
+            <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
                 <li><a class="bez-slovniku" href="${URL.make("/edit/"+RELATION.id+"?action=edit")}" rel="nofollow">Upravit</a></li>
-                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
                 <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Přidat fotografii</a></li>
+            </#if>
+                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
                 <li><a class="bez-slovniku" href="${RELATION.url}?varianta=print" rel="nofollow">Tisk</a></li>
                 <li>
                     <a class="bez-slovniku" href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
@@ -20,7 +22,7 @@
                     <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při úpravě záznamu.</span></a>
                 </li>
                 <#if USER?exists>
-                    <#if USER?exists && USER.hasRole("attachment admin")>
+                    <#if USER?exists && TOOL.permissionsFor(USER, RELATION.upper).canModify()>
                         <li><a href="${URL.make("/inset/"+RELATION.id+"?action=manage")}">Správa příloh</a></li>
                     </#if>
                     <#if USER.hasRole("root")>
@@ -28,7 +30,7 @@
                             <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=setURL2")}">Url</a>
                         </li>
                     </#if>
-                    <#if USER.hasRole("remove relation")>
+                    <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
                         <li>
                             <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/slovnik")}" title="Smaž">Smazat</a>
                         </li>

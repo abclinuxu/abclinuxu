@@ -53,6 +53,7 @@ public class InstantSender extends Thread implements Configurable {
     static Decorator hwDecorator = new HardwareDecorator();
     static Decorator persDecorator = new PersonalityDecorator();
     static Decorator dictDecorator = new DictionaryDecorator();
+    static Decorator articleDecorator = new ArticleDecorator();
 
     int waitInterval;
 
@@ -116,6 +117,8 @@ public class InstantSender extends Thread implements Configurable {
             return faqDecorator;
         if (ObjectType.BLOG.equals(action.type) )
             return blogDecorator;
+        if (ObjectType.ARTICLE.equals(action.type))
+            return articleDecorator;
         return null;
     }
 

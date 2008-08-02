@@ -85,6 +85,12 @@
         </action>
     </servlet>
 
+    <servlet name="EditForum">
+        <action name="edit" content="/edit/forum.ftl">
+            <var name="TITLE" value="Úprava poradny" />
+        </action>
+    </servlet>
+
     <servlet name="EditSurvey">
         <action name="add" template="print" content="/add/survey.ftl">
             <var name="TITLE" value="Vytvoření ankety" />
@@ -394,6 +400,9 @@
         <action name="addScreenshot" content="/add/screenshot.ftl">
             <var name="TITLE" value="Vložit obrázek"/>
         </action>
+        <action name="addFile" content="/add/attachments.ftl">
+            <var name="TITLE" value="Přidat přílohy"/>
+        </action>
         <action name="manage" content="/misc/manage_attachments.ftl">
             <var name="TITLE" value="Správa příloh"/>
         </action>
@@ -499,6 +508,9 @@
         <action name="documents" content="/show/dokumenty.ftl" template="print">
             <var name="TITLE" value='Seznam dokumentů' />
         </action>
+        <action name="subportals" content="/show/subportals.ftl">
+            <var name="TITLE" value="Seznam skupin" />
+        </action>
     </servlet>
 
     <servlet name="ViewSoftware">
@@ -522,6 +534,30 @@
         </action>
         <action name="sw_stats" content="/show/sw_stats.ftl">
             <var name="TITLE" value="Top 10 nejpoužívanějšího softwaru"/>
+        </action>
+    </servlet>
+
+    <servlet name="ViewEvent">
+        <action name="list" content="/show/akce_seznam.ftl">
+            <var name="TITLE" value="Kalendář linuxových akcí"/>
+        </action>
+        <action name="view" content="/show/akce.ftl">
+            <var name="TITLE" value='Akce: ${ITEM.title}' type="Lazy"/>
+        </action>
+        <action name="participants" content="/show/akce_ucastnici.ftl">
+            <var name="TITLE" value='Účastníci akce ${ITEM.title}' type="Lazy"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditEvent">
+        <action name="add" content="/add/akce.ftl">
+            <var name="TITLE" value="Přidání nové akce"/>
+        </action>
+        <action name="edit" content="/edit/akce.ftl">
+            <var name="TITLE" value="Úprava akce"/>
+        </action>
+        <action name="register" content="/edit/akce_registrace.ftl">
+            <var name="TITLE" value="Registrace na akci"/>
         </action>
     </servlet>
 
@@ -770,6 +806,23 @@
         </action>
         <action name="editCode" content="/edit/adCode.ftl" template="print">
             <var name="TITLE" value="Upravit reklamní kód"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditSubportal">
+        <action name="add" content="/add/subportal.ftl">
+            <var name="TITLE" value="Vytvořit skupinu"/>
+        </action>
+        <action name="edit" content="/edit/subportal.ftl">
+            <var name="TITLE" value="Upravit skupinu"/>
+        </action>
+    </servlet>
+    <servlet name="ViewSubportal">
+        <action name="view" content="/show/subportal.ftl">
+            <var name="TITLE" value='${TOOL.childName(RELATION)}' type="Lazy"/>
+        </action>
+        <action name="members" content="/show/subportal_members.ftl">
+            <var name="TITLE" value='Členové subportálu ${TOOL.childName(RELATION)}' type="Lazy"/>
         </action>
     </servlet>
 </config>

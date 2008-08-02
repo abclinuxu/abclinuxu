@@ -19,11 +19,13 @@
     </#list>
 </#if>&nbsp;
 
-<#if USER?exists && USER.hasRole("article admin")>
+<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
  <p>
   <a href="${URL.make("/edit?action=edit&rid="+RELATION.id)}">Upravit</a>
   <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&url=/EditRelation&action=move&rid="+RELATION.id)}">Přesunout</a>
-  <a href="${URL.noPrefix("/EditRelation?action=remove&prefix=/clanky&rid="+RELATION.id)}">Smazat</a>
+  <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
+  	<a href="${URL.noPrefix("/EditRelation?action=remove&prefix=/clanky&rid="+RELATION.id)}">Smazat</a>
+  </#if>
   <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vložit honorář</a>
   <#if CHILDREN.royalties?exists>
    <#list CHILDREN.royalties as honorar>

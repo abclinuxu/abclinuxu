@@ -395,3 +395,9 @@ div.autocomplete ul li.selected { background-color: #FFF8C3;}
 .itbiz a img:hover, a.stitek:hover { background-color: transparent; }
 
 .stitek:hover { text-decoration: line-through; }
+
+.calendar { width: 100%; }
+.calendar #today { background-color: white }
+.calendar td { text-align: center }
+.calendar a { text-decoration: none }
+.cal_selected { border: 1px solid red }

@@ -23,11 +23,14 @@
         <#if item.subtype?exists>mime typ: ${item.subtype}</#if>
         <#if node.@originalFilename[0]?exists>původní název souboru: ${node.@originalFilename[0]}</#if>
         <#if node.@size[0]?exists>velikost: ${node.@size[0]}</#if>
+        <#if node.@hidden[0]?default("false")=="true">skrytá</#if>
         <br>
     </#list>
-    <input type="hidden" name="action" value="remove">
+    <input type="hidden" name="action" value="manage2">
     <#if ! empty>
-        <input type="submit" value="Smazat">
+        <input type="submit" name="remove" value="Smazat">
+        <input type="submit" name="setVisible" value="Nastavit jako viditelné">
+        <input type="submit" name="setHidden" value="Nastavit jako skryté">
     <#else>
         Není co spravovat - k dokumentu nebyly přidány žádné přílohy.
     </#if>

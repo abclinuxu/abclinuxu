@@ -37,6 +37,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 
+import cz.abclinuxu.utils.freemarker.Tools;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -69,7 +70,7 @@ public class EditGroup implements AbcAction {
     public static final String ACTION_REMOVE_GROUP_MEMBERS = "removeMembers";
 
     /** number of groups in system shall be smaller than this value */
-    public static final int DEFAULT_MAX_NUMBER_OF_GROUPS = 20;
+    public static final int DEFAULT_MAX_NUMBER_OF_GROUPS = 40;
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -80,12 +81,35 @@ public class EditGroup implements AbcAction {
             response.sendRedirect(response.encodeRedirectURL("/"));
             return null;
         }
+		
+        Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params, request);
+		boolean groupGroup = false;
 
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if ( !user.hasRole(Roles.USER_ADMIN) )
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+		
+		if (group != null) {
+            Tools.sync(group);
+			groupGroup = user.isMemberOf(group.getId());
+		}
 
+		if ( ACTION_SHOW_USERS.equals(action) ) {
+			if ( !user.hasRole(Roles.USER_ADMIN) && !groupGroup)
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
+            return actionShowUsers(request, env);
+		}
+
+        if ( ACTION_REMOVE_GROUP_MEMBERS.equals(action) ) {
+			if ( !user.hasRole(Roles.USER_ADMIN) && !groupGroup)
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
+            ActionProtector.ensureContract(request, EditGroup.class, true, true, true, false);
+            return actionRemoveMembers(request, response, env);
+        }
+		
+		if ( !user.hasRole(Roles.USER_ADMIN) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if ( ACTION_CREATE_GROUP.equals(action) )
             return FMTemplateSelector.select("EditGroup", "create", env, request);
@@ -105,14 +129,6 @@ public class EditGroup implements AbcAction {
 
         if ( ACTION_SHOW.equals(action) )
             return actionShow(request, env);
-
-        if ( ACTION_SHOW_USERS.equals(action) )
-            return actionShowUsers(request, env);
-
-        if ( ACTION_REMOVE_GROUP_MEMBERS.equals(action) ) {
-            ActionProtector.ensureContract(request, EditGroup.class, true, true, true, false);
-            return actionRemoveMembers(request, response, env);
-        }
 
         return actionShow(request, env);
     }

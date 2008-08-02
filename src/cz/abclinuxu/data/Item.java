@@ -76,6 +76,9 @@ public class Item extends GenericDataObject {
     public static final int SCREENSHOT = 24;
     /** generic type for imported data, its content depends on data source */
     public static final int IMPORT = 25;
+	/** an event in the calendar of Linux events */
+	public static final int EVENT = 26;
+    public static final int UNPUBLISHED_EVENT = 27;
 
     public Item() {
         super();
@@ -154,6 +157,7 @@ public class Item extends GenericDataObject {
             case SERIES: return Constants.TYPE_SERIES;
             case SOFTWARE: return Constants.TYPE_SOFTWARE;
             case SCREENSHOT: return Constants.TYPE_SCREENSHOT;
+            case EVENT: return Constants.TYPE_EVENT;
             default: return Constants.TYPE_OTHER;
         }
     }

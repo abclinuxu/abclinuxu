@@ -19,6 +19,7 @@
 package cz.abclinuxu.scheduler;
 
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.data.view.ChangedContent;
 import cz.abclinuxu.data.view.CloudTag;
 import cz.abclinuxu.data.view.SectionTreeCache;
 import cz.abclinuxu.data.view.HostingServer;
@@ -28,20 +29,26 @@ import cz.abclinuxu.data.view.Screenshot;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.persistence.*;
+import cz.abclinuxu.persistence.extra.CompareCondition;
+import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
-import cz.abclinuxu.utils.TagTool.ListOrder;
+import cz.abclinuxu.servlets.html.view.ContentChanges;
 import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.TagTool;
+import cz.abclinuxu.utils.TagTool.ListOrder;
+import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.freemarker.Tools;
 
 import java.util.*;
-import java.util.prefs.Preferences;
 
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+import org.apache.commons.collections.map.LinkedMap;
 import org.dom4j.Node;
 import org.dom4j.Element;
 import org.dom4j.Document;
@@ -84,17 +91,23 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String PREF_INDEX_FEEDS = "feeds.for.index";
     public static final String PREF_TEMPLATE_FEEDS = "feeds.for.template";
     public static final String PREF_SECTION_CACHE_FREQUENCY = "section.cache.rebuild.frequency";
+    public static final String PREF_MAIN_FORUMS = "forums";
 
     List freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
     List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities;
     List freshTrivias;
+    Map<Integer, List> freshSubportalArticles, freshForumQuestions, freshSubportalWikiPages;
+    Map<Integer, Relation> freshSubportalEvents;
+    
+    Map<Integer, Integer> mainForums;
     List<CloudTag> freshCloudTags;
 
     List<Screenshot> freshScreenshots;
     String indexFeeds, templateFeeds;
     Map<String, Integer> defaultSizes, maxSizes, counter;
+    Map<Relation, Map<String, Integer>> subportalCounter;
     Map<Server, List<Link>> feedLinks;
-    SectionTreeCache forumTree, faqTree, softwareTree, hardwareTree, articleTree;
+    SectionTreeCache faqTree, softwareTree, hardwareTree, articleTree;
     Relation currentPoll;
     int sectionCacheFrequency;
     HostingServer hostingServer, offer64bit;
@@ -108,9 +121,9 @@ public class VariableFetcher extends TimerTask implements Configurable {
      */
     private VariableFetcher() {
         sqlTool = SQLTool.getInstance();
-        forumTree = new SectionTreeCache(UrlUtils.PREFIX_FORUM, Constants.CAT_FORUM);
-        forumTree.setCacheSize(90);
-        forumTree.setLoadLastItem(true);
+        //forumTree = new SectionTreeCache(UrlUtils.PREFIX_FORUM, Constants.CAT_FORUM);
+        //forumTree.setCacheSize(90);
+        //forumTree.setLoadLastItem(true);
         faqTree = new SectionTreeCache(UrlUtils.PREFIX_FAQ, Constants.CAT_FAQ);
         faqTree.setCacheSize(30);
         faqTree.setLoadLastItem(true);
@@ -139,6 +152,21 @@ public class VariableFetcher extends TimerTask implements Configurable {
      */
     public Map getCounter() {
         return counter;
+    }
+    
+    /**
+     * Returns a counter for the specified subportal
+     */
+    public Map getSubportalCounter(Relation portal) {
+        Map map = subportalCounter.get(portal);
+        if (map != null)
+            return map;
+        else
+            return Collections.EMPTY_MAP;
+    }
+    
+    public Map<Integer, Integer> getMainForums() {
+        return mainForums;
     }
 
     /**
@@ -199,13 +227,67 @@ public class VariableFetcher extends TimerTask implements Configurable {
     }
 
     /**
-     * List of the most fresh discussion question relations according to user preference or system setting.
+     * List of the most fresh article relations from a subportal
+     * according to user preference or system setting.
      */
-    public List getFreshQuestions(Object user) {
-        int userLimit = getObjectCountForUser(user, KEY_QUESTION, "/data/settings/index_discussions");
-        return getSubList(freshQuestions, userLimit);
+    public List getFreshSubportalArticles(Object user, int rel) {
+        int userLimit = getObjectCountForUser(user, KEY_ARTICLE, null);
+        List articles = freshSubportalArticles.get(rel);
+
+        if (articles == null)
+            return Collections.EMPTY_LIST;
+        else
+            return getSubList(articles, userLimit);
     }
 
+    /**
+     * List of the most fresh content relations from a subportal
+     * according to user preference or system setting.
+     */
+    public List getFreshSubportalWikiPages(Object user, int rel) {
+        int userLimit = getObjectCountForUser(user, KEY_SOFTWARE, null);
+        List articles = freshSubportalWikiPages.get(rel);
+
+        if (articles == null)
+            return Collections.EMPTY_LIST;
+        else
+            return getSubList(articles, userLimit);
+    }
+    
+    /**
+     * Returns the nearest upcoming event for the subportal specified.
+     * @param rel A subportal
+     * @return An event, if any
+     */
+    public Relation getFreshSubportalEvent(int rel) {
+        if (freshSubportalEvents != null)
+            return freshSubportalEvents.get(rel);
+        else
+            return null;
+    }
+
+    /**
+     * List of the most fresh discussion question relations from a subportal
+     * according to user preference or system setting.
+     */
+    public List getFreshQuestions(int count, int rid) {
+        if (freshQuestions == null)
+            return Collections.EMPTY_LIST;
+        
+        List questions = freshForumQuestions.get(rid);
+        
+        if (questions == null)
+            return Collections.EMPTY_LIST;
+        else
+            return getSubList(questions, count);
+    }
+    
+    public List getFreshQuestions() {
+        int limit = maxSizes.get(KEY_QUESTION);
+        return getSubList(freshQuestions, limit);
+    }
+
+    
     /**
      * List of the most fresh frequently asked question relations according to user preference or system setting.
      */
@@ -338,9 +420,9 @@ public class VariableFetcher extends TimerTask implements Configurable {
     /**
      * @return cache of forum sections
      */
-    public SectionTreeCache getForumTree() {
-        return forumTree;
-    }
+    //public SectionTreeCache getForumTree() {
+    //    return forumTree;
+    //}
 
     /**
      * @return cache of FAQ sections
@@ -376,7 +458,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public HostingServer getHostingServer() {
         return hostingServer;
     }
-
+    
     public HostingServer getOffer64bit() {
         return offer64bit;
     }
@@ -441,6 +523,9 @@ public class VariableFetcher extends TimerTask implements Configurable {
         log.debug("Zacina stahovani cachovanych promennych");
         try {
             refreshArticles();
+            refreshSubportalArticles(null);
+            refreshSubportalWikiPages(null);
+            refreshSubportalEvents(null);
             refreshBazaar();
             refreshCurrentPoll();
             refreshDictionary();
@@ -450,8 +535,10 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshHardware();
             refreshSoftware();
             refreshNews();
+            refreshForumQuestions();
             refreshQuestions();
             refreshSizes();
+            refreshSubportalSizes(null);
             refreshStories();
             refreshFeedLinks();
             refreshSectionCaches();
@@ -490,14 +577,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
             long start = System.currentTimeMillis();
             if (cycle % sectionCacheFrequency == 0) {
                 faqTree.initialize();
-                forumTree.initialize();
+                //forumTree.initialize();
                 softwareTree.initialize();
                 hardwareTree.initialize();
                 articleTree.initialize();
             }
 
             faqTree.refresh();
-            forumTree.refresh();
+            //forumTree.refresh();
             softwareTree.refresh();
             hardwareTree.refresh();
             articleTree.refresh();
@@ -546,7 +633,164 @@ public class VariableFetcher extends TimerTask implements Configurable {
             log.error("Selhalo nacitani clanku", e);
         }
     }
-
+    
+    public void refreshSubportalEvents(Relation where) {
+        try {
+            Map<Integer, Relation> map;
+            List<Relation> children;
+            String date = Constants.isoFormat.format(new Date());
+            
+            // get a list of subportals
+            if (where == null) {
+                Category subportals = new Category(Constants.CAT_SUBPORTALS);
+                map = new HashMap();
+                children = Tools.syncList(subportals.getChildren());
+            } else {
+                map =  freshSubportalEvents;
+                children = Collections.singletonList((Relation) Tools.sync(where));
+            }
+            
+            // get an event for every subportal
+            for (Relation rel : children) {
+                int rid = Misc.parseInt(Tools.xpath(rel.getChild(), "/data/events"), 0);
+                
+                Qualifier[] qualifiers = new Qualifier[] {
+                    new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, date),
+                    new CompareCondition(Field.UPPER, Operation.EQUAL, rid),
+                    Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING,
+                    new LimitQualifier(0, 1)
+                };
+                
+                List<Relation> list = sqlTool.findItemRelationsWithType(Item.EVENT, qualifiers);
+                
+                if (!Misc.empty(list)) {
+                    Relation event = list.get(0);
+                    Tools.sync(event);
+                    map.put(rid, event);
+                }
+            }
+            
+            freshSubportalEvents = map;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani akci pro subportaly", e);
+        }
+    }
+   
+    public void refreshSubportalWikiPages(Relation where) {
+        try {
+            Map<Integer, List> map;
+            List<Relation> children;
+            Persistence persistence = PersistenceFactory.getPersistence();
+            
+            // get a list of subportals
+            if (where == null) {
+                Category subportals = new Category(Constants.CAT_SUBPORTALS);
+                map = new HashMap();
+                children = Tools.syncList(subportals.getChildren());
+            } else {
+                map = freshSubportalWikiPages;
+                children = Collections.singletonList((Relation) Tools.sync(where));
+            }
+            
+            // get wikis for every subportal
+            for (Relation rel : children) {
+                int rid = Misc.parseInt(Tools.xpath(rel.getChild(), "/data/wiki"), 0);
+                List<ChangedContent> changes;
+                List<Relation> result;
+                Relation wikiRelation = new Relation(rid);
+                
+                Tools.sync(wikiRelation);
+                
+                changes = ContentChanges.changedContentList(wikiRelation, persistence, ContentChanges.COLUMN_DATE, true);
+                result = new ArrayList(changes.size());
+                
+                for (ChangedContent change : changes)
+                    result.add(change.getRelation());
+                
+                map.put(rid, result);
+            }
+            
+            freshSubportalWikiPages = map;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani wiki pro subportaly", e);
+        }
+    }
+    
+    public void refreshSubportalArticles(Relation where) {
+        try {
+            List<Relation> children;
+            Map<Integer, List> map;
+            int maximum = (Integer) maxSizes.get(KEY_ARTICLE);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
+            
+            // get a list of subportals
+            if (where == null) {
+                Category subportals = new Category(Constants.CAT_SUBPORTALS);
+                map = new HashMap();
+                children = Tools.syncList(subportals.getChildren());
+            } else {
+                map = freshSubportalArticles;
+                children = Collections.singletonList((Relation) Tools.sync(where));
+            }
+            
+            // get articles for every subportal
+            for (Relation rel : children) {
+                // get the rid of the article section of that subportal
+                int rid = Misc.parseInt(Tools.xpath(rel.getChild(), "/data/articles"), 0);
+                Relation r = new Relation(rid);
+                
+                Tools.sync(r);
+                
+                // get the articles
+                List<Relation> articles = sqlTool.findArticleRelations(qualifiers, r.getChild().getId());
+                Tools.syncList(articles);
+                
+                map.put(rid, articles);
+            }
+            
+            freshSubportalArticles = map;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani clanku pro subportaly", e);
+        }
+    }
+    
+    public void refreshForumQuestions() {
+        try {
+            Map<Integer, List> map;
+            Category subportals = new Category(Constants.CAT_SUBPORTALS);
+            int maximum = (Integer) maxSizes.get(KEY_ARTICLE);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
+            
+            // get a list of subportals
+            List<Relation> children = Tools.syncList(subportals.getChildren());
+            
+            map = new HashMap(children.size() + mainForums.size());
+            
+            // get forums for every subportal
+            for (Relation rel : children) {
+                // get the rid of the forum of that subportal
+                int rid = Misc.parseInt(Tools.xpath(rel.getChild(), "/data/forum"), 0);
+                
+                // get the articles
+                List<Relation> dizs = sqlTool.findDiscussionRelationsWithParent(rid, qualifiers);
+                Tools.syncList(dizs);
+                
+                map.put(rid, dizs);
+            }
+            
+            for (Integer rel : mainForums.keySet()) {
+                List<Relation> dizs = sqlTool.findDiscussionRelationsWithParent(rel, qualifiers);
+                Tools.syncList(dizs);
+                
+                map.put(rel, dizs);
+            }
+            
+            freshForumQuestions = map;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani diskuzi pro sekce", e);
+        }
+    }
+    
     public void refreshQuestions() {
         try {
             int maximum = (Integer) maxSizes.get(KEY_QUESTION);
@@ -759,8 +1003,58 @@ public class VariableFetcher extends TimerTask implements Configurable {
             }
             counter.put("WAITING_NEWS", waiting);
             counter.put("SLEEPING_NEWS", sleeping);
+            
+            int numEvents = sqlTool.countItemRelationsWithType(Item.UNPUBLISHED_EVENT,
+                        new Qualifier[] { new CompareCondition(Field.UPPER, Operation.EQUAL, Constants.REL_EVENTS) });
+            
+            counter.put("WAITING_EVENTS", numEvents);
         } catch (Exception e) {
             log.error("Selhalo nacitani velikosti", e);
+        }
+    }
+    
+    public void refreshSubportalSizes(Relation where) {
+        try {
+            Map<Relation, Map<String,Integer>> map;
+            List<Relation> children;
+            Persistence persistence = PersistenceFactory.getPersistence();
+
+            // get a list of subportals
+            if (where == null) {
+                Category subportals = new Category(Constants.CAT_SUBPORTALS);
+                map = new HashMap();
+                children = Tools.syncList(subportals.getChildren());
+            } else {
+                map = subportalCounter;
+                children = Collections.singletonList((Relation) Tools.sync(where));
+            }
+
+            for (Relation rel : children) {
+                Map<String,Integer> portal = new HashMap(6);
+
+                Relation articles = Tools.createRelation(Tools.xpath(rel.getChild(), "//articles"));
+                Relation wiki = Tools.createRelation(Tools.xpath(rel.getChild(), "//wiki"));
+                Relation forum = Tools.createRelation(Tools.xpath(rel.getChild(), "//forum"));
+                Relation events = Tools.createRelation(Tools.xpath(rel.getChild(), "//events"));
+                Relation pool = Tools.createRelation(Tools.xpath(rel.getChild(), "//article_pool"));
+
+                portal.put("ARTICLES", persistence.findChildren(articles.getChild()).size());
+                portal.put("WAITING_ARTICLES", persistence.findChildren(pool.getChild()).size());
+                portal.put("WIKIS", persistence.findChildren(wiki.getChild()).size());
+                portal.put("QUESTIONS", persistence.findChildren(forum.getChild()).size());
+
+                int numEvents = sqlTool.countItemRelationsWithType(Item.EVENT,
+                        new Qualifier[] { new CompareCondition(Field.UPPER, Operation.EQUAL, events.getId()) });
+                
+                portal.put("EVENTS", numEvents);
+                portal.put("WAITING_EVENTS", persistence.findChildren(events.getChild()).size() - numEvents);
+
+                map.put(rel, portal);
+            }
+
+            subportalCounter = map;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani velikosti podportalu", e);
         }
     }
 
@@ -853,7 +1147,6 @@ public class VariableFetcher extends TimerTask implements Configurable {
         defaultSizes.put(KEY_QUESTION, size);
         size = prefs.getInt(PREF_MAX + KEY_QUESTION, 20);
         maxSizes.put(KEY_QUESTION, size);
-        freshQuestions = Collections.EMPTY_LIST;
 
         size = prefs.getInt(PREF_DEFAULT + KEY_STORY, 5);
         defaultSizes.put(KEY_STORY, size);
@@ -899,5 +1192,19 @@ public class VariableFetcher extends TimerTask implements Configurable {
         maxSizes.put(KEY_TEMPLATE_LINKS, size);
 
         sectionCacheFrequency = prefs.getInt(PREF_SECTION_CACHE_FREQUENCY, 6);
+        
+        Preferences subprefs = prefs.node(PREF_MAIN_FORUMS);
+        String order = subprefs.get("order", null);
+
+        StringTokenizer stk = new StringTokenizer(order, ",");
+        mainForums = new LinkedHashMap<Integer, Integer>(stk.countTokens());
+
+        while (stk.hasMoreTokens()) {
+            String srid = stk.nextToken();
+            int rid = Integer.parseInt(srid);
+            int questions = Integer.parseInt(subprefs.get(srid, null));
+
+            mainForums.put(rid, questions);
+        }
     }
 }

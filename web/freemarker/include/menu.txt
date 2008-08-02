@@ -5,7 +5,14 @@
 <div class="menu-kont">
 
 <ul class="menu" id="menu">
-<li><a href="/poradna">Poradna</a></li>
+<li><a href="/poradna">Poradna</a>
+  <ul>
+    <li><a href="/poradna/linux">Linuxová poradna</a></li>
+    <li><a href="/poradna/databaze">Databázová poradna</a></li>
+    <li><a href="/poradna/programovani">Programovací poradna</a></li>
+    <li><a href="/poradna/hardware">Hardwarová poradna</a></li>
+    <li><a href="/poradna/unix">Unixová poradna</a></li>
+  </ul></li>
 <li><a href="/faq">FAQ</a></li>
 <li><a href="/hardware">Hardware</a>
   <ul>

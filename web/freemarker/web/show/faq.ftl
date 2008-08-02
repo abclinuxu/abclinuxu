@@ -10,7 +10,9 @@
                     <a href="${RELATION.url}">Návrat na aktuální verzi</a>
                 </li>
             <#else>
-                <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
+                <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+                    <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
+                </#if>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
                 <li><a href="${RELATION.url}?varianta=print" rel="nofollow">Tisk otázky</a></li>
                 <li>
@@ -18,12 +20,12 @@
                     <span title="Počet lidí, kteří sledují tuto otázku">(${TOOL.getMonitorCount(ITEM.data)})</span>
                     <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při úpravě otázky</span></a>
                 </li>
-                <#if USER?exists && USER.hasRole("root")>
+                <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canDelete()>
                     <li>
                         <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/faq")}">Smazat otázku</a>
                     </li>
                 </#if>
-                <#if USER?exists && USER.hasRole("move relation")>
+                <#if USER?exists && TOOL.permissionsFor(USER, RELATION.upper).canModify()>
                     <li>
                         <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Přesunout</a>
 			            <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;url=/EditRelation&amp;action=add&amp;prefix="+URL.prefix)}">Vytvořit link</a>

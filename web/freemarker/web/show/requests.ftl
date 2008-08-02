@@ -42,7 +42,7 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
         </#if>
         ${TOOL.render(TOOL.element(item.data,"data/text"),USER?if_exists)}
 
-        <#if USER?exists && USER.hasRole("requests admin")>
+        <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
             <br />
             <a href="${URL.make("/EditRequest?action=email&requestId="+relation.id)}">Poslat email</a>,
             <a href="${URL.make("/EditRequest?action=deliver&requestId="+relation.id+TOOL.ticket(USER, false))}">Vyřízeno</a>,

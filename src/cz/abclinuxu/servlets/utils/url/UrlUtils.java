@@ -55,6 +55,7 @@ public class UrlUtils {
     public static final String PREFIX_SERIES = "/serialy";
     public static final String PREFIX_SOFTWARE = "/software";
     public static final String PREFIX_TAGS = "/stitky";
+	public static final String PREFIX_EVENTS = "/akce";
     public static final String PREFIX_NONE = "";
 
     static List prefixes = null;
@@ -76,6 +77,7 @@ public class UrlUtils {
         prefixes.add(PREFIX_SCREENSHOTS);
         prefixes.add(PREFIX_SERIES);
         prefixes.add(PREFIX_SOFTWARE);
+		prefixes.add(PREFIX_EVENTS);
         prefixes.add(PREFIX_TAGS);
     }
 
@@ -129,7 +131,7 @@ public class UrlUtils {
      */
     public String constructRedirectURL(String url) {
         String out = url;
-        if (PREFIX_NONE.equals(getPrefix(url))) out = prefix+url;
+        //if (PREFIX_NONE.equals(getPrefix(url))) out = prefix+url;
         return response.encodeRedirectURL(out);
     }
 

@@ -18,6 +18,8 @@
  */
 package cz.abclinuxu.servlets.html.edit;
 
+import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -34,7 +36,6 @@ import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -83,12 +84,13 @@ public class EditTrivia implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
+		Relation parent = new Relation(Constants.REL_TRIVIA);
 
         if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
             return null;
         }
-
+		
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if (relation != null) {
             Tools.sync(relation);
@@ -98,16 +100,24 @@ public class EditTrivia implements AbcAction {
         // check permissions
         if (user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if (!user.hasRole(Roles.SURVEY_ADMIN))
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-        if (ACTION_ADD.equals(action))
+		
+        if (ACTION_ADD.equals(action)) {
+			if (!Tools.permissionsFor(user, parent).canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             return FMTemplateSelector.select("EditTrivia", "add", env, request);
+		}
 
         if (ACTION_ADD_STEP2.equals(action)) {
+			if (!Tools.permissionsFor(user, parent).canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             ActionProtector.ensureContract(request, EditTrivia.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
         }
+		
+		if (!Tools.permissionsFor(user, relation).canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (ACTION_EDIT.equals(action))
             return actionEditStep1(request, env);
@@ -134,6 +144,10 @@ public class EditTrivia implements AbcAction {
         Item item = new Item(0, Item.TRIVIA);
         item.setData(document);
         item.setOwner(user.getId());
+		
+		Category cat = (Category) upper.getChild();
+		item.setGroup(cat.getGroup());
+		item.setPermissions(cat.getPermissions());
 
         boolean canContinue = true;
         canContinue &= setName(params, item, env);

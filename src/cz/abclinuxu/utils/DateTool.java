@@ -291,6 +291,14 @@ public class DateTool implements Configurable {
             throw new InvalidInputException("Input format '"+inputFormat+"' not recognized!");
         return show(d, outputFformat);
     }
+    
+    /**
+     * Returns the current date and time.
+     * Useful in Freemarker templates
+     */
+    public Date now() {
+        return new Date();
+    }
 
     /**
      * Calculates cache values used to recognize today and yesterday.

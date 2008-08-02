@@ -64,6 +64,14 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
     </tr>
     <tr>
         <td>
+            <label>Vydat jako mikrozápisek
+            <input type="checkbox" name="micro" value="yes"<#if PARAMS.micro?exists> checked</#if>></label>
+                <a class="info" href="#">?<span class="tooltip">Pokud má váš text do 200 znaků, můžete jej vydat
+                jako mikrozápisek. Bude pak celý zobrazen na úvodní stránce AbcLinuxu.</span></a>
+        </td>
+    </tr>
+    <tr>
+        <td>
             <p class="required">Obsah zápisu</p>
             <div class="form-edit">
                 <a href="javascript:insertAtCursor(document.form.content, '<b>', '</b>');" id="serif" title="Vložit značku tučně"><b>B</b></a>

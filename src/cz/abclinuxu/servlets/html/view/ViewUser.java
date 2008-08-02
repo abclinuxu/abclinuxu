@@ -31,7 +31,6 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -107,7 +106,7 @@ public class ViewUser implements AbcAction {
                 profile = (User) persistence.findById(profile);
 
             env.put(VAR_PROFILE, profile);
-            if (user==null || (user.getId()!=profile.getId() && !user.hasRole(Roles.USER_ADMIN)))
+            if (user==null || (user.getId()!=profile.getId() && !user.isMemberOf(Constants.GROUP_ADMINI)))
                 return handleProfile(request, env);
             else
                 return handleMyProfile(request,env);

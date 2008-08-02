@@ -18,6 +18,7 @@
  */
 package cz.abclinuxu.servlets.html.edit;
 
+import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
@@ -122,13 +123,28 @@ public class EditSoftware implements AbcAction, Configurable {
         if (user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
-        if (ACTION_ADD.equals(action))
+        if (ACTION_ADD.equals(action)) {
+			if (!Tools.permissionsFor(user, relation).canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             return actionAddStep1(request, response, env);
+		}
 
         if (ACTION_ADD_STEP2.equals(action)) {
+			if (!Tools.permissionsFor(user, relation).canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             ActionProtector.ensureContract(request, EditSoftware.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
         }
+		
+		if (ACTION_I_USE.equals(action)) {
+            ActionProtector.ensureContract(request, EditSoftware.class, true, false, false, true);
+            return actionIUse(request, response, env);
+        }
+		
+		if (!Tools.permissionsFor(user, relation).canModify())
+			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (ACTION_EDIT.equals(action))
             return actionEditStep1(request, env);
@@ -136,11 +152,6 @@ public class EditSoftware implements AbcAction, Configurable {
         if (ACTION_EDIT_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditSoftware.class, true, true, true, false);
             return actionEditStep2(request, response, env);
-        }
-
-        if (ACTION_I_USE.equals(action)) {
-            ActionProtector.ensureContract(request, EditSoftware.class, true, false, false, true);
-            return actionIUse(request, response, env);
         }
 
         throw new MissingArgumentException("Chybí parametr action!");
@@ -163,12 +174,18 @@ public class EditSoftware implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation upper = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
+		
+		Tools.sync(upper);
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         Item item = new Item(0, Item.SOFTWARE);
         item.setData(document);
         item.setOwner(user.getId());
+		
+		Category cat = (Category) upper.getChild();
+		item.setGroup(cat.getGroup());
+		item.setPermissions(cat.getPermissions());
 
         boolean canContinue = true;
         canContinue &= setName(params, item, env);

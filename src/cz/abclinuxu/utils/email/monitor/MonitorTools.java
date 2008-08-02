@@ -27,7 +27,7 @@ import cz.abclinuxu.data.User;
 public class MonitorTools {
 
     /**
-     * Reverts current monitor settings for given user. E.g. if he didn't monitor
+     * Reverses current monitor settings for given user. E.g. if he didn't monitor
      * the object yet, he will. And if he did monitor, he will not.
      * @param root Usually root element of DOM4J tree, parent of monitor tag.
      * @param user User, which wants to aletr his monitor settings.
@@ -41,5 +41,24 @@ public class MonitorTools {
             id.detach();
         else
             monitor.addElement("id").setText(new Integer(user.getId()).toString());
+    }
+    
+    /**
+     * If the user doesn't monitor the object, he will. If he already does,
+     * no operation will be performed.
+     * @param root Usually the root element of the DOM4J tree, the parent of the monitor tag.
+     * @param user The user that wants to monitor the object.
+     * @return Returns true if a monitor was added.
+     */
+    public static boolean addMonitor(Element root, User user) {
+        Element monitor = root.element("monitor");
+        if ( monitor==null )
+            monitor = root.addElement("monitor");
+        Element id = (Element) monitor.selectSingleNode("//id[text()='"+user.getId()+"']");
+        if ( id == null ) {
+            monitor.addElement("id").setText(new Integer(user.getId()).toString());
+            return true;
+        } else
+            return false;
     }
 }

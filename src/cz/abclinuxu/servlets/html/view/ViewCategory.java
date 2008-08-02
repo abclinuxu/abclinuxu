@@ -98,6 +98,7 @@ public class ViewCategory implements AbcAction {
     /** holds category to be displayed */
     public static final String VAR_CATEGORY = "CATEGORY";
     public static final String VAR_CHILDREN = "CHILDREN";
+	public static final String VAR_GROUP = "GROUP";
     /** holds list of articles */
     public static final String VAR_ARTICLES = "ARTICLES";
     public static final String VAR_CATEGORIES = "CATEGORIES";
@@ -116,6 +117,7 @@ public class ViewCategory implements AbcAction {
         env.put(ShowObject.VAR_RELATION,relation);
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS,parents);
+        env.put(ShowObject.VAR_SUBPORTAL, Tools.getParentSubportal(parents));
 
         return processCategory(request,response,env,relation);
     }
@@ -145,6 +147,12 @@ public class ViewCategory implements AbcAction {
 
         Tools.sync(category);
         env.put(VAR_CATEGORY, category);
+		
+		if (category.getGroup() != 0) {
+			Item group = new Item(category.getGroup());
+			Tools.sync(group);
+			env.put(VAR_GROUP, group);
+		}
 
         List children = Tools.syncList(category.getChildren());
         env.put(VAR_CHILDREN, children);
@@ -164,6 +172,10 @@ public class ViewCategory implements AbcAction {
                 return ShowForum.processSection(request, relation, env);
             case Category.SOFTWARE_SECTION:
                 return ViewSoftware.processSection(request, relation, env);
+			case Category.SUBPORTAL:
+				return ViewSubportal.processSection(request, relation, env);
+            case Category.EVENT:
+                return ViewEvent.processSection(request, response, relation, env);
         }
 
         switch ( relation.getId() ) {
@@ -189,6 +201,10 @@ public class ViewCategory implements AbcAction {
                 return ViewBazaar.processSection(request, relation, env);
             case Constants.REL_SCREENSHOTS:
                 return ViewScreenshot.processSection(request, env);
+			case Constants.REL_SUBPORTALS:
+				return FMTemplateSelector.select("ViewCategory", "subportals", env, request);
+			case Constants.REL_EVENTS:
+				return ViewEvent.processSection(request, response, relation, env);
         }
 
         if ( category.getId()==Constants.CAT_ARTICLES ) {

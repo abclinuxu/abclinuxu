@@ -41,10 +41,10 @@ import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.scheduler.VariableFetcher;
-import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
 
+import cz.abclinuxu.security.Permissions;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -99,7 +99,8 @@ public class EditBazaar implements AbcAction {
         }
 
         // check permissions
-        if (user == null)
+		Permissions permissions = Tools.permissionsFor(user, new Relation(Constants.REL_BAZAAR));
+        if (user == null || !permissions.canCreate())
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
         if (ACTION_ADD.equals(action))
@@ -111,16 +112,26 @@ public class EditBazaar implements AbcAction {
         }
 
         Item ad = (Item) relation.getChild();
-        if (user.getId() != ad.getOwner() && !user.hasRole(Roles.BAZAAR_ADMIN))
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+		
+		permissions = Tools.permissionsFor(user, relation);
 
-        if (ACTION_EDIT.equals(action))
+        if (ACTION_EDIT.equals(action)) {
+			if (user.getId() != ad.getOwner() && !permissions.canModify())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             return actionEdit(request, env);
+		}
 
         if (ACTION_EDIT_STEP2.equals(action)) {
+			if (user.getId() != ad.getOwner() && !permissions.canModify())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             ActionProtector.ensureContract(request, EditBazaar.class, true, true, true, false);
             return actionEditStep2(request, response, env);
         }
+		
+		if (user.getId() != ad.getOwner() && !permissions.canDelete())
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (ACTION_REMOVE.equals(action))
             return FMTemplateSelector.select("EditBazaar", "remove", env, request);
@@ -140,6 +151,7 @@ public class EditBazaar implements AbcAction {
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
+		Relation parent = new Relation(Constants.REL_BAZAAR);
 
         Item item = new Item(0, Item.BAZAAR);
         Document document = DocumentHelper.createDocument();
@@ -164,13 +176,19 @@ public class EditBazaar implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         item.setOwner(user.getId());
         item.setCreated(new Date());
+		
+		Tools.sync(parent);
+		
+		Category cat = ((Category) parent.getChild());
+		item.setGroup(cat.getGroup());
+		item.setPermissions(cat.getPermissions());
 
         Versioning versioning = VersioningFactory.getVersioning();
         versioning.prepareObjectBeforeCommit(item, user.getId());
         persistence.create(item);
         versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
 
-        Relation relation = new Relation(new Category(Constants.CAT_BAZAAR), item, Constants.REL_BAZAAR);
+        Relation relation = new Relation(parent.getChild(), item, parent.getId());
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 

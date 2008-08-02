@@ -88,6 +88,7 @@ public class ShowObject implements AbcAction {
     /** children relation of Item, grouped by their type */
     public static final String VAR_CHILDREN_MAP = "CHILDREN";
     public static final String VAR_THREAD = "THREAD";
+    public static final String VAR_SUBPORTAL = "SUBPORTAL";
 
     Persistence persistence = PersistenceFactory.getPersistence();
 
@@ -109,6 +110,8 @@ public class ShowObject implements AbcAction {
 
         List parents = persistence.findParents(relation);
         env.put(VAR_PARENTS, parents);
+        
+        env.put(VAR_SUBPORTAL, Tools.getParentSubportal(parents));
 
         if (relation.getChild() instanceof Poll)
             return ViewPolls.processPoll(env, relation, request);
@@ -162,7 +165,7 @@ public class ShowObject implements AbcAction {
             case Item.DISCUSSION: {
                 if (Tools.isQuestion(relation)) {
                     ReadRecorder.log(item, Constants.COUNTER_READ, env);
-                    env.put(Constants.VAR_RSS, FeedGenerator.getForumFeedUrl());
+                    env.put(Constants.VAR_RSS, FeedGenerator.getForumFeedUrl(upper.getId()));
                 }
                 return FMTemplateSelector.select("ShowObject", "discussion", env, request);
             }
@@ -214,6 +217,9 @@ public class ShowObject implements AbcAction {
                 return ViewPersonality.processPersonality(request, relation, env);
             case Item.SCREENSHOT:
                 return ViewScreenshot.processItem(request, relation, env);
+			case Item.EVENT:
+            case Item.UNPUBLISHED_EVENT:
+				return ViewEvent.processItem(request, relation, env);
         }
 
         return null;

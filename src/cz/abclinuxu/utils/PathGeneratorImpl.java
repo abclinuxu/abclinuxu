@@ -20,7 +20,11 @@ package cz.abclinuxu.utils;
 
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.exceptions.InternalException;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.servlets.html.edit.EditArticle;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import java.io.File;
@@ -28,13 +32,14 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.regex.Matcher;
+import org.dom4j.Element;
 
 /**
  * Default implementation
  */
 public class PathGeneratorImpl implements PathGenerator {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(PathGeneratorImpl.class);
-    static Pattern reInvalidChars;
+    static public Pattern reInvalidChars;
     static {
         try {
             reInvalidChars = Pattern.compile("[^a-z0-9_-]");
@@ -67,16 +72,38 @@ public class PathGeneratorImpl implements PathGenerator {
         if (suffix == null || suffix.length() == 0)
             throw new IllegalArgumentException("File suffix must be specified!");
 
+		String id = String.valueOf(obj.getId());
         StringBuffer sb = new StringBuffer();
+		
         if (Type.SCREENSHOT.equals(usage))
             sb.append("images/screenshots/");
         else if (Type.ATTACHMENT.equals(usage))
             sb.append("data/prilohy/");
+		else if (Type.ARTICLE_ATTACHMENT.equals(usage)) {
+			sb.append("data");
+			
+			Relation rel = (Relation) obj;
+			String url = rel.getUrl();
+			
+			if(url == null) {
+				Item item = (Item) rel.getChild();
+				Element element = (Element) item.getData().selectSingleNode("/data/section_rid");
+				if (element == null)
+					return null;
+				int section_rid = Misc.parseInt(element.getText(), 0);
+				if (section_rid == 0)
+					return null;
+				
+				url = EditArticle.getUrl(item, section_rid, PersistenceFactory.getPersistence());
+			}
+			
+			sb.append(url);
+		}
         else
             throw new InternalException("Type " + usage + "not implemented!");
 
-        String id = String.valueOf(obj.getId());
-        sb.append(id.charAt(id.length()-1)).append('/').append(id.charAt(id.length()-2)).append('/');
+		if (!Type.ARTICLE_ATTACHMENT.equals(usage))
+			sb.append(id.charAt(id.length()-1)).append('/').append(id.charAt(id.length()-2)).append('/');
 
         File dir = new File(AbcConfig.calculateDeployedPath(sb.toString()));
         if (!dir.exists())
@@ -85,10 +112,15 @@ public class PathGeneratorImpl implements PathGenerator {
         if (!dir.isDirectory())
             throw new IOException("Supposed path " + dir.getAbsolutePath() + " is not directory!");
 
-        String filePrefix = id + "-" + prefix + "-";
+        String filePrefix = prefix;
         File file = null;
+		
         try {
-            file = File.createTempFile(filePrefix, suffix, dir);
+			if (!Type.ARTICLE_ATTACHMENT.equals(usage)) {
+				filePrefix = id + "-" + prefix + "-";
+				file = File.createTempFile(filePrefix, suffix, dir);
+			} else
+				file = new File(dir + "/" + filePrefix + suffix);
         } catch (IOException e) {
             log.error("Failed to create unique file! Prefix: "+filePrefix+", suffix: "+suffix);
             throw e;

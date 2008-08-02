@@ -220,7 +220,7 @@ public class ShowArticle implements AbcAction {
         }
 
         User user = (User) env.get(Constants.VAR_USER);
-        if ( user == null || ! user.hasRole(Roles.ARTICLE_ADMIN) )
+        if ( user == null || !Tools.permissionsFor(user, articleRelation).canModify())
             ReadRecorder.log(item, Constants.COUNTER_READ, env);
 
         String feedUrl = null;

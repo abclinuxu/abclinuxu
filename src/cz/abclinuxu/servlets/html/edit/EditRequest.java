@@ -28,7 +28,6 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
@@ -133,16 +132,20 @@ public class EditRequest implements AbcAction, Configurable {
         // check permissions
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if ( !user.hasRole(Roles.REQUESTS_ADMIN) )
+		
+		if ( action.equals(ACTION_DELETE) ) {
+			if ( !Tools.permissionsFor(user, relation).canDelete() )
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
+            ActionProtector.ensureContract(request, EditRequest.class, true, false, false, true);
+            return actionDelete(request, response, env);
+        }
+		
+        if ( !Tools.permissionsFor(user, relation).canModify() )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if ( action.equals(ACTION_MAIL) )
             return actionSendEmail(request, response, env);
-
-        if ( action.equals(ACTION_DELETE) ) {
-            ActionProtector.ensureContract(request, EditRequest.class, true, false, false, true);
-            return actionDelete(request, response, env);
-        }
 
         if ( action.equals(ACTION_DELIVER) ) {
             ActionProtector.ensureContract(request, EditRequest.class, true, false, false, true);
@@ -241,9 +244,15 @@ public class EditRequest implements AbcAction, Configurable {
                 text = prefix + "\n<br>\n" + text;
         }
 
+		Relation parent = new Relation(Constants.REL_REQUESTS);
         Item req = new Item(0,Item.REQUEST);
         if (user != null)
             req.setOwner(user.getId());
+		
+        Tools.sync(parent);
+        Category parentCat = (Category) parent.getChild();
+		req.setGroup(parentCat.getGroup());
+        req.setPermissions(parentCat.getPermissions());
 
         Document document = DocumentHelper.createDocument();
         DocumentHelper.makeElement(document,"/data/author").addText(author);
@@ -257,7 +266,7 @@ public class EditRequest implements AbcAction, Configurable {
 
         Persistence persistence = PersistenceFactory.getPersistence();
         persistence.create(req);
-        Relation relation = new Relation(new Category(Constants.CAT_REQUESTS),req,Constants.REL_REQUESTS);
+        Relation relation = new Relation(parent.getChild(), req, parent.getId());
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 

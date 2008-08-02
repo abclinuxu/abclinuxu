@@ -119,34 +119,34 @@ public class EditRelation implements AbcAction {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         relation = (Relation) persistence.findById(relation);
         env.put(VAR_CURRENT, relation);
-        GenericObject child = relation.getChild();
-        persistence.synchronize(child);
+        
+		Tools.sync(relation);
 
         // check permissions
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
         if ( action.equals(ACTION_LINK) ) {
-            if ( !canCreateLink(user) )
+            if ( !Tools.permissionsFor(user, relation).canModify())
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionLinkStep1(request,env);
         }
 
         if ( action.equals(ACTION_LINK_STEP2) ) {
-            if ( !canCreateLink(user) )
+            if ( !Tools.permissionsFor(user, relation).canModify())
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             ActionProtector.ensureContract(request, EditRelation.class, true, true, true, false);
             return actionLinkStep2(request, response, env);
         }
 
         if ( action.equals(ACTION_MOVE_ALL) ) {
-            if ( !canMoveAll(user) )
+            if ( !Tools.permissionsFor(user, relation).canModify())
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return FMTemplateSelector.select("EditRelation", "moveAll", env, request);
         }
 
         if ( action.equals(ACTION_MOVE_ALL_STEP2) ) {
-            if ( !canMoveAll(user) )
+            if ( !Tools.permissionsFor(user, relation).canModify())
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             ActionProtector.ensureContract(request, EditRelation.class, true, false, false, true);
             return actionMoveAll(request, response, env);
@@ -166,20 +166,20 @@ public class EditRelation implements AbcAction {
         }
 
         if ( action.equals(ACTION_MOVE) ) {
-            if ( !canMoveRelation(user, child) )
+            if ( !canMoveRelation(user, relation) )
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             ActionProtector.ensureContract(request, EditRelation.class, true, false, false, true);
             return actionMove(request, response, env);
         }
 
         if ( action.equals(ACTION_REMOVE) ) {
-            if (!canRemoveRelation(user, child))
+            if (!canRemoveRelation(user, relation))
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionRemove1(request, env);
         }
 
         if ( action.equals(ACTION_REMOVE_STEP2) ) {
-            if (!canRemoveRelation(user, child))
+            if (!canRemoveRelation(user, relation))
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             ActionProtector.ensureContract(request, EditRelation.class, true, true, true, false);
             return actionRemove2(request, response, env);
@@ -188,54 +188,40 @@ public class EditRelation implements AbcAction {
         throw new MissingArgumentException("Chybí parametr action!");
     }
 
-    private boolean canMoveAll(User user) {
-        return user.hasRole(Roles.CATEGORY_ADMIN);
-    }
-
-    private boolean canMoveRelation(User user, GenericObject obj) {
+    private boolean canMoveRelation(User user, Relation rel) {
+		GenericObject obj = rel.getChild();
         boolean canMove = false;
-        canMove |= user.hasRole(Roles.CAN_MOVE_RELATION);
-        if (obj instanceof Category)
-            canMove |= user.hasRole(Roles.CATEGORY_ADMIN);
+        canMove |= Tools.permissionsFor(user, rel.getUpper()).canModify();
         if (obj instanceof Item) {
-            switch (((Item) obj).getType()) {
-                case Item.DISCUSSION:
+            if (((Item) obj).getType() == Item.DISCUSSION)
                     canMove |= user.hasRole(Roles.DISCUSSION_ADMIN);
-                    break;
-                case Item.ARTICLE:
-                    canMove |= user.hasRole(Roles.ARTICLE_ADMIN);
-                    break;
-            }
         }
         return canMove;
     }
 
-    private boolean canRemoveRelation(User user, GenericObject obj) {
+    private boolean canRemoveRelation(User user, Relation rel) {
+		GenericObject obj = rel.getChild();
         boolean canRemove = false;
-        canRemove |= user.hasRole(Roles.CAN_REMOVE_RELATION);
+		
         if (obj instanceof Category)
-            canRemove |= user.hasRole(Roles.CATEGORY_ADMIN);
+            canRemove |= Tools.permissionsFor(user, rel.getUpper()).canModify();
+		
         if (obj instanceof Item) {
             switch (((Item) obj).getType()) {
                 case Item.DISCUSSION:
                     canRemove |= user.hasRole(Roles.DISCUSSION_ADMIN);
                     break;
-                case Item.ARTICLE:
-                    canRemove |= user.hasRole(Roles.ARTICLE_ADMIN);
-                    break;
                 case Item.SURVEY:
                     canRemove |= user.hasRole(Roles.SURVEY_ADMIN);
                     break;
+				default:
+                    canRemove |= Tools.permissionsFor(user, rel).canDelete();
             }
         }
         if (obj instanceof Poll)
             canRemove |= user.hasRole(Roles.POLL_ADMIN);
         // todo check ownership
         return canRemove;
-    }
-
-    private boolean canCreateLink(User user) {
-        return user.hasRole(Roles.CATEGORY_ADMIN);
     }
 
     private boolean canSetUrl(User user) {
@@ -449,7 +435,18 @@ public class EditRelation implements AbcAction {
         Relation relation = (Relation) env.get(VAR_CURRENT);
         int originalUpper = relation.getUpper();
         Relation destination = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED, Relation.class, params, request);
-        persistence.synchronize(destination);
+		Tools.sync(destination);
+        
+		boolean move = false;
+		if (relation.getChild() instanceof Item) {
+			Item item = (Item) relation.getChild();
+			if (item.getType() == Item.DISCUSSION)
+				 move = true;
+		} else if (Tools.permissionsFor(user, destination).canModify())
+			move = true;
+		
+		if (!move)
+			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         String originalUrl = relation.getUrl();
         if (originalUrl != null)
@@ -482,7 +479,7 @@ public class EditRelation implements AbcAction {
     private void updateRelationUri(String originalUrl, Relation relation, Relation destination, Map env, HttpServletRequest request) {
         CustomURLCache.getInstance().remove(originalUrl);
         SQLTool sqlTool = SQLTool.getInstance();
-        sqlTool.insertOldAddress(originalUrl, null, new Integer(relation.getId()));
+        sqlTool.insertOldAddress(originalUrl, null, new Integer(relation.getId()));	
 
         String dirUri = destination.getUrl();
         if (dirUri == null) {
@@ -517,17 +514,25 @@ public class EditRelation implements AbcAction {
             Relation childRelation = (Relation) iter.next();
             GenericObject child = childRelation.getChild();
             persistence.synchronize(child);
-            boolean move = false;
+            boolean move = false, verifyDestRights = true;
             if (child instanceof Item) {
                 int itemType = ((Item)child).getType();
-                if (VALUE_ARTICLES.equals(type) && itemType==Item.ARTICLE)
+                if (VALUE_ARTICLES.equals(type) && itemType==Item.ARTICLE) {
                     move = true;
-                if (VALUE_DISCUSSIONS.equals(type) && (itemType==Item.DISCUSSION || itemType == Item.FAQ))
+				}
+                if (VALUE_DISCUSSIONS.equals(type) && (itemType==Item.DISCUSSION || itemType == Item.FAQ)) {
+					verifyDestRights = false; // determined by roles
                     move = true;
+				}
                 if (VALUE_MAKES.equals(type) && (itemType==Item.HARDWARE || itemType==Item.SOFTWARE))
                     move = true;
-            } else if ( VALUE_CATEGORIES.equals(type) && child instanceof Category)
+            } else if ( VALUE_CATEGORIES.equals(type) && child instanceof Category)				
                 move = true;
+			
+			if (verifyDestRights) {
+				if ( !Tools.permissionsFor(user, destination).canModify())
+					return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			}
 
             if (move) {
                 String originalUrl = childRelation.getUrl();

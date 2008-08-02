@@ -11,7 +11,9 @@
                     <a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
                 </li>
             <#else>
+            <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
+            </#if>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
                 <li><a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
@@ -22,7 +24,7 @@
                 <form action="/hledani"><input type="text" class="text" name="dotaz" value="${ITEM.title}">
                     <input type="submit" class="button" value="Hledej">
                 </form>
-                <#if USER?exists && USER.hasRole("remove relation")>
+                <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canDelete()>
                     <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/ovladace")}">Smazat</a></li>
                 </#if>
             </#if>

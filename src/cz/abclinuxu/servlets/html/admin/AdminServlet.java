@@ -83,7 +83,7 @@ public class AdminServlet implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         if ( user == null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if ( ! user.isMemberOf(Constants.GROUP_ADMINI) )
+        if (!user.hasRole(Roles.ROOT))
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (ACTION_RECREATE_RSS.equals(action)) {
@@ -103,9 +103,6 @@ public class AdminServlet implements AbcAction {
 
         if (action == null)
             return FMTemplateSelector.select("Admin", "show", env, request);
-
-        if (!user.hasRole(Roles.ROOT))
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (ACTION_SWITCH_MAINTAINANCE.equals(action)) {
             ActionProtector.ensureContract(request, AdminServlet.class, true, false, false, true);

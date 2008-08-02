@@ -32,11 +32,14 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.scheduler.VariableFetcher;
+import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.parser.safehtml.WikiContentGuard;
 import cz.abclinuxu.utils.email.monitor.*;
+import cz.abclinuxu.utils.freemarker.Tools;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
@@ -77,7 +80,7 @@ public class EditContent implements AbcAction {
     public static final String ACTION_ALTER_PUBLIC = "alterPublic";
 
     /** item subtype that means that content can be edited by any logged user */
-    public static final String TYPE_PUBLIC_CONTENT = "public";
+    // public static final String TYPE_PUBLIC_CONTENT = "public"; // superseded by permissions
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -101,14 +104,15 @@ public class EditContent implements AbcAction {
             env.put(VAR_RELATION, relation);
         }
 
-        boolean manager = user.hasRole(Roles.CONTENT_ADMIN);
-        boolean canDerive = user.hasRole(Roles.CAN_DERIVE_CONTENT);
-        boolean publicContent = false;
-        if (relation.getChild() instanceof Item)
-            publicContent = TYPE_PUBLIC_CONTENT.equals(((Item) relation.getChild()).getSubType());
+		Permissions perms = Tools.permissionsFor(user, relation);
+        //boolean manager = user.hasRole(Roles.CONTENT_ADMIN);
+        //boolean canDerive = user.hasRole(Roles.CAN_DERIVE_CONTENT);
+        //boolean publicContent = false;
+        //if (relation.getChild() instanceof Item)
+        //    publicContent = TYPE_PUBLIC_CONTENT.equals(((Item) relation.getChild()).getSubType());
 
         if (ACTION_ADD_DERIVED_PAGE.equals(action)) {
-            if (manager || (publicContent && canDerive))
+            if (perms.canCreate())
                 return actionAddDerivedPage(request, env);
             else
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
@@ -116,14 +120,14 @@ public class EditContent implements AbcAction {
 
         if (ACTION_ADD_DERIVED_PAGE_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditContent.class, true, true, true, false);
-            if (manager || (publicContent && canDerive))
+            if (perms.canCreate())
                 return actionAddDerivedPageStep2(request, response, env);
             else
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
         }
 
         if (action.equals(ACTION_EDIT_PUBLIC_CONTENT)) {
-            if (manager || publicContent)
+            if (perms.canModify())
                 return actionEditPublicContent(request, env);
             else
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
@@ -131,25 +135,36 @@ public class EditContent implements AbcAction {
 
         if (action.equals(ACTION_EDIT_PUBLIC_CONTENT_STEP2)) {
             ActionProtector.ensureContract(request, EditContent.class, true, true, true, false);
-            if (manager || publicContent)
+            if (perms.canModify())
                 return actionEditPublicContent2(request, response, env);
             else
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
         }
 
-        if ( !manager )
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-        if ( ACTION_ADD.equals(action) )
+        if ( ACTION_ADD.equals(action) ) {
+			if (!perms.canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             return FMTemplateSelector.select("EditContent", "add", env, request);
+		}
 
         if ( action.equals(ACTION_ADD_STEP2) ) {
+			if (!perms.canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
             ActionProtector.ensureContract(request, EditContent.class, true, true, true, false);
             return actionAddStep2(request, response, env);
         }
+		
+		// Since the following operations may involve template changes
+		// right changes etc., we should check for the rights of the upper relation too
+		
+		if (!Tools.permissionsFor(user, relation.getUpper()).canModify() || !perms.canModify())
+			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        if ( action.equals(ACTION_EDIT) )
+        if ( action.equals(ACTION_EDIT) ) {
             return actionEditItem(request, env);
+		}
 
         if ( action.equals(ACTION_EDIT_STEP2) ) {
             ActionProtector.ensureContract(request, EditContent.class, true, true, true, false);
@@ -183,7 +198,9 @@ public class EditContent implements AbcAction {
         canContinue &= setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setURL(params, relation, env);
-        canContinue &= setClass(params, item);
+        
+        if (user.hasRole("root"))
+            canContinue &= setClass(params, item);
 
         if ( !canContinue  || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -206,6 +223,11 @@ public class EditContent implements AbcAction {
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
         MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
+		
+        Relation section = Tools.getParentSubportalSection(relation);
+        
+        if (section != null)
+            VariableFetcher.getInstance().refreshSubportalWikiPages(section);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -233,11 +255,16 @@ public class EditContent implements AbcAction {
         relation.setUpper(parentRelation.getId());
         Item toc = null;
 
+		if (parent instanceof GenericDataObject) {
+			GenericDataObject gdo = (GenericDataObject) parent;
+			item.setPermissions(gdo.getPermissions());
+			item.setGroup(gdo.getGroup());
+		}
+		
         if (parent instanceof Item) {
             Item parentItem = ((Item)parent);
+			
             if (parentItem.getType()==Item.CONTENT) {
-                if (TYPE_PUBLIC_CONTENT.equals(parentItem.getSubType()))
-                    item.setSubType(TYPE_PUBLIC_CONTENT);
 
                 Element element = (Element) parentItem.getData().selectSingleNode("/data/toc");
                 if (element != null) {
@@ -284,6 +311,11 @@ public class EditContent implements AbcAction {
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
         MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
+		
+        Relation section = Tools.getParentSubportalSection(relation);
+        
+        if (section != null)
+            VariableFetcher.getInstance().refreshSubportalWikiPages(section);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -339,6 +371,11 @@ public class EditContent implements AbcAction {
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
+		
+        Relation section = Tools.getParentSubportalSection(relation);
+        
+        if (section != null)
+            VariableFetcher.getInstance().refreshSubportalWikiPages(section);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -380,7 +417,8 @@ public class EditContent implements AbcAction {
         canContinue &= setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setURL(params, relation, env);
-        canContinue &= setClass(params, item);
+        if (user.hasRole("root"))
+            canContinue &= setClass(params, item);
         canContinue &= checkStartTime(params, item, env);
         canContinue &= ServletUtils.checkNoChange(item, origItem, env);
         String changesDescription = Misc.getRevisionString(params, env);
@@ -405,6 +443,11 @@ public class EditContent implements AbcAction {
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
+		
+        Relation section = Tools.getParentSubportalSection(relation);
+        
+        if (section != null)
+            VariableFetcher.getInstance().refreshSubportalWikiPages(section);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -419,11 +462,11 @@ public class EditContent implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item content = (Item) persistence.findById(relation.getChild());
 
-        String subType = content.getSubType();
-        if (TYPE_PUBLIC_CONTENT.equals(subType))
-            content.setSubType(null);
-        else if (subType==null)
-            content.setSubType(TYPE_PUBLIC_CONTENT);
+		int permissions = content.getPermissions();
+		
+		// switch the PERMISSION_CREATE bit
+		permissions ^= ((Permissions.PERMISSION_CREATE | Permissions.PERMISSION_MODIFY) << Permissions.PERMISSIONS_OTHERS_SHIFT);
+		content.setPermissions(permissions);
 
         persistence.update(content);
 
@@ -504,6 +547,7 @@ public class EditContent implements AbcAction {
      * @return false, if there is a major error.
      */
     private boolean setURL(Map params, Relation relation, Map env) {
+        User user = (User) env.get(Constants.VAR_USER);
         String url = (String) params.get(PARAM_URL);
         try {
             url = URLManager.enforceAbsoluteURL(url);
@@ -511,6 +555,20 @@ public class EditContent implements AbcAction {
             ServletUtils.addError(PARAM_URL, e.getMessage(), env, null);
             return false;
         }
+        
+        if (!user.hasRole(Roles.ROOT)) {
+            Relation parent = new Relation(relation.getUpper());
+            Tools.sync(parent);
+
+            String parentUrl = parent.getUrl();
+            int index = parentUrl.lastIndexOf('/');
+            parentUrl = parentUrl.substring(0, index);
+            if (!url.startsWith(parentUrl)) {
+                ServletUtils.addError(PARAM_URL, "Nemáte právo nastavit takové URL!", env, null);
+                return false;
+            }
+        }
+        
         relation.setUrl(url);
 
         if (!URLManager.isURLUnique(relation.getUrl(), relation.getId())) {

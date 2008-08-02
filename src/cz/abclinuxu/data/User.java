@@ -18,12 +18,15 @@
  */
 package cz.abclinuxu.data;
 
+import cz.abclinuxu.persistence.SQLTool;
 import org.dom4j.Document;
 import org.dom4j.Node;
 
 import java.util.*;
 
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.edit.EditGroup;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.LRUMap;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
@@ -186,8 +189,26 @@ public class User extends CommonObject {
      * @return true, if user is member of specified group.
      */
     public boolean isMemberOf(int group) {
-        return getData().selectSingleNode("/data/system/group[text()='"+group+"']")!=null;
+		return getData().selectSingleNode("/data/system/group[text()='"+group+"']")!=null;
     }
+	
+	/**
+     * @return true, if user is member of specified group.
+     */
+	public boolean isMemberOf(String groupName) {
+		List<Item> items = SQLTool.getInstance().findItemsWithType(Item.GROUP, 0, EditGroup.DEFAULT_MAX_NUMBER_OF_GROUPS);
+		
+		for (Item item : items) {
+			if (item.getTitle().equals(groupName))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean isRoot() {
+		return isMemberOf(Constants.GROUP_ADMINI);
+	}
 
     /**
      * Fills last seen comments for this user. This is cache to be filled from persistent storage,

@@ -18,6 +18,7 @@
  */
 package cz.abclinuxu.persistence.impl;
 
+import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
@@ -39,6 +40,12 @@ public class PropertiesConfig {
     public static boolean isSupported(GenericObject obj) {
         if (obj instanceof User)
             return true;
+		if (obj instanceof Category) {
+			switch (((Category) obj).getType()) {
+				case Category.SUBPORTAL:
+					return true;
+			}
+		}
         if (! (obj instanceof Item))
             return false;
         if (! obj.isInitialized())
@@ -48,6 +55,8 @@ public class PropertiesConfig {
             case Item.AUTHOR:
             case Item.BLOG:
             case Item.SCREENSHOT:
+			case Item.EVENT:
+            case Item.UNPUBLISHED_EVENT:
             case Item.SOFTWARE: return true;
         }
         return false;

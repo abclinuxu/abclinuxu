@@ -50,6 +50,7 @@ stránky kdykoliv při ruce.
                     <#elseif item.type=='story'>blog
                     <#elseif item.type=='author'>autor
                     <#elseif item.type=='series'>seriál
+                    <#elseif item.type=='event'>akce
                     </#if>
                 </td>
                 <td>

@@ -29,8 +29,14 @@ import cz.abclinuxu.servlets.html.edit.EditArticle;
 import cz.abclinuxu.servlets.html.edit.EditSeries;
 import cz.abclinuxu.servlets.html.edit.EditDiscussion;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.email.monitor.MonitorAction;
+import cz.abclinuxu.utils.email.monitor.MonitorPool;
+import cz.abclinuxu.utils.email.monitor.ObjectType;
+import cz.abclinuxu.utils.email.monitor.UserAction;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 
+import cz.abclinuxu.utils.freemarker.Tools;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Date;
@@ -47,10 +53,11 @@ import org.dom4j.Document;
 public class PoolMonitor extends TimerTask {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(PoolMonitor.class);
 
-    Category articlePool = new Category(Constants.CAT_ARTICLES_POOL);
     Category newsPool = new Category(Constants.CAT_NEWS_POOL);
+	List<Category> articlePools;
 
     public PoolMonitor() {
+		gatherArticlePools();
     }
 
     /**
@@ -63,70 +70,76 @@ public class PoolMonitor extends TimerTask {
             Date now = new Date();
             boolean articlesUpdated = false, newsUpdated = false;
 
-            List children = articlePool.getChildren();
-            for (Iterator iter = children.iterator(); iter.hasNext();) {
-                Relation relation = (Relation) iter.next();
-                if ( ! (relation.getChild() instanceof Item) )
-                    continue;
-                Item item = (Item) relation.getChild();
-                persistence.synchronize(item);
-                if ( item.getType() != Item.ARTICLE)
-                    continue;
+			for(Category articlePool : articlePools) {
+				List children = articlePool.getChildren();
+				for (Iterator iter = children.iterator(); iter.hasNext();) {
+					Relation relation = (Relation) iter.next();
+					if ( ! (relation.getChild() instanceof Item) )
+						continue;
+					Item item = (Item) relation.getChild();
+					persistence.synchronize(item);
+					if ( item.getType() != Item.ARTICLE)
+						continue;
 
-                if ( now.after(item.getCreated()) ) {
-                    Document document = item.getData();
-                    // move article to selected article section
-                    Element element = (Element) document.selectSingleNode("/data/section_rid");
-                    if (element == null)
-                        continue;
-                    int section_rid = Misc.parseInt(element.getText(), 0);
-                    if (section_rid == 0) {
-                        log.error("bug", new Exception());
-                        continue;
-                    }
+					if ( now.after(item.getCreated()) ) {
+						Document document = item.getData();
+						// move article to selected article section
+						Element element = (Element) document.selectSingleNode("/data/section_rid");
+						if (element == null)
+							continue;
+						int section_rid = Misc.parseInt(element.getText(), 0);
+						if (section_rid == 0) {
+							log.error("bug", new Exception());
+							continue;
+						}
 
-                    Relation section = (Relation) persistence.findById(new Relation(section_rid));
-                    element.detach();
-                    persistence.update(item);
+						Relation section = (Relation) persistence.findById(new Relation(section_rid));
+						element.detach();
+						persistence.update(item);
 
-                    if (relation.getUrl() == null) {
-                        String url = EditArticle.getUrl(item, section.getId(), persistence);
-                        if (url != null) {
-                            relation.setUrl(url);
-                            persistence.update(relation);
-                        }
-                    }
+						if (relation.getUrl() == null) {
+							String url = EditArticle.getUrl(item, section.getId(), persistence);
+							if (url != null) {
+								relation.setUrl(url);
+								persistence.update(relation);
+							}
+						}
 
-                    // link article to article series, if it is set
-                    element = (Element) document.selectSingleNode("/data/series_rid");
-                    if (element != null) {
-                        int series_rid = Misc.parseInt(element.getText(), 0);
-                        if (series_rid == 0) {
-                            log.error("bug", new Exception());
-                            continue;
-                        }
+						// link article to article series, if it is set
+						element = (Element) document.selectSingleNode("/data/series_rid");
+						if (element != null) {
+							int series_rid = Misc.parseInt(element.getText(), 0);
+							if (series_rid == 0) {
+								log.error("bug", new Exception());
+								continue;
+							}
 
-                        Relation seriesRelation = (Relation) persistence.findById(new Relation(series_rid));
-                        Item series = (Item) persistence.findById(seriesRelation.getChild());
-                        List articles = series.getData().getRootElement().elements("article");
-                        EditSeries.addArticleToSeries(item, relation, articles);
-                        persistence.update(series);
-                    }
+							Relation seriesRelation = (Relation) persistence.findById(new Relation(series_rid));
+							Item series = (Item) persistence.findById(seriesRelation.getChild());
+							List articles = series.getData().getRootElement().elements("article");
+							EditSeries.addArticleToSeries(item, relation, articles);
+							persistence.update(series);
+						}
 
-                    relation.getParent().removeChildRelation(relation);
-                    relation.setParent(section.getChild());
-                    relation.setUpper(section.getId());
-                    persistence.update(relation);
-                    relation.getParent().addChildRelation(relation);
+						relation.getParent().removeChildRelation(relation);
+						relation.setParent(section.getChild());
+						relation.setUpper(section.getId());
+						persistence.update(relation);
+						relation.getParent().addChildRelation(relation);
 
-                    if (item.getData().selectSingleNode("/data/forbid_discussions") == null)
-                        EditDiscussion.createEmptyDiscussion(relation, new User(Constants.USER_REDAKCE), persistence);
+						if (item.getData().selectSingleNode("/data/forbid_discussions") == null)
+							EditDiscussion.createEmptyDiscussion(relation, new User(Constants.USER_REDAKCE), persistence);
+                        
+                        String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
+                        MonitorAction action = new MonitorAction("", UserAction.ADD, ObjectType.ARTICLE, relation, absoluteUrl);
+                        MonitorPool.scheduleMonitorAction(action);
 
-                    articlesUpdated = true;
-                }
-            }
+						articlesUpdated = true;
+					}
+				}
+			}
 
-            children = newsPool.getChildren();
+            List children = newsPool.getChildren();
             for (Iterator iter = children.iterator(); iter.hasNext();) {
                 Relation relation = (Relation) iter.next();
                 if ( ! (relation.getChild() instanceof Item) )
@@ -162,6 +175,30 @@ public class PoolMonitor extends TimerTask {
             log.error("Object pool monitor failed!", e);
         }
     }
+	
+	public void gatherArticlePools() {
+		Category subportals = new Category(Constants.CAT_SUBPORTALS);
+		List<Relation> portals = subportals.getChildren();
+		
+		articlePools = new ArrayList(portals.size()+1);
+		
+		Tools.syncList(portals);
+		
+		for (Relation portal : portals) {
+			Category cat = (Category) portal.getChild();
+			int poolid = Misc.parseInt(Tools.xpath(cat, "/data/article_pool"), 0);
+			
+			if (poolid == 0)
+				continue;
+			
+			Relation r = new Relation(poolid);
+			Tools.sync(r);
+			
+			articlePools.add((Category) r.getChild());
+		}
+		
+		articlePools.add(new Category(Constants.CAT_ARTICLES_POOL));
+	}
 
     private String getJobName() {
         return "PoolMonitor";

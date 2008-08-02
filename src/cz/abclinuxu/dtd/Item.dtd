@@ -215,6 +215,12 @@
 <!ELEMENT sender (#PCDATA)> <!-- optional name of the sender -->
 <!ELEMENT uid (#PCDATA)> <!-- user account id of sender, if he is logged in -->
 
+<!-- Item.EVENT -->
+<!ELEMENT data (descriptionShort, description?, icon?)>
+<!ELEMENT description (#PCDATA)> <!-- long description of the event -->
+<!ELEMENT descriptionShort (#PCDATA)> <!-- short description displayed as a perex and in the list of events -->
+<!ELEMENT icon (#PCDATA)> <!-- optional event logo -->
+
 <!-- common -->
 
 <!ELEMENT versioning (title?, properties*, revisions?)> <!-- mandatory element under root that contains versioning specific data -->

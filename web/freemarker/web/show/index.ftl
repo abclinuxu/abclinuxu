@@ -73,43 +73,13 @@
 
 <#flush>
 
-<#assign FORUM = VARS.getFreshQuestions(USER?if_exists)>
-<#if (FORUM?size > 0)>
-  <#assign FORUM=TOOL.analyzeDiscussions(FORUM)>
-  <h1 class="st_nadpis"><a href="/poradna" title="Celá Poradna, seznam diskuzních fór">Poradna</a></h1>
-
-  <table class="ds">
-    <thead>
-      <tr>
-        <td class="td-nazev">Dotaz</td>
-        <td class="td-meta">Stav</td>
-        <td class="td-meta">Reakcí</td>
-        <td class="td-datum">Poslední</td>
-      </tr>
-    </thead>
-    <tbody>
-     <#list FORUM as diz>
-      <tr>
-        <td><a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,60,"...")}</a></td>
-        <td class="td-meta"><@lib.showDiscussionState diz /></td>
-        <td class="td-meta">${diz.responseCount}</td>
-        <td class="td-datum">${DATE.show(diz.updated,"CZ_SHORT")}</td>
-      </tr>
-     </#list>
-    </tbody>
-  </table>
-
-  <div style="margin:0.5em 0 0 0; float:right">
-     <#--<@lib.advertisement id="arbo-full" />-->
-     <@lib.advertisement id="gg-hp-blogy" />
-  </div>
-
-  <ul>
-    <li><a href="/poradna">Položit dotaz</a></li>
-    <li><a href="/History?type=discussions&amp;from=${FORUM?size}&amp;count=20">Starší dotazy</a></li>
-    <li><a href="/faq">Časté dotazy (FAQ)</a></li>
-  </ul>
-</#if>
+<#assign forums=TOOL.getUserForums(USER)>
+<#list forums.entrySet() as forum>
+    <#if forum.value gt 0>
+        <div style="clear: right"></div>
+        <@lib.showForum forum.key, forum.value, true/>
+    </#if>
+</#list>
 
 <#assign STORIES=VARS.getFreshStories(USER?if_exists)>
 <#if (STORIES?size>0) >

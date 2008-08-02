@@ -1,5 +1,5 @@
 <#if USER?exists>
-    <#if USER.id==ITEM.owner || USER.hasRole("attachment admin")>
+    <#if USER.id==ITEM.owner || TOOL.permissionsFor(USER, RELATION).canModify()>
     <#assign plovouci_sloupec>
 
         <div class="s_nadpis">Nástroje</div>
@@ -9,10 +9,12 @@
                 <li>
                     <a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}" rel="nofollow">Upravit</a>
                 </li>
-                <li>
-                    <a href="${URL.make("/edit/"+RELATION.id+"?action=rm2"+TOOL.ticket(USER, false))}" title="Smaž"
-                    onClick="javascript:return confirm('Opravdu chcete smazat tento desktop?');">Smazat</a>
-                </li>
+                <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
+                    <li>
+                        <a href="${URL.make("/edit/"+RELATION.id+"?action=rm2"+TOOL.ticket(USER, false))}" title="Smaž"
+                        onClick="javascript:return confirm('Opravdu chcete smazat tento desktop?');">Smazat</a>
+                    </li>
+                </#if>
             </ul>
         </div>
     </#assign>

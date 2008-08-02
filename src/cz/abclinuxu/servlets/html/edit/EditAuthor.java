@@ -22,12 +22,13 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
-import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
+import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -81,6 +82,9 @@ public class EditAuthor implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
+		Relation parent = new Relation(Constants.REL_AUTHORS);
+		
+		persistence.synchronize(parent);
 
         if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
@@ -94,15 +98,21 @@ public class EditAuthor implements AbcAction {
         if (user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
-        if (!user.hasRole(Roles.ARTICLE_ADMIN))
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-        if (action.equals(ACTION_ADD))
-            return actionAddStep1(request, response, env);
+		Permissions permissions = Tools.permissionsFor(user, parent);
+		
+        if (action.equals(ACTION_ADD)) {
+			if (!permissions.canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
+			return actionAddStep1(request, response, env);
+		}
 
         if (action.equals(ACTION_ADD_STEP2)) {
-            ActionProtector.ensureContract(request, EditAuthor.class, true, true, true, false);
-            return actionAddStep2(request, response, env, true);
+			if (!permissions.canCreate())
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+			
+			ActionProtector.ensureContract(request, EditAuthor.class, true, true, true, false);
+			return actionAddStep2(request, response, env, true);
         }
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
@@ -112,6 +122,13 @@ public class EditAuthor implements AbcAction {
         persistence.synchronize(relation);
         persistence.synchronize(relation.getChild());
         env.put(VAR_RELATION,relation);
+		
+		// since we're editing an existing item
+		// we'll check permissions against that
+		permissions = Tools.permissionsFor(user, relation);
+		
+		if (!permissions.canModify())
+			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (action.equals(ACTION_EDIT))
             return actionEditStep1(request, env);
@@ -132,12 +149,19 @@ public class EditAuthor implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
+		Relation parent = new Relation(Constants.REL_AUTHORS);
+		
+		Tools.sync(parent);
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         Item item = new Item(0, Item.AUTHOR);
         item.setData(document);
         item.setOwner(user.getId());
+		
+		Category cat = (Category) parent.getChild();
+		item.setGroup(cat.getGroup());
+		item.setPermissions(cat.getPermissions());
 
         boolean canContinue = true;
         canContinue &= setSurname(params, root, env);
@@ -161,7 +185,7 @@ public class EditAuthor implements AbcAction {
         item.setTitle(Tools.getPersonName(item));
         persistence.create(item);
 
-        Relation relation = new Relation(new Category(Constants.CAT_AUTHORS), item, Constants.REL_AUTHORS);
+        Relation relation = new Relation(parent.getChild(), item, parent.getId());
         String url = proposeAuthorsUrl(root);
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);

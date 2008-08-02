@@ -1,3 +1,10 @@
+<#import "../macros.ftl" as lib>
+<#if SUBPORTAL?exists>
+    <#assign plovouci_sloupec>
+        <@lib.showSubportal SUBPORTAL, true/>
+    </#assign>
+</#if>
+
 <#include "../header.ftl">
 
 <#assign autors=TOOL.createAuthorsForArticle(RELATION.getChild()),
@@ -9,9 +16,15 @@
 
 <p class="meta-vypis">
     ${DATE.show(ITEM.created,"SMART_DMY")} |
-    <#list autors as autor>
-        <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
-    </#list>
+    <#if autors?size gt 0>
+      <#list autors as autor>
+          <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
+      </#list>
+      <#assign subportal_article=false>
+    <#else>
+        <@lib.showUser TOOL.createUser(ITEM.owner)/>
+        <#assign subportal_article=true>
+    </#if>
 </p>
 
 <#if inPool>
@@ -26,35 +39,50 @@
     </h2>
 </#if>
 
-<#if USER?exists && USER.hasRole("article admin")>
+<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
     <p>
-        <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
-        <#if SERIES?exists>
-            <#if ! inPool>
-                <a href="${URL.noPrefix("/serialy/edit/"+SERIES.series.id+"?action=rmArticle&amp;articleRid="+RELATION.id+TOOL.ticket(USER, false))}">Vyřadit ze seriálu</a>
-            </#if>
-        <#else>
-            <#if inPool>
-                <a href="${URL.noPrefix("/clanky/edit/"+RELATION.id+"?action=addSeries")}">Přiřadit k seriálu</a>
+        <a href="${URL.noPrefix("/clanky/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
+
+        <#if autors?size gt 0>
+            <#if SERIES?exists>
+                <#if ! inPool>
+                    <a href="${URL.noPrefix("/serialy/edit/"+SERIES.series.id+"?action=rmArticle&amp;articleRid="+RELATION.id+TOOL.ticket(USER, false))}">Vyřadit ze seriálu</a>
+                </#if>
             <#else>
-                <a href="${URL.noPrefix("/serialy/edit?action=addArticle&amp;articleRid="+RELATION.id)}">Přiřadit k seriálu</a>
+                <#if inPool>
+                    <a href="${URL.noPrefix("/clanky/edit/"+RELATION.id+"?action=addSeries")}">Přiřadit k seriálu</a>
+                <#else>
+                    <a href="${URL.noPrefix("/serialy/edit?action=addArticle&amp;articleRid="+RELATION.id)}">Přiřadit k seriálu</a>
+                </#if>
+            </#if>
+            <#if !CHILDREN.royalties?exists>
+                <b><a class="error" href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vložit honorář</a></b>
+            <#else>
+                <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vložit honorář</a>
+                <#list CHILDREN.royalties as honorar>
+                    <a href="${URL.make("/honorare/"+honorar.id+"?action=edit")}">Upravit honorář</a>
+                </#list>
+            </#if>
+            <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&amp;url=/EditRelation&action=move&amp;rid="+RELATION.id)}">Přesunout</a>
+            <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
+                <a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=/clanky&amp;rid="+RELATION.id)}">Smazat</a>
+            </#if>
+        <#else>
+            <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
+                <a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=&amp;rid="+RELATION.id)}">Smazat</a>
+            </#if>
+            <#if USER.hasRole("root") && subportal_article>
+                <a href="${URL.noPrefix("/clanky/edit/"+RELATION.id+"?action=toggleHP")}"><#if ITEM.subType?exists && ITEM.subType=="SUBPORTAL">Zobrazovat<#else>Nezobrazovat</#if> na HP</a>
             </#if>
         </#if>
-        <#if !CHILDREN.royalties?exists>
-            <b><a class="error" href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vložit honorář</a></b>
-        <#else>
-            <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vložit honorář</a>
-            <#list CHILDREN.royalties as honorar>
-                <a href="${URL.make("/honorare/"+honorar.id+"?action=edit")}">Upravit honorář</a>
-            </#list>
-        </#if>
+
         <#if !CHILDREN.poll?exists>
             <a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+RELATION.id)}">Vytvoř anketu</a>
         </#if>
-        <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&amp;url=/EditRelation&action=move&amp;rid="+RELATION.id)}">Přesunout</a>
-        <a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=/clanky&amp;rid="+RELATION.id)}">Smazat</a>
         <a href="${URL.make("/"+RELATION.id+".docb")}">Docbook</a>
         <a href="${URL.make("/edit/"+RELATION.id+"?action=showTalk")}">Rozhovor</a>
+        <a href="${URL.make("/inset/"+RELATION.id+"?action=addFile")}">Přidat přílohy</a>
+        <a href="${URL.make("/inset/"+RELATION.id+"?action=manage")}">Správa příloh</a>
     </p>
 </#if>
 
@@ -127,6 +155,27 @@ ${TOOL.render(TEXT,USER?if_exists)}
         </#list>
     </#if>
 </div>
+
+<#assign attachments=TOOL.attachmentsFor(ITEM)>
+<#if (attachments?size > 0)>
+    <#assign wrote_div=false>
+
+        <#list attachments as attachment>
+            <#assign hidden=TOOL.xpath(attachment.child, "/data/object/@hidden")?default("false")>
+            <#if hidden=="false" || TOOL.permissionsFor(USER, RELATION).canModify()>
+                <#if !wrote_div>
+                    <div class="ds_attachments"><span>Přílohy:</span><ul>
+                    <#assign wrote_div=true>
+                </#if>
+
+                <li>
+                <a href="${TOOL.xpath(attachment.child, "/data/object/@path")}">${TOOL.xpath(attachment.child, "/data/object/originalFilename")}</a>
+                (${TOOL.xpath(attachment.child, "/data/object/size")} bytů) <#if hidden=="true"><i>skrytá</i></#if></li>
+            </#if>
+        </#list>
+
+        <#if wrote_div></ul></div></#if>
+</#if>
 
 <p><b>Nástroje</b>: <a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print">Tisk</a>,
 <a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print&amp;noDiz">Tisk bez diskuse</a>

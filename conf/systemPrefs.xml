@@ -104,6 +104,7 @@
                         <node name="Tools">
                             <map>
                                 <entry key="RE_REMOVE_TAGS" value="&lt;(/)?[a-zA-Z][^&gt;]*&gt;"/>
+                                <entry key="RE_REMOVE_PARAGRAPHS" value="(&lt;p&gt;|&lt;/p&gt;)"/>
                                 <entry key="RE_VLNKA" value="((^|\s)\w)\s+(\S+)"/>
                                 <entry key="REPLACEMENT_VLNKA" value="$1&amp;nbsp;$3"/>
                                 <entry key="RE_AMPERSAND" value="&amp;(?!#?[a-zA-Z0-9]+;)" />
@@ -197,6 +198,11 @@
                                     <entry key="action.remove" value="smazal polozku ve slovniku"/>
                                 </map>
                             </node>
+                            <node name="ArticleDecorator">
+                                <map>
+                                    <entry key="subject" value="AbcMonitor: vydani clanku"/>
+                                </map>
+                            </node>
                         </node>
                         <node name="forum">
                             <map/>
@@ -217,10 +223,10 @@
                         <node name="FeedGenerator">
                             <map>
                                 <entry key="clanky" value="auto/abc.rss"/>
-                                <entry key="diskuse" value="auto/diskuse.rss"/>
                                 <entry key="ovladace" value="auto/ovladace.rss"/>
                                 <entry key="hardware" value="auto/hardware.rss"/>
                                 <entry key="software" value="auto/software.rss"/>
+                                <entry key="diskuse" value="auto/diskuse.rss"/>
                                 <entry key="" value="auto/desktopy.rss"/>
                                 <entry key="zpravicky" value="auto/zpravicky.rss"/>
                                 <entry key="faq" value="auto/faq.rss"/>
@@ -240,6 +246,15 @@
                                 <map>
                                     <entry key="165272" value="auto/distribucni-novinky.rss"/>
                                     <entry key="4" value="auto/jaderne-noviny.rss"/>
+                                </map>
+                            </node>
+                            <node name="forums">
+                                <map>
+                                    <entry key="49490" value="auto/poradny/linux.rss"/>
+                                    <entry key="192820" value="auto/poradny/programovani.rss"/>
+                                    <entry key="222492" value="auto/poradny/hardware.rss"/>
+                                    <entry key="192836" value="auto/poradny/unix.rss"/>
+                                    <entry key="222493" value="auto/poradny/databaze.rss"/>
                                 </map>
                             </node>
                         </node>
@@ -333,11 +348,11 @@
                             <entry key="relations.item.by.type" value="select R.cislo from polozka P, relace R, spolecne S where P.typ=? and P.cislo=R.potomek and typ_potomka='P' and S.typ='P' and S.cislo=R.potomek"/>
 			                <entry key="relations.item.by.type.with.filters" value="select distinct R.cislo from polozka P, relace R, vlastnost V, spolecne S where P.typ=? and P.cislo=R.potomek and R.typ_potomka='P' and S.cislo=R.potomek and S.typ='P'"/>
                             <entry key="relations.categories" value="select R.cislo from kategorie K, relace R, spolecne S where K.cislo=R.potomek and typ_potomka='K' and S.cislo=R.potomek and S.typ='K'"/>
-                            <entry key="relations.discussion" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek, spolecne S where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3 and S.cislo=R.potomek and S.typ='P'"/>
+                            <entry key="relations.discussion" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek, spolecne S where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3 and S.cislo=R.potomek and S.typ='P' and P.podtyp = 'question'"/>
                             <entry key="relations.discussion.in.section" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek, spolecne S where R.predchozi=? and P.typ=3 and S.cislo=R.potomek and S.typ='P'"/>
                             <entry key="relations.discussion.last.seen.by.user" value="select R.cislo from relace R, posledni_komentar K, spolecne S where R.typ_potomka='P' and R.potomek=K.diskuse and S.typ='P' and S.cislo=K.diskuse and K.kdo=?" />
                             <entry key="relations.article" value="select R.cislo from polozka P, relace R, kategorie K, spolecne S where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&lt;now()"/>
-                            <entry key="relations.article.on.index" value="select R.cislo from polozka P, relace R, kategorie K, spolecne S where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and (P.podtyp!='NOTONINDEX' or P.podtyp is null) and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&lt;now()"/>
+                            <entry key="relations.article.on.index" value="select R.cislo from polozka P, relace R, kategorie K, spolecne S where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and ((P.podtyp!='NOTONINDEX' and P.podtyp!='SUBPORTAL') or P.podtyp is null) and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&lt;now()"/>
                             <entry key="relations.article.within.period" value="select R.cislo from polozka P, relace R, kategorie K, spolecne S where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&gt;? and S.vytvoreno&lt;?"/>
                             <entry key="relations.article.by.author" value="select R.cislo from relace R, polozka P, vlastnost V, kategorie K, spolecne S where R.typ_potomka='P' and R.potomek=P.cislo and P.typ=2 and V.typ_predka='P' and P.cislo=V.predek and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and V.typ='author' and V.hodnota=? and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&lt;now()"/>
                             <entry key="relations.news" value="select R.cislo from polozka P, relace R, spolecne S where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek and S.typ='P' and S.cislo=P.cislo"/>
@@ -399,8 +414,8 @@
                             <entry key="change.item.owner" value="update spolecne set pridal=?, zmeneno=zmeneno where typ='P' and pridal=?"/>
                             <entry key="change.record.owner" value="update spolecne set pridal=?, zmeneno=zmeneno where typ='Z' and pridal=?"/>
                             <entry key="change.category.owner" value="update spolecne set pridal=?, zmeneno=zmeneno where typ='K' and pridal=?"/>
-                            <entry key="change.property.owner" value="update vlastnost set hodnota=? where hodnota=? and (typ='user' or typ='used_by' or typ='favourited_by')"/>
-                            <entry key="count.properties.by.user" value="select count(*) from vlastnost where hodnota=? and (typ='user' or typ='used_by' or typ='favourited_by')"/>
+                            <entry key="change.property.owner" value="update vlastnost set hodnota=? where hodnota=? and (typ='user' or typ='used_by' or typ='favourited_by' or typ='member')"/>
+                            <entry key="count.properties.by.user" value="select count(*) from vlastnost where hodnota=? and (typ='user' or typ='used_by' or typ='favourited_by' or typ='member')"/>
                             <entry key="tag.log.action" value="insert into stitky_log (akce,kdy,stitek,autor,ip,typ,cislo,titulek) values (?,NULL,?,?,?,?,?,?)"/>
                             <entry key="tag.get.creator" value="select ip,autor from stitky_log where stitek=? and akce='add' order by kdy desc limit 1"/>
                             <entry key="most.commented.relations" value="select RA.cislo, count(*) from relace RZ, zaznam Z, komentar K, relace RA, polozka PA, relace RD, polozka PD where RA.potomek = PA.cislo and RD.potomek = PD.cislo and RD.predchozi = RA.cislo and PA.typ=? and PD.typ=3 and RD.typ_potomka = 'P' and RA.typ_potomka = 'P' and RZ.predchozi = RD.cislo and RZ.typ_potomka='Z' and RZ.potomek = Z.cislo and Z.typ=4 and K.zaznam = Z.cislo group by RZ.cislo order by 2"/>
@@ -572,6 +587,16 @@
                             <entry key="default.jobscz" value="10"/>
                             <entry key="section.cache.rebuild.frequency" value="10" />
                         </map>
+                        <node name="forums">
+                            <map>
+                                <entry key="order" value="49490,192836,222493,192820,222492"/>
+                                <entry key="49490" value="10"/><!-- linuxova poradna -->
+                                <entry key="192820" value="5"/><!-- programatorska poradna -->
+                                <entry key="222493" value="5"/><!-- databazova poradna -->
+                                <entry key="222492" value="5"/><!-- hardwarova poradna -->
+                                <entry key="192836" value="5"/><!-- unixova poradna -->
+                            </map>
+                        </node>
                     </node>
                     <node name="UpdateUserScore">
                         <map>
@@ -713,6 +738,7 @@
                                     <entry key="regexp.invalid.blogname" value="[^a-zA-Z0-9_]|(^[0-9_])"/>
                                     <entry key="max.story.title.length" value="60"/>
                                     <entry key="max.story.word.count" value="150"/>
+                                    <entry key="max.micro.story.character.count" value="200"/>
                                     <entry key="forbidden.category.names" value="export,archiv,souhrn"/>
                                 </map>
                             </node>

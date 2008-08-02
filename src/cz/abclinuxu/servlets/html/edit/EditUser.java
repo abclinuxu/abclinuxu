@@ -183,6 +183,7 @@ public class EditUser implements AbcAction {
     public static final String ACTION_REMOVE_MERGE = "removeMerge";
     public static final String ACTION_REMOVE_MERGE_STEP2 = "removeMerge2";
     public static final String ACTION_REMOVE_MERGE_STEP3 = "removeMerge3";
+	public static final String ACTION_TOGGLE_FORUM_HP = "toggleForumHP";
     public static final String ACTION_FORGOTTEN_PASSWORD = "forgottenPassword";
     public static final String ACTION_FORGOTTEN_PASSWORD_STEP2 = "forgottenPassword2";
     public static final String ACTION_CHANGE_FORGOTTEN_PASSWORD = "changeForgottenPassword";
@@ -232,6 +233,14 @@ public class EditUser implements AbcAction {
         // all other actions require user to be logged in and to have rights for this action
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
+		
+		if ( action.equals(ACTION_ADD_GROUP_MEMBER) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
+			
+			// permission verifiaction is performed in the function
+            return actionAddToGroup(request, response, env);
+        }
+		
         if ( ! (user.getId()==managed.getId() || user.hasRole(Roles.USER_ADMIN)) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -300,6 +309,11 @@ public class EditUser implements AbcAction {
             ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
             return actionRemoveFromBookmarks(request, response, env);
         }
+		
+		if ( action.equals(ACTION_TOGGLE_FORUM_HP) ) {
+			ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
+			return actionToggleForumHP(request, response, env);
+		}
 
         if ( action.equals(ACTION_EDIT_SUBSCRIPTION) )
             return actionEditSubscription(request, env);
@@ -349,11 +363,6 @@ public class EditUser implements AbcAction {
         if ( action.equals(ACTION_GRANT_ROLES_STEP3) ) {
             ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
             return actionGrant3(request, response, env);
-        }
-
-        if ( action.equals(ACTION_ADD_GROUP_MEMBER) ) {
-            ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
-            return actionAddToGroup(request, response, env);
         }
 
         if ( action.equals(ACTION_REMOVE_MERGE) ) {
@@ -768,9 +777,9 @@ public class EditUser implements AbcAction {
         if ( node!=null )
             params.put(PARAM_COOKIE_VALIDITY, node.getText());
 
-        node = document.selectSingleNode("/data/settings/index_discussions");
-        if ( node!=null )
-            params.put(PARAM_DISCUSSIONS_COUNT, node.getText());
+        //node = document.selectSingleNode("/data/settings/index_discussions");
+        //if ( node!=null )
+        //    params.put(PARAM_DISCUSSIONS_COUNT, node.getText());
 
         node = document.selectSingleNode("/data/settings/index_screenshots");
         if ( node!=null )
@@ -1375,22 +1384,88 @@ public class EditUser implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         Persistence persistence = PersistenceFactory.getPersistence();
+		User user = (User) env.get(Constants.VAR_USER);
 
-        int group = Misc.parseInt((String) params.get(EditGroup.PARAM_GROUP), 0);
-        if (group==0)
+        int gid = Misc.parseInt((String) params.get(EditGroup.PARAM_GROUP), 0);
+        if (gid==0)
             return ServletUtils.showErrorPage("Chybí číslo skupiny!",env,request);
+		Item group = new Item(gid);
+		Tools.sync(group);
+		
+		if (!user.hasRole(Roles.ROOT) && user.getId() != group.getOwner())
+			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         Element system = (Element) managed.getData().selectSingleNode("/data/system");
-        system.addElement("group").setText(Integer.toString(group));
+		
+		if (system == null) {
+			Element data = (Element) managed.getData().selectSingleNode("/data");
+			system = data.addElement("system");
+		}
+        system.addElement("group").setText(Integer.toString(gid));
         persistence.update(managed);
 
-        User user = (User) env.get(Constants.VAR_USER);
-        AdminLogger.logEvent(user,"vlozil uzivatele "+managed.getId()+" do skupiny "+group);
+        AdminLogger.logEvent(user,"vlozil uzivatele "+managed.getId()+" do skupiny "+gid);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/Group?action=members&gid="+group);
+        urlUtils.redirect(response, "/Group?action=members&gid="+gid);
         return null;
     }
+	
+	protected String actionToggleForumHP(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+		Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user = (User) env.get(VAR_MANAGED);
+		Persistence persistence = PersistenceFactory.getPersistence();
+		int rid = Misc.parseInt((String) params.get(PARAM_RID), 0);
+        
+        Map<Integer, Integer> forums = Tools.getUserForums(user);
+        Map<Integer, Integer> defaultForums = VariableFetcher.getInstance().getMainForums();
+        
+        boolean isSystem = defaultForums.containsKey(rid);
+        
+        Element forum = (Element) user.getData().selectSingleNode("/data/forums/forum[text()='"+rid+"']");
+        
+        if (forums.containsKey(rid) && forums.get(rid) > 0) {
+            // turn the forum off
+            if (forum != null) {
+                if (isSystem)
+                    forum.addAttribute("questions", "0");
+                else
+                    forum.detach();
+            } else {
+                Element forumsElem = DocumentHelper.makeElement(user.getData(), "/data/forums");
+                forum = forumsElem.addElement("forum");
+                forum.setText(String.valueOf(rid));
+                forum.addAttribute("questions", "0");
+            }
+        } else {
+            // turn the forum on
+            int questions;
+            
+            if (isSystem)
+                questions = defaultForums.get(rid);
+            else
+                questions = VariableFetcher.getInstance().getDefaultSizes().get(VariableFetcher.KEY_QUESTION);
+            
+            if (forum == null) {
+                Element forumsElem = DocumentHelper.makeElement(user.getData(), "/data/forums");
+                forum = forumsElem.addElement("forum");
+                forum.setText(String.valueOf(rid));
+            }
+            
+            forum.addAttribute("questions", String.valueOf(questions));
+        }
+		
+		User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (user.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(user);
+        }
+		
+		persistence.update(user);
+		
+		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/"); // redirect to the homepage
+		return null;
+	}
 
     protected String actionForgottenPasswordStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -2025,7 +2100,35 @@ public class EditUser implements AbcAction {
     private boolean setDiscussionsSizeLimit(Map params, User user, Map env) {
         Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
         int max = (Integer) maxSizes.get(VariableFetcher.KEY_QUESTION);
-        return setLimitedSize(params, PARAM_DISCUSSIONS_COUNT, user.getData(), "/data/settings/index_discussions", 0, max, env);
+        boolean ok = true;
+        
+        Element forumsElem = DocumentHelper.makeElement(user.getData(), "/data/forums");
+        Map<Integer,Integer> mainForums = VariableFetcher.getInstance().getMainForums();
+        Map<Integer,Integer> forums = Tools.getUserForums(user);
+        
+        for (Integer rid : forums.keySet()) {
+            String paramName = PARAM_DISCUSSIONS_COUNT + "_" + rid;
+            int value = Misc.parseInt((String) params.get(paramName), 0);
+            
+            if (value < 0 || value > max) {
+                ServletUtils.addError(paramName, "Zadejte číslo v rozsahu 0 - " + max + "!", env, null);
+                ok = false;
+                continue;
+            }
+            
+            Element elem = (Element) forumsElem.selectSingleNode("forum[text()='"+rid+"']");
+            if (elem == null) {
+                elem = forumsElem.addElement("forum");
+                elem.setText(String.valueOf(rid));
+            }
+            
+            if (value == 0 && !mainForums.containsKey(rid))
+                elem.detach();
+            else
+                elem.addAttribute("questions", String.valueOf(value));
+        }
+        
+        return ok;
     }
 
     /**

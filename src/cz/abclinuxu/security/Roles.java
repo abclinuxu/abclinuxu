@@ -25,46 +25,22 @@ public class Roles {
 
     /** this role grants the user all rights */
     public static final String ROOT = "root";
-    /** user can move relations */
-    public static final String CAN_MOVE_RELATION = "move relation";
-    /** user can remove relations and objects */
-    public static final String CAN_REMOVE_RELATION = "remove relation";
-    /** user can create, edit and delete categories */
-    public static final String CATEGORY_ADMIN = "category admin";
     /** user can edit, move and remove discussions */
     public static final String DISCUSSION_ADMIN = "discussion admin";
     /** user can edit, approve and delete news */
     public static final String NEWS_ADMIN = "news admin";
-    /** user can create, edit, move and delete articles */
-    public static final String ARTICLE_ADMIN = "article admin";
     /** user can create, edit and delete surveys */
     public static final String SURVEY_ADMIN = "survey admin";
-    /** user can manage games (trivia, hangman) */
-    public static final String GAMES_ADMIN = "games admin";
     /** user can create, edit and delete polls */
     public static final String POLL_ADMIN = "poll admin";
     /** user can edit other users */
     public static final String USER_ADMIN = "user admin";
     /** user can invalidate emails of other users */
     public static final String CAN_INVALIDATE_EMAILS = "email invalidator";
-    /** user can edit dictionary items */
-    public static final String DICTIONARY_ADMIN = "dictionary admin";
     /** user can edit tips */
     public static final String TIPS_ADMIN = "tip admin";
-    /** user can edit requests */
-    public static final String REQUESTS_ADMIN = "requests admin";
-    /** user can manage content */
-    public static final String CONTENT_ADMIN = "content admin";
-    /** user can create content with URL derived under public content */
-    public static final String CAN_DERIVE_CONTENT = "derive content";
-    /** user can manage attachments */
-    public static final String ATTACHMENT_ADMIN = "attachment admin";
     /** user can choose stories to RSS digest */
     public static final String BLOG_DIGEST_ADMIN = "blog digest admin";
-    /** software catalog manager */
-    public static final String SOFTWARE_ADMIN = "software admin";
-    /** bazaar manager */
-    public static final String BAZAAR_ADMIN = "bazaar admin";
     /** advertisement manager */
     public static final String ADVERTISEMENT_ADMIN = "advertisement admin";
     /** tag administrator */

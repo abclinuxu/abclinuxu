@@ -2,20 +2,34 @@
 
 <@lib.showMessages/>
 
-<h1>Náhled dotazu</h1>
+<#if !RELATION.child.subType?exists || RELATION.child.subType!="subportal">
+  <h1>Náhled dotazu</h1>
 
-<p>
-    Nyní si prohlédněte vzhled vašeho dotazu. Zkontrolujte
-    si pravopis, obsah i tón vašeho textu. Uvědomte si, že
-    toto není placená technická podpora, ale dobrovolná
-    a neplacená práce ochotných lidí. Pokud se vám text nějak nelíbí,
-    opravte jej a zvolte <tt>Náhled&nbsp;dotazu</tt>. Pokud jste s ním spokojeni,
-    zvolte <tt>Dokonči</tt>.
-</p>
+  <p>
+      Nyní si prohlédněte vzhled vašeho dotazu. Zkontrolujte
+      si pravopis, obsah i tón vašeho textu. Uvědomte si, že
+      toto není placená technická podpora, ale dobrovolná
+      a neplacená práce ochotných lidí. Pokud se vám text nějak nelíbí,
+      opravte jej a zvolte <tt>Náhled&nbsp;dotazu</tt>. Pokud jste s ním spokojeni,
+      zvolte <tt>Dokonči</tt>.
+  </p>
 
-<#if PREVIEW?exists>
-    <h2>Náhled vašeho dotazu</h2>
-    <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
+  <#if PREVIEW?exists>
+      <h2>Náhled vašeho dotazu</h2>
+      <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
+  </#if>
+<#else>
+  <p>
+    Prohlédněte si vzhled vašeho komentáře. Zkontrolujte
+    pravopis, obsah i tón vašeho textu. Někdy to vážně
+    chce chladnou hlavu. Opravte chyby a zvolte tlačítko <code>Náhled&nbsp;komentáře</code>.
+    Pokud jste s příspěvkem spokojeni, stiskněte tlačítko <code>Dokonči</code>.
+  </p>
+
+  <#if PREVIEW?exists>
+      <h2>Náhled vašeho přispěvku</h2>
+      <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
+  </#if>
 </#if>
 
 <h2>Zde můžete provést své úpravy</h2>

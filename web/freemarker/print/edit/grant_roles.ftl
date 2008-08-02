@@ -25,26 +25,14 @@
        <@lib.showOption "roles", "root", "Root", "checkbox" /><br>
        <@lib.showOption "roles", "poll admin", "Administrátor anket", "checkbox" /><br>
        <@lib.showOption "roles", "survey admin", "Administrátor anket/průzkumů", "checkbox" /><br>
-       <@lib.showOption "roles", "bazaar admin", "Administrátor bazaru", "checkbox" /><br>
        <@lib.showOption "roles", "blog digest admin", "Administrátor blog digestu", "checkbox" /><br>
-       <@lib.showOption "roles", "article admin", "Administrátor článků", "checkbox" /><br>
        <@lib.showOption "roles", "discussion admin", "Administrátor diskusí", "checkbox" /><br>
-       <@lib.showOption "roles", "content admin", "Administrátor dokumentů", "checkbox" /><br>
-       <@lib.showOption "roles", "games admin", "Administrátor her", "checkbox" /><br>
-       <@lib.showOption "roles", "requests admin", "Administrátor požadavků", "checkbox" /><br>
-       <@lib.showOption "roles", "attachment admin", "Administrátor příloh", "checkbox" /><br>
-       <@lib.showOption "roles", "category admin", "Administrátor sekcí", "checkbox" /><br>
-       <@lib.showOption "roles", "dictionary admin", "Administrátor slovníku", "checkbox" /><br>
-       <@lib.showOption "roles", "software admin", "Administrátor softwarového katalogu", "checkbox" /><br>
        <@lib.showOption "roles", "tag admin", "Administrátor štítků", "checkbox" /><br>
        <@lib.showOption "roles", "tip admin", "Administrátor tipů", "checkbox" /><br>
        <@lib.showOption "roles", "user admin", "Administrátor uživatelů", "checkbox" /><br>
        <@lib.showOption "roles", "news admin", "Administrátor zpráviček", "checkbox" /><br>
        <@lib.showOption "roles", "advertisement admin", "Administrátor reklamních pozic", "checkbox" /><br>
        <@lib.showOption "roles", "email invalidator", "Smí invalidovat emaily", "checkbox" /><br>
-       <@lib.showOption "roles", "move relation", "Smí přesunout relaci", "checkbox" /><br>
-       <@lib.showOption "roles", "derive content", "Smí vytvořit podstránku dokumentu", "checkbox" /><br>
-       <@lib.showOption "roles", "remove relation", "Smí smazat relaci a objekt", "checkbox" /><br>
    </td>
   </tr>
   <tr>

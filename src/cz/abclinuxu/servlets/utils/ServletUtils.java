@@ -104,12 +104,24 @@ public class ServletUtils implements Configurable {
                 List items = uploader.parseRequest(request);
                 for ( Iterator iter = items.iterator(); iter.hasNext(); ) {
                     FileItem fileItem = (FileItem) iter.next();
-                    if ( fileItem.isFormField() ) {
-                        String value = fileItem.getString();
-                        map.put(fileItem.getFieldName(), value.trim());
-                    } else {
-                        map.put(fileItem.getFieldName(), fileItem);
-                    }
+					Object value;
+					
+                    if ( fileItem.isFormField() )
+                        value = fileItem.getString();
+                    else
+						value = fileItem;
+					
+					Object existing = map.get(fileItem.getFieldName());
+					if (existing == null)
+						map.put(fileItem.getFieldName(), value);
+					else if (existing instanceof List)
+						((List) existing).add(value);
+					else {
+						List list = new ArrayList(2);
+						list.add(existing);
+						list.add(value);
+						map.put(fileItem.getFieldName(), list);
+					}
                 }
             } catch (FileUploadBase.SizeLimitExceededException e) {
                 throw new InvalidInputException("Zvolený soubor je příliš veliký!");

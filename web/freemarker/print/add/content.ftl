@@ -30,11 +30,11 @@ pak však potřebuje podporu programátora, který připraví data.</p>
    <td width="90" class="required">Adresa stránky</td>
    <td>
     <input type="text" name="url" value="${PARAMS.url?if_exists}" size=60 tabindex=2>
-    <p>Zadejte absolutní, ale lokální URL. Většina obsahu by měla
-    být dostupná pod adresářem /doc/*</p>
+    <p>Zadejte absolutní, ale lokální URL.</p>
     <div class="error">${ERRORS.url?if_exists}</div>
    </td>
   </tr>
+  <#if USER.hasRole("root")>
   <tr>
    <td width="90" class="required">Java FQCN</td>
    <td>
@@ -50,6 +50,7 @@ pak však potřebuje podporu programátora, který připraví data.</p>
     <a href="http://freemarker.sourceforge.net/">Freemarker</a>. Užitečné pro dynamický obsah.</p>
    </td>
   </tr>
+  </#if>
   <tr>
    <td width="90" class="required">Obsah stránky</td>
    <td>

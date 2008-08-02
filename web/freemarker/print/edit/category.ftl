@@ -22,6 +22,7 @@
                     <option value="faq"<#if PARAMS.type?if_exists=="faq"> SELECTED</#if>>Sekce FAQ</option>
                     <option value="section"<#if PARAMS.type?if_exists=="section"> SELECTED</#if>>Rubrika</option>
                     <option value="blog"<#if PARAMS.type?if_exists=="blog"> SELECTED</#if>>Blog</option>
+                    <option value="subportal"<#if PARAMS.type?if_exists=="subportal"> SELECTED</#if>>Subportál</option>
                     <option value="generic"<#if PARAMS.type?default("generic")=="generic"> SELECTED</#if>>Sekce</option>
                 </select>
             </td>
@@ -33,15 +34,36 @@
             </td>
         </tr>
         <tr>
-            <td width="120">Otevřená</td>
+            <td width="120">Skupina</td>
             <td>
-                <input type="checkbox" name="open" value="true"<#if PARAMS.open?default("")=="true"> checked</#if> tabindex="4">
+                <input type="text" name="group" value="${PARAMS.group}" tabindex="4">
+                <div class="error">${ERRORS.group?if_exists}</div>
             </td>
+        </tr>
+        <tr>
+            <td width="120">Oprávnění skupiny</td>
+            <td>
+                <#list GROUP_PERMISSIONS as perm>
+                    <@lib.showOption3 "groupPermissions",perm.permission,perm.permission,"checkbox",perm.set/>
+                </#list>
+            </td>
+        </tr>
+        <tr>
+            <td width="120">Oprávnění ostatních</td>
+            <td>
+                <#list OTHERS_PERMISSIONS as perm>
+                    <@lib.showOption3 "othersPermissions",perm.permission,perm.permission,"checkbox",perm.set/>
+                </#list>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><label><input type="checkbox" name="recurse" value="true" />Provést změnu práv rekurzivně</label>
         </tr>
         <tr>
             <td width="120">Relation.upper</td>
             <td>
-                <input type="text" name="upper" value="${PARAMS.upper?if_exists}" tabindex="5">
+                <input type="text" name="upper" value="${PARAMS.upper?if_exists}" tabindex="7">
                 <div class="error">${ERRORS.upper?if_exists}</div>
             </td>
         </tr>
@@ -58,13 +80,13 @@
                     <a href="javascript:insertAtCursor(document.abcForm.note, '&amp;lt;', '');" id="mono" title="Vložit písmeno &lt;">&lt;</a>
                     <a href="javascript:insertAtCursor(document.abcForm.note, '&amp;gt;', '');" id="mono" title="Vložit písmeno &gt;">&gt;</a>
                 </div>
-                <textarea name="note" cols="80" rows="15" tabindex="6">${PARAMS.note?if_exists?html}</textarea>
+                <textarea name="note" cols="80" rows="15" tabindex="8">${PARAMS.note?if_exists?html}</textarea>
                 <div class="error">${ERRORS.note?if_exists}</div>
             </td>
         </tr>
         <tr>
             <td width="120">&nbsp;</td>
-            <td><input type="submit" VALUE="Dokonči" TABINDEX="7"></td>
+            <td><input type="submit" VALUE="Dokonči" TABINDEX="9"></td>
         </tr>
     </table>
 

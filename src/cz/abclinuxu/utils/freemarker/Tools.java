@@ -40,7 +40,10 @@ import cz.abclinuxu.utils.Advertisement;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.forms.RichTextEditor;
 import cz.abclinuxu.scheduler.EnsureWatchedDiscussionsLimit;
+import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
+import cz.abclinuxu.security.Permissions;
+import cz.abclinuxu.security.Roles;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.Element;
@@ -72,10 +75,11 @@ public class Tools implements Configurable {
     public static final String PREF_REGEXP_VLNKA = "RE_VLNKA";
     public static final String PREF_REPLACEMENT_VLNKA = "REPLACEMENT_VLNKA";
     public static final String PREF_REGEXP_AMPERSAND = "RE_AMPERSAND";
+    public static final String PREF_REGEXP_REMOVE_PARAGRAPHS = "RE_REMOVE_PARAGRAPHS";
     public static final String PREF_STORY_RESERVE_PERCENTS = "story.reserve.percents";
 
     static Persistence persistence = PersistenceFactory.getPersistence();
-    static REProgram reRemoveTags, reVlnka, lineBreak;
+    static REProgram reRemoveTags, reVlnka, lineBreak, reRemoveParagraphs;
     static Pattern reAmpersand;
     static String vlnkaReplacement;
     static int storyReservePercents;
@@ -99,6 +103,8 @@ public class Tools implements Configurable {
             lineBreak = reCompiler.compile("[\r\n$]+");
             pref = prefs.get(PREF_REGEXP_AMPERSAND, null);
             reAmpersand = Pattern.compile(pref);
+            pref = prefs.get(PREF_REGEXP_REMOVE_PARAGRAPHS, null);
+            reRemoveParagraphs = reCompiler.compile(pref);
 
             storyReservePercents = prefs.getInt(PREF_STORY_RESERVE_PERCENTS, 50);
         } catch (RESyntaxException e) {
@@ -453,6 +459,51 @@ public class Tools implements Configurable {
             result.add(link);
         }
         return result;
+    }
+    /**
+     * Checks whether one of the parents is a subportal
+     * @param parents A list of parents
+     * @return A relation of a subportal, if any
+     */
+    static public Relation getParentSubportal(List parents) {
+        for ( Iterator iter = parents.iterator(); iter.hasNext(); ) {
+            Object next = iter.next();
+            
+            if (next instanceof Relation && ((Relation) next).getChild() instanceof Category) {
+                Category cat = (Category) sync( ((Relation) next).getChild() );
+                
+                if (cat.getType() == Category.SUBPORTAL)
+                    return (Relation) next;
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Gets the relation's parents and tries to find a section, to which the
+     * relation belongs in a subportal
+     * @param relation
+     * @return Null, if the relation doesn't belong to a subportal
+     */
+    static public Relation getParentSubportalSection(Relation relation) {
+        List parents = persistence.findParents(relation);
+        Object last = null;
+        
+        for ( Iterator iter = parents.iterator(); iter.hasNext(); ) {
+            Object next = iter.next();
+            
+            if (next instanceof Relation && ((Relation) next).getChild() instanceof Category) {
+                Category cat = (Category) sync( ((Relation) next).getChild() );
+                
+                if (cat.getType() == Category.SUBPORTAL)
+                    return (Relation) last;
+            }
+            
+            last = next;
+        }
+        
+        return null;
     }
 
     /**
@@ -1742,6 +1793,13 @@ public class Tools implements Configurable {
     public static String removeNewLines(String text) {
         return new RE(lineBreak, RE.MATCH_MULTILINE).subst(text, " ");
     }
+    
+    /**
+     * Replaces <p> and </p> with spaces.
+     */
+    public static String removeParahraphs(String text) {
+        return new RE(reRemoveParagraphs, RE.MATCH_MULTILINE).subst(text, " ");
+    }
 
     /**
      * Returns true if object <code>o</code> is a List containing, or a String equal to <code>s</code>.
@@ -1800,7 +1858,7 @@ public class Tools implements Configurable {
 
     /**
      * Finds all screenshots for given object.
-     * @return list of Maps with two keys: path and optional thumbnailPath.
+     * @return list of Maps with several keys
      */
     public List screenshotsFor(GenericDataObject obj) {
         if (obj == null)
@@ -1821,9 +1879,35 @@ public class Tools implements Configurable {
             Element thumbnail = element.element("thumbnail");
             if (thumbnail != null)
                 map.put("thumbnailPath", thumbnail.attributeValue("path"));
+			
+			Element origName = element.element("originalFilename");
+			if (origName != null)
+				map.put("originalFilename", origName.getText());
+			
+			if ("true".equals(element.attributeValue("hidden")))
+				map.put("hidden", Boolean.TRUE);
+			else
+				map.put("hidden", Boolean.FALSE);
+			
             result.add(map);
         }
         return result;
+    }
+	
+	/**
+     * Finds all attachments for a given object.
+     * @return list of Data objects
+     */
+    public List<Relation> attachmentsFor(GenericDataObject obj) {
+        if (obj == null)
+            return Collections.EMPTY_LIST;
+
+        Map byType = groupByType(obj.getChildren(), "Data");
+        List objs = (List) byType.get(Constants.TYPE_DATA);
+        if (objs == null)
+            return Collections.EMPTY_LIST;
+
+        return objs;
     }
 
     /**
@@ -1972,6 +2056,60 @@ public class Tools implements Configurable {
     public static boolean isQuestion(Item item) {
         if (item.getType() != Item.DISCUSSION)
             return false;
-        return Constants.SUBTYPE_QUESTION.equals(item.getSubType());
+        return item.getSubType() != null;
+    }
+	
+	public static Permissions permissionsFor(Object anUser, Relation rel) {
+		User user = (User) anUser;
+		if (user != null && user.hasRole(Roles.ROOT))
+			return Permissions.PERMISSIONS_ROOT;
+		
+		sync(rel);
+		
+		GenericObject obj = rel.getChild();
+		if (obj instanceof GenericDataObject) {
+			GenericDataObject gdo = (GenericDataObject) obj;
+			
+			int permissions, shift;
+			
+			if ( user != null && user.isMemberOf(gdo.getGroup()) )
+				shift = Permissions.PERMISSIONS_GROUP_SHIFT;
+			else
+				shift = Permissions.PERMISSIONS_OTHERS_SHIFT;
+			
+			permissions = gdo.getPermissions();
+			
+			if (obj instanceof Category)
+				permissions &= ~Permissions.PERMISSIONS_CATEGORY_MASK;
+			
+			return new Permissions( (permissions >> shift) & 0xff );
+		}
+		return new Permissions(0);
+	}
+	
+	public static Permissions permissionsFor(Object user, int rel) {
+		return permissionsFor(user, new Relation(rel));
+	}
+
+    public static Map<Integer, Integer> getUserForums(User user) {
+        VariableFetcher vars = VariableFetcher.getInstance();
+        Map<Integer, Integer> mainForums = vars.getMainForums();
+        Map<Integer, Integer> retval = new LinkedHashMap(mainForums.size());
+        
+        retval.putAll(mainForums);
+        
+        if (user == null)
+            return retval;
+        
+        List<Element> elements = user.getData().selectNodes("/data/forums/forum");
+        if (elements == null)
+            return retval;
+        
+        for (Element elem : elements) {
+            int rid = Misc.parseInt(elem.getText(), 0);
+            retval.put(rid, Misc.parseInt(elem.attributeValue("questions"), vars.getDefaultSizes().get(VariableFetcher.KEY_QUESTION)));
+        }
+        
+        return retval;
     }
 }

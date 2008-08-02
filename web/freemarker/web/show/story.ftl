@@ -41,7 +41,7 @@
         </div>
     </#if>
 
-    <#if USER?exists && (USER.id==BLOG.owner || USER.hasRole("root") || USER.hasRole("attachment admin") || USER.hasRole("blog digest admin"))>
+    <#if USER?exists && (USER.id==BLOG.owner || USER.hasRole("root") || USER.hasRole("blog digest admin"))>
         <div class="s_nadpis">
             Správa zápisku
         </div>
@@ -90,7 +90,7 @@
                         </li>
                     </#if>
                 </#if>
-                <#if USER.hasRole("attachment admin") || USER.id==BLOG.owner>
+                <#if USER.hasRole("root") || USER.id==BLOG.owner>
                     <li>
                         <a href="${URL.make("/inset/"+STORY.id+"?action=manage")}">Správa příloh</a>
                     </li>
@@ -251,17 +251,23 @@ ${TOOL.xpath(ITEM, "/data/content")}
 
 <#assign images = TOOL.screenshotsFor(ITEM)>
 <#if (images?size > 0)>
-    <h3>Obrázky</h3>
+    <#assign wrote_section=false>
 
-    <p class="galerie">
         <#list images as image>
-            <#if image.thumbnailPath?exists>
-                <a href="${image.path}"><img src="${image.thumbnailPath}" alt="Obrázek ${image_index}" border="0"></a>
-            <#else>
-                <img src="${image.path}" alt="Obrázek ${image_index}">
+            <#if !image.hidden>
+                <#if !wrote_section><h3>Obrázky</h3><p class="galerie"><#assign wrote_section=true></#if>
+
+                <#if image.thumbnailPath?exists>
+                    <a href="${image.path}"><img src="${image.thumbnailPath}" alt="Obrázek ${image_index}" border="0"></a>
+                <#else>
+                    <img src="${image.path}" alt="Obrázek ${image_index}">
+                </#if>
+            <#elseif USER?exists && (USER.id==BLOG.owner || TOOL.permissionsFor(USER, RELATION).canModify())>
+                <#if !wrote_section><h3>Obrázky</h3><p class="galerie"><#assign wrote_section=true></#if>
+                <li><a href="${image.path}">${image.originalFilename}</a> <#if image.thumbnailPath?exists>(<a href="${image.thumbnailPath}">náhled</a>)</#if></li>
             </#if>
         </#list>
-    </p>
+    <#if wrote_section></p></#if>
 </#if>
 
 <p><b>Nástroje</b>: <a rel="nofollow" href="${story_url}?varianta=print">Tisk</a></p>

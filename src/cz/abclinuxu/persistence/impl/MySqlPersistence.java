@@ -118,7 +118,7 @@ public class MySqlPersistence implements Persistence {
 
                 if (obj instanceof GenericDataObject) {
                     GenericDataObject gdo = (GenericDataObject) obj;
-                    PreparedStatement commonStatement = con.prepareStatement("INSERT INTO spolecne (typ,cislo,jmeno,vytvoreno,zmeneno,pridal) VALUES (?,?,?,?,?,?)");
+                    PreparedStatement commonStatement = con.prepareStatement("INSERT INTO spolecne (typ,cislo,jmeno,vytvoreno,zmeneno,pridal,skupina,prava) VALUES (?,?,?,?,?,?,?,?)");
                     commonStatement.setString(1, PersistenceMapping.getGenericObjectType(obj));
                     commonStatement.setInt(2, obj.getId());
                     commonStatement.setString(3, gdo.getTitle());
@@ -128,6 +128,8 @@ public class MySqlPersistence implements Persistence {
                     commonStatement.setTimestamp(4, new Timestamp(gdo.getCreated().getTime()));
                     commonStatement.setTimestamp(5, new Timestamp(gdo.getUpdated().getTime()));
                     commonStatement.setInt(6, gdo.getOwner());
+					commonStatement.setInt(7, gdo.getGroup());
+                    commonStatement.setInt(8, gdo.getPermissions());
                     commonStatement.executeUpdate();
                     commonStatement.close();
                 }
@@ -1022,7 +1024,7 @@ public class MySqlPersistence implements Persistence {
             int i = 0;
             for (; i < choices.length; i++) {
                 PollChoice choice = choices[i];
-                statement.setInt(7+i, choice.getCount());
+                statement.setInt(8+i, choice.getCount());
                 root.addElement("choice").setText(choice.getText());
             }
             for (; i<15; i++)
@@ -1137,7 +1139,7 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("SELECT P.cislo,P.typ,P.podtyp,P.data,S.pridal,S.vytvoreno,S.zmeneno,S.jmeno FROM "
+            statement = con.prepareStatement("SELECT P.cislo,P.typ,P.podtyp,P.data,S.pridal,S.vytvoreno,S.zmeneno,S.jmeno,S.skupina,S.prava FROM "
                     + getTable(obj) + " P, spolecne S WHERE S.cislo=P.cislo AND S.typ=? AND P.cislo=?");
             statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
@@ -1181,7 +1183,7 @@ public class MySqlPersistence implements Persistence {
         GenericDataObject representant = (GenericDataObject) objs.iterator().next();
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("SELECT P.cislo,P.typ,P.podtyp,P.data,S.pridal,S.vytvoreno,S.zmeneno,S.jmeno FROM "
+            statement = con.prepareStatement("SELECT P.cislo,P.typ,P.podtyp,P.data,S.pridal,S.vytvoreno,S.zmeneno,S.jmeno,S.skupina,S.prava FROM "
                     + getTable(representant) + "  P, spolecne S WHERE S.cislo=P.cislo AND S.typ=? AND P.cislo IN " + Misc.getInCondition(objs.size()));
             int i = 1;
             for (Iterator iter = objs.iterator(); iter.hasNext();) {
@@ -1238,6 +1240,8 @@ public class MySqlPersistence implements Persistence {
         item.setCreated(new java.util.Date(resultSet.getTimestamp(6).getTime()));
         item.setUpdated(new java.util.Date(resultSet.getTimestamp(7).getTime()));
         item.setTitle(resultSet.getString(8));
+		item.setGroup(resultSet.getInt(9));
+		item.setPermissions(resultSet.getInt(10));
         item.setInitialized(true);
     }
 
@@ -1712,12 +1716,14 @@ public class MySqlPersistence implements Persistence {
                 throw new PersistenceException("Nepodařilo se uložit změny v "+obj.toString()+" do databáze!");
 
             statement.close();
-            statement = con.prepareStatement("UPDATE spolecne SET jmeno=?,pridal=?,vytvoreno=?,zmeneno=now() WHERE typ=? and cislo=?");
+            statement = con.prepareStatement("UPDATE spolecne SET jmeno=?,pridal=?,skupina=?,prava=?,vytvoreno=?,zmeneno=now() WHERE typ=? and cislo=?");
             statement.setString(1, obj.getTitle());
             statement.setInt(2, obj.getOwner());
-            statement.setTimestamp(3, new Timestamp(obj.getCreated().getTime()));
-            statement.setString(4, PersistenceMapping.getGenericObjectType(obj));
-            statement.setInt(5, obj.getId());
+			statement.setInt(3, obj.getGroup());
+            statement.setInt(4, obj.getPermissions());
+            statement.setTimestamp(5, new Timestamp(obj.getCreated().getTime()));
+            statement.setString(6, PersistenceMapping.getGenericObjectType(obj));
+            statement.setInt(7, obj.getId());
             result = statement.executeUpdate();
 
             if (obj instanceof Record && obj.getType() == Record.DISCUSSION)

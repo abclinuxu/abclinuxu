@@ -21,9 +21,14 @@
     <p class="meta-vypis">
         ${DATE.show(clanek.created, dateFormat[0])} |
 
-        <#list autors as autor>
-            <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
-        </#list> |
+        <#if autors?size gt 0>
+            <#list autors as autor>
+                <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
+            </#list>
+        <#else>
+            <@lib.showUser TOOL.createUser(clanek.owner)/>
+        </#if>
+        |
         Přečteno: <@showCounter clanek, .globals["CITACE"]?if_exists, "read" />&times;
         <#if diz?exists>| <@showCommentsInListing diz, dateFormat[1]?default(dateFormat[0]), "/clanky" /></#if>
         <@showShortRating relation, "| " />
@@ -484,5 +489,183 @@
 			</li>
 		</#list>
 	</ul>
+    </div>
+</#macro>
+
+<#macro repeat times>
+    <#if times lt 1><#return></#if>
+    <#list 1..times as temp>
+        <#nested/>
+    </#list>
+</#macro>
+
+<#macro showForum rid numQuestions onHP>
+    <#local forum = VARS.getFreshQuestions(numQuestions, rid),
+            feed = FEEDS.getForumFeedUrl(rid)?default("UNDEF"),
+            FORUM=TOOL.analyzeDiscussions(forum)>
+
+    <#if USER?exists><form method="post" action="/EditUser/${USER.id}"></#if>
+
+    <div style="float: right">
+        <#if feed!="UNDEF">
+            <a href="${feed}"><img src="/images/site2/feed16.png" width="16" height="16" border="0"></a>
+        </#if>
+
+        <#if USER?exists>
+                <#local uforums=TOOL.getUserForums(USER)>
+                <#list uforums.keySet() as key><#if key==rid><#local onHP=true></#if></#list>
+                <#if onHP>
+                    <input type="image" title="Odlepit z úvodní stránky" src="/images/actions/remove.png" style="background-color:transparent">
+                <#else>
+                    <input type="image" title="Přilepit na úvodní stránku" src="/images/actions/add.png" style="background-color:transparent">
+                </#if>
+                <input type="hidden" name="action" value="toggleForumHP">
+                <input type="hidden" name="rid" value="${rid}">
+                <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER)}">
+        </#if>
+    </div>
+      <#local relation=TOOL.createRelation(rid)>
+      <h1 class="st_nadpis"><a href="${relation.url}" title="Poradna">${TOOL.childName(relation)}</a></h1>
+
+      <#if USER?exists></form></#if>
+
+      <table class="ds">
+        <thead>
+          <tr>
+            <td class="td-nazev">Dotaz</td>
+            <td class="td-meta">Stav</td>
+            <td class="td-meta">Reakcí</td>
+            <td class="td-datum">Poslední</td>
+          </tr>
+        </thead>
+        <tbody>
+         <#list FORUM as diz>
+          <tr>
+            <td><a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,60,"...")}</a></td>
+            <td class="td-meta"><@lib.showDiscussionState diz /></td>
+            <td class="td-meta">${diz.responseCount}</td>
+            <td class="td-datum">${DATE.show(diz.updated,"CZ_SHORT")}</td>
+          </tr>
+         </#list>
+        </tbody>
+      </table>
+
+      <div style="margin:0.5em 0 0 0; float:right">
+         <#--<@lib.advertisement id="arbo-full" />-->
+         <@lib.advertisement id="gg-hp-blogy" />
+      </div>
+
+      <ul>
+        <li><a href="/forum/EditDiscussion?action=addQuez&amp;rid=${rid}">Položit dotaz</a></li>
+        <li><a href="/forum/dir/${rid}?from=${FORUM?size}&amp;count=20">Starší dotazy</a></li>
+      </ul>
+</#macro>
+
+<#macro showRegion region>
+    <#if region=="praha">Praha
+    <#elseif region=="jihocesky">Jihočeský
+    <#elseif region=="jihomoravsky">Jihomoravský
+    <#elseif region=="karlovarsky">Karlovarský
+    <#elseif region=="kralovehradecky">Královehradecký
+    <#elseif region=="liberecky">Liberecký
+    <#elseif region=="moravskoslezsky">Moravskoslezský
+    <#elseif region=="olomoucky">Olomoucký
+    <#elseif region=="pardubicky">Pardubický
+    <#elseif region=="plzensky">Plzeňský
+    <#elseif region=="stredocesky">Středočeský
+    <#elseif region=="ustecky">Ústecký
+    <#elseif region=="vysocina">Vysočina
+    <#elseif region=="zlinsky">Zlínský
+    <#elseif region=="banskobystricky">Banskobystrický
+    <#elseif region=="bratislavsky">Bratislavský
+    <#elseif region=="kosicky">Košický
+    <#elseif region=="nitransky">Nitranský
+    <#elseif region=="presovsky">Prešovský
+    <#elseif region=="trencinsky">Trenčínský
+    <#elseif region=="trnavsky">Trnavský
+    <#elseif region=="zilinsky">Žilinský
+    </#if>
+</#macro>
+
+<#macro showEvent relation showLogo showManagement>
+    <#local item=relation.child, subtype=item.subType,
+            region=item.getProperty("region").toArray()[0]?default("UNDEF"),
+            regs=TOOL.xpathValue(item.data, "count(//registrations/registration)")>
+
+    <#if subtype=="community"><#local subtype="Komunitní">
+    <#elseif subtype=="educational"><#local subtype="Vzdělávací">
+    <#elseif subtype=="company"><#local subtype="Firemní">
+    </#if>
+
+    <#assign tmp=TOOL.groupByType(item.children, "Item")>
+    <#if tmp.discussion?exists><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz=null></#if>
+
+    <table>
+    <tr>
+        <td bgcolor="#dddddd" width="150">
+            <h3>${DATE.show(item.created,"CZ_DMY",false)}</h3>
+            Druh: ${subtype}<br>
+            Kraj: <@lib.showRegion region/><br>
+            Začátek: ${DATE.show(item.created,"TIME")}
+        </td>
+        <td>
+            <#if showLogo>
+                <#assign logo=TOOL.xpath(item, "/data/icon")?default("NOLOGO")>
+                <#if logo!="NOLOGO">
+                    <div class="cl_thumbnail"><img src="${logo}" alt="Logo akce"></div>
+                </#if>
+            </#if>
+            <h1 class="st_nadpis"><a href="${relation.url?default("/akce/show/"+relation.id)}">${TOOL.childName(item)}</a></h2>
+            ${TOOL.xpath(item, "/data/descriptionShort")}
+
+            <div class="meta-vypis">Aktualizováno: ${DATE.show(item.updated,"SMART")}
+                | <@lib.showUser TOOL.createUser(item.owner) />
+                <#if diz?exists>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/akce" /></#if>
+                <br/>
+                Přečteno: ${TOOL.getCounterValue(item,"read")}&times;
+                | <a href="${relation.url?default("/akce/"+relation.id)}?action=participants">Účastníků: ${regs?eval}</a>
+            </div>
+            <#if showManagement>
+                <div>
+                    <a href="${URL.noPrefix("/akce/edit/"+relation.id+"?action=approve"+TOOL.ticket(USER,false))}">Schválit</a>
+                    |
+                    <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/akce")}">Smazat</a>
+                </div>
+            </#if>
+        </td>
+    </tr>
+    </table>
+</#macro>
+
+<#macro showSubportal relation showDesc>
+    <#local item=relation.child, icon=TOOL.xpath(item,"/data/icon")?default("UNDEF"),
+        counter=VARS.getSubportalCounter(relation), members=item.getProperty("member")>
+    <div class="s_sekce" align="center">
+        <#if icon!="UNDEF">
+            <a href="${relation.url}"><img src="${icon}" alt="${item.title}"></a>
+        </#if>
+        <#if showDesc>
+            <h2 class="st_nadpis"><a href="${relation.url}">${item.title}</a></h2>
+            ${TOOL.render(TOOL.xpath(item,"/data/descriptionShort"), USER?if_exists)}
+        </#if>
+    </div>
+    <div class="s_nadpis">Informace o skupině</div>
+    <div class="s_sekce">
+        Založeno: ${DATE.show(item.created,"CZ_SHORT")}<br />
+        Členů: <a href="${relation.url}?action=members">${members?size}</a><br />
+        Článků: <a href="${relation.url}/clanky">${counter.ARTICLES?default("?")}</a><br />
+        Wiki stránek: <a href="${relation.url}/wiki">${counter.WIKIS?default("?")}</a><br />
+        Dotazů: <a href="${relation.url}/poradna">${counter.QUESTIONS?default("?")}</a><br />
+        Akcí: <a href="${relation.url}/akce">${counter.EVENTS?default("?")}</a><br />
+
+        <form action="/skupiny/edit/${relation.id}" method="post">
+            <#if USER?exists && members.contains(""+USER.id)>
+             <input type="submit" value="Neregistrovat se">
+            <#else>
+             <input type="submit" value="Registrovat se">
+            </#if>
+            <input type="hidden" name="action" value="toggleMember">
+            <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER?if_exists)}">
+        </form>
     </div>
 </#macro>

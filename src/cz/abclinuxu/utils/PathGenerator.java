@@ -45,6 +45,8 @@ public interface PathGenerator {
         private String value;
         public static final Type SCREENSHOT = new Type("screenshot");
         public static final Type ATTACHMENT = new Type("attachment");
+		/** for articles, the file will be stored separately */
+		public static final Type ARTICLE_ATTACHMENT = new Type("articleAttachment");
 
         private Type(String value) {
             this.value = value;

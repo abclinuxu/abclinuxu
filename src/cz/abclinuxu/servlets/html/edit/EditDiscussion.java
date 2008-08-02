@@ -311,7 +311,10 @@ public class EditDiscussion implements AbcAction {
 
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item discussion = new Item(0,Item.DISCUSSION);
-        discussion.setSubType(Constants.SUBTYPE_QUESTION);
+		
+		Tools.sync(relation);
+		
+		discussion.setSubType(Constants.SUBTYPE_QUESTION);
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
@@ -365,7 +368,8 @@ public class EditDiscussion implements AbcAction {
 
         // run email forum and refresh RSS
         ForumPool.submitComment(rel2, discussion.getId(), 0, 0);
-        FeedGenerator.updateForum();
+        FeedGenerator.updateForum(relation.getId());
+        FeedGenerator.updateForumAll();
         VariableFetcher.getInstance().refreshQuestions();
 
         if (redirect)
@@ -554,7 +558,8 @@ public class EditDiscussion implements AbcAction {
             Category parent = (Category) persistence.findById(relation.getParent());
             if (parent.getType() == Category.FORUM) {
                 ForumPool.submitComment(relation, discussion.getId(), record.getId(), comment.getId());
-                FeedGenerator.updateForum();
+                FeedGenerator.updateForum(relation.getUpper());
+                FeedGenerator.updateForumAll();
                 VariableFetcher.getInstance().refreshQuestions();
             }
         }

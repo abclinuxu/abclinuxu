@@ -98,6 +98,9 @@ public class EditRelated implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         if (user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
+		
+		if (!Tools.permissionsFor(user, relation).canModify())
+			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (ACTION_ADD_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditRelated.class, true, true, true, false);

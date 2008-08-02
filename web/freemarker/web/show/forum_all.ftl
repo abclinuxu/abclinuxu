@@ -34,93 +34,41 @@ Teprve když neuspějete, položte nový dotaz.</p>
     </li>
 </ul>
 
-<h2>Hardware</h1>
+<#list VARS.mainForums.entrySet() as rid>
+    <#assign forum=TOOL.createRelation(rid.key)>
+    <h2 class="st_nadpis"><a href="${forum.url}">${TOOL.childName(forum)}</a></h2>
+    <p>
+        ${TOOL.xpath(forum.child, "//note")?if_exists}
+    </p>
+</#list>
 
-<p>Sekce sdružující diskusní fóra týkající se instalace, nastavení
-a používání rozličného hardwaru pod Linuxem.
-</p>
+<h2>Přehled aktuálních diskusí</h2>
 
-<@listForum HARDWARE />
+<#assign questions=TOOL.analyzeDiscussions(VARS.getFreshQuestions())>
 
-<h2>Nastavení</h2>
+<table class="ds">
+<thead>
+  <tr>
+    <td class="td-nazev">Dotaz</td>
+    <td class="td-meta">Stav</td>
+    <td class="td-meta">Reakcí</td>
+    <td class="td-datum">Poslední</td>
+  </tr>
+</thead>
+<tbody>
+ <#list questions as diz>
+  <tr>
+    <td><a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,60,"...")}</a></td>
+    <td class="td-meta"><@lib.showDiscussionState diz /></td>
+    <td class="td-meta">${diz.responseCount}</td>
+    <td class="td-datum">${DATE.show(diz.updated,"CZ_SHORT")}</td>
+  </tr>
+ </#list>
+</tbody>
+</table>
 
-<p>Diskusní fóra na téma nastavení Linuxu, jeho prostředí, služeb
-a připojení k síti či Internetu.
-</p>
-
-<@listForum SETTINGS />
-
-<h2>Aplikace</h2>
-
-<p>Většina vašich dotazů bude patřit do těchto diskusních fór. Zabývají
-se různými aplikacemi. Každé fórum je určeno pro jednu třídu aplikací,
-v názvu pak má typického reprezentanta. Například do fóra
-<i>Prohlížeče,&nbsp;Mozilla</i> patří i dotazy na Operu či Lynx, nebo ve fóru
-<i>Multimédia,&nbsp;MPlayer</i> hledejte diskuse i o Xine, XMMS a dalších
-multimediálních programech.
-</p>
-
-<@listForum APPS />
-
-<h2>Distribuce</h2>
-
-<p>Diskusní fóra vyhrazená pro speciality jednotlivých distribucí.
-95% dotazů patří do sekce <i>Hardware</i>, <i>Nastavení</i> nebo
-<i>Aplikace</i>. Zde pokládejte dotazy, jen pokud <b>opravdu</b>
-týkají dané distribuce a nikoliv i ostatních. Než zde položíte
-dotaz, projděte si fóra v předešlých sekcích.
-</p>
-
-<@listForum DISTROS />
-
-<h2>Ostatní</h2>
-
-<p>Diskuse, které nejdou zařadit jinam. Patří zde i dotazy
-na komunitu Open Source, diskuse nad licencemi a také
-otázky ohledně tohoto portálu a jeho služeb.
-</p>
-
-<@listForum VARIOUS />
-
-<#macro listForum FORUM>
-    <table class="ds poradna">
-      <thead>
-        <tr>
-            <td class="td-forum">Fórum</td>
-            <td class="td-meta">Dotazů</td>
-            <td class="td-nazev">Poslední dotaz</td>
-            <td class="td-meta">Stav</td>
-            <td class="td-meta">Reakcí</td>
-            <td class="td-datum">Poslední</td>
-        </tr>
-      </thead>
-      <tbody>
-        <#list FORUM as forum>
-            <tr>
-                <td>
-                    <a href="${forum.url}" title="${forum.name}">${forum.name}</a>
-                </td>
-                <td class="td-meta">${forum.size}</td>
-                <#if forum.lastQuestion?exists>
-                    <#assign diz = forum.lastQuestion>
-                    <td>
-                        <a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,60," ..")}</a>
-                    </td>
-                    <td class="td-meta">
-                        <@lib.showDiscussionState diz />
-                    </td>
-                    <td class="td-meta">${diz.responseCount}</td>
-                    <td class="td-datum">${DATE.show(diz.updated,"SMART")}</td>
-                <#else>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </#if>
-            </tr>
-        </#list>
-      </tbody>
-    </table>
-</#macro>
+<ul>
+    <li><a href="/History?type=discussions&amp;from=${questions?size}&amp;count=20">Starší diskuse</a></li>
+</ul>
 
 <#include "../footer.ftl">

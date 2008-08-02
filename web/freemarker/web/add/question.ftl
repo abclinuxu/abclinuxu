@@ -4,54 +4,10 @@
 
 <h1>Pokládání dotazu</h1>
 
-<ul>
-    <li>Přečtěte si článek <a href="/clanky/navody/jak-resit-problemy">Jak řešit problémy</a>.</li>
-    <li>Zkusili jste <a href="/hledani" title="Vyhledávání">hledání</a>a prošli jste si
-        <a href="/faq" title="FAQ Linux">Často kladené otázky</a> (FAQ)?</li>
-    <li>Fórum slouží jen k řešení problémů s Linuxem (případně Unixy), co tuto definici
-        nesplňuje (například oznámení), bude smazáno.</li>
-    <li>Pokud máte problém s MS&nbsp;Windows a neexistuje příčinná souvislost s Linuxem,
-        obraťte se na Microsoft, tady odpověď nedostanete.</li>
-</ul>
-
-<h2>Jak psát titulek</h2>
-
-<p>Dobře zvolený titulek přiláká pozornost čtenářů, špatný zaručeně odradí zkušené uživatele, kteří
-by vám mohli pomoci. Admini mohou špatně formulovaný titulek upravit.</p>
-
-<ul>
-    <li>Popište větou, v čem přesně spočívá váš problém.</li>
-    <li><b>Nepoužívejte</b> slova jako <i>help</i>, <i>pomoc</i>, <i>poraďte</i>, <i>prosím</i>,
-        <i>začátečník</i> či <i>lama</i>.</li>
-    <li>NEPIŠTE VELKÝMI PÍSMENY nebo <b>tučně</b> a nepoužívejte vykřičníky - je to nezdvořilé.</li>
-    <li>Jeden otazník úplně stačí. Opravdu.</li>
-</ul>
-
-<h2>Jak popsat problém</h2>
-
-<ul>
-    <li>Snažte se uvést co nejvíce relevantních informací. Například:
-            <ul>
-                <li>druh hardwaru</li>
-                <li>verze aplikace</li>
-            </ul>
-        (Ostatní čtenáři nemají křišťálovou kouli, aby to sami uhádli.)</li>
-
-    <li>Popište postup, který nevede k cíli. Uveďte, jestli jste postupovali podle
-        nějakého návodu. Pokud ano, vložte na něj odkaz.</li>
-
-    <li>Často je dobré vložit ukázku konfiguračního souboru, výpis <code>dmesg</code>
-        či <code>lspci</code> (HTML značka <code>&lt;PRE&gt;</code>). Nicméně vkládejte
-        jen skutečně zajímavé části související s problémem, maximálně deset až patnáct řádek.</li>
-
-    <li>Pokud přijdete na řešení sami, vložte jej do diskuse. Pomůžete tak ostatním čtenářům.</li>
-</ul>
-
-<p><b>Do jednoho dotazu nevkládejte více problémů</b>. Diskusi pak není možné vhodně zařadit do
-    příslušného diskusního fóra a není možné ji výstižně pojmenovat. Pro uživatele,
-    který by později hledal odpověď na některý z uvedených problémů, by bylo obtížné takovou
-    diskusi vyhledat. Dotazy obsahující více problémů mohou být administrátory uzamčeny, přičemž
-    tazatel bude požádán, aby jednotlivé problémy popsal v samostatných diskusích.</p>
+<#assign rules=TOOL.xpath(RELATION.child, "data/rules")?default("UNDEF")>
+<#if rules!="UNDEF">
+    ${TOOL.render(rules,USER?if_exists)}
+</#if>
 
 <#if ! USER?exists>
  <h2>Proč se přihlásit</h2>
