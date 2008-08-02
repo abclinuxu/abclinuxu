@@ -45,7 +45,7 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
  <li><a href="/History?type=hardware&from=0&count=25">&gt;&gt;</a></li>
 </ul>
 
-<#assign FORUM = VARS.getFreshQuestions(USER?if_exists)>
+<#assign FORUM = VARS.getFreshQuestions()>
 <#if (FORUM?size > 0)>
     <#assign FORUM=TOOL.analyzeDiscussions(FORUM)>
     <a name="diskuse"><h1>Diskusní fórum</h1></a>

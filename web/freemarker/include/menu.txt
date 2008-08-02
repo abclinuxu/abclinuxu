@@ -88,7 +88,7 @@
 <li><a href="/ovladace">Ovladače</a></li>
 <li><a href="/">Portál</a>
   <ul>
-    <#if USER?exists && USER.isMemberOf(11246)>
+    <#if USER?exists && USER.hasRole("root")>
         <li><a href="/Admin">Administrace portálu</a></li>
         <li><a href="/system">Sekce Systém</a></li>
     </#if>
