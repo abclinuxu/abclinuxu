@@ -298,6 +298,8 @@ public class EditContent implements AbcAction {
 
         relation.setChild(item);
         persistence.create(relation);
+        
+        parent.addChildRelation(relation);
 
         if (toc!=null) {
             Element element = (Element) toc.getData().selectSingleNode("//node[@rid="+parentRelation.getId()+"]");
