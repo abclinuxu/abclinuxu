@@ -58,7 +58,7 @@
     </#list>
 
     <div class="st_vpravo">
-        <a href="/clanky/dir/${articles_rid}?from=${ARTICLES?size}">Starší články</a>
+        <a href="/clanky/dir/${articles.id}?from=${ARTICLES?size}">Starší články</a>
     </div>
 </#if>
 
