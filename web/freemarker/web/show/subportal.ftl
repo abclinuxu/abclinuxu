@@ -64,7 +64,7 @@
 
 
 <#assign wiki_rel=TOOL.createRelation(TOOL.xpath(ITEM,"/data/wiki"))>
-<#assign toplevels=wiki_rel.child.getChildren()>
+<#assign toplevels=TOOL.syncList(wiki_rel.child.getChildren())>
 <#if toplevels?size gt 1>
     <h1 class="st_nadpis"><a href="${wiki_rel.url}">Wiki</a></h1>
     <ul>
