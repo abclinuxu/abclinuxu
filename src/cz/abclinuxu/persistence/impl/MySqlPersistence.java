@@ -1024,7 +1024,7 @@ public class MySqlPersistence implements Persistence {
             int i = 0;
             for (; i < choices.length; i++) {
                 PollChoice choice = choices[i];
-                statement.setInt(8+i, choice.getCount());
+                statement.setInt(7+i, choice.getCount());
                 root.addElement("choice").setText(choice.getText());
             }
             for (; i<15; i++)
