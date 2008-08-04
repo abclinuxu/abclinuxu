@@ -2480,6 +2480,24 @@ public class EditUser implements AbcAction {
             ServletUtils.addError(PARAM_PHOTO, "Soubor musí být typu JPG, GIF nebo JPEG!", env, null);
             return false;
         }
+        
+        try {
+            Iterator readers = ImageIO.getImageReadersBySuffix(suffix);
+            ImageReader reader = (ImageReader) readers.next();
+            ImageInputStream iis = ImageIO.createImageInputStream(fileItem.getInputStream());
+            reader.setInput(iis, false);
+            if (reader.getNumImages(true) > 1) {
+                ServletUtils.addError(PARAM_PHOTO, "Animované obrázky nejsou povoleny!", env, null);
+                return false;
+            }
+            if (reader.getHeight(0) > 500 || reader.getWidth(0) > 500) {
+                ServletUtils.addError(PARAM_PHOTO, "Obrázek přesahuje povolené maximální rozměry!", env, null);
+                return false;
+            }
+        } catch(Exception e) {
+            ServletUtils.addError(PARAM_PHOTO, "Nelze načíst obrázek!", env, null);
+            return false;
+        }
 
         String fileName = "images/faces/"+user.getId()+"."+suffix;
         File file = new File(AbcConfig.calculateDeployedPath(fileName));
