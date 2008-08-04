@@ -41,7 +41,12 @@
     </p>
 </#if>
 
-${TOOL.xpath(ITEM,"/data/content")}
+<#assign exec=TOOL.xpath(ITEM,"/data/content/@execute")?default("no"), content=TOOL.xpath(ITEM,"/data/content")>
+<#if exec!="yes">
+${content}
+<#else>
+<@content?interpret />
+</#if>
 
 <#if TOC?exists>
     <div class="uceb-nav">

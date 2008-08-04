@@ -101,6 +101,11 @@ public class VariableFetcher extends TimerTask implements Configurable {
     
     Map<Integer, Integer> mainForums;
     List<CloudTag> freshCloudTags;
+    Map<Relation, Integer> mostReadStories, mostReadArticles;
+    Map<Relation, Integer> mostCommentedArticles, mostCommentedPolls, mostCommentedStories;
+    Map<Relation, Integer> recentMostReadArticles, recentMostCommentedArticles;
+    Map<Relation, Integer> recentMostCommentedStories, recentMostReadStories;
+    Map<Relation, Integer> mostCommentedNews, recentMostCommentedNews;
 
     List<Screenshot> freshScreenshots;
     String indexFeeds, templateFeeds;
@@ -353,6 +358,46 @@ public class VariableFetcher extends TimerTask implements Configurable {
     	int userLimit = getObjectCountForUser(user, KEY_TAGCLOUD, null);
         return getSubList(freshCloudTags, userLimit);
     }
+    
+    public Map<Relation,Integer> getMostReadArticles() {
+        return mostReadArticles;
+    }
+    
+    public Map<Relation,Integer> getMostReadStories() {
+        return mostReadStories;
+    }
+    
+    public Map<Relation,Integer> getRecentMostReadArticles() {
+        return recentMostReadArticles;
+    }
+    
+    public Map<Relation,Integer> getRecentMostReadStories() {
+        return recentMostReadStories;
+    }
+    
+    public Map<Relation,Integer> getMostCommentedArticles() {
+        return mostCommentedArticles;
+    }
+    
+    public Map<Relation,Integer> getMostCommentedStories() {
+        return mostCommentedStories;
+    }
+    
+    public Map<Relation,Integer> getMostCommentedNews() {
+        return mostCommentedNews;
+    }
+    
+    public Map<Relation,Integer> getRecentMostCommentedArticles() {
+        return recentMostCommentedArticles;
+    }
+    
+    public Map<Relation,Integer> getRecentMostCommentedStories() {
+        return recentMostCommentedStories;
+    }
+    
+    public Map<Relation,Integer> getRecentMostCommentedNews() {
+        return recentMostCommentedNews;
+    }
 
     /**
      * Finds list of servers and their links to be displayed for this user. If user does not want
@@ -571,7 +616,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public void setOffer64bit(HostingServer server) {
         offer64bit = server;
     }
-
+    
     private void refreshSectionCaches() {
         try {
             long start = System.currentTimeMillis();
@@ -950,6 +995,32 @@ public class VariableFetcher extends TimerTask implements Configurable {
             jobsCzHolderHP = newHolder;
         } catch (Exception e) {
             log.error("Selhalo nacitani pracovnich pozic serveru jobs.cz", e);
+        }
+    }
+    
+    public void refreshTopStatistics() {
+        try {
+            String monthago;
+            Qualifier[] qualifiers = new Qualifier[]{ new LimitQualifier(0, 10) };
+            
+            mostReadArticles = sqlTool.getMostReadRelations(Item.ARTICLE, "", qualifiers);
+            mostReadStories = sqlTool.getMostReadRelations(Item.BLOG, "", qualifiers);
+            mostCommentedArticles = sqlTool.getMostCommentedRelations(Item.ARTICLE, "", qualifiers);
+            mostCommentedStories = sqlTool.getMostCommentedRelations(Item.BLOG, "", qualifiers);
+            mostCommentedNews = sqlTool.getMostCommentedRelations(Item.NEWS, "", qualifiers);
+            
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.MONTH, -1);
+            
+            monthago = Constants.isoFormat.format(cal.getTime());
+            
+            recentMostCommentedArticles = sqlTool.getMostCommentedRelations(Item.ARTICLE, monthago, qualifiers);
+            recentMostCommentedStories = sqlTool.getMostCommentedRelations(Item.BLOG, monthago, qualifiers);
+            recentMostReadArticles = sqlTool.getMostReadRelations(Item.ARTICLE, monthago, qualifiers);
+            recentMostReadStories = sqlTool.getMostReadRelations(Item.BLOG, monthago, qualifiers);
+            recentMostCommentedNews = sqlTool.getMostReadRelations(Item.NEWS, monthago, qualifiers);
+        } catch (Exception e) {
+            log.error("Selhalo obnoveni top statistik portalu", e);
         }
     }
 

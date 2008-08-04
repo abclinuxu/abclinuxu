@@ -30,6 +30,7 @@ import cz.abclinuxu.persistence.impl.MySqlPersistence;
 import cz.abclinuxu.persistence.versioning.VersionedDocument;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
+import cz.abclinuxu.servlets.Constants;
 import java.sql.*;
 import java.util.prefs.Preferences;
 import java.util.Date;
@@ -40,6 +41,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 /**
@@ -126,6 +128,9 @@ public final class SQLTool implements Configurable {
     public static final String CHANGE_CATEGORY_OWNER = "change.category.owner";
     public static final String CHANGE_PROPERTY_OWNER = "change.property.owner";
     public static final String COUNT_PROPERTIES_BY_USER = "count.properties.by.user";
+    
+    public static final String MOST_COMMENTED_RELATIONS = "most.commented.relations";
+    public static final String MOST_READ_RELATIONS = "most.read.relations";
 
     private static SQLTool singleton;
     static {
@@ -1655,6 +1660,88 @@ public final class SQLTool implements Configurable {
             persistance.releaseSQLResources(con, statement, null);
         }
     }
+    
+    public Map<Relation, Integer> getMostReadRelations(int itemType, String dateFrom, Qualifier[] qualifiers) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        
+        try {
+            Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
+            con = persistance.getSQLConnection();
+            
+            StringBuilder sb = new StringBuilder((String) sql.get(MOST_READ_RELATIONS));
+            List params = new ArrayList();
+            
+            params.add(itemType);
+            params.add(dateFrom);
+            
+            appendQualifiers(sb, qualifiers, params, null, null);
+            statement = con.prepareStatement(sb.toString());
+            
+            int i = 1;
+            for ( Iterator iter = params.iterator(); iter.hasNext(); )
+                statement.setObject(i++, iter.next());
+            
+            rs = statement.executeQuery();
+            
+            while (rs.next()) {
+                Relation rel = new Relation(rs.getInt(1));
+                int reads = rs.getInt(2);
+                
+                persistance.synchronize(rel);
+                result.put(rel, reads);
+            }
+            
+            return result;
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba v SQL!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, rs);
+        }
+    }
+    
+    public Map<Relation, Integer> getMostCommentedRelations(int itemType, String dateFrom, Qualifier[] qualifiers) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        
+        try {
+            Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
+            con = persistance.getSQLConnection();
+            
+            StringBuilder sb = new StringBuilder((String) sql.get(MOST_COMMENTED_RELATIONS));
+            List params = new ArrayList();
+            
+            params.add(itemType);
+            params.add(dateFrom);
+            
+            appendQualifiers(sb, qualifiers, params, null, null);
+            statement = con.prepareStatement(sb.toString());
+            
+            int i = 1;
+            for ( Iterator iter = params.iterator(); iter.hasNext(); )
+                statement.setObject(i++, iter.next());
+            
+            rs = statement.executeQuery();
+            
+            while (rs.next()) {
+                Relation rel = new Relation(rs.getInt(1));
+                int reads = rs.getInt(2);
+                
+                persistance.synchronize(rel);
+                result.put(rel, reads);
+            }
+            
+            return result;
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba v SQL!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, rs);
+        }
+    }
 
     /**
      * Records new page view in statistics for selected type of page.
@@ -2088,6 +2175,8 @@ public final class SQLTool implements Configurable {
         store(COUNT_PROPERTIES_BY_USER, prefs);
         store(TAG_LOG_ACTION, prefs);
         store(TAG_GET_CREATOR, prefs);
+        store(MOST_READ_RELATIONS, prefs);
+        store(MOST_COMMENTED_RELATIONS, prefs);
     }
 
     /**

@@ -508,21 +508,25 @@ public class EditContent implements AbcAction {
         String content = (String) params.get(PARAM_CONTENT);
         content = Misc.filterDangerousCharacters(content);
         String exec = (String) params.get(PARAM_EXECUTE_AS_TEMPLATE);
+        User user = (User) env.get(Constants.VAR_USER);
 
         if ( content==null || content.length()==0 ) {
             ServletUtils.addError(PARAM_CONTENT, "Vyplňte obsah stránky!", env, null);
             return false;
         }
 
-        try {
-            WikiContentGuard.check(content);
-        } catch (ParserException e) {
-            log.error("ParseException on '" + content + "'", e);
-            ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
-            return false;
-        } catch (Exception e) {
-            ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
-            return false;
+        // Freemarker code wouldn't pass this test
+        if (!user.hasRole("root") || ! "yes".equals(exec)) {
+            try {
+                WikiContentGuard.check(content);
+            } catch (ParserException e) {
+                log.error("ParseException on '" + content + "'", e);
+                ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
+                return false;
+            } catch (Exception e) {
+                ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
+                return false;
+            }
         }
 
         Element element = DocumentHelper.makeElement(item.getData(), "/data/content");
