@@ -89,6 +89,7 @@ public class EditDiscussion implements AbcAction {
     public static final String PARAM_SOLVED = "solved";
     public static final String PARAM_ANTISPAM = "antispam";
     public static final String PARAM_ATTACHMENT = "attachment";
+    public static final String PARAM_REMOVE_ATTACHMENT = "rmAttachment";
 
     public static final String COOKIE_USER_VERIFIED = "usrVrfd";
 
@@ -1343,6 +1344,29 @@ public class EditDiscussion implements AbcAction {
         if (files == null)
             files = new ArrayList<FileItem>(2);
         env.put(VAR_ATTACHMENTS, files);
+        
+        List rmAttachments = Tools.asList(params.get(PARAM_REMOVE_ATTACHMENT));
+        
+        if (rmAttachments.size() != 0) {
+            List<Integer> rmAttachmentIds = new ArrayList(rmAttachments.size());
+            Iterator iterator = rmAttachments.iterator();
+
+            // first convert indexes from Strings to Integers, or the sorting would be incorrect
+            while (iterator.hasNext()) {
+                int index = Misc.parseInt((String) iterator.next(), -1);
+                if (index != -1)
+                    rmAttachmentIds.add(index);
+            }
+
+            Collections.sort(rmAttachmentIds);
+
+            // FileItems have to be removed from the biggest to the smallest index
+            for (int i = rmAttachmentIds.size() - 1; i >= 0; i--) {
+                int index = rmAttachmentIds.get(i);
+                if (index >= 0 && index < files.size())
+                    files.remove(index);
+            }
+        }
 
         Object o = params.get(PARAM_ATTACHMENT);
         if (! (o instanceof FileItem) && o != null) {

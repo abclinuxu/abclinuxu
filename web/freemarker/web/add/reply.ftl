@@ -102,7 +102,7 @@
         <#if ATTACHMENTS?exists>
             <ul>
                 <#list ATTACHMENTS as file>
-                    <li>${file.name} (${file.size} bytů)</li>
+                    <li>${file.name} (${file.size} bytů) | <label><input type="checkbox" name="rmAttachment" value="${file_index}">Smazat</label></li>
                 </#list>
             </ul>
         </#if>
