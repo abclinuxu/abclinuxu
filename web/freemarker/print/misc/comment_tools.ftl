@@ -27,6 +27,7 @@
                 <a href="${URL.make("/EditDiscussion/"+relId+"?action=moveUp&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id+TOOL.ticket(USER, false))}">Přesunout výše</a>
             </#if>
             <a href="${URL.make("/EditDiscussion/"+relId+"?action=toQuestion&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Osamostatnit</a>
+            <a href="${URL.make("/inset/"+relId+"?action=manage&amp;threadId="+COMMENT.id)}">Správa příloh</a>
         </#if>
     </fieldset>
 </#if>

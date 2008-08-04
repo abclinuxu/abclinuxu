@@ -31,6 +31,10 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Data;
 import cz.abclinuxu.data.GenericDataObject;
+import cz.abclinuxu.data.Record;
+import cz.abclinuxu.data.view.Comment;
+import cz.abclinuxu.data.view.DiscussionRecord;
+import cz.abclinuxu.data.view.RowComment;
 import cz.abclinuxu.utils.PathGenerator;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.ImageTool;
@@ -40,7 +44,6 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
-import cz.abclinuxu.utils.PathGeneratorImpl;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,12 +57,12 @@ import java.io.IOException;
 import java.io.File;
 import java.awt.image.BufferedImage;
 
-import java.util.regex.Matcher;
 import org.apache.commons.fileupload.FileItem;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Document;
+import org.dom4j.Node;
 import static cz.abclinuxu.servlets.Constants.PARAM_RELATION;
 
 /**
@@ -77,6 +80,7 @@ public class EditAttachment implements AbcAction {
 	public static final String PARAM_REMOVE = "remove";
 	public static final String PARAM_SET_VISIBLE = "setVisible";
 	public static final String PARAM_SET_HIDDEN = "setHidden";
+    public static final String PARAM_THREAD = "threadId";
 
     public static final String ACTION_ADD_SCREENSHOT = "addScreenshot";
     public static final String ACTION_ADD_SCREENSHOT_STEP2 = "addScreenshot2";
@@ -230,9 +234,32 @@ public class EditAttachment implements AbcAction {
 
     private String actionManageAttachments(HttpServletRequest request, Map env) throws Exception {
         Relation relation = (Relation) env.get(VAR_RELATION);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Item item = (Item) relation.getChild();
         Map<String, List> map = Tools.groupByType(item.getChildren(), "Data");
-        env.put(VAR_ATTACHMENTS, map.get(Constants.TYPE_DATA));
+        int threadId = Misc.parseInt((String) params.get(EditDiscussion.PARAM_THREAD), 0);
+        
+        List<Relation> attachments = map.get(Constants.TYPE_DATA);
+        
+        if (threadId != 0 && item.getType() == Item.DISCUSSION && attachments != null) {
+            // remove attachments not attached to the specified comment
+            Persistence persistence = PersistenceFactory.getPersistence();
+            Record record = getDiscussion(item, persistence);
+            DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
+            Comment comment = dizRecord.getComment(threadId);
+            
+            if (comment == null)
+                throw new MissingArgumentException("Neplatne threadId!");
+            
+            Element commentRoot = comment.getData().getRootElement();
+            
+            for (int i = 0; i < attachments.size(); i++) {
+                if (commentRoot.selectSingleNode("attachment[text()='"+attachments.get(i).getId()+"']") == null)
+                    attachments.remove(i--);
+            }
+        }
+        
+        env.put(VAR_ATTACHMENTS, attachments);
         return FMTemplateSelector.select("EditAttachment", "manage", env, request);
     }
 
@@ -301,6 +328,23 @@ public class EditAttachment implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        Comment comment = null;
+        Record record = null;
+        int threadId = Misc.parseInt((String) params.get(EditDiscussion.PARAM_THREAD), 0);
+        
+        if (threadId != 0 && item.getType() == Item.DISCUSSION) {
+            // remove attachments not attached to the specified comment
+            record = getDiscussion(item, persistence);
+            DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
+            
+            comment = dizRecord.getComment(threadId);
+            
+            if (comment == null)
+                throw new MissingArgumentException("Neplatne threadId!");
+            
+            ((RowComment)comment).set_dirty(true);
+        }
 
         List list = Tools.asList(params.get(PARAM_ATTACHMENT));
         for (Iterator iter = list.iterator(); iter.hasNext();) {
@@ -310,15 +354,33 @@ public class EditAttachment implements AbcAction {
 			
 			if (!Misc.empty(path))
 				new File(path).delete();
+            
+            if (comment != null) {
+                Node node = comment.getData().selectSingleNode("//attachment[text()='"+rid+"']");
+                if (node != null)
+                    node.detach();
+            }
 			
             persistence.remove(dataRelation);
             dataRelation.getParent().removeChildRelation(dataRelation);
             AdminLogger.logEvent(user, "smazal přílohu " + dataRelation);
         }
+        
+        if (record != null)
+            persistence.update(record);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
+    }
+    
+    private Record getDiscussion(Item discussion, Persistence persistence) {
+        Map childrenMap = Tools.groupByType(discussion.getChildren(), "Record");
+        List<Relation> recordRelations = (List<Relation>) childrenMap.get(Constants.TYPE_RECORD);
+        Relation relation = recordRelations.get(0);
+        Record record = (Record) persistence.findById(relation.getChild());
+        
+        return record;
     }
 
     /**

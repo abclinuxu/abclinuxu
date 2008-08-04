@@ -27,6 +27,9 @@
         <br>
     </#list>
     <input type="hidden" name="action" value="manage2">
+    <#if PARAMS.threadId?exists>
+        <input type="hidden" name="threadId" value="${PARAMS.threadId}">
+    </#if>
     <#if ! empty>
         <input type="submit" name="remove" value="Smazat">
         <input type="submit" name="setVisible" value="Nastavit jako viditelné">
