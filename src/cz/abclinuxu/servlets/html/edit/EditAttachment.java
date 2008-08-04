@@ -44,6 +44,7 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
+import cz.abclinuxu.security.Roles;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import javax.servlet.http.HttpServletRequest;
@@ -154,6 +155,8 @@ public class EditAttachment implements AbcAction {
 
             if ( (type == Item.BLOG || type == Item.UNPUBLISHED_BLOG
                     || type == Item.EVENT || type == Item.UNPUBLISHED_EVENT) && item.getOwner() == user.getId())
+                allowed = true;
+            else if (type == Item.DISCUSSION && user.hasRole(Roles.DISCUSSION_ADMIN))
                 allowed = true;
         }
 
