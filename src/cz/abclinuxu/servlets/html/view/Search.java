@@ -106,8 +106,8 @@ public class Search implements AbcAction, Configurable {
     static Date lastUpdated;
     static Map<String,String> googleParams;
 
-    public Search() {
-        ConfigurationManager.getConfigurator().configureAndRememberMe(this);
+    static {
+        ConfigurationManager.getConfigurator().configureAndRememberMe(new Search());
     }
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
