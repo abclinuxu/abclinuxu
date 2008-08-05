@@ -199,7 +199,7 @@ public class EditContent implements AbcAction {
         canContinue &= setContent(params, item, env);
         canContinue &= setURL(params, relation, env);
         
-        if (user.hasRole("root"))
+        if (user.hasRole(Roles.ROOT))
             canContinue &= setClass(params, item);
 
         if ( !canContinue  || params.get(PARAM_PREVIEW) != null) {
@@ -352,7 +352,8 @@ public class EditContent implements AbcAction {
         canContinue &= setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= checkStartTime(params, item, env);
-        canContinue &= ServletUtils.checkNoChange(item, origItem, env);
+        if (canContinue)
+            canContinue &= ServletUtils.checkNoChange(item, origItem, env);
         String changesDescription = Misc.getRevisionString(params, env);
         canContinue &= !Constants.ERROR.equals(changesDescription);
 
@@ -419,10 +420,11 @@ public class EditContent implements AbcAction {
         canContinue &= setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setURL(params, relation, env);
-        if (user.hasRole("root"))
+        if (user.hasRole(Roles.ROOT))
             canContinue &= setClass(params, item);
         canContinue &= checkStartTime(params, item, env);
-        canContinue &= ServletUtils.checkNoChange(item, origItem, env);
+        if (canContinue)
+            canContinue &= ServletUtils.checkNoChange(item, origItem, env);
         String changesDescription = Misc.getRevisionString(params, env);
         canContinue &= !Constants.ERROR.equals(changesDescription);
 
@@ -516,7 +518,7 @@ public class EditContent implements AbcAction {
         }
 
         // Freemarker code wouldn't pass this test
-        if (!user.hasRole("root") || ! "yes".equals(exec)) {
+        if (!user.hasRole(Roles.ROOT) || ! "yes".equals(exec)) {
             try {
                 WikiContentGuard.check(content);
             } catch (ParserException e) {
