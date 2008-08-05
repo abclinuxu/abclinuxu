@@ -33,7 +33,7 @@ kontaktuje administrátory, kteří věc zváží.
     <#assign cat=relation.child,
         icon=TOOL.xpath(cat,"/data/icon")?default("UNDEF"),
         url=relation.url,
-        desc=TOOL.xpath(cat,"/data/description")?default("UNDEF"),
+        desc=TOOL.xpath(cat,"/data/descriptionShort")?default("UNDEF"),
         members = cat.getProperty("member")>
     <#if icon!="UNDEF"><div style="float: left; padding: 5px"><img src="${icon}" alt="${cat.title}" /></div></#if>
 
