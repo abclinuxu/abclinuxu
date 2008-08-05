@@ -18,7 +18,7 @@ pak však potřebuje podporu programátora, který připraví data.</p>
     </fieldset>
 </#if>
 
- <table width=100 border=0 cellpadding=5>
+ <table class="siroka" border="0" cellpadding="5">
   <tr>
    <td width="90" class="required">Titulek stránky</td>
    <td>
@@ -66,7 +66,7 @@ pak však potřebuje podporu programátora, který připraví data.</p>
         <a href="javascript:insertAtCursor(document.form.content, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="Vložit formátovaný text. Vhodné pouze pro konfigurační soubory či výpisy.">&lt;pre&gt;</a>
         <a href="javascript:insertAtCursor(document.form.content, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
     </div>
-    <textarea name="content" cols="100" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
+    <textarea name="content" class="siroka" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
     <div class="error">${ERRORS.content?if_exists}</div>
    </td>
   </tr>

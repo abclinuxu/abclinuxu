@@ -45,7 +45,7 @@ nebudete moci změnit.
         <a href="javascript:insertAtCursor(document.form.content, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
     </div>
     <div class="error">${ERRORS.content?if_exists}</div>
-    <textarea name="content" cols="100" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
+    <textarea name="content" class="siroka" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
    </td>
   </tr>
   <tr>
