@@ -21,7 +21,7 @@ nebudete moci změnit.
     </fieldset>
 </#if>
 
- <table width=100 border=0 cellpadding=5>
+ <table class="siroka" border=0 cellpadding=5>
   <tr>
    <td width="90" class="required">Titulek stránky</td>
    <td>
