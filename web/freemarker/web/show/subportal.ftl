@@ -64,19 +64,16 @@
 
 
 <#assign wiki_rel=TOOL.createRelation(TOOL.xpath(ITEM,"/data/wiki"))>
-<#assign toplevels=TOOL.syncList(wiki_rel.child.getChildren())>
-<#if toplevels?size gt 1>
-    <h1 class="st_nadpis"><a href="${wiki_rel.url}">Wiki</a></h1>
-    <ul>
-    <#list toplevels as page>
-        <#if page.child.type==11>
-        <li><a href="${page.url}">${TOOL.childName(page)}</a></li>
-        </#if>
-    </#list>
-    </ul>
-    <hr />
+<#assign exec=TOOL.xpath(wiki_rel.child,"/data/content/@execute")?default("no"), content=TOOL.xpath(wiki_rel.child,"/data/content")>
+<h1 class="st_nadpis"><a href="${wiki_rel.url}">Wiki</a></h1>
+
+<#if exec!="yes">
+${content}
+<#else>
+<@content?interpret />
 </#if>
 
+<hr />
 
 <#assign event=VARS.getFreshSubportalEvent(events.id)?default("UNDEF")>
 <#if event!="UNDEF">
