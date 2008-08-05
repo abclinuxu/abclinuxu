@@ -95,6 +95,8 @@ public class HTMLVersion implements Configurable {
             response.setHeader("Expires", "Fri, 22 Dec 2000 05:00:00 GMT");
             response.setHeader("Cache-Control", "no-cache, must-revalidate");
             response.setHeader("Pragma", "no-cache");
+            
+            env.put("TEMPLATE", template.getName());
 
             template.process(env, writer);
 

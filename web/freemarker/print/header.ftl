@@ -1,3 +1,4 @@
+<#if USER?exists && USER.hasRole("root")><!-- Sablona: ${TEMPLATE?default("neznama")} --></#if>
 <html>
 <head>
     <title>${TITLE}</title>
