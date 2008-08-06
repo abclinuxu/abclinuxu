@@ -479,7 +479,7 @@
     </#if>
 </#macro>
 
-<#macro showTagCloud list title cssStyle)>
+<#macro showTagCloud list title cssStyle>
     <div id="tagcloud_container"<#if (cssStyle?length gte 1)> style="${cssStyle}"</#if>>
     <#if title?exists ><div id="title">${title}</div></#if>
 	<ul id="tagcloud">
