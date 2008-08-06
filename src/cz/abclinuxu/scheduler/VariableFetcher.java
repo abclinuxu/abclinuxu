@@ -1018,7 +1018,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             recentMostCommentedStories = sqlTool.getMostCommentedRelations(Item.BLOG, monthago, qualifiers);
             recentMostReadArticles = sqlTool.getMostReadRelations(Item.ARTICLE, monthago, qualifiers);
             recentMostReadStories = sqlTool.getMostReadRelations(Item.BLOG, monthago, qualifiers);
-            recentMostCommentedNews = sqlTool.getMostReadRelations(Item.NEWS, monthago, qualifiers);
+            recentMostCommentedNews = sqlTool.getMostCommentedRelations(Item.NEWS, monthago, qualifiers);
         } catch (Exception e) {
             log.error("Selhalo obnoveni top statistik portalu", e);
         }
