@@ -1,4 +1,4 @@
-freemarker		2.3.3		http://freemarker.org/
+freemarker		2.3.13		http://freemarker.org/
 log4j			1.2.7		http://jakarta.apache.org
 proxool			0.7.2		http://proxool.sf.net
 mysql-connector		3.0.17-ga	http://www.mysql.com
