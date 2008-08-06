@@ -383,7 +383,6 @@ pre {
 }
 
 .ds,.hw,.sw,.bazar,.autor { border-bottom: 1px solid; }
-.ds { font-size: small; }
 
 .ds .td-nazev .meta-odkazy {
 	float: right;
@@ -426,9 +425,7 @@ td.td-datum {
 	text-align: right
 }
 
-.ds_odsazeni {
-	margin-left: 1em;
-}
+.ds_odsazeni { margin-left: 1em; }
 
 .hw table.hw-sekce tbody td {
 	width: 33%;
@@ -581,6 +578,7 @@ a.info:hover span.tooltip {
 }
 
 .s,
+.ds,
 .boxy,
 .ramec,
 .ls_zpr span,
@@ -609,7 +607,7 @@ a.info:hover span.tooltip {
 
 .ramec {
 	border: 1px solid;
-	margin: 0 2px;
+	margin: 0.5em 2px 0 2px;
 }
 
 .ramec td {
