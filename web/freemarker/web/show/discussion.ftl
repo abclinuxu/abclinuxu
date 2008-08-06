@@ -34,7 +34,7 @@
    <#if USER?exists && (USER.hasRole("discussion admin") || USER.hasRole("move relation"))>
      <br />
      <b>Admin:</b>
-     <a href="/SelectRelation?prefix=/hardware&amp;url=/EditRelation&amp;action=move&amp;rid=${RELATION.id}">Přesunout</a>,
+     <a href="/SelectRelation?prefix=/forum&amp;url=/EditRelation&amp;action=move&amp;rid=${RELATION.id}">Přesunout</a>,
      <#if USER.hasRole("discussion admin")>
          <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix="+URL.prefix)}">Smazat</a>,
          <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+RELATION.id+"&amp;dizId="+ITEM.id+TOOL.ticket(USER, false))}">
