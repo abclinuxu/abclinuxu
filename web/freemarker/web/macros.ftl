@@ -505,6 +505,7 @@
             FORUM=TOOL.analyzeDiscussions(forum)>
 
       <table class="ds">
+       <#if USER?exists><form method="post" action="/EditUser/${USER.id}"></#if>
         <thead>
           <tr>
             <td class="td-nazev">
@@ -527,7 +528,7 @@
                         <#local uforums=TOOL.getUserForums(USER)>
                         <#list uforums.keySet() as key><#if key==rid><#local onHP=true></#if></#list>
                     </#if>
-                    <form method="post" action="/EditUser/${USER.id}">
+
                     <#if onHP>
                         <input type="image" title="Odlepit z úvodní stránky" src="/images/actions/remove.png" style="background-color:transparent">
                     <#else>
@@ -536,11 +537,11 @@
                     <input type="hidden" name="action" value="toggleForumHP">
                     <input type="hidden" name="rid" value="${rid}">
                     <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER)}">
-                    </form>
                 </#if>
             </td>
           </tr>
         </thead>
+       <#if USER?exists></form></#if>
         <tbody>
          <#list FORUM as diz>
           <tr>
