@@ -590,7 +590,7 @@
                         <node name="forums">
                             <map>
                                 <entry key="order" value="49490,192836,222493,192820,222492"/>
-                                <entry key="49490" value="10"/><!-- linuxova poradna -->
+                                <entry key="49490" value="15"/><!-- linuxova poradna -->
                                 <entry key="192820" value="5"/><!-- programatorska poradna -->
                                 <entry key="222493" value="5"/><!-- databazova poradna -->
                                 <entry key="222492" value="5"/><!-- hardwarova poradna -->
