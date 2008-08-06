@@ -14,7 +14,11 @@ pak však potřebuje podporu programátora, který připraví data.</p>
 <#if PREVIEW?exists>
     <fieldset>
         <legend>Náhled</legend>
-        ${TOOL.xpath(PREVIEW,"/data/content")}
+        <#if PARAMS.execute?default("no")!="yes">
+            ${TOOL.xpath(PREVIEW,"/data/content")}
+        <#else>
+            <@TOOL.xpath(PREVIEW,"/data/content")?interpret />
+        </#if>
     </fieldset>
 </#if>
 
