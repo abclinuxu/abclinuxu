@@ -504,40 +504,41 @@
             feed = FEEDS.getForumFeedUrl(rid)?default("UNDEF"),
             FORUM=TOOL.analyzeDiscussions(forum)>
 
-    <#if USER?exists><form method="post" action="/EditUser/${USER.id}"></#if>
-
-    <div style="float: right">
-        <#if feed!="UNDEF">
-            <a href="${feed}"><img src="/images/site2/feed16.png" width="16" height="16" border="0"></a>
-        </#if>
-
-        <#if USER?exists>
-                <#if !onHP>
-                    <#local uforums=TOOL.getUserForums(USER)>
-                    <#list uforums.keySet() as key><#if key==rid><#local onHP=true></#if></#list>
-                </#if>
-                <#if onHP>
-                    <input type="image" title="Odlepit z úvodní stránky" src="/images/actions/remove.png" style="background-color:transparent">
-                <#else>
-                    <input type="image" title="Přilepit na úvodní stránku" src="/images/actions/add.png" style="background-color:transparent">
-                </#if>
-                <input type="hidden" name="action" value="toggleForumHP">
-                <input type="hidden" name="rid" value="${rid}">
-                <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER)}">
-        </#if>
-    </div>
-      <#local relation=TOOL.createRelation(rid)>
-      <h1 class="st_nadpis"><a href="${relation.url}" title="Poradna">${TOOL.childName(relation)}</a></h1>
-
-      <#if USER?exists></form></#if>
-
       <table class="ds">
         <thead>
           <tr>
-            <td class="td-nazev">Dotaz</td>
+            <td class="td-nazev">
+              <span class="meta-odkazy">
+                 <a href="/forum/EditDiscussion?action=addQuez&amp;rid=${rid}">Položit dotaz</a>,
+                 <a href="/forum/dir/${rid}?from=${FORUM?size}&amp;count=20">Starší dotazy</a>
+              </span>
+              <#local relation=TOOL.createRelation(rid)>
+              <span class="st_nadpis"><a href="${relation.url}" title="${TOOL.childName(relation)}">${TOOL.childName(relation)}</a></span>
+            </td>
             <td class="td-meta">Stav</td>
             <td class="td-meta">Reakcí</td>
-            <td class="td-datum">Poslední</td>
+            <td class="td-datum">
+                Poslední
+                <#if feed!="UNDEF">
+                   &nbsp;<a href="${feed}"><img src="/images/site2/feed12.png" width="12" height="12" border="0" alt="${TOOL.childName(relation)}, RSS feed"></a>
+                </#if>
+                <#if USER?exists>
+                    <#if !onHP>
+                        <#local uforums=TOOL.getUserForums(USER)>
+                        <#list uforums.keySet() as key><#if key==rid><#local onHP=true></#if></#list>
+                    </#if>
+                    <form method="post" action="/EditUser/${USER.id}">
+                    <#if onHP>
+                        <input type="image" title="Odlepit z úvodní stránky" src="/images/actions/remove.png" style="background-color:transparent">
+                    <#else>
+                        <input type="image" title="Přilepit na úvodní stránku" src="/images/actions/add.png" style="background-color:transparent">
+                    </#if>
+                    <input type="hidden" name="action" value="toggleForumHP">
+                    <input type="hidden" name="rid" value="${rid}">
+                    <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER)}">
+                    </form>
+                </#if>
+            </td>
           </tr>
         </thead>
         <tbody>
@@ -552,19 +553,14 @@
         </tbody>
       </table>
 
-      <#if showAdvertisement>
+      <#--<#if showAdvertisement>
           <div style="margin:0.5em 0 0 0; float:right">
-             <#--<@lib.advertisement id="arbo-full" />-->
              <@lib.advertisement id="gg-hp-blogy" />
           </div>
       </#if>
 
-      <ul>
-        <li><a href="/forum/EditDiscussion?action=addQuez&amp;rid=${rid}">Položit dotaz</a></li>
-        <li><a href="/forum/dir/${rid}?from=${FORUM?size}&amp;count=20">Starší dotazy</a></li>
-      </ul>
+      <#if showAdvertisement><div style="clear: right"></div></#if>-->
 
-      <#if showAdvertisement><div style="clear: right"></div></#if>
 </#macro>
 
 <#macro showRegion region>

@@ -363,13 +363,8 @@ pre {
 	margin-left: 25%;
 }
 
-.rtut {
-	height: 8px;
-}
-
-.hlasy {
-	font-weight: bold;
-}
+.rtut { height: 8px; }
+.hlasy { font-weight: bold; }
 
 .uceb-nav {
 	text-align: center;
@@ -387,8 +382,16 @@ pre {
 	table-layout: auto;
 }
 
-.ds,.hw,.sw,.bazar,.autor {
-	border-bottom: 1px solid;
+.ds,.hw,.sw,.bazar,.autor { border-bottom: 1px solid; }
+.ds { font-size: small; }
+
+.ds .td-nazev .meta-odkazy {
+	float: right;
+	font-weight: normal;
+}
+.ds .td-nazev .st_nadpis a {
+	letter-spacing: 0.2em;
+	font-size: medium;
 }
 
 .ds thead td,
