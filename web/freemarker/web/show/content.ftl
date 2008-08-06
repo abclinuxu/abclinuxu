@@ -71,6 +71,8 @@ ${content}
     </div>
 </#if>
 
-<@lib.showRevisions RELATION/>
+<#if exec!="yes" || (USER?exists && USER.hasRole("root"))>
+    <@lib.showRevisions RELATION/>
+</#if>
 
 <#include "../footer.ftl">
