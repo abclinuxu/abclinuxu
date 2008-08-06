@@ -1,7 +1,7 @@
 <#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages>
 
 <p>Zapomněli jste své heslo? Žádný problém. Pomocí tohoto formuláře
 najdete své konto. Pak jednodušete svůj výběr potvrdíte a systém

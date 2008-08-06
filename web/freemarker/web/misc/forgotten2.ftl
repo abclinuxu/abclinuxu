@@ -1,7 +1,7 @@
 <#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages>
 
 <p>Nalezeno ${USERS?size} uživatelů.</p>
 
