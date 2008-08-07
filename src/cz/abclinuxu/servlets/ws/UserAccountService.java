@@ -51,6 +51,17 @@ public interface UserAccountService {
                                @WebParam(name = "portal") String portal, @WebParam(name = "portalPassword") String portalPassword)
             throws AccessDeniedException, LdapException, InvalidInputException;
 
+    /**
+     * Resets password to new value, if the user supplied correct reset token.
+     * @param login login
+     * @param forgottenPasswordToken secret information
+     * @param password new password
+     */
+    public void resetPassword(@WebParam(name = "login") String login, @WebParam(name = "forgottenPasswordToken") String forgottenPasswordToken,
+                              @WebParam(name = "password") String password, @WebParam(name = "portal") String portal,
+                              @WebParam(name = "portalPassword") String portalPassword)
+        throws AccessDeniedException, LdapException, InvalidInputException;
+
     public void updateUser(@WebParam(name = "acount") UserAccount account, @WebParam(name = "portal") String portal,
                            @WebParam(name = "portalPassword") String portalPassword)
             throws AccessDeniedException, LdapException, InvalidInputException;

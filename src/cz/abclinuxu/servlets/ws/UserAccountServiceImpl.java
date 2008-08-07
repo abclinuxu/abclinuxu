@@ -23,9 +23,6 @@ import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.exceptions.LdapException;
 import cz.abclinuxu.exceptions.AccessDeniedException;
 import cz.abclinuxu.persistence.ldap.LdapUserManager;
-import cz.abclinuxu.persistence.SQLTool;
-import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.servlets.html.edit.EditUser;
 import cz.abclinuxu.servlets.Constants;
@@ -133,6 +130,25 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
         }
     }
 
+    public void resetPassword(@WebParam(name = "login") String login, @WebParam(name = "forgottenPasswordToken") String forgottenPasswordToken,
+                              @WebParam(name = "password") String password, @WebParam(name = "portal") String portal,
+                              @WebParam(name = "portalPassword") String portalPassword)
+            throws AccessDeniedException, LdapException, InvalidInputException {
+        try {
+            verifyAccess(portal, portalPassword);
+            if (log.isDebugEnabled())
+                log.debug("changePassword(" + login + ")");
+
+            mgr.changePassword(login, password);
+        } catch (AbcException e) {
+            log.warn("Chyba webové služby", e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Chyba webové služby", e);
+            throw new AbcException("Neočekávaná chyba " + e.getMessage(), e);
+        }
+    }
+
     public void updateUser(@WebParam(name = "acount") UserAccount account, @WebParam(name = "portal") String portal,
                            @WebParam(name = "portalPassword") String portalPassword)
             throws AccessDeniedException, LdapException, InvalidInputException {
@@ -141,10 +157,8 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             if (log.isDebugEnabled())
                 log.debug("updateUser(" + account.login + ")");
 
-            Integer id = SQLTool.getInstance().getUserByLogin(account.login);
-            Persistence persistence = PersistenceFactory.getPersistence();
-            User user = (User) persistence.findById(new User(id)).clone();
-
+            // todo odstranit volani EditUser, presunout kontroly primo sem, hlavne zadne HTML
+            User user = new User();
             Map<String, String> userMap = new HashMap<String, String>();
             Map env = new HashMap();
             String  tmp;
@@ -182,7 +196,7 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             }
             tmp = account.getEmailAddress();
             if (tmp != null) {
-                if (!EditUser.setEmail(Collections.singletonMap(EditUser.PARAM_EMAIL, tmp), user, env))
+                if (! EditUser.setEmail(Collections.singletonMap(EditUser.PARAM_EMAIL, tmp), user, env))
                     throw createException(EditUser.PARAM_EMAIL, env, LdapUserManager.ATTRIB_EMAIL_ADRESS);
                 userMap.put(LdapUserManager.ATTRIB_EMAIL_ADRESS, tmp);
             }
@@ -200,7 +214,7 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             }
             tmp = account.getHomepageURL();
             if (tmp != null) {
-                if (!EditUser.setMyPage(Collections.singletonMap(EditUser.PARAM_HOME_PAGE, tmp), user, env))
+                if (! EditUser.setMyPage(Collections.singletonMap(EditUser.PARAM_HOME_PAGE, tmp), user, env))
                     throw createException(EditUser.PARAM_HOME_PAGE, env, LdapUserManager.ATTRIB_HOME_PAGE_URL);
                 userMap.put(LdapUserManager.ATTRIB_HOME_PAGE_URL, tmp);
             }
@@ -238,13 +252,13 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             }
             tmp = account.getName();
             if (tmp != null) {
-                if (!EditUser.setName(Collections.singletonMap(EditUser.PARAM_NAME, tmp), user, env))
+                if (! EditUser.setName(Collections.singletonMap(EditUser.PARAM_NAME, tmp), user, env))
                     throw createException(EditUser.PARAM_NAME, env, LdapUserManager.ATTRIB_NAME);
                 userMap.put(LdapUserManager.ATTRIB_NAME, tmp);
             }
             tmp = account.getOpenID();
             if (tmp != null) {
-                if (!EditUser.setOpenId(Collections.singletonMap(EditUser.PARAM_OPEN_ID, tmp), user, env))
+                if (! EditUser.setOpenId(Collections.singletonMap(EditUser.PARAM_OPEN_ID, tmp), user, env))
                     throw createException(EditUser.PARAM_OPEN_ID, env, LdapUserManager.ATTRIB_OPEN_ID);
                 userMap.put(LdapUserManager.ATTRIB_OPEN_ID, tmp);
             }
@@ -256,15 +270,17 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             if (tmp != null) {
                 userMap.put(LdapUserManager.ATTRIB_PASSWORD_QUESTION, tmp);
             }
+            tmp = account.getPhone();
+            if (tmp != null) {
+                userMap.put(LdapUserManager.ATTRIB_PHONE, tmp);
+            }
             tmp = account.getSex();
             if (tmp != null) {
-                if (!EditUser.setSex(Collections.singletonMap(EditUser.PARAM_SEX, tmp), user, env))
+                if (! EditUser.setSex(Collections.singletonMap(EditUser.PARAM_SEX, tmp), user, env))
                     throw createException(EditUser.PARAM_SEX, env, LdapUserManager.ATTRIB_SEX);
                 userMap.put(LdapUserManager.ATTRIB_SEX, tmp);
             }
             mgr.updateUser(account.login, userMap);
-
-            persistence.update(user);
         } catch (AbcException e) {
             log.warn("Chyba webové služby", e);
             throw e;
@@ -310,6 +326,7 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             account.setOpenID(map.get(LdapUserManager.ATTRIB_OPEN_ID));
             account.setPasswordAnswer(map.get(LdapUserManager.ATTRIB_PASSWORD_ANSWEAR));
             account.setPasswordQuestion(map.get(LdapUserManager.ATTRIB_PASSWORD_QUESTION));
+            account.setPhone(map.get(LdapUserManager.ATTRIB_PHONE));
             account.setRegistrationDate(map.get(LdapUserManager.ATTRIB_REGISTRATION_DATE));
             account.setSex(map.get(LdapUserManager.ATTRIB_SEX));
             return account;
@@ -353,7 +370,6 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             String password = prefs.get(PREF_CLIENT_PREFIX + portal + PREF_CLENT_PASSWORD_SUFFIX, null);
             clients.put(id, new ClientInfo(id, password));
         }
-
     }
 
     private static class ClientInfo {

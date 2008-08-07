@@ -55,6 +55,7 @@ public class UserAccount implements Serializable {
     String passwordAnswer;
     String passwordHash;
     String passwordQuestion;
+    String phone;
     String registrationDate;
     String sex;
 
@@ -280,6 +281,14 @@ public class UserAccount implements Serializable {
 
     public void setPasswordQuestion(String passwordQuestion) {
         this.passwordQuestion = passwordQuestion;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getRegistrationDate() {
