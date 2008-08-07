@@ -139,7 +139,7 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             if (log.isDebugEnabled())
                 log.debug("changePassword(" + login + ")");
 
-            mgr.changePassword(login, password);
+            mgr.resetPassword(login, forgottenPasswordToken, password);
         } catch (AbcException e) {
             log.warn("Chyba webové služby", e);
             throw e;
