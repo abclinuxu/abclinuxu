@@ -110,7 +110,7 @@
 </#if>
 
 
-<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify() && CHILDREN.poll?exists>
     <h3>Nepoužité ankety</h3>
     <#list CHILDREN.poll as poll>
         <#if poll!="UNDEF">
