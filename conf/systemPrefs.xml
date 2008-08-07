@@ -109,6 +109,8 @@
                                 <entry key="REPLACEMENT_VLNKA" value="$1&amp;nbsp;$3"/>
                                 <entry key="RE_AMPERSAND" value="&amp;(?!#?[a-zA-Z0-9]+;)" />
                                 <entry key="story.reserve.percents" value="25" />
+                                <entry key="news.word.limit.soft" value="45" />
+                                <entry key="news.word.limit.hard" value="60" />
                             </map>
                         </node>
                     </node>

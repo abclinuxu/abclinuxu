@@ -77,12 +77,15 @@ public class Tools implements Configurable {
     public static final String PREF_REGEXP_AMPERSAND = "RE_AMPERSAND";
     public static final String PREF_REGEXP_REMOVE_PARAGRAPHS = "RE_REMOVE_PARAGRAPHS";
     public static final String PREF_STORY_RESERVE_PERCENTS = "story.reserve.percents";
+    public static final String PREF_NEWS_WORD_LIMIT_SOFT = "news.word.limit.soft";
+    public static final String PREF_NEWS_WORD_LIMIT_HARD = "news.word.limit.hard";
 
     static Persistence persistence = PersistenceFactory.getPersistence();
     static REProgram reRemoveTags, reVlnka, lineBreak, reRemoveParagraphs;
     static Pattern reAmpersand;
     static String vlnkaReplacement;
     static int storyReservePercents;
+    static int newsWordSoftLimit, newsWordHardLimit;
 
     static {
         Tools tools = new Tools();
@@ -107,6 +110,9 @@ public class Tools implements Configurable {
             reRemoveParagraphs = reCompiler.compile(pref);
 
             storyReservePercents = prefs.getInt(PREF_STORY_RESERVE_PERCENTS, 50);
+            newsWordSoftLimit = prefs.getInt(PREF_NEWS_WORD_LIMIT_SOFT, 45);
+            newsWordHardLimit = prefs.getInt(PREF_NEWS_WORD_LIMIT_HARD, 60);
+            
         } catch (RESyntaxException e) {
             log.error("Chyba pri kompilaci regexpu!", e);
         } catch (PatternSyntaxException e) {
@@ -2091,6 +2097,11 @@ public class Tools implements Configurable {
 		return permissionsFor(user, new Relation(rel));
 	}
 
+    /**
+     * Returns the RID and the question count for every forum that should be displayed on the HP.
+     * @param user
+     * @return
+     */
     public static Map<Integer, Integer> getUserForums(User user) {
         VariableFetcher vars = VariableFetcher.getInstance();
         Map<Integer, Integer> mainForums = vars.getMainForums();
@@ -2111,5 +2122,56 @@ public class Tools implements Configurable {
         }
         
         return retval;
+    }
+    
+    public static String limitNewsLength(String text) {
+        String stripped = removeTags(text);
+        StringTokenizer stk = new StringTokenizer(stripped, " \t\n\r\f,.");
+        
+        if (stk.countTokens() < newsWordHardLimit)
+            return null;
+        
+        String delims = " \t\n\r\f,.<";
+        stk = new StringTokenizer(text, delims, true);
+        StringBuffer result = new StringBuffer();
+        int words = 0;
+        boolean intag = false;
+        
+        try {
+            while (stk.hasMoreTokens() && (words < newsWordSoftLimit || intag) ) {
+                String next = stk.nextToken(delims);
+                
+                // have we hit a delimiter?
+                if (next.length() == 1) {
+                    
+                    // do the tag processing
+                    if (next.equals("<")) {
+                        // append the opening bracket
+                        result.append(next);
+                        // append the tag's contents
+                        result.append(stk.nextToken(">"));
+                        // append the closing bracket
+                        result.append(stk.nextToken());
+
+                        // assumes that all tags are in pairs
+                        intag = !intag;
+
+                        continue;
+                    }
+                    if (delims.indexOf(next.charAt(0)) != -1) {
+                        result.append(next);
+                        // so that the delimiter doesn't get counted as a word
+                        continue;
+                    }
+                }
+
+                result.append(next);
+                words++;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        
+        return result.toString();
     }
 }

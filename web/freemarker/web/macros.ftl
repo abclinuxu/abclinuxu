@@ -107,7 +107,12 @@
     diz=TOOL.findComments(item),
     url=relation.url?default("/zpravicky/show/"+relation.id)>
     <span>${DATE.show(item.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[item.subType].name}</span>
-    <p>${TOOL.xpath(item,"data/content")}</p>
+    <#local text=TOOL.xpath(item,"data/content"), shortened=TOOL.limitNewsLength(text)?default("UNDEFINED")>
+    <#if shortened=="UNDEFINED">
+        <p>${text}</p>
+    <#else>
+        <p>${shortened}... <i><a href="${url}">Více&raquo;</a></i></p>
+    </#if>
     <span><@showUser autor/>
     | <a href="${url}" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"
     >Komentářů: ${diz.responseCount}<@lib.markNewComments diz/></a></span>
