@@ -102,6 +102,7 @@ public class LdapUserManager implements Configurable {
     public static final String ATTRIB_PASSWORD_ANSWEAR = "passwordAnswer";
     public static final String ATTRIB_PASSWORD_HASHCODE = "passwordHash";
     public static final String ATTRIB_PASSWORD_QUESTION = "passwordQuestion";
+    public static final String ATTRIB_PHONE = "telephoneNumber";
     public static final String ATTRIB_REGISTRATION_PORTAL = "registrationPortalID";
     public static final String ATTRIB_REGISTRATION_DATE = "registrationDate";
     public static final String ATTRIB_SEX = "sex";
@@ -132,9 +133,9 @@ public class LdapUserManager implements Configurable {
             MODIFIABLE_ATTRIBUTES.add(attr);
         }
         MODIFIABLE_ATTRIBUTES.remove(ATTRIB_LOGIN);
-        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_LAST_LOGIN_DATE);
-        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_REGISTRATION_DATE);
-        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_REGISTRATION_PORTAL);
+//        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_LAST_LOGIN_DATE);
+//        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_REGISTRATION_DATE);
+//        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_REGISTRATION_PORTAL);
         MODIFIABLE_ATTRIBUTES.remove(ATTRIB_VISITED_PORTAL);
     }
 
@@ -302,12 +303,64 @@ public class LdapUserManager implements Configurable {
         try {
             ctx = connectLDAP(adminUsername, adminPassword, true);
             List<ModificationItem> modsList = new ArrayList<ModificationItem>();
-            BasicAttribute attr = new BasicAttribute(ATTRIB_PASSWORD, password);
-            modsList.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr));
-            attr = new BasicAttribute(ATTRIB_PASSWORD_HASHCODE, Integer.toString(password.hashCode()));
-            modsList.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr));
+            setPassword(password, modsList);
             ModificationItem[] mods = modsList.toArray(new ModificationItem[modsList.size()]);
             ctx.modifyAttributes(ATTRIB_LOGIN + "=" + login + "," + parentContext, mods);
+        } catch (NamingException e) {
+            log.error("LDAP connection failed!", e);
+            throw new LdapException("Spojení s LDAP serverem selhalo. Důvod: " + e.getMessage());
+        } finally {
+            if (ctx != null)
+                try {
+                    ctx.close();
+                } catch (NamingException e) {
+                    log.error("LDAP connection failed!", e);
+                }
+        }
+    }
+
+    private void setPassword(String password, List<ModificationItem> modsList) {
+        BasicAttribute attr = new BasicAttribute(ATTRIB_PASSWORD, password);
+        modsList.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr));
+        attr = new BasicAttribute(ATTRIB_PASSWORD_HASHCODE, Integer.toString(password.hashCode()));
+        modsList.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr));
+    }
+
+    /**
+     * Updates password and passwordHash.
+     * @param login the login
+     * @param resetToken secret token
+     * @param password the password
+     * @throws LdapException LDAP connection error
+     * @throws InvalidInputException unknown or unsupported attribute was supplied
+     */
+    public void resetPassword(String login, String resetToken, String password) throws LdapException, InvalidInputException {
+        if (password == null || password.length() < 4)
+            throw new InvalidInputException("Přihlašovací heslo musí mít nejméně čtyři znaky!");
+
+        DirContext ctx = null;
+        try {
+            ctx = connectLDAP(adminUsername, adminPassword, true);
+            Map<String, String> info = getUserInformation(login, new String[]{ATTRIB_FORGOTTEN_PASSWORD_TOKEN}, ctx);
+            String realToken = info.get(ATTRIB_FORGOTTEN_PASSWORD_TOKEN);
+            InvalidInputException e = null;
+
+            List<ModificationItem> modsList = new ArrayList<ModificationItem>();
+            // always remove the reset token
+            BasicAttribute attr = new BasicAttribute(ATTRIB_FORGOTTEN_PASSWORD_TOKEN, null);
+            modsList.add(new ModificationItem(DirContext.REMOVE_ATTRIBUTE, attr));
+
+            if (realToken == null || ! realToken.equals(resetToken)) {
+                e = new InvalidInputException("Token je neplatný, vygenerujte si nový!");
+            } else {
+                setPassword(password, modsList);
+            }
+            ModificationItem[] mods = modsList.toArray(new ModificationItem[modsList.size()]);
+
+            ctx.modifyAttributes(ATTRIB_LOGIN + "=" + login + "," + parentContext, mods);
+
+            if (e != null)
+                throw e;
         } catch (NamingException e) {
             log.error("LDAP connection failed!", e);
             throw new LdapException("Spojení s LDAP serverem selhalo. Důvod: " + e.getMessage());
@@ -440,19 +493,7 @@ public class LdapUserManager implements Configurable {
         try {
             ctx = connectLDAP(adminUsername, adminPassword, true);
 
-            Attributes searchAttrs = new BasicAttributes(ATTRIB_LOGIN, login);
-            NamingEnumeration results = ctx.search(parentContext, searchAttrs, attributes);
-            if (!results.hasMore())
-                return Collections.emptyMap();
-
-            SearchResult sr = (SearchResult) results.next();
-            searchAttrs = sr.getAttributes();
-            NamingEnumeration<? extends Attribute> all = searchAttrs.getAll();
-            Map<String, String> result = new HashMap<String, String>();
-            while (all.hasMoreElements()) {
-                Attribute attribute =  all.nextElement();
-                result.put(attribute.getID(), (String) attribute.get());
-            }
+            Map<String, String> result = getUserInformation(login, attributes, ctx);
             return result;
         } catch (NamingException e) {
             log.error("Login with '" + login + "' has failed!", e);
@@ -481,6 +522,26 @@ public class LdapUserManager implements Configurable {
      */
     public String getLdapClass() {
         return ldapClass;
+    }
+
+    /**
+     * Perform search using supplied context.
+     */
+    private Map<String, String> getUserInformation(String login, String[] attributes, DirContext ctx) throws LdapException, NamingException {
+        Attributes searchAttrs = new BasicAttributes(ATTRIB_LOGIN, login);
+        NamingEnumeration results = ctx.search(parentContext, searchAttrs, attributes);
+        if (!results.hasMore())
+            return Collections.emptyMap();
+
+        SearchResult sr = (SearchResult) results.next();
+        searchAttrs = sr.getAttributes();
+        NamingEnumeration<? extends Attribute> all = searchAttrs.getAll();
+        Map<String, String> result = new HashMap<String, String>();
+        while (all.hasMoreElements()) {
+            Attribute attribute = all.nextElement();
+            result.put(attribute.getID(), (String) attribute.get());
+        }
+        return result;
     }
 
     /**

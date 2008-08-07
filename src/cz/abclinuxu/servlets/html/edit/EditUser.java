@@ -233,14 +233,14 @@ public class EditUser implements AbcAction {
         // all other actions require user to be logged in and to have rights for this action
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-		
+
 		if ( action.equals(ACTION_ADD_GROUP_MEMBER) ) {
             ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
-			
+
 			// permission verifiaction is performed in the function
             return actionAddToGroup(request, response, env);
         }
-		
+
         if ( ! (user.getId()==managed.getId() || user.hasRole(Roles.USER_ADMIN)) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -309,7 +309,7 @@ public class EditUser implements AbcAction {
             ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
             return actionRemoveFromBookmarks(request, response, env);
         }
-		
+
 		if ( action.equals(ACTION_TOGGLE_FORUM_HP) ) {
 			ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
 			return actionToggleForumHP(request, response, env);
@@ -562,31 +562,16 @@ public class EditUser implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         String token = (String) params.get(PARAM_TOKEN);
-        Persistence persistence = PersistenceFactory.getPersistence();
 
         if (token == null || token.length() == 0) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Chybí token!", env, request.getSession());
             return FMTemplateSelector.select("EditUser", "changeForgottenPassword", env, request);
         }
 
-        Map<String, String> info = ldapManager.getUserInformation(managed.getLogin(), new String[] { LdapUserManager.ATTRIB_FORGOTTEN_PASSWORD_TOKEN });
-        String realToken = info.get(LdapUserManager.ATTRIB_FORGOTTEN_PASSWORD_TOKEN);
-        Map resetToken = Collections.singletonMap(LdapUserManager.ATTRIB_FORGOTTEN_PASSWORD_TOKEN, null);
-
-        if (!token.equals(realToken)) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Token je neplatný, vygenerujte si nový!", env, request.getSession());
-            ldapManager.updateUser(managed.getLogin(), resetToken);
-            response.sendRedirect(response.encodeRedirectURL("/"));
-            return null;
-        }
-
         if (!setPassword(params, managed, env))
             return FMTemplateSelector.select("EditUser", "changeForgottenPassword", env, request);
 
-        ldapManager.changePassword(managed.getLogin(), managed.getPassword());
-        ldapManager.updateUser(managed.getLogin(), resetToken);
-
-        persistence.update(managed);
+        ldapManager.resetPassword(managed.getLogin(), token, managed.getPassword());
 
         ServletUtils.addMessage("Heslo bylo změněno, nyní se můžete přihlásit.", env, request.getSession());
 
@@ -1391,12 +1376,12 @@ public class EditUser implements AbcAction {
             return ServletUtils.showErrorPage("Chybí číslo skupiny!",env,request);
 		Item group = new Item(gid);
 		Tools.sync(group);
-		
+
 		if (!user.hasRole(Roles.ROOT) && user.getId() != group.getOwner())
 			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         Element system = (Element) managed.getData().selectSingleNode("/data/system");
-		
+
 		if (system == null) {
 			Element data = (Element) managed.getData().selectSingleNode("/data");
 			system = data.addElement("system");
@@ -1410,20 +1395,20 @@ public class EditUser implements AbcAction {
         urlUtils.redirect(response, "/Group?action=members&gid="+gid);
         return null;
     }
-	
+
 	protected String actionToggleForumHP(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(VAR_MANAGED);
 		Persistence persistence = PersistenceFactory.getPersistence();
 		int rid = Misc.parseInt((String) params.get(PARAM_RID), 0);
-        
+
         Map<Integer, Integer> forums = Tools.getUserForums(user);
         Map<Integer, Integer> defaultForums = VariableFetcher.getInstance().getMainForums();
-        
+
         boolean isSystem = defaultForums.containsKey(rid);
-        
+
         Element forum = (Element) user.getData().selectSingleNode("/data/forums/forum[text()='"+rid+"']");
-        
+
         if (forums.containsKey(rid) && forums.get(rid) > 0) {
             // turn the forum off
             if (forum != null) {
@@ -1440,28 +1425,28 @@ public class EditUser implements AbcAction {
         } else {
             // turn the forum on
             int questions;
-            
+
             if (isSystem)
                 questions = defaultForums.get(rid);
             else
                 questions = VariableFetcher.getInstance().getDefaultSizes().get(VariableFetcher.KEY_QUESTION);
-            
+
             if (forum == null) {
                 Element forumsElem = DocumentHelper.makeElement(user.getData(), "/data/forums");
                 forum = forumsElem.addElement("forum");
                 forum.setText(String.valueOf(rid));
             }
-            
+
             forum.addAttribute("questions", String.valueOf(questions));
         }
-		
+
 		User sessionUser = (User) env.get(Constants.VAR_USER);
         if (user.getId() == sessionUser.getId()) {
             sessionUser.synchronizeWith(user);
         }
-		
+
 		persistence.update(user);
-		
+
 		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/"); // redirect to the homepage
 		return null;
@@ -1490,7 +1475,7 @@ public class EditUser implements AbcAction {
         }
 
         String token = generateTicket(managed.getId());
-        Map changes = Collections.singletonMap(LdapUserManager.ATTRIB_FORGOTTEN_PASSWORD_TOKEN, token);
+        Map<String, String> changes = Collections.singletonMap(LdapUserManager.ATTRIB_FORGOTTEN_PASSWORD_TOKEN, token);
         ldapManager.updateUser(managed.getLogin(), changes);
 
         Map data = new HashMap();
@@ -2101,33 +2086,33 @@ public class EditUser implements AbcAction {
         Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
         int max = (Integer) maxSizes.get(VariableFetcher.KEY_QUESTION);
         boolean ok = true;
-        
+
         Element forumsElem = DocumentHelper.makeElement(user.getData(), "/data/forums");
         Map<Integer,Integer> mainForums = VariableFetcher.getInstance().getMainForums();
         Map<Integer,Integer> forums = Tools.getUserForums(user);
-        
+
         for (Integer rid : forums.keySet()) {
             String paramName = PARAM_DISCUSSIONS_COUNT + "_" + rid;
             int value = Misc.parseInt((String) params.get(paramName), 0);
-            
+
             if (value < 0 || value > max) {
                 ServletUtils.addError(paramName, "Zadejte číslo v rozsahu 0 - " + max + "!", env, null);
                 ok = false;
                 continue;
             }
-            
+
             Element elem = (Element) forumsElem.selectSingleNode("forum[text()='"+rid+"']");
             if (elem == null) {
                 elem = forumsElem.addElement("forum");
                 elem.setText(String.valueOf(rid));
             }
-            
+
             if (value == 0 && !mainForums.containsKey(rid))
                 elem.detach();
             else
                 elem.addAttribute("questions", String.valueOf(value));
         }
-        
+
         return ok;
     }
 
