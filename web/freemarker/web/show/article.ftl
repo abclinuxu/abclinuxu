@@ -80,9 +80,8 @@
             </#if>
         </#if>
 
-        <#if !CHILDREN.poll?exists>
-            <a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+RELATION.id)}">Vytvoř anketu</a>
-        </#if>
+        <a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+RELATION.id)}">Vytvoř anketu</a>
+        
         <a href="${URL.make("/"+RELATION.id+".docb")}">Docbook</a>
         <a href="${URL.make("/edit/"+RELATION.id+"?action=showTalk")}">Rozhovor</a>
         <a href="${URL.make("/inset/"+RELATION.id+"?action=addFile")}">Přidat přílohy</a>
@@ -96,17 +95,29 @@
 
 <@lib.advertisement id="arbo-sq" />
 
-${TOOL.render(TEXT,USER?if_exists)}
+<#assign items = TOOL.processArticle( TOOL.render(TEXT,USER?if_exists) )>
+<#list items as item>
+    <#if item.type == "text">${item.value}
+    <#elseif item.type == "poll">
+        <#assign index = item.value?eval>
+        <@lib.showPoll CHILDREN.poll[index], RELATION.url?default("/clanky/show/"+RELATION.id) />
+        <#assign dummy=CHILDREN.poll.set(index, "UNDEF")>
+    </#if>
+</#list>
 
 <#if forbidRating!="yes">
     <@lib.showRating RELATION/>
 </#if>
 
-<#if CHILDREN.poll?exists>
-    <h3>Anketa</h3>
-    <div class="anketa">
-        <@lib.showPoll CHILDREN.poll[0], RELATION.url?default("/clanky/show/"+RELATION.id) />
-    </div>
+
+<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+    <h3>Nepoužité ankety</h3>
+    <#list CHILDREN.poll as poll>
+        <#if poll!="UNDEF">
+            <@lib.showPoll poll, RELATION.url?default("/clanky/show/"+RELATION.id) />
+            <div>Kód: <code>&lt;inline type="poll" id="${poll_index}"&gt;</code></div>
+        </#if>
+    </#list>
 </#if>
 
 <#if PAGES?exists>
