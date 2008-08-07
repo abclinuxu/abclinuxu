@@ -12,7 +12,11 @@
          forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF"),
          inPool=RELATION.upper==8082>
 
-<h1>${ITEM.title}</h1>
+<#if PAGES?exists && PAGE?exists>
+    <h1>${PAGES[PAGE]}</h1>
+<#else>
+    <h1>${ITEM.title}</h1>
+</#if>
 
 <p class="meta-vypis">
     ${DATE.show(ITEM.created,"SMART_DMY")} |
