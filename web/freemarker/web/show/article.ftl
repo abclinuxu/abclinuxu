@@ -119,10 +119,12 @@
         <#if poll!="UNDEF">
             <#if !wrote_pollhdr>
                 <h3>Nepoužité ankety</h3>
-                <#assign write_pollhdr=true>
+                <#assign wrote_pollhdr=true>
             </#if>
-            <@lib.showPoll poll, RELATION.url?default("/clanky/show/"+RELATION.id) />
-            <div>Kód: <code>&lt;inline type="poll" id="${poll_index}"&gt;</code></div>
+            <div>
+                <a href="/ankety/show/${poll.id}">${TOOL.childName(poll)}</a> |
+                Kód: <code>&lt;inline type="poll" id="${poll_index}"&gt;</code>
+            </div>
         </#if>
     </#list>
 </#if>
