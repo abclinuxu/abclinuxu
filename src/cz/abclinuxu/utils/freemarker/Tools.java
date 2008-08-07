@@ -76,16 +76,17 @@ public class Tools implements Configurable {
     public static final String PREF_REPLACEMENT_VLNKA = "REPLACEMENT_VLNKA";
     public static final String PREF_REGEXP_AMPERSAND = "RE_AMPERSAND";
     public static final String PREF_REGEXP_REMOVE_PARAGRAPHS = "RE_REMOVE_PARAGRAPHS";
+    public static final String PREF_REGEXP_ARTICLE_POLL = "RE_ARTICLE_POLL";
     public static final String PREF_STORY_RESERVE_PERCENTS = "story.reserve.percents";
-    public static final String PREF_NEWS_WORD_LIMIT_SOFT = "news.word.limit.soft";
-    public static final String PREF_NEWS_WORD_LIMIT_HARD = "news.word.limit.hard";
+    public static final String PREF_NEWS_LETTER_LIMIT_SOFT = "news.letter.limit.soft";
+    public static final String PREF_NEWS_LETTER_LIMIT_HARD = "news.letter.limit.hard";
 
     static Persistence persistence = PersistenceFactory.getPersistence();
-    static REProgram reRemoveTags, reVlnka, lineBreak, reRemoveParagraphs;
+    static REProgram reRemoveTags, reVlnka, lineBreak, reRemoveParagraphs, rePollTag;
     static Pattern reAmpersand;
     static String vlnkaReplacement;
     static int storyReservePercents;
-    static int newsWordSoftLimit, newsWordHardLimit;
+    static int newsLetterSoftLimit, newsLetterHardLimit;
 
     static {
         Tools tools = new Tools();
@@ -108,10 +109,12 @@ public class Tools implements Configurable {
             reAmpersand = Pattern.compile(pref);
             pref = prefs.get(PREF_REGEXP_REMOVE_PARAGRAPHS, null);
             reRemoveParagraphs = reCompiler.compile(pref);
+            pref = prefs.get(PREF_REGEXP_ARTICLE_POLL, null);
+            rePollTag = reCompiler.compile(pref);
 
             storyReservePercents = prefs.getInt(PREF_STORY_RESERVE_PERCENTS, 50);
-            newsWordSoftLimit = prefs.getInt(PREF_NEWS_WORD_LIMIT_SOFT, 45);
-            newsWordHardLimit = prefs.getInt(PREF_NEWS_WORD_LIMIT_HARD, 60);
+            newsLetterSoftLimit = prefs.getInt(PREF_NEWS_LETTER_LIMIT_SOFT, 400);
+            newsLetterHardLimit = prefs.getInt(PREF_NEWS_LETTER_LIMIT_HARD, 500);
             
         } catch (RESyntaxException e) {
             log.error("Chyba pri kompilaci regexpu!", e);
@@ -2126,19 +2129,18 @@ public class Tools implements Configurable {
     
     public static String limitNewsLength(String text) {
         String stripped = removeTags(text);
-        StringTokenizer stk = new StringTokenizer(stripped, " \t\n\r\f,.");
         
-        if (stk.countTokens() < newsWordHardLimit)
+        if (stripped.length() < newsLetterHardLimit)
             return null;
         
         String delims = " \t\n\r\f,.<";
-        stk = new StringTokenizer(text, delims, true);
+        StringTokenizer stk = new StringTokenizer(text, delims, true);
         StringBuffer result = new StringBuffer();
-        int words = 0;
+        int letters = 0;
         boolean intag = false;
         
         try {
-            while (stk.hasMoreTokens() && (words < newsWordSoftLimit || intag) ) {
+            while (stk.hasMoreTokens() && (letters < newsLetterSoftLimit || intag) ) {
                 String next = stk.nextToken(delims);
                 
                 // have we hit a delimiter?
@@ -2160,18 +2162,60 @@ public class Tools implements Configurable {
                     }
                     if (delims.indexOf(next.charAt(0)) != -1) {
                         result.append(next);
+                        //letters++;
                         // so that the delimiter doesn't get counted as a word
                         continue;
                     }
                 }
 
                 result.append(next);
-                words++;
+                letters += next.length();
             }
         } catch (Exception e) {
             return null;
         }
         
         return result.toString();
+    }
+    
+    public static List<Map> processArticle(String text) {
+        RE regexpPolls = new RE(rePollTag, RE.MATCH_MULTILINE);
+        int pos = 0;
+        List<Map> items = new ArrayList(3);
+        
+        while (true) {
+            if (regexpPolls.match(text, pos)) {
+                Map<String,String> map;
+                
+                // add the preceding text
+                map = new HashMap(2);
+                map.put("type", "text");
+                map.put("value", text.substring(pos, regexpPolls.getParenEnd(0)));
+                items.add(map);
+                
+                pos = regexpPolls.getParenEnd(0);
+                
+                String type = regexpPolls.getParen(1);
+                
+                if ("poll".equals(type)) {
+                    // add a poll
+                    map = new HashMap(2);
+                    map.put("type", "poll");
+                    map.put("value", regexpPolls.getParen(2));
+                    items.add(map);
+                }
+            } else
+                break;
+        }
+        
+        // add the remaining text
+        if (pos < text.length()) {
+            Map<String,String> map = new HashMap(2);
+            map.put("type", "text");
+            map.put("value", text.substring(pos));
+            items.add(map);
+        }
+        
+        return items;
     }
 }
