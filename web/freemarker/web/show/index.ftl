@@ -4,38 +4,6 @@
 
     <@lib.advertisement id="ps-upoutavka" />
 
-    <#assign SOFTWARE = VARS.getFreshSoftware(USER?if_exists)>
-    <#if (SOFTWARE?size>0) >
-        <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Katalog softwaru pro GNU/Linux.</span></a>
-            <a href="/software">Software</a>
-        </div>
-        <div class="s_sekce">
-            <ul>
-            <#list SOFTWARE as rel>
-                 <li><a href="${rel.url}">${rel.child.title}</a></li>
-            </#list>
-            </ul>
-            <span class="s_sekce_dalsi"><a href="/History?type=software">další&nbsp;&raquo;</a></span>
-        </div>
-    </#if>
-
-    <#assign HARDWARE = VARS.getFreshHardware(USER?if_exists)>
-    <#if (HARDWARE?size>0) >
-        <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Obrovská databáze znalostí o hardwaru, postupy zprovoznění v GNU/Linuxu.</span></a>
-            <a href="/hardware">Hardware</a>
-        </div>
-        <div class="s_sekce">
-            <ul>
-            <#list HARDWARE as rel>
-                 <li><a href="${rel.url?default("/hardware/show/"+rel.id)}">${rel.child.title}</a></li>
-            </#list>
-            </ul>
-            <span class="s_sekce_dalsi"><a href="/History?type=hardware">další&nbsp;&raquo;</a></span>
-        </div>
-    </#if>
-
     <@lib.advertisement id="arbo-sq" />
     <@lib.advertisement id="oksystem" />
     <@lib.advertisement id="ps-boxik1" />
@@ -248,6 +216,41 @@
    </td>
 
   </tr>
+  <tr>
+    <td>
+    <#assign SOFTWARE = VARS.getFreshSoftware(USER?if_exists)>
+    <#if (SOFTWARE?size>0) >
+        <div class="s_nadpis">
+            <a class="info" href="#">?<span class="tooltip">Katalog softwaru pro GNU/Linux.</span></a>
+            <a href="/software">Software</a>
+        </div>
+        <div class="s_sekce">
+            <ul>
+            <#list SOFTWARE as rel>
+                 <li><a href="${rel.url}">${rel.child.title}</a></li>
+            </#list>
+            </ul>
+            <span class="s_sekce_dalsi"><a href="/History?type=software">další&nbsp;&raquo;</a></span>
+        </div>
+    </#if>
+    </td>
+    <td>
+    <#assign HARDWARE = VARS.getFreshHardware(USER?if_exists)>
+    <#if (HARDWARE?size>0) >
+        <div class="s_nadpis">
+            <a class="info" href="#">?<span class="tooltip">Obrovská databáze znalostí o hardwaru, postupy zprovoznění v GNU/Linuxu.</span></a>
+            <a href="/hardware">Hardware</a>
+        </div>
+        <div class="s_sekce">
+            <ul>
+            <#list HARDWARE as rel>
+                 <li><a href="${rel.url?default("/hardware/show/"+rel.id)}">${rel.child.title}</a></li>
+            </#list>
+            </ul>
+            <span class="s_sekce_dalsi"><a href="/History?type=hardware">další&nbsp;&raquo;</a></span>
+        </div>
+    </#if>
+    </tr>
 </table>
 
 <#assign DESKTOPS = VARS.getFreshScreenshots(USER?if_exists)>
