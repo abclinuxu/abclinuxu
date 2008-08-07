@@ -108,9 +108,10 @@
                                 <entry key="RE_VLNKA" value="((^|\s)\w)\s+(\S+)"/>
                                 <entry key="REPLACEMENT_VLNKA" value="$1&amp;nbsp;$3"/>
                                 <entry key="RE_AMPERSAND" value="&amp;(?!#?[a-zA-Z0-9]+;)" />
+                                <entry key="RE_ARTICLE_POLL" value='&lt;inline type="([^"]+)" id="(\d+)"&gt;' />
                                 <entry key="story.reserve.percents" value="25" />
-                                <entry key="news.word.limit.soft" value="45" />
-                                <entry key="news.word.limit.hard" value="60" />
+                                <entry key="news.letter.limit.soft" value="375" />
+                                <entry key="news.letter.limit.hard" value="475" />
                             </map>
                         </node>
                     </node>
