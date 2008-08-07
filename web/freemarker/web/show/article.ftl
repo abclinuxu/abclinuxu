@@ -100,7 +100,10 @@
     <#if item.type == "text">${item.value}
     <#elseif item.type == "poll">
         <#assign index = item.value?eval>
-        <@lib.showPoll CHILDREN.poll[index], RELATION.url?default("/clanky/show/"+RELATION.id) />
+        <a id="inlinepoll-${index}"></a>
+        <#assign url = RELATION.url?default("/clanky/show/"+RELATION.id)>
+        <#if PAGE?exists><#assign url=url+"?page="+PAGE></#if>
+        <@lib.showPoll CHILDREN.poll[index], url+"#inlinepoll-"+index />
         <#assign dummy=CHILDREN.poll.set(index, "UNDEF")>
     </#if>
 </#list>
@@ -111,9 +114,13 @@
 
 
 <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify() && CHILDREN.poll?exists>
-    <h3>Nepoužité ankety</h3>
+    <#assign wrote_pollhdr=false>
     <#list CHILDREN.poll as poll>
         <#if poll!="UNDEF">
+            <#if !wrote_pollhdr>
+                <h3>Nepoužité ankety</h3>
+                <#assign write_pollhdr=true>
+            </#if>
             <@lib.showPoll poll, RELATION.url?default("/clanky/show/"+RELATION.id) />
             <div>Kód: <code>&lt;inline type="poll" id="${poll_index}"&gt;</code></div>
         </#if>
