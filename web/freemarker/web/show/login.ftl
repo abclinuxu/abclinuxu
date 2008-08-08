@@ -4,6 +4,12 @@
 
 <h1>Přihlášení</h1>
 
+<#if EXTRA_MESSAGE?exists>
+<p>
+${EXTRA_MESSAGE}
+</p>
+</#if>
+
 <p>
     Tento krok vyžaduje, abyste se přihlásil(a). Přihlašovací údaje jsou společné pro rodinu serverů
     abclinuxu.cz, itbiz.cz, abcprace.cz, abchost.cz a 64bit.cz, takže můžete použít přihlašovací údaje
