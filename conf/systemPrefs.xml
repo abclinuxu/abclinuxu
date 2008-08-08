@@ -117,8 +117,6 @@
                                 <map>
                                     <entry key="" value="Standardní světlý" />
                                     <entry key="/styles-dark.css" value="Oficiální tmavý" />
-                                    <entry key="/data/kratky/pink.css" value="Aprílový růžový" />
-                                    <entry key="http://cs.felk.cvut.cz/~zelenp1/abc/moje.css" value="Tmavší modrý" />
                                 </map>
                             </node>
                         </node>
