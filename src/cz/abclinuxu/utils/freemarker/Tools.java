@@ -64,6 +64,7 @@ import java.util.prefs.Preferences;
 
 import freemarker.template.*;
 import freemarker.ext.dom.NodeModel;
+import java.util.prefs.BackingStoreException;
 
 /**
  * Various utilities available for templates
@@ -80,6 +81,7 @@ public class Tools implements Configurable {
     public static final String PREF_STORY_RESERVE_PERCENTS = "story.reserve.percents";
     public static final String PREF_NEWS_LETTER_LIMIT_SOFT = "news.letter.limit.soft";
     public static final String PREF_NEWS_LETTER_LIMIT_HARD = "news.letter.limit.hard";
+    public static final String PREF_CSS_STYLES = "css.styles";
 
     static Persistence persistence = PersistenceFactory.getPersistence();
     static REProgram reRemoveTags, reVlnka, lineBreak, reRemoveParagraphs, rePollTag;
@@ -87,6 +89,7 @@ public class Tools implements Configurable {
     static String vlnkaReplacement;
     static int storyReservePercents;
     static int newsLetterSoftLimit, newsLetterHardLimit;
+    static Map<String,String> offeredCssStyles;
 
     static {
         Tools tools = new Tools();
@@ -115,6 +118,17 @@ public class Tools implements Configurable {
             storyReservePercents = prefs.getInt(PREF_STORY_RESERVE_PERCENTS, 50);
             newsLetterSoftLimit = prefs.getInt(PREF_NEWS_LETTER_LIMIT_SOFT, 400);
             newsLetterHardLimit = prefs.getInt(PREF_NEWS_LETTER_LIMIT_HARD, 500);
+            
+            try {
+                Preferences subprefs = prefs.node(PREF_CSS_STYLES);
+                String[] keys = subprefs.keys();
+                offeredCssStyles = new HashMap(keys.length);
+                
+                for (int i = 0; i < keys.length; i++)
+                    offeredCssStyles.put(keys[i], subprefs.get(keys[i], null));
+            } catch (BackingStoreException e) {
+                throw new ConfigurationException(e.getMessage(), e.getCause());
+            }
             
         } catch (RESyntaxException e) {
             log.error("Chyba pri kompilaci regexpu!", e);
@@ -2127,6 +2141,11 @@ public class Tools implements Configurable {
         return retval;
     }
     
+    /**
+     * Detects whether the text of a news item is too long to be displayed on the HP.
+     * @param text The text to be checked
+     * @return Null if the text is short enough or the shortened text.
+     */
     public static String limitNewsLength(String text) {
         String stripped = removeTags(text);
         
@@ -2178,6 +2197,11 @@ public class Tools implements Configurable {
         return result.toString();
     }
     
+    /**
+     * Parses the text. Any inline objects are detected and handled accordingly.
+     * @param text The text of the article to be processed
+     * @return list of maps with keys "type" and "value"
+     */
     public static List<Map> processArticle(String text) {
         RE regexpPolls = new RE(rePollTag, RE.MATCH_MULTILINE);
         int pos = 0;
@@ -2217,5 +2241,9 @@ public class Tools implements Configurable {
         }
         
         return items;
+    }
+    
+    public static Map<String,String> getOfferedCssStyles() {
+        return offeredCssStyles;
     }
 }

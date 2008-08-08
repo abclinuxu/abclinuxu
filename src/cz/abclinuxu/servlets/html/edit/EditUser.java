@@ -76,6 +76,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 
 /**
  * Class for manipulation with User.
@@ -149,6 +150,7 @@ public class EditUser implements AbcAction {
     public static final String VAR_BOOKMARKS = "BOOKMARKS";
     public static final String VAR_USER1 = "USER1";
     public static final String VAR_USER2 = "USER2";
+    public static final String VAR_EXTRA_MESSAGE = "EXTRA_MESSAGE";
 
     public static final String ACTION_REGISTER = "register";
     public static final String ACTION_REGISTER_STEP2 = "register2";
@@ -188,6 +190,7 @@ public class EditUser implements AbcAction {
     public static final String ACTION_FORGOTTEN_PASSWORD_STEP2 = "forgottenPassword2";
     public static final String ACTION_CHANGE_FORGOTTEN_PASSWORD = "changeForgottenPassword";
     public static final String ACTION_CHANGE_FORGOTTEN_PASSWORD_STEP2 = "changeForgottenPassword2";
+    public static final String ACTION_CHANGE_STYLE = "changeStyle";
 
     private LdapUserManager ldapManager = LdapUserManager.getInstance();
 
@@ -231,8 +234,15 @@ public class EditUser implements AbcAction {
         }
 
         // all other actions require user to be logged in and to have rights for this action
-        if ( user==null )
+        if ( user==null ) {
+            if (action.equals(ACTION_CHANGE_STYLE)) {
+                env.put(VAR_EXTRA_MESSAGE,
+                        "Změna vzhledu je další z celé řady výhod, které vám přináší registrace na tomto portálu. "+
+                        "Zabere vám přitom jen okamžik!");
+            }
+                
             return FMTemplateSelector.select("ViewUser", "login", env, request);
+        }
 
 		if ( action.equals(ACTION_ADD_GROUP_MEMBER) ) {
             ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
@@ -243,6 +253,11 @@ public class EditUser implements AbcAction {
 
         if ( ! (user.getId()==managed.getId() || user.hasRole(Roles.USER_ADMIN)) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+        
+        if (action.equals(ACTION_CHANGE_STYLE)) {
+            ActionProtector.ensureContract(request, EditUser.class, true, false, true, true);
+            return actionChangeStyle(request, response, env);
+        }
 
         if ( action.equals(ACTION_EDIT_BASIC) )
             return actionEditBasic(request, env);
@@ -1133,6 +1148,32 @@ public class EditUser implements AbcAction {
         ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
+        return null;
+    }
+    
+    protected String actionChangeStyle(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        URL referer = ServletUtils.getReferer(request);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User managed = (User) env.get(VAR_MANAGED);
+        Persistence persistence = PersistenceFactory.getPersistence();
+        String url;
+        
+        setCssUrl(params, managed);
+        
+        persistence.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
+        
+        if (referer != null)
+            url = referer.getPath();
+        else
+            url = "/";
+        
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, url);
         return null;
     }
 
