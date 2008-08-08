@@ -5,9 +5,9 @@
 <h1>Přihlášení</h1>
 
 <#if EXTRA_MESSAGE?exists>
-<p>
-${EXTRA_MESSAGE}
-</p>
+<div class="textad">
+<i>${EXTRA_MESSAGE}</i>
+</div>
 </#if>
 
 <p>
