@@ -4,10 +4,8 @@
 
 <h1>Přihlášení</h1>
 
-<#if EXTRA_MESSAGE?exists>
-<div class="textad">
-<i>${EXTRA_MESSAGE}</i>
-</div>
+<#if EXTRA_TEMPLATE?exists>
+    <#include EXTRA_TEMPLATE>
 </#if>
 
 <p>

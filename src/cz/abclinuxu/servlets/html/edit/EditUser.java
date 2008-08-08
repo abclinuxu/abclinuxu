@@ -150,7 +150,7 @@ public class EditUser implements AbcAction {
     public static final String VAR_BOOKMARKS = "BOOKMARKS";
     public static final String VAR_USER1 = "USER1";
     public static final String VAR_USER2 = "USER2";
-    public static final String VAR_EXTRA_MESSAGE = "EXTRA_MESSAGE";
+    public static final String VAR_EXTRA_TEMPLATE = "EXTRA_TEMPLATE";
 
     public static final String ACTION_REGISTER = "register";
     public static final String ACTION_REGISTER_STEP2 = "register2";
@@ -236,9 +236,7 @@ public class EditUser implements AbcAction {
         // all other actions require user to be logged in and to have rights for this action
         if ( user==null ) {
             if (action.equals(ACTION_CHANGE_STYLE)) {
-                env.put(VAR_EXTRA_MESSAGE,
-                        "Změna vzhledu je další z celé řady výhod, které vám přináší registrace na tomto portálu. "+
-                        "Zabere vám přitom jen okamžik!");
+                env.put(VAR_EXTRA_TEMPLATE, "../misc/style_register_user.ftl");
             }
                 
             return FMTemplateSelector.select("ViewUser", "login", env, request);
