@@ -40,6 +40,12 @@ import java.sql.Timestamp;
 public class Migrate64bitUsers {
     static Set ignored;
     static {
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         int[] ids = {153, 171,148,174,39,179,173,182,1,58,175,44,103,128,3,172,133,156,159,105,170,157};
         ignored = new HashSet();
         for (int i = 0; i < ids.length; i++) {
