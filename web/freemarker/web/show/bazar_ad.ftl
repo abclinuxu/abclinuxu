@@ -6,10 +6,10 @@
     <ul>
     <#if USER?exists>
         <#if USER.id==ITEM.owner || TOOL.permissionsFor(USER, RELATION).canModify()>
-            <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Uprav inzerát</a></li>
-            <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Přidej obrázek</a></li>
-            <li><a href="${URL.make("/edit/"+RELATION.id+"?action=rm")}">Smaž inzerát</a></li>
-            <li><a href="${URL.make("/inset/"+RELATION.id+"?action=manage")}">Správa příloh</a></li>
+            <li><a href="${URL.noPrefix("/bazar/edit/"+RELATION.id+"?action=edit")}">Uprav inzerát</a></li>
+            <li><a href="${URL.noPrefix("/bazar/inset/"+RELATION.id+"?action=addScreenshot")}">Přidej obrázek</a></li>
+            <li><a href="${URL.noPrefix("/bazar/edit/"+RELATION.id+"?action=rm")}">Smaž inzerát</a></li>
+            <li><a href="${URL.noPrefix("/bazar/inset/"+RELATION.id+"?action=manage")}">Správa příloh</a></li>
         </#if>
     <#else>
         <li><a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">Přihlásit se</a></li>
