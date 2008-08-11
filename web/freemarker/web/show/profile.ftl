@@ -163,8 +163,9 @@
 </#if>
 
 <p>
-    <a href="/muj_obsah/${PROFILE.id}" rel="nofollow">Seznam příspěvků na abclinuxu.cz</a><br>
-    (články, komentáře, dotazy, zprávičky, softwarové a hardwarové záznamy, pojmy ve slovníku a texty v učebnici)
+    <li><a href="/lide/${PROFILE.login}/zalozky">Záložky uživatele</a></li>
+    <li><a href="/lide/${PROFILE.login}/objekty" rel="nofollow">Seznam příspěvků na abclinuxu.cz</a><br>
+    (články, komentáře, dotazy, zprávičky, softwarové a hardwarové záznamy, pojmy ve slovníku a texty v učebnici)</li>
 </p>
 <br>
 

@@ -27,6 +27,7 @@ import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.Screenshot;
+import cz.abclinuxu.servlets.html.edit.EditBookmarks;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.email.EmailSender;
@@ -62,9 +63,9 @@ public class ViewUser implements AbcAction {
     public static final String ACTION_SEND_EMAIL = "sendEmail";
     public static final String ACTION_SHOW_MY_PROFILE = "myPage";
     public static final String ACTION_SHOW_MY_OBJECTS = "objekty";
-    public static final String ACTION_SEND_PASSWORD = "forgottenPassword";
+    public static final String ACTION_BOOKMARKS = "zalozky";
 
-    private Pattern reTagId = Pattern.compile(UrlUtils.PREFIX_PEOPLE + "/" + "([^/?]+)");
+    private Pattern reTagId = Pattern.compile(UrlUtils.PREFIX_PEOPLE + "/" + "([^/?]+)/?(\\w+)?");
 
     /**
      * Put your processing here. Return null, if you have redirected browser to another URL.
@@ -91,6 +92,9 @@ public class ViewUser implements AbcAction {
             Integer id = SQLTool.getInstance().getUserByLogin(login);
             if (id != null)
                 profile = new User(id);
+            
+            if (action == null && matcher.group(2) != null)
+                action = matcher.group(2);
         } else {
             profile = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
         }
@@ -116,6 +120,10 @@ public class ViewUser implements AbcAction {
             return ServletUtils.showErrorPage("Uživatel nebyl nalezen nebo byl zadán nesprávný parametr!", env, request);
 
         profile = (User) persistence.findById(profile);
+        
+        if (ACTION_BOOKMARKS.equals(action))
+            return EditBookmarks.processList(request, response, env, profile);
+        
         env.put(VAR_PROFILE, profile);
         env.put(VAR_INVALID_EMAIL, ! Misc.hasValidEmail(profile));
 

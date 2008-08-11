@@ -709,7 +709,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Final step of renaming blog.
+     * Final step of removing a blog story.
      */
     protected String actionRemoveStoryStep2(HttpServletRequest request, HttpServletResponse response, Relation story, Category blog, Map env) throws Exception {
         User user = (User) env.get(Constants.VAR_USER);
@@ -723,7 +723,6 @@ public class EditBlog implements AbcAction, Configurable {
         }
 
         Persistence persistence = PersistenceFactory.getPersistence();
-        persistence.remove(story);
 
         Document document = blog.getData();
         decrementArchiveRecord(document.getRootElement(), ((Item)story.getChild()).getCreated());
@@ -740,6 +739,7 @@ public class EditBlog implements AbcAction, Configurable {
         }
 
         persistence.update(blog);
+        persistence.remove(story);
 
         FeedGenerator.updateBlog(blog);
         VariableFetcher.getInstance().refreshStories();

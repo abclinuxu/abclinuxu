@@ -93,7 +93,7 @@
                 <a href="/History?type=comments&amp;uid=${USER.id}">Mé komentáře</a> |
                 <a href="/History?type=discussions&amp;uid=${USER.id}&amp;filter=last">Navštívené diskuse</a> |
                 <a href="/History?type=questions&amp;uid=${USER.id}">Mé dotazy</a> |
-                <a href="/EditUser/${USER.id}?action=editBookmarks">Záložky</a> |
+                <a href="/lide/${USER.login}/zalozky">Záložky</a> |
                 <a href="/Profile/${USER.id}?action=myPage">Nastavení</a> |
                 <a href="${URL.noPrefix("/Index?logout=true")}">Odhlásit</a>
             <#else>
@@ -242,9 +242,9 @@
                 <a href="${RSS}"><img src="/images/site2/feed16.png" width="16" height="16" border="0"></a>
               </#if>
               <#if RELATION?exists && USER?exists>
-                <form action="/EditUser/${USER.id}" style="display: inline">
+                <form action="/EditBookmarks/${USER.id}" style="display: inline">
                     <input type="submit" class="button" value="do záložek">
-                    <input type="hidden" name="action" value="toBookmarks">
+                    <input type="hidden" name="action" value="add">
                     <input type="hidden" name="rid" value="${RELATION.id}">
                     <input type="hidden" name="prefix" value="${URL.prefix}">
                     <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER)}">

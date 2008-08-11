@@ -1,6 +1,7 @@
+<#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
-<h1>Přehled mých aktivit</h1>
+<h1>Přehled aktivit uživatele <@lib.showUser PROFILE/></h1>
 
 <@lib.showMessages/>
 
@@ -27,7 +28,7 @@
             (${COUNTS.question})
         </li>
         <li>
-            <a href="${URL.noPrefix("/History?type=comments&amp;uid="+PROFILE.id)}">komentáře</a>
+            <a href="${URL.noPrefix("/History?type=comments&amp;uid="+PROFILE.id)}">komentované diskuse</a>
             (${COUNTS.comment})
         </li>
         <#if BLOG?exists>
