@@ -76,6 +76,7 @@ public class ServletUtils implements Configurable {
     public static final String PARAM_LOG_PASSWORD = "PASSWORD";
     /** indicates, that user wishes to logout */
     public static final String PARAM_LOG_OUT = "logout";
+    public static final String PARAM_NO_COOKIE = "noCookie";
 
     public static final String VAR_ERROR_MESSAGE = "ERROR";
 
@@ -210,6 +211,8 @@ public class ServletUtils implements Configurable {
         if ( ! Misc.empty(login) ) {
             Integer id = SQLTool.getInstance().getUserByLogin(login);
             String password = (String) params.get(PARAM_LOG_PASSWORD);
+            String noCookie = (String) params.get(PARAM_NO_COOKIE);
+            
             if (password == null || password.length() == 0) {
                 ServletUtils.addError(PARAM_LOG_PASSWORD, "Přihlášení selhalo - zadejte heslo.", env, null);
                 return;
@@ -221,7 +224,7 @@ public class ServletUtils implements Configurable {
             }
 
             user = (User) persistence.findById(new User(id));
-            handleLoggedIn(user, false, response);
+            handleLoggedIn(user, "yes".equals(noCookie), response);
             params.put(ActionProtector.PARAM_TICKET, user.getSingleProperty(Constants.PROPERTY_TICKET));
 
         } else {

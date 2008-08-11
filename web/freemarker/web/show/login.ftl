@@ -36,6 +36,13 @@
   <tr>
     <td>&nbsp;</td>
     <td>
+        <label><input type="checkbox" name="noCookie" value="yes">Neukládat přihlašovací cookie</label>
+        <@lib.showHelp>Použijte, pokud se přihlašujete na cizím počítači.</@lib.showHelp>
+    </td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>
      <input type="submit" name="finish" value="OK" tabindex=3>
     </td>
   </tr>
