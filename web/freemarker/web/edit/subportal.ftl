@@ -68,6 +68,14 @@ Skupina má vlastní sekci pro články, vlastní wiki, poradnu a sekci pro akce
             </td>
         </tr>
         <tr>
+            <td>
+                &nbsp;
+            </td>
+            <td>
+                <label><input type="checkbox" name="hideForum" value="yes" <#if PARAMS.hideForum?exists && PARAMS.hideForum=="yes">checked="checked"</#if>>Skrýt fórum</label>
+            </td>
+        </tr>
+        <tr>
             <td width="120">&nbsp;</td>
             <td><input type="submit" VALUE="Dokonči" tabindex="6"></td>
         </tr>

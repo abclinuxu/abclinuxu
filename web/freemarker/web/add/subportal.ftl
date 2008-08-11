@@ -64,6 +64,14 @@ Při vytváření skupiny dojde k vytvoření podportálu, který má vlastní s
             </td>
         </tr>
         <tr>
+            <td>
+                &nbsp;
+            </td>
+            <td>
+                <label><input type="checkbox" name="hideForum" value="yes" <#if PARAMS.hideForum?exists && PARAMS.hideForum=="yes">checked="checked"</#if>>Skrýt fórum</label>
+            </td>
+        </tr>
+        <tr>
             <td class="required">
                 UID prvního admina
                 <a class="info" href="#">?<span class="tooltip">Počáteční člen administrátorské skupiny.</span></a>

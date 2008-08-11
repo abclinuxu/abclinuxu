@@ -75,6 +75,7 @@ public class EditSubportal implements AbcAction {
 	public static final String PARAM_URL = "url";
 	public static final String PARAM_ICON = "icon";
 	public static final String PARAM_REMOVE_ICON = "removeIcon";
+    public static final String PARAM_HIDE_FORUM = "hideForum";
 	
 	public static final String VAR_RELATION = "RELATION";
 	
@@ -160,6 +161,7 @@ public class EditSubportal implements AbcAction {
 		canContinue &= setDescription(params, root, env);
 		canContinue &= setUrl(params, relation, env);
         canContinue &= checkImage(params, env);
+        canContinue &= setForumHidden(params, root);
 		
 		if (!canContinue)
             return FMTemplateSelector.select("EditSubportal", "add", env, request);
@@ -227,6 +229,9 @@ public class EditSubportal implements AbcAction {
         node = root.element("descriptionShort");
         if (node != null)
             params.put(PARAM_DESCRIPTION_SHORT, node.getText());
+        node = root.element("forumHidden");
+        if (node != null)
+            params.put(PARAM_HIDE_FORUM, node.getText());
         
 		return FMTemplateSelector.select("EditSubportal", "edit", env, request);
 	}
@@ -244,6 +249,7 @@ public class EditSubportal implements AbcAction {
 		canContinue &= setShortDescription(params, root, env);
         canContinue &= checkImage(params, env);
 		canContinue &= setIcon(params, relation, root, env);
+        canContinue &= setForumHidden(params, root);
 		
 		if (!canContinue)
             return FMTemplateSelector.select("EditSubportal", "edit", env, request);
@@ -505,6 +511,21 @@ public class EditSubportal implements AbcAction {
 		
 		return true;
 	}
+    
+    private boolean setForumHidden(Map params, Element data) {
+        String hidden = (String) params.get(PARAM_HIDE_FORUM);
+        
+        if ("yes".equals(hidden)) {
+            Element elem = DocumentHelper.makeElement(data, "forumHidden");
+            elem.setText("yes");
+        } else {
+            Node node = data.selectSingleNode("forumHidden");
+            if (node != null)
+                node.detach();
+        }
+        
+        return true;
+    }
 	
 	public static String getFileSuffix(String name) {
         if ( name==null )
