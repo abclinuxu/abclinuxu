@@ -331,9 +331,6 @@
         <action name="editBlacklist" content="/edit/user_blacklist.ftl">
             <var name="TITLE" value="Seznam blokovaných uživatelů" />
         </action>
-        <action name="editBookmarks" content="/edit/user_bookmarks.ftl">
-            <var name="TITLE" value="Seznam záložek" />
-        </action>
         <action name="grantSelect" content="/edit/grant_select.ftl" template="print">
             <var name="TITLE" value="Změna rolí uživatele - výběr"/>
         </action>
@@ -354,6 +351,15 @@
         </action>
         <action name="removeMerge2" content="/remove/user2.ftl" template="print">
             <var name="TITLE" value="Odstranění či sloučení uživatele"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditBookmarks">
+        <action name="editAll" content="/edit/user_bookmarks.ftl">
+            <var name="TITLE" value="Seznam záložek" />
+        </action>
+        <action name="add" content="/add/bookmark.ftl">
+            <var name="TITLE" value="Přidání záložky" />
         </action>
     </servlet>
 
@@ -561,6 +567,15 @@
         </action>
     </servlet>
 
+    <servlet name="EditVideo">
+        <action name="add" content="/add/video.ftl">
+            <var name="TITLE" value="Přidat video"/>
+        </action>
+        <action name="edit" content="/edit/video.ftl">
+            <var name="TITLE" value="Upravit video"/>
+        </action>
+    </servlet>
+
     <servlet name="ViewContent">
         <action name="view" content="/show/content.ftl">
             <var name="TITLE" value='${ITEM.title}' type="Lazy" />
@@ -602,6 +617,9 @@
             <var name="TITLE" value='${ITEM.title}' type="Lazy" />
         </action>
         <action name="article" content="/show/article.ftl">
+            <var name="TITLE" value='${ITEM.title}' type="Lazy" />
+        </action>
+        <action name="video" content="/show/video.ftl">
             <var name="TITLE" value='${ITEM.title}' type="Lazy" />
         </action>
         <action name="driver" content="/show/driver.ftl">
