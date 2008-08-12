@@ -286,7 +286,7 @@ public class EditSeries implements AbcAction {
         Element seriesRoot = seriesItem.getData().getRootElement();
         List articles = seriesRoot.elements("article");
 		
-		if (!user.isMemberOf(seriesItem.getGroup()))
+		if (!Tools.permissionsFor(user, seriesRelation).canModify())
 			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         List articleRelations = Tools.asList(params.get(PARAM_ARTICLE_RELATION));
@@ -300,7 +300,7 @@ public class EditSeries implements AbcAction {
             persistence.synchronize(articleRelation.getChild());
             Item articleItem = (Item) articleRelation.getChild().clone();
 			
-			if (!user.isMemberOf(articleItem.getGroup()))
+			if (!Tools.permissionsFor(user, articleRelation).canModify())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 			
             Element articleRoot = articleItem.getData().getRootElement();

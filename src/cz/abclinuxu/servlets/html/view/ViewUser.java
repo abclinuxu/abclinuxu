@@ -27,6 +27,7 @@ import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.Screenshot;
+import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.html.edit.EditBookmarks;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
@@ -110,7 +111,7 @@ public class ViewUser implements AbcAction {
                 profile = (User) persistence.findById(profile);
 
             env.put(VAR_PROFILE, profile);
-            if (user==null || (user.getId()!=profile.getId() && !user.isMemberOf(Constants.GROUP_ADMINI)))
+            if (user==null || (user.getId()!=profile.getId() && !user.hasRole(Roles.USER_ADMIN)))
                 return handleProfile(request, env);
             else
                 return handleMyProfile(request,env);
