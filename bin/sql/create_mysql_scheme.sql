@@ -75,7 +75,9 @@ CREATE TABLE spolecne (
  jmeno VARCHAR(255) NULL,
  vytvoreno DATETIME,                             -- cas vytvoreni
  zmeneno TIMESTAMP NOT NULL,                     -- cas posledni zmeny
- pridal INT(6) NOT NULL                          -- odkaz na uzivatele
+ pridal INT(6) NOT NULL,                         -- odkaz na uzivatele
+ skupina INT(6) NOT NULL,                        -- cislo skupiny
+ prava INT(6) NOT NULL                           -- maska prav
 );
 ALTER TABLE spolecne ADD INDEX in_predek (typ,cislo);
 ALTER TABLE spolecne ADD INDEX in_jmeno (jmeno);
