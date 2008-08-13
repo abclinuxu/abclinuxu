@@ -22,15 +22,13 @@ import cz.abclinuxu.persistence.ldap.LdapUserManager;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.DriverManager;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.util.List;
+import java.util.StringTokenizer;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.text.SimpleDateFormat;
 
 /**
  * Migrates 64bit users to LDAP
@@ -38,78 +36,85 @@ import java.sql.Timestamp;
  * @since 6.8.2008
  */
 public class Migrate64bitUsers {
-    static Set ignored;
-    static {
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static final String SERVER_64BIT_CZ = "www.64bit.cz";
+    public static final String SERVER_64BIT_SK = "www.64bit.sk";
+    public static final String SERVER_64BIT_BIZ = "www.64bit.biz";
 
-        int[] ids = {153, 171,148,174,39,179,173,182,1,58,175,44,103,128,3,172,133,156,159,105,170,157};
-        ignored = new HashSet();
-        for (int i = 0; i < ids.length; i++) {
-            ignored.add(ids[i]);
-        }
-    }
-
-    public static void main(String[] args) throws SQLException {
-        if (args.length != 4) {
-            System.out.println("Usage: Migrate64bitUsers dbhost schema user password ");
+    public static void main(String[] args) throws Exception {
+        if (args.length != 1) {
+            System.out.println("Usage: Migrate64bitUsers dumpFile ");
             System.exit(1);
         }
-        String dbhost = args[0], dbSchema = args[1], dbUser = args[2], dbPassword = args[3];
+
         Map<String, String> changes = new HashMap<String, String>();
         long start = System.currentTimeMillis();
         int created = 0, merged = 0, conflicts = 0;
+        Map<String, String> ldapUser;
+
         LdapUserManager ldapMgr = LdapUserManager.getInstance();
+        BufferedReader reader = new BufferedReader(new FileReader(args[0]));
+        String line = reader.readLine(); // skip the first line
 
-//        String dbUrl = "jdbc:mysql://"+dbhost+"/"+dbSchema+"?user="+dbUser+"&password="+dbPassword+"&useUnicode=true&characterEncoding=ISO-8859-2";
-//        String dbUrl = "jdbc:mysql://"+dbhost+"/"+dbSchema+"?user="+dbUser+"&password="+dbPassword+"&useUnicode=true";
-//        String dbUrl = "jdbc:mysql://"+dbhost+"/"+dbSchema+"?user="+dbUser+"&password="+dbPassword+"&mysqlEncoding=latin2";
-        String dbUrl = "jdbc:mysql://"+dbhost+"/"+dbSchema+"?user="+dbUser+"&password="+dbPassword+"&characterEncoding=ISO-8859-2&mysqlEncoding=latin2";
-        Connection con = DriverManager.getConnection(dbUrl);
-        Statement statement = con.createStatement();
-//        statement.execute("set names latin2");
-        String sql = "select id,idserver,login,passwd,company,ic,dic,surname,name,email,phone,street,city,postcode,country,"+
-                "deliver_company,deliver_street,deliver_city,deliver_postcode,deliver_country,regist_date,last_login_date from ko_user";
-        ResultSet rs = statement.executeQuery(sql);
-        while (rs.next()) {
+        while ((line = reader.readLine()) != null) {
             changes.clear();
-            int id = -1, server;
+            String id = null;
+            String[] rs;
+            boolean conflict = false;
             try {
-                id = rs.getInt(1);
-                server = rs.getInt(2);
-                String login = rs.getString(3), passwd = rs.getString(4), company = rs.getString(5);
-                String ic = rs.getString(6), dic = rs.getString(7), surname = rs.getString(8), name = rs.getString(9);
-                String email = rs.getString(10), phone = rs.getString(11), street = rs.getString(12), city = rs.getString(13);
-                String postcode = rs.getString(14), country = rs.getString(15), deliverCompany = rs.getString(16);
-                String deliverStreet = rs.getString(17), deliverCity = rs.getString(18), deliverPostcode = rs.getString(19);
-                String deliverCountry = rs.getString(20);
-                Date registrationDate = rs.getDate(21);
-                Timestamp timestamp = rs.getTimestamp(22);
-                Date lastLoginDate = (timestamp == null) ? null : new Date(timestamp.getTime());
+                rs = parseLine(line, '\t', 22);
+                id = rs[0];
+                String server = rs[1], login = rs[2], passwd = rs[3], company = rs[4];
+                String ic = rs[5], dic = rs[6], surname = rs[7], name = rs[8];
+                String email = rs[9], phone = rs[10], street = rs[11], city = rs[12];
+                String postcode = rs[13], country = rs[14], deliverCompany = rs[15];
+                String deliverStreet = rs[16], deliverCity = rs[17], deliverPostcode = rs[18];
+                String deliverCountry = rs[19], sRegistrationDate = rs[20], sTimestamp = rs[21];
 
-                System.out.println("surname = " + surname);
+                String registrationDate = sRegistrationDate + " 00:00";
+                String lastLoginDate = sTimestamp.substring(0, 16);
+                if (server.equals("3"))
+                    server = SERVER_64BIT_BIZ;
+                else if (server.equals("2"))
+                    server = SERVER_64BIT_SK;
+                else
+                    server = SERVER_64BIT_CZ;
 
-//                ldapMgr.registerUser(user.getLogin(), user.getPassword(), null, user.getName(), "www.abclinuxu.cz");
-//
-//                changes.put(LdapUserManager.ATTRIB_REGISTRATION_DATE, tmp);
-//                changes.put(LdapUserManager.ATTRIB_REGISTRATION_PORTAL, "www.abclinuxu.cz");
-//                changes.put(LdapUserManager.ATTRIB_VISITED_PORTAL, "www.abclinuxu.cz");
-//                if ("no".equals(tmp))
-//                    changes.put(LdapUserManager.ATTRIB_EMAIL_BLOCKED, "true");
-//                else
-//                    changes.put(LdapUserManager.ATTRIB_EMAIL_BLOCKED, "false");
-//                changes.put(LdapUserManager.ATTRIB_EMAIL_VERIFIED, "true");
-//                changes.put(LdapUserManager.ATTRIB_SEX, tmp);
-//
-//                ldapMgr.updateUser(user.getLogin(), changes);
+                ldapUser = ldapMgr.getUserInformation(login, new String[] {LdapUserManager.ATTRIB_EMAIL_ADRESS});
+                if (ldapUser.size() == 1 && ! email.equals(ldapUser.values().iterator().next())) {
+                    conflict = true;
+                    conflicts++;
+                    ldapUser.clear();
+                    System.out.println("conflict " + login + ", email " + email);
+                }
+                if (ldapUser.size() == 0) {
+                    // create
+                    created++;
+                    System.out.println("create " + login + ", email " + email);
+                } else {
+                    // merge
+                    merged++;
+                    System.out.println("merge " + login + ", email " + email);
+                }
+
             } catch (Exception e) {
                 System.err.println("Migration of user " + id + " failed. Reason: " + e.getMessage());
             }
         }
-        long end = System.currentTimeMillis();
+        System.out.println("Created " + created + " new users in LDAP, merged " + merged + " existing users, " + conflicts + " conflicts");
+    }
+
+    private static String[] parseLine(String line, char separator, int length) {
+        String[] result = new String[length];
+        StringTokenizer stk = new StringTokenizer(line, String.valueOf(separator), true);
+        int i = 0;
+        while (stk.hasMoreTokens()) {
+            String s = stk.nextToken();
+            if (s.length() == 1 && s.charAt(0) == separator)
+                i++;
+            else
+                result[i] = s;
+        }
+        return result;
     }
 /*
 conversion
@@ -119,6 +124,9 @@ problemy:
 a) ilegalni znaky: tspbrno@tycoint.
 b) divne kodovani
 
+mysql -e "set names latin2;select id,idserver,login,passwd,company,ic,dic,surname,name,email,phone,street,city,post
+code,country,deliver_company,deliver_street,deliver_city,deliver_postcode,deliver_country,regist_date,last_login_date from ko_user where
+id not in (153, 171,148,174,39,179,173,182,1,58,175,44,103,128,3,172,133,156,159,105,170,157,189) order by id" 64bitnew > 64bit_users.txt
 
 | id               | int(10)     | -
 | idserver         | int(11)     | -
