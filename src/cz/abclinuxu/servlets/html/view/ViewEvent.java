@@ -67,6 +67,7 @@ public class ViewEvent implements AbcAction {
     public static final String MODE_OLD = "old";
     public static final String MODE_UPCOMING = "upcoming";
     public static final String MODE_UNPUBLISHED = "unpublished";
+    public static final String MODE_EVERYTHING = "everything";
     
     public static final String ACTION_PARTICIPANTS = "participants";
     
@@ -153,7 +154,7 @@ public class ViewEvent implements AbcAction {
         if (MODE_OLD.equals(mode)) {
             order = Qualifier.ORDER_DESCENDING;
             dateTo = Calendar.getInstance();
-        } else { // compute the date range
+        } else if (!MODE_EVERYTHING.equals(mode)) { // compute the date range
             int year, month, day;
             year = Misc.parseInt((String) params.get(PARAM_YEAR), 0);
             month = Misc.parseInt((String) params.get(PARAM_MONTH), 0);
@@ -240,7 +241,14 @@ public class ViewEvent implements AbcAction {
         
         // Process the month for the calendar view
         Map map = new HashMap(10);
-        Calendar cal = (dateFrom != null) ? dateFrom : dateTo;
+        Calendar cal;
+        
+        if (dateFrom != null)
+            cal = dateFrom;
+        else if (dateTo != null)
+            cal = dateTo;
+        else
+            cal = Calendar.getInstance();
                 
         int month = cal.get(Calendar.MONTH)+1; // the selected month
         map.put("month", month);
