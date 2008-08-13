@@ -109,7 +109,7 @@ public class LdapUserManager implements Configurable {
     public static final String ATTRIB_VISITED_PORTAL = "visitedPortalID";
 
     public static final String SERVER_ABCLINUXU = "www.abclinuxu.cz";
-    public static final String SERVER_64bit = "www.64bit.cz";
+    public static final String SERVER_64BIT = "www.64bit.cz";
 
     public static final String SF_USER_ALL_ATTRIBUTES[] = {
         ATTRIB_CITY, ATTRIB_COUNTRY, ATTRIB_DELIVERY_ADDRESS_CITY, ATTRIB_DELIVERY_ADDRESS_COUNTRY,
@@ -137,7 +137,7 @@ public class LdapUserManager implements Configurable {
 //        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_LAST_LOGIN_DATE);
 //        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_REGISTRATION_DATE);
 //        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_REGISTRATION_PORTAL);
-        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_VISITED_PORTAL);
+//        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_VISITED_PORTAL);
     }
 
     private static final String LDAP_PROVIDER = "com.sun.jndi.ldap.LdapCtxFactory";
@@ -489,6 +489,13 @@ public class LdapUserManager implements Configurable {
         }
     }
 
+    /**
+     * Finds user in LDAP store and returns associated information.
+     * @param login
+     * @param attributes
+     * @return
+     * @throws LdapException
+     */
     public Map<String, String> getUserInformation(String login, String[] attributes) throws LdapException {
         DirContext ctx = null;
         try {
@@ -532,7 +539,7 @@ public class LdapUserManager implements Configurable {
         Attributes searchAttrs = new BasicAttributes(ATTRIB_LOGIN, login);
         NamingEnumeration results = ctx.search(parentContext, searchAttrs, attributes);
         if (!results.hasMore())
-            return Collections.emptyMap();
+            return Collections.emptyMap(); // todo return null to distinguish whether user was not found or no attribute has value
 
         SearchResult sr = (SearchResult) results.next();
         searchAttrs = sr.getAttributes();

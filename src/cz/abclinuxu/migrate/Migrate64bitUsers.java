@@ -63,13 +63,14 @@ public class Migrate64bitUsers {
             try {
                 rs = parseLine(line, '\t', 22);
                 id = rs[0];
-                String server = rs[1], login = rs[2], passwd = rs[3], company = rs[4];
+                String server = rs[1], login = rs[2], password = rs[3], company = rs[4];
                 String ic = rs[5], dic = rs[6], surname = rs[7], name = rs[8];
                 String email = rs[9], phone = rs[10], street = rs[11], city = rs[12];
                 String postcode = rs[13], country = rs[14], deliverCompany = rs[15];
                 String deliverStreet = rs[16], deliverCity = rs[17], deliverPostcode = rs[18];
                 String deliverCountry = rs[19], sRegistrationDate = rs[20], sTimestamp = rs[21];
 
+                name = name + " " + surname;
                 String registrationDate = sRegistrationDate + " 00:00";
                 String lastLoginDate = sTimestamp.substring(0, 16);
                 if (server.equals("3"))
@@ -90,6 +91,34 @@ public class Migrate64bitUsers {
                     // create
                     created++;
                     System.out.println("create " + login + ", email " + email);
+
+                    if (conflict)
+                        login = "64bit" + login;
+
+                    ldapMgr.registerUser(login, password, null, name, server);
+                    changes.put(LdapUserManager.ATTRIB_REGISTRATION_DATE, registrationDate);
+                    changes.put(LdapUserManager.ATTRIB_REGISTRATION_PORTAL, server);
+                    changes.put(LdapUserManager.ATTRIB_VISITED_PORTAL, server);
+                    changes.put(LdapUserManager.ATTRIB_EMAIL_ADRESS, email);
+                    changes.put(LdapUserManager.ATTRIB_EMAIL_BLOCKED, "false");
+                    changes.put(LdapUserManager.ATTRIB_EMAIL_VERIFIED, "true");
+                    if (phone != null)
+                        changes.put(LdapUserManager.ATTRIB_PHONE, phone);
+                    if (company != null)
+                        changes.put(LdapUserManager.ATTRIB_INVOICING_COMPANY, company);
+                    if (ic != null)
+                        changes.put(LdapUserManager.ATTRIB_INVOICING_COMPANY_ICO, ic);
+                    if (dic != null)
+                        changes.put(LdapUserManager.ATTRIB_INVOICING_COMPANY_ICO, dic);
+                    if (street != null)
+                        changes.put(LdapUserManager.ATTRIB_INVOICING_ADDRESS_STREET, street);
+                    if (city != null)
+                        changes.put(LdapUserManager.ATTRIB_INVOICING_ADDRESS_CITY, city);
+                    if (postcode != null)
+                        changes.put(LdapUserManager.ATTRIB_INVOICING_ADDRESS_ZIP, postcode);
+
+                    ldapMgr.updateUser(login, changes);
+
                 } else {
                     // merge
                     merged++;
