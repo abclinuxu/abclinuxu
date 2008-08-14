@@ -429,6 +429,9 @@
                             <entry key="tag.get.creator" value="select ip,autor from stitky_log where stitek=? and akce='add' order by kdy desc limit 1"/>
                             <entry key="most.commented.relations" value="select RA.cislo, count(*) from relace RZ, zaznam Z, komentar K, relace RA, polozka PA, relace RD, polozka PD, spolecne S where RA.potomek = PA.cislo and RD.potomek = PD.cislo and RD.predchozi = RA.cislo and PA.typ=? and PD.typ=3 and RD.typ_potomka = 'P' and RA.typ_potomka = 'P' and RZ.predchozi = RD.cislo and RZ.typ_potomka='Z' and RZ.potomek = Z.cislo and Z.typ=4 and K.zaznam = Z.cislo and S.typ = 'P' and S.cislo = RA.potomek and S.vytvoreno > ? group by RZ.cislo order by 2 desc"/>
                             <entry key="most.read.relations" value="select R.cislo, C.soucet from relace R, citac C, spolecne S, polozka P where R.potomek=C.cislo and R.typ_potomka='P' and R.potomek=S.cislo and R.potomek=P.cislo and C.druh='read' and S.typ='P' and P.typ=? and S.vytvoreno > ? order by 2 desc"/>
+                            <entry key="subportal.count.articles" value="select RS.cislo, count(*) from relace RS, kategorie K, polozka P, relace RA, relace RAS where RS.typ_potomka='K' and RS.potomek=K.cislo and K.typ=7 and P.typ=2 and RA.typ_potomka='P' and RA.potomek=P.cislo and RA.predchozi=RAS.cislo and RAS.predchozi=RS.cislo group by RS.cislo"/>
+                            <entry key="subportal.count.events" value="select RS.cislo, count(*) from relace RS, kategorie K, polozka P, relace RA, relace RAS where RS.typ_potomka='K' and RS.potomek=K.cislo and K.typ=7 and P.typ=26 and RA.typ_potomka='P' and RA.potomek=P.cislo and RA.predchozi=RAS.cislo and RAS.predchozi=RS.cislo group by RS.cislo"/>
+                            <entry key="subportal.count.forum.questions" value="select RS.cislo, count(*) from relace RS, kategorie K, relace RF, relace RQ, polozka P where RS.typ_potomka='K' and RS.potomek=K.cislo and K.typ=7 and RF.predchozi=RS.cislo and RQ.predchozi=RF.cislo and RQ.typ_potomka='P' and RQ.potomek=P.cislo and P.podtyp='question' group by RS.cislo"/>
                         </map>
                     </node>
                     <node name="versioning">
@@ -615,6 +618,14 @@
                             <entry key="ratio.news" value="3.0"/>
                         </map>
                     </node>
+                    <node name="UpdateSubportalScore">
+                        <map>
+                            <entry key="ratio.article" value="8.0"/>
+                            <entry key="ratio.question" value="2.0"/>
+                            <entry key="ratio.wiki" value="5.0"/>
+                            <entry key="ratio.event" value="15.0"/>
+                        </map>
+                    </node>
                 </node>
                 <node name="servlets">
                     <map/>
@@ -678,6 +689,7 @@
                                 <entry key="variable.fetcher.delay" value="0"/>
                                 <entry key="variable.fetcher.period" value="@VARIABLE.FETCHER.PERIOD@"/>
                                 <entry key="start.user.score.setter" value="@START.UPDATE.SCORE@"/>
+                                <entry key="start.subportal.score.setter" value="@START.UPDATE.SUBPORTAL.SCORE@"/>
                                 <entry key="start.pool.monitor" value="@START.POOL.MONITOR@"/>
                                 <entry key="pool.monitor.delay" value="60"/>
                                 <entry key="pool.monitor.period" value="180"/>
