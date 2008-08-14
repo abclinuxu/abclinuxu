@@ -76,6 +76,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_UPDATE_STATISTICS = "update.statistics";
     public static final String PREF_JOB_OFFER_MANAGER = "job.offer.manager";
     public static final String PREF_USER_SCORE_SETTER = "user.score.setter";
+    public static final String PREF_SUBPORTAL_SCORE_SETTER = "subportal.score.setter";
     public static final String PREF_WEB_SERVICES = "web.services";
     public static final String PREF_USERS_DEPLOY_PATH = "deploy.path.users";
     public static final String PREF_UPDATE_TOP_STATISTICS = "update.top.statistics";
@@ -150,6 +151,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         startObjectMonitor();
         startForumSender();
         startCalculateUserScoreService();
+        startCalculateSubportalScoreService();
         startDateToolUpdateService();
         startJobOfferUpdateService();
         startWatchedDiscussionsCleaner();
@@ -426,6 +428,21 @@ public class AbcInit extends HttpServlet implements Configurable {
         calendar.add(Calendar.DAY_OF_YEAR, 1);
 
         scheduler.scheduleAtFixedRate(new UpdateUserScore(), calendar.getTime(), 24*60*60*1000);
+    }
+    
+    private void startCalculateSubportalScoreService() {
+        if ( !isSet(PREF_SUBPORTAL_SCORE_SETTER) ) {
+            log.info("Update subportal score configured not to be calculated");
+            return;
+        }
+        log.info("Scheduling update subportal score service");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 3);
+        calendar.set(Calendar.MINUTE, 11);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+
+        scheduler.scheduleAtFixedRate(new UpdateSubportalScore(), calendar.getTime(), 24*60*60*1000);
     }
     
     private void startUpdateTopStatistics() {

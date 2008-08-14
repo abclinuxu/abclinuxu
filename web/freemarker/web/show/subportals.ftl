@@ -30,12 +30,14 @@ kontaktuje administrátory, kteří věc zváží.</p>
         icon=TOOL.xpath(cat,"/data/icon")?default("UNDEF"),
         url=relation.url,
         desc=TOOL.xpath(cat,"/data/descriptionShort")?default("UNDEF"),
-        members = cat.getProperty("member")>
+        members = cat.getProperty("member"),
+        score=cat.getIntProperty("score")?default(-1)>
     <#if icon!="UNDEF"><div style="float:right; padding: 5px"><img src="${icon}" alt="${cat.title}" /></div></#if>
 
     <h2 class="st_nadpis"><a href="${url}">${cat.title}</a></h2>
     <p>${desc}</p>
-    <p class="meta-vypis"><a href="${url}?action=members">Členů</a>: ${members?size} | Vznik: ${DATE.show(cat.created,"CZ_SHORT")}</p>
+    <p class="meta-vypis"><a href="${url}?action=members">Členů</a>: ${members?size} | Vznik: ${DATE.show(cat.created,"CZ_SHORT")}
+    <#if score != -1>| Skóre: ${score}</#if></p>
     <hr style="clear:right" />
 </#list>
 

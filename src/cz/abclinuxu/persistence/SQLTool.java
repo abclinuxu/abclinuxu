@@ -131,6 +131,10 @@ public final class SQLTool implements Configurable {
     
     public static final String MOST_COMMENTED_RELATIONS = "most.commented.relations";
     public static final String MOST_READ_RELATIONS = "most.read.relations";
+    
+    public static final String SUBPORTALS_COUNT_ARTICLES = "subportal.count.articles";
+    public static final String SUBPORTALS_COUNT_EVENTS = "subportal.count.events";
+    public static final String SUBPORTALS_COUNT_FORUM_QUESTIONS = "subportal.count.forum.questions";
 
     private static SQLTool singleton;
     static {
@@ -1198,6 +1202,33 @@ public final class SQLTool implements Configurable {
         StringBuilder sb = new StringBuilder((String) sql.get(USERS_COUNT_NEWS));
         return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
+    
+    /**
+     * Finds all subportals with articles.
+     * @return a list of integer arrays with the first item being the user id and the second the number of articles
+     */
+    public List<Object[]> countSubportalArticles() {
+        StringBuilder sb = new StringBuilder((String) sql.get(SUBPORTALS_COUNT_ARTICLES));
+        return loadObjects(sb.toString(), Collections.EMPTY_LIST);
+    }
+    
+    /**
+     * Finds all subportals with events.
+     * @return a list of integer arrays with the first item being the user id and the second the number of events
+     */
+    public List<Object[]> countSubportalEvents() {
+        StringBuilder sb = new StringBuilder((String) sql.get(SUBPORTALS_COUNT_EVENTS));
+        return loadObjects(sb.toString(), Collections.EMPTY_LIST);
+    }
+    
+    /**
+     * Finds all subportals with forum questions.
+     * @return a list of integer arrays with the first item being the user id and the second the number of questions
+     */
+    public List<Object[]> countSubportalForumQuestions() {
+        StringBuilder sb = new StringBuilder((String) sql.get(SUBPORTALS_COUNT_FORUM_QUESTIONS));
+        return loadObjects(sb.toString(), Collections.EMPTY_LIST);
+    }
 
     /**
      * Finds the last poll. If it is not active, null is returned.
@@ -2177,6 +2208,9 @@ public final class SQLTool implements Configurable {
         store(TAG_GET_CREATOR, prefs);
         store(MOST_READ_RELATIONS, prefs);
         store(MOST_COMMENTED_RELATIONS, prefs);
+        store(SUBPORTALS_COUNT_ARTICLES, prefs);
+        store(SUBPORTALS_COUNT_EVENTS, prefs);
+        store(SUBPORTALS_COUNT_FORUM_QUESTIONS, prefs);
     }
 
     /**

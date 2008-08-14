@@ -647,7 +647,8 @@
 
 <#macro showSubportal relation showDesc>
     <#local item=relation.child, icon=TOOL.xpath(item,"/data/icon")?default("UNDEF"),
-        counter=VARS.getSubportalCounter(relation), members=item.getProperty("member")>
+        counter=VARS.getSubportalCounter(relation), members=item.getProperty("member"),
+        score=item.getIntProperty("score")?default(-1)>
     <div class="s_sekce" align="center">
         <#if icon!="UNDEF">
             <a href="${relation.url}"><img src="${icon}" alt="${item.title}"></a>
@@ -665,6 +666,7 @@
         Wiki stránek: <a href="${relation.url}/wiki">${counter.WIKIS?default("?")}</a><br />
         Dotazů: <a href="${relation.url}/poradna">${counter.QUESTIONS?default("?")}</a><br />
         Akcí: <a href="${relation.url}/akce">${counter.EVENTS?default("?")}</a><br />
+        <#if score != -1>Skóre: ${score}</#if>
 
         <form action="/skupiny/edit/${relation.id}" method="post">
             <#if USER?exists && members.contains(""+USER.id)>
@@ -676,4 +678,14 @@
             <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER?if_exists)}">
         </form>
     </div>
+</#macro>
+
+<#macro showVideo relation width height>
+    <#local item=relation.child, code=TOOL.xpath(item,"//code"), desc=TOOL.xpath(item,"//description")?default("")>
+    <#if item.subType=="youtube"><#local player="http://www.youtube.com/v/"+code+"&amp;hl=en&amp;fs=1">
+    <#elseif item.subType=="googlevideo"><#local player="http://video.google.com/googleplayer.swf?docid="+code+"&amp;hl=cs&amp;fs=true">
+    </#if>
+
+    <object width="${width}" height="${height}"><param name="movie" value="${player}"></param><param name="allowFullScreen" value="true"></param><embed src="${player}" type="application/x-shockwave-flash" allowfullscreen="true" width="${width}" height="${height}"></embed></object>
+    <div><i>${desc}</i></div>
 </#macro>
