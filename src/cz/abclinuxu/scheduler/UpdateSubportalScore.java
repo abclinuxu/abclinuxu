@@ -21,7 +21,6 @@ package cz.abclinuxu.scheduler;
 
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
@@ -74,17 +73,17 @@ public class UpdateSubportalScore extends TimerTask implements Configurable {
     }
     
     private Map<Integer, Integer> findSubportals() {
-        Map<Integer, Integer> users = new HashMap<Integer, Integer>(20);
+        Map<Integer, Integer> portals = new HashMap<Integer, Integer>(20);
         SQLTool sqlTool = SQLTool.getInstance();
         List<Object[]> found = sqlTool.countSubportalForumQuestions();
-        incrementSubportalCounts(users, found, ratioQuestion);
+        incrementSubportalCounts(portals, found, ratioQuestion);
         found = sqlTool.countSubportalArticles();
-        incrementSubportalCounts(users, found, ratioArticle);
+        incrementSubportalCounts(portals, found, ratioArticle);
         found = countSubportalWikiPages();
-        incrementSubportalCounts(users, found, ratioWiki);
+        incrementSubportalCounts(portals, found, ratioWiki);
         found = sqlTool.countSubportalArticles();
-        incrementSubportalCounts(users, found, ratioEvent);
-        return users;
+        incrementSubportalCounts(portals, found, ratioEvent);
+        return portals;
     }
     
     private List countSubportalWikiPages() {
@@ -129,7 +128,7 @@ public class UpdateSubportalScore extends TimerTask implements Configurable {
     }
     
     /**
-     * This method calculates user score based on number of points that the subportal has achieved.
+     * This method calculates subportal score based on number of points that the subportal has achieved.
      * The function is non-decreasing and non-linear.
      * @param points non-negative number
      * @return score
