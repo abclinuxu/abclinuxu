@@ -95,7 +95,7 @@ public class EditBookmarks implements AbcAction {
                 return FMTemplateSelector.select("ViewUser", "login", env, request);
             
             managed = (User) PersistenceFactory.getPersistence().findById(managed);
-            if (!user.hasRole(Roles.USER_ADMIN))
+            if (!user.hasRole(Roles.USER_ADMIN) && managed.getId() != user.getId())
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             
             env.put(VAR_MANAGED, managed);
