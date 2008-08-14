@@ -442,7 +442,8 @@ public class EditRelation implements AbcAction {
 			Item item = (Item) relation.getChild();
 			if (item.getType() == Item.DISCUSSION)
 				 move = true;
-		} else if (Tools.permissionsFor(user, destination).canModify())
+		}
+        if (Tools.permissionsFor(user, destination).canModify())
 			move = true;
 		
 		if (!move)
