@@ -1111,7 +1111,18 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
                 portal.put("ARTICLES", persistence.findChildren(articles.getChild()).size());
                 portal.put("WAITING_ARTICLES", persistence.findChildren(pool.getChild()).size());
-                portal.put("WIKIS", persistence.findChildren(wiki.getChild()).size());
+                
+                int wikiPages = 0;
+                LinkedList<Relation> stack = new LinkedList(persistence.findChildren(wiki.getChild()));
+                while (stack.size() > 0) {
+                    Relation current = stack.removeFirst();
+                    
+                    wikiPages++;
+
+                    stack.addAll(0, persistence.findChildren(current.getChild()));
+                }
+                
+                portal.put("WIKIS", wikiPages);
                 portal.put("QUESTIONS", persistence.findChildren(forum.getChild()).size());
 
                 int numEvents = sqlTool.countItemRelationsWithType(Item.EVENT,
