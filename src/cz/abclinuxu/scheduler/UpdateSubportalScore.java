@@ -62,8 +62,6 @@ public class UpdateSubportalScore extends TimerTask implements Configurable {
             Relation rel = new Relation(entry.getKey());
             int score = calculateScore(entry.getValue());
             
-            System.out.println("Subportal "+rel.getId()+"; points: "+entry.getValue()+"; score: "+score);
-            
             Tools.sync(rel);
             Set properties = Collections.singleton(Integer.toString(score));
             sqlTool.setProperty((Category) rel.getChild(), Constants.PROPERTY_SCORE, properties);
@@ -81,7 +79,7 @@ public class UpdateSubportalScore extends TimerTask implements Configurable {
         incrementSubportalCounts(portals, found, ratioArticle);
         found = countSubportalWikiPages();
         incrementSubportalCounts(portals, found, ratioWiki);
-        found = sqlTool.countSubportalArticles();
+        found = sqlTool.countSubportalEvents();
         incrementSubportalCounts(portals, found, ratioEvent);
         return portals;
     }
