@@ -318,23 +318,29 @@ public class MySqlPersistence implements Persistence {
 
         tmp = user.getEmail();
         if (tmp != null && tmp.length() > 0) {
-            if (addAnd) sb.append(" AND ");
+            if (addAnd) sb.append(" AND "); else addAnd = true;
             sb.append("email LIKE ?");
             conditions.add(tmp);
         }
 
         tmp = user.getNick();
         if (tmp != null && tmp.length() > 0) {
-            if (addAnd) sb.append(" AND ");
+            if (addAnd) sb.append(" AND "); else addAnd = true;
             sb.append("prezdivka LIKE ?");
             conditions.add(tmp);
         }
 
         tmp = user.getDataAsString();
         if ((tmp != null && tmp.length() > 0)) {
-            if (addAnd) sb.append(" AND ");
+            if (addAnd) sb.append(" AND "); else addAnd = true;
             sb.append("data LIKE ?");
             conditions.add(tmp);
+        }
+        
+        if (user.getId() != 0) {
+            if (addAnd) sb.append(" AND "); else addAnd = true;
+            sb.append("cislo = ?");
+            conditions.add(user.getId());
         }
     }
 
