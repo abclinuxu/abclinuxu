@@ -156,6 +156,8 @@ public class LdapUserManager implements Configurable {
     String parentContext;
     String ldapClass;
 
+    // todo udelat synchronizovany pool pro admin spojeni
+
     /**
      * Grants access to singleton of this object.
      * @return singleton
@@ -183,7 +185,7 @@ public class LdapUserManager implements Configurable {
         if (matcher.find())
             throw new InvalidInputException("Přihlašovací jméno smí obsahovat pouze písmena A až Z, číslice, pomlčku, tečku a podtržítko!");
 
-        if (password == null || password.length() < 4)
+        if (password == null || password.length() < 3) // todo vratit zpet, zmena kvuli migraci
             throw new InvalidInputException("Přihlašovací heslo musí mít nejméně čtyři znaky!");
 
         if (name == null || name.length() < 3)
