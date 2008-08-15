@@ -20,15 +20,11 @@ package cz.abclinuxu.migrate;
 
 import cz.abclinuxu.persistence.ldap.LdapUserManager;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * Migrates 64bit users to LDAP
@@ -47,7 +43,6 @@ public class Migrate64bitUsers {
         }
 
         Map<String, String> changes = new HashMap<String, String>();
-        long start = System.currentTimeMillis();
         int created = 0, merged = 0, conflicts = 0;
         Map<String, String> ldapUser;
 
@@ -185,44 +180,29 @@ public class Migrate64bitUsers {
 /*
 conversion
 
-problemy:
-
-a) ilegalni znaky: tspbrno@tycoint.
-b) divne kodovani
-
 mysql -e "set names latin2;select id,idserver,login,passwd,company,ic,dic,surname,name,email,phone,street,city,post
 code,country,deliver_company,deliver_street,deliver_city,deliver_postcode,deliver_country,regist_date,last_login_date from ko_user where
 id not in (153, 171,148,174,39,179,173,182,1,58,175,44,103,128,3,172,133,156,159,105,170,157,189) order by id" 64bitnew > 64bit_users.txt
 
-| id               | int(10)     | -
-| idserver         | int(11)     | -
-| idgroup          | int(10)     | -
-| login            | varchar(16) | ATTRIB_LOGIN
-| passwd           | varchar(16) | ATTRIB_PASSWORD
-| company          | varchar(64) | ATTRIB_INVOICING_COMPANY
-| ic               | varchar(16) | ATTRIB_INVOICING_COMPANY_ICO
-| dic              | varchar(32) | ATTRIB_INVOICING_COMPANY_DIC
-| surname          | varchar(250)| ATTRIB_NAME
-| name             | varchar(32) | ATTRIB_NAME
-| email            | varchar(64) | ATTRIB_EMAIL_ADRESS, ATTRIB_EMAIL_BLOCKED, ATTRIB_EMAIL_VERIFIED
-| phone            | varchar(16) | ATTRIB_PHONE
-| street           | varchar(128)| ATTRIB_INVOICING_ADDRESS_STREET
-| city             | varchar(64) | ATTRIB_INVOICING_ADDRESS_CITY
-| postcode         | varchar(16) | ATTRIB_INVOICING_ADDRESS_ZIP
-| country          | varchar(50) | ATTRIB_COUNTRY
-| deliver_company  | varchar(64) | ATTRIB_DELIVERY_ADDRESS_NAME
-| deliver_street   | varchar(128)| ATTRIB_DELIVERY_ADDRESS_STREET
-| deliver_city     | varchar(64) | ATTRIB_DELIVERY_ADDRESS_CITY
-| deliver_postcode | varchar(16) | ATTRIB_DELIVERY_ADDRESS_ZIP
-| deliver_country  | varchar(50) | ATTRIB_DELIVERY_ADDRESS_COUNTRY
-| from_where       | varchar(128)| -
-| discount         | tinyint(4)  | -
-| note             | text        | -
-| blocked          | tinyint(1)  | -
-| regist_date      | date        | ATTRIB_REGISTRATION_DATE, ATTRIB_REGISTRATION_PORTAL, ATTRIB_VISITED_PORTAL
-| last_login_date  | datetime    | ATTRIB_LAST_LOGIN_DATE
-| last_login_ip    | varchar(40) | -
-| last_access_date | datetime    | -
+update ko_user set name=concat(name," ",surname);
+
+alter table ko_user drop column passwd;
+alter table ko_user drop column regist_date;
+alter table ko_user drop column last_login_date;
+alter table ko_user drop column company;
+alter table ko_user drop column ic;
+alter table ko_user drop column dic;
+alter table ko_user drop column surname;
+alter table ko_user drop column phone;
+alter table ko_user drop column street;
+alter table ko_user drop column city;
+alter table ko_user drop column postcode;
+alter table ko_user drop column country;
+alter table ko_user drop column deliver_company;
+alter table ko_user drop column deliver_street;
+alter table ko_user drop column deliver_city;
+alter table ko_user drop column deliver_postcode;
+alter table ko_user drop column deliver_country;
 
 */
 }
