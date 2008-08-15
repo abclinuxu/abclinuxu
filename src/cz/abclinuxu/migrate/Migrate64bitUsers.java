@@ -63,6 +63,9 @@ public class Migrate64bitUsers {
             try {
                 rs = parseLine(line, '\t', 22);
                 id = rs[0];
+                if ("189".equals(id)) // invalidni login duplicitniho uzivatele
+                    continue;
+
                 String server = rs[1], login = rs[2], password = rs[3], company = rs[4];
                 String ic = rs[5], dic = rs[6], surname = rs[7], name = rs[8];
                 String email = rs[9], phone = rs[10], street = rs[11], city = rs[12];
@@ -80,8 +83,12 @@ public class Migrate64bitUsers {
                 else
                     server = SERVER_64BIT_CZ;
 
-                ldapUser = ldapMgr.getUserInformation(login, new String[] {LdapUserManager.ATTRIB_EMAIL_ADRESS});
-                if (ldapUser.size() == 1 && ! email.equals(ldapUser.values().iterator().next())) {
+                ldapUser = ldapMgr.getUserInformation(login, new String[] {LdapUserManager.ATTRIB_EMAIL_ADRESS, LdapUserManager.ATTRIB_LAST_LOGIN_DATE});
+                String sfEmail = ldapUser.get(LdapUserManager.ATTRIB_EMAIL_ADRESS);
+                if (sfEmail == null)
+                    sfEmail = ldapUser.get("email");
+
+                if (ldapUser.size() == 1 && ! email.equals(sfEmail)) {
                     conflict = true;
                     conflicts++;
                     ldapUser.clear();
@@ -102,20 +109,9 @@ public class Migrate64bitUsers {
                     changes.put(LdapUserManager.ATTRIB_EMAIL_ADRESS, email);
                     changes.put(LdapUserManager.ATTRIB_EMAIL_BLOCKED, "false");
                     changes.put(LdapUserManager.ATTRIB_EMAIL_VERIFIED, "true");
-                    if (phone != null)
-                        changes.put(LdapUserManager.ATTRIB_PHONE, phone);
-                    if (company != null)
-                        changes.put(LdapUserManager.ATTRIB_INVOICING_COMPANY, company);
-                    if (ic != null)
-                        changes.put(LdapUserManager.ATTRIB_INVOICING_COMPANY_ICO, ic);
-                    if (dic != null)
-                        changes.put(LdapUserManager.ATTRIB_INVOICING_COMPANY_ICO, dic);
-                    if (street != null)
-                        changes.put(LdapUserManager.ATTRIB_INVOICING_ADDRESS_STREET, street);
-                    if (city != null)
-                        changes.put(LdapUserManager.ATTRIB_INVOICING_ADDRESS_CITY, city);
-                    if (postcode != null)
-                        changes.put(LdapUserManager.ATTRIB_INVOICING_ADDRESS_ZIP, postcode);
+                    changes.put(LdapUserManager.ATTRIB_LAST_LOGIN_DATE, lastLoginDate);
+                    setValues(phone, changes, company, ic, dic, street, city, postcode, country,
+                            deliverCompany, deliverStreet, deliverCity, deliverPostcode, deliverCountry);
 
                     ldapMgr.updateUser(login, changes);
 
@@ -123,6 +119,18 @@ public class Migrate64bitUsers {
                     // merge
                     merged++;
                     System.out.println("merge " + login + ", email " + email);
+
+                    changes.put(LdapUserManager.ATTRIB_VISITED_PORTAL, server);
+                    setValues(phone, changes, company, ic, dic, street, city, postcode, country,
+                            deliverCompany, deliverStreet, deliverCity, deliverPostcode, deliverCountry);
+
+                    String lastAbcLogin = ldapUser.get(LdapUserManager.ATTRIB_LAST_LOGIN_DATE);
+                    if (lastAbcLogin != null && lastAbcLogin.compareTo(lastLoginDate) < 0) {
+                        System.out.println("Abc ma starsi login: " + lastAbcLogin + ", " + lastLoginDate);
+                        changes.put(LdapUserManager.ATTRIB_LAST_LOGIN_DATE, lastLoginDate);
+                    }
+
+                    ldapMgr.updateUser(login, changes);
                 }
 
             } catch (Exception e) {
@@ -130,6 +138,35 @@ public class Migrate64bitUsers {
             }
         }
         System.out.println("Created " + created + " new users in LDAP, merged " + merged + " existing users, " + conflicts + " conflicts");
+    }
+
+    private static void setValues(String phone, Map<String, String> changes, String company, String ic, String dic, String street, String city, String postcode, String country, String deliverCompany, String deliverStreet, String deliverCity, String deliverPostcode, String deliverCountry) {
+        if (phone != null)
+            changes.put(LdapUserManager.ATTRIB_PHONE, phone);
+        if (company != null)
+            changes.put(LdapUserManager.ATTRIB_INVOICING_COMPANY, company);
+        if (ic != null)
+            changes.put(LdapUserManager.ATTRIB_INVOICING_COMPANY_ICO, ic);
+        if (dic != null)
+            changes.put(LdapUserManager.ATTRIB_INVOICING_COMPANY_ICO, dic);
+        if (street != null)
+            changes.put(LdapUserManager.ATTRIB_INVOICING_ADDRESS_STREET, street);
+        if (city != null)
+            changes.put(LdapUserManager.ATTRIB_INVOICING_ADDRESS_CITY, city);
+        if (postcode != null)
+            changes.put(LdapUserManager.ATTRIB_INVOICING_ADDRESS_ZIP, postcode);
+        if (country != null)
+            changes.put(LdapUserManager.ATTRIB_INVOICING_ADDRESS_ZIP, postcode);
+        if (deliverCompany != null)
+            changes.put(LdapUserManager.ATTRIB_DELIVERY_ADDRESS_NAME, company);
+        if (deliverStreet != null)
+            changes.put(LdapUserManager.ATTRIB_DELIVERY_ADDRESS_STREET, street);
+        if (deliverCity != null)
+            changes.put(LdapUserManager.ATTRIB_DELIVERY_ADDRESS_CITY, city);
+        if (deliverPostcode != null)
+            changes.put(LdapUserManager.ATTRIB_DELIVERY_ADDRESS_ZIP, postcode);
+        if (deliverCountry != null)
+            changes.put(LdapUserManager.ATTRIB_DELIVERY_ADDRESS_ZIP, postcode);
     }
 
     private static String[] parseLine(String line, char separator, int length) {
