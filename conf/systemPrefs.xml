@@ -470,7 +470,7 @@
                                 <entry key="server.uri" value="@LDAP_SERVER@"/>
                                 <entry key="admin.user" value="@LDAP_ADMIN_USER@"/>
                                 <entry key="admin.password" value="@LDAP_ADMIN_PASSWORD@"/>
-                                <entry key="supported.portals" value="www.abclinuxu.cz,www.abcprace.cz,www.abchost.cz,www.itbiz.cz,www.64bit.cz"/>
+                                <entry key="supported.portals" value="www.abclinuxu.cz,www.abcprace.cz,www.abchost.cz,www.itbiz.cz,www.64bit.cz,www.64bit.sk,www.64bit.biz"/>
                                 <entry key="parent.context" value="ou=users,dc=stickfish,dc=net"/>
                                 <entry key="user.ldap.class" value="stickfishUser"/>
                                 <entry key="regexp.invalid.login" value="[^a-zA-Z0-9_.\-]"/>
