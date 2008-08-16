@@ -345,18 +345,6 @@ a.selected:hover {
 .game-results { background-color: #D3D3D3; }
 .game-wrong { color: #8B0000; } /* darkred */
 
-div.autocomplete {
-      background-color: white;
-      border-color: #808080;
-}
-div.autocomplete ul li.selected { background-color: #FFF8C3;}
-
-.host .img-server a:hover { background-color: transparent }
-.host .avail { color: green; }
-.host .price { color: #DC143C; }  /* crimson */
-.host .akce { color: #FF4500 }  /* orangered */
-.host .novinka { color: #0000FF }  /* blue */
-
 /*************** SF lista *****************/
 
 .sflista {

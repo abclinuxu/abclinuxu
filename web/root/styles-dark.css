@@ -351,7 +351,7 @@ a.info:hover span.tooltip {
 
 a.selected {
 	background-color: #80BBCA;
-	color: #3A3A3A;
+	color: black;
 }
 a.selected:hover {
 	color: black;
@@ -366,19 +366,6 @@ a.selected:hover {
 
 .game-results { background-color: gray; }
 .game-wrong { color: #FFC0CB; } /* pink */
-
-div.autocomplete {
-      background-color: black;
-      border-color: #4B4B4B;
-}
-div.autocomplete ul li.selected { background-color: #80BBCA;}
-
-.host .img-server a:hover { background-color: transparent }
-
-.host .avail { color: #00FF00; }  /* lime */
-.host .price { color: #DC143C; }  /* crimson */
-.host .akce { color: #FF4500 }  /* orangered */
-.host .novinka { color: #0000FF}  /* blue */
 
 /*************** SF lista *****************/
 .sflista {

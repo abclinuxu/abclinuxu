@@ -900,19 +900,6 @@ p.documentHistory {
 .desktopy .thumb { margin: 0.5em; }
 .desktopy .uzivatele { float: right; }
 
-.host { font-size: smaller }
-.host .prehled {
-	font-size: small;
-	clear: right;
-}
-
-.host .img-header { float: right; }
-.host .img-server { height: 90px; }
-.host .prehled { clear: right; }
-.host .avail { font-weight: bold; }
-.host .price { font-weight: bold; }  /* crimson */
-.host .kontakt span { margin: 0 0.2em; }
-
 /*************** SF lista *****************/
 .sflista {
 	font-size: 11px;
