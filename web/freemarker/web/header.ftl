@@ -85,8 +85,8 @@
     <div class="obal">
 
         <div class="hl">
-        <div class="hl_vpravo">
-            <#if USER?exists>
+            <div class="hl_vpravo">
+              <#if USER?exists>
                 <@lib.showUser USER/> |
                 <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")?default("UNDEF")>
                 <#if blogName!="UNDEF"><a href="/blog/${blogName}">Blog</a> |</#if>
@@ -96,12 +96,22 @@
                 <a href="/lide/${USER.login}/zalozky">Záložky</a> |
                 <a href="/Profile/${USER.id}?action=myPage">Nastavení</a> |
                 <a href="${URL.noPrefix("/Index?logout=true")}">Odhlásit</a>
-            <#else>
+              <#else>
                 <a href="${URL.noPrefix("/Profile?action=login")}">Přihlášení</a> |
                 <a href="${URL.noPrefix("/EditUser?action=register")}">Registrace</a>
-            </#if>
-        </div>
-        <div class="hl_vlevo">&nbsp;</div>
+              </#if>
+            </div>
+            <div class="hl_vlevo">
+              <ul class="menu-top">
+                <li><a href="/doc/napoveda/alternativni-design">výběr stylu</a>
+                  <ul class="menu-drop">
+                  <#list TOOL.getOfferedCssStyles().entrySet() as style>
+                    <li><a href="/EditUser/<#if USER?exists>${USER.id}</#if>?action=changeStyle${TOOL.ticket(USER,false)}&amp;style=${style.key}">${style.value}</a></li>
+                  </#list>
+                  </ul>
+                </li>
+              </ul>
+            </div>
         </div>
 
         <div id="ls_prepinac" title="Skrýt sloupec" onclick="prepni_sloupec()">&#215;</div>
