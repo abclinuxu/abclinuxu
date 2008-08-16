@@ -193,8 +193,12 @@ public class CreateIndex implements Configurable {
             indexWriter.close();
             long end = System.currentTimeMillis();
 
+            String content;
+            synchronized (Constants.czFormat) {
+                content = Constants.czFormat.format(new Date());
+            }
             FileWriter fos = new FileWriter(new File(PATH, lastRunFilename));
-            fos.write(Constants.czFormat.format(new Date()));
+            fos.write(content);
             fos.close();
 
             String message = "Indexing of "+indexWriter.docCount()+" documents took "+(end-start)/1000+" seconds.";
