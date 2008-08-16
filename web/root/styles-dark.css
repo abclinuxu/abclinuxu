@@ -122,6 +122,12 @@ input, select, textarea, .button,
 	color: #80BBCA;
 }
 
+.hl ul.menu-drop {
+	background-color: #1A425D;
+	border-color: #9A9A9A;
+}
+.hl ul.menu-drop li { border-top-color: #4B4B4B; }
+
 .pwd-box {
 	border-color: gray;
 	background-color: #ececec;

@@ -112,6 +112,12 @@ input, select, textarea, .button, .editTags {
 	color: #FFF8C3;
 }
 
+.hl ul.menu-drop {
+	background-color: #27648d;
+	border-color: silver;
+}
+.hl ul.menu-drop li { border-top-color: gray; }
+
 .st {
 	background-color: white;
 	border-left-color: silver;

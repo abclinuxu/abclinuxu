@@ -226,6 +226,20 @@ blockquote {
 	white-space: nowrap;
 }
 
+.hl ul { list-style: none; }
+.hl ul.menu-top { margin: 0; padding: 0; }
+.hl ul.menu-drop {
+	display: none;
+	position: absolute;
+	border: 1px solid;
+	border-top: none;
+	z-index: 1;
+	padding: 0 1em;
+	margin-left:-0.3em; }
+.hl ul.menu-drop li { padding: 0.1em 0.5em; border-top: 1px solid; }
+.hl ul.menu-drop li:first-child {border: none;}
+.hl .menu-top:hover .menu-drop {display: block}
+
 .pwd-box, .tag-box {
 	min-height: 1.9em;
 	border-bottom: 1px dotted;
@@ -883,29 +897,6 @@ p.documentHistory {
     font-size: small;
 }
 
-div.autocomplete {
-  position:absolute;
-  width:250px;
-  border:1px solid;
-  margin:0px;
-  padding:0px;
-}
-div.autocomplete ul {
-  list-style-type:none;
-  margin:0px;
-  padding:0px;
-  font-size: small;
-}
-div.autocomplete ul li {
-  list-style-type:none;
-  display:block;
-  margin:0;
-  padding:2px;
-  height:1.5em;
-  cursor:pointer;
-}
-div.autocomplete ul li span.informal { size: 80%;}
-
 .desktopy .thumb { margin: 0.5em; }
 .desktopy .uzivatele { float: right; }
 
@@ -978,6 +969,8 @@ div.autocomplete ul li span.informal { size: 80%;}
 	float: right;
 	margin: 0.5em;
 }
+
+
 
 .skoleni table {
 	width: 95%;
