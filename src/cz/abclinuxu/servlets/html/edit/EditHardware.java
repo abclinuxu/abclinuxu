@@ -154,6 +154,7 @@ public class EditHardware implements AbcAction {
 		if (upper.getChild() instanceof GenericDataObject) {
 			GenericDataObject gdo = (GenericDataObject) upper.getChild();
 			item.setGroup(gdo.getGroup());
+            item.setPermissions(gdo.getPermissions());
 		}
 
         boolean canContinue = true;
