@@ -106,7 +106,7 @@
                 <li><a href="/doc/napoveda/alternativni-design">výběr stylu</a>
                   <ul class="menu-drop">
                   <#list TOOL.getOfferedCssStyles().entrySet() as style>
-                    <li><a href="/EditUser/<#if USER?exists>${USER.id}</#if>?action=changeStyle${TOOL.ticket(USER,false)}&amp;style=${style.key}">${style.value}</a></li>
+                    <li><a href="/EditUser/<#if USER?exists>${USER.id}</#if>?action=changeStyle${TOOL.ticket(USER,false)}&amp;css=${style.key}">${style.value}</a></li>
                   </#list>
                   </ul>
                 </li>
