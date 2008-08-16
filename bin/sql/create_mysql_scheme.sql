@@ -25,7 +25,7 @@ ALTER TABLE uzivatel ADD INDEX in_openid (prezdivka);
 CREATE TABLE kategorie (
  cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
  typ SMALLINT,                                   -- typ kategorie
- podtyp VARCHAR(30) NULL,                        -- podtyp
+ podtyp VARCHAR(50) NULL,                        -- podtyp
  data LONGTEXT NOT NULL                          -- XML s nazvem, ikonou, poznamkou ...
 );
 ALTER TABLE kategorie ADD INDEX in_podtyp (podtyp);
@@ -38,7 +38,7 @@ ALTER TABLE kategorie ADD INDEX in_typ (typ);
 CREATE TABLE polozka (
  cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
  typ SMALLINT,                                   -- typ polozky (druh, novinka, ..)
- podtyp VARCHAR(30) NULL,                        -- podtyp
+ podtyp VARCHAR(50) NULL,                        -- podtyp
  data LONGTEXT NOT NULL                          -- XML s nazvem, ikonou, poznamkou ...
 );
 ALTER TABLE polozka ADD INDEX in_typ (typ);
@@ -52,7 +52,7 @@ ALTER TABLE polozka ADD INDEX in_podtyp (podtyp);
 CREATE TABLE zaznam (
  cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
  typ SMALLINT,                                   -- typ zaznamu (HW, SW, clanek ..)
- podtyp VARCHAR(30) NULL,                        -- podtyp
+ podtyp VARCHAR(50) NULL,                        -- podtyp
  data LONGTEXT NOT NULL                          -- XML s nazvem, poznamkou ...
 );
 ALTER TABLE zaznam ADD INDEX in_typ (typ);
@@ -62,7 +62,7 @@ ALTER TABLE zaznam ADD INDEX in_podtyp (podtyp);
 CREATE TABLE data (
  cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
  typ SMALLINT,                                   -- typ polozky (druh, novinka, ..)
- podtyp VARCHAR(30) NULL,                        -- podtyp
+ podtyp VARCHAR(50) NULL,                        -- podtyp
  data LONGTEXT NOT NULL                          -- XML s cestou k soboru, nazvem, ikonou, poznamkou ...
 );
 ALTER TABLE data ADD INDEX in_typ (typ);
