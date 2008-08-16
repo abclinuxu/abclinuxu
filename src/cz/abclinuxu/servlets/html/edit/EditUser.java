@@ -250,7 +250,7 @@ public class EditUser implements AbcAction {
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
         
         if (action.equals(ACTION_CHANGE_STYLE)) {
-            ActionProtector.ensureContract(request, EditUser.class, true, false, true, true);
+            ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
             return actionChangeStyle(request, response, env);
         }
 
