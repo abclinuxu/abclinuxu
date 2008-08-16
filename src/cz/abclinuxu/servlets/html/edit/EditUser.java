@@ -1055,7 +1055,7 @@ public class EditUser implements AbcAction {
         }
         
         if (referer != null)
-            url = referer.getPath();
+            url = referer.toString();
         else
             url = "/";
         
