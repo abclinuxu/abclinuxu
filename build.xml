@@ -96,7 +96,9 @@
         </copy>
 
         <copy todir="${DEPLOY_BIN}" filtering="true">
-            <fileset dir="bin"/>
+            <fileset dir="bin">
+                <exclude name="taganalyze"/>
+            </fileset>
         </copy>
     </target>
 
