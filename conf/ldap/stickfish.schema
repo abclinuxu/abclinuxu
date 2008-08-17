@@ -31,11 +31,6 @@ attributeType ( 222.5.1.5  NAME 'forgottenPasswordToken'
 		EQUALITY caseExactMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
-attributeType ( 222.5.1.5  NAME 'emailVerificationToken'
-		DESC 'Generated one time token to to verify he is really owner of emailAddress'
-		EQUALITY caseExactMatch
-		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
-
 attributeType ( 222.5.1.6  NAME 'registrationPortalID'
 		DESC 'Complete hostname of the portal, where user has been registered'
 		EQUALITY caseIgnoreMatch
@@ -48,11 +43,6 @@ attributeType ( 222.5.1.7  NAME 'registrationDate'
 
 attributeType ( 222.5.1.8  NAME 'lastLoginDate'
 		DESC 'Date when user has logged in the last time in format YYYY-MM-DD HH:MM'
-		EQUALITY caseIgnoreMatch
-		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
-
-attributeType ( 222.5.1.8  NAME 'lastChangeDate'
-		DESC 'Date of last data change in format YYYY-MM-DD HH:MM:SS. Data changes related to login are ignored.'
 		EQUALITY caseIgnoreMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
@@ -73,11 +63,6 @@ attributeType ( 222.5.1.11  NAME 'emailBlocked'
 
 attributeType ( 222.5.1.12  NAME 'country'
 		DESC 'User supplied string identifying the country he lives'
-		EQUALITY caseIgnoreMatch
-		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
-
-attributeType ( 222.5.1.12  NAME 'salutation'
-		DESC 'How to salute the user, e.g. Dear Mr. Smith'
 		EQUALITY caseIgnoreMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
@@ -158,6 +143,21 @@ attributeType ( 222.5.1.32  NAME 'invoicingCompanyICO'
 
 attributeType ( 222.5.1.33  NAME 'invoicingCompanyDIC'
 		DESC '---'
+		EQUALITY caseIgnoreMatch
+		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributeType ( 222.5.1.34  NAME 'lastChangeDate'
+		DESC 'Date of last data change in format YYYY-MM-DD HH:MM:SS. Data changes related to login are ignored.'
+		EQUALITY caseIgnoreMatch
+		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributeType ( 222.5.1.35  NAME 'emailVerificationToken'
+		DESC 'Generated one time token to to verify he is really owner of emailAddress'
+		EQUALITY caseExactMatch
+		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributeType ( 222.5.1.36  NAME 'salutation'
+		DESC 'How to salute the user, e.g. Dear Mr. Smith'
 		EQUALITY caseIgnoreMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
