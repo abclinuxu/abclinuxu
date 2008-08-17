@@ -31,6 +31,9 @@
         <javac srcdir="src" destdir="${DEPLOY_ABCLINUXU}/WEB-INF/classes"
             classpathref="project.classpath" debug="${javac.debug}"
             optimize="${javac.optimize}" source="1.5" />
+        <javac srcdir="test" destdir="${DEPLOY_ABCLINUXU}/WEB-INF/classes"
+            classpathref="project.classpath" debug="${javac.debug}"
+            optimize="${javac.optimize}" source="1.5" />
     </target>
 
 
@@ -97,7 +100,7 @@
 
         <copy todir="${DEPLOY_BIN}" filtering="true">
             <fileset dir="bin">
-                <exclude name="taganalyze"/>
+                <exclude name="taganalyze/**"/>
             </fileset>
         </copy>
     </target>
