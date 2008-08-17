@@ -15,10 +15,12 @@ CREATE TABLE uzivatel (
  email VARCHAR(60) NULL,                         -- email
  openid VARCHAR(255) NULL,     	                 -- openid url
  prezdivka VARCHAR(20) NULL UNIQUE,              -- prezdivka
+ sync DATETIME NULL,                             -- cas posledni synchronizace s LDAPem
  data TEXT                                       -- XML s nazvem, ikonou, poznamkou ...
 );
 ALTER TABLE uzivatel ADD INDEX in_nick (prezdivka);
 ALTER TABLE uzivatel ADD INDEX in_openid (prezdivka);
+ALTER TABLE uzivatel ADD INDEX in_sync (sync);
 
 
 -- tabulka s kategoriemi
