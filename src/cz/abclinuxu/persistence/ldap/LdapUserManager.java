@@ -21,6 +21,7 @@ package cz.abclinuxu.persistence.ldap;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.exceptions.LdapException;
@@ -39,6 +40,7 @@ import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchResult;
 import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
@@ -71,6 +73,10 @@ public class LdapUserManager implements Configurable {
     public static final String PREF_PARENT_CONTEXT = "parent.context";
     public static final String PREF_LDAP_CLASS = "user.ldap.class";
     public static final String PREF_INVALID_LOGIN_REGEXP = "regexp.invalid.login";
+    public static final String PREF_CONNECTION_PROPERTIES = "admin.connection.properties.";
+    public static final String PREF_PROPERTY_COUNT = "count";
+    public static final String PREF_PROPERTY_KEY = "key";
+    public static final String PREF_PROPERTY_VALUE = "value";
 
     // any change to attributes must be performed in stickfish.schema and UserAccount.java too
 
@@ -83,6 +89,7 @@ public class LdapUserManager implements Configurable {
     public static final String ATTRIB_DELIVERY_ADDRESS_ZIP = "deliveryAddressZIP";
     public static final String ATTRIB_EMAIL_ADRESS = "emailAddress";
     public static final String ATTRIB_EMAIL_BLOCKED = "emailBlocked";
+    public static final String ATTRIB_EMAIL_VERIFICATION_TOKEN = "emailVerificationToken";
     public static final String ATTRIB_EMAIL_VERIFIED = "emailVerified";
     public static final String ATTRIB_FORGOTTEN_PASSWORD_TOKEN = "forgottenPasswordToken";
     public static final String ATTRIB_HOME_PAGE_URL = "homepageURL";
@@ -94,6 +101,7 @@ public class LdapUserManager implements Configurable {
     public static final String ATTRIB_INVOICING_ADDRESS_NAME = "invoicingAddressName";
     public static final String ATTRIB_INVOICING_ADDRESS_STREET = "invoicingAddressStreet";
     public static final String ATTRIB_INVOICING_ADDRESS_ZIP = "invoicingAddressZIP";
+    public static final String ATTRIB_LAST_CHANGE_DATE = "lastChangeDate";
     public static final String ATTRIB_LAST_LOGIN_DATE = "lastLoginDate";
     public static final String ATTRIB_LOGIN = "cn";
     public static final String ATTRIB_NAME = "sn";
@@ -105,6 +113,7 @@ public class LdapUserManager implements Configurable {
     public static final String ATTRIB_PHONE = "telephoneNumber";
     public static final String ATTRIB_REGISTRATION_PORTAL = "registrationPortalID";
     public static final String ATTRIB_REGISTRATION_DATE = "registrationDate";
+    public static final String ATTRIB_SALUTATION = "salutation";
     public static final String ATTRIB_SEX = "sex";
     public static final String ATTRIB_VISITED_PORTAL = "visitedPortalID";
 
@@ -114,13 +123,13 @@ public class LdapUserManager implements Configurable {
     public static final String SF_USER_ALL_ATTRIBUTES[] = {
         ATTRIB_CITY, ATTRIB_COUNTRY, ATTRIB_DELIVERY_ADDRESS_CITY, ATTRIB_DELIVERY_ADDRESS_COUNTRY,
         ATTRIB_DELIVERY_ADDRESS_NAME, ATTRIB_DELIVERY_ADDRESS_STREET, ATTRIB_DELIVERY_ADDRESS_ZIP,
-        ATTRIB_EMAIL_ADRESS, ATTRIB_EMAIL_BLOCKED, ATTRIB_EMAIL_VERIFIED, ATTRIB_FORGOTTEN_PASSWORD_TOKEN,
-        ATTRIB_HOME_PAGE_URL, ATTRIB_INVOICING_ADDRESS_CITY, ATTRIB_INVOICING_COMPANY,
+        ATTRIB_EMAIL_ADRESS, ATTRIB_EMAIL_BLOCKED, ATTRIB_EMAIL_VERIFICATION_TOKEN, ATTRIB_EMAIL_VERIFIED,
+        ATTRIB_FORGOTTEN_PASSWORD_TOKEN, ATTRIB_HOME_PAGE_URL, ATTRIB_INVOICING_ADDRESS_CITY, ATTRIB_INVOICING_COMPANY,
         ATTRIB_INVOICING_ADDRESS_COUNTRY, ATTRIB_INVOICING_COMPANY_DIC, ATTRIB_INVOICING_COMPANY_ICO,
         ATTRIB_INVOICING_ADDRESS_NAME, ATTRIB_INVOICING_ADDRESS_STREET, ATTRIB_INVOICING_ADDRESS_ZIP,
-        ATTRIB_LAST_LOGIN_DATE, ATTRIB_LOGIN, ATTRIB_NAME, ATTRIB_OPEN_ID, ATTRIB_PASSWORD_ANSWEAR,
+        ATTRIB_LAST_CHANGE_DATE, ATTRIB_LAST_LOGIN_DATE, ATTRIB_LOGIN, ATTRIB_NAME, ATTRIB_OPEN_ID, ATTRIB_PASSWORD_ANSWEAR,
         ATTRIB_PASSWORD_HASHCODE, ATTRIB_PASSWORD_QUESTION, ATTRIB_PHONE,
-        ATTRIB_REGISTRATION_DATE, ATTRIB_REGISTRATION_PORTAL, ATTRIB_SEX, ATTRIB_VISITED_PORTAL
+        ATTRIB_REGISTRATION_DATE, ATTRIB_REGISTRATION_PORTAL, ATTRIB_SALUTATION, ATTRIB_SEX, ATTRIB_VISITED_PORTAL
     };
     private static final String SF_USER_VISITED_PORTAL[] = new String[]{ATTRIB_VISITED_PORTAL};
     private static final String SF_USER_LOGIN[] = new String[]{ATTRIB_NAME, ATTRIB_LOGIN, ATTRIB_PASSWORD_HASHCODE};
@@ -155,8 +164,7 @@ public class LdapUserManager implements Configurable {
     Set<String> portals = new HashSet<String>();
     String parentContext;
     String ldapClass;
-
-    // todo udelat synchronizovany pool pro admin spojeni
+    Map<String, String> adminConnectionEnv = new HashMap<String, String>(3, 1.0f);
 
     /**
      * Grants access to singleton of this object.
@@ -506,7 +514,52 @@ public class LdapUserManager implements Configurable {
             Map<String, String> result = getUserInformation(login, attributes, ctx);
             return result;
         } catch (NamingException e) {
-            log.error("Login with '" + login + "' has failed!", e);
+            log.error("Get user information for '" + login + "' has failed!", e);
+            throw new LdapException("Spojení s LDAP serverem selhalo. Důvod: " + e.getMessage());
+        } finally {
+            if (ctx != null)
+                try {
+                    ctx.close();
+                } catch (NamingException e) {
+                    log.error("LDAP connection failed!", e);
+                }
+        }
+    }
+
+    /**
+     * Perform search using supplied query within parent context.
+     * @param query LDAP query
+     * @param attributes attributes to be fetched from LDAP
+     * @return list of found LDAP records (as map, where key is attribute name and value is its value)
+     */
+    public List<Map<String, String>> search(String query, String[] attributes) throws LdapException, NamingException {
+        DirContext ctx = null;
+        try {
+            ctx = connectLDAP(adminUsername, adminPassword, true);
+
+            SearchControls constraints = new SearchControls();
+            constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
+            constraints.setReturningAttributes(attributes);
+            NamingEnumeration found = ctx.search(parentContext, query, attributes, constraints);
+            if (!found.hasMore())
+                return Collections.emptyList();
+
+            List<Map<String, String>> results = new ArrayList<Map<String, String>>();
+            while (found.hasMore()) {
+                SearchResult sr = (SearchResult) found.next();
+                Attributes foundAttributes = sr.getAttributes();
+                NamingEnumeration<? extends Attribute> all = foundAttributes.getAll();
+                Map<String, String> item = new HashMap<String, String>();
+                while (all.hasMoreElements()) {
+                    Attribute attribute = all.nextElement();
+                    item.put(attribute.getID(), (String) attribute.get());
+                }
+                if (! item.isEmpty())
+                    results.add(item);
+            }
+            return results;
+        } catch (NamingException e) {
+            log.error("Search with '" + query + "' has failed!", e);
             throw new LdapException("Spojení s LDAP serverem selhalo. Důvod: " + e.getMessage());
         } finally {
             if (ctx != null)
@@ -541,7 +594,7 @@ public class LdapUserManager implements Configurable {
         Attributes searchAttrs = new BasicAttributes(ATTRIB_LOGIN, login);
         NamingEnumeration results = ctx.search(parentContext, searchAttrs, attributes);
         if (!results.hasMore())
-            return Collections.emptyMap(); // todo return null to distinguish whether user was not found or no attribute has value
+            return Collections.emptyMap();
 
         SearchResult sr = (SearchResult) results.next();
         searchAttrs = sr.getAttributes();
@@ -602,9 +655,11 @@ public class LdapUserManager implements Configurable {
         props.setProperty(Context.URL_PKG_PREFIXES, URL_CONTEXT_PREFIX);
         props.setProperty(Context.REFERRAL, REFERRALS_IGNORE);
         props.setProperty(Context.SECURITY_AUTHENTICATION, UPDATE_SECURITY_LEVEL);
-        if (admin)
+        if (admin) {
             props.setProperty(Context.SECURITY_PRINCIPAL, login);
-        else
+            // configurable connection pooling
+            props.putAll(adminConnectionEnv);
+        } else
             props.setProperty(Context.SECURITY_PRINCIPAL, ATTRIB_LOGIN + "=" + login + "," + parentContext);
         props.setProperty(Context.SECURITY_CREDENTIALS, password);
         ctx = new InitialDirContext(props);
@@ -661,9 +716,19 @@ public class LdapUserManager implements Configurable {
         adminPassword = prefs.get(PREF_ADMIN_PASSWORD, "secret");
         parentContext = prefs.get(PREF_PARENT_CONTEXT, "ou=users,dc=stickfish,dc=net");
         ldapClass = prefs.get(PREF_LDAP_CLASS, "stickfishUser");
+
         String uris = prefs.get(PREF_SUPPORTED_PORTALS, "www.abclinuxu.cz");
         StringTokenizer stk = new StringTokenizer(uris, ",");
         while (stk.hasMoreTokens())
             portals.add(stk.nextToken().toLowerCase());
+
+        String sCount = prefs.get(PREF_CONNECTION_PROPERTIES + PREF_PROPERTY_COUNT, "0");
+        int count = Misc.parseInt(sCount, 0);
+        for (int i = 1; i <= count; i++) {
+            String key = prefs.get(PREF_CONNECTION_PROPERTIES + i + "." + PREF_PROPERTY_KEY, null);
+            String value = prefs.get(PREF_CONNECTION_PROPERTIES + i + "." + PREF_PROPERTY_VALUE, null);
+            if (key != null && value != null)
+                adminConnectionEnv.put(key, value);
+        }
     }
 }

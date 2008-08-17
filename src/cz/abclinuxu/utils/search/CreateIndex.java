@@ -50,10 +50,8 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -193,13 +191,7 @@ public class CreateIndex implements Configurable {
             indexWriter.close();
             long end = System.currentTimeMillis();
 
-            String content;
-            synchronized (Constants.czFormat) {
-                content = Constants.czFormat.format(new Date());
-            }
-            FileWriter fos = new FileWriter(new File(PATH, lastRunFilename));
-            fos.write(content);
-            fos.close();
+            Misc.touchFile(new File(PATH, lastRunFilename), System.currentTimeMillis());
 
             String message = "Indexing of "+indexWriter.docCount()+" documents took "+(end-start)/1000+" seconds.";
             log.info(message);

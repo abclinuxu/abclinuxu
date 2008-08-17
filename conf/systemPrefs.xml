@@ -472,6 +472,13 @@
                                 <entry key="admin.password" value="@LDAP_ADMIN_PASSWORD@"/>
                                 <entry key="supported.portals" value="www.abclinuxu.cz,www.abcprace.cz,www.abchost.cz,www.itbiz.cz,www.64bit.cz,www.64bit.sk,www.64bit.biz"/>
                                 <entry key="parent.context" value="ou=users,dc=stickfish,dc=net"/>
+                                <entry key="admin.connection.properties.count" value="3"/>
+                                <entry key="admin.connection.properties.1.key" value="com.sun.jndi.ldap.connect.pool"/>
+                                <entry key="admin.connection.properties.1.value" value="true"/>
+                                <entry key="admin.connection.properties.2.key" value="com.sun.jndi.ldap.connect.pool.maxsize"/>
+                                <entry key="admin.connection.properties.2.value" value="10"/>
+                                <entry key="admin.connection.properties.3.key" value="com.sun.jndi.ldap.connect.pool.timeout"/>
+                                <entry key="admin.connection.properties.3.value" value="3600000"/>
                                 <entry key="user.ldap.class" value="stickfishUser"/>
                                 <entry key="regexp.invalid.login" value="[^a-zA-Z0-9_.\-]"/>
                             </map>
@@ -624,6 +631,12 @@
                             <entry key="ratio.question" value="2.0"/>
                             <entry key="ratio.wiki" value="5.0"/>
                             <entry key="ratio.event" value="15.0"/>
+                        </map>
+                    </node>
+                    <node name="UserSync">
+                        <map>
+                            <entry key="path" value="@DEPLOY_ABCLINUXU@/WEB-INF/run/"/>
+                            <entry key="last.run.file" value="ldap_sync.txt"/>
                         </map>
                     </node>
                 </node>

@@ -284,6 +284,7 @@ public interface Constants {
     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     DateFormat isoFormatShort = new SimpleDateFormat("yyyy-MM-dd");
     DateFormat isoSearchFormat = new SimpleDateFormat("yyyyMMdd");
+    DateFormat isoLongFormat = new SimpleDateFormat("yyyyMMddHHmmZ");
     DateFormat usFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
     DateFormat czFormat = new SimpleDateFormat("d.M.yyyy HH:mm");
     DateFormat czFormatTxt = new SimpleDateFormat("d. MMMMM yyyy HH:mm");

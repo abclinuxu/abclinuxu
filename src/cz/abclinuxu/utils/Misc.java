@@ -47,6 +47,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedList;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Miscallenous utilities.
@@ -398,5 +401,21 @@ public class Misc {
             return false;
         String value = tagEmail.attributeValue("verified");
         return (value == null || "yes".equals(value));
+    }
+
+    /**
+     * Opens given file for writing and replaces its content with supplied time rendered using Constants.czFormat.
+     * @param file file
+     * @param time time to be written into the file
+     * @throws IOException some I/O problem
+     */
+    public static void touchFile(File file, long time) throws IOException {
+        String content;
+        synchronized (Constants.czFormat) {
+            content = Constants.czFormat.format(new Date(time));
+        }
+        FileWriter fos = new FileWriter(file);
+        fos.write(content);
+        fos.close();
     }
 }
