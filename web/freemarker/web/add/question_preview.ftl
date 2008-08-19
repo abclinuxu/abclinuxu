@@ -38,19 +38,11 @@
     <table class="siroka" cellpadding="5">
         <#if ! USER?exists>
             <tr>
-                <td class="required">Login a heslo</td>
-                <td>
-                    <input tabindex="1" type="text" name="LOGIN" size="8">
-                    <input tabindex="2" type="password" name="PASSWORD" size="8">
-                    <label><input tabindex="3" type="checkbox" name="noCookie" value="yes">Neukládat přihlašovací cookie</label>
-                    <@lib.showHelp>Použijte, pokud se přihlašujete na cizím počítači.</@lib.showHelp>
-                </td>
-            </tr>
-            <tr>
-                <td class="required">nebo vaše jméno</td>
+                <td class="required">Zadejte vaše jméno</td>
                 <td>
                     <input tabindex="4" type="text" size="30" name="author" value="${PARAMS.author?if_exists}">
-                    <div class="error">${ERRORS.author?if_exists}</div>
+                    <div class="error">${ERRORS.author?if_exists}</div><br>
+                    nebo <a href="/Profile?action=login">se přihlašte</a>.
                 </td>
             </tr>
             <#if ! USER_VERIFIED?if_exists>
