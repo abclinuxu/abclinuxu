@@ -136,7 +136,7 @@ public class UrlUtils {
     public String constructRedirectURL(String url) {
         String out = url;
         //if (PREFIX_NONE.equals(getPrefix(url))) out = prefix+url;
-        return response.encodeRedirectURL(out);
+        return response.encodeRedirectURL(completeUrl(out));
     }
 
     /**
@@ -174,7 +174,7 @@ public class UrlUtils {
      */
     public void redirect(HttpServletResponse response, String url) throws IOException {
         String url2 = constructRedirectURL(url);
-        response.sendRedirect(completeUrl(url2));
+        response.sendRedirect(url2);
     }
     
     /**
@@ -189,17 +189,18 @@ public class UrlUtils {
         String domain = request.getServerName();
         StringBuffer composedUrl = new StringBuffer();
         int port = request.getServerPort();
-        String scheme = request.getScheme();
+        boolean secure = request.isSecure();
         
-        composedUrl.append(scheme + "://" );
+        composedUrl.append(secure ? "https://" : "http://" );
         composedUrl.append(domain);
         
-        if ((scheme.equals("https") && port != 443) || (scheme.equals("http") && port != 80)) {
+        if ((secure && port != 443) || (!secure && port != 80)) {
             composedUrl.append(':');
             composedUrl.append(port);
         }
         
         composedUrl.append(url);
+        System.out.println("Completed this URL: "+composedUrl.toString());
         return composedUrl.toString();
     }
 
@@ -211,8 +212,8 @@ public class UrlUtils {
             redirect(response, url);
             return;
         }
-        String url2 = response.encodeRedirectURL(url);
-        response.sendRedirect(completeUrl(url2));
+        String url2 = response.encodeRedirectURL(completeUrl(url));
+        response.sendRedirect(url2);
     }
 
     /**
