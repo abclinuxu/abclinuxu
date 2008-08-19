@@ -499,8 +499,13 @@ public class EditSubportal implements AbcAction {
 		
 		if (url.charAt(url.length() - 1) == '/')
             url = url.substring(0, url.length() - 1);
-
-        url = URLManager.enforceAbsoluteURL(url);
+        
+        try {
+            url = URLManager.enforceAbsoluteURL(url);
+        } catch (Exception e) {
+            ServletUtils.addError(PARAM_URL, e.getMessage(), env, null);
+            return false;
+        }
 
         if (URLManager.exists(url)) {
             ServletUtils.addError(PARAM_URL, "Toto URL již existuje!", env, null);
