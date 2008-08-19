@@ -231,7 +231,22 @@ public class ServletUtils implements Configurable {
             user = (User) persistence.findById(new User(id));
             handleLoggedIn(user, "yes".equals(noCookie), response);
             params.put(ActionProtector.PARAM_TICKET, user.getSingleProperty(Constants.PROPERTY_TICKET));
-
+            
+            boolean isSecure = false;
+            try {
+                URL referer = ServletUtils.getReferer(request);
+                if (referer != null)
+                    isSecure = "https".equals(referer.getProtocol());
+            } catch (Exception e) {
+            }
+            
+            String useHttps = (String) params.get(PARAM_USE_HTTPS);
+            if (!"yes".equals(useHttps) && isSecure) {
+                // redirect back to HTTP
+                UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+                String url = request.getRequestURI();
+                urlUtils.redirect(response, urlUtils.completeUrl(url, true));
+            }
         } else {
             Cookie cookie = getCookie(request, Constants.VAR_USER);
             if (cookie == null)
@@ -254,15 +269,6 @@ public class ServletUtils implements Configurable {
                 return;
             }
             handleLoggedIn(user, true, null);
-        }
-        
-        String useHttps = (String) params.get(PARAM_USE_HTTPS);
-        if (!"yes".equals(useHttps) && request.isSecure()) {
-            // redirect back to HTTP
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            String url = request.getRequestURI();
-            url = url.replaceFirst("https://", "http://");
-            urlUtils.redirect(response, url);
         }
 
         session.setAttribute(Constants.VAR_USER, user);

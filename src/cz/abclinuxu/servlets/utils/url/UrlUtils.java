@@ -138,7 +138,7 @@ public class UrlUtils {
     public String constructRedirectURL(String url) {
         String out = url;
         //if (PREFIX_NONE.equals(getPrefix(url))) out = prefix+url;
-        return response.encodeRedirectURL(completeUrl(out));
+        return response.encodeRedirectURL(completeUrl(out, false));
     }
 
     /**
@@ -184,17 +184,19 @@ public class UrlUtils {
      * @param url e.g. "/abcdef"
      * @return completed URL
      */
-    public String completeUrl(String url) {
+    public String completeUrl(String url, boolean enforceHttp) {
         if (url.startsWith("http:") || url.startsWith("https:"))
             return url;
         
-        boolean secure;
+        boolean secure = false;
         
-        try {
-            URL referer = ServletUtils.getReferer(request);
-            secure = referer.getProtocol().equals("https");
-        } catch (Exception e) {
-            secure = false;
+        if (!enforceHttp) {
+            try {
+                URL referer = ServletUtils.getReferer(request);
+                if (referer != null)
+                    secure = "https".equals(referer.getProtocol());
+            } catch (Exception e) {
+            }
         }
         
         String domain = request.getServerName();
@@ -221,7 +223,7 @@ public class UrlUtils {
             redirect(response, url);
             return;
         }
-        String url2 = response.encodeRedirectURL(completeUrl(url));
+        String url2 = response.encodeRedirectURL(completeUrl(url, false));
         response.sendRedirect(url2);
     }
 
