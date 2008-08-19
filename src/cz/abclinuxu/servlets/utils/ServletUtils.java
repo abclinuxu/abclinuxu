@@ -244,8 +244,7 @@ public class ServletUtils implements Configurable {
             if (!"yes".equals(useHttps) && isSecure) {
                 // redirect back to HTTP
                 UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-                String url = request.getRequestURI();
-                urlUtils.redirect(response, urlUtils.completeUrl(url, true));
+                urlUtils.redirect(response, urlUtils.completeUrl("/", true));
             }
         } else {
             Cookie cookie = getCookie(request, Constants.VAR_USER);
