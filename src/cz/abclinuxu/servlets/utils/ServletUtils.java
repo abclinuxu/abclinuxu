@@ -34,6 +34,7 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.security.ActionProtector;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import org.apache.log4j.Logger;
 import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.DefaultFileItemFactory;
@@ -47,6 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.prefs.Preferences;
 import java.net.URL;
@@ -76,7 +78,10 @@ public class ServletUtils implements Configurable {
     public static final String PARAM_LOG_PASSWORD = "PASSWORD";
     /** indicates, that user wishes to logout */
     public static final String PARAM_LOG_OUT = "logout";
+    /** do not create any login cookie */
     public static final String PARAM_NO_COOKIE = "noCookie";
+    /** do not redirect back to HTTPS */
+    public static final String PARAM_USE_HTTPS = "useHttps";
 
     public static final String VAR_ERROR_MESSAGE = "ERROR";
 
@@ -186,7 +191,7 @@ public class ServletUtils implements Configurable {
      * login information in this order and tries user to log in. If it suceeds,
      * instance of User is stored in both session attribute and environment.
      */
-    public static void handleLogin(HttpServletRequest request, HttpServletResponse response, Map env) {
+    public static void handleLogin(HttpServletRequest request, HttpServletResponse response, Map env) throws IOException {
         HttpSession session = request.getSession();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
@@ -249,6 +254,15 @@ public class ServletUtils implements Configurable {
                 return;
             }
             handleLoggedIn(user, true, null);
+        }
+        
+        String useHttps = (String) params.get(PARAM_USE_HTTPS);
+        if (!"yes".equals(useHttps) && request.isSecure()) {
+            // redirect back to HTTP
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            String url = request.getRequestURI();
+            url = url.replaceFirst("https://", "http://");
+            urlUtils.redirect(response, url);
         }
 
         session.setAttribute(Constants.VAR_USER, user);

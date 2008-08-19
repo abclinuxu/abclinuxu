@@ -18,7 +18,7 @@
     <a href="${URL.noPrefix("/EditUser?action=forgottenPassword")}">Zapomněli jste své heslo?</a>
 </p>
 
-<form action="${REQUEST_URI}" method="POST">
+<form action="https://www.abclinuxu.cz${REQUEST_URI}" method="POST">
 
 <table border="0" cellpadding="5">
   <tr>
@@ -38,6 +38,12 @@
     <td>
         <label><input type="checkbox" name="noCookie" value="yes">Neukládat přihlašovací cookie</label>
         <@lib.showHelp>Použijte, pokud se přihlašujete na cizím počítači.</@lib.showHelp>
+    </td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>
+        <label><input type="checkbox" name="useHttps" value="yes">Používat HTTPS i po přihlášení</label>
     </td>
   </tr>
   <tr>
