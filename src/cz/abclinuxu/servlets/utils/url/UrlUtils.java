@@ -206,7 +206,7 @@ public class UrlUtils {
         composedUrl.append(secure ? "https://" : "http://" );
         composedUrl.append(domain);
         
-        if ((secure && port != 443) || (!secure && port != 80)) {
+        if (/*(secure && port != 443) ||*/ (!secure && port != 80)) {
             composedUrl.append(':');
             composedUrl.append(port);
         }
