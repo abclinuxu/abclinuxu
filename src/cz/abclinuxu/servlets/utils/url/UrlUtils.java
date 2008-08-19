@@ -188,13 +188,13 @@ public class UrlUtils {
         
         String domain = request.getServerName();
         StringBuffer composedUrl = new StringBuffer();
-        boolean secure = request.isSecure();
         int port = request.getServerPort();
+        String scheme = request.getScheme();
         
-        composedUrl.append(secure ? "https://" : "http://");
+        composedUrl.append(scheme + "://" );
         composedUrl.append(domain);
         
-        if ((secure && port != 443) || (!secure && port != 80)) {
+        if ((scheme.equals("https") && port != 443) || (scheme.equals("http") && port != 80)) {
             composedUrl.append(':');
             composedUrl.append(port);
         }
