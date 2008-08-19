@@ -37,18 +37,23 @@ attributeType ( 222.5.1.6  NAME 'registrationPortalID'
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
 attributeType ( 222.5.1.7  NAME 'registrationDate'
-		DESC 'Date when user was registered in format YYYY-MM-DD HH:MM:SS'
-		EQUALITY caseIgnoreMatch
+		DESC 'Date when user was registered in format YYYY-MM-DD HH:MM'
+		EQUALITY caseExactMatch
+		ORDERING caseExactOrderingMatch
+		SUBSTR caseExactSubstringsMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
 attributeType ( 222.5.1.8  NAME 'lastLoginDate'
-		DESC 'Date when user has logged in the last time in format YYYY-MM-DD HH:MM'
-		EQUALITY caseIgnoreMatch
+		DESC 'Date when user has logged in the last time in format YYYY-MM-DD HH:MM:SS'
+		EQUALITY caseExactMatch
+		ORDERING caseExactOrderingMatch
+		SUBSTR caseExactSubstringsMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
 attributeType ( 222.5.1.9  NAME 'visitedPortalID'
 		DESC 'Complete hostname of the portals, which user has visited'
 		EQUALITY caseIgnoreMatch
+		SUBSTR caseIgnoreSubstringsMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributeType ( 222.5.1.10  NAME 'emailVerified'
@@ -64,16 +69,21 @@ attributeType ( 222.5.1.11  NAME 'emailBlocked'
 attributeType ( 222.5.1.12  NAME 'country'
 		DESC 'User supplied string identifying the country he lives'
 		EQUALITY caseIgnoreMatch
+		ORDERING caseIgnoreOrderingMatch
+		SUBSTR caseIgnoreSubstringsMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
 attributeType ( 222.5.1.13  NAME 'city'
 		DESC 'User supplied string identifying the city he lives'
 		EQUALITY caseIgnoreMatch
+		ORDERING caseIgnoreOrderingMatch
+		SUBSTR caseIgnoreSubstringsMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
 attributeType ( 222.5.1.14  NAME 'homepageURL'
 		DESC 'User home page url'
 		EQUALITY caseIgnoreMatch
+		SUBSTR caseIgnoreSubstringsMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
 attributeType ( 222.5.1.15  NAME 'sex'
@@ -148,7 +158,9 @@ attributeType ( 222.5.1.33  NAME 'invoicingCompanyDIC'
 
 attributeType ( 222.5.1.34  NAME 'lastChangeDate'
 		DESC 'Date of last data change in format YYYY-MM-DD HH:MM:SS. Data changes related to login are ignored.'
-		EQUALITY caseIgnoreMatch
+		EQUALITY caseExactMatch
+		ORDERING caseExactOrderingMatch
+		SUBSTR caseExactSubstringsMatch
 		SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
 attributeType ( 222.5.1.35  NAME 'emailVerificationToken'
