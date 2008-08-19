@@ -56,6 +56,7 @@ public class UrlUtils {
     public static final String PREFIX_SOFTWARE = "/software";
     public static final String PREFIX_TAGS = "/stitky";
 	public static final String PREFIX_EVENTS = "/akce";
+    public static final String PREFIX_VIDEOS = "/videa";
     public static final String PREFIX_NONE = "";
 
     static List prefixes = null;
@@ -79,19 +80,22 @@ public class UrlUtils {
         prefixes.add(PREFIX_SOFTWARE);
 		prefixes.add(PREFIX_EVENTS);
         prefixes.add(PREFIX_TAGS);
+        prefixes.add(PREFIX_VIDEOS);
     }
 
     /** default prefix to URL */
     String prefix;
     HttpServletResponse response;
+    HttpServletRequest request;
 
     /**
      * Creates new UrlUtils instance.
      * @param url Request URI
      */
-    public UrlUtils(String url, HttpServletResponse response) {
+    public UrlUtils(String url, HttpServletResponse response, HttpServletRequest request) {
         this.prefix = getPrefix(url);
         this.response = response;
+        this.request = request;
     }
 
     /**
@@ -170,7 +174,33 @@ public class UrlUtils {
      */
     public void redirect(HttpServletResponse response, String url) throws IOException {
         String url2 = constructRedirectURL(url);
-        response.sendRedirect(url2);
+        response.sendRedirect(completeUrl(url2));
+    }
+    
+    /**
+     * Adds domain, protocol and/or port.
+     * @param url e.g. "/abcdef"
+     * @return completed URL
+     */
+    public String completeUrl(String url) {
+        if (url.startsWith("http:") || url.startsWith("https:"))
+            return url;
+        
+        String domain = request.getServerName();
+        StringBuffer composedUrl = new StringBuffer();
+        boolean secure = request.isSecure();
+        int port = request.getServerPort();
+        
+        composedUrl.append(secure ? "https://" : "http://");
+        composedUrl.append(domain);
+        
+        if ((secure && port != 443) || (!secure && port != 80)) {
+            composedUrl.append(':');
+            composedUrl.append(port);
+        }
+        
+        composedUrl.append(url);
+        return composedUrl.toString();
     }
 
     /**
@@ -182,7 +212,7 @@ public class UrlUtils {
             return;
         }
         String url2 = response.encodeRedirectURL(url);
-        response.sendRedirect(url2);
+        response.sendRedirect(completeUrl(url2));
     }
 
     /**

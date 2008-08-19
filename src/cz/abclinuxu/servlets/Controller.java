@@ -137,11 +137,11 @@ public class Controller extends HttpServlet implements Configurable {
     /**
      * This step consolidates common initialization tasks like parsing parameters, autenthification etc.
      */
-    protected void performInit(HttpServletRequest request, HttpServletResponse response, Map env) throws InvalidInputException {
+    protected void performInit(HttpServletRequest request, HttpServletResponse response, Map env) throws InvalidInputException, IOException {
         Map params = ServletUtils.putParamsToMap(request);
         env.put(Constants.VAR_PARAMS, params);
         String requestURI = request.getRequestURI();
-        env.put(Constants.VAR_URL_UTILS, new UrlUtils(requestURI, response));
+        env.put(Constants.VAR_URL_UTILS, new UrlUtils(requestURI, response, request));
         env.put(Constants.VAR_REQUEST_URI, requestURI);
 
         String ua = request.getHeader("user-agent");
