@@ -23,6 +23,7 @@ import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +32,7 @@ import javax.servlet.ServletException;
 import javax.servlet.RequestDispatcher;
 import java.util.*;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * Simple class used for generating URLs, which remembers
@@ -186,10 +188,18 @@ public class UrlUtils {
         if (url.startsWith("http:") || url.startsWith("https:"))
             return url;
         
+        boolean secure;
+        
+        try {
+            URL referer = ServletUtils.getReferer(request);
+            secure = referer.getProtocol().equals("https");
+        } catch (Exception e) {
+            secure = false;
+        }
+        
         String domain = request.getServerName();
         StringBuffer composedUrl = new StringBuffer();
         int port = request.getServerPort();
-        boolean secure = request.isSecure();
         
         composedUrl.append(secure ? "https://" : "http://" );
         composedUrl.append(domain);
@@ -200,7 +210,6 @@ public class UrlUtils {
         }
         
         composedUrl.append(url);
-        System.out.println("Completed this URL: "+composedUrl.toString());
         return composedUrl.toString();
     }
 
