@@ -5,7 +5,7 @@
     <Article>
         <ArtID>${relation.id}</ArtID>
         <date>${DATE.show(article.created, "CZ_DMY2",false)}</date>
-        <title>$article.title}</title>
+        <title>${article.title}</title>
         <perex>${TOOL.xpath(article,"/data/perex")?xml}</perex>
         <body><![CDATA[${TOOL.getCompleteArticleText(article)}]]></body>
         <author>${TOOL.childName(autors[0])}</author>
