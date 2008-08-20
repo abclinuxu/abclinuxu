@@ -55,6 +55,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.prefs.Preferences;
 import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 
 import org.apache.log4j.Logger;
 
@@ -88,6 +89,8 @@ public class LdapUserManager implements Configurable {
     public static final String ATTRIB_DELIVERY_ADDRESS_STREET = "deliveryAddressStreet";
     public static final String ATTRIB_DELIVERY_ADDRESS_ZIP = "deliveryAddressZIP";
     public static final String ATTRIB_EMAIL_ADRESS = "emailAddress";
+    /** some LDAP servers return this attribute instead of emailAddress */
+    private static final String ATTRIB_EMAIL_ADRESS_2 = "email";
     public static final String ATTRIB_EMAIL_BLOCKED = "emailBlocked";
     public static final String ATTRIB_EMAIL_VERIFICATION_TOKEN = "emailVerificationToken";
     public static final String ATTRIB_EMAIL_VERIFIED = "emailVerified";
@@ -135,7 +138,7 @@ public class LdapUserManager implements Configurable {
     private static final String SF_USER_LOGIN[] = new String[]{ATTRIB_NAME, ATTRIB_LOGIN, ATTRIB_PASSWORD_HASHCODE};
 
     private static LdapUserManager instance = new LdapUserManager();
-
+    private static DateFormat isoLongFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final Set<String> MODIFIABLE_ATTRIBUTES = new HashSet<String>();
 
     static {
@@ -283,6 +286,12 @@ public class LdapUserManager implements Configurable {
 
             if (modsList.isEmpty())
                 return;
+
+            synchronized (isoLongFormat) {
+                String time = isoLongFormat.format(new Date());
+                attr = new BasicAttribute(ATTRIB_LAST_CHANGE_DATE, time);
+                modsList.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr));
+            }
 
             ModificationItem[] mods = modsList.toArray(new ModificationItem[modsList.size()]);
             ctx.modifyAttributes(ATTRIB_LOGIN + "=" + login + "," + parentContext, mods);
@@ -602,7 +611,10 @@ public class LdapUserManager implements Configurable {
         Map<String, String> result = new HashMap<String, String>();
         while (all.hasMoreElements()) {
             Attribute attribute = all.nextElement();
-            result.put(attribute.getID(), (String) attribute.get());
+            String key = attribute.getID();
+            if (ATTRIB_EMAIL_ADRESS_2.equals(key))
+                key = ATTRIB_EMAIL_ADRESS;
+            result.put(key, (String) attribute.get());
         }
         return result;
     }

@@ -410,8 +410,8 @@
                             <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
                             <entry key="users.with.forum.by.email" value="select cislo from uzivatel where data like '%&lt;email valid=&quot;yes&quot;%&lt;forum&gt;yes%&lt;/email%'"/>
                             <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'"/>
-                            <entry key="users.with.login" value="select cislo from uzivatel where login collate utf8_czech_ci = ?"/><!-- todo asi uz zbytecne -->
-                            <entry key="users.with.nick" value="select cislo from uzivatel where prezdivka collate utf8_czech_ci = ?"/>
+                            <entry key="users.with.login" value="select cislo from uzivatel where login = ?"/>
+                            <entry key="users.with.nick" value="select cislo from uzivatel where prezdivka = ?"/>
                             <entry key="users.in.group" value="select cislo from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%')"/>
                             <entry key="top.used.relations" value="select R.cislo,count(*) from relace R, vlastnost V where V.typ='used_by' and R.typ_potomka='P' and R.potomek=V.predek group by R.potomek order by 2 desc"/>
                             <entry key="top.counted.relations" value="select R.cislo from relace R, citac C, polozka P where R.typ_potomka='P' and R.potomek=C.cislo and C.typ='P' and C.druh=? and R.potomek=P.cislo and P.typ=? order by soucet desc"/>

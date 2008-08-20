@@ -30,7 +30,6 @@ import cz.abclinuxu.persistence.impl.MySqlPersistence;
 import cz.abclinuxu.persistence.versioning.VersionedDocument;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
-import cz.abclinuxu.servlets.Constants;
 import java.sql.*;
 import java.util.prefs.Preferences;
 import java.util.Date;
@@ -128,10 +127,10 @@ public final class SQLTool implements Configurable {
     public static final String CHANGE_CATEGORY_OWNER = "change.category.owner";
     public static final String CHANGE_PROPERTY_OWNER = "change.property.owner";
     public static final String COUNT_PROPERTIES_BY_USER = "count.properties.by.user";
-    
+
     public static final String MOST_COMMENTED_RELATIONS = "most.commented.relations";
     public static final String MOST_READ_RELATIONS = "most.read.relations";
-    
+
     public static final String SUBPORTALS_COUNT_ARTICLES = "subportal.count.articles";
     public static final String SUBPORTALS_COUNT_EVENTS = "subportal.count.events";
     public static final String SUBPORTALS_COUNT_FORUM_QUESTIONS = "subportal.count.forum.questions";
@@ -1049,7 +1048,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Integer> findUsers(Qualifier[] qualifiers) {
         if ( qualifiers == null || qualifiers.length == 0)
-            throw new IllegalArgumentException("qualifiers is mandatory");
+            throw new IllegalArgumentException("qualifiers are mandatory");
         StringBuilder sb = new StringBuilder("select cislo from uzivatel ");
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
@@ -1089,11 +1088,27 @@ public final class SQLTool implements Configurable {
      */
     public List<Integer> findUsersWithLogin(String login, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        // todo odstranit SQL ze systemPrefs, pouzit findUsers s qualifiery
         StringBuilder sb = new StringBuilder((String) sql.get(USERS_WITH_LOGIN));
         List params = new ArrayList();
         params.add(login);
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadUsers(sb.toString(), params);
+    }
+
+    /**
+     * Finds users with given login (case and locale insensitive search).
+     * Use Qualifiers to set additional parameters.
+     * @return list of Integers of user ids.
+     */
+    public List<Integer> findUsersByLogins(List<String> logins) {
+        if (logins == null || logins.isEmpty())
+            return Collections.emptyList();
+
+        Qualifier[] qualifiers = new Qualifier[] {
+            new CompareCondition(Field.LOGIN, new OperationIn(logins.size()), logins)
+        };
+        return findUsers(qualifiers);
     }
 
     /**
@@ -1103,6 +1118,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Integer> findUsersWithNick(String nick, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        // todo odstranit SQL ze systemPrefs, pouzit findUsers s qualifiery
         StringBuilder sb = new StringBuilder((String) sql.get(USERS_WITH_NICK));
         List params = new ArrayList();
         params.add(nick);
@@ -1157,6 +1173,7 @@ public final class SQLTool implements Configurable {
      *          if there is an error with the underlying persistent storage.
      */
     public Integer getUserByLogin(String login) {
+        // todo odstranit SQL ze systemPrefs, pouzit findUsers s qualifiery
         StringBuilder sb = new StringBuilder((String) sql.get(USER_BY_LOGIN));
         List params = new ArrayList();
         params.add(login);
@@ -1202,7 +1219,7 @@ public final class SQLTool implements Configurable {
         StringBuilder sb = new StringBuilder((String) sql.get(USERS_COUNT_NEWS));
         return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
-    
+
     /**
      * Finds all subportals with articles.
      * @return a list of integer arrays with the first item being the user id and the second the number of articles
@@ -1211,7 +1228,7 @@ public final class SQLTool implements Configurable {
         StringBuilder sb = new StringBuilder((String) sql.get(SUBPORTALS_COUNT_ARTICLES));
         return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
-    
+
     /**
      * Finds all subportals with events.
      * @return a list of integer arrays with the first item being the user id and the second the number of events
@@ -1220,7 +1237,7 @@ public final class SQLTool implements Configurable {
         StringBuilder sb = new StringBuilder((String) sql.get(SUBPORTALS_COUNT_EVENTS));
         return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
-    
+
     /**
      * Finds all subportals with forum questions.
      * @return a list of integer arrays with the first item being the user id and the second the number of questions
@@ -1691,40 +1708,40 @@ public final class SQLTool implements Configurable {
             persistance.releaseSQLResources(con, statement, null);
         }
     }
-    
+
     public Map<Relation, Integer> getMostReadRelations(int itemType, String dateFrom, Qualifier[] qualifiers) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        
+
         try {
             Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
             con = persistance.getSQLConnection();
-            
+
             StringBuilder sb = new StringBuilder((String) sql.get(MOST_READ_RELATIONS));
             List params = new ArrayList();
-            
+
             params.add(itemType);
             params.add(dateFrom);
-            
+
             appendQualifiers(sb, qualifiers, params, null, null);
             statement = con.prepareStatement(sb.toString());
-            
+
             int i = 1;
             for ( Iterator iter = params.iterator(); iter.hasNext(); )
                 statement.setObject(i++, iter.next());
-            
+
             rs = statement.executeQuery();
-            
+
             while (rs.next()) {
                 Relation rel = new Relation(rs.getInt(1));
                 int reads = rs.getInt(2);
-                
+
                 persistance.synchronize(rel);
                 result.put(rel, reads);
             }
-            
+
             return result;
         } catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
@@ -1732,40 +1749,40 @@ public final class SQLTool implements Configurable {
             persistance.releaseSQLResources(con, statement, rs);
         }
     }
-    
+
     public Map<Relation, Integer> getMostCommentedRelations(int itemType, String dateFrom, Qualifier[] qualifiers) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        
+
         try {
             Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
             con = persistance.getSQLConnection();
-            
+
             StringBuilder sb = new StringBuilder((String) sql.get(MOST_COMMENTED_RELATIONS));
             List params = new ArrayList();
-            
+
             params.add(itemType);
             params.add(dateFrom);
-            
+
             appendQualifiers(sb, qualifiers, params, null, null);
             statement = con.prepareStatement(sb.toString());
-            
+
             int i = 1;
             for ( Iterator iter = params.iterator(); iter.hasNext(); )
                 statement.setObject(i++, iter.next());
-            
+
             rs = statement.executeQuery();
-            
+
             while (rs.next()) {
                 Relation rel = new Relation(rs.getInt(1));
                 int reads = rs.getInt(2);
-                
+
                 persistance.synchronize(rel);
                 result.put(rel, reads);
             }
-            
+
             return result;
         } catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
@@ -1981,7 +1998,7 @@ public final class SQLTool implements Configurable {
             persistance.releaseSQLResources(con, statement, null);
         }
     }
-	
+
 	/**
 	 * Gets the creator of the tag
 	 * @param tag

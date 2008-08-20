@@ -47,6 +47,8 @@ public class User extends CommonObject {
     private String email;
     /** (noncrypted) password, not persisted */
     private String password;
+    /** time of last synchronization with LDAP (optional) */
+    private Date lastSynced;
 
     /** cache of granted user roles */
     private Map roles;
@@ -149,6 +151,22 @@ public class User extends CommonObject {
     }
 
     /**
+     * Get time of last synchronization with LDAP
+     * @return last synchronization time or null
+     */
+    public Date getLastSynced() {
+        return lastSynced;
+    }
+
+    /**
+     * Sets time of last synchronization with LDAP
+     * @param lastSynced time
+     */
+    public void setLastSynced(Date lastSynced) {
+        this.lastSynced = lastSynced;
+    }
+
+    /**
      * Finds out, whether user is in given role.
      * @param role name of role.
      * @return true, if user is in give role.
@@ -191,21 +209,21 @@ public class User extends CommonObject {
     public boolean isMemberOf(int group) {
 		return getData().selectSingleNode("/data/system/group[text()='"+group+"']")!=null;
     }
-	
+
 	/**
      * @return true, if user is member of specified group.
      */
 	public boolean isMemberOf(String groupName) {
 		List<Item> items = SQLTool.getInstance().findItemsWithType(Item.GROUP, 0, EditGroup.DEFAULT_MAX_NUMBER_OF_GROUPS);
-		
+
 		for (Item item : items) {
 			if (item.getTitle().equals(groupName))
 				return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public boolean isRoot() {
 		return isMemberOf(Constants.GROUP_ADMINI);
 	}

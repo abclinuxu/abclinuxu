@@ -23,7 +23,9 @@ import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.persistence.ldap.LdapUserManager;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.data.User;
 import static cz.abclinuxu.persistence.ldap.LdapUserManager.*;
@@ -38,6 +40,11 @@ import java.util.Iterator;
 import java.util.HashMap;
 import java.util.prefs.Preferences;
 import java.io.File;
+import java.text.ParseException;
+
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.DocumentHelper;
 
 /**
  * This class is responsible in finding all externally modified users and merging changes into database.
@@ -77,27 +84,36 @@ public class UserSync extends TimerTask implements Configurable {
             } else
                 syncSince = new Date(file.lastModified());
 
-            String time;
+            String time, login;
             synchronized(Constants.isoLongFormat) {
                 time = Constants.isoLongFormat.format(syncSince);
             }
 
+            SQLTool sqlTool = SQLTool.getInstance();
             LdapUserManager mgr = LdapUserManager.getInstance();
-            // todo zmenit filtr za ATTRIB_LAST_CHANGE_DATE
-            List<Map<String, String>> users = mgr.search("(modifytimestamp>=" + time + ")", SF_USER_ALL_ATTRIBUTES);
+//            List<Map<String, String>> users = mgr.search("(modifytimestamp>=" + time + ")", SF_USER_ALL_ATTRIBUTES);
+            String query = "(" + ATTRIB_LAST_CHANGE_DATE + "=" + time + ")";
+            List<Map<String, String>> ldapUsers = mgr.search(query, SF_USER_ALL_ATTRIBUTES);
             long syncTime = System.currentTimeMillis();
-            // vyhodit, co nejsou v db, maji novejsi ci roven sync time, merge ostatnich
-            // aktualizovat last_sync pri registraci, uprave ci loginu
-            while (! users.isEmpty()) {
+            while (! ldapUsers.isEmpty()) {
                 int i = 0;
                 Map<String, Map<String, String>> batchUsers = new HashMap<String, Map<String, String>>();
                 List<String> dbUsers = new ArrayList<String>();
-                for (Iterator<Map<String, String>> iter = users.iterator(); i < 50 && iter.hasNext(); i++) {
+                for (Iterator<Map<String, String>> iter = ldapUsers.iterator(); i < 50 && iter.hasNext(); i++) {
                     Map<String, String> map = iter.next();
                     iter.remove();
-                    String login = map.get(ATTRIB_LOGIN);
+                    login = map.get(ATTRIB_LOGIN);
                     batchUsers.put(login, map);
                     dbUsers.add(login);
+                }
+
+                List<Integer> userIds = sqlTool.findUsersByLogins(dbUsers);
+                List<User> users = Tools.createUsers(userIds);
+                for (User user : users) {
+                    Map<String, String> ldapAttributes = batchUsers.get(user.getLogin());
+                    if ( ! isSyncObsolete(user, ldapAttributes))
+                        continue;
+                    syncUser(user, ldapAttributes);
                 }
             }
 
@@ -107,6 +123,42 @@ public class UserSync extends TimerTask implements Configurable {
         }
 
         if (log.isDebugEnabled()) log.debug("Task " + getJobName() + " has finished its job.");
+    }
+
+    /**
+     * Updates user to match values of LDAP properties. It is mandatory to use SF_USER_ALL_ATTRIBUTES
+     * when fetching data otherwise missing attributes will be considered having empty value.
+     * @param user initialized user
+     * @param ldapAttributes attributes
+     */
+    public static void syncUser(User user, Map<String, String> ldapAttributes) {
+        Document doc = user.getData();
+        Element elPersonal = DocumentHelper.makeElement(doc, "/data/personal");
+//        "sex"
+    }
+
+    /**
+     * @return true, if user has no lastSynced property or its value is older than ATTRIB_LAST_CHANGE_DATE.
+     */
+    private boolean isSyncObsolete(User user, Map<String, String> ldapAttributes) {
+        Date lastSynced = user.getLastSynced();
+        if (lastSynced == null)
+            return true;
+
+        String sDate = ldapAttributes.get(ATTRIB_LAST_CHANGE_DATE);
+        if (sDate == null) // this shall not happen
+            return false;
+        Date lastChanged;
+        try {
+            synchronized (Constants.isoLongFormat) {
+                lastChanged = Constants.isoLongFormat.parse(sDate);
+            }
+        } catch (ParseException e) {
+            log.warn("Failed to parse lastChangeDate attribute with value '" + sDate + "' to date!");
+            return false;
+        }
+
+        return (lastSynced.compareTo(lastChanged) < 0);
     }
 
     /**

@@ -336,7 +336,7 @@ public class MySqlPersistence implements Persistence {
             sb.append("data LIKE ?");
             conditions.add(tmp);
         }
-        
+
         if (user.getId() != 0) {
             if (addAnd) sb.append(" AND "); else addAnd = true;
             sb.append("cislo = ?");
@@ -1064,7 +1064,7 @@ public class MySqlPersistence implements Persistence {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("SELECT cislo,login,jmeno,email,openid,prezdivka,data FROM uzivatel WHERE cislo=?");
+            statement = con.prepareStatement("SELECT cislo,login,jmeno,email,openid,prezdivka,sync,data FROM uzivatel WHERE cislo=?");
             statement.setInt(1,obj.getId());
 
             resultSet = statement.executeQuery();
@@ -1091,7 +1091,7 @@ public class MySqlPersistence implements Persistence {
         try {
             Map<Integer, User>  objects = new HashMap<Integer, User>();
             con = getSQLConnection();
-            statement = con.prepareStatement("SELECT cislo,login,jmeno,email,openid,prezdivka,data FROM uzivatel WHERE cislo IN "
+            statement = con.prepareStatement("SELECT cislo,login,jmeno,email,openid,prezdivka,sync,data FROM uzivatel WHERE cislo IN "
                     + Misc.getInCondition(users.size()) + " ORDER BY cislo");
             int i = 1;
             for (Iterator iter = users.iterator(); iter.hasNext();) {
@@ -1133,7 +1133,10 @@ public class MySqlPersistence implements Persistence {
         user.setEmail(resultSet.getString(4));
         user.setOpenId(resultSet.getString(5));
         user.setNick(resultSet.getString(6));
-        user.setData(insertEncoding(resultSet.getString(7)));
+        Timestamp timestamp = resultSet.getTimestamp(7);
+        if (! resultSet.wasNull() && timestamp != null)
+            user.setLastSynced(new java.util.Date(timestamp.getTime()));
+        user.setData(insertEncoding(resultSet.getString(8)));
         user.setInitialized(true);
     }
 
@@ -1928,14 +1931,18 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("UPDATE uzivatel SET login=?,jmeno=?,email=?,openid=?,prezdivka=?,data=? WHERE cislo=?");
+            statement = con.prepareStatement("UPDATE uzivatel SET login=?,jmeno=?,email=?,openid=?,prezdivka=?,sync=?,data=? WHERE cislo=?");
             statement.setString(1,user.getLogin());
             statement.setString(2,user.getName());
             statement.setString(3,user.getEmail());
             statement.setString(4,user.getOpenId());
             statement.setString(5,user.getNick());
-            statement.setBytes(6,user.getDataAsString().getBytes());
-            statement.setInt(7,user.getId());
+            if (user.getLastSynced() != null)
+                statement.setTimestamp(6, new Timestamp(user.getLastSynced().getTime()));
+            else
+                statement.setNull(6, Types.TIMESTAMP);
+            statement.setBytes(7, user.getDataAsString().getBytes());
+            statement.setInt(8, user.getId());
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {

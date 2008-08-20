@@ -118,18 +118,18 @@ public class Tools implements Configurable {
             storyReservePercents = prefs.getInt(PREF_STORY_RESERVE_PERCENTS, 50);
             newsLetterSoftLimit = prefs.getInt(PREF_NEWS_LETTER_LIMIT_SOFT, 400);
             newsLetterHardLimit = prefs.getInt(PREF_NEWS_LETTER_LIMIT_HARD, 500);
-            
+
             try {
                 Preferences subprefs = prefs.node(PREF_CSS_STYLES);
                 String[] keys = subprefs.keys();
                 offeredCssStyles = new HashMap(keys.length);
-                
+
                 for (int i = 0; i < keys.length; i++)
                     offeredCssStyles.put(keys[i], subprefs.get(keys[i], null));
             } catch (BackingStoreException e) {
                 throw new ConfigurationException(e.getMessage(), e.getCause());
             }
-            
+
         } catch (RESyntaxException e) {
             log.error("Chyba pri kompilaci regexpu!", e);
         } catch (PatternSyntaxException e) {
@@ -491,18 +491,18 @@ public class Tools implements Configurable {
     static public Relation getParentSubportal(List parents) {
         for ( Iterator iter = parents.iterator(); iter.hasNext(); ) {
             Object next = iter.next();
-            
+
             if (next instanceof Relation && ((Relation) next).getChild() instanceof Category) {
                 Category cat = (Category) sync( ((Relation) next).getChild() );
-                
+
                 if (cat.getType() == Category.SUBPORTAL)
                     return (Relation) next;
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Gets the relation's parents and tries to find a section, to which the
      * relation belongs in a subportal
@@ -512,20 +512,20 @@ public class Tools implements Configurable {
     static public Relation getParentSubportalSection(Relation relation) {
         List parents = persistence.findParents(relation);
         Object last = null;
-        
+
         for ( Iterator iter = parents.iterator(); iter.hasNext(); ) {
             Object next = iter.next();
-            
+
             if (next instanceof Relation && ((Relation) next).getChild() instanceof Category) {
                 Category cat = (Category) sync( ((Relation) next).getChild() );
-                
+
                 if (cat.getType() == Category.SUBPORTAL)
                     return (Relation) last;
             }
-            
+
             last = next;
         }
-        
+
         return null;
     }
 
@@ -968,6 +968,19 @@ public class Tools implements Configurable {
     public static User createUser(int id) {
         User user = new User(id);
         return (User) persistence.findById(user);
+    }
+
+    /**
+     * This method instantiates list of users and synchronizes them.
+     * @return synchronized Users.
+     */
+    public static List<User> createUsers(List<Integer> userIds) {
+        List<User> users = new ArrayList<User>(userIds.size());
+        for (Integer id : userIds) {
+            users.add(new User(id));
+        }
+        syncList(users);
+        return users;
     }
 
     /**
@@ -1816,7 +1829,7 @@ public class Tools implements Configurable {
     public static String removeNewLines(String text) {
         return new RE(lineBreak, RE.MATCH_MULTILINE).subst(text, " ");
     }
-    
+
     /**
      * Replaces <p> and </p> with spaces.
      */
@@ -1902,21 +1915,21 @@ public class Tools implements Configurable {
             Element thumbnail = element.element("thumbnail");
             if (thumbnail != null)
                 map.put("thumbnailPath", thumbnail.attributeValue("path"));
-			
+
 			Element origName = element.element("originalFilename");
 			if (origName != null)
 				map.put("originalFilename", origName.getText());
-			
+
 			if ("true".equals(element.attributeValue("hidden")))
 				map.put("hidden", Boolean.TRUE);
 			else
 				map.put("hidden", Boolean.FALSE);
-			
+
             result.add(map);
         }
         return result;
     }
-	
+
 	/**
      * Finds all attachments for a given object.
      * @return list of Data objects
@@ -2081,35 +2094,35 @@ public class Tools implements Configurable {
             return false;
         return item.getSubType() != null;
     }
-	
+
 	public static Permissions permissionsFor(Object anUser, Relation rel) {
 		User user = (User) anUser;
 		if (user != null && user.hasRole(Roles.ROOT))
 			return Permissions.PERMISSIONS_ROOT;
-		
+
 		sync(rel);
-		
+
 		GenericObject obj = rel.getChild();
 		if (obj instanceof GenericDataObject) {
 			GenericDataObject gdo = (GenericDataObject) obj;
-			
+
 			int permissions, shift;
-			
+
 			if ( user != null && user.isMemberOf(gdo.getGroup()) )
 				shift = Permissions.PERMISSIONS_GROUP_SHIFT;
 			else
 				shift = Permissions.PERMISSIONS_OTHERS_SHIFT;
-			
+
 			permissions = gdo.getPermissions();
-			
+
 			if (obj instanceof Category)
 				permissions &= ~Permissions.PERMISSIONS_CATEGORY_MASK;
-			
+
 			return new Permissions( (permissions >> shift) & 0xff );
 		}
 		return new Permissions(0);
 	}
-	
+
 	public static Permissions permissionsFor(Object user, int rel) {
 		return permissionsFor(user, new Relation(rel));
 	}
@@ -2123,24 +2136,24 @@ public class Tools implements Configurable {
         VariableFetcher vars = VariableFetcher.getInstance();
         Map<Integer, Integer> mainForums = vars.getMainForums();
         Map<Integer, Integer> retval = new LinkedHashMap(mainForums.size());
-        
+
         retval.putAll(mainForums);
-        
+
         if (user == null)
             return retval;
-        
+
         List<Element> elements = user.getData().selectNodes("/data/forums/forum");
         if (elements == null)
             return retval;
-        
+
         for (Element elem : elements) {
             int rid = Misc.parseInt(elem.getText(), 0);
             retval.put(rid, Misc.parseInt(elem.attributeValue("questions"), vars.getDefaultSizes().get(VariableFetcher.KEY_QUESTION)));
         }
-        
+
         return retval;
     }
-    
+
     /**
      * Detects whether the text of a news item is too long to be displayed on the HP.
      * @param text The text to be checked
@@ -2148,23 +2161,23 @@ public class Tools implements Configurable {
      */
     public static String limitNewsLength(String text) {
         String stripped = removeTags(text);
-        
+
         if (stripped.length() < newsLetterHardLimit)
             return null;
-        
+
         String delims = " \t\n\r\f,.<";
         StringTokenizer stk = new StringTokenizer(text, delims, true);
         StringBuffer result = new StringBuffer();
         int letters = 0;
         boolean intag = false;
-        
+
         try {
             while (stk.hasMoreTokens() && (letters < newsLetterSoftLimit || intag) ) {
                 String next = stk.nextToken(delims);
-                
+
                 // have we hit a delimiter?
                 if (next.length() == 1) {
-                    
+
                     // do the tag processing
                     if (next.equals("<")) {
                         // append the opening bracket
@@ -2193,10 +2206,10 @@ public class Tools implements Configurable {
         } catch (Exception e) {
             return null;
         }
-        
+
         return result.toString();
     }
-    
+
     /**
      * Parses the text. Any inline objects are detected and handled accordingly.
      * @param text The text of the article to be processed
@@ -2206,21 +2219,21 @@ public class Tools implements Configurable {
         RE regexpPolls = new RE(rePollTag, RE.MATCH_MULTILINE);
         int pos = 0;
         List<Map> items = new ArrayList(3);
-        
+
         while (true) {
             if (regexpPolls.match(text, pos)) {
                 Map<String,String> map;
-                
+
                 // add the preceding text
                 map = new HashMap(2);
                 map.put("type", "text");
                 map.put("value", text.substring(pos, regexpPolls.getParenEnd(0)));
                 items.add(map);
-                
+
                 pos = regexpPolls.getParenEnd(0);
-                
+
                 String type = regexpPolls.getParen(1);
-                
+
                 if ("poll".equals(type)) {
                     // add a poll
                     map = new HashMap(2);
@@ -2231,7 +2244,7 @@ public class Tools implements Configurable {
             } else
                 break;
         }
-        
+
         // add the remaining text
         if (pos < text.length()) {
             Map<String,String> map = new HashMap(2);
@@ -2239,10 +2252,10 @@ public class Tools implements Configurable {
             map.put("value", text.substring(pos));
             items.add(map);
         }
-        
+
         return items;
     }
-    
+
     public static Map<String,String> getOfferedCssStyles() {
         return offeredCssStyles;
     }
