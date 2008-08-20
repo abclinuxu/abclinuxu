@@ -266,7 +266,7 @@ public class EditRelation implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         String prefix = (String)params.get(PARAM_PREFIX);
-        UrlUtils urlUtils = new UrlUtils(prefix, response);
+        UrlUtils urlUtils = new UrlUtils(prefix, response, request);
         urlUtils.redirect(response, "/show/"+parent.getId());
         return null;
     }
@@ -394,7 +394,7 @@ public class EditRelation implements AbcAction {
         } else
             url = "/";
 
-        UrlUtils urlUtils = new UrlUtils(prefix, response);
+        UrlUtils urlUtils = new UrlUtils(prefix, response, request);
         urlUtils.redirect(response, url);
         return null;
     }
@@ -472,7 +472,7 @@ public class EditRelation implements AbcAction {
                 url = UrlUtils.getRelationUrl(relation, prefix);
         } else url = "/";
 
-        UrlUtils urlUtils = new UrlUtils("", response);
+        UrlUtils urlUtils = new UrlUtils("", response, request);
         urlUtils.redirect(response, url);
         return null;
     }
@@ -556,7 +556,7 @@ public class EditRelation implements AbcAction {
         String prefix = (String) params.get(PARAM_PREFIX);
         url = (prefix!=null) ? prefix.concat("/show/"+relation.getId()) : "/";
 
-        UrlUtils urlUtils = new UrlUtils("", response);
+        UrlUtils urlUtils = new UrlUtils("", response, request);
         urlUtils.redirect(response, url);
         return null;
     }
