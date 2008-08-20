@@ -77,7 +77,7 @@ public class Tools implements Configurable {
     public static final String PREF_REPLACEMENT_VLNKA = "REPLACEMENT_VLNKA";
     public static final String PREF_REGEXP_AMPERSAND = "RE_AMPERSAND";
     public static final String PREF_REGEXP_REMOVE_PARAGRAPHS = "RE_REMOVE_PARAGRAPHS";
-    public static final String PREF_REGEXP_ARTICLE_POLL = "RE_ARTICLE_POLL";
+    public static final String PREF_REGEXP_ARTICLE_OBJECT = "RE_ARTICLE_OBJECT";
     public static final String PREF_STORY_RESERVE_PERCENTS = "story.reserve.percents";
     public static final String PREF_NEWS_LETTER_LIMIT_SOFT = "news.letter.limit.soft";
     public static final String PREF_NEWS_LETTER_LIMIT_HARD = "news.letter.limit.hard";
@@ -112,7 +112,7 @@ public class Tools implements Configurable {
             reAmpersand = Pattern.compile(pref);
             pref = prefs.get(PREF_REGEXP_REMOVE_PARAGRAPHS, null);
             reRemoveParagraphs = reCompiler.compile(pref);
-            pref = prefs.get(PREF_REGEXP_ARTICLE_POLL, null);
+            pref = prefs.get(PREF_REGEXP_ARTICLE_OBJECT, null);
             rePollTag = reCompiler.compile(pref);
 
             storyReservePercents = prefs.getInt(PREF_STORY_RESERVE_PERCENTS, 50);
@@ -1196,6 +1196,9 @@ public class Tools implements Configurable {
                     case Item.CONTENT:
                         Misc.storeToMap(map, Constants.TYPE_DOCUMENTS, relation);
                         break;
+                    case Item.VIDEO:
+                        Misc.storeToMap(map, Constants.TYPE_VIDEO, relation);
+                        break;
                 }
             } else if ( child instanceof Record )
                 Misc.storeToMap(map,Constants.TYPE_RECORD, relation);
@@ -2227,17 +2230,17 @@ public class Tools implements Configurable {
                 // add the preceding text
                 map = new HashMap(2);
                 map.put("type", "text");
-                map.put("value", text.substring(pos, regexpPolls.getParenEnd(0)));
+                map.put("value", text.substring(pos, regexpPolls.getParenStart(0)));
                 items.add(map);
 
                 pos = regexpPolls.getParenEnd(0);
 
                 String type = regexpPolls.getParen(1);
 
-                if ("poll".equals(type)) {
-                    // add a poll
+                if ("poll".equals(type) || "video".equals(type)) {
+                    // add a poll or video
                     map = new HashMap(2);
-                    map.put("type", "poll");
+                    map.put("type", type);
                     map.put("value", regexpPolls.getParen(2));
                     items.add(map);
                 }
