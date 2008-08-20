@@ -84,14 +84,9 @@ public class GenerateLdapImport {
                 writer.write(LdapUserManager.ATTRIB_PASSWORD + ": secret\n");
                 writer.write(LdapUserManager.ATTRIB_PASSWORD_HASHCODE + ": " + passwordHash + "\n");
                 writer.write(LdapUserManager.ATTRIB_EMAIL_ADRESS + ": root@localhost\n");
-                writer.write(LdapUserManager.ATTRIB_REGISTRATION_DATE + ": 2008-04-04 23:23:SS\n");
+                writer.write(LdapUserManager.ATTRIB_REGISTRATION_DATE + ": 2008-04-04 12:23\n");
                 writer.write(LdapUserManager.ATTRIB_REGISTRATION_PORTAL + ": " + LdapUserManager.SERVER_ABCLINUXU + "\n");
                 writer.write("\n");
-
-                // teoreticky nastavit dalsi atributy
-//                String tmp = MySqlPersistence.insertEncoding(resultSet.getString(3));
-//                Document document = DocumentHelper.parseText(tmp);
-
                 hash();
             }
             resultSet.close();
