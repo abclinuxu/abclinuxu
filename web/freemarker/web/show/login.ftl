@@ -18,7 +18,11 @@
     <a href="${URL.noPrefix("/EditUser?action=forgottenPassword")}">Zapomněli jste své heslo?</a>
 </p>
 
-<form action="https://www.abclinuxu.cz${REQUEST_URI}" method="POST">
+<#if SYSTEM_CONFIG.getLoginUseHttps()>
+    <form action="https://${SYSTEM_CONFIG.getHostname()}${REQUEST_URI}" method="POST">
+<#else>
+    <form action="${REQUEST_URI}" method="POST">
+</#if>
 
 <table border="0" cellpadding="5">
   <tr>

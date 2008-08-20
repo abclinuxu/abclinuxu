@@ -57,12 +57,13 @@ public class AbcConfig implements Configurable {
     public static final String PREF_MAILING_LIST_ADMINS = "mailing.list.admini";
     public static final String PREF_WARN_OLD_DISCUSSION_CREATED = "warn.old.diz.created.days";
     public static final String PREF_WARN_OLD_DISCUSSION_COMMENTED = "warn.old.diz.commented.days";
+    public static final String PREF_LOGIN_USE_HTTPS = "login.use.https";
 
     static String deployPath, domain, hostname, blogWatchEmail, adminsEmail;
     static int viewUserPageSize, sectionArticleCount, seriesArticleCount, bazaarPageSize;
     static int articleSectionArticlesCount, authorArticlesPageSize, searchResultsCount, faqSectionCount;
     static int maxWatchedDiscussions, ticketLength, oldDiscussionAge, oldDiscussionSleep;
-    static boolean maintainanceMode;
+    static boolean maintainanceMode, loginUseHttps;
 
     /**
      * Callback used to configure your class from preferences.
@@ -88,6 +89,7 @@ public class AbcConfig implements Configurable {
         maintainanceMode = prefs.getBoolean(PREF_MAINTAINANCE_MODE, false);
         blogWatchEmail = prefs.get(PREF_MAILING_LIST_BLOG_WATCH, null);
         adminsEmail = prefs.get(PREF_MAILING_LIST_ADMINS, null);
+        loginUseHttps = prefs.getBoolean(PREF_LOGIN_USE_HTTPS, false);
     }
 
     /**
@@ -234,6 +236,13 @@ public class AbcConfig implements Configurable {
      */
     public static PathGenerator getPathGenerator() {
         return new PathGeneratorImpl();
+    }
+    
+    /**
+     * @return Whether HTTPS should be used for login
+     */
+    public static boolean getLoginUseHttps() {
+        return loginUseHttps;
     }
 
     /**
