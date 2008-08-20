@@ -79,6 +79,8 @@ public class Item extends GenericDataObject {
 	/** an event in the calendar of Linux events */
 	public static final int EVENT = 26;
     public static final int UNPUBLISHED_EVENT = 27;
+    /** video items, standalone or as attachments */
+    public static final int VIDEO = 28;
 
     public Item() {
         super();
@@ -120,6 +122,9 @@ public class Item extends GenericDataObject {
             case PERSONALITY: sb.append("Personality");break;
             case SCREENSHOT: sb.append("Screenshot");break;
             case IMPORT: sb.append("Import");break;
+            case UNPUBLISHED_EVENT:
+            case EVENT: sb.append("Event"); break;
+            case VIDEO: sb.append("Video"); break;
             default: sb.append("Unknown Item");
         }
         sb.append(": id=").append(id);
@@ -158,6 +163,7 @@ public class Item extends GenericDataObject {
             case SOFTWARE: return Constants.TYPE_SOFTWARE;
             case SCREENSHOT: return Constants.TYPE_SCREENSHOT;
             case EVENT: return Constants.TYPE_EVENT;
+            case VIDEO: return Constants.TYPE_VIDEO;
             default: return Constants.TYPE_OTHER;
         }
     }

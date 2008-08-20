@@ -144,6 +144,7 @@ public interface Constants {
     String TYPE_SCREENSHOT = "screenshot";
     String TYPE_STORY = "story";
     String TYPE_EVENT = "event";
+    String TYPE_VIDEO = "video";
 
     // template variables
 
