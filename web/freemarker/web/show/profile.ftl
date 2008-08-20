@@ -156,7 +156,7 @@
     <ul>
         <#list DESKTOPS as ds>
             <li>
-                <a href="${ds.url}">${ds.child.title}</a>
+                <a href="${ds.url}">${ds.child.title?html}</a>
             </li>
         </#list>
     </ul>
