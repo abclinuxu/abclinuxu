@@ -655,10 +655,12 @@ public class ViewBlog implements AbcAction, Configurable {
                 now.add(Calendar.MONTH, 1);
                 now.set(Calendar.DAY_OF_MONTH, -1);
                 
-                for (Relation rel : waiting) {
-                    Item item = (Item) rel.getChild();
-                    if (item.getCreated().before(now.getTime()))
-                        size--;
+                if (waiting != null) {
+                    for (Relation rel : waiting) {
+                        Item item = (Item) rel.getChild();
+                        if (item.getCreated().before(now.getTime()))
+                            size--;
+                    }
                 }
             }
             
