@@ -1,3 +1,11 @@
+<#assign html_header>
+    <link rel="stylesheet" type="text/css" media="all" href="/data/site/calendar/calendar-system.css" />
+    <script type="text/javascript" src="/data/site/calendar/calendar.js"></script>
+    <script type="text/javascript" src="/data/site/calendar/calendar-en.js"></script>
+    <script type="text/javascript" src="/data/site/calendar/calendar-cs-utf8.js"></script>
+    <script type="text/javascript" src="/data/site/calendar/calendar-setup.js"></script>
+</#assign>
+
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -106,13 +114,24 @@ v pravém sloupci v části nadepsané <b>Správa zápisku</b>.</p>
     </tr>
     <tr>
         <td>
+            <div>Datum/čas zveřejnění</div>
+            <div>
+                <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish?if_exists}">
+                    <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
+                    Formát 2005-01-25 07:12
+                    <div class="error">${ERRORS.publish?if_exists}</div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
             <#if PREVIEW?exists>
                 <input tabindex="5" type="submit" name="preview" value="Zopakuj náhled">
-                <input tabindex="6" type="submit" name="finish" value="Dokonči">
-                <input tabindex="7" type="submit" name="delay" value="Odlož">
+                <input tabindex="6" type="submit" name="finish" value="Publikuj">
+                <input tabindex="7" type="submit" name="delay" value="Do konceptů">
             <#else>
                 <input tabindex="5" type="submit" name="preview" value="Náhled">
-                <input tabindex="6" type="submit" name="delay" value="Odlož">
+                <input tabindex="6" type="submit" name="delay" value="Do konceptů">
             </#if>
         </td>
     </tr>

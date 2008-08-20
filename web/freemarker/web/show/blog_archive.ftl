@@ -46,6 +46,21 @@
         </div>
     </#if>
 
+    <#if WAITING_STORIES?exists>
+        <div class="s_nadpis">Čekající zápisky</div>
+
+        <div class="s_sekce">
+            <ul>
+            <#list WAITING_STORIES as relation>
+                <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
+                <li>
+                    <a href="${url}">${story.title}</a>
+                </li>
+            </#list>
+            </ul>
+        </div>
+    </#if>
+
     <div class="s_nadpis">Aktuální zápisy</div>
 
     <div class="s_sekce">

@@ -35,6 +35,7 @@ import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.SpecialValue;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditArticle;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
@@ -606,6 +607,7 @@ public class CreateIndex implements Configurable {
         List qualifiers = new ArrayList();
         CompareCondition ownerCondition = new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner());
         qualifiers.add(ownerCondition);
+        qualifiers.add(new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW));
         Qualifier[] qa = new Qualifier[qualifiers.size()];
         int total = sqlTool.countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
         for ( int i = 0; i<total; ) {

@@ -41,6 +41,21 @@
         </div>
     </#if>
 
+    <#if WAITING_STORIES?exists>
+        <div class="s_nadpis">Čekající zápisky</div>
+
+        <div class="s_sekce">
+            <ul>
+            <#list WAITING_STORIES as relation>
+                <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
+                <li>
+                    <a href="${url}">${story.title}</a>
+                </li>
+            </#list>
+            </ul>
+        </div>
+    </#if>
+
     <#if USER?exists && (USER.id==BLOG.owner || USER.hasRole("root") || USER.hasRole("blog digest admin"))>
         <div class="s_nadpis">
             Správa zápisku
@@ -232,6 +247,9 @@
     </#if>
     <#if (ITEM.type==12 && ITEM.created.time!=ITEM.updated.time)>
         | poslední úprava: ${DATE.show(ITEM.updated, "SMART")}
+    </#if>
+    <#if DATE.now().compareTo(ITEM.created) lt 0>
+        | <span style="color: red; font-weight: bold">Čeká na čas publikování</span>
     </#if>
 </p>
 

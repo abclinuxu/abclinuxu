@@ -192,6 +192,8 @@ public class QualifierTool {
         Object value = condition.getValue();
         if (value instanceof Field) {
             appendField((Field) condition.getValue(), fieldMapping, defaultTableNick, sb);
+        } else if (value instanceof SpecialValue) {
+            sb.append(value.toString());
         } else if (value instanceof Collection) {
             for (Iterator iter = ((Collection) value).iterator(); iter.hasNext();) {
                 Object o = iter.next();

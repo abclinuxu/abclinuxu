@@ -99,6 +99,7 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String PARAM_WATCH_DISCUSSION = "watchDiz";
     public static final String PARAM_URL = "url";
     public static final String PARAM_POSITION = "position";
+    public static final String PARAM_PUBLISH = "publish";
 
     public static final String ACTION_ADD_BLOG = "addBlog";
     public static final String ACTION_ADD_BLOG_STEP2 = "addBlog2";
@@ -401,6 +402,7 @@ public class EditBlog implements AbcAction, Configurable {
         boolean canContinue = setStoryTitle(params, story, env);
         canContinue &= setStoryContent(params, root, env);
         canContinue &= setStoryCategory(params, story);
+        canContinue &= setStoryPublishTime(params, story, env);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
             if ( canContinue ) {
@@ -482,6 +484,15 @@ public class EditBlog implements AbcAction, Configurable {
             text = node.getText();
         params.put(PARAM_CONTENT, text);
         params.put(PARAM_CATEGORY_ID, story.getSubType());
+        
+        Date created = story.getCreated();
+        Date now = Calendar.getInstance().getTime();
+        
+        if (created.compareTo(now) > 0) {
+            String date = Constants.isoFormat.format(created);
+            params.put(PARAM_PUBLISH, date);
+        }
+        
         env.put(VAR_IS_DELAYED, Boolean.valueOf(story.getType() == Item.UNPUBLISHED_BLOG));
 
         storeCategories(blog, env);
@@ -501,10 +512,13 @@ public class EditBlog implements AbcAction, Configurable {
         Item story = (Item) relation.getChild();
         Document document = story.getData();
         Element root = document.getRootElement();
+        
+        Date previousDate = story.getCreated();
 
         boolean canContinue = setStoryTitle(params, story, env);
         canContinue &= setStoryContent(params, root, env);
         canContinue &= setStoryCategory(params, story);
+        canContinue &= setStoryPublishTime(params, story, env);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
             if ( canContinue )
@@ -513,6 +527,18 @@ public class EditBlog implements AbcAction, Configurable {
             env.put(VAR_IS_DELAYED, Boolean.valueOf(story.getType() == Item.UNPUBLISHED_BLOG));
             storeCategories(blog, env);
             return FMTemplateSelector.select("EditBlog", "edit", env, request);
+        }
+        
+        if (!previousDate.equals(story.getCreated())) {
+            String storyUrl = generateStoryURL(blog, story);
+
+            if (storyUrl != null && !storyUrl.equals(relation.getUrl())) {
+                relation.setUrl(storyUrl);
+                persistence.update(relation);
+            }
+            
+            decrementArchiveRecord(blog.getData().getRootElement(), previousDate);
+            incrementArchiveRecord(blog.getData().getRootElement(), story.getCreated());
         }
 
         boolean delayed = params.get(PARAM_DELAY) != null;
@@ -1539,6 +1565,47 @@ public class EditBlog implements AbcAction, Configurable {
     boolean setStoryCategory(Map params, Item story) {
         String category = (String) params.get(PARAM_CATEGORY_ID);
         story.setSubType(category);
+        return true;
+    }
+    
+    /**
+     * Sets the time the story is supposed to be published
+     * @param params a map holding request's parameters
+     * @param story the story to be updated
+     * @param env
+     * @return false, if there is a major error
+     */
+    boolean setStoryPublishTime(Map params, Item story, Map env) {
+        String publishTime = (String) params.get(PARAM_PUBLISH);
+        
+        if (Misc.empty(publishTime))
+            return true;
+        
+        Date now = new Date();
+        Date created = story.getCreated();
+        
+        if (story.getType() == Item.BLOG && created != null && created.before(now)) {
+            ServletUtils.addError(PARAM_PUBLISH, "Nemůžete změnit čas vydaného zápisku!", env, null);
+            return false;
+        }
+        
+        Date date;
+        try {
+            synchronized (Constants.isoFormat) {
+                date = Constants.isoFormat.parse(publishTime);
+            }
+        } catch (Exception e) {
+            ServletUtils.addError(PARAM_PUBLISH, "Neplatné datum/čas!", env, null);
+            return false;
+        }
+        
+        if (date.before(now)) {
+            ServletUtils.addError(PARAM_PUBLISH, "Nemůžete publikovat v minulosti!", env, null);
+            return false;
+        }
+        
+        story.setCreated(date);
+        
         return true;
     }
 

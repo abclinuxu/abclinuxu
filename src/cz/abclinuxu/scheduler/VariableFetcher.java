@@ -34,6 +34,7 @@ import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.SpecialValue;
 import cz.abclinuxu.servlets.html.view.ContentChanges;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -46,9 +47,7 @@ import cz.abclinuxu.utils.freemarker.Tools;
 
 import java.util.*;
 
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-import org.apache.commons.collections.map.LinkedMap;
 import org.dom4j.Node;
 import org.dom4j.Element;
 import org.dom4j.Document;
@@ -851,7 +850,10 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public void refreshStories() {
         try {
             int maximum = (Integer) maxSizes.get(KEY_STORY);
-            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
+            Qualifier[] qualifiers = new Qualifier[] {
+                new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW),
+                Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)
+            };
             List list = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
             List blogs = new ArrayList(list.size());
             for (Object aList : list) {

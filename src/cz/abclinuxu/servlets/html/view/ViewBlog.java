@@ -78,6 +78,7 @@ public class ViewBlog implements AbcAction, Configurable {
     public static final String VAR_DAY = "DAY";
     public static final String VAR_CURRENT_STORIES = "CURRENT_STORIES";
     public static final String VAR_UNPUBLISHED_STORIES = "UNPUBLISHED_STORIES";
+    public static final String VAR_WAITING_STORIES = "WAITING_STORIES";
     public static final String VAR_ARCHIVE = "ARCHIVE";
     public static final String VAR_DIGEST = "DIGEST";
     public static final String VAR_RELATION = "RELATION";
@@ -208,10 +209,12 @@ public class ViewBlog implements AbcAction, Configurable {
                 return processExport(request, env, blog);
 
             fillFreshStories(blog, env);
+            if (user != null && user.getId() == blog.getOwner()) {
+                fillUnpublishedStories(blog, env);
+                fillWaitingStories(blog, env);
+            }
             if (! archive)
                 fillMonthStatistics(blog, env);
-            if (user != null && user.getId() == blog.getOwner())
-                fillUnpublishedStories(blog, env);
 
             fillLastDesktop(blog, env);
 
@@ -279,11 +282,13 @@ public class ViewBlog implements AbcAction, Configurable {
         env.put(VAR_BLOG_XML, NodeModel.wrap((new DOMWriter().write(blog.getData()))));
 
         fillFreshStories(blog, env);
-        fillMonthStatistics(blog, env);
 
-        if (user != null && user.getId() == blog.getOwner())
+        if (user != null && user.getId() == blog.getOwner()) {
             fillUnpublishedStories(blog, env);
+            fillWaitingStories(blog, env);
+        }
 
+        fillMonthStatistics(blog, env);
         fillLastDesktop(blog, env);
 
         env.put(Constants.VAR_RSS, FeedGenerator.getBlogFeedUrl(blog));
@@ -333,6 +338,7 @@ public class ViewBlog implements AbcAction, Configurable {
         Category blog = (Category) env.get(VAR_BLOG);
         int count = summarySize;
         List qualifiers = new ArrayList();
+        qualifiers.add(new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW));
         qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner()));
         if (category != null)
             qualifiers.add(new CompareCondition(Field.SUBTYPE, Operation.EQUAL, category.getId()));
@@ -387,6 +393,8 @@ public class ViewBlog implements AbcAction, Configurable {
         List qualifiers = new ArrayList();
         if (!summary)
             addTimeLimitsFQ(year, month, day, qualifiers);
+        
+        qualifiers.add(new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW));
 
         Set<String> values = Collections.singleton("yes");
         Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_BLOG_DIGEST, values);
@@ -556,6 +564,7 @@ public class ViewBlog implements AbcAction, Configurable {
      */
     private static void fillFreshStories(Category blog, Map env) {
         List qualifiers = new ArrayList();
+        qualifiers.add(new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW));
         qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(blog.getOwner())));
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(Qualifier.ORDER_DESCENDING);
@@ -566,6 +575,20 @@ public class ViewBlog implements AbcAction, Configurable {
         List currentStories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
         Tools.syncList(currentStories);
         env.put(VAR_CURRENT_STORIES, currentStories);
+    }
+    
+    private static void fillWaitingStories(Category blog, Map env) {
+        List qualifiers = new ArrayList();
+        qualifiers.add(new CompareCondition(Field.CREATED, Operation.GREATER, SpecialValue.NOW));
+        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(blog.getOwner())));
+        qualifiers.add(Qualifier.SORT_BY_CREATED);
+        qualifiers.add(Qualifier.ORDER_DESCENDING);
+        Qualifier[] qa = new Qualifier[qualifiers.size()];
+
+        SQLTool sqlTool = SQLTool.getInstance();
+        List waitingStories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        Tools.syncList(waitingStories);
+        env.put(VAR_WAITING_STORIES, waitingStories);
     }
 
     /**
@@ -598,6 +621,12 @@ public class ViewBlog implements AbcAction, Configurable {
         Element element;
         int year, month, size;
         String  tmp;
+        
+        Calendar now = Calendar.getInstance();
+        int curYear, curMonth;
+        
+        curYear = now.get(Calendar.YEAR);
+        curMonth = now.get(Calendar.MONTH)+1;
 
         List months = blog.getData().selectNodes("/data/archive/year/month");
         for (int i = months.size(), j = 0; i > 0 && j < 6; i--, j++) {
@@ -606,8 +635,33 @@ public class ViewBlog implements AbcAction, Configurable {
             year = Misc.parseInt(tmp, 0);
             tmp = element.attributeValue("value");
             month = Misc.parseInt(tmp, 0);
+            
+            // is it in the future?
+            if (year > curYear || (year == curYear && month > curMonth)) {
+                j--;
+                continue;
+            }
+            
             tmp = element.getText();
             size = Misc.parseInt(tmp, 0);
+            
+            // is it now?
+            if (year == curYear && month == curMonth) {
+                // check through the waiting stories to see how many of them are yet to be
+                // published this month and therefore have to be substracted from the amount
+                // of published stories in the archive
+                
+                List<Relation> waiting = (List) env.get(VAR_WAITING_STORIES);
+                now.add(Calendar.MONTH, 1);
+                now.set(Calendar.DAY_OF_MONTH, -1);
+                
+                for (Relation rel : waiting) {
+                    Item item = (Item) rel.getChild();
+                    if (item.getCreated().before(now.getTime()))
+                        size--;
+                }
+            }
+            
             archive.add(new ArchiveItem(year, month, size));
         }
     }

@@ -1,3 +1,11 @@
+<#assign html_header>
+    <link rel="stylesheet" type="text/css" media="all" href="/data/site/calendar/calendar-system.css" />
+    <script type="text/javascript" src="/data/site/calendar/calendar.js"></script>
+    <script type="text/javascript" src="/data/site/calendar/calendar-en.js"></script>
+    <script type="text/javascript" src="/data/site/calendar/calendar-cs-utf8.js"></script>
+    <script type="text/javascript" src="/data/site/calendar/calendar-setup.js"></script>
+</#assign>
+
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -86,6 +94,19 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
             <textarea tabindex="2" name="content" class="siroka" rows="30">${PARAMS.content?if_exists?html}</textarea>
         </td>
     </tr>
+    <#if STORY.child.type==15 || PARAMS.publish?exists>
+    <tr>
+        <td>
+            <div>Datum/čas zveřejnění</div>
+            <div>
+                <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish?if_exists}">
+                    <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
+                    Formát 2005-01-25 07:12
+                    <div class="error">${ERRORS.publish?if_exists}</div>
+            </div>
+        </td>
+    </tr>
+    </#if>
     <tr>
         <td>
             <input type="submit" name="preview" value="Náhled">
