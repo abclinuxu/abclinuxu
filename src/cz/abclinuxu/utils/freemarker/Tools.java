@@ -502,6 +502,11 @@ public class Tools implements Configurable {
 
         return null;
     }
+    
+    static public Relation getParentSubportal(Relation rel) {
+        List parents = persistence.findParents(rel);
+        return getParentSubportal(parents);
+    }
 
     /**
      * Gets the relation's parents and tries to find a section, to which the

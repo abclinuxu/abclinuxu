@@ -250,6 +250,24 @@
             <span class="s_sekce_dalsi"><a href="/History?type=hardware">další&nbsp;&raquo;</a></span>
         </div>
     </#if>
+    </td>
+    <td>
+    <#assign SUBPORTALS = VARS.getLatestSubportalChanges(USER?if_exists)>
+    <#if (SUBPORTALS?size>0) >
+        <div class="s_nadpis">
+            <a class="info" href="#">?<span class="tooltip">Podportály různých zájmových skupin.</span></a>
+            <a href="/skupiny">Skupiny</a>
+        </div>
+        <div class="s_sekce">
+            <ul>
+            <#list SUBPORTALS as rel>
+                 <li><a href="${rel.url}">${rel.child.title}</a></li>
+            </#list>
+            </ul>
+            <span class="s_sekce_dalsi"><a href="/skupiny">všechny&nbsp;&raquo;</a></span>
+        </div>
+    </#if>
+    </td>
     </tr>
 </table>
 
