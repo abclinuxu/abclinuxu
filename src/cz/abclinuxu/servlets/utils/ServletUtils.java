@@ -240,19 +240,11 @@ public class ServletUtils implements Configurable {
             handleLoggedIn(user, "yes".equals(noCookie), response);
             params.put(ActionProtector.PARAM_TICKET, user.getSingleProperty(Constants.PROPERTY_TICKET));
 
-            boolean isSecure = false;
-            try {
-                URL referer = ServletUtils.getReferer(request);
-                if (referer != null)
-                    isSecure = "https".equals(referer.getProtocol());
-            } catch (Exception e) {
-            }
-
             String useHttps = (String) params.get(PARAM_USE_HTTPS);
-            if (!"yes".equals(useHttps) && isSecure) {
+            if (!"yes".equals(useHttps)) {
                 // redirect back to HTTP
                 UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-                urlUtils.redirect(response, urlUtils.completeUrl("/", true));
+                urlUtils.setEnforceHttp(true);
             }
         } else {
             Cookie cookie = getCookie(request, Constants.VAR_USER);

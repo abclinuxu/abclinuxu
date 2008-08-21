@@ -89,6 +89,7 @@ public class UrlUtils {
     String prefix;
     HttpServletResponse response;
     HttpServletRequest request;
+    boolean enforceHttp = false;
 
     /**
      * Creates new UrlUtils instance.
@@ -138,7 +139,7 @@ public class UrlUtils {
     public String constructRedirectURL(String url) {
         String out = url;
         //if (PREFIX_NONE.equals(getPrefix(url))) out = prefix+url;
-        return response.encodeRedirectURL(completeUrl(out, false));
+        return response.encodeRedirectURL(completeUrl(out));
     }
 
     /**
@@ -184,7 +185,7 @@ public class UrlUtils {
      * @param url e.g. "/abcdef"
      * @return completed URL
      */
-    public String completeUrl(String url, boolean enforceHttp) {
+    public String completeUrl(String url) {
         if (url.startsWith("http:") || url.startsWith("https:"))
             return url;
         
@@ -223,7 +224,7 @@ public class UrlUtils {
             redirect(response, url);
             return;
         }
-        String url2 = response.encodeRedirectURL(completeUrl(url, false));
+        String url2 = response.encodeRedirectURL(completeUrl(url));
         response.sendRedirect(url2);
     }
 
@@ -279,5 +280,16 @@ public class UrlUtils {
      */
     public String getRelationUrl(Relation relation) {
         return getRelationUrl(relation, prefix);
+    }
+    
+    /**
+     * @return true, if HTTPS shouldn't be used
+     */
+    public boolean getEnforceHttp() {
+        return enforceHttp;
+    }
+    
+    public void setEnforceHttp(boolean enforceHttp) {
+        this.enforceHttp = enforceHttp;
     }
 }
