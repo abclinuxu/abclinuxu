@@ -274,7 +274,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         if (latestSubportalChanges == null)
             return Collections.EMPTY_LIST;
         
-        int userLimit = getObjectCountForUser(user, KEY_SOFTWARE, null);
+        int userLimit = /*getObjectCountForUser(user, KEY_SOFTWARE, null)*/ 10;
         return getSubList(latestSubportalChanges, userLimit);
     }
 
