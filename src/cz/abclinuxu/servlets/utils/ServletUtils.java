@@ -86,6 +86,7 @@ public class ServletUtils implements Configurable {
     public static final String PARAM_NO_COOKIE = "noCookie";
     /** do not redirect back to HTTPS */
     public static final String PARAM_USE_HTTPS = "useHttps";
+    public static final String PARAM_URL = "url";
 
     public static final String VAR_ERROR_MESSAGE = "ERROR";
 
@@ -245,6 +246,12 @@ public class ServletUtils implements Configurable {
                 // redirect back to HTTP
                 UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
                 urlUtils.setEnforceHttp(true);
+            } else {
+                String url = (String) params.get(PARAM_URL);
+                if (!Misc.empty(url)) {
+                    url = url.replaceFirst("http:", "https:");
+                    params.put(PARAM_URL, url);
+                }
             }
         } else {
             Cookie cookie = getCookie(request, Constants.VAR_USER);
