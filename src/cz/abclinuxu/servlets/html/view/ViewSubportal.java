@@ -19,16 +19,24 @@
 
 package cz.abclinuxu.servlets.html.view;
 
+import com.whirlycott.cache.Item;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
+import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.utils.paging.Paging;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -40,8 +48,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ViewSubportal implements AbcAction {
 	public static final String PARAM_RELATION_SHORT = "rid";
+    public static final String PARAM_FROM = "from";
 	
 	public static final String ACTION_MEMBERS = "members";
+    
+    public static final String VAR_SUBPORTALS = "SUBPORTALS";
 
 	public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -73,5 +84,23 @@ public class ViewSubportal implements AbcAction {
 		
 		return FMTemplateSelector.select("ViewSubportal", "view", env, request);
 	}
+    
+    public static String processSectionList(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        SQLTool sqlTool = SQLTool.getInstance();
+
+        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
+        int count = Misc.getPageSize(10, 50, env, "/data/settings/forum_size"); // todo generic listing size setting
+        int total = sqlTool.countCategoryRelationsWithType(Category.SUBPORTAL);
+
+        Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_TITLE, Qualifier.ORDER_ASCENDING, new LimitQualifier(from, count)};
+        List list = sqlTool.findCategoryRelationsWithType(Category.SUBPORTAL, qualifiers);
+        Tools.syncList(list);
+
+        Paging paging = new Paging(list, from, count, total);
+        env.put(VAR_SUBPORTALS, paging);
+
+        return FMTemplateSelector.select("ViewSubportal", "list", env, request);
+    }
 	
 }

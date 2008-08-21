@@ -25,7 +25,7 @@ kontaktuje administrátory, kteří věc zváží.</p>
 
 <hr />
 
-<#list CHILDREN as relation>
+<#list SUBPORTALS.data as relation>
     <#assign cat=relation.child,
         icon=TOOL.xpath(cat,"/data/icon")?default("UNDEF"),
         url=relation.url,
@@ -40,5 +40,20 @@ kontaktuje administrátory, kteří věc zváží.</p>
     <#if score != -1>| Skóre: ${score}</#if></p>
     <hr style="clear:right" />
 </#list>
+
+<ul>
+    <#if (SUBPORTALS.currentPage.row > 0) >
+        <#assign start=SUBPORTALS.currentPage.row-SUBPORTALS.pageSize><#if (start<0)><#assign start=0></#if>
+        <li>
+            <a href="/bazar?from=${start}&amp;count=${SUBPORTALS.pageSize}">Předchozí skupiny</a>
+        </li>
+    </#if>
+    <#assign start=SUBPORTALS.currentPage.row + SUBPORTALS.pageSize>
+    <#if (start < SUBPORTALS.total) >
+        <li>
+            <a href="/bazar?from=${start}&amp;count=${SUBPORTALS.pageSize}">Další skupiny</a>
+        </li>
+    </#if>
+</ul>
 
 <#include "../footer.ftl">

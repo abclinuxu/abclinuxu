@@ -202,7 +202,7 @@ public class ViewCategory implements AbcAction {
             case Constants.REL_SCREENSHOTS:
                 return ViewScreenshot.processSection(request, env);
 			case Constants.REL_SUBPORTALS:
-				return FMTemplateSelector.select("ViewCategory", "subportals", env, request);
+                return ViewSubportal.processSectionList(request, env);
 			case Constants.REL_EVENTS:
 				return ViewEvent.processSection(request, response, relation, env);
         }

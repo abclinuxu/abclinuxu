@@ -514,9 +514,6 @@
         <action name="documents" content="/show/dokumenty.ftl" template="print">
             <var name="TITLE" value='Seznam dokumentů' />
         </action>
-        <action name="subportals" content="/show/subportals.ftl">
-            <var name="TITLE" value="Seznam skupin" />
-        </action>
     </servlet>
 
     <servlet name="ViewSoftware">
@@ -836,6 +833,9 @@
         </action>
     </servlet>
     <servlet name="ViewSubportal">
+        <action name="list" content="/show/subportals.ftl">
+            <var name="TITLE" value="Seznam skupin" />
+        </action>
         <action name="view" content="/show/subportal.ftl">
             <var name="TITLE" value='${TOOL.childName(RELATION)}' type="Lazy"/>
         </action>
