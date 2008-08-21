@@ -107,7 +107,7 @@
 </#if>
 
 <#if SOFTWARE?size gt 0>
-<div class="ri profile_list reverse_anchor">
+<div class="ri profile_list reverse_anchor" style="clear: right;">
     <h2>Používám tento software:</h2>
     <ul>
         <#list SORT.byName(SOFTWARE) as sw>
@@ -118,7 +118,7 @@
 </#if>
 
 <#if DESKTOPS?size gt 0>
-<div class="ri profile_list reverse_anchor">
+<div class="ri profile_list reverse_anchor" style="clear: right;">
     <h2>Desktopy, které se mi líbí:</h2>
     <ul>
         <#list DESKTOPS as ds>
