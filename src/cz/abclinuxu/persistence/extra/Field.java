@@ -75,7 +75,7 @@ public class Field {
             new PersistenceMapping.Table[]{PersistenceMapping.Table.STATISTICS});
     public static final Field WHEN = new Field("WHEN", null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.LAST_SEEN_COMMENT});
-    public static final Field LOGIN = new Field("LOGIN", "U",
+    public static final Field LOGIN = new Field("LOGIN", null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.USER});
 
     private final String myName; // for debug only

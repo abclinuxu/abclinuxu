@@ -36,6 +36,7 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import org.dom4j.Node;
 import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
+import org.dom4j.Attribute;
 import org.htmlparser.lexer.Lexer;
 import org.htmlparser.nodes.TagNode;
 import org.htmlparser.util.ParserException;
@@ -417,5 +418,21 @@ public class Misc {
         FileWriter fos = new FileWriter(file);
         fos.write(content);
         fos.close();
+    }
+
+    /**
+     * Sets value to existing or creates new attribute.
+     * @param element parent element
+     * @param name attribute name
+     * @param value desired value
+     */
+    public static void setAttribute(Element element, String name, String value) {
+        Attribute attribute = element.attribute(name);
+        if (attribute != null)
+            attribute.setText(value);
+        else {
+            attribute = DocumentHelper.createAttribute(element, name, value);
+            element.add(attribute);
+        }
     }
 }

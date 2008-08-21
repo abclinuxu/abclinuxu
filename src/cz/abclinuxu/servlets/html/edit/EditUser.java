@@ -21,11 +21,7 @@ package cz.abclinuxu.servlets.html.edit;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Server;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.Category;
-import cz.abclinuxu.data.Poll;
-import cz.abclinuxu.data.view.Bookmark;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -235,7 +231,7 @@ public class EditUser implements AbcAction {
             if (action.equals(ACTION_CHANGE_STYLE)) {
                 env.put(VAR_EXTRA_TEMPLATE, "../misc/style_register_user.ftl");
             }
-                
+
             return FMTemplateSelector.select("ViewUser", "login", env, request);
         }
 
@@ -248,7 +244,7 @@ public class EditUser implements AbcAction {
 
         if ( ! (user.getId()==managed.getId() || user.hasRole(Roles.USER_ADMIN)) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-        
+
         if (action.equals(ACTION_CHANGE_STYLE)) {
             ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
             return actionChangeStyle(request, response, env);
@@ -1037,28 +1033,28 @@ public class EditUser implements AbcAction {
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
     }
-    
+
         protected String actionChangeStyle(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         URL referer = ServletUtils.getReferer(request);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         Persistence persistence = PersistenceFactory.getPersistence();
         String url;
-        
+
         setCssUrl(params, managed);
-        
+
         persistence.update(managed);
 
         User sessionUser = (User) env.get(Constants.VAR_USER);
         if (managed.getId() == sessionUser.getId()) {
             sessionUser.synchronizeWith(managed);
         }
-        
+
         if (referer != null)
             url = referer.toString();
         else
             url = "/";
-        
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);
         return null;
@@ -1629,22 +1625,8 @@ public class EditUser implements AbcAction {
         }
 
         Element tagEmail = DocumentHelper.makeElement(user.getData(), "/data/communication/email");
-        Attribute attribute = tagEmail.attribute("valid");
-        if (attribute != null)
-            attribute.setText("yes");
-        else {
-            attribute = DocumentHelper.createAttribute(tagEmail, "valid", "yes");
-            tagEmail.add(attribute);
-        }
-
-        attribute = tagEmail.attribute("verified");
-        if (attribute != null)
-            attribute.setText("yes");
-        else {
-            attribute = DocumentHelper.createAttribute(tagEmail, "verified", "yes"); // TODO
-            tagEmail.add(attribute);
-        }
-
+        Misc.setAttribute(tagEmail, "valid", "yes");
+        Misc.setAttribute(tagEmail, "verified", "yes"); // TODO
         user.setEmail(email);
         return true;
     }
@@ -2329,7 +2311,7 @@ public class EditUser implements AbcAction {
             ServletUtils.addError(PARAM_PHOTO, "Soubor musí být typu JPG, GIF nebo JPEG!", env, null);
             return false;
         }
-        
+
         try {
             Iterator readers = ImageIO.getImageReadersBySuffix(suffix);
             ImageReader reader = (ImageReader) readers.next();

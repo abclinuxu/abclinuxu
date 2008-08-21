@@ -26,6 +26,8 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.persistence.ldap.LdapUserManager;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.data.User;
 import static cz.abclinuxu.persistence.ldap.LdapUserManager.*;
@@ -62,7 +64,8 @@ public class UserSync extends TimerTask implements Configurable {
 
     public static final String SF_USER_ALL_ATTRIBUTES[] = {
         ATTRIB_CITY, ATTRIB_COUNTRY, ATTRIB_EMAIL_ADRESS, ATTRIB_EMAIL_BLOCKED, ATTRIB_EMAIL_VERIFIED,
-        ATTRIB_HOME_PAGE_URL, ATTRIB_LAST_CHANGE_DATE, ATTRIB_LOGIN, ATTRIB_NAME, ATTRIB_OPEN_ID, ATTRIB_SEX
+        ATTRIB_HOME_PAGE_URL, ATTRIB_LAST_CHANGE_DATE, ATTRIB_LOGIN, ATTRIB_NAME, ATTRIB_OPEN_ID, ATTRIB_SEX,
+        ATTRIB_REGISTRATION_DATE
     };
 
     static String runFilePath, lastRunFilename;
@@ -91,8 +94,9 @@ public class UserSync extends TimerTask implements Configurable {
 
             SQLTool sqlTool = SQLTool.getInstance();
             LdapUserManager mgr = LdapUserManager.getInstance();
-//            List<Map<String, String>> users = mgr.search("(modifytimestamp>=" + time + ")", SF_USER_ALL_ATTRIBUTES);
-            String query = "(" + ATTRIB_LAST_CHANGE_DATE + "=" + time + ")";
+            Persistence persistence = PersistenceFactory.getPersistence();
+
+            String query = "(" + ATTRIB_LAST_CHANGE_DATE + ">=" + time + ")";
             List<Map<String, String>> ldapUsers = mgr.search(query, SF_USER_ALL_ATTRIBUTES);
             long syncTime = System.currentTimeMillis();
             while (! ldapUsers.isEmpty()) {
@@ -103,17 +107,18 @@ public class UserSync extends TimerTask implements Configurable {
                     Map<String, String> map = iter.next();
                     iter.remove();
                     login = map.get(ATTRIB_LOGIN);
-                    batchUsers.put(login, map);
+                    batchUsers.put(login.toLowerCase(), map);
                     dbUsers.add(login);
                 }
 
                 List<Integer> userIds = sqlTool.findUsersByLogins(dbUsers);
                 List<User> users = Tools.createUsers(userIds);
                 for (User user : users) {
-                    Map<String, String> ldapAttributes = batchUsers.get(user.getLogin());
+                    Map<String, String> ldapAttributes = batchUsers.get(user.getLogin().toLowerCase());
                     if ( ! isSyncObsolete(user, ldapAttributes))
                         continue;
-                    syncUser(user, ldapAttributes);
+                    syncUser(user, ldapAttributes, syncTime);
+                    persistence.update(user);
                 }
             }
 
@@ -127,14 +132,78 @@ public class UserSync extends TimerTask implements Configurable {
 
     /**
      * Updates user to match values of LDAP properties. It is mandatory to use SF_USER_ALL_ATTRIBUTES
-     * when fetching data otherwise missing attributes will be considered having empty value.
+     * when fetching data otherwise missing attributes will be considered having empty value. Changes
+     * to the user are not persisted.
      * @param user initialized user
-     * @param ldapAttributes attributes
+     * @param syncTime when sync was performed
+     * @param attrs attributes
      */
-    public static void syncUser(User user, Map<String, String> ldapAttributes) {
+    public static void syncUser(User user, Map<String, String> attrs, long syncTime) {
         Document doc = user.getData();
         Element elPersonal = DocumentHelper.makeElement(doc, "/data/personal");
-//        "sex"
+        Element element = null;
+        String value = attrs.get(ATTRIB_SEX);
+        if (value == null || value.length() == 0) {
+            element = elPersonal.element("sex");
+            if (element != null)
+                element.detach();
+        } else {
+            DocumentHelper.makeElement(elPersonal, "sex").setText(value);
+        }
+
+        value = attrs.get(ATTRIB_CITY);
+        if (value == null || value.length() == 0) {
+            element = elPersonal.element("city");
+            if (element != null)
+                element.detach();
+        } else {
+            DocumentHelper.makeElement(elPersonal, "city").setText(value);
+        }
+
+        value = attrs.get(ATTRIB_COUNTRY);
+        if (value == null || value.length() == 0) {
+            element = elPersonal.element("country");
+            if (element != null)
+                element.detach();
+        } else {
+            DocumentHelper.makeElement(elPersonal, "country").setText(value);
+        }
+
+        Element elProfile = DocumentHelper.makeElement(doc, "/data/profile");
+        value = attrs.get(ATTRIB_HOME_PAGE_URL);
+        if (value == null || value.length() == 0) {
+            element = elProfile.element("home_page");
+            if (element != null)
+                element.detach();
+        } else {
+            DocumentHelper.makeElement(elProfile, "home_page").setText(value);
+        }
+
+        Element elCommunication = DocumentHelper.makeElement(doc, "/data/communication");
+        value = attrs.get(ATTRIB_EMAIL_ADRESS);
+        if (value == null) {
+            user.setEmail(null);
+            element = elCommunication.element("email");
+            if (element != null)
+                element.detach();
+        } else {
+            user.setEmail(value);
+            element = DocumentHelper.makeElement(elCommunication, "email");
+            value = attrs.get(ATTRIB_EMAIL_BLOCKED);
+            boolean flag = "true".equals(value);
+            Misc.setAttribute(element, "valid", (flag) ? "no" : "yes");
+            value = attrs.get(ATTRIB_EMAIL_VERIFIED);
+            flag = "true".equals(value);
+            Misc.setAttribute(element, "verified", (flag) ? "yes" : "no");
+        }
+
+        value = attrs.get(ATTRIB_NAME);
+        user.setName(value);
+
+        value = attrs.get(ATTRIB_OPEN_ID);
+        user.setOpenId(value);
+
+        user.setLastSynced(new Date(syncTime));
     }
 
     /**

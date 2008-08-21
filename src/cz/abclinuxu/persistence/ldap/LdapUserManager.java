@@ -561,7 +561,10 @@ public class LdapUserManager implements Configurable {
                 Map<String, String> item = new HashMap<String, String>();
                 while (all.hasMoreElements()) {
                     Attribute attribute = all.nextElement();
-                    item.put(attribute.getID(), (String) attribute.get());
+                    String key = attribute.getID();
+                    if (ATTRIB_EMAIL_ADRESS_2.equals(key))
+                        key = ATTRIB_EMAIL_ADRESS;
+                    item.put(key, (String) attribute.get());
                 }
                 if (! item.isEmpty())
                     results.add(item);

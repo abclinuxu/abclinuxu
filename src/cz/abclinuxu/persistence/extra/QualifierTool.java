@@ -261,6 +261,8 @@ public class QualifierTool {
             sb.append("typ_potomka");
         else if (field == Field.CHILD)
             sb.append("potomek");
+        else if (field == Field.LOGIN)
+            sb.append("login");
         else if (field == Field.DATA)
             sb.append("data");
     }

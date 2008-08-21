@@ -35,6 +35,7 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.scheduler.UserSync;
 import org.apache.log4j.Logger;
 import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.DefaultFileItemFactory;
@@ -42,6 +43,9 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.dom4j.Node;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.DocumentHelper;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -111,12 +115,12 @@ public class ServletUtils implements Configurable {
                 for ( Iterator iter = items.iterator(); iter.hasNext(); ) {
                     FileItem fileItem = (FileItem) iter.next();
 					Object value;
-					
+
                     if ( fileItem.isFormField() )
                         value = fileItem.getString();
                     else
 						value = fileItem;
-					
+
 					Object existing = map.get(fileItem.getFieldName());
 					if (existing == null)
 						map.put(fileItem.getFieldName(), value);
@@ -214,10 +218,9 @@ public class ServletUtils implements Configurable {
 
         String login = (String) params.get(PARAM_LOG_USER);
         if ( ! Misc.empty(login) ) {
-            Integer id = SQLTool.getInstance().getUserByLogin(login);
             String password = (String) params.get(PARAM_LOG_PASSWORD);
             String noCookie = (String) params.get(PARAM_NO_COOKIE);
-            
+
             if (password == null || password.length() == 0) {
                 ServletUtils.addError(PARAM_LOG_PASSWORD, "Přihlášení selhalo - zadejte heslo.", env, null);
                 return;
@@ -228,10 +231,15 @@ public class ServletUtils implements Configurable {
                 return;
             }
 
-            user = (User) persistence.findById(new User(id));
+            Integer id = SQLTool.getInstance().getUserByLogin(login);
+            if (id != null)
+                user = (User) persistence.findById(new User(id));
+            else
+                user = copyUserFromLdap(login);
+
             handleLoggedIn(user, "yes".equals(noCookie), response);
             params.put(ActionProtector.PARAM_TICKET, user.getSingleProperty(Constants.PROPERTY_TICKET));
-            
+
             boolean isSecure = false;
             try {
                 URL referer = ServletUtils.getReferer(request);
@@ -239,7 +247,7 @@ public class ServletUtils implements Configurable {
                     isSecure = "https".equals(referer.getProtocol());
             } catch (Exception e) {
             }
-            
+
             String useHttps = (String) params.get(PARAM_USE_HTTPS);
             if (!"yes".equals(useHttps) && isSecure) {
                 // redirect back to HTTP
@@ -419,7 +427,7 @@ public class ServletUtils implements Configurable {
     private static void handleLoggedIn(User user, boolean cookieExists, HttpServletResponse response) {
         int limit = AbcConfig.getMaxWatchedDiscussionLimit();
         List rows = SQLTool.getInstance().getLastSeenComments(user.getId(), limit);
-        Map<Integer, Integer> comments = new HashMap(limit + 1, 1.0f);
+        Map<Integer, Integer> comments = new HashMap<Integer, Integer>(limit + 1, 1.0f);
         Object[] objects;
         for (Iterator iter = rows.iterator(); iter.hasNext();) {
             objects = (Object[]) iter.next();
@@ -443,6 +451,32 @@ public class ServletUtils implements Configurable {
                 addCookie(cookie,response);
             }
         }
+    }
+
+    /**
+     * Copies user from LDAP to persistence. Login must not exist there otherwise exception will be thrown
+     * @param login login
+     * @return user created in persistence
+     * @throws cz.abclinuxu.exceptions.DuplicateKeyException login is already used
+     */
+    private static User copyUserFromLdap(String login) {
+        LdapUserManager mgr = LdapUserManager.getInstance();
+        Persistence persistence = PersistenceFactory.getPersistence();
+
+        User user = new User();
+        user.setLogin(login);
+        user.setData("<data/>");
+
+        Map<String, String> ldapUser = mgr.getUserInformation(login, UserSync.SF_USER_ALL_ATTRIBUTES);
+        UserSync.syncUser(user, ldapUser, System.currentTimeMillis());
+        String value = ldapUser.get(LdapUserManager.ATTRIB_REGISTRATION_DATE);
+        if (value != null) {
+            Document doc = user.getData();
+            Element element = DocumentHelper.makeElement(doc, "/data/system/registration_date");
+            element.setText(value);
+        }
+        persistence.create(user);
+        return user;
     }
 
     /**
