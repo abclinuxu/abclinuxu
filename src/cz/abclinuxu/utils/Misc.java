@@ -344,7 +344,7 @@ public class Misc {
             tag = (TagNode) node;
             currentTagName = tag.getTagName().toUpperCase();
             if (currentTagName.equals("A") && !tag.isEndTag())
-                tag.setAttribute("rel", "\"nofollow\"");
+                tag.setAttribute("rel", "nofollow");
             sb.append('<').append(node.getText()).append('>');
         }
         return sb.toString();
