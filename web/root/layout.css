@@ -356,7 +356,6 @@ pre {
 .ri.profile_list ul {
 	text-align: right;
 	direction: rtl;
-	clear: right;
 }
 
 .rating {
