@@ -567,7 +567,10 @@ public class EditBlog implements AbcAction, Configurable {
         }
 
         story.setType(Item.BLOG);
-        story.setCreated(timeNow);
+        
+        if (timeNow.after(story.getCreated()))
+            story.setCreated(timeNow);
+        
         story.setUpdated(timeNow);
         persistence.update(story);
 
