@@ -97,6 +97,43 @@
     </span>
 </#macro>
 
+<#assign SUBPORTALS = VARS.getLatestSubportalChanges(USER?if_exists)>
+<#if (SUBPORTALS?size>0) >
+<#assign half = SUBPORTALS?size/2 >
+<#if SUBPORTALS?size%2==1><#assign half=half+1></#if>
+
+<div class="ramec">
+    <div class="s_nadpis">
+        <a class="info" href="#">?<span class="tooltip">Poslední aktivita v podportálech různých zájmových skupin.</span></a>
+        <a href="/skupiny">Skupiny</a>
+    </div>
+    <div class="s_sekce">
+        <table class="siroka">
+        <tr>
+          <td>
+            <ul>
+              <#list SUBPORTALS[0..half-1] as relation>
+                <li><@printSubportal relation /></li>
+              </#list>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <#list SUBPORTALS[half..] as relation>
+                <li><@printSubportal relation /></li>
+              </#list>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    </div>
+</div>
+</#if>
+
+<#macro printSubportal rel>
+    <#local subportal=TOOL.getParentSubportal(rel)?default("UNDEF")>
+    <a href="${rel.url}" title="<#if subportal!="UNDEF">Název skupiny: ${TOOL.childName(subportal)}</#if>">${rel.child.title}</a>
+</#macro>
 
 <h2>Služby</h2>
 
@@ -248,23 +285,6 @@
             </#list>
             </ul>
             <span class="s_sekce_dalsi"><a href="/History?type=hardware">další&nbsp;&raquo;</a></span>
-        </div>
-    </#if>
-    </td>
-    <td>
-    <#assign SUBPORTALS = VARS.getLatestSubportalChanges(USER?if_exists)>
-    <#if (SUBPORTALS?size>0) >
-        <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Podportály různých zájmových skupin.</span></a>
-            <a href="/skupiny">Skupiny</a>
-        </div>
-        <div class="s_sekce">
-            <ul>
-            <#list SUBPORTALS as rel>
-                 <li><a href="${rel.url}">${rel.child.title}</a></li>
-            </#list>
-            </ul>
-            <span class="s_sekce_dalsi"><a href="/skupiny">všechny&nbsp;&raquo;</a></span>
         </div>
     </#if>
     </td>
