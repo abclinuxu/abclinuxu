@@ -133,7 +133,7 @@ public class EditBookmarks implements AbcAction {
         Element nodeLinks = (Element) resolveBookmarkDirectory(user, path);
         
         if (nodeLinks == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Cesta neexistuje!", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Cesta neexistuje nebo neexistují žádné záložky!", env, null);
         } else {
 
             List bookmarks = new ArrayList();
