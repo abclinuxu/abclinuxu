@@ -132,7 +132,7 @@
 
 <#macro printSubportal rel>
     <#local subportal=TOOL.getParentSubportal(rel)?default("UNDEF")>
-    <a href="${rel.url}" title="<#if subportal!="UNDEF">Název skupiny: ${TOOL.childName(subportal)}</#if>">${rel.child.title}</a>
+    <#if subportal!="UNDEF"><a href="${rel.url}">${TOOL.childName(subportal)}</a></#if> <span>|</span> <a href="${rel.url}">${rel.child.title}</a>
 </#macro>
 
 <h2>Služby</h2>
