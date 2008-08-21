@@ -353,12 +353,17 @@ pre {
 	margin-bottom: 0.5em;
 }
 
+.ri.profile_list ul {
+	text-align: right;
+	direction: rtl;
+	clear: right;
+}
+
 .rating {
 	float: right;
 	margin: 0.5em;
 	text-align: center;
 	border: 1px solid;
-	font-size: 90%;
 }
 
 .swdetail .rating {
@@ -602,7 +607,8 @@ a.info:hover span.tooltip {
 .souvisejici,
 .search_details,
 #horni .lista-vpravo,
-.rating {
+.rating,
+.profile_list {
 	font-size: 90%;
 }
 
@@ -670,7 +676,8 @@ a:hover,
 .cl_perex a,
 .treeview a,
 .cl-obsah a,
-.cl-serial a {
+.cl-serial a,
+.reverse_anchor a {
 	text-decoration: none
 }
 
@@ -688,7 +695,8 @@ a,
 .rating a:hover,
 .cl_perex a:hover,
 .treeview a:hover,
-.cl-obsah a:hover {
+.cl-obsah a:hover,
+.reverse_anchor a:hover {
 	text-decoration: underline
 }
 
