@@ -24,7 +24,7 @@
         <div class="s_sekce">
             <table width="100%" class="calendar">
             <tr>
-                <td colspan="2"><a href="?year=${CALENDAR.prevYear}&amp;month=${CALENDAR.prevMonth}&amp;subtype=${subtype}">&laquo; <@lib.month CALENDAR.prevMonth.toString()/></a></td>
+                <td colspan="2"><a rel="nofollow" href="?year=${CALENDAR.prevYear}&amp;month=${CALENDAR.prevMonth}&amp;subtype=${subtype}">&laquo; <@lib.month CALENDAR.prevMonth.toString()/></a></td>
                 <td colspan="3">
                     <#if !PARAMS.day?exists && PARAMS.month?exists && ""+CALENDAR.month==PARAMS.month>
                         <span class="cal_selected">
@@ -32,7 +32,7 @@
                         <span>
                     </#if>
     
-                        <a href="?year=${CALENDAR.year}&amp;month=${CALENDAR.month}&amp;subtype=${subtype}"><@lib.month ""+CALENDAR.month/></a>
+                        <a rel="nofollow" href="?year=${CALENDAR.year}&amp;month=${CALENDAR.month}&amp;subtype=${subtype}"><@lib.month ""+CALENDAR.month/></a>
                     </span>
     
                     <#if !PARAMS.month?exists && !PARAMS.day?exists && PARAMS.year?exists && ""+CALENDAR.year==PARAMS.year>
@@ -41,12 +41,12 @@
                         <span>
                     </#if>
     
-                    <a href="?year=${CALENDAR.year}&amp;subtype=${subtype}">
+                    <a rel="nofollow" href="?year=${CALENDAR.year}&amp;subtype=${subtype}">
                         ${CALENDAR.year}
                     </a>
                     </span>
                 </td>
-                <td colspan="2"><a href="?year=${CALENDAR.nextYear}&amp;month=${CALENDAR.nextMonth}&amp;subtype=${subtype}"><@lib.month ""+CALENDAR.nextMonth/> &raquo;</a></td>
+                <td colspan="2"><a rel="nofollow" href="?year=${CALENDAR.nextYear}&amp;month=${CALENDAR.nextMonth}&amp;subtype=${subtype}"><@lib.month ""+CALENDAR.nextMonth/> &raquo;</a></td>
             </tr>
             <tr style="font-weight: bold"><td>Po</td><td>Út</td><td>St</td><td>Čt</td><td>Pá</td><td>So</td><td>Ne</td></tr>
             <tr>
@@ -69,7 +69,7 @@
                         </#if>
                     </#if>
                     <td <#if id!="UNDEF">id="${id}"</#if> <#if class!="UNDEF">class="${class}"</#if>>
-                        <a href="?year=${CALENDAR.year}&amp;month=${CALENDAR.month}&amp;day=${curday}&amp;subtype=${subtype}">${curday}</a>
+                        <a rel="nofollow" href="?year=${CALENDAR.year}&amp;month=${CALENDAR.month}&amp;day=${curday}&amp;subtype=${subtype}">${curday}</a>
                     </td>
                 </#list>
             </tr>
