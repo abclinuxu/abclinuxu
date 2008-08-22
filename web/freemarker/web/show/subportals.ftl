@@ -41,6 +41,37 @@ kontaktuje administrátory, kteří věc zváží.</p>
     <hr style="clear:right" />
 </#list>
 
+<form action="/skupiny">
+    <table border="0">
+        <tr>
+            <th>Pozice</th>
+            <th>Počet</th>
+            <th>Řadit podle</th>
+            <th>Směr</th>
+            <td></td>
+        </tr>
+        <tr>
+            <td><input type="text" size="4" value="${SUBPORTALS.thisPage.row}" name="from" tabindex="1"></td>
+            <td><input type="text" size="3" value="${SUBPORTALS.pageSize}" name="count" tabindex="2"></td>
+            <td>
+                <select name="orderBy" tabindex="3">
+                    <option value="updated"<#if PARAMS.orderBy?if_exists=="updated"> selected</#if>>poslední aktivity</option>
+                    <option value="title"<#if PARAMS.orderBy?if_exists=="title"> selected</#if>>titulku</option>
+                    <option value="created"<#if PARAMS.orderBy?if_exists=="created"> selected</#if>>data vytvoření</option>
+                    <option value="score"<#if PARAMS.orderBy?if_exists=="score"> selected</#if>>skóre</option>
+                </select>
+            </td>
+            <td>
+                <select name="orderDir" tabindex="4">
+                    <option value="desc"<#if PARAMS.orderDir?if_exists=="desc"> selected</#if>>sestupně</option>
+                    <option value="asc"<#if PARAMS.orderDir?if_exists=="asc"> selected</#if>>vzestupně</option>
+                </select>
+            </td>
+            <td><input type="submit" value="Zobrazit"></td>
+        </tr>
+    </table>
+</form>
+
 <ul>
     <#if (SUBPORTALS.currentPage.row > 0) >
         <#assign start=SUBPORTALS.currentPage.row-SUBPORTALS.pageSize><#if (start<0)><#assign start=0></#if>

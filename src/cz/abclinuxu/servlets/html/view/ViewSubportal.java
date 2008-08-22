@@ -19,7 +19,6 @@
 
 package cz.abclinuxu.servlets.html.view;
 
-import com.whirlycott.cache.Item;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.view.Link;
@@ -29,14 +28,16 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +50,8 @@ import javax.servlet.http.HttpServletResponse;
 public class ViewSubportal implements AbcAction {
 	public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_FROM = "from";
+    public static final String PARAM_ORDER_BY = "orderBy";
+    public static final String PARAM_ORDER_DIR = "orderDir";
 	
 	public static final String ACTION_MEMBERS = "members";
     
@@ -91,16 +94,60 @@ public class ViewSubportal implements AbcAction {
 
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int count = Misc.getPageSize(10, 50, env, "/data/settings/forum_size"); // todo generic listing size setting
-        int total = sqlTool.countCategoryRelationsWithType(Category.SUBPORTAL);
-
-        Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_TITLE, Qualifier.ORDER_ASCENDING, new LimitQualifier(from, count)};
-        List list = sqlTool.findCategoryRelationsWithType(Category.SUBPORTAL, qualifiers);
-        Tools.syncList(list);
+        int total;
+        List list;
+        String orderBy = (String) params.get(PARAM_ORDER_BY);
+        String orderDir = (String) params.get(PARAM_ORDER_DIR);
+        
+        if (Misc.empty(orderBy))
+            orderBy = "updated";
+        if (Misc.empty(orderDir))
+            orderDir = "desc";
+        
+        if ("updated".equals(orderBy)) {
+            List<Map> portals = VariableFetcher.getInstance().getAllSubportalChanges();
+            
+            list = new ArrayList(portals.size());
+            if ("asc".equals(orderDir)) {
+                for (int i = portals.size()-1; i >= 0; i--)
+                    list.add(portals.get(i).get("subportal"));
+            } else {
+                for (Map map : portals)
+                    list.add(map.get("subportal"));
+            }
+            
+            total = list.size();
+        } else {
+            List<Qualifier> qualifiers = new ArrayList(3);
+            Qualifier[] qa;
+            
+            if ("created".equals(orderBy))
+                qualifiers.add(Qualifier.SORT_BY_CREATED);
+            else if ("title".equals(orderBy))
+                qualifiers.add(Qualifier.SORT_BY_TITLE);
+            
+            if ("desc".equals(orderDir))
+                qualifiers.add(Qualifier.ORDER_DESCENDING);
+            else
+                qualifiers.add(Qualifier.ORDER_ASCENDING);
+            
+            qualifiers.add(new LimitQualifier(from, count));
+            
+            qa = new Qualifier[qualifiers.size()];
+            qualifiers.toArray(qa);
+            
+            total = sqlTool.countCategoryRelationsWithType(Category.SUBPORTAL);
+            
+            if ("score".equals(orderBy))
+                list = sqlTool.findSubportalsOrderedByScore(qa);
+            else
+                list = sqlTool.findCategoryRelationsWithType(Category.SUBPORTAL, qa);
+            Tools.syncList(list);
+        }
 
         Paging paging = new Paging(list, from, count, total);
         env.put(VAR_SUBPORTALS, paging);
 
         return FMTemplateSelector.select("ViewSubportal", "list", env, request);
     }
-	
 }
