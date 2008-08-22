@@ -670,6 +670,7 @@ public class FeedGenerator implements Configurable {
 
                 List qualifiers = new ArrayList();
                 qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner()));
+                qualifiers.add(new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW));
                 qualifiers.add(Qualifier.SORT_BY_CREATED);
                 qualifiers.add(Qualifier.ORDER_DESCENDING);
                 qualifiers.add(new LimitQualifier(0, feedLength));
@@ -699,7 +700,10 @@ public class FeedGenerator implements Configurable {
             feed.setEntries(entries);
             SyndEntry entry;
 
-            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, highFrequencyFeedLength)};
+            Qualifier[] qualifiers = new Qualifier[] {
+                new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW),
+                Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, highFrequencyFeedLength)
+            };
             List stories = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
             Tools.syncList(stories);
             List blogs = new ArrayList();
