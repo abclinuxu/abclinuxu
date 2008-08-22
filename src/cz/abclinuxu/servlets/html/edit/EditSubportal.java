@@ -195,7 +195,7 @@ public class EditSubportal implements AbcAction {
         Category catEvents;
         
         // a section for events
-        events = createSection(env, root, relation, "Akce", "events", "/akce", Category.EVENT); // a section for events
+        events = createSection(env, root, relation, "Akce", "events", "/akce", 0); // a section for events
         
         catEvents = (Category) events.getChild();
         // give everybody the right to create events in the pool
@@ -207,6 +207,7 @@ public class EditSubportal implements AbcAction {
 		persistence.update(category);
         
         VariableFetcher.getInstance().refreshSubportalSizes(relation);
+        VariableFetcher.getInstance().refreshLatestSubportalChanges();
 		
 		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());

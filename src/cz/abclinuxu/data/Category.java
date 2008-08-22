@@ -41,8 +41,6 @@ public class Category extends GenericDataObject {
     public static final int SOFTWARE_SECTION = 6;
 	/** subportal governed by a special interest-group */
 	public static final int SUBPORTAL = 7;
-    /** section of events */
-    public static final int EVENT = 8;
 
 
     public Category() {
