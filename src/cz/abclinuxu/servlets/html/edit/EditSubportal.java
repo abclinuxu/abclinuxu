@@ -195,7 +195,7 @@ public class EditSubportal implements AbcAction {
         Category catEvents;
         
         // a section for events
-        events = createSection(env, root, relation, "Akce", "events", "/akce", 0); // a section for events
+        events = createSection(env, root, relation, "Akce", "events", "/akce", Category.EVENT); // a section for events
         
         catEvents = (Category) events.getChild();
         // give everybody the right to create events in the pool
