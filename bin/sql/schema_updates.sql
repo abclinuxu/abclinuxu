@@ -1,2 +1,43 @@
-alter table uzivatel add column sync datetime null after prezdivka;
-ALTER TABLE uzivatel ADD INDEX in_sync (sync);
+alter table kategorie add column numeric1 INT NULL after podtyp;
+alter table kategorie add column numeric2 INT NULL after numeric1;
+alter table kategorie add column string1 VARCHAR(50) NULL after numeric2;
+alter table kategorie add column string2 VARCHAR(50) NULL after string1;
+alter table kategorie add column date1 DATETIME NULL after string2;
+alter table kategorie add column date2 DATETIME NULL after date1;
+ALTER TABLE kategorie ADD INDEX in_numeric1 (numeric1);
+ALTER TABLE kategorie ADD INDEX in_numeric2 (numeric2);
+ALTER TABLE kategorie ADD INDEX in_string1 (string1);
+ALTER TABLE kategorie ADD INDEX in_string2 (string2);
+
+alter table polozka add column numeric1 INT NULL after podtyp;
+alter table polozka add column numeric2 INT NULL after numeric1;
+alter table polozka add column string1 VARCHAR(50) NULL after numeric2;
+alter table polozka add column string2 VARCHAR(50) NULL after string1;
+alter table polozka add column date1 DATETIME NULL after string2;
+alter table polozka add column date2 DATETIME NULL after date1;
+ALTER TABLE polozka ADD INDEX in_numeric1 (numeric1);
+ALTER TABLE polozka ADD INDEX in_numeric2 (numeric2);
+ALTER TABLE polozka ADD INDEX in_string1 (string1);
+ALTER TABLE polozka ADD INDEX in_string2 (string2);
+
+alter table zaznam add column numeric1 INT NULL after podtyp;
+alter table zaznam add column numeric2 INT NULL after numeric1;
+alter table zaznam add column string1 VARCHAR(50) NULL after numeric2;
+alter table zaznam add column string2 VARCHAR(50) NULL after string1;
+alter table zaznam add column date1 DATETIME NULL after string2;
+alter table zaznam add column date2 DATETIME NULL after date1;
+ALTER TABLE zaznam ADD INDEX in_numeric1 (numeric1);
+ALTER TABLE zaznam ADD INDEX in_numeric2 (numeric2);
+ALTER TABLE zaznam ADD INDEX in_string1 (string1);
+ALTER TABLE zaznam ADD INDEX in_string2 (string2);
+
+alter table data add column numeric1 INT NULL after podtyp;
+alter table data add column numeric2 INT NULL after numeric1;
+alter table data add column string1 VARCHAR(50) NULL after numeric2;
+alter table data add column string2 VARCHAR(50) NULL after string1;
+alter table data add column date1 DATETIME NULL after string2;
+alter table data add column date2 DATETIME NULL after date1;
+ALTER TABLE data ADD INDEX in_numeric1 (numeric1);
+ALTER TABLE data ADD INDEX in_numeric2 (numeric2);
+ALTER TABLE data ADD INDEX in_string1 (string1);
+ALTER TABLE data ADD INDEX in_string2 (string2);

@@ -28,10 +28,20 @@ CREATE TABLE kategorie (
  cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
  typ SMALLINT,                                   -- typ kategorie
  podtyp VARCHAR(50) NULL,                        -- podtyp
+ numeric1 INT NULL,                              -- obecne pouzitelny sloupecek
+ numeric2 INT NULL,                              -- obecne pouzitelny sloupecek
+ string1 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
+ string2 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
+ date1 DATETIME NULL,                            -- obecne pouzitelny sloupecek
+ date2 DATETIME NULL,                            -- obecne pouzitelny sloupecek
  data LONGTEXT NOT NULL                          -- XML s nazvem, ikonou, poznamkou ...
 );
 ALTER TABLE kategorie ADD INDEX in_podtyp (podtyp);
 ALTER TABLE kategorie ADD INDEX in_typ (typ);
+ALTER TABLE kategorie ADD INDEX in_numeric1 (numeric1);
+ALTER TABLE kategorie ADD INDEX in_numeric2 (numeric2);
+ALTER TABLE kategorie ADD INDEX in_string1 (string1);
+ALTER TABLE kategorie ADD INDEX in_string2 (string2);
 
 
 -- obecna struktura pro ukladani polozek
@@ -41,10 +51,20 @@ CREATE TABLE polozka (
  cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
  typ SMALLINT,                                   -- typ polozky (druh, novinka, ..)
  podtyp VARCHAR(50) NULL,                        -- podtyp
+ numeric1 INT NULL,                              -- obecne pouzitelny sloupecek
+ numeric2 INT NULL,                              -- obecne pouzitelny sloupecek
+ string1 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
+ string2 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
+ date1 DATETIME NULL,                            -- obecne pouzitelny sloupecek
+ date2 DATETIME NULL,                            -- obecne pouzitelny sloupecek
  data LONGTEXT NOT NULL                          -- XML s nazvem, ikonou, poznamkou ...
 );
 ALTER TABLE polozka ADD INDEX in_typ (typ);
 ALTER TABLE polozka ADD INDEX in_podtyp (podtyp);
+ALTER TABLE polozka ADD INDEX in_numeric1 (numeric1);
+ALTER TABLE polozka ADD INDEX in_numeric2 (numeric2);
+ALTER TABLE polozka ADD INDEX in_string1 (string1);
+ALTER TABLE polozka ADD INDEX in_string2 (string2);
 
 -- kazdy uzivatel muze pridat k polozce svuj zaznam, kazda polozka
 -- ma nejmene jeden zaznam od autora polozky
@@ -55,20 +75,40 @@ CREATE TABLE zaznam (
  cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
  typ SMALLINT,                                   -- typ zaznamu (HW, SW, clanek ..)
  podtyp VARCHAR(50) NULL,                        -- podtyp
+ numeric1 INT NULL,                              -- obecne pouzitelny sloupecek
+ numeric2 INT NULL,                              -- obecne pouzitelny sloupecek
+ string1 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
+ string2 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
+ date1 DATETIME NULL,                            -- obecne pouzitelny sloupecek
+ date2 DATETIME NULL,                            -- obecne pouzitelny sloupecek
  data LONGTEXT NOT NULL                          -- XML s nazvem, poznamkou ...
 );
 ALTER TABLE zaznam ADD INDEX in_typ (typ);
 ALTER TABLE zaznam ADD INDEX in_podtyp (podtyp);
+ALTER TABLE zaznam ADD INDEX in_numeric1 (numeric1);
+ALTER TABLE zaznam ADD INDEX in_numeric2 (numeric2);
+ALTER TABLE zaznam ADD INDEX in_string1 (string1);
+ALTER TABLE zaznam ADD INDEX in_string2 (string2);
 
 -- obecna struktura pro ukladani priloh ruznych typu (logy, konfiguraky ..)
 CREATE TABLE data (
  cislo INT AUTO_INCREMENT PRIMARY KEY,           -- jednoznacny identifikator
  typ SMALLINT,                                   -- typ polozky (druh, novinka, ..)
  podtyp VARCHAR(50) NULL,                        -- podtyp
+ numeric1 INT NULL,                              -- obecne pouzitelny sloupecek
+ numeric2 INT NULL,                              -- obecne pouzitelny sloupecek
+ string1 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
+ string2 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
+ date1 DATETIME NULL,                            -- obecne pouzitelny sloupecek
+ date2 DATETIME NULL,                            -- obecne pouzitelny sloupecek
  data LONGTEXT NOT NULL                          -- XML s cestou k soboru, nazvem, ikonou, poznamkou ...
 );
 ALTER TABLE data ADD INDEX in_typ (typ);
 ALTER TABLE data ADD INDEX in_podtyp (podtyp);
+ALTER TABLE data ADD INDEX in_numeric1 (numeric1);
+ALTER TABLE data ADD INDEX in_numeric2 (numeric2);
+ALTER TABLE data ADD INDEX in_string1 (string1);
+ALTER TABLE data ADD INDEX in_string2 (string2);
 
 -- tabulka obsahujici udaje spolecne vice jinym tabulkam
 CREATE TABLE spolecne (

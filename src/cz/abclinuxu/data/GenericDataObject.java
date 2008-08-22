@@ -49,6 +49,10 @@ public abstract class GenericDataObject extends CommonObject {
     protected Date created;
     /** last update of this object */
     protected Date updated;
+    // generic purpose properties
+    protected int numeric1, numeric2;
+    protected String string1, string2;
+    protected Date date1, date2;
 
     /**
      * Helper (non-persistant) String for findByExample(),
@@ -78,7 +82,7 @@ public abstract class GenericDataObject extends CommonObject {
     public void setOwner(int owner) {
         this.owner = owner;
     }
-	
+
 	/**
      * @return group's id
      */
@@ -92,14 +96,14 @@ public abstract class GenericDataObject extends CommonObject {
     public void setGroup(int group) {
         this.group = group;
     }
-	
+
 	/**
 	 * @return object's permissions
 	 */
 	public int getPermissions() {
 		return permissions;
 	}
-	
+
 	/**
 	 * @param permissions New object's permissions
 	 */
@@ -179,6 +183,72 @@ public abstract class GenericDataObject extends CommonObject {
      */
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    /**
+     * @return first generic purpose number property
+     */
+    public int getNumeric1() {
+        return numeric1;
+    }
+
+    public void setNumeric1(int numeric1) {
+        this.numeric1 = numeric1;
+    }
+
+    /**
+     * @return second generic purpose number property
+     */
+    public int getNumeric2() {
+        return numeric2;
+    }
+
+    public void setNumeric2(int numeric2) {
+        this.numeric2 = numeric2;
+    }
+
+    /**
+     * @return first generic purpose string property
+     */
+    public String getString1() {
+        return string1;
+    }
+
+    public void setString1(String string1) {
+        this.string1 = string1;
+    }
+
+    /**
+     * @return second generic purpose string property
+     */
+    public String getString2() {
+        return string2;
+    }
+
+    public void setString2(String string2) {
+        this.string2 = string2;
+    }
+
+    /**
+     * @return first generic purpose date property
+     */
+    public Date getDate1() {
+        return date1;
+    }
+
+    public void setDate1(Date date1) {
+        this.date1 = date1;
+    }
+
+    /**
+     * @return second generic purpose string property
+     */
+    public Date getDate2() {
+        return date2;
+    }
+
+    public void setDate2(Date date2) {
+        this.date2 = date2;
     }
 
     /**
