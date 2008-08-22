@@ -71,6 +71,7 @@ public class EditVideo implements AbcAction, Configurable {
     public static final String ACTION_ADD_STEP2 = "add2";
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
+    public static final String ACTION_REMOVE = "remove";
     
     public static final String PREF_URLS = "urls";
     public static final String PREF_PLAYERS = "players";
@@ -125,6 +126,21 @@ public class EditVideo implements AbcAction, Configurable {
         if (ACTION_EDIT_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditVideo.class, true, true, true, false);
             return actionEditStep2(request, response, env, relation);
+        }
+        
+        isBlogOwner = false;
+        if (relation.getParent() instanceof Item) {
+            item = (Item) relation.getParent();
+            if (item.getType() == Item.BLOG && item.getOwner() == user.getId())
+                isBlogOwner = true;
+        }
+        
+        if (ACTION_REMOVE.equals(action)) {
+            if (!Tools.permissionsFor(user, relation).canDelete() && !isBlogOwner)
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            
+            ActionProtector.ensureContract(request, EditVideo.class, true, false, false, true);
+            return actionRemove(request, response, env, relation);
         }
         
         throw new MissingArgumentException("Chybí argument action!");
@@ -214,6 +230,19 @@ public class EditVideo implements AbcAction, Configurable {
         
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+        
+        return null;
+    }
+    
+    private static String actionRemove(HttpServletRequest request, HttpServletResponse response, Map env, Relation relation) throws Exception {
+        Relation upperRel = new Relation(relation.getUpper());
+        Tools.sync(upperRel);
+        Persistence persistence = PersistenceFactory.getPersistence();
+        
+        persistence.remove(relation);
+        
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(upperRel));
         
         return null;
     }

@@ -6,8 +6,8 @@
                 <#if TOOL.permissionsFor(USER, RELATION).canModify() || ITEM.owner == USER.id>
                     <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
                 </#if>
-                <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
-                    <li><a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=/videa&amp;rid="+RELATION.id)}">Smazat</a></li>
+                <#if TOOL.permissionsFor(USER, RELATION).canDelete() || ITEM.owner == USER.id>
+                    <li><a href="${URL.make("/edit/"+RELATION.id+"?action=remove"+TOOL.ticket(USER,false))}">Smazat</a></li>
                 </#if>
             </ul>
         </div>
