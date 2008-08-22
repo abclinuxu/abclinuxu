@@ -14,6 +14,31 @@
           <li><a href="/auto/blog.rss">RSS kanál</a></li>
         </ul>
     </div>
+
+    <div class="s_nadpis">Nej blogů na AbcLinuxu</div>
+    <div class="s_sekce">
+        <#if VARS.recentMostReadStories?exists>
+            <b>Nejčtenější zápisky posledního měsíce</b>
+            <ul>
+                <#list VARS.recentMostReadStories.entrySet() as rel>
+                    <#if rel_index gt 2><#break></#if>
+                    <li><a href="${rel.key.url}">${TOOL.childName(rel.key)}</a></li>
+                </#list>
+            </ul>
+        </#if>
+
+        <#if VARS.recentMostCommentedStories?exists>
+            <b>Nejkomentovanější zápisky posledního měsíce</b>
+            <ul>
+                <#list VARS.recentMostCommentedStories.entrySet() as rel>
+                    <#if rel_index gt 2><#break></#if>
+                    <li><a href="${rel.key.url}">${TOOL.childName(rel.key)}</a></li>
+                </#list>
+            </ul>
+        </#if>
+        <br>
+        <a href="/nej">všechny statistiky &raquo;</a>
+    </div>
 </#assign>
 
 <#include "../header.ftl">

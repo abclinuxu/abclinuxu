@@ -184,6 +184,29 @@
         </#if>
         <#if (SERIES.total > 1)><a href="${SERIES.last.url}">${TOOL.childName(SERIES.last)}</a> (poslední díl)<br /></#if>
     </#if>
+
+    <div style="float: right">
+        <#if VARS.recentMostReadArticles?exists>
+            <h3>Nejčtenější články posledního měsíce</h3>
+            <ul>
+                <#list VARS.recentMostReadArticles.entrySet() as rel>
+                    <#if rel_index gt 2><#break></#if>
+                    <li><a href="${rel.key.url}">${TOOL.childName(rel.key)}</a></li>
+                </#list>
+            </ul>
+        </#if>
+        <#if VARS.recentMostCommentedArticles?exists>
+            <h3>Nejkomentovanější články posledního měsíce</h3>
+            <ul>
+                <#list VARS.recentMostCommentedArticles.entrySet() as rel>
+                    <#if rel_index gt 2><#break></#if>
+                    <li><a href="${rel.key.url}">${TOOL.childName(rel.key)}</a></li>
+                </#list>
+            </ul>
+            <a href="/nej">všechny statistiky &raquo;</a>
+        </#if>
+    </div>
+
     <#if RELATED?exists>
         <h3>Související články</h3>
         <#list RELATED as link>

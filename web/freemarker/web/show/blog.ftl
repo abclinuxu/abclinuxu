@@ -7,6 +7,14 @@
 </#if>
 
 <#assign plovouci_sloupec>
+    <div class="s_nadpis">
+        <@lib.showUser owner/>
+    	<#if title!="UNDEF"> - <a href="/blog/${BLOG.subType}">${title}</a></#if>
+    </div>
+
+    <div class="s_sekce">
+        <#if intro!="UNDEF">${intro}</#if>
+    </div>
 
     <div class="s_nadpis">
         <#if USER?exists && USER.id==BLOG.owner>
@@ -70,15 +78,6 @@
             </ul>
         </div>
     </#if>
-
-    <div class="s_nadpis">
-        <@lib.showUser owner/>
-    	<#if title!="UNDEF"> - <a href="/blog/${BLOG.subType}">${title}</a></#if>
-    </div>
-
-    <div class="s_sekce">
-        <#if intro!="UNDEF">${intro}</#if>
-    </div>
 
     <div class="s_nadpis">Aktuální zápisy</div>
 
@@ -160,6 +159,31 @@
                 <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při vytvoření nového zápisku v tomto blogu.</span></a>
             </li>
         </ul>
+    </div>
+
+    <div class="s_nadpis">Nej blogů na AbcLinuxu</div>
+    <div class="s_sekce">
+        <#if VARS.recentMostReadStories?exists>
+            <b>Nejčtenější zápisky posledního měsíce</b>
+            <ul>
+                <#list VARS.recentMostReadStories.entrySet() as rel>
+                    <#if rel_index gt 2><#break></#if>
+                    <li><a href="${rel.key.url}">${TOOL.childName(rel.key)}</a></li>
+                </#list>
+            </ul>
+        </#if>
+
+        <#if VARS.recentMostCommentedStories?exists>
+            <b>Nejkomentovanější zápisky posledního měsíce</b>
+            <ul>
+                <#list VARS.recentMostCommentedStories.entrySet() as rel>
+                    <#if rel_index gt 2><#break></#if>
+                    <li><a href="${rel.key.url}">${TOOL.childName(rel.key)}</a></li>
+                </#list>
+            </ul>
+        </#if>
+        <br>
+        <a href="/nej">všechny statistiky &raquo;</a>
     </div>
 
   <#--<@lib.advertisement id="arbo-sq" />-->
