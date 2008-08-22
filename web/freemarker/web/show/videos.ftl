@@ -1,4 +1,4 @@
-<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canCreate()>
     <#assign plovouci_sloupec>
         <div class="s_sekce">
         <ul>
