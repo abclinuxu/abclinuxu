@@ -36,6 +36,17 @@ s vysvětlením. Teprve po schválení bude zprávička zveřejněna.</p>
 <#if PARAMS.preview?exists>
  <h2>Náhled</h2>
  <@lib.showNews RELATION />
+<#elseif WAITING_NEWS?size gt 0>
+ <h2>Čekající zprávičky</h2>
+ <p>
+    Následující zprávičky už napsal někdo před vámi a ty nyní čekají na
+    schválení administrátorem nebo na svůj čas vydání.
+ </p>
+ <ul>
+    <#list WAITING_NEWS as rel>
+        <li>${TOOL.childName(rel)}</li>
+    </#list>
+ </ul>
 </#if>
 
 <form action="${URL.make("/edit")}" method="POST" name="newsForm">

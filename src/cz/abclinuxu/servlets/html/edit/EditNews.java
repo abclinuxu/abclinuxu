@@ -82,6 +82,7 @@ public class EditNews implements AbcAction {
     public static final String VAR_MESSAGE = "MESSAGE";
     public static final String VAR_AUTHOR = "AUTHOR";
     public static final String VAR_ADMIN = "ADMIN";
+    public static final String VAR_WAITING_NEWS = "WAITING_NEWS";
 
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_RELATION_SHORT = "rid";
@@ -171,6 +172,13 @@ public class EditNews implements AbcAction {
 
     private String actionAddStep1(HttpServletRequest request, Map env) throws Exception {
         env.put(VAR_CATEGORIES, NewsCategories.getAllCategories());
+        
+        Category catWaitingNews = new Category(Constants.CAT_NEWS_POOL);
+        Tools.sync(catWaitingNews);
+        
+        List news = catWaitingNews.getChildren();
+        env.put(VAR_WAITING_NEWS, news);
+        
         return FMTemplateSelector.select("EditNews", "add", env, request);
     }
 
