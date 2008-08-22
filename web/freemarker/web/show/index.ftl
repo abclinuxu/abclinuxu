@@ -117,15 +117,15 @@
         <tr>
           <td>
             <ul>
-              <#list SUBPORTALS[0..half-1] as relation>
-                <li><@printSubportal relation /></li>
+              <#list SUBPORTALS[0..half-1] as map>
+                <li><@printSubportal map /></li>
               </#list>
             </ul>
           </td>
           <td>
             <ul>
-              <#list SUBPORTALS[half..] as relation>
-                <li><@printSubportal relation /></li>
+              <#list SUBPORTALS[half..] as map>
+                <li><@printSubportal map /></li>
               </#list>
             </ul>
           </td>
@@ -135,9 +135,10 @@
 </div>
 </#if>
 
-<#macro printSubportal rel>
-    <#local subportal=TOOL.getParentSubportal(rel)?default("UNDEF")>
-    <#if subportal!="UNDEF"><a href="${subportal.url}">${TOOL.childName(subportal)}</a></#if> <span>|</span> <a href="${rel.url}">${rel.child.title}</a>
+<#macro printSubportal map>
+    <a href="${map.subportal.url}">${TOOL.childName(map.subportal)}</a>
+    <span>|</span>
+    <a href="${map.relation.url}">${map.relation.child.title}</a>
 </#macro>
 
 <h2>Služby</h2>
