@@ -91,9 +91,14 @@
     <#else>
         <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
     </#if>
+    <#local signs="">
+    <#if CHILDREN.poll?exists><#local signs=signs+", A"></#if>
+    <#if TOOL.screenshotsFor(story)?size gt 0><#local signs=signs+", O"></#if>
+    <#if CHILDREN.video?exists><#local signs=signs+", V"></#if>
+
     <a href="${url}" title="${author.nick?default(author.name)?html}<#if title!="UNDEF">, ${title}</#if>">${story.title}</a>
     <span title="Počet&nbsp;komentářů<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>">
-        (${diz.responseCount}<@lib.markNewComments diz/>)
+        (${diz.responseCount}<@lib.markNewComments diz/>${signs})
     </span>
 </#macro>
 
