@@ -1,3 +1,4 @@
+
 <mappings>
     <format version="www">
         <mapping>
@@ -121,6 +122,10 @@
             <pattern>^/desktopy</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewScreenshot</action>
         </mapping>
+        <mapping>
+            <pattern>^/videa</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewVideo</action>
+        </mapping>
         <mapping priority="true">
             <pattern>/diskuse$</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowObject</action>
@@ -128,6 +133,10 @@
         <mapping priority="true">
             <pattern>^/hry</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewGames</action>
+        </mapping>
+        <mapping priority="true">
+            <pattern>^/videa/edit</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditVideo</action>
         </mapping>
         <mapping priority="true">
             <pattern>^/software/edit</pattern>

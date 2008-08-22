@@ -802,6 +802,22 @@
                                     <entry key="regexp.valid.identifier" value="[a-z0-9_-]+"/>
                                 </map>
                             </node>
+                            <node name="EditVideo">
+                                <map>
+                                </map>
+                                <node name="urls">
+                                    <map>
+                                        <entry key="youtube" value="http://w*\.?youtube\.com/watch\?v=([^&amp;]+)"/>
+                                        <entry key="googlevideo" value="http://video\.google\.com/videoplay\?docid=(\d+)"/>
+                                    </map>
+                                </node>
+                                <node name="players">
+                                    <map>
+                                        <entry key="youtube" value='http://www.youtube.com/v/%s&amp;hl=en&amp;fs=1'/>
+                                        <entry key="googlevideo" value='http://video.google.com/googleplayer.swf?docid=%s&amp;hl=cs&amp;fs=true'/>
+                                    </map>
+                                </node>
+                            </node>
                         </node>
                         <node name="view">
                             <map/>
