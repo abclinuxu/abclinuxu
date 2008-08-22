@@ -205,6 +205,8 @@ public class ViewCategory implements AbcAction {
                 return ViewSubportal.processSectionList(request, env);
 			case Constants.REL_EVENTS:
 				return ViewEvent.processSection(request, response, relation, env);
+            case Constants.REL_VIDEOS:
+                return ViewVideo.processSection(request, response, relation, env);
         }
 
         if ( category.getId()==Constants.CAT_ARTICLES ) {

@@ -57,6 +57,7 @@ public interface Constants {
     int CAT_PERSONALITIES = 1863;
 	int CAT_SUBPORTALS = 2116;
 	int CAT_EVENTS = 2117;
+    int CAT_VIDEOS = 2123;
 
     int ITEM_DIZ_TODO = 11606;
     /** item holding dynamic configuration */
@@ -104,6 +105,7 @@ public interface Constants {
     int REL_PERSONALITIES = 190499;
 	int REL_SUBPORTALS = 233273;
 	int REL_EVENTS = 233274;
+    int REL_VIDEOS = 234043;
 
     int GROUP_ADMINI = 11246;
     int GROUP_AUTORI = 11247;

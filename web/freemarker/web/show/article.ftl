@@ -84,7 +84,8 @@
         
         <a href="${URL.make("/"+RELATION.id+".docb")}">Docbook</a>
         <a href="${URL.make("/edit/"+RELATION.id+"?action=showTalk")}">Rozhovor</a>
-        <a href="${URL.make("/inset/"+RELATION.id+"?action=addFile")}">Přidat přílohy</a>
+        <a href="${URL.make("/inset/"+RELATION.id+"?action=addFile")}">Přidat soubory</a>
+        <a href="${URL.noPrefix("/videa/edit/"+RELATION.id+"?action=add&amp;redirect="+RELATION.url?default("/clanky/show/"+RELATION.id))}">Přidat video</a>
         <a href="${URL.make("/inset/"+RELATION.id+"?action=manage")}">Správa příloh</a>
     </p>
 </#if>
@@ -105,6 +106,12 @@
         <#if PAGE?exists><#assign url=url+"?page="+PAGE></#if>
         <@lib.showPoll CHILDREN.poll[index], url+"#inlinepoll-"+index />
         <#assign dummy=CHILDREN.poll.set(index, "UNDEF")>
+    <#elseif item.type=="video">
+        <#assign index = item.value?eval>
+        <div id="inlinevideo-${index}" style="text-align: center">
+            <@lib.showVideo CHILDREN.video[index], 300, 300, (USER?exists && TOOL.permissionsFor(USER,RELATION).canModify()) />
+        </div>
+        <#assign dummy=CHILDREN.video.set(index, "UNDEF")>
     </#if>
 </#list>
 
@@ -113,20 +120,37 @@
 </#if>
 
 
-<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify() && CHILDREN.poll?exists>
-    <#assign wrote_pollhdr=false>
-    <#list CHILDREN.poll as poll>
-        <#if poll!="UNDEF">
-            <#if !wrote_pollhdr>
-                <h3>Nepoužité ankety</h3>
-                <#assign wrote_pollhdr=true>
+<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+    <#if CHILDREN.poll?exists>
+        <#assign wrote_pollhdr=false>
+        <#list CHILDREN.poll as poll>
+            <#if poll!="UNDEF">
+                <#if !wrote_pollhdr>
+                    <h3>Nepoužité ankety</h3>
+                    <#assign wrote_pollhdr=true>
+                </#if>
+                <div>
+                    <a href="/ankety/show/${poll.id}">${TOOL.childName(poll)}</a> |
+                    Kód: <code>&lt;inline type="poll" id="${poll_index}"&gt;</code>
+                </div>
             </#if>
-            <div>
-                <a href="/ankety/show/${poll.id}">${TOOL.childName(poll)}</a> |
-                Kód: <code>&lt;inline type="poll" id="${poll_index}"&gt;</code>
-            </div>
-        </#if>
-    </#list>
+        </#list>
+    </#if>
+    <#if CHILDREN.video?exists>
+        <#assign wrote_hdr=false>
+        <#list CHILDREN.video as video>
+            <#if video!="UNDEF">
+                <#if !wrote_hdr>
+                    <h3>Nepoužitá videa</h3>
+                    <#assign wrote_hdr=true>
+                </#if>
+                <div>
+                    <a href="/videa/show/${video.id}">${TOOL.childName(video)}</a> |
+                    Kód: <code>&lt;inline type="video" id="${video_index}"&gt;</code>
+                </div>
+            </#if>
+        </#list>
+    </#if>
 </#if>
 
 <#if PAGES?exists>

@@ -680,12 +680,13 @@
     </div>
 </#macro>
 
-<#macro showVideo relation width height>
+<#macro showVideo relation width height showLink>
     <#local item=relation.child, code=TOOL.xpath(item,"//code"), desc=TOOL.xpath(item,"//description")?default("")>
     <#if item.subType=="youtube"><#local player="http://www.youtube.com/v/"+code+"&amp;hl=en&amp;fs=1">
     <#elseif item.subType=="googlevideo"><#local player="http://video.google.com/googleplayer.swf?docid="+code+"&amp;hl=cs&amp;fs=true">
     </#if>
 
+    <p><b>${TOOL.childName(relation)}</b> <#if showLink>(<a href="${relation.url?default("/videa/show/"+relation.id)}">správa videa</a>)</#if></p>
     <object width="${width}" height="${height}"><param name="movie" value="${player}"></param><param name="allowFullScreen" value="true"></param><embed src="${player}" type="application/x-shockwave-flash" allowfullscreen="true" width="${width}" height="${height}"></embed></object>
-    <div><i>${desc}</i></div>
+    <#if desc!=""><p><i>${desc}</i></p></#if>
 </#macro>

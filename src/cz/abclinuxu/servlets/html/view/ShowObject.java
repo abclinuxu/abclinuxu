@@ -220,6 +220,8 @@ public class ShowObject implements AbcAction {
 			case Item.EVENT:
             case Item.UNPUBLISHED_EVENT:
 				return ViewEvent.processItem(request, relation, env);
+            case Item.VIDEO:
+                return ViewVideo.processItem(request, relation, env);
         }
 
         return null;

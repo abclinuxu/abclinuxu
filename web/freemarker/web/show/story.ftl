@@ -99,6 +99,9 @@
                     <li>
                         <a href="${URL.make("/inset/"+STORY.id+"?action=addScreenshot")}">Přidej obrázek</a>
                     </li>
+                    <li>
+                        <a href="${URL.noPrefix("/videa/edit/"+STORY.id+"?action=add&amp;redirect="+STORY.url?if_exists)}">Přidej video</a>
+                    </li>
                     <#if !CHILDREN.poll?exists>
                         <li>
                             <a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+STORY.id)}">Vlož anketu</a>
@@ -286,6 +289,19 @@ ${TOOL.xpath(ITEM, "/data/content")}
             </#if>
         </#list>
     <#if wrote_section></p></#if>
+</#if>
+
+<#if CHILDREN.video?exists>
+    <h3>Videa</h3>
+    <#list CHILDREN.video as video>
+        <div>
+        <#assign showVideoManagement=false>
+        <#if USER?exists>
+            <#if TOOL.permissionsFor(USER,video).canModify() || video.child.owner == USER.id><#assign showVideoManagement=true></#if>
+        </#if>
+        <@lib.showVideo video, 300, 300, showVideoManagement />
+        </div>
+    </#list>
 </#if>
 
 <p><b>Nástroje</b>: <a rel="nofollow" href="${story_url}?varianta=print">Tisk</a></p>
