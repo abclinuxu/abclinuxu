@@ -224,7 +224,7 @@ public class EditContent implements AbcAction {
         MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 		
-        Relation section = Tools.getParentSubportalSection(relation);
+        Relation section = Tools.getParentSubportal(relation);
         
         if (section != null)
             VariableFetcher.getInstance().refreshSubportalWikiPages(section);
@@ -314,7 +314,7 @@ public class EditContent implements AbcAction {
         MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 		
-        Relation section = Tools.getParentSubportalSection(relation);
+        Relation section = Tools.getParentSubportal(relation);
         
         if (section != null)
             VariableFetcher.getInstance().refreshSubportalWikiPages(section);
@@ -375,7 +375,7 @@ public class EditContent implements AbcAction {
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 		
-        Relation section = Tools.getParentSubportalSection(relation);
+        Relation section = Tools.getParentSubportal(relation);
         
         if (section != null)
             VariableFetcher.getInstance().refreshSubportalWikiPages(section);
@@ -448,7 +448,7 @@ public class EditContent implements AbcAction {
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 		
-        Relation section = Tools.getParentSubportalSection(relation);
+        Relation section = Tools.getParentSubportal(relation);
         
         if (section != null)
             VariableFetcher.getInstance().refreshSubportalWikiPages(section);

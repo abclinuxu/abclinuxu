@@ -418,7 +418,7 @@ public class EditEvent implements AbcAction {
         
         TagTool.assignDetectedTags(item, user);
         
-        Relation section = Tools.getParentSubportalSection(relation);
+        Relation section = Tools.getParentSubportal(relation);
         VariableFetcher.getInstance().refreshSubportalEvents(section);
         
         AdminLogger.logEvent(user, "  approve | event " + relation.getUrl());
