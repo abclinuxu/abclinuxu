@@ -336,7 +336,7 @@ public class EditSubportal implements AbcAction {
 		content.setOwner(user.getId());
 		content.setPermissions(cat.getPermissions() | (Permissions.PERMISSION_MODIFY)
 				<< Permissions.PERMISSIONS_OTHERS_SHIFT);
-		content.setTitle("Úvodní wiki stránka pro "+ title);
+		content.setTitle("Úvodní wiki stránka");
 		
         content.setData(DocumentHelper.createDocument());
 		
