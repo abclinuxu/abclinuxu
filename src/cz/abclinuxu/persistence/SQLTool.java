@@ -134,6 +134,7 @@ public final class SQLTool implements Configurable {
     public static final String SUBPORTALS_COUNT_ARTICLES = "subportal.count.articles";
     public static final String SUBPORTALS_COUNT_EVENTS = "subportal.count.events";
     public static final String SUBPORTALS_COUNT_FORUM_QUESTIONS = "subportal.count.forum.questions";
+    public static final String SUBPORTALS_ORDERED_BY_SCORE = "subportals.ordered.by.score";
 
     private static SQLTool singleton;
     static {
@@ -594,6 +595,18 @@ public final class SQLTool implements Configurable {
     public List<Relation> findCategoriesRelations(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuilder sb = new StringBuilder((String) sql.get(CATEGORY_RELATIONS));
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadRelations(sb.toString(), params);
+    }
+    
+    /**
+     * Finds subportals and orders them by the score value
+     * @return List of initialized relations
+     */
+    public List<Relation> findSubportalsOrderedByScore(Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuilder sb = new StringBuilder((String) sql.get(SUBPORTALS_ORDERED_BY_SCORE));
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
@@ -2228,6 +2241,7 @@ public final class SQLTool implements Configurable {
         store(SUBPORTALS_COUNT_ARTICLES, prefs);
         store(SUBPORTALS_COUNT_EVENTS, prefs);
         store(SUBPORTALS_COUNT_FORUM_QUESTIONS, prefs);
+        store(SUBPORTALS_ORDERED_BY_SCORE, prefs);
     }
 
     /**
