@@ -62,7 +62,7 @@
 <#else>
   <input type="hidden" name="action" value="${PARAMS.action?if_exists}">
 </#if>
-${TOOL.saveParams(PARAMS, ["LOGIN","PASSWORD","action"])}
+${TOOL.saveParams(PARAMS, ["LOGIN","PASSWORD","action","useHttps","noCookie"])}
 </form>
 
 <#include "../footer.ftl">
