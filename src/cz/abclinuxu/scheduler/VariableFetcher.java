@@ -94,7 +94,8 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     List freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
     List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities;
-    List freshTrivias, latestSubportalChanges;
+    List freshTrivias;
+    List<Map> latestSubportalChanges;
     Map<Integer, List> freshSubportalArticles, freshForumQuestions, freshSubportalWikiPages;
     Map<Integer, Relation> nextSubportalEvent, freshSubportalEvent;
     
@@ -276,6 +277,10 @@ public class VariableFetcher extends TimerTask implements Configurable {
         
         int userLimit = /*getObjectCountForUser(user, KEY_SOFTWARE, null)*/ 10;
         return getSubList(latestSubportalChanges, userLimit);
+    }
+    
+    public List getAllSubportalChanges() {
+        return latestSubportalChanges;
     }
 
     /**
@@ -827,18 +832,29 @@ public class VariableFetcher extends TimerTask implements Configurable {
         }
     }
     
-    private static class SubportalChangeComparator implements Comparator<Relation> {
-            public int compare(Relation r1, Relation r2) {
-                GenericDataObject gdo1 = (GenericDataObject) r1.getChild();
-                GenericDataObject gdo2 = (GenericDataObject) r2.getChild();
-                
-                return gdo1.getUpdated().compareTo(gdo2.getUpdated());
-            }
+    private static class SubportalChangeComparator implements Comparator {
+        public int compare(Object o1, Object o2) {
+            if (o1 instanceof Relation)
+                return compare((Relation) o1, (Relation) o2);
+            else if (o1 instanceof Map)
+                return compare((Map) o1, (Map) o2);
+            else
+                return 0;
+        }
+        public int compare(Map m1, Map m2) {
+            return compare((Relation) m1.get("relation"), (Relation) m2.get("relation"));
+        }
+        public int compare(Relation r1, Relation r2) {
+            GenericDataObject gdo1 = (GenericDataObject) r1.getChild();
+            GenericDataObject gdo2 = (GenericDataObject) r2.getChild();
+
+            return gdo1.getUpdated().compareTo(gdo2.getUpdated());
+        }
     }
     public void refreshLatestSubportalChanges() {
         // get the latest change for every subportal
         Map<Integer,List> latestSubportal = new HashMap();
-        List<Relation> latestChanges;
+        List<Map> latestChanges;
         
         // add articles to the mix
         for (Integer rid : freshSubportalArticles.keySet()) {
@@ -883,10 +899,15 @@ public class VariableFetcher extends TimerTask implements Configurable {
         
         // now perform sorting
         Comparator comparator = new SubportalChangeComparator();
-        for (List<Relation> list : latestSubportal.values()) {
+        for (Map.Entry<Integer,List> entry : latestSubportal.entrySet()) {
+            List<Relation> list = entry.getValue();
             Collections.sort(list, comparator);
             // get the latest change
-            latestChanges.add(list.get(list.size()-1));
+            Map map = new HashMap(2);
+            map.put("relation", list.get(list.size()-1));
+            map.put("subportal", Tools.createRelation(entry.getKey()));
+            
+            latestChanges.add(map);
         }
         
         Collections.sort(latestChanges, comparator);
