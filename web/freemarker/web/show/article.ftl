@@ -115,11 +115,6 @@
     </#if>
 </#list>
 
-<#if forbidRating!="yes">
-    <@lib.showRating RELATION/>
-</#if>
-
-
 <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
     <#if CHILDREN.poll?exists>
         <#assign wrote_pollhdr=false>
@@ -154,7 +149,7 @@
 </#if>
 
 <#if PAGES?exists>
-    <div class="cl_perex">
+    <div class="cl_perex souvisejici">
         <h3>Jednotlivé podstránky článku</h3>
         <div class="s_sekce">
             <ol>
@@ -188,22 +183,18 @@
     <div style="float: right">
         <#if VARS.recentMostReadArticles?exists>
             <h3>Nejčtenější články posledního měsíce</h3>
-            <ul>
                 <#list VARS.recentMostReadArticles.entrySet() as rel>
                     <#if rel_index gt 2><#break></#if>
-                    <li><a href="${rel.key.url}">${TOOL.childName(rel.key)}</a></li>
+                    <a href="${rel.key.url}">${TOOL.childName(rel.key)}</a><br />
                 </#list>
-            </ul>
         </#if>
         <#if VARS.recentMostCommentedArticles?exists>
             <h3>Nejkomentovanější články posledního měsíce</h3>
-            <ul>
                 <#list VARS.recentMostCommentedArticles.entrySet() as rel>
                     <#if rel_index gt 2><#break></#if>
-                    <li><a href="${rel.key.url}">${TOOL.childName(rel.key)}</a></li>
+                    <a href="${rel.key.url}">${TOOL.childName(rel.key)}</a><br />
                 </#list>
-            </ul>
-            <a href="/nej">všechny statistiky &raquo;</a>
+            &nbsp; <a href="/nej">všechny statistiky &raquo;</a>
         </#if>
     </div>
 
@@ -246,6 +237,10 @@
         </#list>
 
         <#if wrote_div></ul></div></#if>
+</#if>
+
+<#if forbidRating!="yes">
+    <@lib.showRating RELATION/>
 </#if>
 
 <p><b>Nástroje</b>: <a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print">Tisk</a>,
