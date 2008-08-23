@@ -76,6 +76,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_UPDATE_STATISTICS = "update.statistics";
     public static final String PREF_JOB_OFFER_MANAGER = "job.offer.manager";
     public static final String PREF_USER_SCORE_SETTER = "user.score.setter";
+    public static final String PREF_USER_SYNC_SERVICE = "user.sync.service";
     public static final String PREF_SUBPORTAL_SCORE_SETTER = "subportal.score.setter";
     public static final String PREF_WEB_SERVICES = "web.services";
     public static final String PREF_USERS_DEPLOY_PATH = "deploy.path.users";
@@ -83,9 +84,12 @@ public class AbcInit extends HttpServlet implements Configurable {
 
     Timer scheduler, slowScheduler;
     VariableFetcher fetcher;
-    private Map<String,Boolean> services = new HashMap<String, Boolean>(20, 1.0f);
-    private Map<String,Integer> delays = new HashMap<String, Integer>(20, 1.0f);
-    private Map<String, Integer> periods = new HashMap<String, Integer>(20, 1.0f);
+
+    private final int SERVICE_COUNT = 22;
+
+    private Map<String,Boolean> services = new HashMap<String, Boolean>(SERVICE_COUNT, 1.0f);
+    private Map<String,Integer> delays = new HashMap<String, Integer>(SERVICE_COUNT, 1.0f);
+    private Map<String, Integer> periods = new HashMap<String, Integer>(SERVICE_COUNT, 1.0f);
     String endpointUrlServices;
     static AbcInit instance;
 
@@ -156,6 +160,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         startJobOfferUpdateService();
         startWatchedDiscussionsCleaner();
         startUpdateTopStatistics();
+        startUserSyncService();
         log.info("Ulohy jsou nastartovany");
     }
 
@@ -216,13 +221,13 @@ public class AbcInit extends HttpServlet implements Configurable {
         int period = getPeriod(PREF_RSS_JOBSCZ);
         slowScheduler.schedule(new JobsCzFetcher(), delay, period);
     }
-    
+
     protected void start64bitFetcher() {
         if ( !isSet(PREF_RSS_64BIT) ) {
             log.info("64bit.cz RSS monitor configured not to run");
             return;
         }
-        
+
         log.info("Scheduling the 64bit.cz RSS monitor");
         int delay = getDelay(PREF_RSS_64BIT);
         int period = getPeriod(PREF_RSS_64BIT);
@@ -429,7 +434,21 @@ public class AbcInit extends HttpServlet implements Configurable {
 
         scheduler.scheduleAtFixedRate(new UpdateUserScore(), calendar.getTime(), 24*60*60*1000);
     }
-    
+
+    /**
+     * Start user synchronization service
+     */
+    private void startUserSyncService() {
+        if ( !isSet(PREF_USER_SYNC_SERVICE) ) {
+            log.info("User sync service configured not to be run");
+            return;
+        }
+        log.info("Scheduling User sync service");
+        int delay = getDelay(PREF_USER_SYNC_SERVICE);
+        int period = getPeriod(PREF_USER_SYNC_SERVICE);
+        scheduler.schedule(new UserSync(), delay, period);
+    }
+
     private void startCalculateSubportalScoreService() {
         if ( !isSet(PREF_SUBPORTAL_SCORE_SETTER) ) {
             log.info("Update subportal score configured not to be calculated");
@@ -444,7 +463,7 @@ public class AbcInit extends HttpServlet implements Configurable {
 
         scheduler.scheduleAtFixedRate(new UpdateSubportalScore(), calendar.getTime(), 24*60*60*1000);
     }
-    
+
     private void startUpdateTopStatistics() {
         if ( !isSet(PREF_UPDATE_TOP_STATISTICS) ) {
             log.info("Top statistics updater configured not to run");
@@ -453,7 +472,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         log.info("Scheduling Top statistics updater");
         int delay = getDelay(PREF_UPDATE_TOP_STATISTICS);
         TimerTask task = new UpdateTopStatistics();
-        
+
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 3);
         calendar.set(Calendar.MINUTE, 15);
@@ -511,6 +530,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         services.put(PREF_UPDATE_STATISTICS, prefs.getBoolean(PREF_START + PREF_UPDATE_STATISTICS, true));
         services.put(PREF_JOB_OFFER_MANAGER, prefs.getBoolean(PREF_START + PREF_JOB_OFFER_MANAGER, false));
         services.put(PREF_USER_SCORE_SETTER, prefs.getBoolean(PREF_START + PREF_USER_SCORE_SETTER, false));
+        services.put(PREF_USER_SYNC_SERVICE, prefs.getBoolean(PREF_START + PREF_USER_SYNC_SERVICE, false));
         services.put(PREF_WEB_SERVICES, prefs.getBoolean(PREF_START + PREF_WEB_SERVICES, false));
 
         delays.put(PREF_POOL_MONITOR, prefs.getInt(PREF_POOL_MONITOR + PREF_DELAY, 60));
@@ -522,6 +542,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         delays.put(PREF_RSS_JOBPILOT, prefs.getInt(PREF_RSS_JOBPILOT + PREF_DELAY, 60));
         delays.put(PREF_RSS_JOBSCZ, prefs.getInt(PREF_RSS_JOBSCZ + PREF_DELAY, 60));
         delays.put(PREF_RSS_64BIT, prefs.getInt(PREF_RSS_64BIT + PREF_DELAY, 60));
+        delays.put(PREF_USER_SYNC_SERVICE, prefs.getInt(PREF_USER_SYNC_SERVICE + PREF_DELAY, 160));
         delays.put(PREF_UPDATE_TOP_STATISTICS, prefs.getInt(PREF_UPDATE_TOP_STATISTICS + PREF_DELAY, 60));
         delays.put(PREF_UPDATE_STATISTICS, prefs.getInt(PREF_UPDATE_STATISTICS + PREF_DELAY, 60));
         delays.put(PREF_JOB_OFFER_MANAGER, prefs.getInt(PREF_JOB_OFFER_MANAGER + PREF_DELAY, 60));
@@ -537,6 +558,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         periods.put(PREF_RSS_64BIT, prefs.getInt(PREF_RSS_64BIT + PREF_PERIOD, 60));
         periods.put(PREF_UPDATE_STATISTICS, prefs.getInt(PREF_UPDATE_STATISTICS + PREF_PERIOD, 60));
         periods.put(PREF_JOB_OFFER_MANAGER, prefs.getInt(PREF_JOB_OFFER_MANAGER + PREF_PERIOD, 60));
+        periods.put(PREF_USER_SYNC_SERVICE, prefs.getInt(PREF_USER_SYNC_SERVICE + PREF_PERIOD, 60));
 
         endpointUrlServices = prefs.get(PREF_USERS_DEPLOY_PATH, "/users");
     }

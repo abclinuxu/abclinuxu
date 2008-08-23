@@ -725,6 +725,9 @@
                                 <entry key="start.job.offer.manager" value="@START.PRACE.MANAGER@"/>
                                 <entry key="job.offer.manager.delay" value="180"/>
                                 <entry key="job.offer.manager.period" value="3600"/>
+                                <entry key="start.user.sync.service" value="@START.USER.SYNC.SERVICE@"/>
+                                <entry key="user.sync.service.delay" value="240"/>
+                                <entry key="user.sync.service.period" value="3600"/>
                                 <entry key="deploy.path.users" value="@URL.WS.USERS@"/>
                                 <entry key="update.top.statistics.delay" value="20"/>
                             </map>
