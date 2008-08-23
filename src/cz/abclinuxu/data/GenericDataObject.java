@@ -285,6 +285,12 @@ public abstract class GenericDataObject extends CommonObject {
         created = b.created;
         updated = b.updated;
         custom = b.custom;
+        date1 = b.date1;
+        date2 = b.date2;
+        numeric1 = b.numeric1;
+        numeric2 = b.numeric2;
+        string1 = b.string1;
+        string2 = b.string2;
     }
 
     public Object clone() {
