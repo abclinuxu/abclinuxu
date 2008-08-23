@@ -322,7 +322,7 @@ public class User extends CommonObject {
             return false;
         if (!Misc.same(password,p.password))
             return false;
-        if (!Misc.same(getDataAsString(),p.getDataAsString()))
+        if (!Misc.sameXml(getDataAsString(),p.getDataAsString()))
             return false;
         return true;
     }

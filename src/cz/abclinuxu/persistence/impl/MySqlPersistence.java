@@ -99,9 +99,9 @@ public class MySqlPersistence implements Persistence {
                 StringBuffer sb = new StringBuffer();
                 appendCreateParams(obj,sb,conditions);
                 statement = con.prepareStatement(sb.toString());
-                for ( int i=0; i<conditions.size(); i++ ) {
+                for (int i = 0; i < conditions.size(); i++) {
                     Object o = conditions.get(i);
-                    statement.setObject(i+1,o);
+                    statement.setObject(i + 1, o);
                 }
 
                 int result = statement.executeUpdate();
@@ -905,13 +905,27 @@ public class MySqlPersistence implements Persistence {
     private void appendCreateParams(GenericObject obj, StringBuffer sb, List conditions ) {
         if (obj instanceof GenericDataObject) {
             GenericDataObject gdo = (GenericDataObject) obj;
-            sb.append("INSERT INTO ").append(getTable(obj)).append(" (cislo,typ,podtyp,data) VALUES (?,?,?,?)");
-            if ( !(obj instanceof Category || obj instanceof Data) && gdo.getType()==0 ) {
-                log.warn("Type not set! "+obj.toString());
+            sb.append("INSERT INTO ").append(getTable(obj)).append(" (cislo,typ,podtyp,numeric1,numeric2,string1,string2,date1,date2,data) " +
+                    "VALUES (?,?,?,?,?,?,?,?,?,?)");
+            if ((obj instanceof Item || obj instanceof Record) && gdo.getType() == 0) {
+                log.warn("Type not set! " + obj.toString());
             }
             conditions.add(gdo.getId());
             conditions.add(gdo.getType());
             conditions.add(gdo.getSubType());
+            conditions.add(gdo.getNumeric1());
+            conditions.add(gdo.getNumeric2());
+            conditions.add(gdo.getString1());
+            conditions.add(gdo.getString2());
+            if ((gdo.getDate1() != null))
+                conditions.add(new Timestamp(gdo.getDate1().getTime()));
+            else
+                conditions.add(null);
+            if ((gdo.getDate2() != null))
+                conditions.add(new Timestamp(gdo.getDate2().getTime()));
+            else
+                conditions.add(null);
+
             conditions.add(gdo.getDataAsString().getBytes());
 
         } else if (obj instanceof Relation) {
@@ -1148,8 +1162,9 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("SELECT P.cislo,P.typ,P.podtyp,P.data,S.pridal,S.vytvoreno,S.zmeneno,S.jmeno,S.skupina,S.prava FROM "
-                    + getTable(obj) + " P, spolecne S WHERE S.cislo=P.cislo AND S.typ=? AND P.cislo=?");
+            statement = con.prepareStatement("SELECT P.cislo,P.typ,P.podtyp,P.numeric1,P.numeric2,P.string1,P.string2,P.date1,P.date2,P.data" +
+                    ",S.pridal,S.vytvoreno,S.zmeneno,S.jmeno,S.skupina,S.prava FROM " + getTable(obj) + " P, spolecne S WHERE " +
+                    "S.cislo=P.cislo AND S.typ=? AND P.cislo=?");
             statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
 
@@ -1192,8 +1207,9 @@ public class MySqlPersistence implements Persistence {
         GenericDataObject representant = (GenericDataObject) objs.iterator().next();
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("SELECT P.cislo,P.typ,P.podtyp,P.data,S.pridal,S.vytvoreno,S.zmeneno,S.jmeno,S.skupina,S.prava FROM "
-                    + getTable(representant) + "  P, spolecne S WHERE S.cislo=P.cislo AND S.typ=? AND P.cislo IN " + Misc.getInCondition(objs.size()));
+            statement = con.prepareStatement("SELECT P.cislo,P.typ,P.podtyp,P.numeric1,P.numeric2,P.string1,P.string2,P.date1,P.date2,P.data," +
+                    "S.pridal,S.vytvoreno,S.zmeneno,S.jmeno,S.skupina,S.prava FROM " + getTable(representant) + "  P, spolecne S WHERE " +
+                    "S.cislo=P.cislo AND S.typ=? AND P.cislo IN " + Misc.getInCondition(objs.size()));
             int i = 1;
             for (Iterator iter = objs.iterator(); iter.hasNext();) {
                 obj = (GenericDataObject) iter.next();
@@ -1240,17 +1256,31 @@ public class MySqlPersistence implements Persistence {
     private void syncGenericDataObjectFromRS(GenericDataObject item, ResultSet resultSet) throws SQLException {
         item.setType(resultSet.getInt(2));
         item.setSubType(resultSet.getString(3));
+        Object object = resultSet.getObject(4);
+        if (object != null)
+            item.setNumeric1(((Number)object).intValue());
+        object = resultSet.getObject(5);
+        if (object != null)
+            item.setNumeric2(((Number) object).intValue());
+        item.setString1(resultSet.getString(6));
+        item.setString2(resultSet.getString(7));
+        Timestamp timestamp = resultSet.getTimestamp(8);
+        if (timestamp != null)
+            item.setDate1(new java.util.Date(timestamp.getTime()));
+        timestamp = resultSet.getTimestamp(9);
+        if (timestamp != null)
+            item.setDate2(new java.util.Date(timestamp.getTime()));
 
-        String tmp = resultSet.getString(4);
+        String tmp = resultSet.getString(10);
         tmp = insertEncoding(tmp);
         item.setData(tmp);
 
-        item.setOwner(resultSet.getInt(5));
-        item.setCreated(new java.util.Date(resultSet.getTimestamp(6).getTime()));
-        item.setUpdated(new java.util.Date(resultSet.getTimestamp(7).getTime()));
-        item.setTitle(resultSet.getString(8));
-		item.setGroup(resultSet.getInt(9));
-		item.setPermissions(resultSet.getInt(10));
+        item.setOwner(resultSet.getInt(11));
+        item.setCreated(new java.util.Date(resultSet.getTimestamp(12).getTime()));
+        item.setUpdated(new java.util.Date(resultSet.getTimestamp(13).getTime()));
+        item.setTitle(resultSet.getString(14));
+		item.setGroup(resultSet.getInt(15));
+		item.setPermissions(resultSet.getInt(16));
         item.setInitialized(true);
     }
 

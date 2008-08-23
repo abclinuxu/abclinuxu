@@ -150,7 +150,7 @@ public abstract class GenericObject implements Cloneable {
      * that's not enough for unit test.
      */
     public boolean preciseEquals(Object obj) {
-        return super.equals(obj);
+        return id == ((GenericObject)obj).getId();
     }
 
     /**

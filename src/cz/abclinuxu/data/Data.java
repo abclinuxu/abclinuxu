@@ -18,8 +18,6 @@
  */
 package cz.abclinuxu.data;
 
-import cz.abclinuxu.utils.Misc;
-
 /**
  * Class for storage various data objects like images, logs, configuration files ..
  * Subtype shall contain content type, if known.
@@ -42,14 +40,6 @@ public class Data extends GenericDataObject {
 
     public String toString() {
         return "Data: id=" + id;
-    }
-
-    public boolean preciseEquals(Object o) {
-        if (!(o instanceof Data)) return false;
-        if (id != ((GenericObject) o).getId()) return false;
-        if (type != ((GenericDataObject) o).type) return false;
-        if (owner != ((GenericDataObject) o).owner) return false;
-        return Misc.same(getDataAsString(), ((GenericDataObject) o).getDataAsString());
     }
 
     public int hashCode() {

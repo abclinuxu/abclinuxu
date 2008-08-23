@@ -18,7 +18,6 @@
  */
 package cz.abclinuxu.data;
 
-import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.servlets.Constants;
 
 public class Item extends GenericDataObject {
@@ -131,14 +130,6 @@ public class Item extends GenericDataObject {
         if (title != null)
             sb.append(", title=").append(title);
         return sb.toString();
-    }
-
-    public boolean preciseEquals(Object o) {
-        if ( !( o instanceof Item) ) return false;
-        if ( id!=((GenericObject)o).getId() ) return false;
-        if ( type!=((GenericDataObject)o).type ) return false;
-        if ( owner!=((GenericDataObject)o).owner ) return false;
-        return Misc.same(getDataAsString(), ((GenericDataObject) o).getDataAsString());
     }
 
     public int hashCode() {

@@ -18,8 +18,6 @@
  */
 package cz.abclinuxu.data;
 
-import cz.abclinuxu.utils.Misc;
-
 public class Record extends GenericDataObject {
     /** part of the article, each article is consisted from article header and at least one record */
     public static final int ARTICLE = 3;
@@ -48,15 +46,6 @@ public class Record extends GenericDataObject {
         }
         sb.append(": id=").append(id);
         return sb.toString();
-    }
-
-    public boolean preciseEquals(Object o) {
-        if ( !( o instanceof Record) ) return false;
-        if ( id!=((GenericObject)o).getId() ) return false;
-        if ( type!=((GenericDataObject)o).type ) return false;
-        if ( owner!=((GenericDataObject)o).owner ) return false;
-        if ( ! Misc.same(getDataAsString(),((GenericDataObject)o).getDataAsString()) ) return false;
-        return true;
     }
 
     public int hashCode() {

@@ -497,6 +497,9 @@ public class TestMySqlPersistance extends TestCase {
         item.setType(Item.SOFTWARE);
         item.setSubType("podtyp");
         item.setOwner(2);
+        item.setString1("s1");
+        item.setDate2(new Date(1000000));
+        item.setNumeric1(1234);
         item.setData("<data><element>text</element></data>");
         persistence.create(item);
 
@@ -551,21 +554,30 @@ public class TestMySqlPersistance extends TestCase {
         user.setLogin("login" + random.nextInt());
         user.setEmail("email@server.com");
         user.setName("name" + random.nextInt());
-        user.setNick("nick" + random.nextLong());
+        user.setNick("nick" + random.nextInt());
         user.setData("<data><element>text</element></data>");
         persistence.create(user);
 
         persistence.clearCache();
 
         Record record2 = (Record) persistence.findById(record);
+        assertTrue("difference found", record2.preciseEquals(record));
         Item item2 = (Item) persistence.findById(item);
+        assertTrue("difference found", item2.preciseEquals(item));
         Category category2 = (Category) persistence.findById(category);
+        assertTrue("difference found", category2.preciseEquals(category));
         Data data2 = (Data) persistence.findById(data);
+        assertTrue("difference found", data2.preciseEquals(data));
         Server server2 = (Server) persistence.findById(server);
+        assertTrue("difference found", server2.preciseEquals(server));
         Link link2 = (Link) persistence.findById(link);
+        assertTrue("difference found", link2.preciseEquals(link));
         Poll poll2 = (Poll) persistence.findById(poll);
+        assertTrue("difference found", poll2.preciseEquals(poll));
         Relation relation2 = (Relation) persistence.findById(relation);
+        assertTrue("difference found", relation2.preciseEquals(relation));
         User user2 = (User) persistence.findById(user);
+        assertTrue("difference found", user2.preciseEquals(user));
 
         record2.setOwner(user.getId());
         record2.setData("<data><element>text2</element></data>");

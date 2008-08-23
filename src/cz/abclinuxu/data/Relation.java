@@ -183,8 +183,11 @@ public final class Relation extends GenericObject implements XMLContainer {
     public boolean preciseEquals(Object obj) {
         if ( ! (obj instanceof Relation ) ) return false;
         Relation o = (Relation) obj;
-        if ( upper==o.getUpper() && parent==o.getParent() && child==o.getChild() ) return true;
-        return false;
+        if (upper != o.getUpper())
+            return false;
+        if (! parent.equals(o.getParent()))
+            return false;
+        return child.equals(o.getChild());
     }
 
     /**

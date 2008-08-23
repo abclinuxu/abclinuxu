@@ -18,10 +18,6 @@
  */
 package cz.abclinuxu.data;
 
-import cz.abclinuxu.utils.Misc;
-import org.dom4j.Element;
-import org.dom4j.Document;
-
 /**
  * Category is a node of the tree
  */
@@ -60,15 +56,6 @@ public class Category extends GenericDataObject {
         if (title != null)
             sb.append(", title=").append(title);
         return sb.toString();
-    }
-
-    public boolean preciseEquals(Object o) {
-        if ( !( o instanceof Category) ) return false;
-        if ( id!=((GenericObject)o).getId() ) return false;
-        if ( type!=((GenericDataObject)o).type ) return false;
-        if ( owner!=((GenericDataObject)o).owner ) return false;
-        if ( ! Misc.same(getDataAsString(),((GenericDataObject)o).getDataAsString()) ) return false;
-        return true;
     }
 
     public int hashCode() {

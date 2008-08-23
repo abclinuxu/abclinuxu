@@ -229,6 +229,24 @@ public class Misc {
     }
 
     /**
+     * Compares two objects.
+     * @return true, if both parameters are null or are equal.
+     */
+    public static boolean sameXml(String first, String second) {
+        if ( first != null ) {
+            if ( second == null )
+                return false;
+
+            if (first.startsWith("<?xml"))
+                first = first.substring(first.indexOf('\n') + 1);
+            if (second.startsWith("<?xml"))
+                second = second.substring(0, second.indexOf('\n') + 1);
+            return first.equals(second);
+        }
+        return second == null;
+    }
+
+    /**
      * Removes trailing spaces from the argument. If s has length 0,
      * null is returned otherwise trimmed version is returned.
      * @param s text to be trimmed

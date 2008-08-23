@@ -18,7 +18,6 @@
  */
 package cz.abclinuxu.data;
 
-import cz.abclinuxu.servlets.Constants;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.Method;
@@ -50,7 +49,7 @@ public abstract class GenericDataObject extends CommonObject {
     /** last update of this object */
     protected Date updated;
     // generic purpose properties
-    protected int numeric1, numeric2;
+    protected Integer numeric1, numeric2;
     protected String string1, string2;
     protected Date date1, date2;
 
@@ -188,22 +187,22 @@ public abstract class GenericDataObject extends CommonObject {
     /**
      * @return first generic purpose number property
      */
-    public int getNumeric1() {
+    public Integer getNumeric1() {
         return numeric1;
     }
 
-    public void setNumeric1(int numeric1) {
+    public void setNumeric1(Integer numeric1) {
         this.numeric1 = numeric1;
     }
 
     /**
      * @return second generic purpose number property
      */
-    public int getNumeric2() {
+    public Integer getNumeric2() {
         return numeric2;
     }
 
-    public void setNumeric2(int numeric2) {
+    public void setNumeric2(Integer numeric2) {
         this.numeric2 = numeric2;
     }
 
@@ -332,7 +331,19 @@ public abstract class GenericDataObject extends CommonObject {
             return false;
         if ( ! Misc.same(subType, p.subType) )
             return false;
-        if ( ! Misc.same(getDataAsString(), p.getDataAsString()) )
+        if ( ! Misc.same(string1, p.string1) )
+            return false;
+        if ( ! Misc.same(string2, p.string2) )
+            return false;
+        if ( ! Misc.same(numeric1, p.numeric1) )
+            return false;
+        if ( ! Misc.same(numeric2, p.numeric2) )
+            return false;
+        if ( ! Misc.same(date1, p.date1) )
+            return false;
+        if ( ! Misc.same(date2, p.date2) )
+            return false;
+        if ( ! Misc.sameXml(getDataAsString(), p.getDataAsString()) )
             return false;
         return true;
     }
@@ -351,7 +362,21 @@ public abstract class GenericDataObject extends CommonObject {
         GenericDataObject p = (GenericDataObject) obj;
         if (type != p.type)
             return false;
-        if (! Misc.same(subType, p.subType))
+        if (!Misc.same(title, p.title))
+            return false;
+        if (!Misc.same(subType, p.subType))
+            return false;
+        if (!Misc.same(string1, p.string1))
+            return false;
+        if (!Misc.same(string2, p.string2))
+            return false;
+        if (!Misc.same(numeric1, p.numeric1))
+            return false;
+        if (!Misc.same(numeric2, p.numeric2))
+            return false;
+        if (!Misc.same(date1, p.date1))
+            return false;
+        if (!Misc.same(date2, p.date2))
             return false;
         return Misc.same(custom, p.custom);
     }

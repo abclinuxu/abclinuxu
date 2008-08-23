@@ -114,6 +114,10 @@ public class Server extends GenericObject {
         return Misc.same(url, p.url);
     }
 
+    public boolean preciseEquals(Object obj) {
+        return contentEquals((Server)obj);
+    }
+
     public int hashCode() {
         String tmp = "Server"+id;
         return tmp.hashCode();
