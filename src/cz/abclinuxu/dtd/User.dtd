@@ -58,10 +58,18 @@ verze 2.0
 <!ELEMENT hp_all_stories (#PCDATA)> <!-- yes or no, whether to display all stories, including banned by administrator -->
 <!ELEMENT rte (#PCDATA)> <!-- textarea or wysiwyg, this settings controls rich text editor component behaviour -->
 
-<!ELEMENT system (registration_date?,last_login_date?,group?)>
+<!ELEMENT system (registration_date?,group?)>
 <!ELEMENT registration_date (#PCDATA)> <!-- ISO format, kdy se zaregistroval -->
-<!ELEMENT last_login_date (#PCDATA)> <!-- ISO format, kdy se naposledy prihlasil -->
 <!ELEMENT group (#PCDATA)> <!-- integer, id of group, to which user belongs -->
 
 <!ELEMENT roles (role+)>
 <!ELEMENT role (#PCDATA)> <!-- id of role, see Roles.java -->
+
+<!--
+
+Deprecated properties:
+
+/data/system/last_login_date
+/data/system/author_id
+
+-->

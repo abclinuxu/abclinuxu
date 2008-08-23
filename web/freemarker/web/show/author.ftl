@@ -5,7 +5,7 @@
 <#assign autor = RELATION.child, name = TOOL.xpath(autor, "/data/firstname")?default("UNDEFINED"),
          surname = TOOL.xpath(autor, "/data/surname")?default("UNDEFINED"),
          nickname = TOOL.xpath(autor, "/data/nickname")?default("UNDEFINED"),
-         uid = autor.getIntProperty("user")?default(0)>
+         uid = autor.numeric1?default(0)>
 
 <h1>
     Autor

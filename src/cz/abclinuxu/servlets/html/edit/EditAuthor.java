@@ -22,7 +22,6 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Category;
-import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -37,7 +36,6 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.freemarker.Tools;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -47,7 +45,6 @@ import org.dom4j.Node;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.Collections;
 import static cz.abclinuxu.servlets.Constants.PARAM_RELATION;
 import static cz.abclinuxu.servlets.Constants.PARAM_NAME;
 
@@ -66,6 +63,7 @@ public class EditAuthor implements AbcAction {
     public static final String PARAM_PHONE = "phone";
     public static final String PARAM_ADDRESS = "address";
     public static final String PARAM_UID = "uid";
+    public static final String PARAM_LOGIN = "login";
     public static final String PARAM_PREVIEW = "preview";
 
     public static final String VAR_RELATION = "RELATION";
@@ -83,7 +81,7 @@ public class EditAuthor implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 		Relation parent = new Relation(Constants.REL_AUTHORS);
-		
+
 		persistence.synchronize(parent);
 
         if (ServletUtils.handleMaintainance(request, env)) {
@@ -99,18 +97,18 @@ public class EditAuthor implements AbcAction {
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
 		Permissions permissions = Tools.permissionsFor(user, parent);
-		
+
         if (action.equals(ACTION_ADD)) {
 			if (!permissions.canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
 			return actionAddStep1(request, response, env);
 		}
 
         if (action.equals(ACTION_ADD_STEP2)) {
 			if (!permissions.canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
 			ActionProtector.ensureContract(request, EditAuthor.class, true, true, true, false);
 			return actionAddStep2(request, response, env, true);
         }
@@ -122,11 +120,11 @@ public class EditAuthor implements AbcAction {
         persistence.synchronize(relation);
         persistence.synchronize(relation.getChild());
         env.put(VAR_RELATION,relation);
-		
+
 		// since we're editing an existing item
 		// we'll check permissions against that
 		permissions = Tools.permissionsFor(user, relation);
-		
+
 		if (!permissions.canModify())
 			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -149,16 +147,14 @@ public class EditAuthor implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
-		Relation parent = new Relation(Constants.REL_AUTHORS);
-		
-		Tools.sync(parent);
+		Relation parent = (Relation) persistence.findById(new Relation(Constants.REL_AUTHORS));
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         Item item = new Item(0, Item.AUTHOR);
         item.setData(document);
         item.setOwner(user.getId());
-		
+
 		Category cat = (Category) parent.getChild();
 		item.setGroup(cat.getGroup());
 		item.setPermissions(cat.getPermissions());
@@ -168,7 +164,7 @@ public class EditAuthor implements AbcAction {
         canContinue &= setFirstname(params, root);
         canContinue &= setNickname(params, root);
         canContinue &= setBirthNumber(params, root);
-        canContinue &= setUserId(params, item);
+        canContinue &= setUserId(params, item, env);
         canContinue &= setAccountNumber(params, root);
         canContinue &= setEmail(params, root);
         canContinue &= setPhone(params, root);
@@ -192,9 +188,6 @@ public class EditAuthor implements AbcAction {
 
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
-
-        associateWithUser(root, persistence, relation);
-        TagTool.assignDetectedTags(item, user);
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -221,9 +214,9 @@ public class EditAuthor implements AbcAction {
         node = root.element("birthNumber");
         if (node != null)
             params.put(PARAM_BIRTH_NUMBER, node.getText());
-        Integer user = item.getIntProperty(Constants.PROPERTY_USER);
+        Integer user = item.getNumeric1();
         if (user != null)
-            params.put(PARAM_UID, user);
+            params.put(PARAM_LOGIN, user);
         node = root.element("accountNumber");
         if (node != null)
             params.put(PARAM_ACCOUNT_NUMBER, node.getText());
@@ -254,7 +247,7 @@ public class EditAuthor implements AbcAction {
         canContinue &= setSurname(params, root, env);
         canContinue &= setFirstname(params, root);
         canContinue &= setNickname(params, root);
-        canContinue &= setUserId(params, item);
+        canContinue &= setUserId(params, item, env);
         canContinue &= setBirthNumber(params, root);
         canContinue &= setAccountNumber(params, root);
         canContinue &= setEmail(params, root);
@@ -281,8 +274,6 @@ public class EditAuthor implements AbcAction {
             persistence.update(relation);
         }
 
-        associateWithUser(root, persistence, relation);
-
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
@@ -302,24 +293,6 @@ public class EditAuthor implements AbcAction {
 
         String url = UrlUtils.PREFIX_AUTHORS + "/" + URLManager.enforceRelativeURL(sb.toString());
         return url;
-    }
-
-    /**
-     * Creates link to user
-     */
-    private void associateWithUser(Element root, Persistence persistence, Relation relation) {
-        String uid = root.elementText("uid");
-        if (uid != null) {
-            int id = Misc.parseInt(uid, 0);
-            User associatedUser = (User) persistence.findById(new User(id));
-            Document document = associatedUser.getData();
-            Element element = (Element) document.selectSingleNode("/system/author_id");
-            if (element == null) {
-                element = DocumentHelper.makeElement(document, "/system/author_id");
-                element.setText(Integer.toString(relation.getId()));
-                persistence.update(associatedUser);
-            }
-        }
     }
 
     /**
@@ -439,15 +412,20 @@ public class EditAuthor implements AbcAction {
      * @param item author's item to be updated
      * @return false, if there is a major error.
      */
-    private boolean setUserId(Map params, Item item) {
-        String tmp = (String) params.get(PARAM_UID);
-        if (Misc.empty(tmp))
-            item.removeProperty(Constants.PROPERTY_USER);
-        else {
-            tmp = Misc.filterDangerousCharacters(tmp);
-            item.setProperty(Constants.PROPERTY_USER, Collections.singleton(tmp));
+    private boolean setUserId(Map params, Item item, Map env) {
+        String login = (String) params.get(PARAM_LOGIN);
+        if (Misc.empty(login)) {
+            item.setNumeric1(null);
+            item.setString1(null);
+        } else {
+            Integer uid = SQLTool.getInstance().getUserByLogin(login);
+            if (uid == null) {
+                ServletUtils.addError(PARAM_UID, "Zadejte login!", env, null);
+                return false;
+            }
+            item.setNumeric1(uid);
+            item.setString1(login);
         }
-
         return true;
     }
 

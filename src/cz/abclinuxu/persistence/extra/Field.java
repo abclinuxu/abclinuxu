@@ -28,62 +28,80 @@ import java.util.Collections;
  * Constants for database columns.
  */
 public class Field {
-    public static final Field CREATED = new Field("CREATED", "S",
+    public static final Field CREATED = new Field(Id.CREATED, "S",
             new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.POLL,
                                            PersistenceMapping.Table.DATA, PersistenceMapping.Table.COMMENT});
-    public static final Field UPDATED = new Field("UPDATED", "S",
+    public static final Field UPDATED = new Field(Id.UPDATED, "S",
             new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.POLL,
                                            PersistenceMapping.Table.DATA});
-    public static final Field ID = new Field("ID", null,
+    public static final Field ID = new Field(Id.ID, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.POLL,
                                            PersistenceMapping.Table.COMMENT, PersistenceMapping.Table.RELATION,
                                            PersistenceMapping.Table.SERVER, PersistenceMapping.Table.LINK,
                                            PersistenceMapping.Table.USER, PersistenceMapping.Table.DATA});
-    public static final Field TITLE = new Field("TITLE", "S",
+    public static final Field TITLE = new Field(Id.TITLE, "S",
             new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
-    public static final Field DATA = new Field("DATA", null,
+    public static final Field DATA = new Field(Id.DATA, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.POLL,
                                            PersistenceMapping.Table.COMMENT, PersistenceMapping.Table.RELATION,
                                            PersistenceMapping.Table.USER, PersistenceMapping.Table.DATA});
-    public static final Field TYPE = new Field("TYPE", null,
+    public static final Field TYPE = new Field(Id.TYPE, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.STATISTICS,
                                            PersistenceMapping.Table.ACTION, PersistenceMapping.Table.DATA} );
-    public static final Field SUBTYPE = new Field("SUBTYPE", null,
+    public static final Field SUBTYPE = new Field(Id.SUBTYPE, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
-    public static final Field OWNER = new Field("OWNER", "S",
+    public static final Field NUMERIC1 = new Field(Id.NUMERIC1, null,
+            new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
+                                           PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
+    public static final Field NUMERIC2 = new Field(Id.NUMERIC2, null,
+            new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
+                                           PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
+    public static final Field STRING1 = new Field(Id.STRING1, null,
+            new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
+                                           PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
+    public static final Field STRING2 = new Field(Id.STRING2, null,
+            new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
+                                           PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
+    public static final Field DATE1 = new Field(Id.DATE1, null,
+            new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
+                                           PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
+    public static final Field DATE2 = new Field(Id.DATE2, null,
+            new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
+                                           PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
+    public static final Field OWNER = new Field(Id.OWNER, "S",
             new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.POLL,
                                            PersistenceMapping.Table.LINK, PersistenceMapping.Table.DATA});
-    public static final Field UPPER = new Field("UPPER", "R",
+    public static final Field UPPER = new Field(Id.UPPER, "R",
             new PersistenceMapping.Table[]{PersistenceMapping.Table.RELATION});
-    public static final Field PARENT_TYPE = new Field("PARENT_TYPE", "R",
+    public static final Field PARENT_TYPE = new Field(Id.PARENT_TYPE, "R",
             new PersistenceMapping.Table[]{PersistenceMapping.Table.RELATION});
-    public static final Field PARENT = new Field("PARENT", "R",
+    public static final Field PARENT = new Field(Id.PARENT, "R",
             new PersistenceMapping.Table[]{PersistenceMapping.Table.RELATION});
-    public static final Field CHILD_TYPE = new Field("CHILD_TYPE", "R",
+    public static final Field CHILD_TYPE = new Field(Id.CHILD_TYPE, "R",
             new PersistenceMapping.Table[]{PersistenceMapping.Table.RELATION});
-    public static final Field CHILD = new Field("CHILD", "R",
+    public static final Field CHILD = new Field(Id.CHILD, "R",
             new PersistenceMapping.Table[]{PersistenceMapping.Table.RELATION});
-    public static final Field DAY = new Field("DAY", null,
+    public static final Field DAY = new Field(Id.DAY, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.STATISTICS});
-    public static final Field WHEN = new Field("WHEN", null,
+    public static final Field WHEN = new Field(Id.WHEN, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.LAST_SEEN_COMMENT});
-    public static final Field LOGIN = new Field("LOGIN", null,
+    public static final Field LOGIN = new Field(Id.LOGIN, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.USER});
 
-    private final String myName; // for debug only
+    private final Id id;
     private Set<PersistenceMapping.Table> compatibility;
     private String defaultTableNick;
 
-    private Field(String name, String defaultMapping, PersistenceMapping.Table[] tables) {
-        myName = name;
+    private Field(Id id, String defaultMapping, PersistenceMapping.Table[] tables) {
+        this.id = id;
         if (tables == null) {
             compatibility = Collections.emptySet();
             return;
@@ -112,7 +130,36 @@ public class Field {
         return defaultTableNick;
     }
 
+    public Id getId() {
+        return id;
+    }
+
     public String toString() {
-        return myName;
+        return id.toString();
+    }
+
+    public enum Id {
+        CHILD,
+        CHILD_TYPE,
+        CREATED,
+        DATA,
+        DATE1,
+        DATE2,
+        DAY,
+        ID,
+        LOGIN,
+        NUMERIC1,
+        NUMERIC2,
+        OWNER,
+        PARENT,
+        PARENT_TYPE,
+        STRING1,
+        STRING2,
+        SUBTYPE,
+        TITLE,
+        TYPE,
+        UPDATED,
+        UPPER,
+        WHEN
     }
 }

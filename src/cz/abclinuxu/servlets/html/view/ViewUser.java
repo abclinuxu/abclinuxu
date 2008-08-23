@@ -93,7 +93,7 @@ public class ViewUser implements AbcAction {
             Integer id = SQLTool.getInstance().getUserByLogin(login);
             if (id != null)
                 profile = new User(id);
-            
+
             if (action == null && matcher.group(2) != null)
                 action = matcher.group(2);
         } else {
@@ -121,10 +121,10 @@ public class ViewUser implements AbcAction {
             return ServletUtils.showErrorPage("Uživatel nebyl nalezen nebo byl zadán nesprávný parametr!", env, request);
 
         profile = (User) persistence.findById(profile);
-        
+
         if (ACTION_BOOKMARKS.equals(action))
             return EditBookmarks.processList(request, response, env, profile);
-        
+
         env.put(VAR_PROFILE, profile);
         env.put(VAR_INVALID_EMAIL, ! Misc.hasValidEmail(profile));
 
@@ -200,10 +200,9 @@ public class ViewUser implements AbcAction {
         User user = (User) env.get(VAR_PROFILE);
 
         Map counts = new HashMap();
-        Set<String> property = Collections.singleton(Integer.toString(user.getId()));
-        Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_USER, property);
-        List<Relation> authors = sqlTool.findItemRelationsWithTypeWithFilters(Item.AUTHOR, null, filters);
-        if (authors.size() != 0) {
+        Qualifier[] qualifiers = new Qualifier[]{ new CompareCondition(Field.NUMERIC1, Operation.EQUAL, user.getId())};
+        List<Relation> authors = sqlTool.findItemRelationsWithType(Item.AUTHOR, qualifiers);
+        if (! authors.isEmpty()) {
             Relation author = (Relation) persistence.findById(authors.get(0));
             counts.put("article", sqlTool.countArticleRelationsByAuthor(author.getId()));
             env.put(VAR_AUTHOR, author);

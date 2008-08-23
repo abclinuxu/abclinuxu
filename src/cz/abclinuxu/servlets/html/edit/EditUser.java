@@ -27,6 +27,10 @@ import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.CompareCondition;
+import cz.abclinuxu.persistence.extra.Field;
+import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.ldap.LdapUserManager;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
@@ -55,7 +59,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.dom4j.Attribute;
 import org.htmlparser.util.ParserException;
 
 import javax.mail.internet.AddressException;
@@ -1133,9 +1136,8 @@ public class EditUser implements AbcAction {
             boolean unused = true;
             SQLTool sqlTool = SQLTool.getInstance();
 
-            Set<String> property = Collections.singleton(Integer.toString(user1.getId()));
-            Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_USER, property);
-            List<Relation> authors = sqlTool.findItemRelationsWithTypeWithFilters(Item.AUTHOR, null, filters);
+            Qualifier[] qualifiers = new Qualifier[]{new CompareCondition(Field.LOGIN, Operation.EQUAL, user1.getId())};
+            List<Relation> authors = sqlTool.findItemRelationsWithType(Item.AUTHOR, qualifiers);
 
             unused &= authors.isEmpty();
             unused &= sqlTool.countNewsRelationsByUser(user1.getId()) == 0;

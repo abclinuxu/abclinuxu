@@ -307,7 +307,6 @@ public interface Constants {
     String PROPERTY_BLOG_DIGEST = "digest";
     String PROPERTY_BANNED_BLOG = "banned_blog";
     String PROPERTY_AUTHOR = "author";
-    String PROPERTY_USER = "user";
     String PROPERTY_SCORE = "score";
     String PROPERTY_TICKET = "ticket";
     String PROPERTY_USED_BY = "used_by";

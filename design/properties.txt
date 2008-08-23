@@ -1,3 +1,6 @@
+The goal of this file is to map usage of table vlastnost, which is used to
+persist properties variable of class CommonObject.
+
 Item.SOFTWARE
 =============
 
@@ -41,14 +44,6 @@ name: author
 value: id of relation to article's author
 mapping: 1:n
 purpose: defines author(s) of that article
-
-ITEM.AUTHOR
-============
-
-name: user
-value: id of user
-mapping: 1:1
-purpose: defines relationship between author and user
 
 ITEM.SCREENSHOT
 ============

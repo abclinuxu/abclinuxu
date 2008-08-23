@@ -237,33 +237,67 @@ public class QualifierTool {
     private static void appendField(Field field, Map<Field, String> fieldMapping, String defaultTableNick, StringBuilder sb) {
         addTableNick(field, fieldMapping, defaultTableNick, sb);
 
-        if (field == Field.CREATED)
-            sb.append("vytvoreno");
-        else if (field == Field.UPDATED)
-            sb.append("zmeneno");
-        else if (field == Field.ID)
-            sb.append("cislo");
-        else if (field == Field.TYPE)
-            sb.append("typ");
-        else if (field == Field.SUBTYPE)
-            sb.append("podtyp");
-        else if (field == Field.OWNER)
-            sb.append("pridal");
-        else if (field == Field.UPPER)
-            sb.append("predchozi");
-        else if (field == Field.DAY)
-            sb.append("den");
-        else if (field == Field.PARENT_TYPE)
-            sb.append("typ_predka");
-        else if (field == Field.PARENT)
-            sb.append("predek");
-        else if (field == Field.CHILD_TYPE)
-            sb.append("typ_potomka");
-        else if (field == Field.CHILD)
-            sb.append("potomek");
-        else if (field == Field.LOGIN)
-            sb.append("login");
-        else if (field == Field.DATA)
-            sb.append("data");
+        switch (field.getId()) {
+            case CHILD:
+                sb.append("potomek");
+                break;
+            case CHILD_TYPE:
+                sb.append("typ_potomka");
+                break;
+            case CREATED:
+                sb.append("vytvoreno");
+                break;
+            case DATA:
+                sb.append("data");
+                break;
+            case DATE1:
+                sb.append("date1");
+                break;
+            case DATE2:
+                sb.append("date2");
+                break;
+            case DAY:
+                sb.append("den");
+                break;
+            case ID:
+                sb.append("cislo");
+                break;
+            case LOGIN:
+                sb.append("login");
+                break;
+            case OWNER:
+                sb.append("pridal");
+                break;
+            case NUMERIC1:
+                sb.append("numeric1");
+                break;
+            case NUMERIC2:
+                sb.append("numeric2");
+                break;
+            case PARENT:
+                sb.append("predek");
+                break;
+            case PARENT_TYPE:
+                sb.append("typ_predka");
+                break;
+            case STRING1:
+                sb.append("string1");
+                break;
+            case STRING2:
+                sb.append("string2");
+                break;
+            case SUBTYPE:
+                sb.append("podtyp");
+                break;
+            case TYPE:
+                sb.append("typ");
+                break;
+            case UPDATED:
+                sb.append("zmeneno");
+                break;
+            case UPPER:
+                sb.append("predchozi");
+                break;
+        }
     }
 }

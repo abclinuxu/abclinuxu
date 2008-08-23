@@ -67,10 +67,10 @@
         </tr>
 
         <tr>
-            <td width="60">Číslo uživatele</td>
+            <td width="60">Login uživatele</td>
             <td>
-            <input type="text" name="uid" value="${PARAMS.uid?if_exists}" size="24" tabindex="9">
-            <div class="error">${ERRORS.uid?if_exists}</div>
+            <input type="text" name="login" value="${PARAMS.login?if_exists}" size="24" tabindex="9">
+            <div class="error">${ERRORS.login?if_exists}</div>
             </td>
         </tr>
 

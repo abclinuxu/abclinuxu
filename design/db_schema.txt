@@ -1,0 +1,13 @@
+Database schema description, especially of columns with context sensitive meaning.
+
+
+ITEM.AUTHOR
+============
+
+string1: login of user
+purpose: defines relationship between author and user, this can be used for cross-database/LDAP queries
+
+numeric1: id of user in table uzivatel
+purpose: defines relationship between author and user, cache for easy lookup
+
+

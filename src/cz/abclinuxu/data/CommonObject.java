@@ -120,7 +120,10 @@ public class CommonObject extends GenericObject implements XMLContainer {
             return null;
         String value = (String) set.iterator().next();
         int result = Misc.parseInt(value, -1);
-        return (result != -1) ? result : null;
+        if ((result != -1))
+            return result;
+        else
+            return null;
     }
 
     /**
