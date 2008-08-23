@@ -144,10 +144,10 @@
     </ul>
   </div>
 
-  <div class="s_nadpis">Nej blogů na AbcLinuxu</div>
+    <div class="s_nadpis"><a href="/nej">Nej blogů na AbcLinuxu</a></div>
     <div class="s_sekce">
         <#if VARS.recentMostReadStories?exists>
-            <b>Nejčtenější zápisky posledního měsíce</b>
+            <b>Nejčtenější za poslední měsíc</b>
             <ul>
                 <#list VARS.recentMostReadStories.entrySet() as rel>
                     <#if rel_index gt 2><#break></#if>
@@ -157,7 +157,7 @@
         </#if>
 
         <#if VARS.recentMostCommentedStories?exists>
-            <b>Nejkomentovanější zápisky posledního měsíce</b>
+            <b>Nejkomentovanější za poslední měsíc</b>
             <ul>
                 <#list VARS.recentMostCommentedStories.entrySet() as rel>
                     <#if rel_index gt 2><#break></#if>
@@ -165,8 +165,6 @@
                 </#list>
             </ul>
         </#if>
-        <br>
-        <a href="/nej">všechny statistiky &raquo;</a>
     </div>
 
   <@lib.advertisement id="gg-sq-blog" />
