@@ -95,7 +95,7 @@ public class Controller extends HttpServlet implements Configurable {
     private String detectHtmlPage(String uri) {
         if (uri.equals("/"))
             return Constants.PAGE_INDEX;
-        if (uri.startsWith(UrlUtils.PREFIX_FORUM))
+        if (uri.startsWith(UrlUtils.PREFIX_FORUM) || uri.startsWith("/poradna"))
             return Constants.PAGE_FORUM;
         if (uri.startsWith(UrlUtils.PREFIX_BLOG))
             return Constants.PAGE_BLOGS;
@@ -125,12 +125,18 @@ public class Controller extends HttpServlet implements Configurable {
             return Constants.PAGE_FAQ;
         if (uri.startsWith(UrlUtils.PREFIX_POLLS))
             return Constants.PAGE_POLLS;
+        if (uri.startsWith(UrlUtils.PREFIX_VIDEOS))
+            return Constants.PAGE_VIDEOS;
+        if (uri.startsWith("/skupiny"))
+            return Constants.PAGE_GROUPS;
+        if (uri.startsWith(UrlUtils.PREFIX_EVENTS))
+            return Constants.PAGE_EVENTS;
         if (uri.startsWith(UrlUtils.PREFIX_BAZAAR))
             return Constants.PAGE_BAZAAR;
         if (uri.startsWith("/hry"))
             return Constants.PAGE_GAMES;
-        if (uri.startsWith("/hosting"))
-            return Constants.PAGE_HOSTING;
+        if (uri.startsWith("/nej"))
+            return Constants.PAGE_TOP;
         return null;
     }
 

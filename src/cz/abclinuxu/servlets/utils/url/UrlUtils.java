@@ -179,7 +179,7 @@ public class UrlUtils {
         String url2 = constructRedirectURL(url);
         response.sendRedirect(url2);
     }
-    
+
     /**
      * Adds domain, protocol and/or port.
      * @param url e.g. "/abcdef"
@@ -188,9 +188,9 @@ public class UrlUtils {
     public String completeUrl(String url) {
         if (url.startsWith("http:") || url.startsWith("https:"))
             return url;
-        
+
         boolean secure = false;
-        
+
         if (!enforceHttp) {
             try {
                 URL referer = ServletUtils.getReferer(request);
@@ -199,19 +199,19 @@ public class UrlUtils {
             } catch (Exception e) {
             }
         }
-        
+
         String domain = request.getServerName();
         StringBuffer composedUrl = new StringBuffer();
         int port = request.getServerPort();
-        
+
         composedUrl.append(secure ? "https://" : "http://" );
         composedUrl.append(domain);
-        
+
         if (/*(secure && port != 443) ||*/ (!secure && port != 80)) {
             composedUrl.append(':');
             composedUrl.append(port);
         }
-        
+
         composedUrl.append(url);
         return composedUrl.toString();
     }
@@ -281,14 +281,14 @@ public class UrlUtils {
     public String getRelationUrl(Relation relation) {
         return getRelationUrl(relation, prefix);
     }
-    
+
     /**
      * @return true, if HTTPS shouldn't be used
      */
     public boolean getEnforceHttp() {
         return enforceHttp;
     }
-    
+
     public void setEnforceHttp(boolean enforceHttp) {
         this.enforceHttp = enforceHttp;
     }

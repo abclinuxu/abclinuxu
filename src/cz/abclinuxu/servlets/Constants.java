@@ -255,9 +255,11 @@ public interface Constants {
     String PAGE_DICTIONARY = "slovnik";
     String PAGE_PERSONALITIES = "kdo-je";
     String PAGE_DRIVERS = "ovladace";
+    String PAGE_EVENTS = "udalosti";
     String PAGE_FAQ = "faq";
     String PAGE_FORUM = "forum";
     String PAGE_GAMES = "hry";
+    String PAGE_GROUPS = "skupiny";
     String PAGE_HARDWARE = "hardware";
     String PAGE_HOSTING = "hosting";
     String PAGE_INDEX = "homepage";
@@ -268,6 +270,8 @@ public interface Constants {
     String PAGE_SCREENSHOTS = "desktopy";
     String PAGE_SEARCH = "hledani";
     String PAGE_TAGS = "stitky";
+    String PAGE_TOP = "nej";
+    String PAGE_VIDEOS = "videos";
     String PAGE_WAP = "wap";
 
     String EMAIL_FORUM = "email-forum";
