@@ -247,8 +247,6 @@
                 </#list>
             </ul>
         </#if>
-        <br>
-        <a href="/nej">všechny statistiky &raquo;</a>
     </div>
   <#--<hr id="arbo-sq-cara" />
   <@lib.advertisement id="arbo-sq" />-->
