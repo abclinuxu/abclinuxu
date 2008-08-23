@@ -84,7 +84,7 @@
                 <Set name="append">true</Set>
                 <Set name="extended">true</Set>
                 <Set name="LogTimeZone">Europe/Prague</Set>
-		<Set name="logDateFormat">yyyy-MM-dd HH:mm:ss</Set>
+		<Set name="logDateFormat">dd/MMM/yyyy:HH:mm:ss Z</Set>
                 <!--Set name="buffered">false</Set--> <!-- jetty 4.1 performance tuning -->
                 <Set name="ignorePaths">
                     <Array type="String">
