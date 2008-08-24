@@ -137,7 +137,7 @@ public class Controller extends HttpServlet implements Configurable {
             return Constants.PAGE_GAMES;
         if (uri.startsWith("/nej"))
             return Constants.PAGE_TOP;
-        return null;
+        return Constants.PAGE_UNKNOWN;
     }
 
     /**
