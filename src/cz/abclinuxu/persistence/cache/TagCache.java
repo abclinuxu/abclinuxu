@@ -134,7 +134,11 @@ public class TagCache implements Configurable {
      * @param tags its tags, empty list of none tags are assigned
      */
     public void storeAssignedTags(GenericDataObject obj, List<String> tags) {
-        mappingCache.store(obj.makeLightClone(), tags);
+        List<String> ids = new ArrayList<String>(tags.size());
+        for (String s : tags) {
+            ids.add(s.toLowerCase());
+        }
+        mappingCache.store(obj.makeLightClone(), ids);
     }
 
     /**
@@ -156,7 +160,8 @@ public class TagCache implements Configurable {
      * @param id tag identifier
      */
     public void assignTag(GenericDataObject obj, String id) {
-        Tag tag = (Tag) tagCache.get(id.toLowerCase());
+        id = id.toLowerCase();
+        Tag tag = (Tag) tagCache.get(id);
         if (tag == null) {
             log.warn("Cannot increment usage for tag '" + id + "' - not in cache!");
             return;
@@ -166,7 +171,7 @@ public class TagCache implements Configurable {
         List<String> tags = getAssignedTags(obj);
         if (tags == null)
             tags = new ArrayList<String>();
-        tags.add(id.toLowerCase());
+        tags.add(id);
         mappingCache.store(obj.makeLightClone(), tags);
     }
 
@@ -176,7 +181,8 @@ public class TagCache implements Configurable {
      * @param id tag identifier
      */
     public void unassignTag(GenericDataObject obj, String id) {
-        Tag tag = (Tag) tagCache.get(id.toLowerCase());
+        id = id.toLowerCase();
+        Tag tag = (Tag) tagCache.get(id);
         if (tag == null) {
             log.warn("Cannot decrement usage for tag '" + id + "' - not in cache!");
             return;
@@ -188,7 +194,7 @@ public class TagCache implements Configurable {
             log.warn("Cannot unassign tag '" + id + "' for " + obj + " - not in cache!");
             return;
         }
-        tags.remove(id.toLowerCase());
+        tags.remove(id);
         mappingCache.store(obj.makeLightClone(), tags);
     }
 
