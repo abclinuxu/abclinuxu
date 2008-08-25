@@ -31,13 +31,11 @@
 
 <!-- sekce osobni udaje -->
 
-<#if PROFILE.nick?exists>
-    <p>Přezdívka: ${PROFILE.nick}</p>
-</#if>
+<#if PROFILE.nick?exists><p>Přezdívka: ${PROFILE.nick}</p></#if>
 
 <#assign homePage = TOOL.xpath(PROFILE,"/data/profile/home_page")?default("UNDEFINED")>
 <#if homePage != "UNDEFINED">
-  <p>Moje domovská stránka: <a href="${homePage}" rel="nofollow">${homePage}</a></p>
+    <p>Moje domovská stránka: <a href="${homePage}" rel="nofollow">${homePage}</a></p>
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/profile/about_myself")?exists>
@@ -46,24 +44,16 @@
 
 <p>
 <#assign birth = TOOL.xpath(PROFILE,"/data/personal/birth_year")?default("UNDEFINED")>
-<#if birth != "UNDEFINED">
-    Rok narození: ${birth}<br />
-</#if>
+<#if birth != "UNDEFINED">Rok narození: ${birth}<br /></#if>
 
 <#assign city = TOOL.xpath(PROFILE,"/data/personal/city")?default("UNDEFINED")>
-<#if city != "UNDEFINED">
-    Bydliště: ${city}<br />
-</#if>
+<#if city != "UNDEFINED">Bydliště: ${city}<br /></#if>
 
 <#assign area = TOOL.xpath(PROFILE,"/data/personal/area")?default("UNDEFINED")>
-<#if area != "UNDEFINED">
-    Kraj: ${area}<br />
-</#if>
+<#if area != "UNDEFINED">Kraj: ${area}<br /></#if>
 
 <#assign country = TOOL.xpath(PROFILE,"/data/personal/country")?default("UNDEFINED")>
-<#if country != "UNDEFINED">
-    Země: ${country}
-</#if>
+<#if country != "UNDEFINED">Země: ${country}</#if>
 </p>
 
 <!-- sekce linux -->
@@ -110,9 +100,9 @@
 <div class="ri profile_list reverse_anchor" style="clear: right;">
     <h2>Používám tento software:</h2>
     <ul>
-        <#list SORT.byName(SOFTWARE) as sw>
-            <li><a href="${sw.url}" title="${sw.child.title}">${sw.child.title}</a></li>
-        </#list>
+      <#list SORT.byName(SOFTWARE) as sw>
+        <li><a href="${sw.url}" title="${sw.child.title}">${sw.child.title}</a></li>
+      </#list>
     </ul>
 </div>
 </#if>
@@ -132,18 +122,16 @@
 <div class="profile_list reverse_anchor">
     <h2>Můj blog: <a href="/blog/${BLOG.subType}">${BLOG.title?default("blog")}</a></h2>
     <ul>
-        <#list STORIES as relation>
-            <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
-            <#assign CHILDREN=TOOL.groupByType(story.children)>
-            <#if CHILDREN.discussion?exists>
-                <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
-            <#else>
-                <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
-            </#if>
-            <li><a href="${url}" title="${story.title}">${story.title}</a> | ${DATE.show(story.created, "CZ_DMY")}
-                | <span title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>">
-                komentářů: ${diz.responseCount}<@lib.markNewComments diz/></span></li>
-        </#list>
+      <#list STORIES as relation>
+        <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
+        <#assign CHILDREN=TOOL.groupByType(story.children)>
+        <#if CHILDREN.discussion?exists>
+          <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
+        <#else>
+          <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
+        </#if>
+        <li><a href="${url}">${story.title}</a> | ${DATE.show(story.created, "CZ_DMY")} | <span title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>"> komentářů: ${diz.responseCount}<@lib.markNewComments diz/></span></li>
+      </#list>
     </ul>
 </div>
 </#if>
