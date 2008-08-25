@@ -545,7 +545,8 @@ public class FeedGenerator implements Configurable {
      */
     public static void createSeriesEntries(Item serie, SyndFeed feed, int maxArticles) {
         List articlesElements = serie.getData().getRootElement().elements("article");
-        articlesElements = articlesElements.subList(0, Math.min(maxArticles, articlesElements.size()));
+        int first = articlesElements.size()-maxArticles;
+        articlesElements = articlesElements.subList(Math.max(first, 0), articlesElements.size()-1);
         articlesElements = new ArrayList<Element>(articlesElements);
         Collections.reverse(articlesElements);
 
@@ -579,7 +580,11 @@ public class FeedGenerator implements Configurable {
         Document document = item.getData();
 
         SyndEntry entry = new SyndEntryImpl();
-        entry.setLink("http://"+AbcConfig.getHostname() + r.getUrl());
+        
+        if (r.getUrl() != null)
+            entry.setLink("http://"+AbcConfig.getHostname() + r.getUrl());
+        else
+            entry.setLink("http://"+AbcConfig.getHostname() + UrlUtils.PREFIX_CLANKY + "/show/" + r.getId());
         entry.setTitle(item.getTitle());
         entry.setPublishedDate(item.getCreated());
         entry.setAuthor(Tools.childName(author));
