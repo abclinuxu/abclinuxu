@@ -159,6 +159,9 @@
 </#if>
 
 <ul>
+    <#if TOOL.xpath(PROFILE,"/data/profile/gpg")?default("UNDEF")!="UNDEF">
+        <li><a href="/lide/${PROFILE.login}/gpg">Veřejný GPG klíč</a></li>
+    </#if>
     <li><a href="/lide/${PROFILE.login}/zalozky">Záložky uživatele</a></li>
     <li><a href="/lide/${PROFILE.login}/objekty" rel="nofollow">Seznam příspěvků na abclinuxu.cz</a><br />
     (články, komentáře, dotazy, zprávičky, softwarové a hardwarové záznamy, pojmy ve slovníku a texty v učebnici)</li>

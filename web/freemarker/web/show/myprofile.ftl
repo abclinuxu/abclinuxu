@@ -96,6 +96,14 @@
     </tr>
     <tr>
         <td align="right" valign="top">
+            <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editGPG")}">změnit</a>
+        </td>
+        <td>
+            GPG klíč
+        </td>
+    </tr>
+    <tr>
+        <td align="right" valign="top">
             <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editSettings")}">změnit</a>
         </td>
         <td>

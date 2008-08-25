@@ -31,9 +31,13 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.html.edit.EditBookmarks;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.freemarker.Tools;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -65,6 +69,7 @@ public class ViewUser implements AbcAction {
     public static final String ACTION_SHOW_MY_PROFILE = "myPage";
     public static final String ACTION_SHOW_MY_OBJECTS = "objekty";
     public static final String ACTION_BOOKMARKS = "zalozky";
+    public static final String ACTION_GPG = "gpg";
 
     private Pattern reTagId = Pattern.compile(UrlUtils.PREFIX_PEOPLE + "/" + "([^/?]+)/?(\\w+)?");
 
@@ -130,6 +135,9 @@ public class ViewUser implements AbcAction {
 
         if (ACTION_SHOW_MY_OBJECTS.equals(action))
             return handleMyObjects(request, env);
+        
+        if (ACTION_GPG.equals(action))
+            return handleGPG(request, response, env);
 
         if (ACTION_SEND_EMAIL.equals(action))
             return handleSendEmail(request, response, env);
@@ -226,6 +234,26 @@ public class ViewUser implements AbcAction {
         env.put(VAR_COUNTS, counts);
 
         return FMTemplateSelector.select("ViewUser","counter",env,request);
+    }
+    
+    /**
+     * Sends the contents of the file with the GPG public key
+     */
+    protected String handleGPG(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        User user = (User) env.get(VAR_PROFILE);
+        Element element = (Element) user.getData().selectSingleNode("/data/profile/gpg");
+        
+        if (element == null)
+            return null;
+        else {
+            File file = new File(AbcConfig.calculateDeployedPath(element.getText()));
+            FileInputStream fis = new FileInputStream(file);
+            byte[] data = new byte[(int) file.length()];
+            
+            fis.read(data);
+            response.getWriter().write(new String(data));
+            return null;
+        }
     }
 
     /**

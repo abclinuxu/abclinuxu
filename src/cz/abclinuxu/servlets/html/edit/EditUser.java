@@ -54,6 +54,7 @@ import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.scheduler.UpdateLinks;
+import java.io.BufferedWriter;
 import org.apache.commons.fileupload.FileItem;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -71,6 +72,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.lang.reflect.Method;
@@ -136,6 +138,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_UID1 = "uid1";
     public static final String PARAM_UID2 = "uid2";
     public static final String PARAM_TOKEN = "token";
+    public static final String PARAM_KEY = "key";
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
@@ -165,6 +168,8 @@ public class EditUser implements AbcAction {
     public static final String ACTION_UPLOAD_PHOTO_STEP2 = "uploadPhoto2";
     public static final String ACTION_UPLOAD_AVATAR = "uploadAvatar";
     public static final String ACTION_UPLOAD_AVATAR_STEP2 = "uploadAvatar2";
+    public static final String ACTION_EDIT_GPG = "editGPG";
+    public static final String ACTION_EDIT_GPG_STEP2 = "editGPG2";
     public static final String ACTION_EDIT_SETTINGS = "editSettings";
     public static final String ACTION_EDIT_SETTINGS_STEP2 = "editSettings2";
     public static final String ACTION_EDIT_BLACKLIST = "editBlacklist";
@@ -333,6 +338,14 @@ public class EditUser implements AbcAction {
         if ( action.equals(ACTION_UPLOAD_AVATAR_STEP2) ) {
             ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
             return actionUploadAvatar2(request, response, env);
+        }
+        
+        if (action.equals(ACTION_EDIT_GPG))
+            return FMTemplateSelector.select("EditUser", "editGPG", env, request);
+        
+        if ( action.equals(ACTION_EDIT_GPG_STEP2) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
+            return actionEditGPG2(request, response, env);
         }
 
         // these actions are restricted to admin only
@@ -1060,6 +1073,38 @@ public class EditUser implements AbcAction {
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);
+        return null;
+    }
+        
+    protected String actionEditGPG2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User managed = (User) env.get(VAR_MANAGED);
+        
+        User user = (User) env.get(Constants.VAR_USER);
+        Persistence persistence = PersistenceFactory.getPersistence();
+
+        boolean canContinue = true;
+        if ( ! user.hasRole(Roles.USER_ADMIN) )
+            canContinue &= checkPassword(params, managed, env);
+
+        if ( ! canContinue)
+            return FMTemplateSelector.select("EditUser", "editGPG", env, request);
+        
+        canContinue &= setGPG(params, managed, env);
+
+        if ( ! canContinue )
+            return FMTemplateSelector.select("EditUser", "editGPG", env, request);
+
+        persistence.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
+
+        ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
     }
 
@@ -2344,6 +2389,29 @@ public class EditUser implements AbcAction {
 
         Element photo = DocumentHelper.makeElement(user.getData(), "/data/profile/photo");
         photo.setText("/"+fileName);
+        return true;
+    }
+    
+    private boolean setGPG(Map params, User user, Map env) throws Exception {
+        String key = (String) params.get(PARAM_KEY);
+        if (Misc.empty(key)) {
+            Node node = user.getData().selectSingleNode("/data/profile/gpg");
+            if (node != null) {
+                String localPath = AbcConfig.calculateDeployedPath(node.getText().substring(1));
+                new File(localPath).delete();
+                node.detach();
+            }
+            return true;
+        }
+        
+        String fileName = "data/gpg/" + user.getId() + ".asc";
+        
+        BufferedWriter out = new BufferedWriter(new FileWriter(AbcConfig.calculateDeployedPath(fileName)));
+        out.write(key);
+        out.close();
+        
+        Element gpg = DocumentHelper.makeElement(user.getData(), "/data/profile/gpg");
+        gpg.setText(fileName);
         return true;
     }
 
