@@ -151,6 +151,7 @@ public class EditFaq implements AbcAction {
         Item item = new Item(0, Item.FAQ);
         item.setOwner(user.getId());
 		item.setGroup(section.getGroup());
+        item.setPermissions(section.getPermissions());
 		
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
