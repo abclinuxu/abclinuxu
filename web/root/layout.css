@@ -353,11 +353,11 @@ pre {
 	margin-bottom: 0.5em;
 }
 
-.ri.profile_list { margin-right: 1em; /* nektere verze Opery a Konq. */ }
-.ri.profile_list ul {
+.ri.profile_list {
+	margin-right: 1em; /* nektere verze Opery a Konq. */
 	text-align: right;
-	direction: rtl;
 }
+.ri.profile_list ul { direction: rtl; }
 .ri.profile_list ul li a {
 	direction: ltr;
 	unicode-bidi: bidi-override;
