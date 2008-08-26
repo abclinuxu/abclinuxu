@@ -373,9 +373,9 @@ public class EditDiscussion implements AbcAction {
         FeedGenerator.updateForumAll();
         VariableFetcher.getInstance().refreshQuestions();
 
-        if (redirect)
-            urlUtils.redirect(response, "/show/"+rel2.getId());
-        else
+        if (redirect) {
+            urlUtils.redirect(response, Tools.getUrlForDiscussion(rel2));
+        } else
             env.put(VAR_RELATION, rel2);
 
         return null;
@@ -568,9 +568,7 @@ public class EditDiscussion implements AbcAction {
         if (redirect) {
             url = (String) params.get(PARAM_URL);
             if (url==null)
-                url = relation.getUrl();
-            if (url==null)
-                url = urlUtils.getPrefix()+"/show/"+relation.getId();
+                url = Tools.getUrlForDiscussion(relation);
             url += "#"+comment.getId();
             urlUtils.redirect(response, url, false);
         }
