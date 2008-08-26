@@ -22,75 +22,72 @@
         <#assign subtype=PARAMS.subtype?default("")>
         <div class="s_nadpis">Kalendář</div>
         <div class="s_sekce">
-            <table width="100%" class="calendar">
+            <table cellspacing="0" class="calendar">
             <tr>
-                <td colspan="2"><a rel="nofollow" href="?year=${CALENDAR.prevYear}&amp;month=${CALENDAR.prevMonth}&amp;subtype=${subtype}">&laquo; <@lib.month CALENDAR.prevMonth.toString()/></a></td>
-                <td colspan="3">
+                <td colspan="2">
+                  <a rel="nofollow" href="?year=${CALENDAR.prevYear}&amp;month=${CALENDAR.prevMonth}&amp;subtype=${subtype}">&laquo;&nbsp;<@lib.month CALENDAR.prevMonth.toString()/></a></td>
+                <td colspan="3" class="month_year">
                     <#if !PARAMS.day?exists && PARAMS.month?exists && ""+CALENDAR.month==PARAMS.month>
-                        <span class="calendar_selected">
+                      <span class="selected">
                     <#else>
-                        <span>
+                      <span>
                     </#if>
-    
                         <a rel="nofollow" href="?year=${CALENDAR.year}&amp;month=${CALENDAR.month}&amp;subtype=${subtype}"><@lib.month ""+CALENDAR.month/></a>
-                    </span>
-    
+                      </span>
+
                     <#if !PARAMS.month?exists && !PARAMS.day?exists && PARAMS.year?exists && ""+CALENDAR.year==PARAMS.year>
-                        <span class="calendar_selected">
+                      <span class="selected">
                     <#else>
-                        <span>
+                      <span>
                     </#if>
-    
-                    <a rel="nofollow" href="?year=${CALENDAR.year}&amp;subtype=${subtype}">
-                        ${CALENDAR.year}
-                    </a>
-                    </span>
+                        <a rel="nofollow" href="?year=${CALENDAR.year}&amp;subtype=${subtype}">${CALENDAR.year}</a>
+                      </span>
                 </td>
-                <td colspan="2"><a rel="nofollow" href="?year=${CALENDAR.nextYear}&amp;month=${CALENDAR.nextMonth}&amp;subtype=${subtype}"><@lib.month ""+CALENDAR.nextMonth/> &raquo;</a></td>
+                <td colspan="2"><a rel="nofollow" href="?year=${CALENDAR.nextYear}&amp;month=${CALENDAR.nextMonth}&amp;subtype=${subtype}"><@lib.month ""+CALENDAR.nextMonth/>&nbsp;&raquo;</a></td>
             </tr>
-            <tr style="font-weight: bold"><td>Po</td><td>Út</td><td>St</td><td>Čt</td><td>Pá</td><td>So</td><td>Ne</td></tr>
+            <tr class="weekdays"><td>Po</td><td>Út</td><td>St</td><td>Čt</td><td>Pá</td><td>So</td><td>Ne</td></tr>
             <tr>
                 <@lib.repeat CALENDAR.emptyDays><td>&nbsp;</td></@lib.repeat>
                 <#list 1..CALENDAR.days as curday>
                     <#if (CALENDAR.emptyDays+curday)%7==1></tr><tr></#if>
-    
+
                     <#assign id="UNDEF", class="UNDEF">
                     <#if CALENDAR.today?exists && curday==CALENDAR.today>
                         <#assign id="today">
                     </#if>
                     <#if PARAMS.day?exists && ""+curday==PARAMS.day>
-                        <#assign class="calendar_selected">
+                        <#assign class="selected">
                     </#if>
                     <#if CALENDAR.eventDays[curday-1]>
                         <#if class!="UNDEF">
-                            <#assign class="calendar_event "+class>
+                            <#assign class="event_day "+class>
                         <#else>
-                            <#assign class="calendar_event">
+                            <#assign class="event_day">
                         </#if>
                     </#if>
-                    <td <#if id!="UNDEF">id="${id}"</#if> <#if class!="UNDEF">class="${class}"</#if>>
+                    <td<#if id!="UNDEF"> id="${id}"</#if><#if class!="UNDEF"> class="${class}"</#if>>
                         <a rel="nofollow" href="?year=${CALENDAR.year}&amp;month=${CALENDAR.month}&amp;day=${curday}&amp;subtype=${subtype}">${curday}</a>
                     </td>
                 </#list>
             </tr>
             </table>
         </div>
-    
+
         <div class="s_nadpis">Časová osa</div>
         <div class="s_sekce">
-        <ul>
-            <li <#if "everything"==PARAMS.mode?default("UNDEF")>class="calendar_selected"</#if>>
+        <ul class="event_time">
+            <li <#if "everything"==PARAMS.mode?default("UNDEF")>class="selected"</#if>>
                     <a href="?mode=everything&amp;subtype=${subtype}">Všechny akce</a>
             </li>
-            <li <#if "upcoming"==PARAMS.mode?default("UNDEF")>class="calendar_selected"</#if>>
+            <li <#if "upcoming"==PARAMS.mode?default("UNDEF")>class="selected"</#if>>
                     <a href="?mode=upcoming&amp;subtype=${subtype}">Nadcházející akce</a>
             </li>
-            <li <#if "old"==PARAMS.mode?default("UNDEF")>class="calendar_selected"</#if>>
+            <li <#if "old"==PARAMS.mode?default("UNDEF")>class="selected"</#if>>
                     <a href="?mode=old&amp;subtype=${subtype}">Proběhlé akce</a>
             </li>
         </ul>
         </div>
-    
+
         <div class="s_nadpis">Druh akce</div>
         <div class="s_sekce">
             <#if PARAMS.mode?exists>
@@ -107,13 +104,13 @@
                     </#if>
                 </#if>
             </#if>
-    
-            <ul>
-            <li <#if subtype=="">class="calendar_selected"</#if>><a href="/akce?${url}">Všechny druhy</a></li>
+
+            <ul class="event_type">
+            <li <#if subtype=="">class="selected"</#if>><a href="/akce?${url}">Všechny druhy</a></li>
             <hr />
-            <li <#if subtype=="community">class="calendar_selected"</#if>><a href="/akce?${url}&amp;subtype=community">Komunitní</a></li>
-            <li <#if subtype=="educational">class="calendar_selected"</#if>><a href="/akce?${url}&amp;subtype=educational">Vzdělávací</a></li>
-            <li <#if subtype=="company">class="calendar_selected"</#if> ><a href="/akce?${url}&amp;subtype=company">Firemní</a></li>
+            <li <#if subtype=="community">class="selected"</#if>><a href="/akce?${url}&amp;subtype=community">Komunitní</a></li>
+            <li <#if subtype=="educational">class="selected"</#if>><a href="/akce?${url}&amp;subtype=educational">Vzdělávací</a></li>
+            <li <#if subtype=="company">class="selected"</#if> ><a href="/akce?${url}&amp;subtype=company">Firemní</a></li>
             </ul>
         </div>
     </#if>
