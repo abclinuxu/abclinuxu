@@ -612,9 +612,9 @@
     <tr>
         <td class="event_hdr">
             <b>${DATE.show(item.created,"CZ_DMY",false)}</b><br />
-            <em>Druh:</em> ${subtype}<br />
-            <em>Kraj:</em> <@lib.showRegion region/><br />
-            <em>Začátek:</em> ${DATE.show(item.created,"TIME")}
+            <em>Druh:</em>&nbsp;${subtype}<br />
+            <em>Kraj:</em>&nbsp;<@lib.showRegion region/><br />
+            <em>Začátek:</em>&nbsp;${DATE.show(item.created,"TIME")}
         </td>
         <td>
             <#if showLogo>
