@@ -79,6 +79,26 @@
             </td>
         </tr>
         <tr>
+            <td>Konec v</td>
+            <td>
+                <input type="text" name="dateTo" id="datetime_input2" value="${PARAMS.dateTo?if_exists}">
+                <input type="button" id="datetime_btn2" value="...">
+                    <script type="text/javascript">
+                        Calendar.setup({inputField:"datetime_input2",ifFormat:"%Y-%m-%d %H:%M",showsTime:true,button:"datetime_btn2",singleClick:false,step:1,firstDay:1});
+                    </script>
+                Formát 2005-01-25 07:12, volitelný údaj
+                <div class="error">${ERRORS.dateTo?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
+            <td>Přesné umístění</td>
+            <td>
+                <input type="text" name="location" value="${PARAMS.location?if_exists}" size="40">
+                <div class="error">${ERRORS.location?if_exists}</div>
+                Zadejte souřadnice či jiné údaje použitelné pro vyhledávání na Google Maps.
+            </td>
+        </tr>
+        <tr>
             <td class="required">
                     Stručný popis
                     <a class="info" href="#">?<span class="tooltip">Text, který bude zobrazen ve výpisu akcí a jako úvod na stránce akce.</span></a>

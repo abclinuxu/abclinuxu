@@ -19,7 +19,6 @@
 
 package cz.abclinuxu.servlets.html.view;
 
-import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
@@ -31,6 +30,8 @@ import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.LogicalOperation;
+import cz.abclinuxu.persistence.extra.NestedCondition;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.servlets.AbcAction;
@@ -39,6 +40,9 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
 import java.util.ArrayList;
@@ -46,6 +50,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.prefs.Preferences;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -53,7 +58,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author lubos
  */
-public class ViewEvent implements AbcAction {
+public class ViewEvent implements AbcAction, Configurable {
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_FROM = "from";
     
@@ -76,6 +81,14 @@ public class ViewEvent implements AbcAction {
     /** A hashmap containing data for the calendar */
     public static final String VAR_CALENDAR = "CALENDAR";
     public static final String VAR_REGISTRATIONS = "REGISTRATIONS";
+    public static final String VAR_GOOGLE_MAPS_KEY = "GOOGLE_MAPS_KEY";
+    
+    static String googleMapsKey;
+    
+    static {
+        ViewEvent servlet = new ViewEvent();
+        ConfigurationManager.getConfigurator().configureAndRememberMe(servlet);
+    }
     
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -206,11 +219,21 @@ public class ViewEvent implements AbcAction {
         
         if (dateFrom != null) {
             String date = Constants.isoFormat.format(dateFrom.getTime());
-            qualifiers.add(new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, date));
+            CompareCondition left, right;
+            
+            left = new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, date);
+            right = new CompareCondition(Field.DATE1, Operation.GREATER_OR_EQUAL, date);
+            
+            qualifiers.add(new NestedCondition(new Qualifier[] {left, right}, LogicalOperation.OR));
         }
         if (dateTo != null) {
             String date = Constants.isoFormat.format(dateTo.getTime());
-            qualifiers.add(new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, date));
+            CompareCondition left, right;
+            
+            left = new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, date);
+            right = new CompareCondition(Field.DATE1, Operation.SMALLER_OR_EQUAL, date);
+            
+            qualifiers.add(new NestedCondition(new Qualifier[] {left, right}, LogicalOperation.OR));
         }
         if (!Misc.empty(subtype))
             qualifiers.add(new CompareCondition(Field.SUBTYPE, Operation.EQUAL, subtype));
@@ -258,13 +281,18 @@ public class ViewEvent implements AbcAction {
         // find all events in that month
         String date;
         
+        CompareCondition condLeft1, condRight1, condLeft2, condRight2;
         cal.set(Calendar.DAY_OF_MONTH, 1);
         date = Constants.isoFormat.format(cal.getTime());
-        qualifiersCal.add(new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, date));
+        condLeft1 = new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, date);
+        condLeft2 = new CompareCondition(Field.DATE1, Operation.GREATER_OR_EQUAL, date);
+        qualifiersCal.add(new NestedCondition(new Qualifier[] { condLeft1, condLeft2 }, LogicalOperation.OR));
         
         cal.set(Calendar.DAY_OF_MONTH, (Integer) map.get("days"));
         date = Constants.isoFormat.format(cal.getTime());
-        qualifiersCal.add(new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, date));
+        condRight1 = new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, date);
+        condRight2 = new CompareCondition(Field.DATE1, Operation.SMALLER_OR_EQUAL, date);
+        qualifiersCal.add(new NestedCondition(new Qualifier[] { condRight1, condRight2 }, LogicalOperation.OR));
         
         qualifiersCal.add(Qualifier.SORT_BY_CREATED);
         qualifiersCal.add(Qualifier.ORDER_ASCENDING);
@@ -274,14 +302,36 @@ public class ViewEvent implements AbcAction {
         Tools.syncList(list);
         
         // mark those days in the calendar
-        boolean[] eventDays = new boolean[(Integer) map.get("days")];
+        int days = (Integer) map.get("days");
+        boolean[] eventDays = new boolean[days];
         
         for (Relation r : list) {
             Item item = (Item) r.getChild();
-            Calendar cItem = Calendar.getInstance();
+            Calendar cItemFrom = Calendar.getInstance();
+            Calendar cItemTo;
+            int fromIndex, toIndex = -1;
             
-            cItem.setTime(item.getCreated());
-            eventDays[cItem.get(Calendar.DAY_OF_MONTH)-1] = true;
+            cItemFrom.setTime(item.getCreated());
+            fromIndex = cItemFrom.get(Calendar.DAY_OF_MONTH)-1;
+            
+            if (item.getDate1() != null) {
+                cItemTo = Calendar.getInstance();
+                cItemTo.setTime(item.getDate1());
+                
+                if (cItemTo.get(Calendar.YEAR) > cItemFrom.get(Calendar.YEAR) ||
+                        cItemTo.get(Calendar.MONTH) > cItemFrom.get(Calendar.MONTH)) {
+                    toIndex = days - 1;
+                } else
+                    toIndex = cItemTo.get(Calendar.DAY_OF_MONTH)-1;
+            }
+            
+            
+            eventDays[fromIndex] = true;
+            
+            if (toIndex != -1) {
+                for (int i = fromIndex; i <= toIndex; i++)
+                    eventDays[i] = true;
+            }
         }
         
         map.put("eventDays", eventDays);
@@ -353,8 +403,14 @@ public class ViewEvent implements AbcAction {
             User user = (User) env.get(Constants.VAR_USER);
             if ( user == null || user.getId() != item.getOwner() )
                 ReadRecorder.log(item, Constants.COUNTER_READ, env);
+            
+            env.put(VAR_GOOGLE_MAPS_KEY, googleMapsKey);
 
             return FMTemplateSelector.select("ViewEvent", "view", env, request);
         }
+    }
+    
+    public void configure(Preferences prefs) throws ConfigurationException {
+        googleMapsKey = prefs.get("google.maps.key", null);
     }
 }

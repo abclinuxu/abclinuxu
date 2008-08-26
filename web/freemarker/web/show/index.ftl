@@ -4,6 +4,29 @@
 
     <@lib.advertisement id="ps-upoutavka" />
 
+    <#assign EVENTS=VARS.getFreshEvents(USER?if_exists)>
+    <div class="s_nadpis">
+        <a class="s_nadpis-pravy-odkaz" href="${URL.make("/akce/edit/233274?action=add")}">zadejte &raquo;</a>
+        <#if USER?exists && TOOL.permissionsFor(USER,TOOL.createRelation(233274)).canModify()>
+            <a class="s_nadpis-pravy-odkaz" href="${URL.make("/akce?mode=unpublished")}" title="Počet neschválených akcí">(${VARS.counter.WAITING_EVENTS})&nbsp;</a>
+        </#if>
+        <a href="/akce">Kalendář akcí</a>
+    </div>
+    <div class="s_sekce">
+        <ul>
+        <#list EVENTS as rel>
+             <li>
+                <#assign date=DATE.show(rel.child.created, "CZ_DM")>
+                 <#if rel.child.date1?exists>
+                    <#assign toDate=DATE.show(rel.child.date1, "CZ_DM")>
+                    <#if toDate!=date><#assign date=date+"-"+toDate></#if>
+                 </#if>
+                <a href="${rel.url?default("/akce/show/"+rel.id)}">${rel.child.title}</a> <span>(${date})</span>
+             </li>
+        </#list>
+        </ul>
+    </div>
+
     <@lib.advertisement id="arbo-sq" />
     <@lib.advertisement id="oksystem" />
     <@lib.advertisement id="ps-boxik1" />

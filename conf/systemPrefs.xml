@@ -592,6 +592,8 @@
                             <entry key="max.question" value="50"/>
                             <entry key="default.faq" value="3"/>
                             <entry key="max.faq" value="10"/>
+                            <entry key="default.event" value="3"/>
+                            <entry key="max.event" value="10"/>
                             <entry key="default.dictionary" value="3"/>
                             <entry key="max.dictionary" value="10"/>
                             <entry key="default.personalities" value="3"/>
@@ -923,6 +925,11 @@
                                     <entry key="page.size" value="15"/>
                                     <entry key="summary.size" value="50"/>
                                     <entry key="fresh.stories.size" value="5"/>
+                                </map>
+                            </node>
+                            <node name="ViewEvent">
+                                <map>
+                                    <entry key="google.maps.key" value="ABQIAAAAg0klMNtaGHd0vd1_mSrAOhTgFdUsXmJq1QE2cfas2eBIcAtRwBTUYPmh3Knw9GTqCAtdlSLEKLzlNA"/>
                                 </map>
                             </node>
                             <node name="Search">

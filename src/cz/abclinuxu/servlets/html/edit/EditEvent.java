@@ -75,6 +75,7 @@ public class EditEvent implements AbcAction {
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_REGION = "region";
     public static final String PARAM_DATE = "date";
+    public static final String PARAM_DATE_TO = "dateTo";
     public static final String PARAM_DESCRIPTION_SHORT = "descriptionShort";
     public static final String PARAM_DESCRIPTION = "description";
     public static final String PARAM_LOGO = "logo";
@@ -82,6 +83,7 @@ public class EditEvent implements AbcAction {
     public static final String PARAM_SUBTYPE = "subtype";
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_NAME = "name";
+    public static final String PARAM_LOCATION = "location";
     
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -99,7 +101,6 @@ public class EditEvent implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
-        Relation parent;
         
         if (action == null)
             throw new MissingArgumentException("Chybí parametr action!");
@@ -218,9 +219,11 @@ public class EditEvent implements AbcAction {
         canContinue = setTitle(params, item, env);
         canContinue &= setRegion(params, item, env);
         canContinue &= setDate(params, item, env);
+        canContinue &= setDateTo(params, item, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setShortDescription(params, root, env);
         canContinue &= setSubType(params, item, env);
+        canContinue &= setLocation(params, root, env);
         canContinue &= checkImage(params, env);
         
         if (!canContinue)
@@ -256,6 +259,11 @@ public class EditEvent implements AbcAction {
         String date = Constants.isoFormat.format(item.getCreated());
         params.put(PARAM_DATE, date);
         
+        if (item.getDate1() != null) {
+            date = Constants.isoFormat.format(item.getDate1());
+            params.put(PARAM_DATE_TO, date);
+        }
+        
         Element elem = root.element("description");
         if (elem != null)
             params.put(PARAM_DESCRIPTION, elem.getText());
@@ -263,6 +271,10 @@ public class EditEvent implements AbcAction {
         elem = root.element("descriptionShort");
         if (elem != null)
             params.put(PARAM_DESCRIPTION_SHORT, elem.getText());
+        
+        elem = root.element("location");
+        if (elem != null)
+            params.put(PARAM_LOCATION, elem.getText());
         
         return FMTemplateSelector.select("EditEvent", "edit", env, request);
     }
@@ -278,9 +290,11 @@ public class EditEvent implements AbcAction {
         canContinue = setTitle(params, item, env);
         canContinue &= setRegion(params, item, env);
         canContinue &= setDate(params, item, env);
+        canContinue &= setDateTo(params, item, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setShortDescription(params, root, env);
         canContinue &= setSubType(params, item, env);
+        canContinue &= setLocation(params, root, env);
         canContinue &= checkImage(params, env);
         canContinue &= setLogo(params, relation, root, env);
         
@@ -477,8 +491,11 @@ public class EditEvent implements AbcAction {
     
     private boolean setDate(Map params, Item item, Map env) {
         String tmp = (String) params.get(PARAM_DATE);
-        if (tmp==null || tmp.length()==0)
-            return true;
+        if (Misc.empty(tmp)) {
+            ServletUtils.addError(PARAM_DATE, "Zadejte datum!", env, null);
+            return false;
+        }
+        
         try {
             Date date;
             synchronized (Constants.isoFormat) {
@@ -490,6 +507,32 @@ public class EditEvent implements AbcAction {
             ServletUtils.addError(PARAM_DATE, "Chybný formát data!", env, null);
             return false;
         }
+    }
+    
+    private boolean setDateTo(Map params, Item item, Map env) {
+        String tmp = (String) params.get(PARAM_DATE_TO);
+        if (Misc.empty(tmp)) {
+            item.setDate1(null);
+            return true;
+        }
+        
+        try {
+            Date date;
+            synchronized (Constants.isoFormat) {
+                date = Constants.isoFormat.parse(tmp);
+            }
+            item.setDate1(date);
+        } catch (ParseException e) {
+            ServletUtils.addError(PARAM_DATE_TO, "Chybný formát data!", env, null);
+            return false;
+        }
+        
+        if (item.getDate1().before(item.getCreated())) {
+            ServletUtils.addError(PARAM_DATE_TO, "Akce nemůže končit dříve než začínat!", env, null);
+            return false;
+        }
+        
+        return true;
     }
     
     private boolean setShortDescription(Map params, Element root, Map env) {
@@ -542,6 +585,21 @@ public class EditEvent implements AbcAction {
         element.setText(tmp);
         Format format = FormatDetector.detect(tmp);
         element.addAttribute("format", Integer.toString(format.getId()));
+        
+        return true;
+    }
+    
+    private boolean setLocation(Map params, Element root, Map env) {
+        String tmp = (String) params.get(PARAM_LOCATION);
+        if (Misc.empty(tmp)) {
+            Element element = root.element("location");
+            if (element != null)
+                element.detach();
+            return true;
+        }
+        
+        Element element = DocumentHelper.makeElement(root, "location");
+        element.setText(tmp);
         
         return true;
     }

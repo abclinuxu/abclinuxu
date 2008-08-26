@@ -1,3 +1,8 @@
+<#assign html_header>
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=${GOOGLE_MAPS_KEY}"
+      type="text/javascript"></script>
+</#assign>
+
 <#import "../macros.ftl" as lib>
 
 <#assign region=ITEM.getProperty("region").toArray()[0], subtype=ITEM.subType>
@@ -12,6 +17,17 @@
         <@lib.showSubportal SUBPORTAL, true/>
         <#assign counter=VARS.getSubportalCounter(SUBPORTAL)>
     </#if>
+
+    <#assign location=TOOL.xpath(ITEM,"//location")?default("UNDEF")>
+    <div class="s_nadpis">Informace o akci</div>
+    <div class="s_sekce">
+        Datum: ${DATE.show(ITEM.created,"CZ_DMY")}<br>
+        Začátek: ${DATE.show(ITEM.created,"TIME")}<br>
+        <#if ITEM.date1?exists>Konec: ${DATE.show(ITEM.date1,"CZ_FULL")}<br></#if>
+        Kraj: <@lib.showRegion region/><br>
+        Typ akce: ${subtype}
+    </div>
+
     <#if USER?exists && (USER.id == ITEM.owner || TOOL.permissionsFor(USER, RELATION).canModify())>
         <div class="s_nadpis">Správa akce</div>
         <div class="s_sekce">
@@ -25,14 +41,6 @@
             </ul>
         </div>
     </#if>
-
-    <div class="s_nadpis">Informace o akci</div>
-    <div class="s_sekce">
-        Datum: ${DATE.show(ITEM.created,"CZ_DMY")}<br>
-        Začátek: ${DATE.show(ITEM.created,"TIME")}<br>
-        Kraj: <@lib.showRegion region/><br>
-        Typ akce: ${subtype}
-    </div>
 </#assign>
 
 <#include "../header.ftl">
@@ -76,6 +84,31 @@ Stav: čeká na schválení
 <p>
     ${TOOL.render(descShort,USER?if_exists)}
 </p>
+</#if>
+
+<#if location!="UNDEF">
+    <div id="map" style="width: 500px; height: 300px"></div>
+    <script type="text/javascript">
+        var map = new GMap2(document.getElementById("map"));
+        geocoder = new GClientGeocoder();
+
+        map.addControl(new GSmallMapControl());
+        map.addControl(new GMapTypeControl());
+        
+        geocoder.getLatLng(
+          "${location?html}",
+          function(point) {
+            if (!point) {
+              alert(address + " nebylo na Google Maps nalezeno!");
+            } else {
+              map.setCenter(point, 13);
+              var marker = new GMarker(point);
+              map.addOverlay(marker);
+              marker.openInfoWindowHtml("<font color=\"black\"><b>Umístění akce</b><br>${location?html}");
+            }
+          }
+        );
+    </script>
 </#if>
 
 <#assign attachments=TOOL.attachmentsFor(ITEM)>

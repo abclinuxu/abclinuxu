@@ -84,6 +84,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String KEY_INDEX_LINKS = "links.in.index";
     public static final String KEY_TEMPLATE_LINKS = "links.in.template";
     public static final String KEY_TAGCLOUD = "tagcloud";
+    public static final String KEY_EVENT = "event";
 
     public static final String PREF_DEFAULT = "default.";
     public static final String PREF_MAX = "max.";
@@ -94,7 +95,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     List freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
     List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities;
-    List freshTrivias;
+    List freshTrivias, freshEvents;
     List<Map> latestSubportalChanges;
     Map<Integer, List> freshSubportalArticles, freshForumQuestions, freshSubportalWikiPages;
     Map<Integer, Relation> nextSubportalEvent, freshSubportalEvent;
@@ -352,6 +353,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
         int userLimit = getObjectCountForUser(user, KEY_TRIVIA, null);
         return getSubList(freshTrivias, userLimit);
     }
+    
+    /**
+     * List of the most fresh event relations according to user preference or system setting.
+     */
+    public List getFreshEvents(Object user) {
+        int userLimit = getObjectCountForUser(user, KEY_EVENT, null);
+        return getSubList(freshEvents, userLimit);
+    }
 
     /**
      * List of the most fresh screenshot relations according to user preference or system setting.
@@ -603,6 +612,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshScreenshots();
             refreshCloudTags();
             refreshTrivia();
+            refreshEvents();
 
             // jobs are refreshed from another thread (JobsCzFetcher)
             // refreshJobsCz();
@@ -1045,6 +1055,21 @@ public class VariableFetcher extends TimerTask implements Configurable {
             log.error("Selhalo nacitani kvizu", e);
         }
     }
+    
+    public void refreshEvents() {
+        try {
+            int maximum = (Integer) maxSizes.get(KEY_EVENT);
+            Qualifier[] qualifiers = new Qualifier[] {
+                new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, SpecialValue.NOW),
+                Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING, new LimitQualifier(0, maximum)
+            };
+            List data = sqlTool.findItemRelationsWithType(Item.EVENT, qualifiers);
+            Tools.syncList(data);
+            freshEvents = data;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani akci", e);
+        }
+    }
 
     public void refreshPersonalities() {
         try {
@@ -1367,6 +1392,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
         size = prefs.getInt(PREF_MAX + KEY_SCREENSHOT, 3);
         maxSizes.put(KEY_SCREENSHOT, size);
         freshScreenshots = Collections.emptyList();
+        
+        size = prefs.getInt(PREF_DEFAULT + KEY_EVENT, 3);
+        defaultSizes.put(KEY_EVENT, size);
+        size = prefs.getInt(PREF_MAX + KEY_EVENT, 3);
+        maxSizes.put(KEY_EVENT, size);
+        freshEvents = Collections.emptyList();
 
         size = prefs.getInt(PREF_DEFAULT + KEY_JOBSCZ, 10);
         defaultSizes.put(KEY_JOBSCZ, size);
