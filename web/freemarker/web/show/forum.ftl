@@ -61,7 +61,7 @@
   <tbody>
    <#list TOOL.analyzeDiscussions(DIZS.data) as diz>
     <tr>
-      <td><a href="/forum/show/${diz.relationId}" title="${diz.title}">${TOOL.limit(diz.title,60," ..")}</a></td>
+      <td><a href="${diz.url?default("/forum/show/"+diz.relationId)}" title="${diz.title}">${TOOL.limit(diz.title,60," ..")}</a></td>
       <td class="td-meta"><@lib.showDiscussionState diz /></td>
       <td class="td-meta">${diz.responseCount}</td>
       <td class="td-datum">${DATE.show(diz.updated,"SMART")}</td>

@@ -58,7 +58,7 @@ Teprve když neuspějete, položte nový dotaz.</p>
 <tbody>
  <#list questions as diz>
   <tr>
-    <td><a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,60,"...")}</a></td>
+    <td><a href="${diz.url?default("/forum/show/"+diz.relationId)}">${TOOL.limit(diz.title,60,"...")}</a></td>
     <td class="td-meta"><@lib.showDiscussionState diz /></td>
     <td class="td-meta">${diz.responseCount}</td>
     <td class="td-datum">${DATE.show(diz.updated,"CZ_SHORT")}</td>

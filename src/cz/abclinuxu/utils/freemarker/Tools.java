@@ -1638,7 +1638,7 @@ public class Tools implements Configurable {
         discussion.relationId = relation.getId();
         discussion.updated = item.getUpdated();
         discussion.created = item.getCreated();
-        discussion.url = relation.getUrl();
+        discussion.url = getUrlForDiscussion(relation);
 
         Document data = item.getData();
         Element element = (Element) data.selectSingleNode("/data/comments");
@@ -1652,6 +1652,27 @@ public class Tools implements Configurable {
         discussion.title = item.getTitle();
         discussion.title = removeTags(discussion.title);
         return discussion;
+    }
+    
+    public static String getUrlForDiscussion(Relation relation) {
+        sync(relation);
+        if (relation.getUrl() != null)
+            return relation.getUrl();
+        
+        if (relation.getParent() instanceof Category) {
+            Relation relUpper = (Relation) persistence.findById(new Relation(relation.getUpper()));
+            if (relUpper.getUrl() != null)
+                return relUpper.getUrl() + "/show/" + relation.getId();
+        }
+        
+        if (relation.getParent() instanceof Item) {
+            Item item = (Item) sync(relation.getParent());
+            
+            if (item.getType() == Item.NEWS)
+                return "/zpravicky/show/" + relation.getId();
+        }
+        
+        return "/forum/show/" + relation.getId();
     }
 
     /**
