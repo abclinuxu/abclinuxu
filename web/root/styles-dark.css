@@ -425,9 +425,9 @@ a.selected:hover {
 
 .calendar td { border-color: transparent; }
 .calendar #today { background-color: #202020; }
-.calendar .selected,
-.event_time .selected,
-.event_type .selected { background-color: #80BBCA; color: black; }
+.calendar .selected a,
+.event_time .selected a,
+.event_type .selected a { background-color: #80BBCA; color: black; }
 .calendar .event_day { border-color: #4B4B4B; }
 .event_hdr {
   border-color: #4B4B4B;
