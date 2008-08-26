@@ -1744,11 +1744,34 @@ public class MySqlPersistence implements Persistence {
             con = getSQLConnection();
             statement = null;
 
-            statement = con.prepareStatement("UPDATE "+getTable(obj)+" SET typ=?,podtyp=?,data=? WHERE cislo=?");
+            statement = con.prepareStatement("UPDATE "+getTable(obj)+" SET typ=?,podtyp=?,data=?,numeric1=?,numeric2=?,string1=?,string2=?,date1=?,date2=? WHERE cislo=?");
             statement.setInt(1,obj.getType());
             statement.setString(2,obj.getSubType());
             statement.setBytes(3,obj.getDataAsString().getBytes());
-            statement.setInt(4,obj.getId());
+            statement.setInt(10,obj.getId());
+            
+            Integer intgr = obj.getNumeric1();
+            if (intgr != null)
+                statement.setInt(4,intgr);
+            else
+                statement.setString(4,null);
+            
+            intgr = obj.getNumeric2();
+            if (intgr != null)
+                statement.setInt(5,intgr);
+            else
+                statement.setString(5,null);
+            
+            statement.setString(6,obj.getString1());
+            statement.setString(7,obj.getString2());
+            if ((obj.getDate1() != null))
+                statement.setTimestamp(8,new Timestamp(obj.getDate1().getTime()));
+            else
+                statement.setTimestamp(8,null);
+            if ((obj.getDate2() != null))
+                statement.setTimestamp(9,new Timestamp(obj.getDate2().getTime()));
+            else
+                statement.setTimestamp(9,null);
 
             int result = statement.executeUpdate();
             if ( result!=1 )
