@@ -355,7 +355,9 @@ public class Tools implements Configurable {
                 Category blog = (Category) relation.getParent();
                 sync(blog);
                 return urlUtils.noPrefix(getUrlForBlogStory(blog.getSubType(), item.getCreated(), relation.getId()));
-            } else
+            } else if (item.getType() == Item.DISCUSSION)
+                return urlUtils.noPrefix(getUrlForDiscussion(relation));
+            else
                 return urlUtils.make("/show/" + relation.getId());
         }
 
