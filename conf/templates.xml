@@ -626,7 +626,6 @@
             <var name="TITLE" value='${ITEM.title}' type="Lazy" />
         </action>
         <action name="article" content="/show/article.ftl">
-            <var name="TITLE" value='${ITEM.title}' type="Lazy" />
         </action>
         <action name="driver" content="/show/driver.ftl">
             <var name="TITLE" value='${ITEM.title} - ${TOOL.xpath(ITEM,"data/version")}' type="Lazy" />

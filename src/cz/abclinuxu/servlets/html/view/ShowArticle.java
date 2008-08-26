@@ -68,6 +68,7 @@ public class ShowArticle implements AbcAction {
     public static final String VAR_RELATED_RESOURCES = "RESOURCES";
     public static final String VAR_ARTICLES_IN_SAME_SECTION = "SAME_SECTION_ARTICLES";
     public static final String VAR_SERIES = "SERIES";
+    public static final String VAR_TITLE = "TITLE";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -116,6 +117,7 @@ public class ShowArticle implements AbcAction {
             throw new InvalidDataException("Záznam "+record.getId()+" má špatný obsah!");
         } else if ( nodes.size() == 1 ) {
             env.put(VAR_ARTICLE_TEXT,((Node)nodes.get(0)).getText());
+            env.put(VAR_TITLE, item.getTitle());
         } else {
             int page = Misc.parseInt((String) params.get(PARAM_PAGE), 0);
             env.put(VAR_PAGE, page);
@@ -125,6 +127,7 @@ public class ShowArticle implements AbcAction {
             for ( Iterator iter = nodes.iterator(); iter.hasNext(); )
                 pages.add(((Element)iter.next()).attributeValue("title"));
             env.put(VAR_PAGES, pages);
+            env.put(VAR_TITLE, pages.get(page));
         }
 
         nodes = recordDocument.selectNodes("/data/related/link");
