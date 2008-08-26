@@ -179,7 +179,7 @@ public class ViewCategory implements AbcAction {
         }
 
         int rid = relation.getId();
-        System.out.println("Zpracovavam rid "+rid);
+
         if (rid == Constants.REL_FORUM)
             return ShowForum.processMain(request, env);
         else if (rid == Constants.REL_POLLS)
