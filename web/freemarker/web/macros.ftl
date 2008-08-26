@@ -570,29 +570,29 @@
 </#macro>
 
 <#macro showRegion region>
-    <#if region=="praha">Praha
-    <#elseif region=="jihocesky">Jihočeský
-    <#elseif region=="jihomoravsky">Jihomoravský
-    <#elseif region=="karlovarsky">Karlovarský
-    <#elseif region=="kralovehradecky">Královehradecký
-    <#elseif region=="liberecky">Liberecký
-    <#elseif region=="moravskoslezsky">Moravskoslezský
-    <#elseif region=="olomoucky">Olomoucký
-    <#elseif region=="pardubicky">Pardubický
-    <#elseif region=="plzensky">Plzeňský
-    <#elseif region=="stredocesky">Středočeský
-    <#elseif region=="ustecky">Ústecký
-    <#elseif region=="vysocina">Vysočina
-    <#elseif region=="zlinsky">Zlínský
-    <#elseif region=="banskobystricky">Banskobystrický
-    <#elseif region=="bratislavsky">Bratislavský
-    <#elseif region=="kosicky">Košický
-    <#elseif region=="nitransky">Nitranský
-    <#elseif region=="presovsky">Prešovský
-    <#elseif region=="trencinsky">Trenčínský
-    <#elseif region=="trnavsky">Trnavský
-    <#elseif region=="zilinsky">Žilinský
-    </#if>
+<#if region=="praha">Praha
+<#elseif region=="jihocesky">Jihočeský
+<#elseif region=="jihomoravsky">Jihomoravský
+<#elseif region=="karlovarsky">Karlovarský
+<#elseif region=="kralovehradecky">Královehradecký
+<#elseif region=="liberecky">Liberecký
+<#elseif region=="moravskoslezsky">Moravskoslezský
+<#elseif region=="olomoucky">Olomoucký
+<#elseif region=="pardubicky">Pardubický
+<#elseif region=="plzensky">Plzeňský
+<#elseif region=="stredocesky">Středočeský
+<#elseif region=="ustecky">Ústecký
+<#elseif region=="vysocina">Vysočina
+<#elseif region=="zlinsky">Zlínský
+<#elseif region=="banskobystricky">Banskobystrický
+<#elseif region=="bratislavsky">Bratislavský
+<#elseif region=="kosicky">Košický
+<#elseif region=="nitransky">Nitranský
+<#elseif region=="presovsky">Prešovský
+<#elseif region=="trencinsky">Trenčínský
+<#elseif region=="trnavsky">Trnavský
+<#elseif region=="zilinsky">Žilinský
+</#if>
 </#macro>
 
 <#macro showEvent relation showLogo showManagement>
