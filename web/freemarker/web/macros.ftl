@@ -610,7 +610,7 @@
 
     <table>
     <tr>
-        <td bgcolor="#dddddd" width="150">
+        <td class="event_hdr">
             <h3>${DATE.show(item.created,"CZ_DMY",false)}</h3>
             Druh: ${subtype}<br>
             Kraj: <@lib.showRegion region/><br>

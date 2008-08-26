@@ -1117,3 +1117,11 @@ p.documentHistory {
 .editTags {
 	margin-left: 1em;
 }
+
+.event_hdr {
+    width: 150px;
+}
+
+.calendar { width: 100%; }
+.calendar td { text-align: center }
+.calendar a { text-decoration: none }

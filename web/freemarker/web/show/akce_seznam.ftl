@@ -27,7 +27,7 @@
                 <td colspan="2"><a rel="nofollow" href="?year=${CALENDAR.prevYear}&amp;month=${CALENDAR.prevMonth}&amp;subtype=${subtype}">&laquo; <@lib.month CALENDAR.prevMonth.toString()/></a></td>
                 <td colspan="3">
                     <#if !PARAMS.day?exists && PARAMS.month?exists && ""+CALENDAR.month==PARAMS.month>
-                        <span class="cal_selected">
+                        <span class="calendar_selected">
                     <#else>
                         <span>
                     </#if>
@@ -36,7 +36,7 @@
                     </span>
     
                     <#if !PARAMS.month?exists && !PARAMS.day?exists && PARAMS.year?exists && ""+CALENDAR.year==PARAMS.year>
-                        <span class="cal_selected">
+                        <span class="calendar_selected">
                     <#else>
                         <span>
                     </#if>
@@ -59,13 +59,13 @@
                         <#assign id="today">
                     </#if>
                     <#if PARAMS.day?exists && ""+curday==PARAMS.day>
-                        <#assign class="cal_selected">
+                        <#assign class="calendar_selected">
                     </#if>
                     <#if CALENDAR.eventDays[curday-1]>
                         <#if class!="UNDEF">
-                            <#assign class="cal_event "+class>
+                            <#assign class="calendar_event "+class>
                         <#else>
-                            <#assign class="cal_event">
+                            <#assign class="calendar_event">
                         </#if>
                     </#if>
                     <td <#if id!="UNDEF">id="${id}"</#if> <#if class!="UNDEF">class="${class}"</#if>>
@@ -79,13 +79,13 @@
         <div class="s_nadpis">Časová osa</div>
         <div class="s_sekce">
         <ul>
-            <li <#if "everything"==PARAMS.mode?default("UNDEF")>class="cal_selected"</#if>>
+            <li <#if "everything"==PARAMS.mode?default("UNDEF")>class="calendar_selected"</#if>>
                     <a href="?mode=everything&amp;subtype=${subtype}">Všechny akce</a>
             </li>
-            <li <#if "upcoming"==PARAMS.mode?default("UNDEF")>class="cal_selected"</#if>>
+            <li <#if "upcoming"==PARAMS.mode?default("UNDEF")>class="calendar_selected"</#if>>
                     <a href="?mode=upcoming&amp;subtype=${subtype}">Nadcházející akce</a>
             </li>
-            <li <#if "old"==PARAMS.mode?default("UNDEF")>class="cal_selected"</#if>>
+            <li <#if "old"==PARAMS.mode?default("UNDEF")>class="calendar_selected"</#if>>
                     <a href="?mode=old&amp;subtype=${subtype}">Proběhlé akce</a>
             </li>
         </ul>
@@ -109,11 +109,11 @@
             </#if>
     
             <ul>
-            <li <#if subtype=="">class="cal_selected"</#if>><a href="/akce?${url}">Všechny druhy</a></li>
+            <li <#if subtype=="">class="calendar_selected"</#if>><a href="/akce?${url}">Všechny druhy</a></li>
             <hr />
-            <li <#if subtype=="community">class="cal_selected"</#if>><a href="/akce?${url}&amp;subtype=community">Komunitní</a></li>
-            <li <#if subtype=="educational">class="cal_selected"</#if>><a href="/akce?${url}&amp;subtype=educational">Vzdělávací</a></li>
-            <li <#if subtype=="company">class="cal_selected"</#if> ><a href="/akce?${url}&amp;subtype=company">Firemní</a></li>
+            <li <#if subtype=="community">class="calendar_selected"</#if>><a href="/akce?${url}&amp;subtype=community">Komunitní</a></li>
+            <li <#if subtype=="educational">class="calendar_selected"</#if>><a href="/akce?${url}&amp;subtype=educational">Vzdělávací</a></li>
+            <li <#if subtype=="company">class="calendar_selected"</#if> ><a href="/akce?${url}&amp;subtype=company">Firemní</a></li>
             </ul>
         </div>
     </#if>
