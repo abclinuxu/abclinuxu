@@ -159,6 +159,7 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
 
             // todo odstranit volani EditUser, presunout kontroly primo sem, hlavne zadne HTML
             User user = new User();
+            user.setData("<data/>");
             Map<String, String> userMap = new HashMap<String, String>();
             Map env = new HashMap();
             String  tmp;
