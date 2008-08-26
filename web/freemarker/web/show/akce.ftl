@@ -87,6 +87,7 @@ Stav: čeká na schválení
 </#if>
 
 <#if location!="UNDEF">
+<p>
     <div id="map" style="width: 500px; height: 300px"></div>
     <script type="text/javascript">
         var map = new GMap2(document.getElementById("map"));
@@ -109,6 +110,7 @@ Stav: čeká na schválení
           }
         );
     </script>
+</p>
 </#if>
 
 <#assign attachments=TOOL.attachmentsFor(ITEM)>
