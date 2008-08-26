@@ -96,7 +96,7 @@ Stav: čeká na schválení
         map.addControl(new GMapTypeControl());
         
         geocoder.getLatLng(
-          "${location?html}",
+          "${location.replace("\"","\\\"")}",
           function(point) {
             if (!point) {
               alert(address + " nebylo na Google Maps nalezeno!");

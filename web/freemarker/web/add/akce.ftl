@@ -97,7 +97,7 @@ Ať už plánujete posezení v hospodě, installfest či nějakou velkou akci, z
         <tr>
             <td>Přesné umístění</td>
             <td>
-                <input type="text" name="location" value="${PARAMS.location?if_exists}" size="40">
+                <input type="text" name="location" value="${PARAMS.location?if_exists?html}" size="40">
                 <div class="error">${ERRORS.location?if_exists}</div>
                 Zadejte souřadnice či jiné údaje použitelné pro vyhledávání na Google Maps.
             </td>
