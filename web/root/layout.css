@@ -1123,5 +1123,5 @@ p.documentHistory {
 }
 
 .calendar { width: 100%; }
-.calendar td { text-align: center }
+.calendar td { text-align: center; width: 14% }
 .calendar a { text-decoration: none }
