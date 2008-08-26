@@ -608,31 +608,30 @@
     <#assign tmp=TOOL.groupByType(item.children, "Item")>
     <#if tmp.discussion?exists><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz=null></#if>
 
-    <table>
+    <table class="events">
     <tr>
         <td class="event_hdr">
-            <h3>${DATE.show(item.created,"CZ_DMY",false)}</h3>
-            Druh: ${subtype}<br>
-            Kraj: <@lib.showRegion region/><br>
-            Začátek: ${DATE.show(item.created,"TIME")}
+            <b>${DATE.show(item.created,"CZ_DMY",false)}</b><br />
+            <em>Druh:</em> ${subtype}<br />
+            <em>Kraj:</em> <@lib.showRegion region/><br />
+            <em>Začátek:</em> ${DATE.show(item.created,"TIME")}
         </td>
         <td>
             <#if showLogo>
                 <#assign logo=TOOL.xpath(item, "/data/icon")?default("NOLOGO")>
                 <#if logo!="NOLOGO">
-                    <div class="cl_thumbnail"><img src="${logo}" alt="Logo akce"></div>
+                    <div class="cl_thumbnail"><img src="${logo}" alt="Logo akce ${TOOL.childName(item)}"></div>
                 </#if>
             </#if>
-            <h1 class="st_nadpis"><a href="${relation.url?default("/akce/show/"+relation.id)}">${TOOL.childName(item)}</a></h2>
-            ${TOOL.xpath(item, "/data/descriptionShort")}
+            <h2 class="st_nadpis"><a href="${relation.url?default("/akce/show/"+relation.id)}">${TOOL.childName(item)}</a></h2>
+            <p>${TOOL.xpath(item, "/data/descriptionShort")}</p>
 
-            <div class="meta-vypis">Aktualizováno: ${DATE.show(item.updated,"SMART")}
-                | <@lib.showUser TOOL.createUser(item.owner) />
+            <p class="meta-vypis">Aktualizováno: ${DATE.show(item.updated,"SMART")}
+                | správce:&nbsp;<@lib.showUser TOOL.createUser(item.owner) />
                 <#if diz?exists>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/akce" /></#if>
-                <br/>
-                Přečteno: ${TOOL.getCounterValue(item,"read")}&times;
-                | <a href="${relation.url?default("/akce/"+relation.id)}?action=participants">Účastníků: ${regs?eval}</a>
-            </div>
+                | Přečteno:&nbsp;${TOOL.getCounterValue(item,"read")}&times; |
+                <a href="${relation.url?default("/akce/"+relation.id)}?action=participants">Účastníků:&nbsp;${regs?eval}</a>
+            </p>
             <#if showManagement>
                 <div>
                     <a href="${URL.noPrefix("/akce/edit/"+relation.id+"?action=approve"+TOOL.ticket(USER,false))}">Schválit</a>
