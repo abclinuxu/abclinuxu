@@ -131,7 +131,7 @@
 </#list>
 
 <#if ITEMS.data?size==0>
-    <h2>Žádné akce!</h2>
+    <h2>Nenalezeny žádné akce pro váš výběr</h2>
 </#if>
 
 <#if (ITEMS.currentPage.row > 0) >
