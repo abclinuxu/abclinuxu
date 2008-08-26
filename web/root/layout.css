@@ -1125,20 +1125,20 @@ p.documentHistory {
 	font-size: 90%;
 }
 
-.calendar { width: 100%; }
-.calendar td {
+.eventCalendar { width: 100%; }
+.eventCalendar td {
 	width: 50px;
 	text-align: center;
 	border-width: 1px;
 }
-.calendar a {
+.eventCalendar a {
 	text-decoration: none;
 	display: block;
 }
-.calendar td.month_year a { display: inline; }
-.calendar .event_day,
-.calendar .weekdays { font-weight: bold; }
-.calendar .event_day {
+.eventCalendar td.month_year a { display: inline; }
+.eventCalendar .event_day,
+.eventCalendar .weekdays { font-weight: bold; }
+.eventCalendar .event_day {
 	border-width: 1px;
 	border-style: dotted;
 }

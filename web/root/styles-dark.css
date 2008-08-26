@@ -423,12 +423,12 @@ a.selected:hover {
         border: 1px solid white;
 }
 
-.calendar td { border-color: transparent; }
-.calendar #today { background-color: #202020; }
-.calendar .selected a,
+.eventCalendar td { border-color: transparent; }
+.eventCalendar #today { background-color: #202020; }
+.eventCalendar .selected a,
 .event_time .selected a,
 .event_type .selected a { background-color: #80BBCA; color: black; }
-.calendar .event_day { border-color: #4B4B4B; }
+.eventCalendar .event_day { border-color: #4B4B4B; }
 .event_hdr {
   border-color: #4B4B4B;
   background-color: black;

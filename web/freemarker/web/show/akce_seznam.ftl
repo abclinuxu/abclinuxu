@@ -22,7 +22,7 @@
         <#assign subtype=PARAMS.subtype?default("")>
         <div class="s_nadpis">Kalendář</div>
         <div class="s_sekce">
-            <table cellspacing="0" class="calendar">
+            <table cellspacing="0" class="eventCalendar">
             <tr>
                 <td colspan="2">
                   <a rel="nofollow" href="?year=${CALENDAR.prevYear}&amp;month=${CALENDAR.prevMonth}&amp;subtype=${subtype}">&laquo;&nbsp;<@lib.month CALENDAR.prevMonth.toString()/></a></td>
