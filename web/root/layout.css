@@ -1118,10 +1118,27 @@ p.documentHistory {
 	margin-left: 1em;
 }
 
+.events td { padding: 0 0.5em; }
 .event_hdr {
-    width: 150px;
+	border-width: 1px;
+	border-style: dotted;
+	font-size: 90%;
 }
 
 .calendar { width: 100%; }
-.calendar td { text-align: center; width: 14% }
-.calendar a { text-decoration: none }
+.calendar td {
+	width: 50px;
+	text-align: center;
+	border-width: 1px;
+}
+.calendar a {
+	text-decoration: none;
+	display: block;
+}
+.calendar td.month_year a { display: inline; }
+.calendar .event_day,
+.calendar .weekdays { font-weight: bold; }
+.calendar .event_day {
+	border-width: 1px;
+	border-style: dotted;
+}
