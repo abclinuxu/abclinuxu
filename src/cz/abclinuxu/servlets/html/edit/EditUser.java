@@ -2397,7 +2397,7 @@ public class EditUser implements AbcAction {
         if (Misc.empty(key)) {
             Node node = user.getData().selectSingleNode("/data/profile/gpg");
             if (node != null) {
-                String localPath = AbcConfig.calculateDeployedPath(node.getText().substring(1));
+                String localPath = AbcConfig.calculateDeployedPath(node.getText());
                 new File(localPath).delete();
                 node.detach();
             }
