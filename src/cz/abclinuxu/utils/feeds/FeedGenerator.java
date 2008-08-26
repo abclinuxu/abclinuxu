@@ -546,7 +546,7 @@ public class FeedGenerator implements Configurable {
     public static void createSeriesEntries(Item serie, SyndFeed feed, int maxArticles) {
         List articlesElements = serie.getData().getRootElement().elements("article");
         int first = articlesElements.size()-maxArticles;
-        articlesElements = articlesElements.subList(Math.max(first, 0), articlesElements.size()-1);
+        articlesElements = articlesElements.subList(Math.max(first, 0), articlesElements.size());
         articlesElements = new ArrayList<Element>(articlesElements);
         Collections.reverse(articlesElements);
 
