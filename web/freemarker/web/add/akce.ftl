@@ -97,9 +97,14 @@ Ať už plánujete posezení v hospodě, installfest či nějakou velkou akci, z
         <tr>
             <td>Přesné umístění</td>
             <td>
+                Zadejte souřadnice či jiné údaje použitelné pro vyhledávání na Google Maps.<br>
+                Příklady:
+                <ul>
+                    <li>50°5'31.77"N, 14°26'47.789"E</li>
+                    <li>u maxe, budějovice</li>
+                </ul>
                 <input type="text" name="location" value="${PARAMS.location?if_exists?html}" size="40">
                 <div class="error">${ERRORS.location?if_exists}</div>
-                Zadejte souřadnice či jiné údaje použitelné pro vyhledávání na Google Maps.
             </td>
         </tr>
         <tr>
