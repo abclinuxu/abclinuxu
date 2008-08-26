@@ -104,7 +104,7 @@ Stav: čeká na schválení
               map.setCenter(point, 13);
               var marker = new GMarker(point);
               map.addOverlay(marker);
-              marker.openInfoWindowHtml("<font color=\"black\"><b>Umístění akce</b><br>${location?html}");
+              marker.bindInfoWindowHtml("<font color=\"black\"><b>Umístění akce</b><br>${location?html}");
             }
           }
         );
