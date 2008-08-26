@@ -3,7 +3,7 @@
 <@lib.showMessages/>
 
 <p>
-    Zde můžete nastavit svůj GPG podpis, takže lidé mohou
+    Zde můžete nastavit svůj veřejný klíč GPG, takže lidé mohou
     ověřovat zprávy, které jim zašlete, a mohou vám posílat
     šifrované e-maily.
 </p>
