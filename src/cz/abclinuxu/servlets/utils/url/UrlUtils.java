@@ -269,6 +269,8 @@ public class UrlUtils {
 
         if (type == Item.BLOG || type == Item.UNPUBLISHED_BLOG)
             return Tools.getUrlForBlogStory(relation);
+        else if (type == Item.DISCUSSION)
+            return Tools.getUrlForDiscussion(relation);
         return prefix + "/show/" + relation.getId();
     }
 

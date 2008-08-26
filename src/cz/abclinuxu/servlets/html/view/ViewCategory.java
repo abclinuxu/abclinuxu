@@ -178,36 +178,34 @@ public class ViewCategory implements AbcAction {
                 return ViewEvent.processSection(request, response, relation, env);
         }
 
-        switch ( relation.getId() ) {
-            case Constants.REL_FORUM:
-                return ShowForum.processMain(request, env);
-            case Constants.REL_POLLS:
-                return ViewPolls.processPolls(env, request);
-            case Constants.REL_DRIVERS: {
-                env.put(Constants.VAR_RSS, FeedGenerator.getDriversFeedUrl());
-                env.put(EditDriver.VAR_CATEGORIES, DriverCategories.getAllCategories());
-                return FMTemplateSelector.select("ViewCategory", "drivers", env, request);
-            }
-            case Constants.REL_NEWS_POOL:
-                return FMTemplateSelector.select("ViewCategory", "waiting_news", env, request);
-            case Constants.REL_REQUESTS: {
-                EditDiscussion.detectSpambotCookie(request, env, user);
-                env.put(EditRequest.VAR_CATEGORIES, EditRequest.categories);
-                return FMTemplateSelector.select("EditRequest", "view", env, request);
-            }
-            case Constants.REL_DOCUMENTS:
-                return FMTemplateSelector.select("ViewCategory", "documents", env, request);
-            case Constants.REL_BAZAAR:
-                return ViewBazaar.processSection(request, relation, env);
-            case Constants.REL_SCREENSHOTS:
-                return ViewScreenshot.processSection(request, env);
-			case Constants.REL_SUBPORTALS:
-                return ViewSubportal.processSectionList(request, env);
-			case Constants.REL_EVENTS:
-				return ViewEvent.processSection(request, response, relation, env);
-            case Constants.REL_VIDEOS:
-                return ViewVideo.processSection(request, response, relation, env);
-        }
+        int rid = relation.getId();
+        System.out.println("Zpracovavam rid "+rid);
+        if (rid == Constants.REL_FORUM)
+            return ShowForum.processMain(request, env);
+        else if (rid == Constants.REL_POLLS)
+            return ViewPolls.processPolls(env, request);
+        else if (rid == Constants.REL_DRIVERS) {
+            env.put(Constants.VAR_RSS, FeedGenerator.getDriversFeedUrl());
+            env.put(EditDriver.VAR_CATEGORIES, DriverCategories.getAllCategories());
+            return FMTemplateSelector.select("ViewCategory", "drivers", env, request);
+        } else if (rid == Constants.REL_NEWS_POOL)
+            return FMTemplateSelector.select("ViewCategory", "waiting_news", env, request);
+        else if (rid == Constants.REL_REQUESTS) {
+            EditDiscussion.detectSpambotCookie(request, env, user);
+            env.put(EditRequest.VAR_CATEGORIES, EditRequest.categories);
+            return FMTemplateSelector.select("EditRequest", "view", env, request);
+        } else if (rid == Constants.REL_DOCUMENTS)
+            return FMTemplateSelector.select("ViewCategory", "documents", env, request);
+        else if (rid == Constants.REL_BAZAAR)
+            return ViewBazaar.processSection(request, relation, env);
+        else if (rid == Constants.REL_SCREENSHOTS)
+            return ViewScreenshot.processSection(request, env);
+		else if (rid == Constants.REL_SUBPORTALS)
+            return ViewSubportal.processSectionList(request, env);
+		else if (rid == Constants.REL_EVENTS)
+            return ViewEvent.processSection(request, response, relation, env);
+        else if (rid == Constants.REL_VIDEOS)
+            return ViewVideo.processSection(request, response, relation, env);
 
         if ( category.getId()==Constants.CAT_ARTICLES ) {
             env.put(Constants.VAR_RSS, FeedGenerator.getArticlesFeedUrl());

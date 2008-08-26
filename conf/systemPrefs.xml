@@ -649,6 +649,90 @@
                             <entry key="regexp.bots" value="bot|spider|crawl|blog|feed|rss|subscriber|liferea|slurp|archive|plucker|DigExt" />
                         </map>
                     </node>
+                    <node name="Constants">
+                        <map>
+                            <entry key="CAT_ARTICLES" value="1"/>
+                            <entry key="CAT_HARDWARE" value="2"/>
+                            <entry key="CAT_SOFTWARE" value="3"/>
+                            <entry key="CAT_ABC" value="4"/>
+                            <entry key="CAT_386" value="10"/>
+                            <entry key="CAT_POLLS" value="240"/>
+                            <entry key="CAT_LINKS" value="14"/>
+                            <entry key="CAT_DRIVERS" value="13"/>
+                            <entry key="CAT_AUTHORS" value="247"/>
+                            <entry key="CAT_REQUESTS" value="256"/>
+                            <entry key="CAT_FORUM" value="265"/>
+                            <entry key="CAT_ROOT" value="248"/>
+                            <entry key="CAT_SYSTEM" value="338"/>
+                            <entry key="CAT_ARTICLES_POOL" value="339"/>
+                            <entry key="CAT_NEWS_POOL" value="445"/>
+                            <entry key="CAT_NEWS" value="452"/>
+                            <entry key="CAT_DICTIONARY" value="569"/>
+                            <entry key="CAT_TIPS_POOL" value="571"/>
+                            <entry key="CAT_TIPS" value="572"/>
+                            <entry key="CAT_DOCUMENTS" value="587"/>
+                            <entry key="CAT_BLOGS" value="589"/>
+                            <entry key="CAT_FAQ" value="758"/>
+                            <entry key="CAT_GUESTBOOK" value="885"/>
+                            <entry key="CAT_BAZAAR" value="1584"/>
+                            <entry key="CAT_TRIVIA" value="1605"/>
+                            <entry key="CAT_HANGMAN" value="1606"/>
+                            <entry key="CAT_SCREENSHOTS" value="1949"/>
+                            <entry key="CAT_SERIES" value="1647"/>
+                            <entry key="CAT_SURVEY" value="1679"/>
+                            <entry key="CAT_PERSONALITIES" value="1863"/>
+                            <entry key="CAT_SUBPORTALS" value="2116"/>
+                            <entry key="CAT_EVENTS" value="2117"/>
+                            <entry key="CAT_VIDEOS" value="2123"/>
+                            <entry key="ITEM_DIZ_TODO" value="11606"/>
+                            <entry key="ITEM_DYNAMIC_CONFIGURATION" value="59516"/>
+                            <entry key="REC_DIZ_TODO" value="38280"/>
+                            <entry key="REL_POLLS" value="250"/>
+                            <entry key="REL_REKLAMA" value="308"/>
+                            <entry key="REL_AUTHORS" value="314"/>
+                            <entry key="REL_ARTICLES" value="315"/>
+                            <entry key="REL_HARDWARE" value="316"/>
+                            <entry key="REL_HARDWARE_386" value="1"/>
+                            <entry key="REL_SOFTWARE" value="317"/>
+                            <entry key="REL_DRIVERS" value="318"/>
+                            <entry key="REL_FORUM" value="3739"/>
+                            <entry key="REL_FORUM_APPLICATIONS" value="49655"/>
+                            <entry key="REL_FORUM_HARDWARE" value="49488"/>
+                            <entry key="REL_FORUM_SETTINGS" value="49489"/>
+                            <entry key="REL_FORUM_DISTRIBUTIONS" value="49490"/>
+                            <entry key="REL_FORUM_VARIOUS" value="51457"/>
+                            <entry key="REL_ABC" value="5187"/>
+                            <entry key="REL_KOMERCE" value="7223"/>
+                            <entry key="REL_SYSTEM" value="8000"/>
+                            <entry key="REL_ARTICLEPOOL" value="8082"/>
+                            <entry key="REL_NEWS_POOL" value="37672"/>
+                            <entry key="REL_NEWS" value="42932"/>
+                            <entry key="REL_DIZ_TODO" value="50795"/>
+                            <entry key="REL_DICTIONARY" value="60058"/>
+                            <entry key="REL_TIPS_POOL" value="61138"/>
+                            <entry key="REL_TIPS" value="61139"/>
+                            <entry key="REL_DOCUMENTS" value="66948"/>
+                            <entry key="REL_BLOGS" value="69275"/>
+                            <entry key="REL_GUESTBOOK" value="93214"/>
+                            <entry key="REL_FAQ" value="81515"/>
+                            <entry key="REL_BAZAAR" value="152995"/>
+                            <entry key="REL_GAMES" value="156665"/>
+                            <entry key="REL_TRIVIA" value="156666"/>
+                            <entry key="REL_HANGMAN" value="156667"/>
+                            <entry key="REL_SCREENSHOTS" value="200506"/>
+                            <entry key="REL_SERIES" value="164193"/>
+                            <entry key="REL_SURVEY" value="168884"/>
+                            <entry key="REL_PERSONALITIES" value="190499"/>
+                            <entry key="REL_SUBPORTALS" value="233273"/>
+                            <entry key="REL_EVENTS" value="233274"/>
+                            <entry key="REL_VIDEOS" value="234043"/>
+                            <entry key="GROUP_ADMINI" value="11246"/>
+                            <entry key="GROUP_AUTORI" value="11247"/>
+                            <entry key="GROUP_STICKFISH" value="12651"/>
+                            <entry key="GROUP_TEAM_ABCLINUXU" value="20468"/>
+                            <entry key="USER_REDAKCE" value="5473"/>
+                        </map>
+                    </node>
                     <node name="utils">
                         <map/>
                         <node name="url">
