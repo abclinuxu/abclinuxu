@@ -390,13 +390,13 @@ a.selected:hover {
 
 .stitek:hover { text-decoration: line-through; }
 
-.calendar #today { background-color: white }
-.calendar_selected { border: 1px solid #f88 }
-.calendar_event { font-weight: bold }
-.event_hdr { 
-  border-style: dotted;
-  border-width: 1px;
-  border-color: #aaa;
-  background-color: #eee;
-  color: #555;
+.calendar td { border-color: transparent; }
+.calendar #today { background-color: white; }
+.calendar .selected,
+.event_time .selected,
+.event_type .selected { background-color: #FFF8C3; }
+.calendar .event_day { border-color: silver; }
+.event_hdr {
+  border-color: silver;
+  background-color: #ececec;
 }
