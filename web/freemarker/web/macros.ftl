@@ -312,20 +312,20 @@
 
 <#macro star value><#if (value>0.60)><img src="/images/site/star1.gif" alt="*"><#elseif (value<0.2)><img src="/images/site/star0.gif" alt="-"><#else><img src="/images/site/star5.gif" alt="+"></#if></#macro>
 
-<#macro month (month)>
-    <#if month=="1">leden
-    <#elseif month=="2">únor
-    <#elseif month=="3">březen
-    <#elseif month=="4">duben
-    <#elseif month=="5">květen
-    <#elseif month=="6">červen
-    <#elseif month=="7">červenec
-    <#elseif month=="8">srpen
-    <#elseif month=="9">září
-    <#elseif month=="10">říjen
-    <#elseif month=="11">listopad
-    <#elseif month=="12">prosinec
-    </#if>
+<#macro month (month)><#--
+ --><#if month=="1">leden<#--
+ --><#elseif month=="2">únor<#--
+ --><#elseif month=="3">březen<#--
+ --><#elseif month=="4">duben<#--
+ --><#elseif month=="5">květen<#--
+ --><#elseif month=="6">červen<#--
+ --><#elseif month=="7">červenec<#--
+ --><#elseif month=="8">srpen<#--
+ --><#elseif month=="9">září<#--
+ --><#elseif month=="10">říjen<#--
+ --><#elseif month=="11">listopad<#--
+ --><#elseif month=="12">prosinec<#--
+ --></#if>
 </#macro>
 
 <#macro showPoll (relation url=relation.url?default("/ankety/show/"+relation.id))>
