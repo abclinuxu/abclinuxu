@@ -424,7 +424,7 @@ a.selected:hover {
 }
 
 .eventCalendar td { border-color: transparent; }
-.eventCalendar #today { background-color: #202020; }
+.eventCalendar #today { background-color: #575757; }
 .eventCalendar .selected a,
 .event_time .selected a,
 .event_type .selected a { background-color: #80BBCA; color: black; }
