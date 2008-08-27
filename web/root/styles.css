@@ -273,7 +273,9 @@ a.info:hover span.tooltip {
 	color: white;
 }
 
-.s_reklama a:hover { background-color: transparent; }
+.s_reklama a:hover,
+.s_logo a:hover { background-color: transparent; }
+
 .gg-sky { border-left-color: #C0C0C0; }
 
 .ank-sloup {
