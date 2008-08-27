@@ -87,15 +87,15 @@
 </#if>
 
 <#if location!="UNDEF">
-<p>
-    <div id="map" style="width: 500px; height: 300px"></div>
+<h2>Mapa</h2>
+    <div id="gg_map" style="width: 500px; height: 300px"></div>
     <script type="text/javascript">
-        var map = new GMap2(document.getElementById("map"));
+        var map = new GMap2(document.getElementById("gg_map"));
         geocoder = new GClientGeocoder();
 
         map.addControl(new GSmallMapControl());
         map.addControl(new GMapTypeControl());
-        
+
         geocoder.getLatLng(
           "${location.replace("\"","\\\"")}",
           function(point) {
@@ -105,33 +105,32 @@
               map.setCenter(point, 13);
               var marker = new GMarker(point);
               map.addOverlay(marker);
-              marker.bindInfoWindowHtml("<font color=\"black\"><b>Umístění akce</b><br>${location?html}");
+              marker.bindInfoWindowHtml("<font color=\"black\"><b>${TOOL.childName(ITEM)}</b><br />${location?html}");
             }
           }
         );
     </script>
-</p>
 </#if>
 
 <#assign attachments=TOOL.attachmentsFor(ITEM)>
 <#if (attachments?size > 0)>
-    <#assign wrote_div=false>
-
-        <#list attachments as attachment>
-            <#assign hidden=TOOL.xpath(attachment.child, "/data/object/@hidden")?default("false")>
-            <#if hidden=="false" || TOOL.permissionsFor(USER, RELATION).canModify()>
-                <#if !wrote_div>
-                    <div class="ds_attachments"><span>Přílohy:</span><ul>
-                    <#assign wrote_div=true>
-                </#if>
-
-                <li>
-                <a href="${TOOL.xpath(attachment.child, "/data/object/@path")}">${TOOL.xpath(attachment.child, "/data/object/originalFilename")}</a>
-                (${TOOL.xpath(attachment.child, "/data/object/size")} bytů) <#if hidden=="true"><i>skrytá</i></#if></li>
-            </#if>
-        </#list>
-
-        <#if wrote_div></ul></div></#if>
+  <#assign wrote_div=false>
+  <#list attachments as attachment>
+  <#assign hidden=TOOL.xpath(attachment.child, "/data/object/@hidden")?default("false")>
+    <#if hidden=="false" || TOOL.permissionsFor(USER, RELATION).canModify()>
+      <#if !wrote_div>
+        <div class="ds_attachments">
+          <h3>Přílohy:</h3>
+          <ul>
+          <#assign wrote_div=true>
+      </#if>
+            <li><a href="${TOOL.xpath(attachment.child, "/data/object/@path")}">${TOOL.xpath(attachment.child, "/data/object/originalFilename")}</a> (${TOOL.xpath(attachment.child, "/data/object/size")} bytů) <#if hidden=="true"><i>skrytá</i></#if></li>
+      </#if>
+    </#list>
+    <#if wrote_div>
+          </ul>
+        </div>
+    </#if>
 </#if>
 
 <hr />
