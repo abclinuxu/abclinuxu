@@ -17,6 +17,7 @@
         <@lib.showSubportal SUBPORTAL, true/>
         <#assign counter=VARS.getSubportalCounter(SUBPORTAL)>
     </#if>
+    <#assign icon=TOOL.xpath(ITEM,"/data/icon")?default("UNDEF")>
     <#if icon!="UNDEF">
         <div class="s_nadpis">${TOOL.childName(ITEM)}</div>
         <div class="s_sekce">
@@ -61,13 +62,12 @@
     |  Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;</p>
 
 <#assign descShort=TOOL.xpath(ITEM,"/data/descriptionShort"),
-        desc=TOOL.xpath(ITEM,"/data/description")?default("UNDEF"),
-        icon=TOOL.xpath(ITEM,"/data/icon")?default("UNDEF")>
+         desc=TOOL.xpath(ITEM,"/data/description")?default("UNDEF")>
 <#if ITEM.type==27>
 <p>Stav: čeká na schválení
     <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
-        <a href="${URL.noPrefix("/akce/edit/"+RELATION.id+"?action=approve"+TOOL.ticket(USER,false))}">Schválit</a>
-        | <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/akce")}">Smazat</a>
+        (<a href="${URL.noPrefix("/akce/edit/"+RELATION.id+"?action=approve"+TOOL.ticket(USER,false))}">Schválit</a>
+        | <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/akce")}">Smazat</a>)
     </#if>
 </p>
 </#if>
