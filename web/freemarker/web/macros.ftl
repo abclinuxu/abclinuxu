@@ -569,30 +569,30 @@
 
 </#macro>
 
-<#macro showRegion region>
-<#if region=="praha">Praha
-<#elseif region=="jihocesky">Jihočeský
-<#elseif region=="jihomoravsky">Jihomoravský
-<#elseif region=="karlovarsky">Karlovarský
-<#elseif region=="kralovehradecky">Královehradecký
-<#elseif region=="liberecky">Liberecký
-<#elseif region=="moravskoslezsky">Moravskoslezský
-<#elseif region=="olomoucky">Olomoucký
-<#elseif region=="pardubicky">Pardubický
-<#elseif region=="plzensky">Plzeňský
-<#elseif region=="stredocesky">Středočeský
-<#elseif region=="ustecky">Ústecký
-<#elseif region=="vysocina">Vysočina
-<#elseif region=="zlinsky">Zlínský
-<#elseif region=="banskobystricky">Banskobystrický
-<#elseif region=="bratislavsky">Bratislavský
-<#elseif region=="kosicky">Košický
-<#elseif region=="nitransky">Nitranský
-<#elseif region=="presovsky">Prešovský
-<#elseif region=="trencinsky">Trenčínský
-<#elseif region=="trnavsky">Trnavský
-<#elseif region=="zilinsky">Žilinský
-</#if>
+<#macro showRegion region><#--
+ --><#if region=="praha">Praha<#--
+ --><#elseif region=="jihocesky">Jihočeský<#--
+ --><#elseif region=="jihomoravsky">Jihomoravský<#--
+ --><#elseif region=="karlovarsky">Karlovarský<#--
+ --><#elseif region=="kralovehradecky">Královehradecký<#--
+ --><#elseif region=="liberecky">Liberecký<#--
+ --><#elseif region=="moravskoslezsky">Moravskoslezský<#--
+ --><#elseif region=="olomoucky">Olomoucký<#--
+ --><#elseif region=="pardubicky">Pardubický<#--
+ --><#elseif region=="plzensky">Plzeňský<#--
+ --><#elseif region=="stredocesky">Středočeský<#--
+ --><#elseif region=="ustecky">Ústecký<#--
+ --><#elseif region=="vysocina">Vysočina<#--
+ --><#elseif region=="zlinsky">Zlínský<#--
+ --><#elseif region=="banskobystricky">Banskobystrický<#--
+ --><#elseif region=="bratislavsky">Bratislavský<#--
+ --><#elseif region=="kosicky">Košický<#--
+ --><#elseif region=="nitransky">Nitranský<#--
+ --><#elseif region=="presovsky">Prešovský<#--
+ --><#elseif region=="trencinsky">Trenčínský<#--
+ --><#elseif region=="trnavsky">Trnavský<#--
+ --><#elseif region=="zilinsky">Žilinský<#--
+ --></#if>
 </#macro>
 
 <#macro showEvent relation showLogo showManagement>
@@ -648,28 +648,34 @@
     <#local item=relation.child, icon=TOOL.xpath(item,"/data/icon")?default("UNDEF"),
         counter=VARS.getSubportalCounter(relation), members=item.getProperty("member"),
         score=item.getIntProperty("score")?default(-1)>
-    <div class="s_sekce" align="center">
+
+    <div class="s_nadpis"><a href="${relation.url}">${item.title}</a></div>
+    <div class="s_sekce" style="text-align:center">
         <#if icon!="UNDEF">
-            <a href="${relation.url}"><img src="${icon}" alt="${item.title}"></a>
+            <div class="s_logo">
+                <a href="${relation.url}"><img src="${icon}" alt="${item.title}"></a>
+            </div>
         </#if>
         <#if showDesc>
             <h2 class="st_nadpis"><a href="${relation.url}">${item.title}</a></h2>
             ${TOOL.render(TOOL.xpath(item,"/data/descriptionShort"), USER?if_exists)}
         </#if>
     </div>
+
     <div class="s_nadpis">Informace o skupině</div>
     <div class="s_sekce">
-        Založeno: ${DATE.show(item.created,"CZ_SHORT")}<br />
-        Členů: <a href="${relation.url}?action=members">${members?size}</a><br />
-        Článků: <a href="${relation.url}/clanky">${counter.ARTICLES?default("?")}</a><br />
-        Wiki stránek: <a href="${relation.url}/wiki">${counter.WIKIS?default("?")}</a><br />
-        Dotazů: <a href="${relation.url}/poradna">${counter.QUESTIONS?default("?")}</a><br />
-        Akcí: <a href="${relation.url}/akce">${counter.EVENTS?default("?")}</a><br />
-        <#if score != -1>Skóre: ${score}</#if>
-
+      <table cellspacing="0" class="s_table skupiny">
+        <tr><td>Založena:</td>     <td>${DATE.show(item.created,"CZ_SHORT")}</td></tr>
+        <tr><td>Členů:</td>        <td><a href="${relation.url}?action=members">${members?size}</a></td></tr>
+        <tr><td>Článků:</td>       <td><a href="${relation.url}/clanky">${counter.ARTICLES?default("?")}</a></td></tr>
+        <tr><td>Wiki stránek:</td> <td><a href="${relation.url}/wiki">${counter.WIKIS?default("?")}</a></td></tr>
+        <tr><td>Dotazů:</td>       <td><a href="${relation.url}/poradna">${counter.QUESTIONS?default("?")}</a></td></tr>
+        <tr><td>Akcí:</td>         <td><a href="${relation.url}/akce">${counter.EVENTS?default("?")}</a></td></tr>
+        <#if score != -1><tr><td>Skóre:</td> <td>${score}</td></tr></#if>
+      </table>
         <form action="/skupiny/edit/${relation.id}" method="post">
             <#if USER?exists && members.contains(""+USER.id)>
-             <input type="submit" value="Neregistrovat se">
+             <input type="submit" value="Odregistrovat se">
             <#else>
              <input type="submit" value="Registrovat se">
             </#if>
