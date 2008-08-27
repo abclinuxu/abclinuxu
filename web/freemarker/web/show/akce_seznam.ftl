@@ -25,7 +25,7 @@
             <table cellspacing="0" class="eventCalendar">
             <tr>
                 <td colspan="2">
-                  <a rel="nofollow" href="?year=${CALENDAR.prevYear}&amp;month=${CALENDAR.prevMonth}&amp;subtype=${subtype}">&laquo;&nbsp;<@lib.month CALENDAR.prevMonth.toString()/></a></td>
+                  <a rel="nofollow" href="?year=${CALENDAR.prevYear}&amp;month=${CALENDAR.prevMonth}&amp;subtype=${subtype}">&laquo; <@lib.month CALENDAR.prevMonth.toString()/></a></td>
                 <td colspan="3" class="month_year">
                     <#if !PARAMS.day?exists && PARAMS.month?exists && ""+CALENDAR.month==PARAMS.month>
                       <span class="selected">
@@ -43,14 +43,13 @@
                         <a rel="nofollow" href="?year=${CALENDAR.year}&amp;subtype=${subtype}">${CALENDAR.year}</a>
                       </span>
                 </td>
-                <td colspan="2"><a rel="nofollow" href="?year=${CALENDAR.nextYear}&amp;month=${CALENDAR.nextMonth}&amp;subtype=${subtype}"><@lib.month ""+CALENDAR.nextMonth/>&nbsp;&raquo;</a></td>
+                <td colspan="2"><a rel="nofollow" href="?year=${CALENDAR.nextYear}&amp;month=${CALENDAR.nextMonth}&amp;subtype=${subtype}"><@lib.month ""+CALENDAR.nextMonth/> &raquo;</a></td>
             </tr>
             <tr class="weekdays"><td>Po</td><td>Út</td><td>St</td><td>Čt</td><td>Pá</td><td>So</td><td>Ne</td></tr>
             <tr>
                 <@lib.repeat CALENDAR.emptyDays><td>&nbsp;</td></@lib.repeat>
                 <#list 1..CALENDAR.days as curday>
                     <#if (CALENDAR.emptyDays+curday)%7==1></tr><tr></#if>
-
                     <#assign id="UNDEF", class="UNDEF">
                     <#if CALENDAR.today?exists && curday==CALENDAR.today>
                         <#assign id="today">
@@ -65,11 +64,18 @@
                             <#assign class="event_day">
                         </#if>
                     </#if>
-                    <td<#if id!="UNDEF"> id="${id}"</#if><#if class!="UNDEF"> class="${class}"</#if>>
-                        <a rel="nofollow" href="?year=${CALENDAR.year}&amp;month=${CALENDAR.month}&amp;day=${curday}&amp;subtype=${subtype}">${curday}</a>
-                    </td>
+                    <td<#if id!="UNDEF"> id="${id}"</#if><#if class!="UNDEF"> class="${class}"</#if>><#--
+                    --><a rel="nofollow" href="?year=${CALENDAR.year}&amp;month=${CALENDAR.month}&amp;day=${curday}&amp;subtype=${subtype}">${curday}</a><#--
+                 --></td>
                 </#list>
             </tr>
+            </table>
+            <hr />
+            Legenda:<br />
+            <table cellspacing="0" class="eventCalendar legenda">
+               <tr><td class="event_day"><a href="">XY</a></td><td>den s akcí</td></tr>
+               <tr><td id="today"><a href="">XY</a></td><td>dnešní den</td></tr>
+               <tr><td class="selected"><a href="">XY</a></td><td>zvolené datum/typ akce</td></tr>
             </table>
         </div>
 
