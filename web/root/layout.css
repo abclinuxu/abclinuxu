@@ -643,7 +643,7 @@ a.info:hover span.tooltip {
 }
 
 .s_table { width: 100%; }
-.s_table.skupiny { text-align: center; }
+.s_table.skupiny tr>td+td { text-align: center; }
 .s_table a {
 	display: block;
 	text-decoration: none;
