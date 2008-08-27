@@ -17,15 +17,24 @@
         <@lib.showSubportal SUBPORTAL, true/>
         <#assign counter=VARS.getSubportalCounter(SUBPORTAL)>
     </#if>
+    <#if icon!="UNDEF">
+        <div class="s_nadpis">${TOOL.childName(ITEM)}</div>
+        <div class="s_sekce">
+            <div style="text-align:center">
+                <img src="${icon}" alt="Logo akce ${TOOL.childName(ITEM)}">
+            </div>
+        </div>
+    </#if>
 
     <#assign location=TOOL.xpath(ITEM,"//location")?default("UNDEF")>
     <div class="s_nadpis">Informace o akci</div>
     <div class="s_sekce">
-        Datum: ${DATE.show(ITEM.created,"CZ_DMY")}<br>
-        Začátek: ${DATE.show(ITEM.created,"TIME")}<br>
-        <#if ITEM.date1?exists>Konec: ${DATE.show(ITEM.date1,"CZ_FULL")}<br></#if>
-        Kraj: <@lib.showRegion region/><br>
-        Typ akce: ${subtype}
+      <table cellspacing="0" class="s_table">
+        <tr><td>Datum:</td>    <td>${DATE.show(ITEM.created,"CZ_DMY")}, od: ${DATE.show(ITEM.created,"TIME")}</td></tr>
+        <#if ITEM.date1?exists><tr><td>Konec:</td> <td>${DATE.show(ITEM.date1,"CZ_FULL")}</td></tr></#if>
+        <tr><td>Kraj:</td>     <td><@lib.showRegion region/></td></tr>
+        <tr><td>Typ akce:</td> <td>${subtype}</td></tr>
+      </table>
     </div>
 
     <#if USER?exists && (USER.id == ITEM.owner || TOOL.permissionsFor(USER, RELATION).canModify())>
@@ -47,43 +56,34 @@
 
 <h1>${TOOL.childName(ITEM)}</h1>
 
-<div class="meta-vypis">Aktualizováno: ${DATE.show(ITEM.updated,"SMART")}
+<p class="meta-vypis">Aktualizováno: ${DATE.show(ITEM.updated,"SMART")}
     | <@lib.showUser TOOL.createUser(ITEM.owner) />
-    |  Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;</div>
+    |  Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;</p>
 
 <#assign descShort=TOOL.xpath(ITEM,"/data/descriptionShort"),
         desc=TOOL.xpath(ITEM,"/data/description")?default("UNDEF"),
         icon=TOOL.xpath(ITEM,"/data/icon")?default("UNDEF")>
 <#if ITEM.type==27>
-Stav: čeká na schválení
+<p>Stav: čeká na schválení
     <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
-    <div>
-            <a href="${URL.noPrefix("/akce/edit/"+RELATION.id+"?action=approve"+TOOL.ticket(USER,false))}">Schválit</a>
-            |
-            <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/akce")}">Smazat</a>
-    </div>
+        <a href="${URL.noPrefix("/akce/edit/"+RELATION.id+"?action=approve"+TOOL.ticket(USER,false))}">Schválit</a>
+        | <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/akce")}">Smazat</a>
     </#if>
-
-    <hr />
-</#if>
-
-<#if icon!="UNDEF">
-<div style="float: right">
-<img src="${icon}" alt="Logo akce">
-</div>
+</p>
 </#if>
 
 <#if desc!="UNDEF">
-<div style="cl_perex">
-    ${TOOL.render(descShort,USER?if_exists)}
-</div>
-<p>
-    ${TOOL.render(desc,USER?if_exists)}
-</p>
+    <div class="cl_perex">
+        ${TOOL.render(descShort,USER?if_exists)}
+    </div>
+    <div>
+        ${TOOL.render(desc,USER?if_exists)}
+    </div>
 <#else>
-<p>
-    ${TOOL.render(descShort,USER?if_exists)}
-</p>
+    <hr />
+    <div>
+        ${TOOL.render(descShort,USER?if_exists)}
+    </div>
 </#if>
 
 <#if location!="UNDEF">
