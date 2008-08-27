@@ -397,7 +397,8 @@ a.selected:hover {
 .eventCalendar .selected,
 .event_time .selected,
 .event_type .selected { background-color: #FFF8C3; }
-.eventCalendar .event_day { border-color: silver; }
+.eventCalendar .event_day,
+#gg_map { border-color: silver; }
 .event_hdr {
   border-color: silver;
   background-color: #ececec;

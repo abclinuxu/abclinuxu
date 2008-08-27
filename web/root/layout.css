@@ -1152,3 +1152,8 @@ p.documentHistory {
 	text-align: left;
 	padding-left: 0.5em;
 }
+#gg_map {
+	border-width: 1px;
+	border-style: solid;
+	margin-left: 0.5em;
+}
