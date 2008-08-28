@@ -18,6 +18,7 @@
  */
 package cz.abclinuxu.servlets.html.edit;
 
+import cz.abclinuxu.AbcException;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.GenericObject;
@@ -373,8 +374,13 @@ public class EditRelation implements AbcAction {
         GenericObject child = relation.getChild();
         String objectName = Tools.childName(relation);
 
-        if (child instanceof Item && ((Item) child).getType() == Item.ARTICLE)
-            removeArticleFromSeries((Item) child, relation.getId());
+        if (child instanceof Item) {
+            Item item = (Item) child;
+            if (item.getType() == Item.ARTICLE)
+                removeArticleFromSeries(item, relation.getId());
+            else if (item.getType() == Item.CONTENT)
+                removeContentFromTOC(item, relation.getId());
+        }
 
         if (child instanceof GenericDataObject) {
             Versioning versioning = VersioningFactory.getVersioning();
@@ -420,6 +426,25 @@ public class EditRelation implements AbcAction {
         if (element != null) {
             element.detach();
             persistence.update(series);
+        }
+    }
+    
+    private void removeContentFromTOC(Item content, int contentRelationId) {
+        Element tocElem = (Element) content.getData().selectSingleNode("/data/toc");
+        Persistence persistence = PersistenceFactory.getPersistence();
+        
+        if (tocElem == null)
+            return;
+        
+        Relation tocRel = new Relation(Integer.parseInt(tocElem.getText()));
+        Tools.sync(tocRel);
+        
+        Item toc = (Item) tocRel.getChild();
+        
+        Node node = toc.getData().selectSingleNode("//node[@rid='"+contentRelationId+"']");
+        if (node != null) {
+            node.detach();
+            persistence.update(toc);
         }
     }
 
