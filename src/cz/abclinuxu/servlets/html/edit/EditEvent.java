@@ -30,6 +30,7 @@ import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ShowObject;
@@ -227,7 +228,7 @@ public class EditEvent implements AbcAction {
         canContinue &= setLocation(params, root, env);
         canContinue &= checkImage(params, env);
         
-        if (Tools.permissionsFor(user, parent).canModify())
+        if (user.hasRole(Roles.ROOT))
             canContinue &= setOwner(params, item, env);
         
         if (!canContinue)
@@ -304,7 +305,7 @@ public class EditEvent implements AbcAction {
         canContinue &= checkImage(params, env);
         canContinue &= setLogo(params, relation, root, env);
         
-        if (Tools.permissionsFor(user, parent).canModify())
+        if (user.hasRole(Roles.ROOT))
             canContinue &= setOwner(params, item, env);
         
         if (!canContinue)
