@@ -155,10 +155,21 @@
                 <a class="info" href="#">?<span class="tooltip">Pokud má vaše organizace/firma/parta nějaké (malé) logo, můžete jej nechat vložit..</span></a>
             </td>
             <td>
-                <input type="file" name="logo" size="20" tabindex="3"> Rozměry maximálně 100&times;100.
+                <input type="file" name="logo" size="20"> Rozměry maximálně 100&times;100.
                 <div class="error">${ERRORS.logo?if_exists}</div>
             </td>
         </tr>
+        <#if USER.hasRole("root")>
+        <tr>
+            <td>
+                UID vlastníka
+            </td>
+            <td>
+                <input type="text" name="uid" size="10">
+                <div class="error">${ERRORS.uid?if_exists}</div>
+            </td>
+        </tr>
+        </#if>
         <tr>
             <td>&nbsp;</td>
             <td><input type="submit" value="Dokonči"></td>

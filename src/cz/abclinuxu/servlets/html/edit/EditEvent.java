@@ -84,6 +84,7 @@ public class EditEvent implements AbcAction {
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_LOCATION = "location";
+    public static final String PARAM_UID = "uid";
     
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -226,6 +227,9 @@ public class EditEvent implements AbcAction {
         canContinue &= setLocation(params, root, env);
         canContinue &= checkImage(params, env);
         
+        if (Tools.permissionsFor(user, parent).canModify())
+            canContinue &= setOwner(params, item, env);
+        
         if (!canContinue)
             return FMTemplateSelector.select("EditEvent", "add", env, request);
         
@@ -285,6 +289,8 @@ public class EditEvent implements AbcAction {
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Item item = (Item) relation.getChild().clone();
         Element root = item.getData().getRootElement();
+        User user = (User) env.get(Constants.VAR_USER);
+        Relation parent = (Relation) Tools.sync(new Relation(relation.getUpper()));
         
         boolean canContinue;
         canContinue = setTitle(params, item, env);
@@ -297,6 +303,9 @@ public class EditEvent implements AbcAction {
         canContinue &= setLocation(params, root, env);
         canContinue &= checkImage(params, env);
         canContinue &= setLogo(params, relation, root, env);
+        
+        if (Tools.permissionsFor(user, parent).canModify())
+            canContinue &= setOwner(params, item, env);
         
         if (!canContinue)
             return FMTemplateSelector.select("EditEvent", "edit", env, request);
@@ -486,6 +495,22 @@ public class EditEvent implements AbcAction {
         }
         
         item.setProperty(Constants.PROPERTY_REGION, Collections.singleton(region));
+        return true;
+    }
+    
+    private boolean setOwner(Map params, Item item, Map env) {
+        String uid = (String) params.get(PARAM_UID);
+        if (Misc.empty(uid))
+            return true;
+        
+        try {
+            User owner = Tools.createUser(uid);
+            item.setOwner(owner.getId());
+        } catch (Exception e) {
+            ServletUtils.addError(PARAM_UID, "Neplatné UID uživatele!", env, null);
+            return false;
+        }
+        
         return true;
     }
     

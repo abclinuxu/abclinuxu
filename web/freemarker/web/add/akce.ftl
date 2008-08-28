@@ -153,6 +153,17 @@ Ať už plánujete posezení v hospodě, installfest či nějakou velkou akci, z
                 <div class="error">${ERRORS.logo?if_exists}</div>
             </td>
         </tr>
+        <#if USER.hasRole("root")>
+        <tr>
+            <td>
+                UID vlastníka
+            </td>
+            <td>
+                <input type="text" name="uid" size="10">
+                <div class="error">${ERRORS.uid?if_exists}</div>
+            </td>
+        </tr>
+        </#if>
         <tr>
             <td>&nbsp;</td>
             <td><input type="submit" value="Vytvoř"></td>
