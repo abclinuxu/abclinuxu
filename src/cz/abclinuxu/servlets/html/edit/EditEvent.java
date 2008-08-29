@@ -258,7 +258,7 @@ public class EditEvent implements AbcAction {
         Element root = item.getData().getRootElement();
         
         params.put(PARAM_TITLE, item.getTitle());
-        params.put(PARAM_REGION, (String) item.getProperty(Constants.PROPERTY_REGION).toArray()[0]);
+        params.put(PARAM_REGION, item.getString1());
         params.put(PARAM_SUBTYPE, item.getSubType());
         
         String date = Constants.isoFormat.format(item.getCreated());
@@ -495,7 +495,7 @@ public class EditEvent implements AbcAction {
             return false;
         }
         
-        item.setProperty(Constants.PROPERTY_REGION, Collections.singleton(region));
+        item.setString1(region);
         return true;
     }
     

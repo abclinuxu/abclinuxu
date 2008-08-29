@@ -5,7 +5,7 @@
 
 <#import "../macros.ftl" as lib>
 
-<#assign region=ITEM.getProperty("region").toArray()[0], subtype=ITEM.subType>
+<#assign region=ITEM.string1?default("UNDEF"), subtype=ITEM.subType>
 
 <#if subtype=="community"><#assign subtype="Komunitní">
 <#elseif subtype=="educational"><#assign subtype="Školní">

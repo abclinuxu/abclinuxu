@@ -597,7 +597,7 @@
 
 <#macro showEvent relation showLogo showManagement>
     <#local item=relation.child, subtype=item.subType,
-            region=item.getProperty("region").toArray()[0]?default("UNDEF"),
+            region=item.string1?default("UNDEF"),
             regs=TOOL.xpathValue(item.data, "count(//registrations/registration)")>
 
     <#if subtype=="community"><#local subtype="Komunitní">
