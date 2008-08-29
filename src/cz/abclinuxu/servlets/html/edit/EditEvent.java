@@ -291,7 +291,6 @@ public class EditEvent implements AbcAction {
         Item item = (Item) relation.getChild().clone();
         Element root = item.getData().getRootElement();
         User user = (User) env.get(Constants.VAR_USER);
-        Relation parent = (Relation) Tools.sync(new Relation(relation.getUpper()));
         
         boolean canContinue;
         canContinue = setTitle(params, item, env);
