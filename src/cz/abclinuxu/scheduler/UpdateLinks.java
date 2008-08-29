@@ -365,6 +365,10 @@ public class UpdateLinks extends TimerTask implements Configurable {
         Matcher matcher = ampersand.matcher(url);
 	    return matcher.replaceAll("&amp;");
     }
+    
+    public static String prefixAbsoluteLinks(String text, String prefix) {
+        return text.replaceAll("<a href=\"/", "<a href=\""+prefix+"/");
+    }
 
     static class ServerInfo {
         static final int RSS = 2;

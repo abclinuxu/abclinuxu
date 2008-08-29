@@ -90,11 +90,12 @@ public class NewsCSV implements AbcAction, Configurable {
             writer.write(NewsCategories.get(item.getSubType()).getName());
             writer.write("|");
             User author = (User) persistence.findById(new User(item.getOwner()));
-            writer.write("<a href=\"http://www.abclinuxu.cz/Profile/"+author.getId()+"\">"+author.getName()+"</a>");
+            writer.write("<a href=\"http://www.abclinuxu.cz/lide/"+author.getLogin()+"\">"+author.getName()+"</a>");
             writer.write("|");
             String text = Tools.xpath(item, "data/content");
             text = Tools.removeNewLines(text);
             text = UpdateLinks.fixAmpersand(text);
+            text = UpdateLinks.prefixAbsoluteLinks(text, "http://www.abclinuxu.cz");
             writer.write(text);
             writer.write("|");
             writer.write("http://www.abclinuxu.cz"+relation.getUrl());
