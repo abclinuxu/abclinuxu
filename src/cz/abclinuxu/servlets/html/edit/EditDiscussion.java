@@ -537,7 +537,7 @@ public class EditDiscussion implements AbcAction {
         // run monitor
         String url = relation.getUrl();
         if (url==null)
-            url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/show/"+relation.getId();
+            url = "http://www.abclinuxu.cz" + Tools.getUrlForDiscussion(relation);
         else
             url = "http://www.abclinuxu.cz" + url;
         url += "#" + comment.getId();
@@ -893,7 +893,7 @@ public class EditDiscussion implements AbcAction {
 
         String url = relation.getUrl();
         if (url == null)
-            url = "/show/" + relation.getId();
+            url = Tools.getUrlForDiscussion(relation);
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);
         return null;
