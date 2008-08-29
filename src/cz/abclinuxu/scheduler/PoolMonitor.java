@@ -24,11 +24,17 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.CompareCondition;
+import cz.abclinuxu.persistence.extra.Field;
+import cz.abclinuxu.persistence.extra.Operation;
+import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditArticle;
 import cz.abclinuxu.servlets.html.edit.EditSeries;
 import cz.abclinuxu.servlets.html.edit.EditDiscussion;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.email.monitor.MonitorAction;
 import cz.abclinuxu.utils.email.monitor.MonitorPool;
 import cz.abclinuxu.utils.email.monitor.ObjectType;
@@ -37,13 +43,17 @@ import cz.abclinuxu.utils.feeds.FeedGenerator;
 
 import cz.abclinuxu.utils.freemarker.Tools;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimerTask;
 
 import org.dom4j.Element;
 import org.dom4j.Document;
+import org.dom4j.Node;
 
 /**
  * This class is responsible for monitoring of
@@ -161,6 +171,8 @@ public class PoolMonitor extends TimerTask {
                     newsUpdated = true;
                 }
             }
+            
+            sendEventNotifications();
 
             if (articlesUpdated) {
                 VariableFetcher.getInstance().refreshArticles();
@@ -199,6 +211,63 @@ public class PoolMonitor extends TimerTask {
 		
 		articlePools.add(new Category(Constants.CAT_ARTICLES_POOL));
 	}
+    
+    private void sendEventNotifications() {
+        String dateFrom, dateTo;
+        Calendar calendar = Calendar.getInstance();
+        SQLTool sqlTool = SQLTool.getInstance();
+        Persistence persistence = PersistenceFactory.getPersistence();
+        
+        calendar.add(Calendar.DATE, 2);
+        dateFrom = Constants.isoFormat.format(calendar.getTime());
+        calendar.add(Calendar.DATE, 1);
+        dateTo = Constants.isoFormat.format(calendar.getTime());
+        
+        Qualifier[] qa = new Qualifier[] {
+            new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, dateFrom),
+            new CompareCondition(Field.CREATED, Operation.SMALLER, dateTo)
+        };
+        
+        List<Relation> list = sqlTool.findItemRelationsWithType(Item.EVENT, qa);
+        Tools.syncList(list);
+        
+        Map map = new HashMap();
+        map.put(EmailSender.KEY_FROM, "robot@abclinuxu.cz");
+        map.put(EmailSender.KEY_TEMPLATE, "/mail/akce.ftl");
+        
+        // all upcoming events
+        for (Relation rel : list) {
+            Item item = (Item) rel.getChild();
+            if ("yes".equals(item.getSingleProperty("notified")))
+                continue;
+            
+            map.put(EmailSender.KEY_SUBJECT, "Upominka: "+item.getTitle());
+            map.put("RELATION", rel);
+            map.put("ITEM", item);
+            
+            // send notifications
+            List<Node> nodes = item.getData().selectNodes("/data/registrations/registration");
+            for (Node node : nodes) {
+                Element elem = (Element) node;
+                String email = elem.attributeValue("email");
+                String uid = elem.attributeValue("uid");
+                
+                map.put(EmailSender.KEY_TO, email);
+                if (!Misc.empty(uid))
+                    map.put(EmailSender.KEY_RECEPIENT_UID, uid);
+                else
+                    map.remove(EmailSender.KEY_RECEPIENT_UID);
+                
+                EmailSender.sendEmail(map);
+            }
+            
+            item.addProperty("notified", "yes");
+            
+            Date originalUpdated = item.getUpdated();
+            persistence.update(item);
+            SQLTool.getInstance().setUpdatedTimestamp(item, originalUpdated);
+        }
+    }
 
     private String getJobName() {
         return "PoolMonitor";
