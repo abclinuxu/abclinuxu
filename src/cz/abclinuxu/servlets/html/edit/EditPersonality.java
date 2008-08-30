@@ -258,8 +258,8 @@ public class EditPersonality implements AbcAction {
         canContinue &= setBirthDate(params, root);
         canContinue &= setDeathDate(params, root);
         canContinue &= checkRssUrl(params, env);
-        canContinue &= ServletUtils.checkNoChange(item, origItem, env);
         setRssUrl(params, item, relation.getId());
+        canContinue &= ServletUtils.checkNoChange(item, origItem, env);
         String changesDescription = Misc.getRevisionString(params, env);
         canContinue &= !Constants.ERROR.equals(changesDescription);
 
