@@ -377,7 +377,7 @@ public class EditBookmarks implements AbcAction {
         Relation relation = null;
         
         if (!myurl.startsWith("http://"))
-            URLMapper.loadRelationFromUrl(myurl);
+            relation = URLMapper.loadRelationFromUrl(myurl);
         
         if (relation == null) {
             String title = (String) params.get(PARAM_TITLE);
