@@ -63,14 +63,16 @@ Při vytváření skupiny dojde k vytvoření podportálu, který má vlastní s
                 <div class="error">${ERRORS.icon?if_exists}</div>
             </td>
         </tr>
-        <tr>
-            <td>
-                &nbsp;
-            </td>
-            <td>
-                <label><input type="checkbox" name="hideForum" value="yes" <#if PARAMS.hideForum?exists && PARAMS.hideForum=="yes">checked="checked"</#if>>Skrýt fórum</label>
-            </td>
-        </tr>
+        <#if USER.hasRole("root")>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    <label><input type="checkbox" name="hideForum" value="yes" <#if PARAMS.hideForum?exists && PARAMS.hideForum=="yes">checked="checked"</#if>>Skrýt fórum</label>
+                </td>
+            </tr>
+        </#if>
         <tr>
             <td class="required">
                 UID prvního admina
