@@ -42,6 +42,7 @@ Disallow: /SelectUser
 Disallow: /SelectRelation
 Disallow: /revize
 Disallow: /muj_obsah
+Disallow: /lide/*/objekty
 Disallow: /zmeny
 Disallow: /presmeruj
 Disallow: /hledani
