@@ -103,7 +103,7 @@
             </div>
             <div class="hl_vlevo">
               <ul class="menu-top">
-                <li><a href="/doc/napoveda/alternativni-design">výběr stylu</a>
+                <li><a href="/doc/napoveda/alternativni-design">Styl</a>
                   <ul class="menu-drop">
                   <#list TOOL.getOfferedCssStyles().entrySet() as style>
                     <li><a href="/EditUser/<#if USER?exists>${USER.id}</#if>?action=changeStyle${TOOL.ticket(USER,false)}&amp;css=${style.key}">${style.value}</a></li>
