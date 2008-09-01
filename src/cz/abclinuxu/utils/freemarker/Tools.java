@@ -1105,11 +1105,11 @@ public class Tools implements Configurable {
             if (!Misc.empty(classFilter))
                 relations = new ArrayList(relations);
 
-        boolean itemYes, recordYes, categoryYes, userYes, pollYes, linkYes, dataYes;
+        boolean itemYes, recordYes, categoryYes, userYes, pollYes, linkYes, dataYes, serverYes;
         if (Misc.empty(classFilter))
-            itemYes = recordYes = categoryYes = userYes = pollYes = linkYes = dataYes = true;
+            itemYes = recordYes = categoryYes = userYes = pollYes = linkYes = dataYes = serverYes = true;
         else {
-            itemYes = recordYes = categoryYes = userYes = pollYes = linkYes = dataYes = false;
+            itemYes = recordYes = categoryYes = userYes = pollYes = linkYes = dataYes = serverYes = false;
             StringTokenizer stk = new StringTokenizer(classFilter);
             while (stk.hasMoreTokens()) {
                 String className = stk.nextToken();
@@ -1127,6 +1127,8 @@ public class Tools implements Configurable {
                     pollYes = true;
                 else if ("Link".equalsIgnoreCase(className))
                     linkYes = true;
+                else if ("Server".equalsIgnoreCase(className))
+                    serverYes = true;
             }
         }
 
@@ -1159,6 +1161,9 @@ public class Tools implements Configurable {
                 iterator.remove();
                 continue;
             } else if (!linkYes && child instanceof Link) {
+                iterator.remove();
+                continue;
+            } else if (!serverYes && child instanceof Server) {
                 iterator.remove();
                 continue;
             }
@@ -1217,6 +1222,8 @@ public class Tools implements Configurable {
                 Misc.storeToMap(map,Constants.TYPE_POLL, relation);
             else if ( child instanceof User )
                 Misc.storeToMap(map,Constants.TYPE_USER, relation);
+            else if ( child instanceof Server )
+                Misc.storeToMap(map, Constants.TYPE_SERVER, relation);
         }
         return map;
     }

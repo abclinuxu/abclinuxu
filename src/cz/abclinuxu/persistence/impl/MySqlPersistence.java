@@ -211,6 +211,8 @@ public class MySqlPersistence implements Persistence {
             update((Poll) obj);
         } else if (obj instanceof Link) {
             update((Link)obj);
+        } else if (obj instanceof Server) {
+            update((Server) obj);
         }
     }
 
@@ -966,12 +968,13 @@ public class MySqlPersistence implements Persistence {
             conditions.add(new Timestamp(link.getUpdated().getTime()));
 
         } else if (obj instanceof Server) {
-            sb.append("INSERT INTO server (cislo,jmeno,url,kontakt) VALUES (?,?,?,?)");
+            sb.append("INSERT INTO server (cislo,jmeno,url,kontakt,rss) VALUES (?,?,?,?,?)");
             Server server = (Server) obj;
             conditions.add(server.getId());
             conditions.add(server.getName());
             conditions.add(server.getUrl());
             conditions.add(server.getContact());
+            conditions.add(server.getRssUrl());
         }
     }
 
@@ -1670,7 +1673,7 @@ public class MySqlPersistence implements Persistence {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("SELECT cislo,jmeno,url,kontakt FROM server WHERE cislo=?");
+            statement = con.prepareStatement("SELECT cislo,jmeno,url,kontakt,rss FROM server WHERE cislo=?");
             statement.setInt(1,obj.getId());
 
             resultSet = statement.executeQuery();
@@ -1696,7 +1699,7 @@ public class MySqlPersistence implements Persistence {
         ResultSet rs = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("SELECT cislo,jmeno,url,kontakt FROM server WHERE cislo IN " +
+            statement = con.prepareStatement("SELECT cislo,jmeno,url,kontakt,rss FROM server WHERE cislo IN " +
                     Misc.getInCondition(servers.size()) + " ORDER BY cislo");
             int i = 1;
             for (Iterator iter = servers.iterator(); iter.hasNext();) {
@@ -1729,6 +1732,7 @@ public class MySqlPersistence implements Persistence {
         server.setName(resultSet.getString(2));
         server.setUrl(resultSet.getString(3));
         server.setContact(resultSet.getString(4));
+        server.setRssUrl(resultSet.getString(5));
         server.setInitialized(true);
     }
 
@@ -1969,6 +1973,36 @@ public class MySqlPersistence implements Persistence {
             cache.store(poll);
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu uložit změny v "+poll.toString()+" do databáze!",e);
+        } finally {
+            releaseSQLResources(con,statement,resultSet);
+        }
+    }
+    
+    /**
+     * updates a server in the database
+     */
+    public void update(Server server) {
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        if ( server==null )
+            throw new NullPointerException("Nemohu  uložit prázdný objekt!");
+
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("UPDATE server SET jmeno=?,url=?,kontakt=?,rss=? WHERE cislo=?");
+
+            statement.setString(1, server.getName());
+            statement.setString(2, server.getUrl());
+            statement.setString(3, server.getContact());
+            statement.setString(4, server.getRssUrl());
+            statement.setInt(5, server.getId());
+
+            int result = statement.executeUpdate();
+            if ( result!=1 )
+                throw new PersistenceException("Nepodarilo se uložit změny v "+server.toString()+" do databáze!");
+
+            cache.store(server);
+        } catch (SQLException e) {
+            throw new PersistenceException("Nemohu uložit změny v "+server.toString()+" do databáze!",e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }

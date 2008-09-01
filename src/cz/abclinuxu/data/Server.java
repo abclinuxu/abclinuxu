@@ -29,6 +29,8 @@ public class Server extends GenericObject {
     protected String name;
     /** URL of the start page of the server */
     protected String url;
+    /** URL of the RSS feed */
+    protected String rssUrl;
     /** email of our contact to this server */
     protected String contact;
 
@@ -82,6 +84,20 @@ public class Server extends GenericObject {
     public void setContact(String contact) {
         this.contact = contact;
     }
+    
+    /**
+     * @return URL of the server's RSS feed
+     */
+    public String getRssUrl() {
+        return rssUrl;
+    }
+
+    /**
+     * sets URL of the server's RSS feed
+     */
+    public void setRssUrl(String rssUrl) {
+        this.rssUrl = rssUrl;
+    }
 
     /**
      * Initialize this object with values from <code>obj</code>, if
@@ -95,6 +111,7 @@ public class Server extends GenericObject {
         name = b.getName();
         url = b.getUrl();
         contact = b.getContact();
+        rssUrl = b.getRssUrl();
     }
 
     /**
@@ -110,6 +127,8 @@ public class Server extends GenericObject {
             return false;
         Server p = (Server) obj;
         if (! Misc.same(name, p.name))
+            return false;
+        if (! Misc.same(rssUrl, p.rssUrl))
             return false;
         return Misc.same(url, p.url);
     }
@@ -128,6 +147,7 @@ public class Server extends GenericObject {
         sb.append(id);
         if ( name!=null ) sb.append(",name="+name);
         if ( url!=null ) sb.append(",title="+url);
+        if ( rssUrl!=null ) sb.append(",rss="+rssUrl);
         if ( contact!=null ) sb.append(",contact="+contact);
         return sb.toString();
     }

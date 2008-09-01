@@ -135,6 +135,10 @@ public final class SQLTool implements Configurable {
     public static final String SUBPORTALS_COUNT_EVENTS = "subportal.count.events";
     public static final String SUBPORTALS_COUNT_FORUM_QUESTIONS = "subportal.count.forum.questions";
     public static final String SUBPORTALS_ORDERED_BY_SCORE = "subportals.ordered.by.score";
+    
+    public static final String VALID_SERVERS = "valid.servers";
+    public static final String SERVER_RELATIONS_IN_CATEGORY = "server.relations.in.category";
+    public static final String QUESTIONS_WITH_TAGS = "questions.with.tags";
 
     private static SQLTool singleton;
     static {
@@ -661,6 +665,59 @@ public final class SQLTool implements Configurable {
         StringBuilder sb = new StringBuilder((String) sql.get(DISCUSSION_RELATIONS));
         changeToCountStatement(sb);
         List params = new ArrayList();
+        return loadNumber(sb.toString(), params);
+    }
+    
+    private StringBuilder discussionRelationsWithTagsQuery(List<String> tags, List params) {
+        StringBuilder sb = new StringBuilder((String) sql.get(QUESTIONS_WITH_TAGS));
+        Iterator it = tags.iterator();
+        
+        sb.append(" and S.stitek in (");
+        boolean firstOne = true;
+        
+        while (it.hasNext()) {
+            String tag = (String) it.next();
+            tag = TagTool.getNormalizedId(tag);
+            
+            params.add(tag);
+            
+            sb.append(firstOne ? "?" : ",?");
+            firstOne = false;
+        }
+        
+        sb.append(") group by R.cislo having count(*) = ?");
+        params.add(tags.size());
+        
+        return sb;
+    }
+    
+    public List<Relation> findDiscussionRelationsWithTags(List<String> tags, int parent, Qualifier[] qualifiers) {
+        if (tags.size() == 0)
+            return findDiscussionRelationsWithParent(parent, qualifiers);
+        
+        List params = new ArrayList(tags.size()+2);
+        StringBuilder sb;
+        
+        params.add(parent);
+        
+        sb = discussionRelationsWithTagsQuery(tags, params);
+        
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadRelations(sb.toString(), params);
+    }
+    
+    public int countDiscussionRelationsWithTags(List<String> tags, int parent, Qualifier[] qualifiers) {
+        if (tags.size() == 0)
+            return countDiscussionRelationsWithParent(parent);
+        
+        List params = new ArrayList(tags.size()+2);
+        StringBuilder sb;
+        
+        params.add(parent);
+        
+        sb = discussionRelationsWithTagsQuery(tags, params);
+        
+        changeToCountStatement(sb);
         return loadNumber(sb.toString(), params);
     }
 
@@ -2152,6 +2209,36 @@ public final class SQLTool implements Configurable {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
     }
+    
+    public List<Server> getValidServers() {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement((String) sql.get(VALID_SERVERS));
+            resultSet = statement.executeQuery();
+
+            List<Server> result = new ArrayList();
+            while (resultSet.next()) {
+                Server server = new Server(resultSet.getInt(1));
+                result.add(server);
+            }
+            
+            persistance.synchronizeList(result);
+            return result;
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba při hledání serverů!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+    
+    public List<Relation> findServerRelationsInCategory(int cat) {
+        String query = (String) sql.get(SERVER_RELATIONS_IN_CATEGORY);
+        return loadRelations(query, Collections.singletonList(new Integer(cat)));
+    }
 
     /**
      * Private constructor
@@ -2242,6 +2329,9 @@ public final class SQLTool implements Configurable {
         store(SUBPORTALS_COUNT_EVENTS, prefs);
         store(SUBPORTALS_COUNT_FORUM_QUESTIONS, prefs);
         store(SUBPORTALS_ORDERED_BY_SCORE, prefs);
+        store(QUESTIONS_WITH_TAGS, prefs);
+        store(VALID_SERVERS, prefs);
+        store(SERVER_RELATIONS_IN_CATEGORY, prefs);
     }
 
     /**

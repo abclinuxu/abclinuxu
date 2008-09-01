@@ -113,6 +113,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     Map<String, Integer> defaultSizes, maxSizes, counter;
     Map<Relation, Map<String, Integer>> subportalCounter;
     Map<Server, List<Link>> feedLinks;
+    Map<Integer, Map> feedSubportalLinks;
     SectionTreeCache faqTree, softwareTree, hardwareTree, articleTree;
     Relation currentPoll;
     int sectionCacheFrequency;
@@ -455,6 +456,25 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
         return getSelectedFeeds(element.getText(), userLimit);
     }
+    
+    public Map getSubportalFeeds(Object user, int rid) {
+        if (feedSubportalLinks == null)
+            return Collections.EMPTY_MAP;
+        
+        int userLimit = getObjectCountForUser(user, KEY_INDEX_LINKS, "/data/settings/index_links");
+        
+        Map<Server, List<Link>> map = feedSubportalLinks.get(rid);
+        if (map == null)
+            return Collections.EMPTY_MAP;
+        
+        map = new HashMap(map);
+        for (Map.Entry<Server,List<Link>> entry : map.entrySet()) {
+            List list = getSubList(entry.getValue(), userLimit);
+            entry.setValue(list);
+        }
+        
+        return map;
+    }
 
     /**
      * Gets newest links for specified server.
@@ -608,6 +628,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshSubportalSizes(null);
             refreshStories();
             refreshFeedLinks();
+            refreshSubportalFeedLinks();
             refreshSectionCaches();
             refreshScreenshots();
             refreshCloudTags();
@@ -675,6 +696,23 @@ public class VariableFetcher extends TimerTask implements Configurable {
             feedLinks = feeds;
         } catch (Exception e) {
             log.error("Selhalo nacitani odkazu feedu", e);
+        }
+    }
+    
+    private void refreshSubportalFeedLinks() {
+        try {
+            Category subportals = new Category(Constants.CAT_SUBPORTALS);
+            List<Relation> children = Tools.syncList(subportals.getChildren());
+            Map data = new HashMap();
+
+            for (Relation rel : children) {
+                Map feeds = UpdateLinks.getFeeds(rel.getChild().getId());
+                data.put(rel.getId(), feeds);
+            }
+            
+            feedSubportalLinks = data;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani odkazu feedu podportalu", e);
         }
     }
 

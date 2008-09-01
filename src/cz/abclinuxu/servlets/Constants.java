@@ -139,6 +139,7 @@ public class Constants implements Configurable {
     public static final String TYPE_USER = "user";
     public static final String TYPE_POLL = "poll";
     public static final String TYPE_LINK = "link";
+    public static final String TYPE_SERVER = "server";
 
     // more types, see EditRelated, Item and Item.dtd
     public static final String TYPE_AUTHOR = "author";

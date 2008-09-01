@@ -11,6 +11,7 @@
     <li><a href="${URL.noPrefix("/clanky/dir/66948")}">seznam dokumentů</a></li>
     <li><a href="${URL.noPrefix("/EditSurvey?action=list")}">seznam velkých anket</a></li>
     <li><a href="${URL.noPrefix("/Admin?action=refreshRss"+TOOL.ticket(USER, false))}">přegeneruj RSS soubory</a></li>
+    <li><a href="${URL.noPrefix("/EditServers/319")}">správa rozcestníku</a></li>
 </ul>
 
 <h3>Správa redakce</h3>

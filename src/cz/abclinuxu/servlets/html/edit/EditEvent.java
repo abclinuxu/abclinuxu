@@ -136,9 +136,6 @@ public class EditEvent implements AbcAction {
             return actionDeregisterStep2(request, response, env);
         }
         
-        if (relation == null)
-            throw new MissingArgumentException("Chybí číslo relace!");
-        
         if (action.equals(ACTION_ADD)) {
             if (!Tools.permissionsFor(user, relation).canCreate())
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);

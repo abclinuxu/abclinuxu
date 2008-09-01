@@ -30,7 +30,7 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Server;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.persistence.Nursery;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.Configurable;
@@ -47,7 +47,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
@@ -69,7 +68,7 @@ public class UpdateLinks extends TimerTask implements Configurable {
     /** maximum length of one link's text */
     static int maxTitleLength = 80;
     /** id (integer) of server is key, value is ServerInfo instance */
-    static Map definitions;
+    //static Map definitions;
     static UpdateLinks instance;
     static Pattern ampersand;
     static {
@@ -102,19 +101,19 @@ public class UpdateLinks extends TimerTask implements Configurable {
         if (log.isDebugEnabled()) log.debug("Starting task "+getJobName());
         try {
             Persistence persistence = PersistenceFactory.getPersistence();
-            ServerInfo definition;
-            Server server;
-            List servers = getMaintainedServers();
+            SQLTool sqlTool = SQLTool.getInstance();
+            List<Server> servers = sqlTool.getValidServers();
+            
             for (Iterator iter = servers.iterator(); iter.hasNext();) {
-                Integer id = (Integer) iter.next();
-                definition = (ServerInfo) definitions.get(id);
-                server = (Server) persistence.findById(new Server(id));
+                Server server = (Server) iter.next();
+                
                 try {
-                    synchronize(server, 0, definition, persistence);
+                    synchronize(server, 0, server.getRssUrl(), persistence);
                 } catch (Exception e) {
                     log.warn("Cannot update links for server "+server+"!", e);
                 }
             }
+            
 
             List remove = new ArrayList();
             GenericObject child;
@@ -129,11 +128,11 @@ public class UpdateLinks extends TimerTask implements Configurable {
                     rid = Misc.parseInt(feed.attributeValue("relation"), -1);
                     relation = (Relation) persistence.findById(new Relation(rid));
                     child = persistence.findById(relation.getChild());
-                    definition = new ServerInfo(feed.getText());
+                    
                     try {
-                        synchronize(child, relation.getId(), definition, persistence);
+                        synchronize(child, relation.getId(), feed.getText(), persistence);
                     } catch (Exception e) {
-                        log.warn("Cannot update links for url " + definition.url + ", parent relation is "+rid+"!", e);
+                        log.warn("Cannot update links for url " + feed.getText() + ", parent relation is "+rid+"!", e);
                     }
                 } catch (Exception e) {
                     remove.add(rid);
@@ -169,9 +168,9 @@ public class UpdateLinks extends TimerTask implements Configurable {
      * @param parentRelation if of parent relation or 0.
      * @param definition definition of the feed
      */
-    protected void synchronize(GenericObject parent, int parentRelation, ServerInfo definition, Persistence persistence) {
+    protected void synchronize(GenericObject parent, int parentRelation, String rssUrl, Persistence persistence) {
         List storedLinks = getLinks(parent, persistence);
-        List downloaded = parseRSS(definition);
+        List downloaded = parseRSS(rssUrl);
         int updated = 0;
 
         if ( downloaded.size() > linksPerFeed )
@@ -237,12 +236,12 @@ public class UpdateLinks extends TimerTask implements Configurable {
      * Loads and parses links in netscape's RSS format from selected server.
      * @return List of Links sorted by time in descending order.
      */
-    protected List parseRSS(ServerInfo definition) {
+    protected List parseRSS(String rssUrl) {
         List result = new ArrayList();
         SyndFeedInput input = new SyndFeedInput();
 
         try {
-            SyndFeed feed = input.build(new XmlReader(new URL(definition.url)));
+            SyndFeed feed = input.build(new XmlReader(new URL(rssUrl)));
             List items = feed.getEntries();
             if ( items==null ) return result;
             for (Iterator iter = items.iterator(); iter.hasNext();) {
@@ -261,11 +260,11 @@ public class UpdateLinks extends TimerTask implements Configurable {
                 result.add(link);
             }
         } catch (ParsingFeedException e) {
-            log.warn("Invalid content in feed "+definition.url+": "+e.getMessage());
+            log.warn("Invalid content in feed "+rssUrl+": "+e.getMessage());
         } catch (IOException e) {
-            log.warn("IO problems for "+definition.url+": "+e.getMessage());
+            log.warn("IO problems for "+rssUrl+": "+e.getMessage());
         }  catch (Exception e) {
-            log.error("Cannot parse links from "+definition.url, e);
+            log.error("Cannot parse links from "+rssUrl, e);
         }
 
         return result;
@@ -295,8 +294,17 @@ public class UpdateLinks extends TimerTask implements Configurable {
     /**
      * @return list of ids of servers (integer) whose feeds are regularly fetched
      */
-    public static List getMaintainedServers() {
-        return new ArrayList(definitions.keySet());
+    public static List<Integer> getMaintainedServers() {
+        SQLTool sqlTool = SQLTool.getInstance();
+        List<Relation> servers = sqlTool.findServerRelationsInCategory(Constants.CAT_LINKS);
+        List<Integer> numbers = new ArrayList(servers.size());
+        
+        for (Iterator iter = servers.iterator(); iter.hasNext();) {
+            Relation rel = (Relation) iter.next();
+            numbers.add(rel.getChild().getId());
+        }
+        
+        return numbers;
     }
 
     /**
@@ -304,20 +312,23 @@ public class UpdateLinks extends TimerTask implements Configurable {
      * @return list of Servers, their children are Links
      */
     public static Map<Server, List<Link>> getMaintainedFeeds() {
-        List servers = new ArrayList(definitions.size());
-        for (Iterator iter = definitions.keySet().iterator(); iter.hasNext();) {
-            Integer id = (Integer) iter.next();
-            servers.add(new Server(id));
-        }
-        servers = Tools.syncList(servers);
-        Nursery.getInstance().initChildren(servers);
+        return getFeeds(Constants.CAT_LINKS);
+    }
+    
+    public static Map<Server, List<Link>> getFeeds(int cat) {
+        SQLTool sqlTool = SQLTool.getInstance();
+        List<Relation> servers = sqlTool.findServerRelationsInCategory(cat);
+        
+        Tools.syncList(servers);
 
-        Map<Server, List<Link>> result = new HashMap(definitions.size() + 1, 1.0f);
-        List<Link> allLinks = new ArrayList<Link>(definitions.size() * 5);
+        Map<Server, List<Link>> result = new HashMap(servers.size());
+        List<Link> allLinks = new ArrayList<Link>(servers.size() * 5);
         for (Iterator iter = servers.iterator(); iter.hasNext();) {
-            Server server = (Server) iter.next();
+            Relation rel = (Relation) iter.next();
+            Server server = (Server) rel.getChild();
             List children = server.getChildren();
             List links = new ArrayList(children.size());
+            
             for (Iterator iter2 = children.iterator(); iter2.hasNext();) {
                 Relation relation = (Relation) iter2.next();
                 Link link = (Link) relation.getChild();
@@ -333,24 +344,6 @@ public class UpdateLinks extends TimerTask implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         maxTitleLength = prefs.getInt(PREF_MAX_TITLE_LENGTH, 80);
         linksPerFeed = prefs.getInt(PREF_MAX_LINKS_PER_FEED, 5);
-        String feeds = prefs.get(PREF_FEEDS, "");
-
-        Map newDefinitions = new HashMap();
-        StringTokenizer stk = new StringTokenizer(feeds, ",");
-        String feed, tmp;
-        Integer id;
-        while (stk.hasMoreTokens()) {
-            tmp =  stk.nextToken();
-            id = new Integer(tmp);
-            feed = prefs.get(PREF_FEED + id, null);
-            if (feed == null) {
-                log.warn("Missing feed url for server "+id);
-                continue;
-            }
-            log.info("Added feed url '"+feed+"' for server "+id);
-            newDefinitions.put(id, new ServerInfo(feed));
-        }
-        definitions = newDefinitions;
     }
 
     public static void main(String[] args) {
@@ -368,30 +361,5 @@ public class UpdateLinks extends TimerTask implements Configurable {
     
     public static String prefixAbsoluteLinks(String text, String prefix) {
         return text.replaceAll("<a href=\"/", "<a href=\""+prefix+"/");
-    }
-
-    static class ServerInfo {
-        static final int RSS = 2;
-
-        /** where to download new links */
-        String url;
-        /** null fore default, otherwise valid encoding name of text */
-        String encoding;
-        /** in which format data are stored */
-        int format = RSS;
-
-        public ServerInfo(String url) {
-            this.url = url;
-        }
-
-        public ServerInfo(String url, String encoding, int format) {
-            this.url = url;
-            this.encoding = encoding;
-            this.format = format;
-        }
-
-        public String toString() {
-            return url;
-        }
     }
 }

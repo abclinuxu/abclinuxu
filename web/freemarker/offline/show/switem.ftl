@@ -1,7 +1,7 @@
 <#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
-<@showParents>
+<@showParents/>
 
 <#assign who=TOOL.createUser(ITEM.owner)>
 <p>

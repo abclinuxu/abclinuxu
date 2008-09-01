@@ -22,6 +22,7 @@
         <li><a href="/clanky/edit/${articles_rid}?action=add">Napsat článek</a></li>
         <li><a href="/clanky/dir/${articles_rid}">Čekající články</a> <span>(${counter.WAITING_ARTICLES?default("?")})</span></li>
         <li><a href="${events.url}?mode=unpublished">Čekající akce</a> <span>(${counter.WAITING_EVENTS?default("?")})</span></li>
+        <li><a href="${URL.make("/EditServers/"+RELATION.id)}">Servery rozcestníku</a></li>
     </ul>
     </div>
     </#if>
@@ -89,6 +90,28 @@ ${content}
 <#if TOOL.xpath(RELATION.child, "/data/forumHidden")?default("no")!="yes">
     <#assign forum_rid=TOOL.xpath(RELATION.child,"/data/forum")>
     <@lib.showForum forum_rid?eval, VARS.defaultSizes.question, false, true />
+</#if>
+
+<#assign FEEDS = VARS.getSubportalFeeds(USER?if_exists,RELATION.id)>
+<#if (FEEDS.size() > 0)>
+  <h2>Rozcestník</h2>
+  <div class="rozc">
+    <table>
+      <#list FEEDS.keySet() as server>
+      <#if server_index % 3 = 0><tr><#assign open=true></#if>
+       <td>
+         <a class="server" href="${server.url}" rel="nofollow">${server.name}</a>
+         <ul>
+           <#list FEEDS(server) as link>
+             <li><a href="${link.url}" rel="nofollow">${link.text}</a></li>
+           </#list>
+         </ul>
+       </td>
+     <#if server_index % 3 = 2></tr><#assign open=false></#if>
+     </#list>
+     <#if open></tr></#if>
+    </table>
+  </div>
 </#if>
 
 <#include "../footer.ftl">
