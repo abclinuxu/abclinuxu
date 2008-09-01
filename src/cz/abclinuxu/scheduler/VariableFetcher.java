@@ -1338,8 +1338,13 @@ public class VariableFetcher extends TimerTask implements Configurable {
                 log.warn("Damaged list of servers: '"+servers+"'!");
                 continue;
             }
-
-            server = (Server) persistence.findById(new Server(id));
+            
+            try {
+                server = (Server) persistence.findById(new Server(id));
+            } catch (Exception e) {
+                continue;
+            }
+            
             links = feedLinks.get(server);
             if (links == null) // unmaintained
                 continue;
