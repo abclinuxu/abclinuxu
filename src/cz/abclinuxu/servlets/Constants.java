@@ -329,7 +329,6 @@ public class Constants implements Configurable {
     public static final String PROPERTY_TICKET = "ticket";
     public static final String PROPERTY_USED_BY = "used_by";
 	public static final String PROPERTY_MEMBER = "member";
-	public static final String PROPERTY_REGION = "region";
     public static final String PROPERTY_FAVOURITED_BY = "favourited_by";
 
     // see EditBazaar
