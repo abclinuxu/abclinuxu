@@ -130,10 +130,11 @@ ALTER TABLE spolecne ADD INDEX in_pridal (pridal);
 
 -- tabulka s definicemi serveru, kterym zobrazujeme odkazy
 CREATE TABLE server (
-  cislo INT(3) PRIMARY KEY,                      -- identifikator serveru
+  cislo INT(3) auto_increment PRIMARY KEY,       -- identifikator serveru
   jmeno VARCHAR(60) NOT NULL,                    -- zobrazovany nazev serveru
   url VARCHAR(255) NOT NULL,                     -- URL serveru
-  kontakt VARCHAR(60)                            -- email na kontaktni osobu
+  kontakt VARCHAR(60),                           -- email na kontaktni osobu
+  rss VARCHAR(255) NOT NULL,                     -- URL RSS feedu
 );
 
 

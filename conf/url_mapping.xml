@@ -79,6 +79,10 @@
             <action>cz.abclinuxu.servlets.html.edit.EditBookmarks</action>
         </mapping>
         <mapping>
+            <pattern>^/EditServers</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditServers</action>
+        </mapping>
+        <mapping>
             <pattern>/stitky/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditTag</action>
         </mapping>

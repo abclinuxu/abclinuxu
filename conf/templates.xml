@@ -32,8 +32,11 @@
         <action name="list" content="/edit/servers.ftl">
             <var name="TITLE" value="Servery rozcestníku" />
         </action>
-        <action name="list" content="/edit/server.ftl">
+        <action name="edit" content="/edit/server.ftl">
             <var name="TITLE" value="Úprava serveru rozcestníku" />
+        </action>
+        <action name="add" content="/edit/server.ftl">
+            <var name="TITLE" value="Přidání serveru rozcestníku" />
         </action>
     </servlet>
 
