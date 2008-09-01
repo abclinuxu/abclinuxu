@@ -7,6 +7,12 @@
 </#assign>
 <#include "../header.ftl">
 
+<#if PARAMS.action=="add" || PARAMS.action="add2" >
+<h1>Přidání článku</h1>
+<#else>
+<h1>Úprava článku</h1>
+</#if>
+
 <@lib.showMessages/>
 
 <#macro selected id><#t>
