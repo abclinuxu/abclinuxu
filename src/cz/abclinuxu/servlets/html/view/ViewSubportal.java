@@ -100,7 +100,7 @@ public class ViewSubportal implements AbcAction {
         String orderDir = (String) params.get(PARAM_ORDER_DIR);
         
         if (Misc.empty(orderBy))
-            orderBy = "updated";
+            orderBy = "score";
         if (Misc.empty(orderDir))
             orderDir = "desc";
         

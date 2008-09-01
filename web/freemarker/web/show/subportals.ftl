@@ -14,14 +14,7 @@
 
 <h1>Seznam skupin</h1>
 
-<p>Abychom usnadnili nejrůznějším zájmovým skupinám v linuxové komunitě
-spolupráci, komunikaci a rozvoj dalších aktivit, nabízíme funkci
-skupin. Zde si mohou uživatelé do určité míry vytvořit vlastní
-malý portál, vydávat články, vést diskuze atd.</p>
-
-<p>Zároveň chceme zamezit vzniku spousty nepoužívaných a zbytečných portálů,
-nelze si jej tedy nechat vytvořit automaticky. Pokud máte o subportál zájem,
-kontaktuje administrátory, kteří věc zváží.</p>
+${TOOL.xpath(RELATION.child,"/data/note")}
 
 <hr />
 
@@ -36,7 +29,7 @@ kontaktuje administrátory, kteří věc zváží.</p>
 
     <h2 class="st_nadpis"><a href="${url}">${cat.title}</a></h2>
     <p>${desc}</p>
-    <p class="meta-vypis"><a href="${url}?action=members">Členů</a>: ${members?size} | Vznik: ${DATE.show(cat.created,"CZ_SHORT")}
+    <p class="meta-vypis"><a href="${url}?action=members">Členů</a>: ${members?size} | Vznik: ${DATE.show(cat.created,"SMART_DMY")}
     <#if score != -1>| Skóre: ${score}</#if></p>
     <hr style="clear:right" />
 </#list>
@@ -55,10 +48,10 @@ kontaktuje administrátory, kteří věc zváží.</p>
             <td><input type="text" size="3" value="${SUBPORTALS.pageSize}" name="count" tabindex="2"></td>
             <td>
                 <select name="orderBy" tabindex="3">
+                    <option value="score"<#if PARAMS.orderBy?if_exists=="score"> selected</#if>>skóre</option>
                     <option value="updated"<#if PARAMS.orderBy?if_exists=="updated"> selected</#if>>poslední aktivity</option>
                     <option value="title"<#if PARAMS.orderBy?if_exists=="title"> selected</#if>>titulku</option>
                     <option value="created"<#if PARAMS.orderBy?if_exists=="created"> selected</#if>>data vytvoření</option>
-                    <option value="score"<#if PARAMS.orderBy?if_exists=="score"> selected</#if>>skóre</option>
                 </select>
             </td>
             <td>

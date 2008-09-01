@@ -32,6 +32,7 @@ import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.security.Permissions;
+import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -84,6 +85,7 @@ public class EditSubportal implements AbcAction {
     public static final String ACTION_ADD_STEP2 = "add2";
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
+    public static final String ACTION_LIST_RSS = "listRSS";
 	
 	private Persistence persistence = PersistenceFactory.getPersistence();
 	static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditSubportal.class);
@@ -140,13 +142,16 @@ public class EditSubportal implements AbcAction {
 			ActionProtector.ensureContract(request, EditSubportal.class, true, true, true, false);
 			return actionEditStep2(request, response, env);
 		}
+        
+        if (ACTION_LIST_RSS.equals(action))
+            return actionListRSS(request, response, env);
 		
 		throw new MissingArgumentException("Chybí parametr action!");
 	}
 	
 	protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
-		
+		User user = (User) env.get(Constants.VAR_USER);
 		Category category = new Category();
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
@@ -161,7 +166,9 @@ public class EditSubportal implements AbcAction {
 		canContinue &= setDescription(params, root, env);
 		canContinue &= setUrl(params, relation, env);
         canContinue &= checkImage(params, env);
-        canContinue &= setForumHidden(params, root);
+        
+        if (user.hasRole(Roles.ROOT))
+            canContinue &= setForumHidden(params, root);
 		
 		if (!canContinue)
             return FMTemplateSelector.select("EditSubportal", "add", env, request);
@@ -182,11 +189,11 @@ public class EditSubportal implements AbcAction {
         // a wiki page
 		createContent(env, root, relation);
         // a section for articles
-		createSection(env, root, relation, "Články na "+title, "articles", "/clanky", Category.SECTION);
+		createSection(env, root, relation, "Články", "articles", "/clanky", Category.SECTION);
         // waiting articles
-		createSection(env, root, relation, "Čekající články na "+title, "article_pool", null, 0);
+		createSection(env, root, relation, "Čekající články", "article_pool", null, 0);
         // a discussion forum
-		forum = createSection(env, root, relation, "Poradna pro "+title, "forum", "/poradna", Category.FORUM);
+		forum = createSection(env, root, relation, "Poradna", "forum", "/poradna", Category.FORUM);
         
         FeedGenerator.findSubportalForums();
         FeedGenerator.updateForum(forum.getId());
@@ -214,6 +221,10 @@ public class EditSubportal implements AbcAction {
 		
 		return null;
 	}
+    
+    private String actionListRSS(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        return null;
+    }
 	
 	private String actionEditStep1(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 		Relation relation = (Relation) env.get(VAR_RELATION);
@@ -241,6 +252,7 @@ public class EditSubportal implements AbcAction {
 		Relation relation = (Relation) env.get(VAR_RELATION);
 		Category category = (Category) relation.getChild().clone();
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user = (User) env.get(Constants.VAR_USER);
 		
 		boolean canContinue = true;        
         Element root = category.getData().getRootElement();
@@ -250,7 +262,9 @@ public class EditSubportal implements AbcAction {
 		canContinue &= setShortDescription(params, root, env);
         canContinue &= checkImage(params, env);
 		canContinue &= setIcon(params, relation, root, env);
-        canContinue &= setForumHidden(params, root);
+        
+        if (user.hasRole(Roles.ROOT))
+            canContinue &= setForumHidden(params, root);
 		
 		if (!canContinue)
             return FMTemplateSelector.select("EditSubportal", "edit", env, request);

@@ -553,7 +553,7 @@
             <td><a href="${diz.url}">${TOOL.limit(diz.title,60,"...")}</a></td>
             <td class="td-meta"><@lib.showDiscussionState diz /></td>
             <td class="td-meta">${diz.responseCount}</td>
-            <td class="td-datum">${DATE.show(diz.updated,"CZ_SHORT")}</td>
+            <td class="td-datum">${DATE.show(diz.updated,"SMART")}</td>
           </tr>
          </#list>
         </tbody>
@@ -665,7 +665,7 @@
     <div class="s_nadpis">Informace o skupině</div>
     <div class="s_sekce">
       <table cellspacing="0" class="s_table skupiny">
-        <tr><td>Založena:</td>     <td>${DATE.show(item.created,"CZ_SHORT")}</td></tr>
+        <tr><td>Založena:</td>     <td>${DATE.show(item.created,"SMART_DMY")}</td></tr>
         <tr><td>Členů:</td>        <td><a href="${relation.url}?action=members">${members?size}</a></td></tr>
         <tr><td>Článků:</td>       <td><a href="${relation.url}/clanky">${counter.ARTICLES?default("?")}</a></td></tr>
         <tr><td>Wiki stránek:</td> <td><a href="${relation.url}/wiki">${counter.WIKIS?default("?")}</a></td></tr>
