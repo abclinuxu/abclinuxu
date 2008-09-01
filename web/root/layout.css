@@ -217,9 +217,7 @@ blockquote {
 	font-size: 90%;
 }
 
-.hl a {
-	text-decoration: none;
-}
+.hl a { text-decoration: none; }
 
 .hl_vpravo {
 	float: right;
@@ -227,7 +225,11 @@ blockquote {
 }
 
 .hl ul { list-style: none; }
-.hl ul.menu-top { margin: 0; padding: 0; }
+.hl ul.menu-top {
+	margin: 0;
+	padding: 0;
+	display: table;
+}
 .hl ul.menu-drop {
 	display: none;
 	position: absolute;
@@ -236,9 +238,12 @@ blockquote {
 	z-index: 1;
 	padding: 0 1em;
 	margin-left:-0.3em; }
-.hl ul.menu-drop li { padding: 0.1em 0.5em; border-top: 1px solid; }
-.hl ul.menu-drop li:first-child {border: none;}
-.hl .menu-top:hover .menu-drop {display: block}
+.hl ul.menu-drop li {
+	padding: 0.1em 0.5em;
+	border-top: 1px solid;
+}
+.hl ul.menu-drop li:first-child { border: none; }
+.hl .menu-top:hover .menu-drop { display: block; }
 
 .pwd-box, .tag-box {
 	min-height: 1.9em;
