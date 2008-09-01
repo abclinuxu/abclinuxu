@@ -17,7 +17,7 @@
 
 <fieldset style="margin-top: 1em;">
     <legend>Náhled</legend>
-    <@bazarlib.showBazaarAd RELATION.child, USER />
+    <@bazarlib.showBazaarAd RELATION.child, TOOL.createUser(RELATION.child.owner) />
 </fieldset>
 
 
