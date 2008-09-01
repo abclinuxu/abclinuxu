@@ -19,13 +19,14 @@ Zde můžete upravit RSS kanály, které se mají zobrazovat v rozcestníku (box
 <#if SERVERS?size gt 0>
     <form action="${URL.make("/EditServers")}" method="POST">
     <table border="1">
-    <tr><th></th><th>Název</th><th>URL webu</th></tr>
+    <tr><th></th><th>Název</th><th>URL webu</th><th>ID</th></tr>
     
     <#list SERVERS as server>
         <tr>
             <td><input type="checkbox" name="server" value="${server.id}"></td>
             <td><a href="${URL.make("/EditServers/"+server.id+"?action=edit")}">${server.child.name}</a></td>
             <td><a href="${server.child.url}">${server.child.url}</a></td>
+            <td>${server.child.id}</td>
         </tr>
     </#list>
     </table>
