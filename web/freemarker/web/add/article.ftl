@@ -21,19 +21,19 @@
 
 <form action="${URL.make("/edit")}" method="POST" name="theForm">
 
- <table width=100 border=0 cellpadding=5>
+ <table class="siroka" border="0" cellpadding="5">
   <tr>
-   <td width="90" class="required">Titulek</td>
+   <td class="required">Titulek</td>
    <td>
-    <input type="text" name="title" value="${PARAMS.title?if_exists?html}" size=60 tabindex=1>
+    <input type="text" name="title" value="${PARAMS.title?if_exists?html}" size="60" tabindex="1">
     <div class="error">${ERRORS.title?if_exists}</div>
    </td>
   </tr>
   <#if AUTHORS?exists>
   <tr>
-   <td width="90" class="required">Autor</td>
+   <td class="required">Autor</td>
    <td>
-    <select name="authors" size="6" multiple tabindex=2>
+    <select name="authors" size="6" multiple tabindex="2">
         <#list AUTHORS as relation>
             <#assign author=relation.child>
             <option value="${relation.id}"<@selected relation.id/>>
@@ -46,16 +46,16 @@
   </tr>
   </#if>
   <tr>
-   <td width="90" class="required">Zveřejni dne</td>
+   <td class="required">Zveřejni dne</td>
    <td>
-    <input type="text" name="published" id="datetime_input" value="${PARAMS.published?if_exists}" size=40 tabindex=3>
+    <input type="text" name="published" id="datetime_input" value="${PARAMS.published?if_exists}" size="40" tabindex="3">
     <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
     <div class="error">${ERRORS.published?if_exists}</div>
    </td>
   </tr>
   <#if SECTIONS?exists>
       <tr>
-       <td width="90" class="required">Rubrika</td>
+       <td class="required">Rubrika</td>
        <td>
         <select name="section">
             <#list SECTIONS as section>
@@ -66,14 +66,14 @@
       </tr>
   </#if>
   <tr>
-   <td width="90" class="required">Perex</td>
+   <td class="required">Perex</td>
    <td>
-    <textarea name="perex" cols="100" rows="4" tabindex="4">${PARAMS.perex?if_exists?html}</textarea>
+    <textarea name="perex" class="siroka" rows="4" tabindex="4">${PARAMS.perex?if_exists?html}</textarea>
     <div class="error">${ERRORS.perex?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td width="90" class="required">Obsah článku</td>
+   <td class="required">Obsah článku</td>
    <td>
     <p>Rozdělit článek na více podstránek můžete pomocí následující direktivy: <br>
     <i>&lt;page title="Nastavení programu LILO"&gt;</i> <br>
@@ -91,33 +91,33 @@
 	    <a href="javascript:insertAtCursor(document.theForm.content, '&amp;gt;', '');" id="mono" title="Vložit písmeno &gt;">&gt;</a>
     </div>
 
-    <textarea name="content" cols="100" rows="45" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
+    <textarea name="content" class="siroka" rows="40" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
     <div class="error">${ERRORS.content?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td width="90">Související články</td>
+   <td>Související články</td>
    <td>
     Zde můžete zadat související články z našeho portálu. Na první řádek vložte
     relativní URL odkazu, na druhý jeho popis. Liché řádky jsou URL, sudé popisy. Popis může obsahovat
     znak |, zbytek textu řádky bude sloužit jako komentář, nebude součástí odkazu. <br>
-    <textarea name="related" cols="80" rows="5" tabindex="6">${PARAMS.related?if_exists}</textarea>
+    <textarea name="related" class="siroka" rows="5" tabindex="6">${PARAMS.related?if_exists}</textarea>
     <div class="error">${ERRORS.related?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td width="90">Zdroje a odkazy</td>
+   <td>Zdroje a odkazy</td>
    <td>
     Zde můžete zadat odkazy a zdroje. Místní URL vkládejte jako relativní! Na první řádek vložte
     URL odkazu, na druhý jeho popis. Liché řádky jsou URL, sudé popisy. Popis může obsahovat
     znak |, zbytek textu řádky bude sloužit jako komentář, nebude součástí odkazu. <br>
-    <textarea name="resources" cols="80" rows="5" tabindex="7">${PARAMS.resources?if_exists}</textarea>
+    <textarea name="resources" class="siroka" rows="5" tabindex="7">${PARAMS.resources?if_exists}</textarea>
     <div class="error">${ERRORS.resources?if_exists}</div>
    </td>
   </tr>
   <#if AUTHORS?exists>
   <tr>
-   <td width="90">Volby</td>
+   <td>Volby</td>
    <td>
     <label>
         <input type="checkbox" name="forbid_discussions" <#if PARAMS.forbid_discussions?exists>checked</#if> value="yes">
@@ -135,23 +135,23 @@
   </tr>
   </#if>
   <tr>
-   <td width="90">URL</td>
+   <td>URL</td>
    <td>
-      /clanky/nejaka-sekce/<input type="text" name="url" value="${PARAMS.url?if_exists}">
+      /clanky/nejaka-sekce/<input type="text" name="url" value="${PARAMS.url?if_exists}"> (nepovinné; je-li ponecháno prázdné, systém vygeneruje URL podle názvu článku)
       <div class="error">${ERRORS.url?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td width="90">Ikonka</td>
+   <td>Ikonka</td>
    <td>
     Pokud chcete, aby se ve výpise článků zobrazovala ikonka, vložte zde její HTML kód.
     Nedávejte zde formátování, to se řeší v šabloně. Jen definici tagu IMG. <br>
-    <textarea name="thumbnail" cols="90" rows="2" tabindex="7">${PARAMS.thumbnail?if_exists}</textarea>
+    <textarea name="thumbnail" class="siroka" rows="2" tabindex="7">${PARAMS.thumbnail?if_exists}</textarea>
     <div class="error">${ERRORS.thumbnail?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td width="90">&nbsp;</td>
+   <td>&nbsp;</td>
    <td><input type="submit" value="Dokonči" tabindex="8"></td>
   </tr>
  </table>
