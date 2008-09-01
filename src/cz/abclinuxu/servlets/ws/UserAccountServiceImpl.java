@@ -162,6 +162,9 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             user.setData("<data/>");
             Map<String, String> userMap = new HashMap<String, String>();
             Map env = new HashMap();
+            
+            env.put(Constants.VAR_ERRORS, new HashMap());
+            
             String  tmp;
             tmp = account.getCity();
             if (tmp != null) {
