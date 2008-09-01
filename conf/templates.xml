@@ -28,11 +28,20 @@
         </action>
     </servlet>
 
+    <servlet name="EditServers">
+        <action name="list" content="/edit/servers.ftl">
+            <var name="TITLE" value="Servery rozcestníku" />
+        </action>
+        <action name="list" content="/edit/server.ftl">
+            <var name="TITLE" value="Úprava serveru rozcestníku" />
+        </action>
+    </servlet>
+
     <servlet name="EditArticle">
-        <action name="add" template="print" content="/add/article.ftl">
+        <action name="add" content="/add/article.ftl">
             <var name="TITLE" value="Vložení článku"/>
         </action>
-        <action name="edit" template="print" content="/add/article.ftl">
+        <action name="edit" content="/add/article.ftl">
             <var name="TITLE" value="Úprava článku"/>
         </action>
         <action name="talk" template="print" content="/edit/article_talk.ftl">
