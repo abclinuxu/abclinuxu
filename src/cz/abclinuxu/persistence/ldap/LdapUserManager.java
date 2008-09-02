@@ -217,7 +217,7 @@ public class LdapUserManager implements Configurable {
             attr = new BasicAttribute(ATTRIB_PASSWORD_HASHCODE, Integer.toString(password.hashCode()));
             attrs.put(attr);
 
-            if (openId != null) {
+            if (openId != null && openId.length() > 0) {
                 checkDuplicateOpenId(openId, null, ctx);
                 attr = new BasicAttribute(ATTRIB_OPEN_ID, openId);
                 attrs.put(attr);
