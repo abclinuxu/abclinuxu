@@ -64,7 +64,7 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
         try {
             verifyAccess(portal, portalPassword);
             if (log.isDebugEnabled())
-                log.debug("registerUser(" + login + ")");
+                log.debug("registerUser(" + login + ", ***, " + openId + ", " + name + ")");
 
             mgr.registerUser(login, password, openId, name, portal);
         } catch (AbcException e) {
@@ -155,16 +155,15 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
         try {
             verifyAccess(portal, portalPassword);
             if (log.isDebugEnabled())
-                log.debug("updateUser(" + account.login + ")");
+                log.debug("updateUser(" + account.login + ")" + account.toString());
 
             // todo odstranit volani EditUser, presunout kontroly primo sem, hlavne zadne HTML
             User user = new User();
             user.setData("<data/>");
             Map<String, String> userMap = new HashMap<String, String>();
             Map env = new HashMap();
-            
             env.put(Constants.VAR_ERRORS, new HashMap());
-            
+
             String  tmp;
             tmp = account.getCity();
             if (tmp != null) {

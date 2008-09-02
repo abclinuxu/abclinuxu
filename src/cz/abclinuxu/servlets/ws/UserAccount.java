@@ -306,4 +306,40 @@ public class UserAccount implements Serializable {
     public void setSex(String sex) {
         this.sex = sex;
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("city: "+ city + ", ");
+        sb.append("country: "+ country + ", ");
+        sb.append("deliveryAddressCity: "+ deliveryAddressCity + ", ");
+        sb.append("deliveryAddressCountry: "+ deliveryAddressCountry + ", ");
+        sb.append("deliveryAddressName: "+ deliveryAddressName + ", ");
+        sb.append("deliveryAddressStreet: "+ deliveryAddressStreet + ", ");
+        sb.append("deliveryAddressZIP: "+ deliveryAddressZIP + ", ");
+        sb.append("emailAddress: "+ emailAddress + ", ");
+        sb.append("emailBlocked: "+ emailBlocked + ", ");
+        sb.append("emailVerified: "+ emailVerified + ", ");
+        sb.append("forgottenPasswordToken: "+ forgottenPasswordToken + ", ");
+        sb.append("homepageURL: "+ homepageURL + ", ");
+        sb.append("invoicingAddressCity: "+ invoicingAddressCity + ", ");
+        sb.append("invoicingCompany: "+ invoicingCompany + ", ");
+        sb.append("invoicingAddressCountry: "+ invoicingAddressCountry + ", ");
+        sb.append("invoicingCompanyDIC: "+ invoicingCompanyDIC + ", ");
+        sb.append("invoicingCompanyICO: "+ invoicingCompanyICO + ", ");
+        sb.append("invoicingAddressName: "+ invoicingAddressName + ", ");
+        sb.append("invoicingAddressStreet: "+ invoicingAddressStreet + ", ");
+        sb.append("invoicingAddressZIP: "+ invoicingAddressZIP + ", ");
+        sb.append("lastLoginDate: "+ lastLoginDate + ", ");
+        sb.append("login: "+ login + ", ");
+        sb.append("name: "+ name + ", ");
+        sb.append("openID: "+ openID + ", ");
+        sb.append("userPassword: "+ userPassword + ", ");
+        sb.append("passwordAnswer: "+ passwordAnswer + ", ");
+        sb.append("passwordHash: "+ passwordHash + ", ");
+        sb.append("passwordQuestion: "+ passwordQuestion + ", ");
+        sb.append("phone: "+ phone + ", ");
+        sb.append("registrationDate: "+ registrationDate + ", ");
+        sb.append("sex: "+ sex + ", ");
+        return sb.toString();
+    }
 }
