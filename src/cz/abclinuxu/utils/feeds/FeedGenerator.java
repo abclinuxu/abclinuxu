@@ -41,6 +41,7 @@ import java.io.*;
 
 import com.sun.syndication.feed.synd.*;
 import com.sun.syndication.io.SyndFeedOutput;
+import cz.abclinuxu.AbcException;
 import org.apache.log4j.Logger;
 import org.dom4j.Node;
 import org.dom4j.Document;
@@ -121,7 +122,60 @@ public class FeedGenerator implements Configurable {
      * Generates a RSS feed combinig all forums
      */
     public static void updateForumAll() {
-        
+        try {
+            SyndFeed feed = new SyndFeedImpl();
+            feed.setFeedType(TYPE_RSS_1_0);
+            feed.setEncoding("UTF-8");
+            feed.setTitle("abclinuxu - aktuální diskuse");
+            
+            feed.setLink("http://www.abclinuxu.cz/poradna");
+            feed.setUri("http://www.abclinuxu.cz/poradna");
+            feed.setDescription("Seznam aktuálních diskusí v poradnách na portálu www.abclinuxu.cz");
+            List entries = new ArrayList();
+            feed.setEntries(entries);
+
+            SyndEntry entry;
+            SyndContent description;
+            String question, title;
+
+            Qualifier[] qualifiers = new Qualifier[]{new CompareCondition(Field.SUBTYPE, Operation.EQUAL, "question"),
+                    Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, highFrequencyFeedLength)};
+            List list = SQLTool.getInstance().findDiscussionRelations(qualifiers);
+            Tools.syncList(list);
+            
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Relation rel = (Relation) iter.next();
+                DiscussionHeader diz = Tools.analyzeDiscussion(rel);
+                
+                entry = new SyndEntryImpl();
+                entry.setLink("http://www.abclinuxu.cz" + Tools.getUrlForDiscussion(rel));
+                title = diz.getTitle();
+                title = title.concat(", odpovědí: " + diz.getResponseCount());
+                entry.setTitle(title);
+                entry.setPublishedDate(diz.getUpdated());
+                description = new SyndContentImpl();
+                description.setType("text/plain");
+                question = Tools.xpath(diz.getDiscussion(), "data/text");
+                question = Tools.removeTags(question);
+                question = Tools.limit(question, 500, "...");
+                description.setValue(question);
+                entry.setDescription(description);
+                entries.add(entry);
+            }
+
+            String path = AbcConfig.calculateDeployedPath(getForumFeedUrl().substring(1));
+            
+            File dir = new File(path).getParentFile();
+            if (!dir.exists())
+                dir.mkdirs();
+            
+            Writer writer = getWriter(path);
+            SyndFeedOutput output = new SyndFeedOutput();
+            output.output(feed, writer);
+            writer.close();
+        } catch (Exception e) {
+            log.error("Chyba pri generovani RSS pro poradny", e);
+        }
     }
     
     /**
@@ -161,11 +215,13 @@ public class FeedGenerator implements Configurable {
                     Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, highFrequencyFeedLength)};
             List list = SQLTool.getInstance().findDiscussionRelations(qualifiers);
             Tools.syncList(list);
-            List discussions = new Tools().analyzeDiscussions(list);
-            for (Iterator iter = discussions.iterator(); iter.hasNext();) {
-                DiscussionHeader diz = (DiscussionHeader) iter.next();
+            
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Relation rel = (Relation) iter.next();
+                DiscussionHeader diz = Tools.analyzeDiscussion(rel);
+                
                 entry = new SyndEntryImpl();
-                entry.setLink("http://www.abclinuxu.cz/forum/show/" + diz.getRelationId());
+                entry.setLink("http://www.abclinuxu.cz" + Tools.getUrlForDiscussion(rel));
                 title = diz.getTitle();
                 title = title.concat(", odpovědí: " + diz.getResponseCount());
                 entry.setTitle(title);
@@ -191,7 +247,7 @@ public class FeedGenerator implements Configurable {
             output.output(feed, writer);
             writer.close();
         } catch (Exception e) {
-            log.error("Chyba pri generovani RSS pro ovladace", e);
+            log.error("Chyba pri generovani RSS pro poradnu", e);
         }
     }
 
