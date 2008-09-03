@@ -302,7 +302,7 @@ ${TOOL.xpath(ITEM, "/data/content")}
                 <#if image.thumbnailPath?exists>
                     <a href="${image.path}"><img src="${image.thumbnailPath}" alt="Obrázek ${image_index}" border="0"></a>
                 <#else>
-                    <img src="${image.path}" alt="Obrázek ${image_index}">
+                    <img src="${image.path}" alt="${ITEM.title}, obrázek ${image_index}">
                 </#if>
             <#elseif USER?exists && (USER.id==BLOG.owner || TOOL.permissionsFor(USER, RELATION).canModify())>
                 <#if !wrote_section><h3>Obrázky</h3><p class="galerie"><#assign wrote_section=true></#if>
