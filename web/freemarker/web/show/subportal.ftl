@@ -8,7 +8,7 @@
 </#if>
 
 <#assign plovouci_sloupec>
-    <@lib.showSubportal RELATION, false />
+    <@lib.showSubportal RELATION, true />
     <#if USER?exists && (USER.hasRole("root") || TOOL.permissionsFor(USER, RELATION).canModify())>
     <div class="s_nadpis">
         Správa skupiny
