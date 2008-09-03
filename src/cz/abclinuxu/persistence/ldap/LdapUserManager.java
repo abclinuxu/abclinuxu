@@ -269,15 +269,18 @@ public class LdapUserManager implements Configurable {
             for (String key : values.keySet()) {
                 if (!MODIFIABLE_ATTRIBUTES.contains(key))
                     throw new InvalidInputException("Atribut '" + key + "' je buď špatně zapsán, neexistuje nebo je zakázáno jej měnit!");
+
+                String value = values.get(key);
                 if (ATTRIB_OPEN_ID.equals(key)) {
-                    checkDuplicateOpenId(values.get(key), login, ctx);
+                    if (value == null || value.length() == 0)
+                        continue;
+                    checkDuplicateOpenId(value, login, ctx);
                 } else if (ATTRIB_EMAIL_BLOCKED.equals(key) || ATTRIB_EMAIL_VERIFIED.equals(key)) {
-                    String value = values.get(key);
                     if ( value != null && ! ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)))
                         throw new InvalidInputException("Atribut '" + key + "' smí obsahovat jen hodnoty true a false!");
                 }
 
-                attr = new BasicAttribute(key, values.get(key));
+                attr = new BasicAttribute(key, value);
                 if (ATTRIB_VISITED_PORTAL.equals(key)) // TODO odstranit po migraci
                     modsList.add(new ModificationItem(DirContext.ADD_ATTRIBUTE, attr));
                 else
