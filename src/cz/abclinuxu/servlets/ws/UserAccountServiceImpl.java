@@ -278,7 +278,7 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
                 userMap.put(LdapUserManager.ATTRIB_PHONE, tmp);
             }
             tmp = account.getSex();
-            if (tmp != null) {
+            if (tmp != null && tmp.length() > 0) {
                 if (! EditUser.setSex(Collections.singletonMap(EditUser.PARAM_SEX, tmp), user, env))
                     throw createException(EditUser.PARAM_SEX, env, LdapUserManager.ATTRIB_SEX);
                 userMap.put(LdapUserManager.ATTRIB_SEX, tmp);
