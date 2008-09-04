@@ -114,13 +114,13 @@
     <#else>
         <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
     </#if>
-    <#local signs="">
-    <#if CHILDREN.poll?exists><#local signs=signs+", A"></#if>
-    <#if TOOL.screenshotsFor(story)?size gt 0><#local signs=signs+", O"></#if>
-    <#if CHILDREN.video?exists><#local signs=signs+", V"></#if>
+    <#local signs="", tooltip="">
+    <#if CHILDREN.poll?exists><#local signs=signs+", A", tooltip=tooltip+"anketa"></#if>
+    <#if TOOL.screenshotsFor(story)?size gt 0><#if tooltip!=""><#local tooltip=tooltip+", "></#if><#local signs=signs+", O", tooltip=tooltip+"obrázek"></#if>
+    <#if CHILDREN.video?exists><#if tooltip!=""><#local tooltip=tooltip+", "></#if><#local signs=signs+", V", tooltip=tooltip+"video"></#if>
 
     <a href="${url}" title="${author.nick?default(author.name)?html}<#if title!="UNDEF">, ${title}</#if>">${story.title}</a>
-    <span title="Počet&nbsp;komentářů<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>">
+    <span title="Počet&nbsp;komentářů<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if><#if tooltip!=""> [${tooltip}]</#if>">
         (${diz.responseCount}<@lib.markNewComments diz/>${signs})
     </span>
 </#macro>
