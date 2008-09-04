@@ -135,6 +135,7 @@ public final class SQLTool implements Configurable {
     public static final String SUBPORTALS_COUNT_EVENTS = "subportal.count.events";
     public static final String SUBPORTALS_COUNT_FORUM_QUESTIONS = "subportal.count.forum.questions";
     public static final String SUBPORTALS_ORDERED_BY_SCORE = "subportals.ordered.by.score";
+    public static final String SUBPORTALS_ORDERED_BY_MEMBER_COUNT = "subportals.ordered.by.member.count";
     
     public static final String VALID_SERVERS = "valid.servers";
     public static final String SERVER_RELATIONS_IN_CATEGORY = "server.relations.in.category";
@@ -621,6 +622,18 @@ public final class SQLTool implements Configurable {
     public List<Relation> findSubportalsOrderedByScore(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuilder sb = new StringBuilder((String) sql.get(SUBPORTALS_ORDERED_BY_SCORE));
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadRelations(sb.toString(), params);
+    }
+    
+    /**
+     * Finds subportals and orders them by the member count
+     * @return List of initialized relations
+     */
+    public List<Relation> findSubportalsOrderedByMemberCount(Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuilder sb = new StringBuilder((String) sql.get(SUBPORTALS_ORDERED_BY_MEMBER_COUNT));
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
@@ -2339,6 +2352,7 @@ public final class SQLTool implements Configurable {
         store(SUBPORTALS_COUNT_EVENTS, prefs);
         store(SUBPORTALS_COUNT_FORUM_QUESTIONS, prefs);
         store(SUBPORTALS_ORDERED_BY_SCORE, prefs);
+        store(SUBPORTALS_ORDERED_BY_MEMBER_COUNT, prefs);
         store(QUESTIONS_WITH_TAGS, prefs);
         store(VALID_SERVERS, prefs);
         store(SERVER_RELATIONS_IN_CATEGORY, prefs);
