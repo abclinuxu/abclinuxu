@@ -11,10 +11,10 @@
     </servlet>
 
     <servlet name="EditAuthor">
-        <action name="add" template="print" content="/add/author.ftl">
+        <action name="add" content="/add/author.ftl">
             <var name="TITLE" value="Vložit autora" />
         </action>
-        <action name="edit" template="print" content="/add/author.ftl">
+        <action name="edit" content="/add/author.ftl">
             <var name="TITLE" value="Upravit autora" />
         </action>
     </servlet>
@@ -56,16 +56,16 @@
         <action name="talkQuestion" template="print" content="/edit/talk_question.ftl">
             <var name="TITLE" value="Vložení odpovědi k otázce"/>
         </action>
-        <action name="addSeries" template="print" content="/add/article_series.ftl">
+        <action name="addSeries" content="/add/article_series.ftl">
             <var name="TITLE" value="Vyber seriál"/>
         </action>
     </servlet>
 
     <servlet name="EditContent">
-        <action name="add" template="print" content="/add/content.ftl">
+        <action name="add" content="/add/content.ftl">
             <var name="TITLE" value="Vložení stránky"/>
         </action>
-        <action name="edit" template="print" content="/add/content.ftl">
+        <action name="edit" content="/add/content.ftl">
             <var name="TITLE" value='Úprava stránky - ${RELATION.child.title}' type="Lazy"/>
         </action>
         <action name="addDerived" content="/add/derivedContent.ftl">
@@ -77,22 +77,22 @@
     </servlet>
 
     <servlet name="Royalties">
-        <action name="add" template="print" content="/add/honorar.ftl">
+        <action name="add" content="/add/honorar.ftl">
             <var name="TITLE" value="Vložení honoráře"/>
         </action>
-        <action name="form" template="print" content="/show/royalties_form.ftl">
+        <action name="form" content="/show/royalties_form.ftl">
             <var name="TITLE" value="Hledání honorářů"/>
         </action>
-        <action name="report" template="print" content="/show/royalties_report.ftl">
+        <action name="report" content="/show/royalties_report.ftl">
             <var name="TITLE" value="Nalezené honoráře"/>
         </action>
     </servlet>
 
     <servlet name="EditCategory">
-        <action name="add" template="print" content="/add/category.ftl">
+        <action name="add" content="/add/category.ftl">
             <var name="TITLE" value="Vložení kategorie" />
         </action>
-        <action name="edit" template="print" content="/edit/category.ftl">
+        <action name="edit" content="/edit/category.ftl">
             <var name="TITLE" value="Úprava kategorie" />
         </action>
     </servlet>
@@ -104,13 +104,13 @@
     </servlet>
 
     <servlet name="EditSurvey">
-        <action name="add" template="print" content="/add/survey.ftl">
+        <action name="add" content="/add/survey.ftl">
             <var name="TITLE" value="Vytvoření ankety" />
         </action>
-        <action name="edit" template="print" content="/add/survey.ftl">
+        <action name="edit" content="/add/survey.ftl">
             <var name="TITLE" value="Úprava ankety" />
         </action>
-        <action name="list" template="print" content="/show/surveys.ftl">
+        <action name="list" content="/show/surveys.ftl">
             <var name="TITLE" value="Seznam anket" />
         </action>
     </servlet>
@@ -125,19 +125,19 @@
         <action name="ask_confirm" content="/add/question_preview.ftl">
             <var name="TITLE" value="Náhled vašeho dotazu" />
         </action>
-        <action name="edit" template="print" content="/edit/comment.ftl">
+        <action name="edit" content="/edit/comment.ftl">
             <var name="TITLE" value="Úprava příspěvku" />
         </action>
-        <action name="remove" template="print" content="/remove/comment.ftl">
+        <action name="remove" content="/remove/comment.ftl">
             <var name="TITLE" value="Smazání příspěvku" />
         </action>
-        <action name="move" template="print" content="/misc/move_thread.ftl">
+        <action name="move" content="/misc/move_thread.ftl">
             <var name="TITLE" value="Přesun vlákna" />
         </action>
-        <action name="censore" template="print" content="/edit/censore.ftl">
+        <action name="censore" content="/edit/censore.ftl">
             <var name="TITLE" value="Cenzura příspěvku"/>
         </action>
-        <action name="toQuestion" template="print" content="/add/threaddiz.ftl">
+        <action name="toQuestion" content="/add/threaddiz.ftl">
             <var name="TITLE" value="Vlákno na otázku"/>
         </action>
     </servlet>
@@ -199,7 +199,7 @@
         <action name="add" template="print" content="/add/anketa.ftl">
             <var name="TITLE" value="Vytvoř anketu" />
         </action>
-        <action name="edit" template="print" content="/edit/anketa.ftl">
+        <action name="edit" content="/edit/anketa.ftl">
             <var name="TITLE" value="Uprav anketu" />
         </action>
     </servlet>
@@ -208,10 +208,10 @@
         <action name="add" content="/add/zpravicka.ftl">
             <var name="TITLE" value="Vytvoř zprávičku" />
         </action>
-        <action name="edit" template="print" content="/edit/zpravicka.ftl">
+        <action name="edit" content="/edit/zpravicka.ftl">
             <var name="TITLE" value="Uprav zprávičku" />
         </action>
-        <action name="remove" template="print" content="/remove/zpravicka.ftl">
+        <action name="remove" content="/remove/zpravicka.ftl">
             <var name="TITLE" value="Smaž zprávičku" />
         </action>
     </servlet>
@@ -247,25 +247,25 @@
     </servlet>
 
     <servlet name="EditSeries">
-        <action name="add" template="print" content="/add/series.ftl">
+        <action name="add" content="/add/series.ftl">
             <var name="TITLE" value="Vlož seriál" />
         </action>
-        <action name="edit" template="print" content="/add/series.ftl">
+        <action name="edit" content="/add/series.ftl">
             <var name="TITLE" value="Vlož seriál" />
         </action>
-        <action name="addArticle" template="print" content="/add/series_article.ftl">
+        <action name="addArticle" content="/add/series_article.ftl">
             <var name="TITLE" value="Vyber seriál" />
         </action>
-        <action name="addArticlesUrls" template="print" content="/add/series_article_urls.ftl">
+        <action name="addArticlesUrls" content="/add/series_article_urls.ftl">
             <var name="TITLE" value="Vlož články do seriálu" />
         </action>
     </servlet>
 
     <servlet name="EditTrivia">
-        <action name="add" template="print" content="/add/trivia.ftl">
+        <action name="add" content="/add/trivia.ftl">
             <var name="TITLE" value="Vlož kvíz" />
         </action>
-        <action name="edit" template="print" content="/add/trivia.ftl">
+        <action name="edit" content="/add/trivia.ftl">
             <var name="TITLE" value="Uprav kvíz" />
         </action>
     </servlet>
@@ -286,16 +286,16 @@
         <action name="add" template="print" content="/add/relation.ftl">
             <var name="TITLE" value="Vytvoř link" />
         </action>
-        <action name="remove" template="print" content="/remove/relation.ftl">
+        <action name="remove" content="/remove/relation.ftl">
             <var name="TITLE" value="Smazání relace" />
         </action>
-        <action name="moveAll" template="print" content="/edit/move_content.ftl">
+        <action name="moveAll" content="/edit/move_content.ftl">
             <var name="TITLE" value="Přesun obsahu" />
         </action>
-        <action name="setUrl" template="print" content="/misc/set_url.ftl">
+        <action name="setUrl" content="/misc/set_url.ftl">
             <var name="TITLE" value="Nastav URL" />
         </action>
-        <action name="setUrl2" template="print" content="/misc/set_url2.ftl">
+        <action name="setUrl2" content="/misc/set_url2.ftl">
             <var name="TITLE" value="Nastav URL" />
         </action>
     </servlet>
@@ -304,10 +304,10 @@
         <action name="view" content="/show/requests.ftl">
             <var name="TITLE" value="Administrativní požadavky" />
         </action>
-        <action name="chooseRightForum" content="/misc/requestForum.ftl" template="print">
+        <action name="chooseRightForum" content="/misc/requestForum.ftl">
             <var name="TITLE" value="Volba správného fóra" />
         </action>
-        <action name="comment" content="/misc/comment_tools.ftl" template="print">
+        <action name="comment" content="/misc/comment_tools.ftl">
             <var name="TITLE" value="Nástroje pro správu komentáře" />
         </action>
     </servlet>
@@ -346,13 +346,13 @@
         <action name="editBlacklist" content="/edit/user_blacklist.ftl">
             <var name="TITLE" value="Seznam blokovaných uživatelů" />
         </action>
-        <action name="grantSelect" content="/edit/grant_select.ftl" template="print">
+        <action name="grantSelect" content="/edit/grant_select.ftl">
             <var name="TITLE" value="Změna rolí uživatele - výběr"/>
         </action>
-        <action name="grantRoles" content="/edit/grant_roles.ftl" template="print">
+        <action name="grantRoles" content="/edit/grant_roles.ftl">
             <var name="TITLE" value="Změna rolí uživatele"/>
         </action>
-        <action name="invalidateEmail" content="/edit/invalidate_emails.ftl" template="print">
+        <action name="invalidateEmail" content="/edit/invalidate_emails.ftl">
             <var name="TITLE" value="Zneplatnění emailu uživatelům"/>
         </action>
         <action name="forgottenPassword" content="/edit/forgotten_password.ftl">
@@ -361,10 +361,10 @@
         <action name="changeForgottenPassword" content="/edit/user_password_forgotten.ftl">
             <var name="TITLE" value="Změna hesla" />
         </action>
-        <action name="removeMerge" content="/remove/user.ftl" template="print">
+        <action name="removeMerge" content="/remove/user.ftl">
             <var name="TITLE" value="Odstranění či sloučení uživatele"/>
         </action>
-        <action name="removeMerge2" content="/remove/user2.ftl" template="print">
+        <action name="removeMerge2" content="/remove/user2.ftl">
             <var name="TITLE" value="Odstranění či sloučení uživatele"/>
         </action>
     </servlet>
@@ -493,10 +493,10 @@
     </servlet>
 
     <servlet name="SelectRelation">
-        <action name="step1" template="print" content="/misc/selectRelation.ftl">
+        <action name="step1" content="/misc/selectRelation.ftl">
             <var name="TITLE" value="Výběr relace" />
         </action>
-        <action name="step2" template="print" content="/misc/selectRelation2.ftl">
+        <action name="step2" content="/misc/selectRelation2.ftl">
             <var name="TITLE" value="Potvrzení výběru" />
         </action>
     </servlet>
@@ -526,7 +526,7 @@
         <action name="news" content="/show/zpravicky.ftl">
             <var name="TITLE" value='Zprávičky' />
         </action>
-        <action name="documents" content="/show/dokumenty.ftl" template="print">
+        <action name="documents" content="/show/dokumenty.ftl">
             <var name="TITLE" value='Seznam dokumentů' />
         </action>
     </servlet>
@@ -824,22 +824,22 @@
     </servlet>
 
     <servlet name="EditAdvertisement">
-        <action name="main" content="/misc/ads.ftl" template="print">
+        <action name="main" content="/misc/ads.ftl">
             <var name="TITLE" value="Správa reklamních pozic"/>
         </action>
-        <action name="addPosition" content="/add/adPosition.ftl" template="print">
+        <action name="addPosition" content="/add/adPosition.ftl">
             <var name="TITLE" value="Vložit reklamní pozici"/>
         </action>
-        <action name="editPosition" content="/edit/adPosition.ftl" template="print">
+        <action name="editPosition" content="/edit/adPosition.ftl">
             <var name="TITLE" value="Upravit reklamní pozici"/>
         </action>
-        <action name="showPosition" content="/show/adPosition.ftl" template="print">
+        <action name="showPosition" content="/show/adPosition.ftl">
             <var name="TITLE" value="Reklamní pozice"/>
         </action>
-        <action name="addCode" content="/add/adCode.ftl" template="print">
+        <action name="addCode" content="/add/adCode.ftl">
             <var name="TITLE" value="Vložit reklamní kód"/>
         </action>
-        <action name="editCode" content="/edit/adCode.ftl" template="print">
+        <action name="editCode" content="/edit/adCode.ftl">
             <var name="TITLE" value="Upravit reklamní kód"/>
         </action>
     </servlet>
