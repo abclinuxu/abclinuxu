@@ -4,7 +4,7 @@
 
 
 <p>Na této stránce můžete vytvořit novou anketu či hodnocení.
-Jsou povoleny základní html značky ( nový řádek, odkaz ).
+Jsou povoleny základní HTML značky (nový řádek, odkaz).
 Můžete také povolit současné vybrání více možností.</p>
 
 <#if POLL?exists>
