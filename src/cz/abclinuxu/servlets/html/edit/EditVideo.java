@@ -314,7 +314,7 @@ public class EditVideo implements AbcAction, Configurable {
     private static boolean setThumbnail(Relation rel, Item item, Element root, Map params) throws Exception {
         String url = (String) params.get(PARAM_URL);
         Thumbnailer thumbnailer = Thumbnailer.getInstance(item.getSubType());
-        Node node = root.selectSingleNode("//thumbnail");
+        Node node = root.selectSingleNode("thumbnail");
         
         if (node != null) {
             new File(node.getText()).delete();
