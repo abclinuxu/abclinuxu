@@ -18,17 +18,17 @@
 
 <form action="${URL.make("/EditPoll")}" method="POST">
  <#assign choices=PARAMS.choices?if_exists>
- <table width="100%" border=0 cellpadding=5>
+ <table class="siroka" border=0 cellpadding=5>
   <tr>
-   <td width="90" class="required">Otázka</td>
+   <td class="required">Otázka</td>
    <td>
-    <textarea name="question" cols="80" rows="3" tabindex="1">${PARAMS.question?if_exists?html}</textarea>
+    <textarea name="question" class="siroka" rows="3" tabindex="1">${PARAMS.question?if_exists?html}</textarea>
     <div class="error">${ERRORS.question?if_exists}</div>
    </td>
   </tr>
   <#if RELATION.id==250>
       <tr>
-       <td width="90">URL</td>
+       <td>URL</td>
        <td>
         /ankety/<input type="text" name="url" size="20" value="${PARAMS.url?if_exists}" tabindex="2">
         <div class="error">${ERRORS.url?if_exists}</div>
@@ -117,7 +117,7 @@
    </td>
   </tr>
   <tr>
-   <td width="120">&nbsp;</td>
+   <td>&nbsp;</td>
    <td>
        <input type="submit" name="preview" value="Náhled" tabindex="14">
        <input type="submit" value="Dokonči" tabindex="14">
