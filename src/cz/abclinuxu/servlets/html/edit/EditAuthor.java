@@ -214,7 +214,7 @@ public class EditAuthor implements AbcAction {
         node = root.element("birthNumber");
         if (node != null)
             params.put(PARAM_BIRTH_NUMBER, node.getText());
-        Integer user = item.getNumeric1();
+        String user = item.getString1();
         if (user != null)
             params.put(PARAM_LOGIN, user);
         node = root.element("accountNumber");
@@ -420,7 +420,7 @@ public class EditAuthor implements AbcAction {
         } else {
             Integer uid = SQLTool.getInstance().getUserByLogin(login);
             if (uid == null) {
-                ServletUtils.addError(PARAM_UID, "Zadejte login!", env, null);
+                ServletUtils.addError(PARAM_LOGIN, "Zadejte login!", env, null);
                 return false;
             }
             item.setNumeric1(uid);
