@@ -139,13 +139,13 @@
                 <div class="error">${ERRORS.description?if_exists}</div>
             </td>
         </tr>
-        <#assign logo=TOOL.xpath(RELATION.child,"/data/logo")?default("UNDEF")>
+        <#assign logo=TOOL.xpath(RELATION.child,"/data/icon")?default("UNDEF")>
         <#if logo != "UNDEF">
             <tr>
                 <td>Současné logo</td>
                 <td>
                     <img src="${logo}" alt="logo">
-                    <label><input type="checkbox" name="remove_logo" tabindex="3">Odstrait logo</label>
+                    <label><input type="checkbox" name="removeLogo" value="yes">Odstranit logo</label>
                 </td>
             </tr>
         </#if>

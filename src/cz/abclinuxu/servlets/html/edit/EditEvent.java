@@ -235,7 +235,7 @@ public class EditEvent implements AbcAction {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
         
-        setLogo(params, relation, root, env);
+        setLogo(params, relation, item, root, env);
         persistence.update(item);
         
         EditDiscussion.createEmptyDiscussion(relation, user, persistence);
@@ -299,7 +299,7 @@ public class EditEvent implements AbcAction {
         canContinue &= setSubType(params, item, env);
         canContinue &= setLocation(params, root, env);
         canContinue &= checkImage(params, env);
-        canContinue &= setLogo(params, relation, root, env);
+        canContinue &= setLogo(params, relation, item, root, env);
         
         if (user.hasRole(Roles.ROOT))
             canContinue &= setOwner(params, item, env);
@@ -669,11 +669,9 @@ public class EditEvent implements AbcAction {
         return true;
     }
     
-    private boolean setLogo(Map params, Relation rel, Element root, Map env) {
-        Item item = (Item) rel.getChild();
-        
+    private boolean setLogo(Map params, Relation rel, Item item, Element root, Map env) {
         if (params.containsKey(PARAM_REMOVE_LOGO)) {
-            Node node = item.getData().selectSingleNode("/data/logo");
+            Node node = item.getData().selectSingleNode("/data/icon");
             if (node != null) {
                 String localPath = AbcConfig.calculateDeployedPath(node.getText().substring(1));
                 new File(localPath).delete();
