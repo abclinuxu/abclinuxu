@@ -85,6 +85,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String KEY_TEMPLATE_LINKS = "links.in.template";
     public static final String KEY_TAGCLOUD = "tagcloud";
     public static final String KEY_EVENT = "event";
+    public static final String KEY_VIDEO = "video";
 
     public static final String PREF_DEFAULT = "default.";
     public static final String PREF_MAX = "max.";
@@ -95,7 +96,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     List freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
     List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities;
-    List freshTrivias, freshEvents;
+    List freshTrivias, freshEvents, freshVideos;
     List<Map> latestSubportalChanges;
     Map<Integer, List> freshSubportalArticles, freshForumQuestions, freshSubportalWikiPages;
     Map<Integer, Relation> nextSubportalEvent, freshSubportalEvent;
@@ -370,6 +371,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
         int userLimit = getObjectCountForUser(user, KEY_SCREENSHOT, "/data/settings/index_screenshots");
         return getSubList(freshScreenshots, userLimit);
     }
+    
+    /**
+     * List of the freshest video relations according to user preference or system setting.
+     */
+    public List getFreshVideos(Object user) {
+        int userLimit = getObjectCountForUser(user, KEY_VIDEO, "/data/settings/index_screenshots");
+        return getSubList(freshVideos, userLimit);
+    }
 
     public List<JobsCzItem> getFreshJobsCz(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_JOBSCZ, null);
@@ -631,6 +640,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshSubportalFeedLinks();
             refreshSectionCaches();
             refreshScreenshots();
+            refreshVideos();
             refreshCloudTags();
             refreshTrivia();
             refreshEvents();
@@ -1161,6 +1171,22 @@ public class VariableFetcher extends TimerTask implements Configurable {
             log.error("Selhalo nacitani desktopu", e);
         }
     }
+    
+    public void refreshVideos() {
+        try {
+            int maximum = (Integer) maxSizes.get(KEY_VIDEO);
+            Qualifier[] qualifiers = new Qualifier[] {
+                new CompareCondition(Field.UPPER, Operation.EQUAL, Constants.REL_VIDEOS),
+                Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)
+            };
+            List<Relation> list = sqlTool.findItemRelationsWithType(Item.VIDEO, qualifiers);
+            Tools.syncList(list);
+
+            freshVideos = list;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani videi", e);
+        }
+    }
 
     /**
      * Fetches jobs from available XML file, if
@@ -1435,6 +1461,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
         size = prefs.getInt(PREF_MAX + KEY_SCREENSHOT, 3);
         maxSizes.put(KEY_SCREENSHOT, size);
         freshScreenshots = Collections.emptyList();
+        
+        size = prefs.getInt(PREF_DEFAULT + KEY_VIDEO, 3);
+        defaultSizes.put(KEY_VIDEO, size);
+        size = prefs.getInt(PREF_MAX + KEY_VIDEO, 3);
+        maxSizes.put(KEY_VIDEO, size);
+        freshVideos = Collections.emptyList();
         
         size = prefs.getInt(PREF_DEFAULT + KEY_EVENT, 3);
         defaultSizes.put(KEY_EVENT, size);

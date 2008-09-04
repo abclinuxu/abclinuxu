@@ -109,6 +109,7 @@
     <#elseif item.type=="video">
         <#assign index = item.value?eval>
         <div id="inlinevideo-${index}" style="text-align: center">
+            <b>${TOOL.childName(relation)}</b>
             <@lib.showVideo CHILDREN.video[index], 300, 300, (USER?exists && TOOL.permissionsFor(USER,RELATION).canModify()) />
         </div>
         <#assign dummy=CHILDREN.video.set(index, "UNDEF")>

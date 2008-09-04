@@ -13,16 +13,22 @@
 <@lib.showMessages/>
 
 <#list ITEMS.data as video>
-    <#assign item=video.child, tmp=TOOL.groupByType(item.children, "Item")>
+    <#assign item=video.child, tmp=TOOL.groupByType(item.children, "Item"),
+        icon=TOOL.xpath(item,"/data/thumbnail")?default("UNDEF")>
     <#if tmp.discussion?exists><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz=null></#if>
 
     <h1 class="st_nadpis"><a href="${video.url?default("/videa/show/"+video.id)}">${TOOL.childName(video)}</a></h1>
+    <#if icon!="UNDEF">
+        <div style="padding: 5px">
+            <a href="${video.url?default("/videa/show/"+video.id)}"><img src="${icon}" alt="${TOOL.childName(video)}" /></a>
+        </div>
+    </#if>
     <p>${TOOL.xpath(item,"//description")?default("")}</p>
     <p class="meta-vypis">
         <@lib.showUser TOOL.createUser(item.owner)/> | ${DATE.show(item.created, "SMART")}
         <#if diz?exists>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
     </p>
-    <hr />
+    <hr style="clear:right" />
 </#list>
 
 <#if (ITEMS.currentPage.row > 0) >

@@ -24,10 +24,12 @@ import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.utils.video.Thumbnailer;
 import cz.abclinuxu.data.view.VideoServer;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
@@ -35,14 +37,21 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.utils.ImageTool;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -76,7 +85,7 @@ public class EditVideo implements AbcAction, Configurable {
     public static final String PREF_URLS = "urls";
     public static final String PREF_PLAYERS = "players";
     
-    public static List<VideoServer> videoServers;
+    public static Map<String,VideoServer> videoServers;
     
     static {
         EditVideo instance = new EditVideo();
@@ -181,8 +190,15 @@ public class EditVideo implements AbcAction, Configurable {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
         
-        if (upperRelation.getChild() instanceof Category)
+        if (upperRelation.getChild() instanceof Category) {
+            if (!setThumbnail(relation, item, root, params))
+                ServletUtils.addError(Constants.ERROR_GENERIC, "Nepodařilo se získat náhled videa", env, request.getSession());
+            else
+                persistence.update(item);
+            
+            VariableFetcher.getInstance().refreshVideos();
             EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+        }
         
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         
@@ -222,6 +238,11 @@ public class EditVideo implements AbcAction, Configurable {
         canContinue = setTitle(item, params, env);
         canContinue &= setUrl(item, root, params, env);
         canContinue &= setDescription(root, params, env);
+        
+        if (relation.getParent() instanceof Category) {
+            if (!setThumbnail(relation, item, root, params))
+                ServletUtils.addError(Constants.ERROR_GENERIC, "Nepodařilo se získat náhled videa", env, request.getSession());
+        }
         
         if (!canContinue)
             return FMTemplateSelector.select("EditVideo", "edit", env, request);
@@ -271,7 +292,7 @@ public class EditVideo implements AbcAction, Configurable {
             return false;
         }
         
-        for (VideoServer server : videoServers) {
+        for (VideoServer server : videoServers.values()) {
             RE regexp = new RE(server.getUrlMatcher(), RE.MATCH_SINGLELINE);
             
             if (regexp.match(url)) {
@@ -288,6 +309,51 @@ public class EditVideo implements AbcAction, Configurable {
         
         ServletUtils.addError(PARAM_URL, "Nebylo rozpoznáno podporované URL!", env, null);
         return false;
+    }
+    
+    private static boolean setThumbnail(Relation rel, Item item, Element root, Map params) throws Exception {
+        String url = (String) params.get(PARAM_URL);
+        Thumbnailer thumbnailer = Thumbnailer.getInstance(item.getSubType());
+        Node node = root.selectSingleNode("//thumbnail");
+        
+        if (node != null) {
+            new File(node.getText()).delete();
+            node.detach();
+        }
+        
+        if (thumbnailer == null)
+            return false;
+        
+        try {
+            String path = "/images/videos/"+rel.getId()+".jpg";
+            String fileName = AbcConfig.calculateDeployedPath(path.substring(1));
+            OutputStream out = new BufferedOutputStream(new FileOutputStream(fileName));
+            String source = thumbnailer.getThumbnailUrl(url);
+            
+            if (source == null)
+                return false;
+            
+            URL thumb = new URL(source);
+            InputStream in = thumb.openStream();
+
+            byte[] buffer = new byte[1024];
+            int numRead;
+            while ((numRead = in.read(buffer)) != -1)
+                out.write(buffer, 0, numRead);
+
+            out.close();
+            in.close();
+            
+            File file = new File(fileName);
+            ImageTool.createThumbnailMaxSize(file, file, 200, false);
+            
+            Element elem = DocumentHelper.makeElement(root, "thumbnail");
+            elem.setText(path);
+        } catch (Exception e) {
+            return false;
+        }
+        
+        return true;
     }
     
     private static boolean setDescription(Element root, Map params, Map env) {
@@ -335,7 +401,7 @@ public class EditVideo implements AbcAction, Configurable {
             String[] keys = subprefs.keys();
             Preferences subPlayers = prefs.node(PREF_PLAYERS);
             
-            videoServers = new ArrayList(keys.length);
+            videoServers = new HashMap(keys.length);
             
             for (int i = 0; i < keys.length; i++) {
                 VideoServer server = new VideoServer(keys[i]);
@@ -343,7 +409,7 @@ public class EditVideo implements AbcAction, Configurable {
                 server.setUrlMatcher(reCompiler.compile(subprefs.get(keys[i], null)));
                 server.setCode(subPlayers.get(keys[i], null));
                 
-                videoServers.add(server);
+                videoServers.put(keys[i], server);
             }
         } catch (BackingStoreException e) {
             throw new ConfigurationException(e.getMessage(), e.getCause());

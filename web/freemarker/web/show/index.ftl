@@ -344,6 +344,24 @@
     </div>
 </#if>
 
+<#assign VIDEOS = VARS.getFreshVideos(USER?if_exists)>
+<#if (VIDEOS?size > 0)>
+    <div class="ramec">
+      <div class="s_nadpis">
+        <a class="info" href="#">?<span class="tooltip">Zajímavá linuxová videa.</span></a>
+        <a href="/videa">Videa</a>
+      </div>
+      <div class="s_sekce" style="text-align:center;">
+        <#list VIDEOS as video>
+          <a href="${video.url}" title="${TOOL.childName(video)}" class="thumb">
+            <img src="${TOOL.xpath(video.child, "/data/thumbnail")}" alt="${TOOL.childName(video)}" border="0" style="margin: 0.4em 0.3em 0.3em 0.3em">
+          </a>
+        </#list>
+        <br>
+        <span class="s_sekce_dalsi"><a href="/videa">další&nbsp;&raquo;</a></span>
+      </div>
+    </div>
+</#if>
 
 <#assign FEEDS = VARS.getFeeds(USER?if_exists,true)>
 <#if (FEEDS.size() > 0)>
