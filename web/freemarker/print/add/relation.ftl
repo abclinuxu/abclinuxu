@@ -2,15 +2,14 @@
 
 <@lib.showMessages/>
 
-<p>
-Chystáte se nalinkovat ${TOOL.childName(SELECTED)}
-do ${TOOL.childName(CURRENT)}.
-</p>
-<p>
-Pokud chcete změnit jméno relace, zde máte možnost.
+<h2>Linkování relace</h2>
+
+<p>Chystáte se nalinkovat <b>${TOOL.childName(SELECTED)}</b>
+do <b>${TOOL.childName(CURRENT)}</b>.</p>
+
+<p>Pokud chcete změnit jméno relace, zde máte možnost.
 Nechte tento formulář prázdný, pokud si přejete ponechat
-původní jméno.
-</p>
+původní jméno.</p>
 
 <form action="${URL.noPrefix("/EditRelation")}" method="POST">
 
