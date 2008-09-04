@@ -4,9 +4,9 @@
 
 <p>
     Tato stránka je určena pro vytváření nových anket. Zadejte
-    text otázky a nejméně dvě volby. Z html značek jsou povoleny
+    text otázky a nejméně dvě volby. Z HTML značek jsou povoleny
     jen nový řádek a odkaz. Dále můžete určit, zda jeden hlasující
-    může vybrat více voleb nebo si musí zvolit jednu jedinou.
+    může vybrat více voleb, nebo si musí zvolit jednu jedinou.
 </p>
 
 <#if POLL?exists>

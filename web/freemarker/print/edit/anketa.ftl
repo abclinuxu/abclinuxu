@@ -2,12 +2,14 @@
 
 <@lib.showMessages/>
 
+<h2>Úprava ankety</h2>
+
 <form action="${URL.make("/EditPoll")}" method="POST">
- <table width=100 border=0 cellpadding=5>
+ <table class="siroka" border=0 cellpadding=5>
   <tr>
-   <td width="90" class="required">Otázka</td>
+   <td class="required">Otázka</td>
    <td>
-    <textarea name="question" cols="80" rows="3" tabindex="1">${POLL.text?html}</textarea>
+    <textarea name="question" class="siroka" rows="3" tabindex="1">${POLL.text?html}</textarea>
    </td>
   </tr>
   <tr>
@@ -40,7 +42,7 @@
    </tr>
   </#list>
   <tr>
-   <td width="120">&nbsp;</td>
+   <td>&nbsp;</td>
    <td><input type="submit" value="Dokonči"></td>
   </tr>
  </table>
