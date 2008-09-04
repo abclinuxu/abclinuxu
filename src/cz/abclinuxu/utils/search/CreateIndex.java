@@ -228,7 +228,7 @@ public class CreateIndex implements Configurable {
                         if ( hasBeenIndexed(child) )
                             continue;
                         doc = indexDiscussion((Item)child, null);
-                        doc.setURL(urlPrefix+"/show/"+relation2.getId());
+                        doc.setURL(Tools.getUrlForDiscussion(relation2));
                         doc.setParent(relation2.getUpper());
                         indexWriter.addDocument(doc.getDocument());
                     } catch (Exception e) {
@@ -921,9 +921,7 @@ public class CreateIndex implements Configurable {
                     urlPrefix = UrlUtils.PREFIX_POLLS;
                 }
 
-                String url = child.getUrl();
-                if (url == null)
-                    url = urlPrefix + "/show/" + child.getId();
+                String url = Tools.getUrlForBlogStory(child);
 
                 MyDocument doc = indexDiscussion(item, title);
                 doc.setURL(url);
