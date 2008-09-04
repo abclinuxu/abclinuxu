@@ -140,6 +140,8 @@ public class ViewSubportal implements AbcAction {
             
             if ("score".equals(orderBy))
                 list = sqlTool.findSubportalsOrderedByScore(qa);
+            else if ("members".equals(orderBy))
+                list = sqlTool.findSubportalsOrderedByMemberCount(qa);
             else
                 list = sqlTool.findCategoryRelationsWithType(Category.SUBPORTAL, qa);
             Tools.syncList(list);

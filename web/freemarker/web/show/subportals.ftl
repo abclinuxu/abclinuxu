@@ -52,6 +52,7 @@ ${TOOL.xpath(RELATION.child,"/data/note")}
                     <option value="updated"<#if PARAMS.orderBy?if_exists=="updated"> selected</#if>>poslední aktivity</option>
                     <option value="title"<#if PARAMS.orderBy?if_exists=="title"> selected</#if>>titulku</option>
                     <option value="created"<#if PARAMS.orderBy?if_exists=="created"> selected</#if>>data vytvoření</option>
+                    <option value="members"<#if PARAMS.orderBy?if_exists=="members"> selected</#if>>počtu členů</option>
                 </select>
             </td>
             <td>
