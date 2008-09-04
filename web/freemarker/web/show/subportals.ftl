@@ -29,7 +29,7 @@ ${TOOL.xpath(RELATION.child,"/data/note")}
 
     <h2 class="st_nadpis"><a href="${url}">${cat.title}</a></h2>
     <p>${desc}</p>
-    <p class="meta-vypis"><a href="${url}?action=members">Členů</a>: ${members?size} | Vznik: ${DATE.show(cat.created,"SMART_DMY")}
+    <p class="meta-vypis"><a href="${url}?action=members">Členů</a>: ${members?size} | Vznik: ${DATE.show(cat.created,"CZ_DMY")}
     <#if score != -1>| Skóre: ${score}</#if></p>
     <hr style="clear:right" />
 </#list>
