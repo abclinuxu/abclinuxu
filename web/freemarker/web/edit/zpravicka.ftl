@@ -31,7 +31,6 @@ a vygeneruje se z něj URL.</p>
 
 <h2>Náhled</h2>
 
-    <h3>${RELATION.child.title?if_exists}</h3>
     <@lib.showNews RELATION />
 
 <form action="${URL.make("/edit")}" method="POST" name="newsForm">
