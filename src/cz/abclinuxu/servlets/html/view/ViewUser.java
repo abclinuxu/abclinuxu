@@ -58,6 +58,7 @@ public class ViewUser implements AbcAction {
     public static final String VAR_LAST_DESKTOP = "LAST_DESKTOP";
     public static final String VAR_DESKTOPS = "DESKTOPS";
     public static final String VAR_INVALID_EMAIL = "INVALID_EMAIL";
+    public static final String VAR_SUBPORTALS = "SUBPORTALS";
 
     public static final String PARAM_USER = "userId";
     public static final String PARAM_USER_SHORT = "uid";
@@ -173,6 +174,10 @@ public class ViewUser implements AbcAction {
             Tools.syncList(stories);
             env.put(ViewBlog.VAR_STORIES, stories);
         }
+        
+        List<Relation> subportals = sqlTool.findSubportalMembership(user.getId());
+        Tools.syncList(subportals);
+        env.put(VAR_SUBPORTALS, subportals);
 
         Set<String> property = Collections.singleton(Integer.toString(user.getId()));
         Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_USED_BY, property);

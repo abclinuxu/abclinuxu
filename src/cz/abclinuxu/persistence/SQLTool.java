@@ -139,6 +139,7 @@ public final class SQLTool implements Configurable {
     public static final String VALID_SERVERS = "valid.servers";
     public static final String SERVER_RELATIONS_IN_CATEGORY = "server.relations.in.category";
     public static final String QUESTIONS_WITH_TAGS = "questions.with.tags";
+    public static final String FIND_SUBPORTAL_MEMBERSHIP  = "find.subportal.membership";
 
     private static SQLTool singleton;
     static {
@@ -494,6 +495,15 @@ public final class SQLTool implements Configurable {
         fieldMappings.put(Field.TYPE, "P");
         appendQualifiers(sb, qualifiers, params, null, fieldMappings);
         return loadNumber(sb.toString(), params);
+    }
+    
+    /**
+     * @param uid
+     * @return Subportal relations where the user is a member.
+     */
+    public List<Relation> findSubportalMembership(int uid) {
+        StringBuilder sb = new StringBuilder((String) sql.get(FIND_SUBPORTAL_MEMBERSHIP));
+        return loadRelations(sb.toString(), Collections.singletonList(uid));
     }
 
     /**
@@ -2332,6 +2342,7 @@ public final class SQLTool implements Configurable {
         store(QUESTIONS_WITH_TAGS, prefs);
         store(VALID_SERVERS, prefs);
         store(SERVER_RELATIONS_IN_CATEGORY, prefs);
+        store(FIND_SUBPORTAL_MEMBERSHIP, prefs);
     }
 
     /**

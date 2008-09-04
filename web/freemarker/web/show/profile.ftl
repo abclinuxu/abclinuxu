@@ -136,6 +136,15 @@
 </div>
 </#if>
 
+<#if SUBPORTALS?size gt 0>
+    <h3>Jsem členem těchto skupin:</h3>
+    <ul>
+        <#list SUBPORTALS as rel>
+            <li><a href="${rel.url}">${TOOL.childName(rel)}</a></li>
+        </#list>
+    </ul>
+</#if>
+
 <#if LAST_DESKTOP?exists>
     <h3>Můj současný desktop:</h3>
     <p>
@@ -146,14 +155,14 @@
     </p>
 </#if>
 
-<ul>
+<p>
     <#if TOOL.xpath(PROFILE,"/data/profile/gpg")?default("UNDEF")!="UNDEF">
         <li><a href="/lide/${PROFILE.login}/gpg">Veřejný GPG klíč</a></li>
     </#if>
     <li><a href="/lide/${PROFILE.login}/zalozky">Záložky uživatele</a></li>
     <li><a href="/lide/${PROFILE.login}/objekty" rel="nofollow">Seznam příspěvků na abclinuxu.cz</a><br />
     (články, komentáře, dotazy, zprávičky, softwarové a hardwarové záznamy, pojmy ve slovníku a texty v učebnici)</li>
-</ul>
+</p>
 
 <#if PROFILE.email?exists>
   <div>
