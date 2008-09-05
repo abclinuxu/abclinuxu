@@ -47,13 +47,13 @@
         <action name="edit" content="/add/article.ftl">
             <var name="TITLE" value="Úprava článku"/>
         </action>
-        <action name="talk" template="print" content="/edit/article_talk.ftl">
+        <action name="talk" content="/edit/article_talk.ftl">
             <var name="TITLE" value="Rozhovor"/>
         </action>
-        <action name="talkAddresses" template="print" content="/edit/talk_addresses.ftl">
+        <action name="talkAddresses" content="/edit/talk_addresses.ftl">
             <var name="TITLE" value="Adresy rozhovoru"/>
         </action>
-        <action name="talkQuestion" template="print" content="/edit/talk_question.ftl">
+        <action name="talkQuestion" content="/edit/talk_question.ftl">
             <var name="TITLE" value="Vložení odpovědi k otázce"/>
         </action>
         <action name="addSeries" content="/add/article_series.ftl">
@@ -283,7 +283,7 @@
     </servlet>
 
     <servlet name="EditRelation">
-        <action name="add" template="print" content="/add/relation.ftl">
+        <action name="add" content="/add/relation.ftl">
             <var name="TITLE" value="Vytvoř link" />
         </action>
         <action name="remove" content="/remove/relation.ftl">
@@ -433,13 +433,13 @@
     </servlet>
 
     <servlet name="EditGroup">
-        <action name="create" content="/add/group.ftl" template="print">
+        <action name="create" content="/add/group.ftl">
             <var name="TITLE" value="Skupina"/>
         </action>
-        <action name="showGroups" content="/show/groups.ftl" template="print">
+        <action name="showGroups" content="/show/groups.ftl">
             <var name="TITLE" value="Seznam skupin"/>
         </action>
-        <action name="showMembers" content="/show/group_members.ftl" template="print">
+        <action name="showMembers" content="/show/group_members.ftl">
             <var name="TITLE" value='Skupina ${GROUP.title}' type="Lazy"/>
         </action>
     </servlet>
@@ -463,7 +463,7 @@
     </servlet>
 
     <servlet name="Admin">
-        <action name="show" template="print" content="/misc/admin.ftl">
+        <action name="show" content="/misc/admin.ftl">
             <var name="TITLE" value="Administrace portálu" />
         </action>
         <action name="check" template="print" content="/misc/admin_check.ftl">
@@ -472,7 +472,7 @@
     </servlet>
 
     <servlet name="PageStatistics">
-        <action name="show" template="print" content="/misc/statistiky.ftl">
+        <action name="show" content="/misc/statistiky.ftl">
             <var name="TITLE" value="Statistika návštěvnosti" />
         </action>
     </servlet>
