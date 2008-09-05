@@ -438,6 +438,8 @@
                             <entry key="subportals.ordered.by.member.count" value="select R.cislo,count(*) from relace R, kategorie K, vlastnost V where R.typ_potomka='K' and R.potomek=K.cislo and K.typ=7 and V.predek=K.cislo and V.typ_predka='K' and V.typ='member' group by V.predek order by count(*)" />
                             <entry key="questions.with.tags" value="select R.cislo from relace R, polozka P, stitkovani S where P.cislo=R.potomek and R.typ_potomka='P' and S.typ='P' and S.cislo=P.cislo and P.typ=3 and P.podtyp='question' and R.predchozi = ?" />
                             <entry key="find.subportal.membership" value="select R.cislo from vlastnost V, kategorie K, relace R where K.cislo=V.predek and V.typ_predka='K' and V.typ='member' and R.typ_potomka='K' and R.potomek=K.cislo and K.typ=7 and V.hodnota = ?" />
+                            <entry key="valid.servers" value="select cislo from server where rss is not null"/>
+                            <entry key="server.relations.in.category" value="select R.cislo from relace R where R.typ_potomka='S' and R.predek = ?"/>
                         </map>
                     </node>
                     <node name="versioning">
