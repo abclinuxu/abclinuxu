@@ -10,13 +10,15 @@
     </p>
 
     <#if USER?exists>
-        <#assign myreg=ITEM.data.selectSingleNode("/data/registrations/registration[@uid="+USER.id+"]")>
+        <#assign myreg=ITEM.data.selectSingleNode("/data/registrations/registration[@uid="+USER.id+"]")?default("UNDEF")>
+    <#else>
+        <#assign myreg="UNDEF">
     </#if>
 
     <#if DATE.now().compareTo(ITEM.created) lt 0>
         <form action="/akce/edit" method="post">
             <input type="hidden" name="rid" value="${RELATION.id}">
-            <#if !myreg?exists>
+            <#if myreg=="UNDEF">
                 <input type="submit" value="Registrovat svou účast">
                 <input type="hidden" name="action" value="register">
             <#else>
