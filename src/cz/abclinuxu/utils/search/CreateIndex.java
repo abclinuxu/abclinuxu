@@ -921,7 +921,7 @@ public class CreateIndex implements Configurable {
                     urlPrefix = UrlUtils.PREFIX_POLLS;
                 }
 
-                String url = Tools.getUrlForBlogStory(child);
+                String url = Tools.getUrlForDiscussion(child);
 
                 MyDocument doc = indexDiscussion(item, title);
                 doc.setURL(url);
