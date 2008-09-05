@@ -195,7 +195,7 @@
 
             <@lib.advertisement id="sl-jobscz" />
             <@lib.advertisement id="sl-abcprace" />
-<#--
+
             <#if ! IS_INDEX?exists>
                 <#assign FEEDS = VARS.getFeeds(USER?if_exists,false)>
                 <#if (FEEDS.size() > 0)>
@@ -215,7 +215,7 @@
                     </div>
                 </#if>
             </#if>
--->
+
             <@lib.advertisement id="sl-doporucujeme" />
 
             <@lib.advertisement id="sl-placene-odkazy" />
