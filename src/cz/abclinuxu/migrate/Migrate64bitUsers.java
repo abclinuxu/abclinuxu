@@ -32,9 +32,7 @@ import java.util.StringTokenizer;
  * @since 6.8.2008
  */
 public class Migrate64bitUsers {
-    public static final String SERVER_64BIT_CZ = "www.64bit.cz";
-    public static final String SERVER_64BIT_SK = "www.64bit.sk";
-    public static final String SERVER_64BIT_BIZ = "www.64bit.biz";
+    public static final String SERVER_64BIT = "www.64bit.cz";
 
     public static void main(String[] args) throws Exception {
         if (args.length != 1) {
@@ -71,12 +69,6 @@ public class Migrate64bitUsers {
                 name = name + " " + surname;
                 String registrationDate = sRegistrationDate + " 00:00";
                 String lastLoginDate = sTimestamp.substring(0, 16);
-                if (server.equals("3"))
-                    server = SERVER_64BIT_BIZ;
-                else if (server.equals("2"))
-                    server = SERVER_64BIT_SK;
-                else
-                    server = SERVER_64BIT_CZ;
 
                 ldapUser = ldapMgr.getUserInformation(login, new String[] {LdapUserManager.ATTRIB_EMAIL_ADRESS, LdapUserManager.ATTRIB_LAST_LOGIN_DATE});
                 String sfEmail = ldapUser.get(LdapUserManager.ATTRIB_EMAIL_ADRESS);
@@ -97,10 +89,10 @@ public class Migrate64bitUsers {
                     if (conflict)
                         login = "64bit" + login;
 
-                    ldapMgr.registerUser(login, password, null, name, server);
+                    ldapMgr.registerUser(login, password, null, name, SERVER_64BIT);
                     changes.put(LdapUserManager.ATTRIB_REGISTRATION_DATE, registrationDate);
-                    changes.put(LdapUserManager.ATTRIB_REGISTRATION_PORTAL, server);
-                    changes.put(LdapUserManager.ATTRIB_VISITED_PORTAL, server);
+                    changes.put(LdapUserManager.ATTRIB_REGISTRATION_PORTAL, SERVER_64BIT);
+                    changes.put(LdapUserManager.ATTRIB_VISITED_PORTAL, SERVER_64BIT);
                     changes.put(LdapUserManager.ATTRIB_EMAIL_ADRESS, email);
                     changes.put(LdapUserManager.ATTRIB_EMAIL_BLOCKED, "false");
                     changes.put(LdapUserManager.ATTRIB_EMAIL_VERIFIED, "true");
@@ -115,7 +107,7 @@ public class Migrate64bitUsers {
                     merged++;
                     System.out.println("merge " + login + ", email " + email);
 
-                    changes.put(LdapUserManager.ATTRIB_VISITED_PORTAL, server);
+                    changes.put(LdapUserManager.ATTRIB_VISITED_PORTAL, SERVER_64BIT);
                     setValues(phone, changes, company, ic, dic, street, city, postcode, country,
                             deliverCompany, deliverStreet, deliverCity, deliverPostcode, deliverCountry);
 
