@@ -2200,6 +2200,8 @@ public class Tools implements Configurable {
     public static String limitNewsLength(String text) {
         String stripped = removeTags(text);
 
+        stripped = stripped.replaceAll("[ \t\n\r\f,.<]", "");
+        
         if (stripped.length() < newsLetterHardLimit)
             return null;
 
@@ -2244,7 +2246,7 @@ public class Tools implements Configurable {
         } catch (Exception e) {
             return null;
         }
-
+        
         return result.toString();
     }
 
