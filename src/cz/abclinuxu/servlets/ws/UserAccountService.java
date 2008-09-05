@@ -67,7 +67,7 @@ public interface UserAccountService {
                            @WebParam(name = "portalPassword") String portalPassword)
             throws AccessDeniedException, LdapException, InvalidInputException;
 
-    public void updateUser(@WebParam(name = "login") String login, Map<String, String> values, @WebParam(name = "portal") String portal,
+    public void updateUserMap(@WebParam(name = "login") String login, Map<String, String> values, @WebParam(name = "portal") String portal,
                            @WebParam(name = "portalPassword") String portalPassword)
             throws AccessDeniedException, LdapException, InvalidInputException;
 

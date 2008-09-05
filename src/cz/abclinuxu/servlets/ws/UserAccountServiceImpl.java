@@ -149,7 +149,7 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
         }
     }
 
-    public void updateUser(@WebParam(name = "login") String login, Map<String, String> values,
+    public void updateUserMap(@WebParam(name = "login") String login, Map<String, String> values,
                            @WebParam(name = "portal") String portal, @WebParam(name = "portalPassword") String portalPassword)
             throws AccessDeniedException, LdapException, InvalidInputException {
         try {
@@ -214,7 +214,7 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
         try {
             verifyAccess(portal, portalPassword);
             if (log.isDebugEnabled())
-                log.debug("updateUser(" + account.login + ")" + account.toString());
+                log.debug("updateUser(" + account.getLogin() + ")" + account.toString());
 
             // todo odstranit volani EditUser, presunout kontroly primo sem, hlavne zadne HTML
             User user = new User();
@@ -342,7 +342,7 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
                     throw createException(EditUser.PARAM_SEX, env, LdapUserManager.ATTRIB_SEX);
                 userMap.put(LdapUserManager.ATTRIB_SEX, tmp);
             }
-            mgr.updateUser(account.login, userMap);
+            mgr.updateUser(account.getLogin(), userMap);
         } catch (AbcException e) {
             log.warn("Chyba webové služby", e);
             throw e;
