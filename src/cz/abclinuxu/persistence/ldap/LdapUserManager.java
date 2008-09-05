@@ -276,7 +276,9 @@ public class LdapUserManager implements Configurable {
                         continue;
                     checkDuplicateOpenId(value, login, ctx);
                 } else if (ATTRIB_EMAIL_BLOCKED.equals(key) || ATTRIB_EMAIL_VERIFIED.equals(key)) {
-                    if ( value != null && ! ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)))
+                    if ( value == null || value.length() == 0)
+                        continue;
+                    if ( ! ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)))
                         throw new InvalidInputException("Atribut '" + key + "' smí obsahovat jen hodnoty true a false!");
                 }
 
