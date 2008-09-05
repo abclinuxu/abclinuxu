@@ -53,21 +53,22 @@ Skupina má vlastní sekci pro články, vlastní wiki, poradnu a sekci pro akce
                 <div class="error">${ERRORS.desc?if_exists}</div>
             </td>
         </tr>
+        <tr>
+            <td>
+                Ikonka
+                <a class="info" href="#">?<span class="tooltip">Ikonka zobrazovaná ve výpisu skupin a v pravém sloupci ve skupině.</span></a>
+            </td>
+            <td>
+                <#assign icon=TOOL.xpath(RELATION.child,"/data/icon")?default("UNDEF")>
+                <#if icon != "UNDEF">
+                    <img src="${icon}" alt="logo">
+                    <label><input type="checkbox" name="remove_icon" tabindex="3">Pouze odstraň současnou ikonku</label>
+                </#if>
+                <input type="file" name="icon" size="20" tabindex="4"> Rozměry maximálně 100&times;100.
+                <div class="error">${ERRORS.icon?if_exists}</div>
+            </td>
+        </tr>
         <#if USER.hasRole("root")>
-            <tr>
-                <td>
-                    Ikonka
-                    <a class="info" href="#">?<span class="tooltip">Ikonka zobrazovaná ve výpisu skupin a v pravém sloupci ve skupině.</span></a>
-                </td>
-                <td>
-                    <#assign icon=TOOL.xpath(RELATION.child,"/data/icon")?default("UNDEF")>
-                    <#if icon != "UNDEF">
-                        <label><input type="checkbox" name="remove_icon" tabindex="3">Pouze odstraň současnou ikonku</label>
-                    </#if>
-                    <input type="file" name="icon" size="20" tabindex="4"> Rozměry maximálně 100&times;100.
-                    <div class="error">${ERRORS.icon?if_exists}</div>
-                </td>
-            </tr>
             <tr>
                 <td>
                     &nbsp;
