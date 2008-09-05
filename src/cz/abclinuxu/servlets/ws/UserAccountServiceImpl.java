@@ -149,6 +149,65 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
         }
     }
 
+    public void updateUser(@WebParam(name = "login") String login, Map<String, String> values,
+                           @WebParam(name = "portal") String portal, @WebParam(name = "portalPassword") String portalPassword)
+            throws AccessDeniedException, LdapException, InvalidInputException {
+        try {
+            verifyAccess(portal, portalPassword);
+            if (log.isDebugEnabled())
+                log.debug("updateUser(" + login + ")" + values.toString());
+
+            // todo odstranit volani EditUser, presunout kontroly primo sem, hlavne zadne HTML
+            User user = new User();
+            user.setData("<data/>");
+            Map env = new HashMap();
+            env.put(Constants.VAR_ERRORS, new HashMap());
+
+            String tmp = values.get(LdapUserManager.ATTRIB_CITY);
+            if (tmp != null) {
+                if (!EditUser.setCity(Collections.singletonMap(EditUser.PARAM_CITY, tmp), user, env))
+                    throw createException(EditUser.PARAM_CITY, env, LdapUserManager.ATTRIB_CITY);
+            }
+            tmp = values.get(LdapUserManager.ATTRIB_COUNTRY);
+            if (tmp != null) {
+                if (!EditUser.setCountry(Collections.singletonMap(EditUser.PARAM_COUNTRY, tmp), user, env))
+                    throw createException(EditUser.PARAM_COUNTRY, env, LdapUserManager.ATTRIB_COUNTRY);
+            }
+            tmp = values.get(LdapUserManager.ATTRIB_EMAIL_ADRESS);
+            if (tmp != null) {
+                if (!EditUser.setEmail(Collections.singletonMap(EditUser.PARAM_EMAIL, tmp), user, env))
+                    throw createException(EditUser.PARAM_EMAIL, env, LdapUserManager.ATTRIB_EMAIL_ADRESS);
+            }
+            tmp = values.get(LdapUserManager.ATTRIB_HOME_PAGE_URL);
+            if (tmp != null) {
+                if (!EditUser.setMyPage(Collections.singletonMap(EditUser.PARAM_HOME_PAGE, tmp), user, env))
+                    throw createException(EditUser.PARAM_HOME_PAGE, env, LdapUserManager.ATTRIB_HOME_PAGE_URL);
+            }
+            tmp = values.get(LdapUserManager.ATTRIB_NAME);
+            if (tmp != null) {
+                if (!EditUser.setName(Collections.singletonMap(EditUser.PARAM_NAME, tmp), user, env))
+                    throw createException(EditUser.PARAM_NAME, env, LdapUserManager.ATTRIB_NAME);
+            }
+            tmp = values.get(LdapUserManager.ATTRIB_OPEN_ID);
+            if (tmp != null) {
+                if (!EditUser.setOpenId(Collections.singletonMap(EditUser.PARAM_OPEN_ID, tmp), user, env))
+                    throw createException(EditUser.PARAM_OPEN_ID, env, LdapUserManager.ATTRIB_OPEN_ID);
+            }
+            tmp = values.get(LdapUserManager.ATTRIB_SEX);
+            if (tmp != null && tmp.length() > 0) {
+                if (!EditUser.setSex(Collections.singletonMap(EditUser.PARAM_SEX, tmp), user, env))
+                    throw createException(EditUser.PARAM_SEX, env, LdapUserManager.ATTRIB_SEX);
+            }
+            mgr.updateUser(login, values);
+        } catch (AbcException e) {
+            log.warn("Chyba webové služby", e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Chyba webové služby", e);
+            throw new AbcException("Neočekávaná chyba " + e.getMessage(), e);
+        }
+    }
+
     public void updateUser(@WebParam(name = "acount") UserAccount account, @WebParam(name = "portal") String portal,
                            @WebParam(name = "portalPassword") String portalPassword)
             throws AccessDeniedException, LdapException, InvalidInputException {

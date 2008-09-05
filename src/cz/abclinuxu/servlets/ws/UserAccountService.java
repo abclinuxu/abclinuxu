@@ -25,6 +25,7 @@ import cz.abclinuxu.exceptions.AccessDeniedException;
 
 import javax.jws.WebService;
 import javax.jws.WebParam;
+import java.util.Map;
 
 /**
  * Web service interface for user account manipulation.
@@ -63,6 +64,10 @@ public interface UserAccountService {
         throws AccessDeniedException, LdapException, InvalidInputException;
 
     public void updateUser(@WebParam(name = "acount") UserAccount account, @WebParam(name = "portal") String portal,
+                           @WebParam(name = "portalPassword") String portalPassword)
+            throws AccessDeniedException, LdapException, InvalidInputException;
+
+    public void updateUser(@WebParam(name = "login") String login, Map<String, String> values, @WebParam(name = "portal") String portal,
                            @WebParam(name = "portalPassword") String portalPassword)
             throws AccessDeniedException, LdapException, InvalidInputException;
 

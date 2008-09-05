@@ -26,37 +26,70 @@ import java.io.Serializable;
  * @author literakl
  * @since 24.4.2008
  */
+// http://java.sun.com/webservices/reference/tutorials/wsit/doc/DataBinding2.html
+//     @javax.xml.bind.annotation.XmlElement(nillable = true, required=true)
 public class UserAccount implements Serializable {
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String city;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String country;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String deliveryAddressCity;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String deliveryAddressCountry;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String deliveryAddressName;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String deliveryAddressStreet;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String deliveryAddressZIP;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String emailAddress;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String emailBlocked;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String emailVerified;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String forgottenPasswordToken;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String homepageURL;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String invoicingAddressCity;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String invoicingCompany;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String invoicingAddressCountry;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String invoicingCompanyDIC;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String invoicingCompanyICO;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String invoicingAddressName;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String invoicingAddressStreet;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String invoicingAddressZIP;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String lastLoginDate;
+    @javax.xml.bind.annotation.XmlElement(nillable = false, required = true)
     String login;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String name;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String openID;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String userPassword;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String passwordAnswer;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String passwordHash;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String passwordQuestion;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String phone;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String registrationDate;
+    @javax.xml.bind.annotation.XmlElement(nillable = true)
     String sex;
 
     public String getCity() {
