@@ -363,6 +363,7 @@
     </div>
 </#if>
 
+<#--
 <#assign FEEDS = VARS.getFeeds(USER?if_exists,true)>
 <#if (FEEDS.size() > 0)>
   <h2>Rozcestník</h2>
@@ -384,5 +385,6 @@
     </table>
   </div>
 </#if>
+-->
 
 <#include "../footer.ftl">
