@@ -11,6 +11,12 @@
     je <a href="/slovnik/wm">správce oken</a> a téma.
 </p>
 
+<p><b>
+    Upozorňujeme, že tato sekce slouží pouze ke vkládání screenshotů pracovního
+    prostředí vašeho počítače (KDE, GNOME apod.). Není určena ke vkládání různých
+    fotek, ať už vašeho stolu, nebo něčeho jiného.
+</b></p>
+
 <p>
   <form action="${URL.make("/desktopy/edit")}" method="POST" enctype="multipart/form-data">
   <span class="required">Titulek</span><br />

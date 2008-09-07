@@ -11,6 +11,12 @@
     jeho miniatura.
 </p>
 
+<p><b>
+    Upozorňujeme, že tato sekce slouží pouze ke vkládání screenshotů pracovního
+    prostředí vašeho počítače (KDE, GNOME apod.). Není určena ke vkládání různých
+    fotek, ať už vašeho stolu, nebo něčeho jiného.
+</b></p>
+
 <form action="${URL.make("/inset/"+RELATION.id)}" method="POST" enctype="multipart/form-data">
     <p>
         <span class="required">Jméno souboru</span><br/>
