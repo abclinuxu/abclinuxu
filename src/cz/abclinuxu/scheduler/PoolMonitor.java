@@ -64,7 +64,7 @@ public class PoolMonitor extends TimerTask {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(PoolMonitor.class);
 
     Category newsPool = new Category(Constants.CAT_NEWS_POOL);
-	List<Category> articlePools;
+	List<Relation> articlePools;
 
     public PoolMonitor() {
 		gatherArticlePools();
@@ -80,7 +80,9 @@ public class PoolMonitor extends TimerTask {
             Date now = new Date();
             boolean articlesUpdated = false, newsUpdated = false;
 
-			for(Category articlePool : articlePools) {
+			for(Relation rel : articlePools) {
+                Category articlePool = (Category) rel.getChild();
+                
 				List children = articlePool.getChildren();
 				for (Iterator iter = children.iterator(); iter.hasNext();) {
 					Relation relation = (Relation) iter.next();
@@ -143,6 +145,11 @@ public class PoolMonitor extends TimerTask {
                         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
                         MonitorAction action = new MonitorAction("", UserAction.ADD, ObjectType.ARTICLE, relation, absoluteUrl);
                         MonitorPool.scheduleMonitorAction(action);
+                        
+                        if (Tools.getParentSubportal(rel) != null) {
+                            articlePool.setUpdated(new Date());
+                            persistence.update(articlePool);
+                        }
 
 						articlesUpdated = true;
 					}
@@ -206,10 +213,12 @@ public class PoolMonitor extends TimerTask {
 			Relation r = new Relation(poolid);
 			Tools.sync(r);
 			
-			articlePools.add((Category) r.getChild());
+			articlePools.add(r);
 		}
 		
-		articlePools.add(new Category(Constants.CAT_ARTICLES_POOL));
+        Relation r = new Relation(Constants.REL_ARTICLEPOOL);
+        Tools.sync(r);
+		articlePools.add(r);
 	}
     
     private void sendEventNotifications() {

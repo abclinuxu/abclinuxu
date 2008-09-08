@@ -49,7 +49,7 @@ pak však potřebuje podporu programátora, který připraví data.</p>
   <tr>
    <td width="90" class="required">Zpracovat freemarkerem</td>
    <td>
-    <input type="checkbox" name="execute" <#if PARAMS.execute?exists>checked</#if> value="yes">
+    <input type="checkbox" name="execute" <#if PARAMS.execute?default("no")=="yes">checked</#if> value="yes">
     <p>Pokud zaškrtnete tuto volbu, systém obsah článku zpracuje skrze
     <a href="http://freemarker.sourceforge.net/">Freemarker</a>. Užitečné pro dynamický obsah.</p>
    </td>

@@ -40,6 +40,7 @@ import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.parser.safehtml.WikiContentGuard;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.freemarker.Tools;
+import java.util.Date;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
@@ -314,10 +315,14 @@ public class EditContent implements AbcAction {
         MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 		
-        Relation section = Tools.getParentSubportal(relation);
+        Relation sp = Tools.getParentSubportal(relation);
         
-        if (section != null)
-            VariableFetcher.getInstance().refreshSubportalWikiPages(section);
+        if (sp != null) {
+            VariableFetcher.getInstance().refreshSubportalWikiPages(sp);
+            Category cat = (Category) sp.getChild();
+            cat.setUpdated(new Date());
+            persistence.update(cat);
+        }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -375,10 +380,14 @@ public class EditContent implements AbcAction {
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 		
-        Relation section = Tools.getParentSubportal(relation);
+        Relation sp = Tools.getParentSubportal(relation);
         
-        if (section != null)
-            VariableFetcher.getInstance().refreshSubportalWikiPages(section);
+        if (sp != null) {
+            VariableFetcher.getInstance().refreshSubportalWikiPages(sp);
+            Category cat = (Category) sp.getChild();
+            cat.setUpdated(new Date());
+            persistence.update(cat);
+        }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -448,10 +457,15 @@ public class EditContent implements AbcAction {
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 		
-        Relation section = Tools.getParentSubportal(relation);
+        Relation sp = Tools.getParentSubportal(relation);
         
-        if (section != null)
-            VariableFetcher.getInstance().refreshSubportalWikiPages(section);
+        if (sp != null) {
+            VariableFetcher.getInstance().refreshSubportalWikiPages(sp);
+            Category cat = (Category) sp.getChild();
+            System.out.println("Setting the update time for "+cat);
+            cat.setUpdated(new Date());
+            persistence.update(cat);
+        }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
