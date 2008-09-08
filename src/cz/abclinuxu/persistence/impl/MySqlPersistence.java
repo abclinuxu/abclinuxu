@@ -1523,7 +1523,11 @@ public class MySqlPersistence implements Persistence {
         link.setUrl(resultSet.getString(4));
         link.setFixed(resultSet.getBoolean(5));
         link.setOwner(resultSet.getInt(6));
-        link.setUpdated(new java.util.Date(resultSet.getTimestamp(7).getTime()));
+        
+        Timestamp ts = resultSet.getTimestamp(7);
+        if (ts != null)
+            link.setUpdated(new java.util.Date(ts.getTime()));
+        
         link.setInitialized(true);
     }
 
