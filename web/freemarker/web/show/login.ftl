@@ -2,21 +2,20 @@
 
 <@lib.showMessages/>
 
+<div style="width:250px; float:right; padding:0.5em; margin:0.5em; font-size:small; border-left:1px solid silver">
+<img src="/images/site2/sf-login.png" width="100" height="40" alt="Stickfish login" style="float:right; margin:0.5em;">
+    Tento krok vyžaduje, abyste se přihlásil(a). Přihlašovací údaje jsou společné servery
+    AbcLinuxu.cz a <a href="http://www.64bit.cz">64bit.cz</a>. Pokud jste se ještě na žádném z techto serverů nezaregistrovali,
+    využijte <a href="${URL.noPrefix("/EditUser?action=register")}">registrační formulář</a>.
+    Registrace je opravdu jednoduchá, zabere jen okamžik vašeho času a přinese vám mnoho výhod oproti
+    neregistrovaným uživatelům.
+</div>
+
 <h1>Přihlášení</h1>
 
 <#if EXTRA_TEMPLATE?exists>
     <#include EXTRA_TEMPLATE>
 </#if>
-
-<p>
-    Tento krok vyžaduje, abyste se přihlásil(a). Přihlašovací údaje jsou společné pro rodinu serverů
-    abclinuxu.cz, itbiz.cz, abcprace.cz, abchost.cz a 64bit.cz, takže můžete použít přihlašovací údaje
-    z kteréhokoliv těchto serverů. Pokud jste se ještě na žádném z techto serverů nezaregistrovali,
-    využijte jednoduchého <a href="${URL.noPrefix("/EditUser?action=register")}">registračního formuláře</a>.
-    Registrace je opravdu jednoduchá, zabere jen okamžik vašeho času a přinese vám mnoho výhod oproti
-    neregistrovaným uživatelům.
-    <a href="${URL.noPrefix("/EditUser?action=forgottenPassword")}">Zapomněli jste své heslo?</a>
-</p>
 
 <#if SYSTEM_CONFIG.getLoginUseHttps()>
     <form action="https://${SYSTEM_CONFIG.getHostname()}${REQUEST_URI}" method="POST">
@@ -34,7 +33,7 @@
   </tr>
   <tr>
     <td>Heslo:</td>
-    <td><input type="password" name="PASSWORD" size="8" tabindex="2">
+    <td><input type="password" name="PASSWORD" size="8" tabindex="2"> <a href="${URL.noPrefix("/EditUser?action=forgottenPassword")}">Zapomněli jste své heslo?</a>
     <span class="error">${ERRORS.PASSWORD?if_exists}</span></td>
   </tr>
   <tr>
@@ -53,7 +52,7 @@
   <tr>
     <td>&nbsp;</td>
     <td>
-     <input type="submit" name="finish" value="OK" tabindex=3>
+     <input type="submit" name="finish" value="Přihlásit" tabindex=3>
     </td>
   </tr>
 </table>
