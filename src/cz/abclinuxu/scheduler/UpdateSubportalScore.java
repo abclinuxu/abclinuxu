@@ -60,7 +60,7 @@ public class UpdateSubportalScore extends TimerTask implements Configurable {
         SQLTool sqlTool = SQLTool.getInstance();
         for (Map.Entry<Integer, Integer> entry : portals.entrySet()) {
             Relation rel = new Relation(entry.getKey());
-            int score = calculateScore(entry.getValue());
+            int score = calculateScore(entry.getValue())+1;
             
             Tools.sync(rel);
             Set properties = Collections.singleton(Integer.toString(score));
