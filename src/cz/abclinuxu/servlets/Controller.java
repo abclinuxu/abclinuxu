@@ -49,6 +49,7 @@ import org.apache.regexp.RESyntaxException;
  * based on URL mapping.
  */
 public class Controller extends HttpServlet implements Configurable {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Controller.class);
     public static final String PREF_BOTS_REGEXP = "regexp.bots";
 
     static REProgram reBots;
@@ -137,6 +138,7 @@ public class Controller extends HttpServlet implements Configurable {
             return Constants.PAGE_GAMES;
         if (uri.startsWith("/nej"))
             return Constants.PAGE_TOP;
+        log.warn("Loguji nezname URI " + uri);
         return Constants.PAGE_UNKNOWN;
     }
 
