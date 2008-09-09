@@ -229,17 +229,19 @@ public class EditArticle implements AbcAction {
 		Item item = (Item) relation.getChild();
 		Persistence persistence = PersistenceFactory.getPersistence();
 		
-		if ("SUBPORTAL".equals(item.getSubType()) )
-			item.setSubType(null);
-		else
-			item.setSubType("SUBPORTAL");
+        if (item.getProperty(Constants.PROPERTY_BANNED_ARTICLE).size() > 0)
+            item.removeProperty(Constants.PROPERTY_BANNED_ARTICLE);
+        else
+            item.addProperty(Constants.PROPERTY_BANNED_ARTICLE, "yes");
 		
 		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, UrlUtils.getRelationUrl(relation, null), false);
 		
+        Date originalUpdated = item.getUpdated();
 		persistence.update(item);
+        SQLTool.getInstance().setUpdatedTimestamp(item, originalUpdated);
 		
-		VariableFetcher.getInstance().refreshArticles();
+		VariableFetcher.getInstance().refreshHPSubportalArticles();
 		
 		return null;
 	}

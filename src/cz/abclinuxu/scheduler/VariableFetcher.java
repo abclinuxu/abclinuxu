@@ -86,6 +86,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String KEY_TAGCLOUD = "tagcloud";
     public static final String KEY_EVENT = "event";
     public static final String KEY_VIDEO = "video";
+    public static final String KEY_SUBPORTAL_ARTICLE = "sp.article";
 
     public static final String PREF_DEFAULT = "default.";
     public static final String PREF_MAX = "max.";
@@ -96,7 +97,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     List freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
     List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities;
-    List freshTrivias, freshEvents, freshVideos;
+    List freshTrivias, freshEvents, freshVideos, freshHPSubportalArticles;
     List<Map> latestSubportalChanges;
     Map<Integer, List> freshSubportalArticles, freshForumQuestions, freshSubportalWikiPages;
     Map<Integer, Relation> nextSubportalEvent, freshSubportalEvent;
@@ -232,6 +233,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public List getFreshArticles(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_ARTICLE, null);
         return getSubList(freshArticles, userLimit);
+    }
+    
+    /**
+     * List of the freshest subportal article relations according to user preference or system setting.
+     */
+    public List getFreshHPSubportalArticles(Object user) {
+        int userLimit = getObjectCountForUser(user, KEY_SUBPORTAL_ARTICLE, null);
+        return getSubList(freshHPSubportalArticles, userLimit);
     }
 
     /**
@@ -716,7 +725,10 @@ public class VariableFetcher extends TimerTask implements Configurable {
             Map data = new HashMap();
 
             for (Relation rel : children) {
-                Map feeds = UpdateLinks.getFeeds(rel.getChild().getId());
+                Map<Server, List<Link>> feeds = UpdateLinks.getFeeds(rel.getChild().getId());
+                for (List links : feeds.values())
+                    Sorters2.byDate(links, Sorters2.DESCENDING);
+                
                 data.put(rel.getId(), feeds);
             }
             
@@ -747,6 +759,18 @@ public class VariableFetcher extends TimerTask implements Configurable {
             freshArticles = articles;
         } catch (Exception e) {
             log.error("Selhalo nacitani clanku", e);
+        }
+    }
+    
+    public void refreshHPSubportalArticles() {
+        try {
+            int maximum = (Integer) maxSizes.get(KEY_SUBPORTAL_ARTICLE);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
+            List articles = sqlTool.findHPSubportalArticles(qualifiers);
+            Tools.syncList(articles);
+            freshHPSubportalArticles = articles;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani clanku ze skupin pro HP", e);
         }
     }
     
@@ -1487,6 +1511,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
         size = prefs.getInt(PREF_MAX + KEY_TRIVIA, 10);
         maxSizes.put(KEY_TRIVIA, size);
         freshTrivias = Collections.EMPTY_LIST;
+        
+        size = prefs.getInt(PREF_DEFAULT + KEY_SUBPORTAL_ARTICLE, 2);
+        defaultSizes.put(KEY_SUBPORTAL_ARTICLE, size);
+        size = prefs.getInt(PREF_MAX + KEY_SUBPORTAL_ARTICLE, 5);
+        maxSizes.put(KEY_SUBPORTAL_ARTICLE, size);
+        freshHPSubportalArticles = Collections.EMPTY_LIST;
 
         indexFeeds = prefs.get(PREF_INDEX_FEEDS, "");
         templateFeeds = prefs.get(PREF_TEMPLATE_FEEDS, "");

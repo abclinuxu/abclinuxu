@@ -324,6 +324,7 @@ public class Constants implements Configurable {
     public static final String PROPERTY_LICENSE = "license";
     public static final String PROPERTY_BLOG_DIGEST = "digest";
     public static final String PROPERTY_BANNED_BLOG = "banned_blog";
+    public static final String PROPERTY_BANNED_ARTICLE = "banned_article";
     public static final String PROPERTY_AUTHOR = "author";
     public static final String PROPERTY_SCORE = "score";
     public static final String PROPERTY_TICKET = "ticket";

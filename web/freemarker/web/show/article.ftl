@@ -76,7 +76,12 @@
                 <a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=&amp;rid="+RELATION.id)}">Smazat</a>
             </#if>
             <#if USER.hasRole("root") && subportal_article>
-                <a href="${URL.noPrefix("/clanky/edit/"+RELATION.id+"?action=toggleHP")}"><#if ITEM.subType?exists && ITEM.subType=="SUBPORTAL">Zobrazovat<#else>Nezobrazovat</#if> na HP</a>
+                <#if (ITEM.getProperty("banned_article")?size > 0)>
+                        <#assign banMsg='Není nevhodný pro HP'>
+                    <#else>
+                        <#assign banMsg='Nevhodný pro HP'>
+                </#if>
+                <a href="${URL.noPrefix("/clanky/edit/"+RELATION.id+"?action=toggleHP")}">${banMsg}</a>
             </#if>
         </#if>
 
