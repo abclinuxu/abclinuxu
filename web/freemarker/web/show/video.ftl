@@ -21,8 +21,6 @@
 
 <@lib.showVideo RELATION, 500, 400, false />
 
-<p><i>K přehrávání videa je nutné mít Adobe Flash plugin.</i></p>
-
 
 <#if CHILDREN.discussion?exists>
     <h3>Komentáře</h3>

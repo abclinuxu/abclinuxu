@@ -693,5 +693,5 @@
 
     <#if showLink>(<a href="${relation.url?default("/videa/show/"+relation.id)}">správa videa</a>)</#if><br>
     <object width="${width}" height="${height}"><param name="movie" value="${player}"></param><param name="allowFullScreen" value="true"></param><embed src="${player}" type="application/x-shockwave-flash" allowfullscreen="true" width="${width}" height="${height}"></embed></object>
-    <#if desc!=""><p><i>${desc}</i></p></#if>
+    <#if desc!=""><p>${desc}</p></#if>
 </#macro>
