@@ -187,8 +187,6 @@ public class EditVideo implements AbcAction, Configurable {
         if (!canContinue)
             return FMTemplateSelector.select("EditVideo", "add", env, request);
         
-        TagTool.assignDetectedTags(item, user);
-        
         persistence.create(item);
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
@@ -202,6 +200,8 @@ public class EditVideo implements AbcAction, Configurable {
             VariableFetcher.getInstance().refreshVideos();
             EditDiscussion.createEmptyDiscussion(relation, user, persistence);
         }
+        
+        TagTool.assignDetectedTags(item, user);
         
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         
