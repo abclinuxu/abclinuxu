@@ -40,6 +40,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.ImageTool;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -185,6 +186,8 @@ public class EditVideo implements AbcAction, Configurable {
         
         if (!canContinue)
             return FMTemplateSelector.select("EditVideo", "add", env, request);
+        
+        TagTool.assignDetectedTags(item, user);
         
         persistence.create(item);
         persistence.create(relation);

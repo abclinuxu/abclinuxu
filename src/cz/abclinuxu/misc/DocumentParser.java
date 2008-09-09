@@ -93,6 +93,8 @@ public class DocumentParser {
                 return parseSoftware(item);
 			case Item.EVENT:
 				return parseEvent(item);
+            case Item.VIDEO:
+                return parseVideo(item);
         }
 
         throw new InternalException("Unsupported item type: " + item.getType());
@@ -427,6 +429,17 @@ public class DocumentParser {
     }
 
     private static ParsedDocument parseScreenshot(Item item) {
+        StringBuffer sb = new StringBuffer(item.getTitle());
+
+        Element data = item.getData().getRootElement();
+        Node node = data.element("description");
+        if (node != null)
+            sb.append(" ").append(node.getText());
+
+        return normalize(sb);
+    }
+    
+    private static ParsedDocument parseVideo(Item item) {
         StringBuffer sb = new StringBuffer(item.getTitle());
 
         Element data = item.getData().getRootElement();
