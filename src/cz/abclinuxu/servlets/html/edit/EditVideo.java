@@ -345,7 +345,7 @@ public class EditVideo implements AbcAction, Configurable {
             in.close();
             
             File file = new File(fileName);
-            ImageTool.createThumbnailMaxSize(file, file, 200, false);
+            ImageTool.createThumbnailMaxSize(file, file, 96, true);
             
             Element elem = DocumentHelper.makeElement(root, "thumbnail");
             elem.setText(path);
