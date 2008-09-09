@@ -30,6 +30,7 @@
     <div class="s_nadpis">Nástroje</div>
     <div class="s_sekce">
         <ul>
+            <li><a href="?action=admins">Seznam administrátorů</a></li>
             <li><a href="/akce/edit/${events.id}?action=add">Přidat akci</a></li>
             <li>
                 <a href="${URL.make("/EditMonitor/"+articles.id+"?action=toggle&amp;redirect="+RELATION.url+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>

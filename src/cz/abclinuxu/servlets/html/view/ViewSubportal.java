@@ -20,7 +20,9 @@
 package cz.abclinuxu.servlets.html.view;
 
 import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
@@ -37,7 +39,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -54,8 +56,10 @@ public class ViewSubportal implements AbcAction {
     public static final String PARAM_ORDER_DIR = "orderDir";
 	
 	public static final String ACTION_MEMBERS = "members";
+    public static final String ACTION_ADMINS = "admins";
     
     public static final String VAR_SUBPORTALS = "SUBPORTALS";
+    public static final String VAR_ADMINS = "ADMINS";
 
 	public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -83,6 +87,25 @@ public class ViewSubportal implements AbcAction {
             parents.add(link);
         
 			return FMTemplateSelector.select("ViewSubportal", "members", env, request);
+        } else if (ACTION_ADMINS.equals(action)) {
+            Item group = new Item(cat.getGroup());
+            Tools.sync(group);
+
+            SQLTool sqlTool = SQLTool.getInstance();
+            List keys = sqlTool.findUsersInGroup(group.getId(), null);
+            List users = new ArrayList(keys.size());
+            for ( Iterator iter = keys.iterator(); iter.hasNext(); ) {
+                Integer key = (Integer) iter.next();
+                users.add(Tools.sync(new User(key.intValue())));
+            }
+            
+            env.put(VAR_ADMINS, users);
+            
+            List parents = (List) env.get(ShowObject.VAR_PARENTS);
+            Link link = new Link("Admini", relation.getUrl()+"?action="+ACTION_ADMINS, null);
+            parents.add(link);
+            
+            return FMTemplateSelector.select("ViewSubportal", "admins", env, request);
         }
 		
 		return FMTemplateSelector.select("ViewSubportal", "view", env, request);

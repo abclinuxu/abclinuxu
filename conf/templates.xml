@@ -865,5 +865,8 @@
         <action name="members" content="/show/subportal_members.ftl">
             <var name="TITLE" value='Členové subportálu ${TOOL.childName(RELATION)}' type="Lazy"/>
         </action>
+        <action name="admins" content="/show/subportal_admins.ftl">
+            <var name="TITLE" value='Administrátoři subportálu ${TOOL.childName(RELATION)}' type="Lazy"/>
+        </action>
     </servlet>
 </config>
