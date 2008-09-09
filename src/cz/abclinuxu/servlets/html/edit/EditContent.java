@@ -462,7 +462,6 @@ public class EditContent implements AbcAction {
         if (sp != null) {
             VariableFetcher.getInstance().refreshSubportalWikiPages(sp);
             Category cat = (Category) sp.getChild();
-            System.out.println("Setting the update time for "+cat);
             cat.setUpdated(new Date());
             persistence.update(cat);
         }
