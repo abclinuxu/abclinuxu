@@ -45,6 +45,11 @@ value: id of relation to article's author
 mapping: 1:n
 purpose: defines author(s) of that article
 
+name: banned_article
+value: yes
+mapping: 1:1
+purpose: indicates that the article was marked as inappropriate for home page
+
 ITEM.SCREENSHOT
 ============
 
@@ -67,6 +72,11 @@ name: region
 values: defined in ftl templates
 mapping: 1:1
 purpose: define the location of the event
+
+name: notified
+values: yes
+mapping: 1:1
+purpose: show that registrants have been notified of the event
 
 USER
 ====
