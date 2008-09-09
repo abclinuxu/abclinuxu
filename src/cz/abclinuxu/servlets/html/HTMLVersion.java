@@ -18,7 +18,8 @@
  */
 package cz.abclinuxu.servlets.html;
 
-import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.url.URLMapper;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -38,6 +39,8 @@ import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.exceptions.SecurityException;
 import cz.abclinuxu.data.User;
 
+import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -50,6 +53,9 @@ import freemarker.template.Template;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 import org.apache.log4j.Logger;
+import org.apache.regexp.RE;
+import org.apache.regexp.RECompiler;
+import org.apache.regexp.REProgram;
 
 /**
  * This class renders HTML version of portal.
@@ -61,10 +67,14 @@ public class HTMLVersion implements Configurable {
     public static final String PREF_DEFAULT_CSS_STYLE = "default.css.uri";
 
     private static String defaultCss;
+    private static REProgram reShowUrls;
 
     static {
         HTMLVersion instance = new HTMLVersion();
         ConfigurationManager.getConfigurator().configureAndRememberMe(instance);
+        
+        RECompiler reCompiler = new RECompiler();
+        reShowUrls = reCompiler.compile("/show/(\\d+)");
     }
 
     public static void process(HttpServletRequest request, HttpServletResponse response, Map env) throws IOException {
@@ -75,6 +85,47 @@ public class HTMLVersion implements Configurable {
             setLayout(request, env);
 
             long start = System.currentTimeMillis();
+            
+            // Catch all URLs containing numbers and try to find
+            // a proper text variant
+            String uri = request.getRequestURI();
+            String redirectUrl = null;
+            RE regexp = new RE(reShowUrls, RE.MATCH_SINGLELINE);
+            
+            int pos = uri.indexOf('?');
+            if (pos != -1)
+                uri = uri.substring(0, pos);
+            
+            if (regexp.match(uri)) {
+                int rid = Integer.parseInt(regexp.getParen(1));
+                Relation rel = new Relation(rid);
+                
+                Tools.sync(rel);
+                
+                String relUrl = rel.getUrl();
+                if (relUrl != null && !relUrl.equals(uri)) {
+                    redirectUrl = relUrl;
+                } else if (rel.getChild() instanceof Item) {
+                    Item item = (Item) rel.getChild();
+                    if (item.getType() == Item.DISCUSSION) {
+                        String newUrl = Tools.getUrlForDiscussion(rel);
+                        if (!newUrl.equals(uri))
+                            redirectUrl = newUrl;
+                    }
+                }
+            }
+            
+            if (redirectUrl != null) {
+                String query = request.getQueryString();
+                
+                if (query != null)
+                    redirectUrl = redirectUrl + "?" + query;
+                
+                UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+                urlUtils.redirect(response, redirectUrl, false);
+                
+                return;
+            }
 
             AbcAction action = urlMapper.findAction(request, response, env);
             if (action == null)
