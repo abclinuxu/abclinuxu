@@ -586,6 +586,9 @@
         <action name="edit" content="/edit/video.ftl">
             <var name="TITLE" value="Upravit video"/>
         </action>
+        <action name="remove" content="/remove/video.ftl">
+            <var name="TITLE" value="Smazání videa" />
+        </action>
     </servlet>
 
     <servlet name="ViewVideo">

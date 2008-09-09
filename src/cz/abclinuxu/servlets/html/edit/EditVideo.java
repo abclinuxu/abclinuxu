@@ -33,6 +33,7 @@ import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.URLManager;
@@ -82,6 +83,7 @@ public class EditVideo implements AbcAction, Configurable {
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
     public static final String ACTION_REMOVE = "remove";
+    public static final String ACTION_REMOVE_STEP2 = "remove2";
     
     public static final String PREF_URLS = "urls";
     public static final String PREF_PLAYERS = "players";
@@ -105,6 +107,7 @@ public class EditVideo implements AbcAction, Configurable {
             return FMTemplateSelector.select("ViewUser", "login", env, request);
         
         Tools.sync(relation);
+        env.put(ShowObject.VAR_RELATION, relation);
         
         boolean isBlogOwner = false;
         if (relation.getChild() instanceof Item) {
@@ -145,12 +148,16 @@ public class EditVideo implements AbcAction, Configurable {
                 isBlogOwner = true;
         }
         
-        if (ACTION_REMOVE.equals(action)) {
+        if (ACTION_REMOVE.equals(action) || ACTION_REMOVE_STEP2.equals(action)) {
             if (!Tools.permissionsFor(user, relation).canDelete() && !isBlogOwner)
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             
-            ActionProtector.ensureContract(request, EditVideo.class, true, false, false, true);
-            return actionRemove(request, response, env, relation);
+            if (ACTION_REMOVE_STEP2.equals(action)) {
+                ActionProtector.ensureContract(request, EditVideo.class, true, true, true, false);
+                return actionRemove(request, response, env, relation);
+            } else {
+                return FMTemplateSelector.select("EditVideo", "remove", env, request);
+            }
         }
         
         throw new MissingArgumentException("Chybí argument action!");

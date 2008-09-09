@@ -7,7 +7,7 @@
                     <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
                 </#if>
                 <#if TOOL.permissionsFor(USER, RELATION).canDelete() || ITEM.owner == USER.id>
-                    <li><a href="${URL.make("/edit/"+RELATION.id+"?action=remove"+TOOL.ticket(USER,false))}">Smazat</a></li>
+                    <li><a href="${URL.make("/edit/"+RELATION.id+"?action=remove")}">Smazat</a></li>
                 </#if>
             </ul>
         </div>
