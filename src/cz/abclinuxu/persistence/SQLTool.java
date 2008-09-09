@@ -18,18 +18,33 @@
  */
 package cz.abclinuxu.persistence;
 
+import cz.abclinuxu.data.CommonObject;
+import cz.abclinuxu.data.GenericDataObject;
+import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Poll;
+import cz.abclinuxu.data.Record;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.Server;
+import cz.abclinuxu.data.Tag;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.exceptions.PersistenceException;
+import cz.abclinuxu.persistence.extra.CompareCondition;
+import cz.abclinuxu.persistence.extra.Field;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.OperationIn;
+import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.QualifierTool;
+import cz.abclinuxu.persistence.extra.tags.TagExpression;
+import cz.abclinuxu.persistence.impl.MySqlPersistence;
+import cz.abclinuxu.persistence.versioning.VersionedDocument;
+
+import cz.abclinuxu.scheduler.VariableFetcher;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.TagTool;
-import cz.abclinuxu.data.*;
-import cz.abclinuxu.exceptions.PersistenceException;
-import cz.abclinuxu.persistence.extra.*;
-import cz.abclinuxu.persistence.impl.MySqlPersistence;
-import cz.abclinuxu.persistence.versioning.VersionedDocument;
-import cz.abclinuxu.scheduler.VariableFetcher;
-
 import java.sql.*;
 import java.util.prefs.Preferences;
 import java.util.Date;
@@ -141,6 +156,7 @@ public final class SQLTool implements Configurable {
     public static final String SERVER_RELATIONS_IN_CATEGORY = "server.relations.in.category";
     public static final String QUESTIONS_WITH_TAGS = "questions.with.tags";
     public static final String FIND_SUBPORTAL_MEMBERSHIP  = "find.subportal.membership";
+    public static final String FIND_HP_SUBPORTAL_ARTICLES = "find.hp.subportal.articles";
 
     private static SQLTool singleton;
     static {
@@ -691,54 +707,50 @@ public final class SQLTool implements Configurable {
         return loadNumber(sb.toString(), params);
     }
     
-    private StringBuilder discussionRelationsWithTagsQuery(List<String> tags, List params) {
-        StringBuilder sb = new StringBuilder((String) sql.get(QUESTIONS_WITH_TAGS));
+    private StringBuilder discussionRelationsWithTagsQuery(TagExpression expr, List<String> tags, List params) {
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append("select R.cislo from (select T.cislo from stitkovani T where T.typ = 'P' and T.stitek in (");
+        
+        boolean first = true;
         Iterator it = tags.iterator();
-        
-        sb.append(" and S.stitek in (");
-        boolean firstOne = true;
-        
         while (it.hasNext()) {
-            String tag = (String) it.next();
-            tag = TagTool.getNormalizedId(tag);
+            String next = (String) it.next();
             
-            params.add(tag);
-            
-            sb.append(firstOne ? "?" : ",?");
-            firstOne = false;
+            if (!first)
+                sb.append(',');
+            params.add(next);
+            sb.append('?');
+            first = false;
         }
         
-        sb.append(") group by R.cislo having count(*) = ?");
-        params.add(tags.size());
+        sb.append(") group by T.cislo having ");
+        sb.append(expr.toString());
+        sb.append(") T join relace R on (T.cislo = R.potomek) join spolecne S on (S.cislo = R.potomek and S.typ = 'P')"
+                +" where R.typ_potomka = 'P' and R.predchozi = ?");
         
         return sb;
     }
     
-    public List<Relation> findDiscussionRelationsWithTags(List<String> tags, int parent, Qualifier[] qualifiers) {
-        if (tags.size() == 0)
+    public List<Relation> findDiscussionRelationsWithTags(TagExpression expr, List<String> tags, int parent, Qualifier[] qualifiers) {
+        if (tags.size() == 0 || expr == null)
             return findDiscussionRelationsWithParent(parent, qualifiers);
         
         List params = new ArrayList(tags.size()+2);
-        StringBuilder sb;
-        
+        StringBuilder sb = discussionRelationsWithTagsQuery(expr, tags, params);
         params.add(parent);
-        
-        sb = discussionRelationsWithTagsQuery(tags, params);
         
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
     
-    public int countDiscussionRelationsWithTags(List<String> tags, int parent, Qualifier[] qualifiers) {
-        if (tags.size() == 0)
+    public int countDiscussionRelationsWithTags(TagExpression expr, List<String> tags, int parent) {
+        if (tags.size() == 0 || expr == null)
             return countDiscussionRelationsWithParent(parent);
         
         List params = new ArrayList(tags.size()+2);
-        StringBuilder sb;
-        
+        StringBuilder sb = discussionRelationsWithTagsQuery(expr, tags, params);
         params.add(parent);
-        
-        sb = discussionRelationsWithTagsQuery(tags, params);
         
         changeToCountStatement(sb);
         return loadNumber(sb.toString(), params);
@@ -814,6 +826,17 @@ public final class SQLTool implements Configurable {
         Map<Field, String> fieldMapping = new HashMap<Field, String>();
         fieldMapping.put(Field.UPPER, "R");
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
+        return loadRelations(sb.toString(), params);
+    }
+    
+    /**
+     * Finds articles from subportals that are supposed to be shown on the HP.
+     * @param qualifiers
+     * @return
+     */
+    public List<Relation> findHPSubportalArticles(Qualifier[] qualifiers) {
+        StringBuilder sb = new StringBuilder((String) sql.get(FIND_HP_SUBPORTAL_ARTICLES));
+        List params = new ArrayList();
         return loadRelations(sb.toString(), params);
     }
 
@@ -2357,6 +2380,7 @@ public final class SQLTool implements Configurable {
         store(VALID_SERVERS, prefs);
         store(SERVER_RELATIONS_IN_CATEGORY, prefs);
         store(FIND_SUBPORTAL_MEMBERSHIP, prefs);
+        store(FIND_HP_SUBPORTAL_ARTICLES, prefs);
     }
 
     /**

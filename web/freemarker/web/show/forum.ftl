@@ -43,9 +43,15 @@
 </p>
 </#if>
 
-<p>Toto diskusní fórum obsahuje celkem ${DIZS.total} diskusí.</p>
+<#--<p>Toto diskusní fórum obsahuje celkem ${DIZS.total} diskusí.</p>-->
 
 <@lib.showMessages/>
+
+<form action="" method="get">
+Filtr: <@lib.showHelp>Filtruje dotazy podle přiřazených štítků. Můžete použít logické operátory AND, OR a NOT a závorky.</@lib.showHelp>
+<input type="text" name="tags" value="${PARAMS.tags?if_exists?html}" size="50"> <input type="submit" value="Filtruj">
+<div class="error">${ERRORS.tags?if_exists}</div>
+</form>
 
 <#if (DIZS.total > 0) >
 
@@ -81,13 +87,18 @@
     <input type="hidden" name="typ" value="poradna">
    </form>
   <li><a href="${URL.make("/forum/EditDiscussion?action=addQuez&amp;rid="+RELATION.id)}">Položit nový dotaz</a>
+  <#if PARAMS.tags?exists>
+    <#assign tags=PARAMS.tags.replace("\"", "%22")>
+  <#else>
+    <#assign tags="">
+  </#if>
   <#if (DIZS.currentPage.row > 0) >
    <#assign start=DIZS.currentPage.row-DIZS.pageSize><#if (start<0)><#assign start=0></#if>
-   <li><a href="/forum/dir/${RELATION.id}?from=${start}&amp;count=${DIZS.pageSize}">Novější dotazy</a>
+   <li><a href="${RELATION.url?default("/forum/dir/"+RELATION.id)}?from=${start}&amp;count=${DIZS.pageSize}&amp;tags=${tags}">Novější dotazy</a>
   </#if>
   <#assign start=DIZS.currentPage.row + DIZS.pageSize>
   <#if (start < DIZS.total) >
-   <li><a href="/forum/dir/${RELATION.id}?from=${start}&amp;count=${DIZS.pageSize}">Starší dotazy</a>
+   <li><a href="${RELATION.url?default("/forum/dir/"+RELATION.id)}?from=${start}&amp;count=${DIZS.pageSize}&amp;tags=${tags}">Starší dotazy</a>
   </#if>
  </ul>
 

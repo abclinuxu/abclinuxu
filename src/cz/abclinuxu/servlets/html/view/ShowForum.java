@@ -18,7 +18,6 @@
  */
 package cz.abclinuxu.servlets.html.view;
 
-import cz.abclinuxu.data.Category;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -26,18 +25,16 @@ import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.view.SectionTreeCache;
-import cz.abclinuxu.data.view.SectionNode;
-import cz.abclinuxu.data.view.Forum;
-import cz.abclinuxu.data.view.DiscussionHeader;
+import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.scheduler.VariableFetcher;
 
+import cz.abclinuxu.persistence.extra.tags.TagExpression;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -54,16 +51,12 @@ public class ShowForum implements AbcAction {
     public static final String PARAM_FROM = "from";
     /** how many object to display */
     public static final String PARAM_COUNT = "count";
+    public static final String PARAM_TAGS = "tags";
 
     /** holds forum to be displayed */
     public static final String VAR_CATEGORY = "CATEGORY";
     /** holds list of discussions */
     public static final String VAR_DISCUSSIONS = "DIZS";
-    //public static final String VAR_FORUM_APPLICATIONS = "APPS";
-    //public static final String VAR_FORUM_DISTRIBUTIONS = "DISTROS";
-    //public static final String VAR_FORUM_HARDWARE = "HARDWARE";
-    //public static final String VAR_FORUM_SETTINGS = "SETTINGS";
-    //public static final String VAR_FORUM_VARIOUS = "VARIOUS";
     public static final String VAR_CHILDREN_MAP = "CHILDREN";
 
     static Persistence persistence = PersistenceFactory.getPersistence();
@@ -98,19 +91,27 @@ public class ShowForum implements AbcAction {
 
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int count = Misc.getPageSize(40, 100, env, "/data/settings/forum_size");
+        
+        List<String> tags = new ArrayList<String>();
+        String expr = (String) params.get(PARAM_TAGS);
+        TagExpression tExpr = null;
+        
+        if (!Misc.empty(expr)) {
+            try {
+                tExpr = TagExpression.parseString(expr, tags);
+            } catch (InvalidInputException e) {
+                ServletUtils.addError(PARAM_TAGS, e.getMessage(), env, null);
+                tags.clear();
+            }
+        }
 
         SQLTool sqlTool = SQLTool.getInstance();
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
-        List discussions = sqlTool.findDiscussionRelationsWithParent(relation.getId(),qualifiers);
+        List discussions;
+        discussions = sqlTool.findDiscussionRelationsWithTags(tExpr, tags, relation.getId(), qualifiers);
         Tools.syncList(discussions);
 
-        //SectionTreeCache forumTree = VariableFetcher.getInstance().getForumTree();
-        //SectionNode sectionNode = forumTree.getByRelation(relation.getId());
-        int total = -1;
-        //if (sectionNode != null)
-        //    total = sectionNode.getSize();
-        //else
-            total = sqlTool.countDiscussionRelationsWithParent(relation.getId());
+        int total = sqlTool.countDiscussionRelationsWithTags(tExpr, tags, relation.getId());
 
         Paging paging = new Paging(discussions, from, count, total);
         env.put(VAR_DISCUSSIONS,paging);
