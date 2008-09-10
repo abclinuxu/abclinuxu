@@ -26,6 +26,22 @@ zásady (psán velkými písmeny apod.), nevhodné HTML značky, ...</p>
     <div class="error">${ERRORS.title?if_exists}</div>
    </td>
   </tr>
+    <tr>
+        <td>Autor (id)</td>
+        <td>
+            <input type="text" name="author_id" size="5" maxlength="5" value="${PARAMS.author_id?if_exists}">
+            <br>Jen ve výjimečných případech (sloučení dvou kont)!
+            <div class="error">${ERRORS.author_id?if_exists}</div>
+        </td>
+    </tr>
+    <tr>
+        <td>Autor</td>
+        <td>
+            <input type="text" name="author" size="30" maxlength="50" value="${PARAMS.author?if_exists}">
+            <br>Jen ve výjimečných případech!
+            <div class="error">${ERRORS.author?if_exists}</div>
+        </td>
+    </tr>
   <tr>
    <td class="required">Komentář</td>
    <td>
