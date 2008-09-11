@@ -20,6 +20,7 @@
 package cz.abclinuxu.persistence.extra.tags;
 
 import cz.abclinuxu.exceptions.InvalidInputException;
+import cz.abclinuxu.utils.TagTool;
 import java.util.List;
 
 /**
@@ -79,7 +80,7 @@ public abstract class TagExpression {
                     next = andC;
                 } else {
                     TagValue value = new TagValue(piece, not);
-                    tags.add(piece);
+                    tags.add(TagTool.getNormalizedId(piece));
                     next = value;
                 }
                 
