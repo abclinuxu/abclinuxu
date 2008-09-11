@@ -398,6 +398,123 @@ ModalWindow.prototype = {
 	}
 }
 
+function StitkyLink() {
+	var div = document.getElementById("tagfilter");
+	if (div) {
+		this.clink = Toolkit.appendElement(div, "a", null, null, "Zobrazit štítky");
+		this.clink.href = "#";
+		Toolkit.addEventListener(this.clink, "click", "showTags", this, this.clink);
+		
+		this.spanAttribs = Toolkit.appendElement(div, "span", null, null, " Logické operace: ");
+		var label = Toolkit.appendElement(this.spanAttribs, "label");
+		this.radioAnd = Toolkit.appendElement(label, "input", null, "radioAnd");
+		this.radioAnd.type = "radio";
+		this.radioAnd.name = "logicalOp";
+		this.radioAnd.checked = "checked";
+		Toolkit.appendElement(label, "span", null, null, "AND ");
+		
+		label = Toolkit.appendElement(this.spanAttribs, "label");
+		this.radioOr = Toolkit.appendElement(label, "input", null, "radioOr");
+		this.radioOr.type = "radio";
+		this.radioOr.name = "logicalOp";
+		Toolkit.appendElement(label, "span", null, null, " OR ");
+		
+		label = Toolkit.appendElement(this.spanAttribs, "label");
+		this.radioOr = Toolkit.appendElement(label, "input", null, "checkNot");
+		this.radioOr.type = "checkbox";
+		Toolkit.appendElement(label, "span", null, null, " NOT ");
+		
+		this.spanAttribs.setAttribute("style", "visibility: hidden");
+	}
+}
+
+StitkyLink.prototype = {
+	visible: false,
+	showTags: function(event, button) {
+		if (!this.visible) {
+			this.clink.innerHTML = "Skrýt štítky";
+			this.spanAttribs.setAttribute("style", "");
+			
+			this.div = document.getElementById("tagfilter");
+			this.ndiv = Toolkit.appendElement(this.div, "div", null, null, null);
+			new StitkySearch(Page.relationID, this.ndiv);
+			this.visible = true;
+		} else {
+			this.spanAttribs.setAttribute("style", "visibility: hidden");
+			this.clink.innerHTML = "Zobrazit štítky";
+			this.div.removeChild(this.ndiv);
+			this.visible = false;
+		}
+	}
+}
+
+function StitkySearch(nodeID, div) {
+	this.nodeID = nodeID;
+	this.div = div;
+	
+	var vyberStitku = Toolkit.appendElement(this.div, "table", "vyberStitku");
+	var row = vyberStitku.insertRow(0);
+	this.stitkySeznam = Toolkit.appendElement(row.insertCell(0), "select", "stitkySeznam");
+	this.stitkySeznam.size = this.seznamSize;
+	
+	this.stitkyOblibene = Toolkit.appendElement(row.insertCell(1), "div", "stitkyOblibene");
+	this.pridatButton = Toolkit.appendElement(this.div, "span", "pridatButton");
+	this.pridatButton.setAttribute("style", "visibility: hidden");
+	
+	Toolkit.appendElement(this.div, "p", "note", null, "Vybraný štítek bude automaticky přidán do filtru včetně nastavení logické operace.");
+	
+	var sseznam = new SeznamStitkuAJAX(this, this.nodeID);
+	var sfavorite = new OblibeneStitkyAJAX(this, this.nodeID);
+	
+	sseznam.pridatStitekMouse = this.pridatStitekMouseHandler;
+	sseznam.pridatStitekKeyboard = this.pridatStitekKeyboardHandler;
+	sfavorite.pridatStitek = this.pridatStitekHandler;
+	
+}
+
+function addSearchTag(stitek) {
+	var taglist = document.getElementById("tags");
+	var radioAnd = document.getElementById("radioAnd");
+	var radioOr = document.getElementById("radioOr");
+	var checkNot = document.getElementById("checkNot");
+	
+	var op = "";
+	if (radioAnd.checked)
+		op = "AND";
+	else if (radioOr.checked)
+		op = "OR";
+	if (checkNot.checked)
+		op = op+" NOT";
+
+	if (taglist.value != "")
+		taglist.value = taglist.value+" "+op;
+	if (stitek.indexOf(' ') != -1)
+		taglist.value = taglist.value+" \""+stitek+"\"";
+	else
+		taglist.value = taglist.value+" "+stitek;
+}
+
+StitkySearch.prototype = {
+	seznamSize: 12,
+ 
+	pridatStitekMouseHandler: function(event, seznam) {
+		if (seznam.selectedIndex >= 0 && !event.ctrlKey)
+			addSearchTag(seznam.options[seznam.selectedIndex].value);
+		return false;
+	},
+
+	pridatStitekHandler: function(event, stitekID) {
+		addSearchTag(stitekID);
+		return false;
+	},
+
+	pridatStitekKeyboardHandler: function(event, seznam) {
+		if (seznam.selectedIndex >= 0 && (event.charCode == 32 || (event.charCode == 0 && event.keyCode == 13)) || (!event.charCode && (event.keyCode == 13 || event.keyCode == 32))) {
+			addSearchTag(seznam.options[seznam.selectedIndex].value);
+			return false;
+		}
+	}
+}
 
 function Stitky() {
 	var seznamStitku = document.getElementById("prirazeneStitky");
@@ -742,6 +859,7 @@ function init(event, gecko) {
 	}
 
 	new Stitky();
+	new StitkyLink();
 }
 
 
