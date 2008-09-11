@@ -48,9 +48,12 @@
 <@lib.showMessages/>
 
 <form action="" method="get">
-Filtr: <@lib.showHelp>Filtruje dotazy podle přiřazených štítků. Můžete použít logické operátory AND, OR a NOT a závorky.</@lib.showHelp>
-<input type="text" name="tags" value="${PARAMS.tags?if_exists?html}" size="50"> <input type="submit" value="Filtruj">
-<div class="error">${ERRORS.tags?if_exists}</div>
+<div id="tagfilter">
+    Filtr: <@lib.showHelp>Filtruje dotazy podle přiřazených štítků. Můžete použít logické operátory AND, OR a NOT a závorky.</@lib.showHelp>
+    <input type="text" name="tags" id="tags" value="${PARAMS.tags?if_exists?html}" size="50"> <input type="submit" value="Filtruj">
+    <div class="error">${ERRORS.tags?if_exists}</div>
+    <br>
+</div>
 </form>
 
 <#if (DIZS.total > 0) >
