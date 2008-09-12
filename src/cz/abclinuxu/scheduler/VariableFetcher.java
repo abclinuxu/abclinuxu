@@ -1038,6 +1038,15 @@ public class VariableFetcher extends TimerTask implements Configurable {
         }
     }
     
+    public void refreshForumQuestions(int rid) {
+        int maximum = (Integer) maxSizes.get(KEY_QUESTION);
+        Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
+        List<Relation> dizs = sqlTool.findDiscussionRelationsWithParent(rid, qualifiers);
+        Tools.syncList(dizs);
+
+        freshForumQuestions.put(rid, dizs);
+    }
+    
     public void refreshQuestions() {
         try {
             int maximum = (Integer) maxSizes.get(KEY_QUESTION);

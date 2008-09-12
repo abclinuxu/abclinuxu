@@ -372,6 +372,7 @@ public class EditDiscussion implements AbcAction {
         FeedGenerator.updateForum(relation.getId());
         FeedGenerator.updateForumAll();
         VariableFetcher.getInstance().refreshQuestions();
+        VariableFetcher.getInstance().refreshForumQuestions(relation.getId());
 
         if (redirect) {
             urlUtils.redirect(response, Tools.getUrlForDiscussion(rel2));
@@ -562,6 +563,7 @@ public class EditDiscussion implements AbcAction {
                 FeedGenerator.updateForum(relation.getUpper());
                 FeedGenerator.updateForumAll();
                 VariableFetcher.getInstance().refreshQuestions();
+                VariableFetcher.getInstance().refreshForumQuestions(relation.getUpper());
             }
         }
 
