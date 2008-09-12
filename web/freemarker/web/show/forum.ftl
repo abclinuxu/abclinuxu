@@ -19,23 +19,31 @@
 <#include "../header.ftl">
 
 <#if USER?exists>
-    <form method="post" action="/EditUser/${USER.id}">
-    <div style="float: right">
-        <#assign questionCount=TOOL.getUserForums(USER).get(RELATION.id)?default(0)>
-        <#if questionCount!=0>
-            <input type="image" title="Odlepit" src="/images/actions/remove.png" style="background-color:transparent">
-        <#else>
-            <input type="image" title="Přilepit" src="/images/actions/add.png" style="background-color:transparent">
+    <#assign single_mode=false>
+    <#if USER?exists>
+        <#if TOOL.xpath(USER, "/data/profile/forum_mode")?default("")=="single">
+            <#assign single_mode=true>
         </#if>
-        <input type="hidden" name="action" value="toggleForumHP">
-        <input type="hidden" name="rid" value="${RELATION.id}">
-        <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER)}">
+    </#if>
+    <#if !single_mode>
+        <form method="post" action="/EditUser/${USER.id}">
+        <div style="float: right">
+            <#assign questionCount=TOOL.getUserForums(USER).get(RELATION.id)?default(0)>
+            <#if questionCount!=0>
+                <input type="image" title="Odlepit" src="/images/actions/remove.png" style="background-color:transparent">
+            <#else>
+                <input type="image" title="Přilepit" src="/images/actions/add.png" style="background-color:transparent">
+            </#if>
+            <input type="hidden" name="action" value="toggleForumHP">
+            <input type="hidden" name="rid" value="${RELATION.id}">
+            <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER)}">
+        </div>
+     </#if>
 </#if>
-</div>
 
 <h1 align="center">Fórum ${CATEGORY.title}</h1>
 
-<#if USER?exists></form></#if>
+<#if USER?exists && !single_mode></form></#if>
 
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
 <p>

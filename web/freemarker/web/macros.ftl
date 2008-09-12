@@ -504,7 +504,7 @@
     </#list>
 </#macro>
 
-<#macro showForum rid numQuestions onHP showAdvertisement showAJAXControls>
+<#macro showForum rid numQuestions onHP showAdvertisement showAJAXControls singleMode>
     <#if rid!=0>
         <#local forum = VARS.getFreshQuestions(numQuestions, rid),
                 feed = FEEDS.getForumFeedUrl(rid)?default("UNDEF")>
@@ -541,7 +541,7 @@
                 <#if feed!="UNDEF">
                    &nbsp;<a href="${feed}"><img src="/images/site2/feed12.png" width="12" height="12" border="0" alt="<#if rid!=0>${TOOL.childName(relation)}, </#if>RSS feed"></a>
                 </#if>
-                <#if USER?exists && rid!=0>
+                <#if USER?exists && rid!=0 && !singleMode>
                     <#if !onHP>
                         <#local uforums=TOOL.getUserForums(USER)>
                         <#list uforums.keySet() as key><#if key==rid><#local onHP=true></#if></#list>

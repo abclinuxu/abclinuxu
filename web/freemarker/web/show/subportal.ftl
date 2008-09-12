@@ -90,7 +90,13 @@ ${content}
 
 <#if TOOL.xpath(RELATION.child, "/data/forumHidden")?default("no")!="yes">
     <#assign forum_rid=TOOL.xpath(RELATION.child,"/data/forum")>
-    <@lib.showForum forum_rid?eval, VARS.defaultSizes.question, false, true, false />
+    <#assign single_mode=false>
+    <#if USER?exists>
+        <#if TOOL.xpath(USER, "/data/profile/forum_mode")?default("")=="single">
+            <#assign single_mode=true>
+        </#if>
+    </#if>
+    <@lib.showForum forum_rid?eval, VARS.defaultSizes.question, false, true, false, single_mode />
 </#if>
 
 <#assign FEEDS = VARS.getSubportalFeeds(USER?if_exists,RELATION.id)>

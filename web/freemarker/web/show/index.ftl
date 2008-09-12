@@ -87,11 +87,11 @@
     <#list forums.entrySet() as forum>
         <#if forum.value gt 0>
             <div style="clear: right"></div>
-            <@lib.showForum forum.key, forum.value, true, (forum_index==0), true/>
+            <@lib.showForum forum.key, forum.value, true, (forum_index==0), true, single_mode/>
         </#if>
     </#list>
 <#else>
-    <@lib.showForum 0, 0, true, true, true/>
+    <@lib.showForum 0, 0, true, true, true, single_mode/>
 </#if>
 
 <#assign STORIES=VARS.getFreshStories(USER?if_exists)>
