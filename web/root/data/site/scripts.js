@@ -928,7 +928,10 @@ Forum.prototype = {
         var paragraph = Toolkit.createElement(document, "p");
         paragraph.setAttribute("style", "text-align: center; font-size: small");
 
-        var btn = Toolkit.appendElement(paragraph, "button", null, this.rid, "rozbalit");
+        var btn = Toolkit.appendElement(paragraph, "input");
+        btn.type = "button";
+        btn.value = "rozbalit";
+        
         Toolkit.addEventListener(btn, "click", "expand", this);
         
         Toolkit.appendElement(paragraph, "span", null, null, " dalších ");
@@ -950,12 +953,16 @@ Forum.prototype = {
         var paragraph = Toolkit.createElement(document, "p");
         paragraph.setAttribute("style", "text-align: center; font-size: small");
         
-        var btn = Toolkit.appendElement(paragraph, "button", null, this.rid, "sbalit");
+        var btn = Toolkit.appendElement(paragraph, "input");
+        btn.type = "button";
+        btn.value = "sbalit";
         Toolkit.addEventListener(btn, "click", "collapse", this);
         
         Toolkit.appendElement(paragraph, "span", null, null, " | ");
         
-        var save = Toolkit.appendElement(paragraph, "button", null, this.rid, "uložit");
+        var save = Toolkit.appendElement(paragraph, "input");
+        save.type = "button";
+        save.value = "uložit";
         Toolkit.addEventListener(save, "click", "save", this);
         
         Toolkit.appendElement(paragraph, "span", null, null, " nový stav (zobrazovat ");
