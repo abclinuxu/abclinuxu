@@ -58,6 +58,14 @@ values: user IDs
 mapping: 1:n
 purpose: user likes this item
 
+ITEM.VIDEO
+============
+
+name: favourited_by
+values: user IDs
+mapping: 1:n
+purpose: user likes this item
+
 ITEM.SUBPORTAL
 ============
 
