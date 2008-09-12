@@ -141,7 +141,12 @@
        <#assign forums=TOOL.getUserForums(MANAGED)>
        <table>
         <#list forums.entrySet() as forum>
-            <tr><td>${TOOL.childName(TOOL.createRelation(forum.key))}</td><td><input type="text" name="discussions_${forum.key}" value="${forum.value}" size="3" tabindex="7"></td></tr>
+            <#if forum.key gt 0>
+                <#assign name=TOOL.childName(TOOL.createRelation(forum.key))>
+            <#elseif forum.key==-1>
+                <#assign name="Poradny ze skupin">
+            </#if>
+            <tr><td>${name}</td><td><input type="text" name="discussions_${forum.key}" value="${forum.value}" size="3" tabindex="7"></td></tr>
         </#list>
        </table>
    </#if>

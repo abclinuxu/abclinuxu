@@ -520,18 +520,20 @@
           <tr>
             <td class="td-nazev">
               <span class="meta-odkazy">
-                 <#if rid!=0>
+                 <#if rid gt 0>
                      <a href="/forum/EditDiscussion?action=addQuez&amp;rid=${rid}">Položit dotaz</a>,
                      <a href="/forum/dir/${rid}?from=${FORUM?size}&amp;count=20">Starší dotazy</a>
-                 <#else>
+                 <#elseif rid==0>
                      <a href="/History?type=discussions&amp;from=${FORUM?size}&amp;count=20">Starší dotazy</a>
                  </#if>
               </span>
-              <#if rid!=0>
+              <#if rid gt 0>
                   <#local relation=TOOL.createRelation(rid)>
                   <span class="st_nadpis"><a href="${relation.url}" title="${TOOL.childName(relation)}">${TOOL.childName(relation)}</a></span>
-              <#else>
+              <#elseif rid==0>
                   <span class="st_nadpis"><a href="/poradna" title="Poradna">Poradna</a></span>
+              <#elseif rid==-1>
+                  <span class="st_nadpis"><a href="/skupiny" title="Poradny ze skupin">Poradny ze skupin</a></span>
               </#if>
             </td>
             <td class="td-meta">Stav</td>

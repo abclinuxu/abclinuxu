@@ -1033,6 +1033,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             }
             
             freshForumQuestions = map;
+            refreshCombinedSubportalQuestions();
         } catch (Exception e) {
             log.error("Selhalo nacitani diskuzi pro sekce", e);
         }
@@ -1045,6 +1046,24 @@ public class VariableFetcher extends TimerTask implements Configurable {
         Tools.syncList(dizs);
 
         freshForumQuestions.put(rid, dizs);
+        refreshCombinedSubportalQuestions();
+    }
+    
+    /**
+     * This function is to be called only from refreshForumQuestions
+     */
+    public void refreshCombinedSubportalQuestions() {
+        List<Relation> combined = new ArrayList(40*freshForumQuestions.size());
+        int maximum = (Integer) maxSizes.get(KEY_QUESTION);
+        
+        for(Map.Entry<Integer,List> entry : freshForumQuestions.entrySet()) {
+            if (mainForums.containsKey(entry.getKey()) || entry.getKey() < 0)
+                continue;
+            combined.addAll(entry.getValue());
+        }
+        
+        Sorters2.byDate(combined, Sorters2.DESCENDING);
+        freshForumQuestions.put(-1, getSubList(combined, maximum));
     }
     
     public void refreshQuestions() {
