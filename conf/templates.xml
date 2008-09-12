@@ -595,6 +595,9 @@
         <action name="item" content="/show/video.ftl">
             <var name="TITLE" value='${ITEM.title}' type="Lazy" />
         </action>
+        <action name="users" content="/show/video_users.ftl">
+            <var name="TITLE" value='Seznam fanoušků videa ${ITEM.title}' type="Lazy"/>
+        </action>
         <action name="list" content="/show/videos.ftl">
             <var name="TITLE" value='Videa' />
         </action>

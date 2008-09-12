@@ -21,6 +21,7 @@ package cz.abclinuxu.servlets.html.view;
 
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -35,6 +36,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
 import java.util.ArrayList;
@@ -52,6 +54,9 @@ public class ViewVideo implements AbcAction {
     public static final String PARAM_FROM = "from";
     
     public static final String VAR_ITEMS = "ITEMS";
+    public static final String VAR_ITEM = "ITEM";
+    
+    public static final String ACTION_USERS = "users";
     
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -103,6 +108,20 @@ public class ViewVideo implements AbcAction {
     }
     
     public static String processItem(HttpServletRequest request, Relation relation, Map env) {
-        return FMTemplateSelector.select("ViewVideo", "item", env, request);
+        Item item = (Item) relation.getChild();
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String action = (String) params.get(PARAM_ACTION);
+        
+        env.put(VAR_ITEM, item);
+        
+        if (ACTION_USERS.equals(action)) {
+            return FMTemplateSelector.select("ViewVideo", "users", env, request);
+        } else {
+            User user = (User) env.get(Constants.VAR_USER);
+            if (user == null || user.getId() != item.getOwner())
+                ReadRecorder.log(item, Constants.COUNTER_READ, env);
+
+            return FMTemplateSelector.select("ViewVideo", "item", env, request);
+        }
     }
 }

@@ -29,6 +29,7 @@ import cz.abclinuxu.data.view.VideoServer;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.AbcAction;
@@ -53,8 +54,10 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.servlet.http.HttpServletRequest;
@@ -84,6 +87,7 @@ public class EditVideo implements AbcAction, Configurable {
     public static final String ACTION_EDIT_STEP2 = "edit2";
     public static final String ACTION_REMOVE = "remove";
     public static final String ACTION_REMOVE_STEP2 = "remove2";
+    public static final String ACTION_I_LIKE = "favourite";
     
     public static final String PREF_URLS = "urls";
     public static final String PREF_PLAYERS = "players";
@@ -108,6 +112,11 @@ public class EditVideo implements AbcAction, Configurable {
         
         Tools.sync(relation);
         env.put(ShowObject.VAR_RELATION, relation);
+        
+        if (ACTION_I_LIKE.equals(action)) {
+            ActionProtector.ensureContract(request, EditVideo.class, true, false, false, true);
+            return actionILike(request, response, env);
+        }
         
         boolean isBlogOwner = false;
         if (relation.getChild() instanceof Item) {
@@ -275,6 +284,30 @@ public class EditVideo implements AbcAction, Configurable {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(upperRel));
         
+        return null;
+    }
+    
+    public String actionILike(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        User user = (User) env.get(Constants.VAR_USER);
+        Persistence persistence = PersistenceFactory.getPersistence();
+        Set<String> users = item.getProperty(Constants.PROPERTY_FAVOURITED_BY);
+
+        // see whether user wants to remove or add himself
+        String userid = Integer.toString(user.getId());
+        if (!users.contains(userid))
+            item.addProperty(Constants.PROPERTY_FAVOURITED_BY, userid);
+        else
+            item.removePropertyValue(Constants.PROPERTY_FAVOURITED_BY, userid);
+
+        Date originalUpdated = item.getUpdated();
+        persistence.update(item);
+        SQLTool.getInstance().setUpdatedTimestamp(item, originalUpdated);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+
         return null;
     }
     
