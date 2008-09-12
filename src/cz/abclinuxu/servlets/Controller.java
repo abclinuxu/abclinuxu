@@ -93,6 +93,12 @@ public class Controller extends HttpServlet implements Configurable {
             UpdateStatistics.getInstance().recordView(page, 1);
     }
 
+    /*
+    TODOs:
+        1) rewrite using grammar with antlr, it will be much faster
+        2) find better place, we match here even deprecated URIs that will be redirected
+        or we cannot match URIs like /show/1234
+    */
     private String detectHtmlPage(String uri) {
         if (uri.equals("/"))
             return Constants.PAGE_INDEX;
@@ -100,7 +106,7 @@ public class Controller extends HttpServlet implements Configurable {
             return Constants.PAGE_FORUM;
         if (uri.startsWith(UrlUtils.PREFIX_BLOG))
             return Constants.PAGE_BLOGS;
-        if (uri.startsWith(UrlUtils.PREFIX_CLANKY))
+        if (uri.startsWith(UrlUtils.PREFIX_CLANKY) || uri.startsWith("/serialy") || uri.startsWith("/autori"))
             return Constants.PAGE_ARTICLES;
         if (uri.startsWith(UrlUtils.PREFIX_NEWS))
             return Constants.PAGE_NEWS;
@@ -134,11 +140,17 @@ public class Controller extends HttpServlet implements Configurable {
             return Constants.PAGE_EVENTS;
         if (uri.startsWith(UrlUtils.PREFIX_BAZAAR))
             return Constants.PAGE_BAZAAR;
+        if (uri.startsWith("/lide") || uri.startsWith("/Profile"))
+            return Constants.PAGE_BAZAAR;
         if (uri.startsWith("/hry"))
             return Constants.PAGE_GAMES;
         if (uri.startsWith("/nej"))
             return Constants.PAGE_TOP;
-        log.warn("Loguji nezname URI " + uri);
+        if (uri.startsWith("/revize"))
+            return Constants.PAGE_WIKITOOLS;
+        if (uri.startsWith("/History"))
+            return Constants.PAGE_HISTORY;
+//        log.warn("Loguji nezname URI " + uri);
         return Constants.PAGE_UNKNOWN;
     }
 

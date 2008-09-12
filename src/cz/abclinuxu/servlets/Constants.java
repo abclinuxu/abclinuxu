@@ -34,9 +34,9 @@ public class Constants implements Configurable {
         Constants constants = new Constants();
         ConfigurationManager.getConfigurator().configureAndRememberMe(constants);
     }
-    
+
     //static String[] DYNAMIC_FIELDS = { "CAT_", "ITEM_", "REL_", "GROUP_", "USER_" };
-    
+
     public static int CAT_ARTICLES;
     public static int CAT_HARDWARE;
     public static int CAT_SOFTWARE;
@@ -273,11 +273,12 @@ public class Constants implements Configurable {
     public static final String PAGE_GAMES = "hry";
     public static final String PAGE_GROUPS = "skupiny";
     public static final String PAGE_HARDWARE = "hardware";
-    public static final String PAGE_HOSTING = "hosting";
+    public static final String PAGE_HISTORY = "historie";
     public static final String PAGE_INDEX = "homepage";
     public static final String PAGE_NEWS = "zpravicky";
     public static final String PAGE_PERSONALITIES = "kdo-je";
     public static final String PAGE_POLLS = "ankety";
+    public static final String PAGE_PROFILE = "profily";
     public static final String PAGE_SOFTWARE = "software";
     public static final String PAGE_SCHOOLBOOK = "ucebnice";
     public static final String PAGE_SCREENSHOTS = "desktopy";
@@ -287,6 +288,7 @@ public class Constants implements Configurable {
     public static final String PAGE_UNKNOWN = "neznamy";
     public static final String PAGE_VIDEOS = "videos";
     public static final String PAGE_WAP = "wap";
+    public static final String PAGE_WIKITOOLS = "wikitools";
 
     public static final String EMAIL_FORUM = "email-forum";
     public static final String EMAIL_WEEKLY = "email-weekly";
@@ -348,10 +350,10 @@ public class Constants implements Configurable {
     public static final String COUNTER_READ = "read";
     public static final String COUNTER_VISIT = "visit";
     public static final String COUNTER_PLAY = "play";
-    
+
     public void configure(Preferences prefs) throws ConfigurationException {
         Field[] fields = Constants.class.getDeclaredFields();
-        
+
         try {
             for (int i = 0; i < fields.length; i++) {
                 /*boolean found = false;
@@ -365,10 +367,10 @@ public class Constants implements Configurable {
                 if (!found)
                     continue;
                 */
-                
+
                 if (!fields[i].getType().equals(int.class))
                     continue;
-                
+
                 int value = prefs.getInt(fields[i].getName(), -1);
                 fields[i].setInt(null, value);
             }
