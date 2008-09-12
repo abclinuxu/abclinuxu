@@ -856,10 +856,21 @@ Forum.prototype = {
     paragraph: null,
     servletPath: "/ajax/forum/questions",
     expand: function() {
-        this.currentQuestions += parseInt(this.input.value);
+        var prev = this.currentQuestions;
+        var add = parseInt(this.input.value);
         
-        if (this.currentQuestions > this.maxQuestions)
+        if (add == 0)
+            return;
+        
+        this.currentQuestions += add;
+        
+        if (this.currentQuestions > this.maxQuestions) {
             this.currentQuestions = this.maxQuestions;
+            if (prev == this.currentQuestions) {
+                alert("Více dotazů nelze zobrazit!");
+                return;
+            }
+        }
         
         this.init();
         this.request.send(null);
