@@ -69,24 +69,27 @@ public class Forum implements AbcAction {
         try {
             if (user == null)
                 throw new InvalidInputException("Nejste přihlášen!");
-            if (rid == 0)
-                throw new InvalidInputException("Chybí číslo relace!");
             if (questions > max || questions < 0)
                 throw new InvalidInputException("Zadejte číslo v rozsahu 0 - " + max + "!");
 
-            Map<Integer,Integer> mainForums = VariableFetcher.getInstance().getMainForums();
-            Element forumsElem = DocumentHelper.makeElement(user.getData(), "/data/forums");
-            
-            Element elem = (Element) forumsElem.selectSingleNode("forum[text()='"+rid+"']");
-            if (elem == null) {
-                elem = forumsElem.addElement("forum");
-                elem.setText(String.valueOf(rid));
-            }
+            if (rid != 0) {
+                Map<Integer,Integer> mainForums = VariableFetcher.getInstance().getMainForums();
+                Element forumsElem = DocumentHelper.makeElement(user.getData(), "/data/forums");
 
-            if (questions == 0 && !mainForums.containsKey(rid))
-                elem.detach();
-            else
-                elem.addAttribute("questions", String.valueOf(questions));
+                Element elem = (Element) forumsElem.selectSingleNode("forum[text()='"+rid+"']");
+                if (elem == null) {
+                    elem = forumsElem.addElement("forum");
+                    elem.setText(String.valueOf(rid));
+                }
+
+                if (questions == 0 && !mainForums.containsKey(rid))
+                    elem.detach();
+                else
+                    elem.addAttribute("questions", String.valueOf(questions));
+            } else {
+                Element elem = DocumentHelper.makeElement(user.getData(), "/data/settings/index_discussions");
+                elem.setText(String.valueOf(questions));
+            }
             
             persistence.update(user);
             response.getWriter().print("Nastaveno.");

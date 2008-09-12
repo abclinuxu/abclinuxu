@@ -112,33 +112,45 @@
   <tr>
    <td class="required">Počet diskusí na úvodní stránce</td>
    <td>
-   <#assign forums=TOOL.getUserForums(USER)>
-   <table>
-    <#list forums.entrySet() as forum>
-        <tr><td>${TOOL.childName(TOOL.createRelation(forum.key))}</td><td><input type="text" name="discussions_${forum.key}" value="${forum.value}" size="3" tabindex="7"></td></tr>
-    </#list>
-   </table>
-   <!--
-    <select name="discussions" tabindex="7">
-     <#assign discussions=PARAMS.discussions?default("20")>
-     <option value="-2"<#if discussions=="-2">SELECTED</#if>>default</option>
-     <option value="0" <#if discussions=="0">SELECTED</#if>>žádné</option>
-     <option value="5"<#if discussions=="5">SELECTED</#if>>5</option>
-     <option value="10"<#if discussions=="10">SELECTED</#if>>10</option>
-     <option value="15"<#if discussions=="15">SELECTED</#if>>15</option>
-     <option value="20"<#if discussions=="20">SELECTED</#if>>20</option>
-     <option value="25"<#if discussions=="25">SELECTED</#if>>25</option>
-     <option value="30"<#if discussions=="30">SELECTED</#if>>30</option>
-     <option value="40"<#if discussions=="40">SELECTED</#if>>40</option>
-     <option value="50"<#if discussions=="50">SELECTED</#if>>50</option>
-    </select>
-    -->
+   <#assign single_mode=TOOL.xpath(MANAGED, "/data/profile/forum_mode")?default("")=="single">
+   <#if !single_mode>
+            samostatné poradny
+            |
+            <a href="${URL.noPrefix("/EditUser/"+USER.id+"?action=changeForumMode&amp;forumMode=single"+TOOL.ticket(USER,false))}">všechny diskuze v jednom výpisu</a>
+        <#else>
+            <a href="${URL.noPrefix("/EditUser/"+USER.id+"?action=changeForumMode&amp;forumMode=split"+TOOL.ticket(USER,false))}">samostatné poradny</a>
+            |
+            všechny diskuze v jednom výpisu
+        </#if>
+        <br>
+   <#if single_mode>
+        <select name="discussions" tabindex="7">
+         <#assign discussions=PARAMS.discussions?default("20")>
+         <option value="-2"<#if discussions=="-2">SELECTED</#if>>default</option>
+         <option value="0" <#if discussions=="0">SELECTED</#if>>žádné</option>
+         <option value="5"<#if discussions=="5">SELECTED</#if>>5</option>
+         <option value="10"<#if discussions=="10">SELECTED</#if>>10</option>
+         <option value="15"<#if discussions=="15">SELECTED</#if>>15</option>
+         <option value="20"<#if discussions=="20">SELECTED</#if>>20</option>
+         <option value="25"<#if discussions=="25">SELECTED</#if>>25</option>
+         <option value="30"<#if discussions=="30">SELECTED</#if>>30</option>
+         <option value="40"<#if discussions=="40">SELECTED</#if>>40</option>
+         <option value="50"<#if discussions=="50">SELECTED</#if>>50</option>
+        </select>
+   <#else>
+       <#assign forums=TOOL.getUserForums(MANAGED)>
+       <table>
+        <#list forums.entrySet() as forum>
+            <tr><td>${TOOL.childName(TOOL.createRelation(forum.key))}</td><td><input type="text" name="discussions_${forum.key}" value="${forum.value}" size="3" tabindex="7"></td></tr>
+        </#list>
+       </table>
+   </#if>
    </td>
   </tr>
   <tr>
    <td colspan="2">Zde máte možnost ovlivnit počet zobrazených diskusí
-   na úvodní stránce. Nula znamená, že se dané fórum na úvodní stránce
-   zobrazovat nebude.
+   na úvodní stránce. <#if !single_mode>Nula znamená, že se dané fórum na úvodní stránce
+   zobrazovat nebude.</#if>
    </td>
   </tr>
 

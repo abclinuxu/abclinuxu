@@ -139,6 +139,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_UID2 = "uid2";
     public static final String PARAM_TOKEN = "token";
     public static final String PARAM_KEY = "key";
+    public static final String PARAM_FORUM_MODE = "forumMode";
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
@@ -192,6 +193,7 @@ public class EditUser implements AbcAction {
     public static final String ACTION_CHANGE_FORGOTTEN_PASSWORD = "changeForgottenPassword";
     public static final String ACTION_CHANGE_FORGOTTEN_PASSWORD_STEP2 = "changeForgottenPassword2";
     public static final String ACTION_CHANGE_STYLE = "changeStyle";
+    public static final String ACTION_CHANGE_FORUM_MODE = "changeForumMode";
 
     private LdapUserManager ldapManager = LdapUserManager.getInstance();
 
@@ -346,6 +348,11 @@ public class EditUser implements AbcAction {
         if ( action.equals(ACTION_EDIT_GPG_STEP2) ) {
             ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
             return actionEditGPG2(request, response, env);
+        }
+        
+        if (action.equals(ACTION_CHANGE_FORUM_MODE)) {
+            ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
+            return actionChangeForumMode(request, response, env);
         }
 
         // these actions are restricted to admin only
@@ -771,9 +778,9 @@ public class EditUser implements AbcAction {
         if ( node!=null )
             params.put(PARAM_COOKIE_VALIDITY, node.getText());
 
-        //node = document.selectSingleNode("/data/settings/index_discussions");
-        //if ( node!=null )
-        //    params.put(PARAM_DISCUSSIONS_COUNT, node.getText());
+        node = document.selectSingleNode("/data/settings/index_discussions");
+        if ( node!=null )
+            params.put(PARAM_DISCUSSIONS_COUNT, node.getText());
 
         node = document.selectSingleNode("/data/settings/index_screenshots");
         if ( node!=null )
@@ -1049,8 +1056,34 @@ public class EditUser implements AbcAction {
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
     }
+    
+    protected String actionChangeForumMode(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        User managed = (User) env.get(VAR_MANAGED);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        URL referer = ServletUtils.getReferer(request);
+        Persistence persistence = PersistenceFactory.getPersistence();
+        String url;
+        
+        setForumMode(params, managed);
+        
+        persistence.update(managed);
+        
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
+        
+        if (referer != null)
+            url = referer.toString();
+        else
+            url = "/";
+        
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, url);
+        return null;
+    }
 
-        protected String actionChangeStyle(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String actionChangeStyle(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         URL referer = ServletUtils.getReferer(request);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
@@ -2044,30 +2077,40 @@ public class EditUser implements AbcAction {
         int max = (Integer) maxSizes.get(VariableFetcher.KEY_QUESTION);
         boolean ok = true;
 
-        Element forumsElem = DocumentHelper.makeElement(user.getData(), "/data/forums");
-        Map<Integer,Integer> mainForums = VariableFetcher.getInstance().getMainForums();
-        Map<Integer,Integer> forums = Tools.getUserForums(user);
+        boolean singleMode = false;
+        Element modeElem = (Element) user.getData().selectSingleNode("/data/profile/forum_mode");
+        
+        if (modeElem != null)
+            singleMode = "single".equals(modeElem.getText());
+        
+        if (!singleMode) {
+            Element forumsElem = DocumentHelper.makeElement(user.getData(), "/data/forums");
+            Map<Integer,Integer> mainForums = VariableFetcher.getInstance().getMainForums();
+            Map<Integer,Integer> forums = Tools.getUserForums(user);
 
-        for (Integer rid : forums.keySet()) {
-            String paramName = PARAM_DISCUSSIONS_COUNT + "_" + rid;
-            int value = Misc.parseInt((String) params.get(paramName), 0);
+            for (Integer rid : forums.keySet()) {
+                String paramName = PARAM_DISCUSSIONS_COUNT + "_" + rid;
+                int value = Misc.parseInt((String) params.get(paramName), 0);
 
-            if (value < 0 || value > max) {
-                ServletUtils.addError(paramName, "Zadejte číslo v rozsahu 0 - " + max + "!", env, null);
-                ok = false;
-                continue;
+                if (value < 0 || value > max) {
+                    ServletUtils.addError(paramName, "Zadejte číslo v rozsahu 0 - " + max + "!", env, null);
+                    ok = false;
+                    continue;
+                }
+
+                Element elem = (Element) forumsElem.selectSingleNode("forum[text()='"+rid+"']");
+                if (elem == null) {
+                    elem = forumsElem.addElement("forum");
+                    elem.setText(String.valueOf(rid));
+                }
+
+                if (value == 0 && !mainForums.containsKey(rid))
+                    elem.detach();
+                else
+                    elem.addAttribute("questions", String.valueOf(value));
             }
-
-            Element elem = (Element) forumsElem.selectSingleNode("forum[text()='"+rid+"']");
-            if (elem == null) {
-                elem = forumsElem.addElement("forum");
-                elem.setText(String.valueOf(rid));
-            }
-
-            if (value == 0 && !mainForums.containsKey(rid))
-                elem.detach();
-            else
-                elem.addAttribute("questions", String.valueOf(value));
+        } else {
+            return setLimitedSize(params, PARAM_DISCUSSIONS_COUNT, user.getData(), "/data/settings/index_discussions", 0, max, env);
         }
 
         return ok;
@@ -2412,6 +2455,20 @@ public class EditUser implements AbcAction {
         
         Element gpg = DocumentHelper.makeElement(user.getData(), "/data/profile/gpg");
         gpg.setText(fileName);
+        return true;
+    }
+    
+    private boolean setForumMode(Map params, User user) {
+        String mode = (String) params.get(PARAM_FORUM_MODE);
+        
+        if ("single".equals(mode)) {
+            Element emode = DocumentHelper.makeElement(user.getData(), "/data/profile/forum_mode");
+            emode.setText(mode);
+        } else {
+            Node node = user.getData().selectSingleNode("/data/profile/forum_mode");
+            if (node != null)
+                node.detach();
+        }
         return true;
     }
 

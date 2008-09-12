@@ -1,5 +1,10 @@
 <#import "../macros.ftl" as lib>
-<#assign questions=VARS.getFreshQuestions(PARAMS.questions?eval, PARAMS.rid?eval), FORUM=TOOL.analyzeDiscussions(questions)>
+<#if PARAMS.rid!="0">
+    <#assign questions=VARS.getFreshQuestions(PARAMS.questions?eval, PARAMS.rid?eval)>
+<#else>
+    <#assign questions=VARS.getFreshQuestions(PARAMS.questions?eval)>
+</#if>
+<#assign FORUM=TOOL.analyzeDiscussions(questions)>
 <#list FORUM as diz>
 <tr>
     <td><a href="${diz.url}">${TOOL.limit(diz.title,60,"...")}</a></td>

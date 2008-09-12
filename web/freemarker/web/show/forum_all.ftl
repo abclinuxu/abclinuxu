@@ -44,7 +44,7 @@ Teprve když neuspějete, položte nový dotaz.</p>
 
 <h2>Přehled aktuálních diskusí</h2>
 
-<#assign questions=TOOL.analyzeDiscussions(VARS.getFreshQuestions())>
+<#assign questions=TOOL.analyzeDiscussions(VARS.getFreshQuestions(USER?if_exists))>
 
 <table class="ds">
 <thead>

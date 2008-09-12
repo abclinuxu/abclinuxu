@@ -64,13 +64,35 @@
 
 <#flush>
 
-<#assign forums=TOOL.getUserForums(USER)>
-<#list forums.entrySet() as forum>
-    <#if forum.value gt 0>
-        <div style="clear: right"></div>
-        <@lib.showForum forum.key, forum.value, true, (forum_index==0), true/>
+<#assign single_mode=false>
+<#if USER?exists>
+    <#if TOOL.xpath(USER, "/data/profile/forum_mode")?default("")=="single">
+        <#assign single_mode=true>
     </#if>
-</#list>
+    <small>
+    <#if !single_mode>
+        samostatné poradny
+        |
+        <a href="${URL.noPrefix("/EditUser/"+USER.id+"?action=changeForumMode&amp;forumMode=single"+TOOL.ticket(USER,false))}">všechny diskuze v jednom výpisu</a>
+    <#else>
+        <a href="${URL.noPrefix("/EditUser/"+USER.id+"?action=changeForumMode&amp;forumMode=split"+TOOL.ticket(USER,false))}">samostatné poradny</a>
+        |
+        všechny diskuze v jednom výpisu
+    </#if>
+    </small>
+</#if>
+
+<#if !single_mode>
+    <#assign forums=TOOL.getUserForums(USER)>
+    <#list forums.entrySet() as forum>
+        <#if forum.value gt 0>
+            <div style="clear: right"></div>
+            <@lib.showForum forum.key, forum.value, true, (forum_index==0), true/>
+        </#if>
+    </#list>
+<#else>
+    <@lib.showForum 0, 0, true, true, true/>
+</#if>
 
 <#assign STORIES=VARS.getFreshStories(USER?if_exists)>
 <#if (STORIES?size>0) >

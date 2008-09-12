@@ -300,7 +300,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * according to user preference or system setting.
      */
     public List getFreshQuestions(int count, int rid) {
-        if (freshQuestions == null)
+        if (freshForumQuestions == null)
             return Collections.EMPTY_LIST;
         
         List questions = freshForumQuestions.get(rid);
@@ -311,11 +311,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
             return getSubList(questions, count);
     }
     
-    public List getFreshQuestions() {
-        int limit = maxSizes.get(KEY_QUESTION);
-        return getSubList(freshQuestions, limit);
+    public List getFreshQuestions(User user) {
+        int userLimit = getObjectCountForUser(user, KEY_QUESTION, "/data/settings/index_discussions");
+        return getSubList(freshQuestions, userLimit);
     }
-
+    
+    public List getFreshQuestions(int count) {
+        return getSubList(freshQuestions, count);
+    }
     
     /**
      * List of the most fresh frequently asked question relations according to user preference or system setting.

@@ -505,9 +505,14 @@
 </#macro>
 
 <#macro showForum rid numQuestions onHP showAdvertisement showAJAXControls>
-    <#local forum = VARS.getFreshQuestions(numQuestions, rid),
-            feed = FEEDS.getForumFeedUrl(rid)?default("UNDEF"),
-            FORUM=TOOL.analyzeDiscussions(forum)>
+    <#if rid!=0>
+        <#local forum = VARS.getFreshQuestions(numQuestions, rid),
+                feed = FEEDS.getForumFeedUrl(rid)?default("UNDEF")>
+    <#else>
+        <#local forum = VARS.getFreshQuestions(USER?if_exists),
+                feed = FEEDS.getForumFeedUrl(rid)?default("UNDEF")>
+    </#if>
+    <#local FORUM=TOOL.analyzeDiscussions(forum)>
 
       <table class="ds" id="forum_table_${rid}">
        <#if USER?exists><form method="post" action="/EditUser/${USER.id}"></#if>
@@ -515,11 +520,19 @@
           <tr>
             <td class="td-nazev">
               <span class="meta-odkazy">
-                 <a href="/forum/EditDiscussion?action=addQuez&amp;rid=${rid}">Položit dotaz</a>,
-                 <a href="/forum/dir/${rid}?from=${FORUM?size}&amp;count=20">Starší dotazy</a>
+                 <#if rid!=0>
+                     <a href="/forum/EditDiscussion?action=addQuez&amp;rid=${rid}">Položit dotaz</a>,
+                     <a href="/forum/dir/${rid}?from=${FORUM?size}&amp;count=20">Starší dotazy</a>
+                 <#else>
+                     <a href="/History?type=discussions&amp;from=${FORUM?size}&amp;count=20">Starší dotazy</a>
+                 </#if>
               </span>
-              <#local relation=TOOL.createRelation(rid)>
-              <span class="st_nadpis"><a href="${relation.url}" title="${TOOL.childName(relation)}">${TOOL.childName(relation)}</a></span>
+              <#if rid!=0>
+                  <#local relation=TOOL.createRelation(rid)>
+                  <span class="st_nadpis"><a href="${relation.url}" title="${TOOL.childName(relation)}">${TOOL.childName(relation)}</a></span>
+              <#else>
+                  <span class="st_nadpis"><a href="/poradna" title="Poradna">Poradna</a></span>
+              </#if>
             </td>
             <td class="td-meta">Stav</td>
             <td class="td-meta">Reakcí</td>
@@ -528,7 +541,7 @@
                 <#if feed!="UNDEF">
                    &nbsp;<a href="${feed}"><img src="/images/site2/feed12.png" width="12" height="12" border="0" alt="${TOOL.childName(relation)}, RSS feed"></a>
                 </#if>
-                <#if USER?exists>
+                <#if USER?exists && rid!=0>
                     <#if !onHP>
                         <#local uforums=TOOL.getUserForums(USER)>
                         <#list uforums.keySet() as key><#if key==rid><#local onHP=true></#if></#list>
