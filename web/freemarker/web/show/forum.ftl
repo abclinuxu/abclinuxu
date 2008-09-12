@@ -14,6 +14,10 @@
                 </#if>
          </ul>
     </div>
+    <#if SUBPORTAL?exists>
+        <#import "../macros.ftl" as lib>
+        <@lib.showSubportal SUBPORTAL, true/>
+    </#if>
 </#assign>
 
 <#include "../header.ftl">
