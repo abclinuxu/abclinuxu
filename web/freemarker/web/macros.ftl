@@ -504,7 +504,7 @@
     </#list>
 </#macro>
 
-<#macro showForum rid numQuestions onHP showAdvertisement>
+<#macro showForum rid numQuestions onHP showAdvertisement showAJAXControls>
     <#local forum = VARS.getFreshQuestions(numQuestions, rid),
             feed = FEEDS.getForumFeedUrl(rid)?default("UNDEF"),
             FORUM=TOOL.analyzeDiscussions(forum)>
@@ -557,11 +557,13 @@
           </tr>
          </#list>
         </tbody>
-        <tfoot id="forum_tfoot_${rid}">
-            <script type="text/javascript"><!--
-            new Forum(${rid}, ${FORUM?size}, ${VARS.maxSizes.question});
-            //--></script>
-        </tfoot>
+        <#if showAJAXControls>
+            <tfoot id="forum_tfoot_${rid}">
+                <script type="text/javascript"><!--
+                new Forum(${rid}, ${FORUM?size}, ${VARS.maxSizes.question});
+                //--></script>
+            </tfoot>
+        </#if>
       </table>
 
       <#--<#if showAdvertisement>

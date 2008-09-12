@@ -90,7 +90,7 @@ ${content}
 
 <#if TOOL.xpath(RELATION.child, "/data/forumHidden")?default("no")!="yes">
     <#assign forum_rid=TOOL.xpath(RELATION.child,"/data/forum")>
-    <@lib.showForum forum_rid?eval, VARS.defaultSizes.question, false, true />
+    <@lib.showForum forum_rid?eval, VARS.defaultSizes.question, false, true, false />
 </#if>
 
 <#assign FEEDS = VARS.getSubportalFeeds(USER?if_exists,RELATION.id)>
