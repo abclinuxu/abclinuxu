@@ -118,6 +118,17 @@
 </div>
 </#if>
 
+<#if VIDEOS?size gt 0>
+<div class="ri profile_list reverse_anchor" style="clear: right;">
+    <h2>Videa, která se mi líbí:</h2>
+    <ul>
+        <#list VIDEOS as vd>
+            <li><a href="${vd.url}">${vd.child.title?html}</a></li>
+        </#list>
+    </ul>
+</div>
+</#if>
+
 <#if BLOG?exists>
 <div class="profile_list reverse_anchor">
     <h2>Můj blog: <a href="/blog/${BLOG.subType}">${BLOG.title?default("blog")}</a></h2>

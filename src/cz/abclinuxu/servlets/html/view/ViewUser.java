@@ -57,6 +57,7 @@ public class ViewUser implements AbcAction {
     public static final String VAR_SOFTWARE = "SOFTWARE";
     public static final String VAR_LAST_DESKTOP = "LAST_DESKTOP";
     public static final String VAR_DESKTOPS = "DESKTOPS";
+    public static final String VAR_VIDEOS = "VIDEOS";
     public static final String VAR_INVALID_EMAIL = "INVALID_EMAIL";
     public static final String VAR_SUBPORTALS = "SUBPORTALS";
 
@@ -190,6 +191,12 @@ public class ViewUser implements AbcAction {
         List<Relation> desktops = sqlTool.findItemRelationsWithTypeWithFilters(Item.SCREENSHOT, null, filters);
         Tools.syncList(desktops);
         env.put(VAR_DESKTOPS, desktops);
+        
+        // find user's favourite videos
+        filters = Collections.singletonMap(Constants.PROPERTY_FAVOURITED_BY, property);
+        List<Relation> videos = sqlTool.findItemRelationsWithTypeWithFilters(Item.VIDEO, null, filters);
+        Tools.syncList(videos);
+        env.put(VAR_VIDEOS, videos);
 
         // find the last screenshot uploaded by this user
         setLastDesktop(user.getId(), env);
