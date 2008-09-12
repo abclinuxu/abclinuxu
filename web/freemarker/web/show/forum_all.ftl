@@ -35,11 +35,13 @@ Teprve když neuspějete, položte nový dotaz.</p>
 </ul>
 
 <#list VARS.mainForums.entrySet() as rid>
-    <#assign forum=TOOL.createRelation(rid.key)>
-    <h2 class="st_nadpis"><a href="${forum.url}">${TOOL.childName(forum)}</a></h2>
-    <p>
-        ${TOOL.xpath(forum.child, "//note")?if_exists}
-    </p>
+    <#if rid.key gt 0>
+        <#assign forum=TOOL.createRelation(rid.key)>
+        <h2 class="st_nadpis"><a href="${forum.url}">${TOOL.childName(forum)}</a></h2>
+        <p>
+            ${TOOL.xpath(forum.child, "//note")?if_exists}
+        </p>
+    </#if>
 </#list>
 
 <h2>Přehled aktuálních diskusí</h2>
