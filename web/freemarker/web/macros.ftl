@@ -509,7 +509,7 @@
             feed = FEEDS.getForumFeedUrl(rid)?default("UNDEF"),
             FORUM=TOOL.analyzeDiscussions(forum)>
 
-      <table class="ds">
+      <table class="ds" id="forum_table_${rid}">
        <#if USER?exists><form method="post" action="/EditUser/${USER.id}"></#if>
         <thead>
           <tr>
@@ -547,7 +547,7 @@
           </tr>
         </thead>
        <#if USER?exists></form></#if>
-        <tbody>
+        <tbody id="forum_tbody_${rid}">
          <#list FORUM as diz>
           <tr>
             <td><a href="${diz.url}">${TOOL.limit(diz.title,60,"...")}</a></td>
@@ -557,6 +557,11 @@
           </tr>
          </#list>
         </tbody>
+        <tfoot id="forum_tfoot_${rid}">
+            <script type="text/javascript"><!--
+            new Forum(${rid}, ${FORUM?size}, ${VARS.maxSizes.question});
+            //--></script>
+        </tfoot>
       </table>
 
       <#--<#if showAdvertisement>

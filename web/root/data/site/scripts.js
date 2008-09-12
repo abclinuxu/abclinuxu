@@ -838,6 +838,156 @@ OblibeneStitkyAJAX.prototype = {
 	}
 }
 
+function Forum(rid, currentQuestions, maxQuestions) {
+    this.tfoot = document.getElementById("forum_tfoot_"+rid);
+    if (!this.tfoot)
+        return;
+    
+    this.maxQuestions = maxQuestions;
+    this.rid = rid;
+    this.currentQuestions = this.originalQuestions = currentQuestions;
+    
+    this.createExpandingElem();
+}
+
+Forum.prototype = {
+    init: AJAX.init,
+    createEventHandler: AJAX.createEventHandler,
+    paragraph: null,
+    servletPath: "/ajax/forum/questions",
+    expand: function() {
+        this.currentQuestions += parseInt(this.input.value);
+        
+        if (this.currentQuestions > this.maxQuestions)
+            this.currentQuestions = this.maxQuestions;
+        
+        this.init();
+        this.request.send(null);
+        this.createCollapsingElem();
+    },
+    collapse: function() {
+        this.currentQuestions = this.originalQuestions;
+        this.init();
+        this.request.send(null);
+        this.createExpandingElem();
+    },
+    save: function() {
+        if (!Page.userID) {
+            window.location = "/Profile?action=login";
+            return;
+        }
+        
+        var num = parseInt(this.input.value);
+        if (num > this.maxQuestions || num < 0) {
+            alert("Zadejte číslo v rozsahu 0 - "+this.maxQuestions+"!");
+            return;
+        }
+        new ForumQuestionsSave(this.rid, num);
+        
+        if (num != this.currentQuestions) {
+            if (num != 0) {
+                this.currentQuestions = num;
+                this.init();
+                this.request.send(null);
+            } else {
+                var table = document.getElementById("forum_table_"+this.rid);
+                table.parentNode.removeChild(table);
+            }
+        }
+    },
+    getURL: function() {
+          var url = this.servletPath;
+          url += "?rid="+this.rid;
+          url += "&questions="+this.currentQuestions;
+          return url;
+    },
+
+    readyStateChange: function() {
+          if (this.request.readyState == 4 && this.request.status == 200) {
+                  this.loadQuestions(this.request.responseText);
+          }
+    },
+    
+    loadQuestions: function(text) {
+        var tbody = document.getElementById("forum_tbody_"+this.rid);
+        tbody.innerHTML = text;
+    },
+    
+    createExpandingElem: function() {
+        var paragraph = Toolkit.createElement(document, "p");
+        paragraph.setAttribute("style", "text-align: center; font-size: small");
+
+        var btn = Toolkit.appendElement(paragraph, "button", null, this.rid, "rozbalit");
+        Toolkit.addEventListener(btn, "click", "expand", this);
+        
+        Toolkit.appendElement(paragraph, "span", null, null, " dalších ");
+
+        this.input = Toolkit.appendElement(paragraph, "input");
+        this.input.type = "text";
+        this.input.value = 10;
+        this.input.size = 2;
+        Toolkit.appendElement(paragraph, "span", null, null, " dotazů");
+        
+        if (this.paragraph)
+            this.tfoot.replaceChild(paragraph, this.paragraph);
+        else
+            this.tfoot.appendChild(paragraph);
+        this.paragraph = paragraph;
+    },
+    
+    createCollapsingElem: function() {
+        var paragraph = Toolkit.createElement(document, "p");
+        paragraph.setAttribute("style", "text-align: center; font-size: small");
+        
+        var btn = Toolkit.appendElement(paragraph, "button", null, this.rid, "sbalit");
+        Toolkit.addEventListener(btn, "click", "collapse", this);
+        
+        Toolkit.appendElement(paragraph, "span", null, null, " | ");
+        
+        var save = Toolkit.appendElement(paragraph, "button", null, this.rid, "uložit");
+        Toolkit.addEventListener(save, "click", "save", this);
+        
+        Toolkit.appendElement(paragraph, "span", null, null, " nový stav (zobrazovat ");
+        this.input = Toolkit.appendElement(paragraph, "input");
+        this.input.type = "text";
+        this.input.value = this.currentQuestions;
+        this.input.size = 2;
+        
+        Toolkit.appendElement(paragraph, "span", null, null, " dotazů)");
+        
+        if (this.paragraph)
+            this.tfoot.replaceChild(paragraph, this.paragraph);
+        else
+            this.tfoot.appendChild(paragraph);
+        this.paragraph = paragraph;
+    }
+}
+
+function ForumQuestionsSave(rid, num) {
+    this.rid = rid;
+    this.num = num;
+    this.init();
+    this.request.send(null);
+}
+
+ForumQuestionsSave.prototype = {
+    init: AJAX.init,
+    createEventHandler: AJAX.createEventHandler,
+    servletPath: "/ajax/forum/numquestions",
+    readyStateChange: function() {
+        if (this.request.readyState == 4 && this.request.status == 200) {
+                alert(this.request.responseText);
+        }
+    },
+    getURL: function() {
+        var url = this.servletPath;
+        url += "?rid="+this.rid;
+        url += "&questions="+this.num;
+        url += "&ticket="+Page.ticket;
+        return url;
+    }
+}
+
 function init(event, gecko) {
 	if (gecko) {
 		document.getElementById('menu').style.display='block';

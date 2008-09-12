@@ -869,4 +869,8 @@
             <var name="TITLE" value='Administrátoři subportálu ${TOOL.childName(RELATION)}' type="Lazy"/>
         </action>
     </servlet>
+
+    <servlet name="Forum">
+        <action name="questions" content="/show/questions.ftl" />
+    </servlet>
 </config>

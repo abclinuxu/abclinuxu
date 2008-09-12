@@ -17,6 +17,10 @@
             <pattern>/ajax/tags</pattern>
             <action>cz.abclinuxu.servlets.ajax.TagList</action>
         </mapping>
+        <mapping priority="true">
+            <pattern>/ajax/forum</pattern>
+            <action>cz.abclinuxu.servlets.ajax.Forum</action>
+        </mapping>
         <mapping>
             <pattern>/show</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowObject</action>

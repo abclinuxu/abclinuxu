@@ -40,6 +40,7 @@
 	    </#if>
         <#if USER?exists>
         	Page.userID = ${USER.id};
+            Page.ticket = "${TOOL.ticketValue(USER)}";
 	    </#if>
     </script>
     <script type="text/javascript" src="/data/site/impact.js"></script>
