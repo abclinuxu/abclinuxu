@@ -1002,7 +1002,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             Map<Integer, List> map;
             Category subportals = new Category(Constants.CAT_SUBPORTALS);
-            int maximum = (Integer) maxSizes.get(KEY_ARTICLE);
+            int maximum = (Integer) maxSizes.get(KEY_QUESTION);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
             
             // get a list of subportals
