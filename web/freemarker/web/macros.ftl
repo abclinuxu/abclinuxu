@@ -510,7 +510,7 @@
                 feed = FEEDS.getForumFeedUrl(rid)?default("UNDEF")>
     <#else>
         <#local forum = VARS.getFreshQuestions(USER?if_exists),
-                feed = FEEDS.getForumFeedUrl(rid)?default("UNDEF")>
+                feed = FEEDS.getForumFeedUrl()?default("UNDEF")>
     </#if>
     <#local FORUM=TOOL.analyzeDiscussions(forum)>
 
@@ -539,7 +539,7 @@
             <td class="td-datum">
                 Poslední
                 <#if feed!="UNDEF">
-                   &nbsp;<a href="${feed}"><img src="/images/site2/feed12.png" width="12" height="12" border="0" alt="${TOOL.childName(relation)}, RSS feed"></a>
+                   &nbsp;<a href="${feed}"><img src="/images/site2/feed12.png" width="12" height="12" border="0" alt="<#if rid!=0>${TOOL.childName(relation)}, </#if>RSS feed"></a>
                 </#if>
                 <#if USER?exists && rid!=0>
                     <#if !onHP>
