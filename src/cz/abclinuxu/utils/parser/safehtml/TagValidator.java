@@ -19,6 +19,7 @@
 package cz.abclinuxu.utils.parser.safehtml;
 
 import org.htmlparser.util.ParserException;
+import org.htmlparser.util.Translate;
 import org.htmlparser.lexer.Lexer;
 import org.htmlparser.lexer.PageAttribute;
 import org.htmlparser.nodes.TagNode;
@@ -98,6 +99,7 @@ public class TagValidator {
                     String value = attribute.getValue().toLowerCase();
                     if (value == null || value.length() == 0)
                         throw new AttributeValueNotAllowedException("Atribut " + name + " značky " + checkedTag.name + " nesmí být prázdný!");
+                    value = Translate.decode(value);
                     if (value.indexOf("javascript:") != -1)
                         throw new AttributeValueNotAllowedException("Atribut " + name + " značky " + checkedTag.name + " nesmí obsahovat javascript!");
                     if (value.indexOf("%3cscript") != -1)

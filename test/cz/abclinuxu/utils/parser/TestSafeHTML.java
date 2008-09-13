@@ -39,36 +39,6 @@ public class TestSafeHTML extends TestCase {
         }
     }
 
-    public void testForbiddenTag2() throws Exception {
-        try {
-            String s = "zde je <table>";
-            SafeHTMLGuard.check(s);
-            fail("Shall have failed: "+s);
-        } catch (TagNotAllowedException e) {
-            //ok
-        }
-    }
-
-    public void testForbiddenTag3() throws Exception {
-        try {
-            String s = "zde je <tr>";
-            SafeHTMLGuard.check(s);
-            fail("Shall have failed: "+s);
-        } catch (TagNotAllowedException e) {
-            //ok
-        }
-    }
-
-    public void testForbiddenTag4() throws Exception {
-        try {
-            String s = "zde je <td>";
-            SafeHTMLGuard.check(s);
-            fail("Shall have failed: "+s);
-        } catch (TagNotAllowedException e) {
-            //ok
-        }
-    }
-
     public void testForbiddenTag5() throws Exception {
         try {
             String s = "zde je <script>";
@@ -449,9 +419,9 @@ public class TestSafeHTML extends TestCase {
 
     public void testLinkTag4() throws Exception {
         try {
-            String s = "zde je <img src=\"data:image/gif;base64,R0lGODdhMAAwAPAAAAAAAP///ywAAAAAMAAwAAAC8IyPqcvt3wCcDkiLc7C0qwyGHhSWpjQu5yqmCYsapyuvUUlvONmOZtfzgFzByTB10QgxOR0TqBQejhRNzOfkVJ+5YiUqrXF5Y5lKh/DeuNcP5yLWGsEbtLiOSpa/TPg7JpJHxyendzWTBfX0cxOnKPjgBzi4diinWGdkF8kjdfnycQZXZeYGejmJlZeGl9i2icVqaNVailT6F5iJ90m6mvuTS4OK05M0vDk0Q4XUtwvKOzrcd3iq9uisF81M1OIcR7lEewwcLp7tuNNkM3uNna3F2JQFo97Vriy/Xl4/f1cf5VWzXyym7PHhhx4dbgYKAAA7\">";
-            WikiContentGuard.check(s);
-            fail("Shall have failed: "+s);
+            String s = "zde je <a href=\"&#106;&#097;&#118;&#097;&#115;&#099;&#114;&#105;&#112;&#116;:alert('BAM!')\">zde</a>";
+            SafeHTMLGuard.check(s);
+            fail("Shall have failed: " + s);
         } catch (AttributeValueNotAllowedException e) {
             //ok
         }
@@ -473,6 +443,37 @@ public class TestSafeHTML extends TestCase {
             SafeHTMLGuard.check(s);
             fail("Shall have failed: "+s);
         } catch (TagNotClosedException e) {
+            //ok
+        }
+    }
+
+    public void testImgTag1() throws Exception {
+        try {
+            String s = "zde je <img src=\"data:image/gif;base64,R0lGODdhMAAwAPAAAAAAAP///ywAAAAAMAAwAAAC8IyPqcvt3wCcDkiLc7C0qwyGHhSWpjQu5yqmCYsapyuvUUlvONmOZtfzgFzByTB10QgxOR0TqBQejhRNzOfkVJ+5YiUqrXF5Y5lKh/DeuNcP5yLWGsEbtLiOSpa/TPg7JpJHxyendzWTBfX0cxOnKPjgBzi4diinWGdkF8kjdfnycQZXZeYGejmJlZeGl9i2icVqaNVailT6F5iJ90m6mvuTS4OK05M0vDk0Q4XUtwvKOzrcd3iq9uisF81M1OIcR7lEewwcLp7tuNNkM3uNna3F2JQFo97Vriy/Xl4/f1cf5VWzXyym7PHhhx4dbgYKAAA7\">";
+            WikiContentGuard.check(s);
+            fail("Shall have failed: " + s);
+        } catch (AttributeValueNotAllowedException e) {
+            //ok
+        }
+    }
+
+    public void testImgTag2() throws Exception {
+        try {
+            String s = "zde je <img src=\"javascript:location='http://images.ucomics.com/comics/ga/2006/ga06'+((new\n" +
+                    "Date()).getMonth()+1)+(new Date()).getDate()+'.gif'\">";
+            WikiContentGuard.check(s);
+            fail("Shall have failed: " + s);
+        } catch (AttributeValueNotAllowedException e) {
+            //ok
+        }
+    }
+
+    public void testImgTag3() throws Exception {
+        try {
+            String s = "zde je <img src=\"&#106;&#097;&#118;&#097;&#115;&#099;&#114;&#105;&#112;&#116;:alert('BAM!')\">";
+            WikiContentGuard.check(s);
+            fail("Shall have failed: " + s);
+        } catch (AttributeValueNotAllowedException e) {
             //ok
         }
     }
