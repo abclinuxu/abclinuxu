@@ -532,6 +532,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         services.put(PREF_USER_SCORE_SETTER, prefs.getBoolean(PREF_START + PREF_USER_SCORE_SETTER, false));
         services.put(PREF_USER_SYNC_SERVICE, prefs.getBoolean(PREF_START + PREF_USER_SYNC_SERVICE, false));
         services.put(PREF_WEB_SERVICES, prefs.getBoolean(PREF_START + PREF_WEB_SERVICES, false));
+        services.put(PREF_SUBPORTAL_SCORE_SETTER, prefs.getBoolean(PREF_START + PREF_SUBPORTAL_SCORE_SETTER, false));
 
         delays.put(PREF_POOL_MONITOR, prefs.getInt(PREF_POOL_MONITOR + PREF_DELAY, 60));
         delays.put(PREF_RSS_GENERATOR, prefs.getInt(PREF_RSS_GENERATOR + PREF_DELAY, 60));
