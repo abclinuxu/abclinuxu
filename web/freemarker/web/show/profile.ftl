@@ -26,7 +26,9 @@
 <#if photo=="UNDEFINED" && sex!="UNDEFINED">
     <#assign photo="/images/faces/default_"+sex+".gif">
 </#if>
-<img src="${photo}" style="float: right; margin: 0.5em" alt="${PROFILE.name}">
+<#if photo!="UNDEFINED">
+    <img src="${photo}" style="float: right; margin: 0.5em" alt="${PROFILE.name}">
+</#if>
 
 <h1>${PROFILE.name}</h1>
 
