@@ -123,5 +123,10 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
 </form>
 
 <#include "/include/napoveda-k-html-formatovani.txt">
+<p>
+    Na HTML značky v perexu jsou uplatňována ještě další omezení. Zde nejsou povoleny
+    značky B, BIG, STRONG, H1-H5 a IMG. Navíc je možné použít tagy P a BR maximálně
+    jednou.
+</p>
 
 <#include "../footer.ftl">

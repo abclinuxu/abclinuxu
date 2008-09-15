@@ -1529,7 +1529,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         try {
             if (perex != null)
-                BlogHTMLGuard.check(perex);
+                BlogHTMLGuard.checkPerex(perex);
             BlogHTMLGuard.check(content);
         } catch (ParserException e) {
             log.error("ParseException on '" + content + "'", e);

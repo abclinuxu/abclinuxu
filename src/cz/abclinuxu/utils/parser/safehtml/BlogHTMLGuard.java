@@ -29,9 +29,15 @@ import java.util.*;
  */
 public class BlogHTMLGuard {
     static final Map TAGS = new HashMap(SafeHTMLGuard.TAGS);
+    static final Map TAGS_PEREX = new HashMap(SafeHTMLGuard.TAGS);
     static {
-        // todo probably make it optional. available only in full blog display, not in perex
         TAGS.put("IMG", new CheckedTag("IMG", false, new String[]{"SRC", "WIDTH", "HEIGHT", "BORDER", "ALT"}));
+        
+        for (int i = 1; i <= 5; i++)
+            TAGS_PEREX.remove("H"+i);
+        TAGS_PEREX.remove("B");
+        TAGS_PEREX.remove("BIG");
+        TAGS_PEREX.remove("STRONG");
     }
 
     /**
@@ -43,5 +49,14 @@ public class BlogHTMLGuard {
      */
     public static void check(String s) throws HtmlCheckException, ParserException {
         TagValidator.check(s, TAGS);
+    }
+    public static void checkPerex(String s) throws HtmlCheckException, ParserException {
+        String lower = s.toLowerCase();
+        if (lower.indexOf("<p") != lower.lastIndexOf("<p"))
+            throw new HtmlCheckException("V perexu není povolen více než jeden odstavec!");
+        if (lower.indexOf("<br") != lower.lastIndexOf("<br"))
+            throw new HtmlCheckException("V perexu není povolen více než jeden tag BR!");
+        
+        TagValidator.check(s, TAGS_PEREX);
     }
 }
