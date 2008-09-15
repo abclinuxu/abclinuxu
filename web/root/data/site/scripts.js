@@ -1006,6 +1006,52 @@ ForumQuestionsSave.prototype = {
     }
 }
 
+function ShortenedPre(pre) {
+    this.pre = pre;
+    
+    this.pre.setAttribute("style", "height: 150px");
+    
+    this.div = Toolkit.createElement(document, "div");
+    this.div.setAttribute("style", "float: right");
+
+    this.btn = Toolkit.appendElement(this.div, "input");
+    this.btn.type = "button";
+    this.btn.value = "Rozbalit";
+
+    pre.insertBefore(this.div, pre.firstChild);
+    Toolkit.addEventListener(this.btn, "click", "buttonClicked", this);
+}
+ShortenedPre.prototype = {
+    collapsed: true,
+    buttonClicked: function() {
+        if (this.collapsed) {
+            this.pre.setAttribute("style", "");
+            this.btn.value = "Sbalit";
+        } else {
+            this.pre.setAttribute("style", "height: 150px");
+            this.btn.value = "Rozbalit";
+        }
+        this.collapsed = !this.collapsed;
+    }
+}
+
+function countOccurences(str, character) {
+    var pos = 0, count = 0;
+    while ( (pos = str.indexOf(character, pos)) != -1 ) {
+        pos++;
+        count++;
+    }
+    return count;
+}
+
+function shortenLongOutputs() {
+    var pres = document.getElementsByTagName("pre");
+    for (var i = 0; i < pres.length; i++) {
+        if (countOccurences(pres[i].innerHTML, "\n") > 10)
+          new ShortenedPre(pres[i]);
+    }
+}
+
 function init(event, gecko) {
 	if (gecko) {
 		document.getElementById('menu').style.display='block';
@@ -1025,6 +1071,9 @@ function init(event, gecko) {
 		}
 		prepareCommentNext();
 	}
+        if (document.getElementsByTagName) {
+            shortenLongOutputs();
+        }
 
 	new Stitky();
 	new StitkyLink();
