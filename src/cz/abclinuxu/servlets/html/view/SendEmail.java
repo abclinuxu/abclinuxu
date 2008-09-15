@@ -19,6 +19,7 @@
 package cz.abclinuxu.servlets.html.view;
 
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -116,22 +117,26 @@ public class SendEmail implements AbcAction {
     protected String handleSendEmail2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         HttpSession session = request.getSession();
+        User user = (User) env.get(Constants.VAR_USER);
 
         boolean chyba = false;
 
-        String kod = (String) params.get(VAR_KOD);
-        try {
-            Integer ulozenyKod = (Integer) session.getAttribute(VAR_KOD);
-            env.put(VAR_KOD, ulozenyKod);
-            Integer nalezenyKod = Integer.valueOf(kod);
-            if ( !nalezenyKod.equals(ulozenyKod) ) {
+        if (user == null || !user.hasRole(Roles.ROOT)) {
+            String kod = (String) params.get(VAR_KOD);
+            try {
+                Integer ulozenyKod = (Integer) session.getAttribute(VAR_KOD);
+                env.put(VAR_KOD, ulozenyKod);
+                Integer nalezenyKod = Integer.valueOf(kod);
+                if ( !nalezenyKod.equals(ulozenyKod) ) {
+                    ServletUtils.addError(VAR_KOD, "Vyplňte správný kód!", env, null);
+                    chyba = true;
+                }
+            } catch (Exception e) {
                 ServletUtils.addError(VAR_KOD, "Vyplňte správný kód!", env, null);
                 chyba = true;
             }
-        } catch (Exception e) {
-            ServletUtils.addError(VAR_KOD, "Vyplňte správný kód!", env, null);
-            chyba = true;
         }
+        
         String from = (String) params.get(PARAM_SENDER);
         if ( from==null || from.length()<6 || from.indexOf('@')==-1 || from.indexOf('.')==-1 ) {
             ServletUtils.addError(PARAM_SENDER, "Zadejte platnou adresu!", env, null);

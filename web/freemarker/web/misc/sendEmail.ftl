@@ -8,20 +8,24 @@ našeho uživatele kontaktovat emailem, tento formulář vám to umožní.
 Zároveň můžete zadat adresu, kam se má poslat (slepá) kopie emailu.
 </p>
 
-<p>Jako malá prevence před zneužíváním slouží kontrolní
-kód. Ve vašem případě má hodnotu ${KOD}. Vyplňte jej prosím
-níže do formuláře. Do políčka pro email zadávajte maximálně jednu
-adresu.</p>
+<#if !USER?exists || !USER.hasRole("root")>
+    <p>Jako malá prevence před zneužíváním slouží kontrolní
+    kód. Ve vašem případě má hodnotu ${KOD}. Vyplňte jej prosím
+    níže do formuláře. Do políčka pro email zadávajte maximálně jednu
+    adresu.</p>
+</#if>
 
 <form action="${URL.noPrefix("/Mail")}" method="POST">
 
  <table class="siroka" border="0" cellpadding="5">
-  <tr>
-   <td class="required">Kontrolní kód</td>
-   <td><input type="text" name="KOD" value="${PARAMS.KOD?if_exists}" size="4">
-   <#if ERRORS.KOD?exists><span class="error">${ERRORS.KOD}</span></#if>
-   </td>
-  </tr>
+  <#if !USER?exists || !USER.hasRole("root")>
+      <tr>
+       <td class="required">Kontrolní kód</td>
+       <td><input type="text" name="KOD" value="${PARAMS.KOD?if_exists}" size="4">
+       <#if ERRORS.KOD?exists><span class="error">${ERRORS.KOD}</span></#if>
+       </td>
+      </tr>
+  </#if>
   <tr>
    <td class="required">Váš email</td>
    <td><input type="text" name="sender" size="30" value="${PARAMS.sender?if_exists}">
