@@ -21,9 +21,10 @@
     <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=myPage")}">Upravit</a>
 </#if>
 
-<#assign photo = TOOL.xpath(PROFILE,"/data/profile/photo")?default("UNDEFINED")>
-<#if photo=="UNDEFINED">
-    <#assign photo="/images/faces/default_"+TOOL.xpath(PROFILE,"/data/personal/sex")+".gif">
+<#assign photo = TOOL.xpath(PROFILE,"/data/profile/photo")?default("UNDEFINED"),
+    sex = TOOL.xpath(PROFILE,"/data/personal/sex")?default("UNDEFINED")>
+<#if photo=="UNDEFINED" && sex!="UNDEFINED">
+    <#assign photo="/images/faces/default_"+sex+".gif">
 </#if>
 <img src="${photo}" style="float: right; margin: 0.5em" alt="${PROFILE.name}">
 
