@@ -854,6 +854,11 @@
                         </node>
                         <node name="edit">
                             <map/>
+                            <node name="EditDiscussion">
+                                <map>
+                                    <entry key="regexp.detect.link" value='&lt;a href="https?://www\.abclinuxu\.cz([^"]+)"'/>
+                                </map>
+                            </node>
                             <node name="EditBlog">
                                 <map>
                                     <entry key="regexp.invalid.blogname" value="[^a-zA-Z0-9_]|(^[0-9_])"/>
