@@ -1693,13 +1693,14 @@ public class EditDiscussion implements AbcAction, Configurable {
                     }
 
                     if (prehash.equals(Tools.getUrlForDiscussion(discussion)) || prehash.equals(upper)) {
-                        boolean isdigit = true;
+                        boolean isdigit = false;
 
                         for (int j = hash+1; j < link.length(); j++) {
                             if (!Character.isDigit(link.charAt(j))) {
                                 isdigit = false;
                                 break;
-                            }
+                            } else
+                                isdigit = true;
                         }
 
                         if (isdigit) {
