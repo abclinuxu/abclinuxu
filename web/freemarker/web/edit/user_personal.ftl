@@ -17,9 +17,10 @@
             </td>
         </tr>
         <tr>
-            <td class="required" width="60">Vaše pohlaví</td>
+            <td width="60">Vaše pohlaví</td>
             <td>
                 <select name="sex" tabindex="2">
+                    <option value="undef">nezadávat</option>
                     <option value="man" <#if PARAMS.sex?default("UNDEF")=="man">SELECTED</#if>>muž</option>
                     <option value="woman"<#if PARAMS.sex?default("UNDEF")=="woman">SELECTED</#if>>žena</option>
                 </select>

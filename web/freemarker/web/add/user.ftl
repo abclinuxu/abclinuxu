@@ -105,7 +105,8 @@
             <td width="160">Vaše pohlaví</td>
             <td>
                 <select name="sex" tabindex="5">
-                    <#assign sex=PARAMS.sex?default("man")>
+                    <#assign sex=PARAMS.sex?default("UNDEF")>
+                    <option value="undef">nezadávat</option>
                     <option value="man" <#if sex=="man">SELECTED</#if>>muž</option>
                     <option value="woman"<#if sex=="woman">SELECTED</#if>>žena</option>
                 </select>

@@ -1722,8 +1722,11 @@ public class EditUser implements AbcAction {
     public static boolean setSex(Map params, User user, Map env) {
         String sex = (String) params.get(PARAM_SEX);
         if ( !("man".equals(sex) || "woman".equals(sex)) ) {
-            ServletUtils.addError(PARAM_SEX, "Zadejte své pohlaví!", env, null);
-            return false;
+            Node node = user.getData().selectSingleNode("/data/personal/sex");
+            if (node != null)
+                node.detach();
+            
+            return true;
         }
         Node node = DocumentHelper.makeElement(user.getData(),"/data/personal/sex");
         node.setText(sex);
