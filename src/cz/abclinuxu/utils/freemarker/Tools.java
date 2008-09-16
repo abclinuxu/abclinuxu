@@ -132,7 +132,7 @@ public class Tools implements Configurable {
             }
             
             String hostname = AbcConfig.getHostname().replaceAll("\\.", "\\\\.");
-            String regexp = "https?://" + hostname + "([^\"]+)\"";
+            String regexp = "<a href=\"https?://" + hostname + "([^\"]+)\"";
             reDetectLink = reCompiler.compile(regexp);
 
         } catch (RESyntaxException e) {
