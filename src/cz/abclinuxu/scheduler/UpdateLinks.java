@@ -43,6 +43,7 @@ import org.dom4j.Element;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -256,6 +257,10 @@ public class UpdateLinks extends TimerTask implements Configurable {
                 link.setUrl(url);
                 link.setText(title);
                 link.setUpdated(entry.getPublishedDate());
+                
+                if (link.getUpdated() == null || link.getUpdated().before(new Date(0))) {
+                    link.setUpdated(new Date());
+                }
 
                 result.add(link);
             }
