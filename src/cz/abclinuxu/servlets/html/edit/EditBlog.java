@@ -1542,7 +1542,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         Element tagPerex = root.element("perex");
         if (perex != null) {
-            perex = EditDiscussion.processLocalLinks(perex, null);
+            perex = Tools.processLocalLinks(perex, null);
             
             if (tagPerex == null)
                 tagPerex = root.addElement("perex");
@@ -1556,7 +1556,7 @@ public class EditBlog implements AbcAction, Configurable {
         Element tagContent = root.element("content");
         if (tagContent == null)
             tagContent = root.addElement("content");
-        content = EditDiscussion.processLocalLinks(content, null);
+        content = Tools.processLocalLinks(content, null);
         tagContent.setText(content);
         tagContent.addAttribute("format", Integer.toString(Format.HTML.getId()));
         return true;

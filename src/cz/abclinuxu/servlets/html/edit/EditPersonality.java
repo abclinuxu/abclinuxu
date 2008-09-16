@@ -403,6 +403,7 @@ public class EditPersonality implements AbcAction {
         }
 
         Element element = DocumentHelper.makeElement(root, "description");
+        tmp = Tools.processLocalLinks(tmp, null);
         element.setText(tmp);
         Format format = FormatDetector.detect(tmp);
         element.addAttribute("format", Integer.toString(format.getId()));

@@ -344,6 +344,7 @@ public class EditBazaar implements AbcAction {
                 return false;
             }
             Element element = DocumentHelper.makeElement(document, "data/text");
+            tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));

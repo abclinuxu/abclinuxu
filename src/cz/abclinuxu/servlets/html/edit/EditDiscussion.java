@@ -79,7 +79,7 @@ import org.apache.regexp.REProgram;
  * This class is responsible for adding new
  * new discussion.<p>
  */
-public class EditDiscussion implements AbcAction, Configurable {
+public class EditDiscussion implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditDiscussion.class);
 
     public static final String PARAM_RELATION = "relationId";
@@ -130,23 +130,10 @@ public class EditDiscussion implements AbcAction, Configurable {
     public static final String ACTION_THREAD_TO_DIZ_STEP2 = "toQuestion2";
     public static final String ACTION_SOLVED = "solved";
     
-    public static final String PREF_REGEXP_DETECT_LINK = "regexp.detect.link";
-    
-    static REProgram reDetectLink;
-
 //    private static final String LOGIN_REQUIRED = "Litujeme, ale bez registrace je možné komentovat jen otázky v diskusním fóru, " +
 //                        "kde se řeší problémy. U ostatních diskusí (zprávičky, články, blogy) je nutné se nejdříve přihlásit. " +
 //                        "Toto opatření jsme zavedli z důvodu zvýšené aktivity spambotů a trollů.";
     
-    static {
-        ConfigurationManager.getConfigurator().configureAndRememberMe(new EditDiscussion());
-    }
-    
-    public void configure(Preferences prefs) throws ConfigurationException {
-        RECompiler reCompiler = new RECompiler();
-        reDetectLink = reCompiler.compile(prefs.get(PREF_REGEXP_DETECT_LINK, null));
-    }
-
 // prepsat a overit kazdou jednotlivou funkci
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -1279,7 +1266,7 @@ public class EditDiscussion implements AbcAction, Configurable {
             }
             Element element = DocumentHelper.makeElement(root,"text");
             tmp = Misc.filterDangerousCharacters(tmp);
-            tmp = processLocalLinks(tmp, rel);
+            tmp = Tools.processLocalLinks(tmp, rel);
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
@@ -1666,61 +1653,5 @@ public class EditDiscussion implements AbcAction, Configurable {
         response.addCookie(cookie);
 
         return true;
-    }
-    
-    public static String processLocalLinks(String text, Relation discussion) {
-        try {
-            RE regexp = new RE(reDetectLink, RE.MATCH_MULTILINE);
-            int i = 0;
-            StringBuffer sb = new StringBuffer();
-
-            while (regexp.match(text, i)) {
-                String link = regexp.getParen(1);
-                int hash = link.indexOf('#');
-                boolean replaced = false;
-
-                sb.append(text.substring(i, regexp.getParenStart(0)));
-                sb.append("<a href=\"");
-
-                if (discussion != null && hash != -1) {
-                    String prehash = link.substring(0, hash);
-                    String upper = null;
-
-                    if (discussion.getParent() instanceof Item) {
-                        Persistence persistence = PersistenceFactory.getPersistence();
-                        Relation upperRel = (Relation) persistence.findById(new Relation(discussion.getUpper()));
-                        upper = upperRel.getUrl();
-                    }
-
-                    if (prehash.equals(Tools.getUrlForDiscussion(discussion)) || prehash.equals(upper)) {
-                        boolean isdigit = false;
-
-                        for (int j = hash+1; j < link.length(); j++) {
-                            if (!Character.isDigit(link.charAt(j))) {
-                                isdigit = false;
-                                break;
-                            } else
-                                isdigit = true;
-                        }
-
-                        if (isdigit) {
-                            sb.append("#"+Integer.parseInt(link.substring(hash+1)));
-                            replaced = true;
-                        }
-                    }
-                }
-
-                if (!replaced)
-                    sb.append(link);
-
-                i = regexp.getParenEnd(1);
-            }
-
-            sb.append(text.substring(i));
-
-            return sb.toString();
-        } catch (Exception e) { // just in case
-            return text;
-        }
     }
 }

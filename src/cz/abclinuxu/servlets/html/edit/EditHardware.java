@@ -417,6 +417,7 @@ public class EditHardware implements AbcAction {
                 return false;
             }
             Element element = DocumentHelper.makeElement(root, "setup");
+            tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
@@ -445,6 +446,7 @@ public class EditHardware implements AbcAction {
                 return false;
             }
             Element element = DocumentHelper.makeElement(root, "params");
+            tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
@@ -473,6 +475,7 @@ public class EditHardware implements AbcAction {
                 return false;
             }
             Element element = DocumentHelper.makeElement(root, "identification");
+            tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
@@ -501,6 +504,7 @@ public class EditHardware implements AbcAction {
                 return false;
             }
             Element element = DocumentHelper.makeElement(root, "note");
+            tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));

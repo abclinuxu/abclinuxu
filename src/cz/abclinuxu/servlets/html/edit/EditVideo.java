@@ -416,6 +416,7 @@ public class EditVideo implements AbcAction, Configurable {
         }
         
         Element elem = DocumentHelper.makeElement(root, "description");
+        desc = Tools.processLocalLinks(desc, null);
         elem.setText(desc);
         
         return true;

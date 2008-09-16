@@ -545,6 +545,7 @@ public class EditContent implements AbcAction {
         }
 
         Element element = DocumentHelper.makeElement(item.getData(), "/data/content");
+        content = Tools.processLocalLinks(content, null);
         element.setText(content);
         if (! "yes".equals(exec))
             exec = "no";

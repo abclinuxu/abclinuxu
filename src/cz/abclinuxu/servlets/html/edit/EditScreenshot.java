@@ -335,6 +335,7 @@ public class EditScreenshot implements AbcAction {
 
         try {
             SafeHTMLGuard.check(tmp);
+            tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));

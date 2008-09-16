@@ -317,6 +317,7 @@ public class EditFaq implements AbcAction {
                 return false;
             }
             Element element = DocumentHelper.makeElement(root, "text");
+            tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));

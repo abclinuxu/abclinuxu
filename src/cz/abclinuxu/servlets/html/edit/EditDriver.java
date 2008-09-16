@@ -367,6 +367,7 @@ public class EditDriver implements AbcAction {
                 return false;
             }
             Element element = DocumentHelper.makeElement(document, "data/note");
+            tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));

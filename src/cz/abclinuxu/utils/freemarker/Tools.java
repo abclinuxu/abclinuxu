@@ -44,6 +44,7 @@ import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.Element;
@@ -84,7 +85,7 @@ public class Tools implements Configurable {
     public static final String PREF_CSS_STYLES = "css.styles";
 
     static Persistence persistence = PersistenceFactory.getPersistence();
-    static REProgram reRemoveTags, reVlnka, lineBreak, reRemoveParagraphs, rePollTag;
+    static REProgram reRemoveTags, reVlnka, lineBreak, reRemoveParagraphs, rePollTag, reDetectLink;
     static Pattern reAmpersand;
     static String vlnkaReplacement;
     static int storyReservePercents;
@@ -129,6 +130,10 @@ public class Tools implements Configurable {
             } catch (BackingStoreException e) {
                 throw new ConfigurationException(e.getMessage(), e.getCause());
             }
+            
+            String hostname = AbcConfig.getHostname().replaceAll("\\.", "\\\\.");
+            String regexp = "https?://" + hostname + "([^\"]+)\"";
+            reDetectLink = reCompiler.compile(regexp);
 
         } catch (RESyntaxException e) {
             log.error("Chyba pri kompilaci regexpu!", e);
@@ -2298,5 +2303,61 @@ public class Tools implements Configurable {
 
     public static Map<String,String> getOfferedCssStyles() {
         return offeredCssStyles;
+    }
+    
+    public static String processLocalLinks(String text, Relation discussion) {
+        try {
+            RE regexp = new RE(reDetectLink, RE.MATCH_MULTILINE);
+            int i = 0;
+            StringBuffer sb = new StringBuffer();
+
+            while (regexp.match(text, i)) {
+                String link = regexp.getParen(1);
+                int hash = link.indexOf('#');
+                boolean replaced = false;
+
+                sb.append(text.substring(i, regexp.getParenStart(0)));
+                sb.append("<a href=\"");
+
+                if (discussion != null && hash != -1) {
+                    String prehash = link.substring(0, hash);
+                    String upper = null;
+
+                    if (discussion.getParent() instanceof Item) {
+                        Persistence persistence = PersistenceFactory.getPersistence();
+                        Relation upperRel = (Relation) persistence.findById(new Relation(discussion.getUpper()));
+                        upper = upperRel.getUrl();
+                    }
+
+                    if (prehash.equals(Tools.getUrlForDiscussion(discussion)) || prehash.equals(upper)) {
+                        boolean isdigit = false;
+
+                        for (int j = hash+1; j < link.length(); j++) {
+                            if (!Character.isDigit(link.charAt(j))) {
+                                isdigit = false;
+                                break;
+                            } else
+                                isdigit = true;
+                        }
+
+                        if (isdigit) {
+                            sb.append("#"+Integer.parseInt(link.substring(hash+1)));
+                            replaced = true;
+                        }
+                    }
+                }
+
+                if (!replaced)
+                    sb.append(link);
+
+                i = regexp.getParenEnd(1);
+            }
+
+            sb.append(text.substring(i));
+
+            return sb.toString();
+        } catch (Exception e) { // just in case
+            return text;
+        }
     }
 }
