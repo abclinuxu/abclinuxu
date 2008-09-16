@@ -1047,7 +1047,7 @@ function countOccurences(str, character) {
 function shortenLongOutputs() {
     var pres = document.getElementsByTagName("pre");
     for (var i = 0; i < pres.length; i++) {
-        if (countOccurences(pres[i].innerHTML, "\n") > 10)
+        if (countOccurences(pres[i].innerHTML, "\n") > 15)
           new ShortenedPre(pres[i]);
     }
 }
