@@ -925,8 +925,7 @@ Forum.prototype = {
     },
     
     createExpandingElem: function() {
-        var paragraph = Toolkit.createElement(document, "p");
-        paragraph.setAttribute("style", "text-align: center; font-size: small");
+        var paragraph = Toolkit.createElement(document, "div");
 
         var btn = Toolkit.appendElement(paragraph, "input");
         btn.type = "button";
@@ -950,8 +949,7 @@ Forum.prototype = {
     },
     
     createCollapsingElem: function() {
-        var paragraph = Toolkit.createElement(document, "p");
-        paragraph.setAttribute("style", "text-align: center; font-size: small");
+        var paragraph = Toolkit.createElement(document, "div");
         
         var btn = Toolkit.appendElement(paragraph, "input");
         btn.type = "button";
