@@ -432,6 +432,12 @@ pre {
 	border-bottom: solid 1px;
 }
 
+.ds tfoot div {
+	text-align: center;
+	font-size: small;
+}
+.ds tfoot div input { height: 1.5em; }
+
 .poradna td.td-forum {
 	width: 400px;
 }
