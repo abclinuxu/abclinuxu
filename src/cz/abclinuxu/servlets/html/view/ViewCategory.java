@@ -61,6 +61,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
+import cz.abclinuxu.utils.ReadRecorder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -117,7 +118,11 @@ public class ViewCategory implements AbcAction {
         env.put(ShowObject.VAR_RELATION,relation);
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS,parents);
-        env.put(ShowObject.VAR_SUBPORTAL, Tools.getParentSubportal(parents));
+        Relation subportal = Tools.getParentSubportal(parents);
+        if (subportal != null) {
+            env.put(ShowObject.VAR_SUBPORTAL, subportal);
+            ReadRecorder.log(subportal.getChild(), Constants.COUNTER_READ, env);
+        }
 
         return processCategory(request,response,env,relation);
     }

@@ -1363,6 +1363,8 @@ public class VariableFetcher extends TimerTask implements Configurable {
                 map = subportalCounter;
                 children = Collections.singletonList((Relation) Tools.sync(where));
             }
+            
+            double total = sqlTool.maxSubportalReads();
 
             for (Relation rel : children) {
                 Map<String,Integer> portal = new HashMap(6);
@@ -1394,6 +1396,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
                 
                 portal.put("EVENTS", numEvents);
                 portal.put("WAITING_EVENTS", persistence.findChildren(events.getChild()).size() - numEvents);
+                
+                if (where == null && total > 0) {
+                    double sp = Tools.getCounterValue(rel.getChild(), Constants.COUNTER_READ);
+                    double pct = 100.0/(total/sp);
+                    portal.put("READPCT", (int) pct);
+                }
 
                 map.put(rel, portal);
             }

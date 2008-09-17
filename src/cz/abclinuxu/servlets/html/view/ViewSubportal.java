@@ -36,6 +36,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public class ViewSubportal implements AbcAction {
         
         Category cat = (Category) relation.getChild();
         env.put(ShowObject.VAR_ITEM, cat);
-		
+        
 		if (ACTION_MEMBERS.equals(action)) {
             List parents = (List) env.get(ShowObject.VAR_PARENTS);
             Link link = new Link("Členové", relation.getUrl()+"?action="+ACTION_MEMBERS, null);

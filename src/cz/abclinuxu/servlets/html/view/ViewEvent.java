@@ -103,7 +103,12 @@ public class ViewEvent implements AbcAction, Configurable {
         
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
-        env.put(ShowObject.VAR_SUBPORTAL, Tools.getParentSubportal(parents));
+        
+        Relation subportal = Tools.getParentSubportal(parents);
+        if (subportal != null) {
+            env.put(ShowObject.VAR_SUBPORTAL, subportal);
+            ReadRecorder.log(subportal.getChild(), Constants.COUNTER_READ, env);
+        }
         
         if (relation.getId() == Constants.REL_EVENTS)
             return processSection(request, response, relation, env);

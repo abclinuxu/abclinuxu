@@ -157,6 +157,8 @@ public final class SQLTool implements Configurable {
     public static final String QUESTIONS_WITH_TAGS = "questions.with.tags";
     public static final String FIND_SUBPORTAL_MEMBERSHIP  = "find.subportal.membership";
     public static final String FIND_HP_SUBPORTAL_ARTICLES = "find.hp.subportal.articles";
+    
+    public static final String MAX_SUBPORTAL_READS = "max.subportal.reads";
 
     private static SQLTool singleton;
     static {
@@ -2285,6 +2287,14 @@ public final class SQLTool implements Configurable {
         String query = (String) sql.get(SERVER_RELATIONS_IN_CATEGORY);
         return loadRelations(query, Collections.singletonList(new Integer(cat)));
     }
+    
+    /**
+     * Sums all read counters across subportals.
+     * @return The number of reads.
+     */
+    public int maxSubportalReads() {
+        return loadNumber(sql.get(MAX_SUBPORTAL_READS), Collections.EMPTY_LIST);
+    }
 
     /**
      * Private constructor
@@ -2381,6 +2391,7 @@ public final class SQLTool implements Configurable {
         store(SERVER_RELATIONS_IN_CATEGORY, prefs);
         store(FIND_SUBPORTAL_MEMBERSHIP, prefs);
         store(FIND_HP_SUBPORTAL_ARTICLES, prefs);
+        store(MAX_SUBPORTAL_READS, prefs);
     }
 
     /**

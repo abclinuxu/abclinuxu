@@ -111,7 +111,11 @@ public class ShowObject implements AbcAction {
         List parents = persistence.findParents(relation);
         env.put(VAR_PARENTS, parents);
         
-        env.put(VAR_SUBPORTAL, Tools.getParentSubportal(parents));
+        Relation subportal = Tools.getParentSubportal(parents);
+        if (subportal != null) {
+            env.put(VAR_SUBPORTAL, subportal);
+            ReadRecorder.log(subportal.getChild(), Constants.COUNTER_READ, env);
+        }
 
         if (relation.getChild() instanceof Poll)
             return ViewPolls.processPoll(env, relation, request);

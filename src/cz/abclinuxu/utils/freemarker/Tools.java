@@ -2324,7 +2324,6 @@ public class Tools implements Configurable {
                     String upper = null;
 
                     if (discussion.getParent() instanceof Item) {
-                        Persistence persistence = PersistenceFactory.getPersistence();
                         Relation upperRel = (Relation) persistence.findById(new Relation(discussion.getUpper()));
                         upper = upperRel.getUrl();
                     }

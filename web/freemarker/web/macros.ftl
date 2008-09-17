@@ -693,6 +693,7 @@
         <tr><td>Wiki stránek:</td> <td><a href="${relation.url}/wiki">${counter.WIKIS?default("?")}</a></td></tr>
         <tr><td>Dotazů:</td>       <td><a href="${relation.url}/poradna">${counter.QUESTIONS?default("?")}</a></td></tr>
         <tr><td>Akcí:</td>         <td><a href="${relation.url}/akce">${counter.EVENTS?default("?")}</a></td></tr>
+        <tr><td>Čtenost:</td>      <td>${counter.READPCT?default("?")}&nbsp;%</td></tr>
         <#if score != -1><tr><td>Skóre:</td> <td>${score}</td></tr></#if>
       </table>
         <form action="/skupiny/edit/${relation.id}" method="post">
