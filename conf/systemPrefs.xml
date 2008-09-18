@@ -586,7 +586,7 @@
                             <entry key="max.question" value="50"/>
                             <entry key="default.faq" value="3"/>
                             <entry key="max.faq" value="10"/>
-                            <entry key="default.event" value="3"/>
+                            <entry key="default.event" value="5"/>
                             <entry key="max.event" value="10"/>
                             <entry key="default.dictionary" value="3"/>
                             <entry key="max.dictionary" value="10"/>
