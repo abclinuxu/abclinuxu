@@ -355,14 +355,14 @@
         <a href="/desktopy">Vaše desktopy</a>
       </div>
       <div class="s_sekce" style="text-align:center;">
-        <table>
+        <table align="center">
           <tr>
             <#list DESKTOPS as desktop>
               <td>
                 <@lib.showDesktop desktop />
               </td>
             </#list>
-          </td>
+          </tr>
         </table>
         <span class="s_sekce_dalsi"><a href="/desktopy">další&nbsp;&raquo;</a></span>
       </div>
@@ -377,10 +377,15 @@
         <a href="/videa">Videa</a>
       </div>
       <div class="s_sekce" style="text-align:center;">
-        <#list VIDEOS as video>
-            <@lib.showVideo video />
-        </#list>
-        <br>
+        <table align="center">
+          <tr>
+            <#list VIDEOS as video>
+              <td>
+                <@lib.showVideo video />
+              </td>
+            </#list>
+          </tr>
+        </table>
         <span class="s_sekce_dalsi"><a href="/videa">další&nbsp;&raquo;</a></span>
       </div>
     </div>
