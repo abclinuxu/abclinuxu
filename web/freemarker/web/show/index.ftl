@@ -355,10 +355,15 @@
         <a href="/desktopy">Vaše desktopy</a>
       </div>
       <div class="s_sekce" style="text-align:center;">
-        <#list DESKTOPS as desktop>
-            <@lib.showDesktop desktop />
-        </#list>
-        <br>
+        <table>
+          <tr>
+            <#list DESKTOPS as desktop>
+              <td>
+                <@lib.showDesktop desktop />
+              </td>
+            </#list>
+          </td>
+        </table>
         <span class="s_sekce_dalsi"><a href="/desktopy">další&nbsp;&raquo;</a></span>
       </div>
     </div>
