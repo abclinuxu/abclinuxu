@@ -41,6 +41,7 @@ public class Screenshot {
     String imageUrl;
     String thumbnailListingUrl;
     String thumbnailDetailUrl;
+    Item item;
 
     /**
      * Constructs object from fully initialized relation (including child).
@@ -48,7 +49,7 @@ public class Screenshot {
      */
     public Screenshot(Relation relation) {
         url = relation.getUrl();
-        Item item = (Item) relation.getChild();
+        item = (Item) relation.getChild();
         title = item.getTitle();
         Map children = Tools.groupByType(item.getChildren(), "Data");
         List list = (List) children.get(Constants.TYPE_DATA);
@@ -61,6 +62,10 @@ public class Screenshot {
         imageUrl = doc.selectSingleNode("/data/object/@path").getText();
         thumbnailDetailUrl = doc.selectSingleNode("/data/object/thumbnail[@useType='detail']/@path").getText();
         thumbnailListingUrl = doc.selectSingleNode("/data/object/thumbnail[@useType='listing']/@path").getText();
+    }
+
+    public Item getItem() {
+        return item;
     }
 
     public String getUrl() {

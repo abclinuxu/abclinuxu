@@ -25,7 +25,8 @@
     </#if>
     <p>${TOOL.xpath(item,"//description")?default("")}</p>
     <p class="meta-vypis">
-        <@lib.showUser TOOL.createUser(item.owner)/> | ${DATE.show(item.created, "SMART")}
+        ${DATE.show(item.created, "SMART")} | <@lib.showUser TOOL.createUser(item.owner)/>
+        | Zhlédnuto: <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times;
         <#if diz?exists>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
     </p>
     <hr style="clear:right" />

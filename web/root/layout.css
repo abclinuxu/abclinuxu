@@ -476,6 +476,16 @@ td.td-datum {
 .sw-strom div { margin-left: 1em; }
 .sw-strom div.uroven-1 { margin-left: 0; }
 
+div.video {
+    margin: 0.4em 0.3em 0.3em 0.3em;
+    display: inline-table
+}
+
+div.desktop {
+    margin: 0.4em 0.3em 0.3em 0.3em;
+    display: inline-table
+}
+
 .hidden {
 	display: none;
 }

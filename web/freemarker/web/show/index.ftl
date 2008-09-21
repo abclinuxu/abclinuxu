@@ -356,9 +356,7 @@
       </div>
       <div class="s_sekce" style="text-align:center;">
         <#list DESKTOPS as desktop>
-          <a href="${desktop.url}" title="${desktop.title}" class="thumb">
-            <img width="200" src="${desktop.thumbnailListingUrl}" alt="${desktop.title}" border="0" style="margin: 0.4em 0.3em 0.3em 0.3em">
-          </a>
+            <@lib.showDesktop desktop />
         </#list>
         <br>
         <span class="s_sekce_dalsi"><a href="/desktopy">další&nbsp;&raquo;</a></span>
@@ -375,9 +373,7 @@
       </div>
       <div class="s_sekce" style="text-align:center;">
         <#list VIDEOS as video>
-          <a href="${video.url}" title="${TOOL.childName(video)}" class="thumb">
-            <img src="${TOOL.xpath(video.child, "/data/thumbnail")}" alt="${TOOL.childName(video)}" border="0" style="margin: 0.4em 0.3em 0.3em 0.3em">
-          </a>
+            <@lib.showVideo video />
         </#list>
         <br>
         <span class="s_sekce_dalsi"><a href="/videa">další&nbsp;&raquo;</a></span>

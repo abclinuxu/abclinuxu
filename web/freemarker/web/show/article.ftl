@@ -86,7 +86,7 @@
         </#if>
 
         <a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+RELATION.id)}">Vytvoř anketu</a>
-        
+
         <a href="${URL.make("/"+RELATION.id+".docb")}">Docbook</a>
         <a href="${URL.make("/edit/"+RELATION.id+"?action=showTalk")}">Rozhovor</a>
         <a href="${URL.make("/inset/"+RELATION.id+"?action=addFile")}">Přidat soubory</a>
@@ -115,7 +115,7 @@
         <#assign index = item.value?eval>
         <div id="inlinevideo-${index}" style="text-align: center">
             <b>${TOOL.childName(CHILDREN.video[index])}</b>
-            <@lib.showVideo CHILDREN.video[index], 300, 300, (USER?exists && TOOL.permissionsFor(USER,RELATION).canModify()) />
+            <@lib.showVideoPlayer CHILDREN.video[index], 300, 300, (USER?exists && TOOL.permissionsFor(USER,RELATION).canModify()) />
         </div>
         <#assign dummy=CHILDREN.video.set(index, "UNDEF")>
     </#if>

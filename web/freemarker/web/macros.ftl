@@ -708,13 +708,49 @@
     </div>
 </#macro>
 
-<#macro showVideo relation width height showLink>
+<#macro showVideoPlayer relation width height showLink>
     <#local item=relation.child, code=TOOL.xpath(item,"//code"), desc=TOOL.xpath(item,"//description")?default("")>
     <#if item.subType=="youtube"><#local player="http://www.youtube.com/v/"+code+"&amp;hl=en&amp;fs=1">
     <#elseif item.subType=="googlevideo"><#local player="http://video.google.com/googleplayer.swf?docid="+code+"&amp;hl=cs&amp;fs=true">
     </#if>
 
     <#if showLink>(<a href="${relation.url?default("/videa/show/"+relation.id)}">správa videa</a>)</#if><br>
-    <object width="${width}" height="${height}"><param name="movie" value="${player}"></param><param name="allowFullScreen" value="true"></param><embed src="${player}" type="application/x-shockwave-flash" allowfullscreen="true" width="${width}" height="${height}"></embed></object>
+    <object width="${width}" height="${height}">
+        <param name="movie" value="${player}"></param><param name="allowFullScreen" value="true"></param>
+        <embed src="${player}" type="application/x-shockwave-flash" allowfullscreen="true" width="${width}" height="${height}"></embed>
+    </object>
     <#if desc!=""><p>${desc}</p></#if>
+</#macro>
+
+<#macro showVideo relation>
+    <#assign item = relation.child, tmp = TOOL.groupByType(item.children, "Item"),
+    icon = TOOL.xpath(item,"/data/thumbnail")?default("UNDEF"), title = "${TOOL.childName(relation)}">
+    <#if tmp.discussion?exists><#assign diz = TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz = null></#if>
+    <div class="video">
+        <p>${TOOL.limit(title, 22, "..")}</p>
+        <a href="${relation.url}" class="thumb">
+            <img src="${icon}" alt="${title}" border="0">
+        </a>
+        <p class="meta-vypis" style="text-align: left">
+            ${DATE.show(item.created, "SMART")} | <@lib.showUser TOOL.createUser(item.owner)/><br>
+            Zhlédnuto: <#assign reads = TOOL.getCounterValue(item,"read")>${reads}&times;
+            <#if diz?exists>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
+        </p>
+    </div>
+</#macro>
+
+<#macro showDesktop desktop>
+    <#assign item = desktop.item, tmp = TOOL.groupByType(item.children, "Item")>
+    <#if tmp.discussion?exists><#assign diz = TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz = null></#if>
+    <div class="desktop">
+        <p>${TOOL.limit(desktop.title, 22, "..")}</p>
+        <a href="${desktop.url}" class="thumb">
+            <img width="200" src="${desktop.thumbnailListingUrl}" alt="${desktop.title}" border="0">
+        </a>
+        <p class="meta-vypis" style="text-align: left">
+            ${DATE.show(item.created, "SMART")} | <@lib.showUser TOOL.createUser(item.owner)/><br>
+            Zhlédnuto: <#assign reads = TOOL.getCounterValue(item,"read")>${reads}&times;
+            <#if diz?exists>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
+        </p>
+    </div>
 </#macro>

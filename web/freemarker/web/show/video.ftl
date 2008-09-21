@@ -22,7 +22,7 @@
     | <@lib.showUser TOOL.createUser(ITEM.owner) />
     | Zhlédnuto: <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times;</p>
 
-<@lib.showVideo RELATION, 500, 400, false />
+<@lib.showVideoPlayer RELATION, 500, 400, false />
 
 <p>
   <form action="${URL.make("/videa/edit/"+RELATION.id)}">
