@@ -727,7 +727,7 @@
     icon = TOOL.xpath(item,"/data/thumbnail")?default("UNDEF"), title = "${TOOL.childName(relation)}">
     <#if tmp.discussion?exists><#assign diz = TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz = null></#if>
     <div class="video">
-        <p>${TOOL.limit(title, 22, "..")}</p>
+        <p title="${title}">${TOOL.limit(title, 22, "..")}</p>
         <a href="${relation.url}" class="thumb">
             <img src="${icon}" alt="${title}" border="0">
         </a>
@@ -743,7 +743,7 @@
     <#assign item = desktop.item, tmp = TOOL.groupByType(item.children, "Item")>
     <#if tmp.discussion?exists><#assign diz = TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz = null></#if>
     <div class="desktop">
-        <p>${TOOL.limit(desktop.title, 22, "..")}</p>
+        <p title="${desktop.title}">${TOOL.limit(desktop.title, 22, "..")}</p>
         <a href="${desktop.url}" class="thumb">
             <img width="200" src="${desktop.thumbnailListingUrl}" alt="${desktop.title}" border="0">
         </a>
