@@ -99,9 +99,9 @@ public class VariableFetcher extends TimerTask implements Configurable {
     List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities;
     List freshTrivias, freshEvents, freshVideos, freshHPSubportalArticles;
     List<Map> latestSubportalChanges;
-    Map<Integer, List> freshSubportalArticles, freshForumQuestions, freshSubportalWikiPages;
+    Map<Integer, List<Relation>> freshSubportalArticles, freshForumQuestions, freshSubportalWikiPages;
     Map<Integer, Relation> nextSubportalEvent, freshSubportalEvent;
-    
+
     Map<Integer, Integer> mainForums;
     List<CloudTag> freshCloudTags;
     Map<Relation, Integer> mostReadStories, mostReadArticles;
@@ -115,7 +115,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     Map<String, Integer> defaultSizes, maxSizes, counter;
     Map<Relation, Map<String, Integer>> subportalCounter;
     Map<Server, List<Link>> feedLinks;
-    Map<Integer, Map> feedSubportalLinks;
+    Map<Integer, Map<Server, List<Link>>> feedSubportalLinks;
     SectionTreeCache faqTree, softwareTree, hardwareTree, articleTree;
     Relation currentPoll;
     int sectionCacheFrequency;
@@ -162,7 +162,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public Map getCounter() {
         return counter;
     }
-    
+
     /**
      * Returns a counter for the specified subportal
      */
@@ -173,7 +173,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         else
             return Collections.EMPTY_MAP;
     }
-    
+
     public Map<Integer, Integer> getMainForums() {
         return mainForums;
     }
@@ -234,7 +234,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         int userLimit = getObjectCountForUser(user, KEY_ARTICLE, null);
         return getSubList(freshArticles, userLimit);
     }
-    
+
     /**
      * List of the freshest subportal article relations according to user preference or system setting.
      */
@@ -270,7 +270,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         else
             return getSubList(articles, userLimit);
     }
-    
+
     /**
      * Returns the nearest upcoming event for the subportal specified.
      * @param rel A subportal
@@ -282,15 +282,15 @@ public class VariableFetcher extends TimerTask implements Configurable {
         else
             return null;
     }
-    
+
     public List getLatestSubportalChanges(Object user) {
         if (latestSubportalChanges == null)
             return Collections.EMPTY_LIST;
-        
+
         int userLimit = /*getObjectCountForUser(user, KEY_SOFTWARE, null)*/ 10;
         return getSubList(latestSubportalChanges, userLimit);
     }
-    
+
     public List getAllSubportalChanges() {
         return latestSubportalChanges;
     }
@@ -302,24 +302,24 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public List getFreshQuestions(int count, int rid) {
         if (freshForumQuestions == null)
             return Collections.EMPTY_LIST;
-        
+
         List questions = freshForumQuestions.get(rid);
-        
+
         if (questions == null)
             return Collections.EMPTY_LIST;
         else
             return getSubList(questions, count);
     }
-    
+
     public List getFreshQuestions(User user) {
         int userLimit = getObjectCountForUser(user, KEY_QUESTION, "/data/settings/index_discussions");
         return getSubList(freshQuestions, userLimit);
     }
-    
+
     public List getFreshQuestions(int count) {
         return getSubList(freshQuestions, count);
     }
-    
+
     /**
      * List of the most fresh frequently asked question relations according to user preference or system setting.
      */
@@ -367,7 +367,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         int userLimit = getObjectCountForUser(user, KEY_TRIVIA, null);
         return getSubList(freshTrivias, userLimit);
     }
-    
+
     /**
      * List of the most fresh event relations according to user preference or system setting.
      */
@@ -383,7 +383,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         int userLimit = getObjectCountForUser(user, KEY_SCREENSHOT, "/data/settings/index_screenshots");
         return getSubList(freshScreenshots, userLimit);
     }
-    
+
     /**
      * List of the freshest video relations according to user preference or system setting.
      */
@@ -401,43 +401,43 @@ public class VariableFetcher extends TimerTask implements Configurable {
     	int userLimit = getObjectCountForUser(user, KEY_TAGCLOUD, null);
         return getSubList(freshCloudTags, userLimit);
     }
-    
+
     public Map<Relation,Integer> getMostReadArticles() {
         return mostReadArticles;
     }
-    
+
     public Map<Relation,Integer> getMostReadStories() {
         return mostReadStories;
     }
-    
+
     public Map<Relation,Integer> getRecentMostReadArticles() {
         return recentMostReadArticles;
     }
-    
+
     public Map<Relation,Integer> getRecentMostReadStories() {
         return recentMostReadStories;
     }
-    
+
     public Map<Relation,Integer> getMostCommentedArticles() {
         return mostCommentedArticles;
     }
-    
+
     public Map<Relation,Integer> getMostCommentedStories() {
         return mostCommentedStories;
     }
-    
+
     public Map<Relation,Integer> getMostCommentedNews() {
         return mostCommentedNews;
     }
-    
+
     public Map<Relation,Integer> getRecentMostCommentedArticles() {
         return recentMostCommentedArticles;
     }
-    
+
     public Map<Relation,Integer> getRecentMostCommentedStories() {
         return recentMostCommentedStories;
     }
-    
+
     public Map<Relation,Integer> getRecentMostCommentedNews() {
         return recentMostCommentedNews;
     }
@@ -477,23 +477,23 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
         return getSelectedFeeds(element.getText(), userLimit);
     }
-    
+
     public Map getSubportalFeeds(Object user, int rid) {
         if (feedSubportalLinks == null)
             return Collections.EMPTY_MAP;
-        
+
         int userLimit = getObjectCountForUser(user, KEY_INDEX_LINKS, "/data/settings/index_links");
-        
+
         Map<Server, List<Link>> map = feedSubportalLinks.get(rid);
         if (map == null)
             return Collections.EMPTY_MAP;
-        
-        map = new HashMap(map);
+
+        map = new HashMap<Server, List<Link>>(map);
         for (Map.Entry<Server,List<Link>> entry : map.entrySet()) {
-            List list = getSubList(entry.getValue(), userLimit);
+            List<Link> list = getSubList(entry.getValue(), userLimit);
             entry.setValue(list);
         }
-        
+
         return map;
     }
 
@@ -565,7 +565,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public HostingServer getHostingServer() {
         return hostingServer;
     }
-    
+
     public HostingServer getOffer64bit() {
         return offer64bit;
     }
@@ -682,7 +682,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public void setOffer64bit(HostingServer server) {
         offer64bit = server;
     }
-    
+
     private void refreshSectionCaches() {
         try {
             long start = System.currentTimeMillis();
@@ -720,21 +720,21 @@ public class VariableFetcher extends TimerTask implements Configurable {
             log.error("Selhalo nacitani odkazu feedu", e);
         }
     }
-    
+
     private void refreshSubportalFeedLinks() {
         try {
             Category subportals = new Category(Constants.CAT_SUBPORTALS);
             List<Relation> children = Tools.syncList(subportals.getChildren());
-            Map data = new HashMap();
+            Map<Integer, Map<Server, List<Link>>> data = new HashMap<Integer, Map<Server, List<Link>>>();
 
             for (Relation rel : children) {
                 Map<Server, List<Link>> feeds = UpdateLinks.getFeeds(rel.getChild().getId());
                 for (List links : feeds.values())
                     Sorters2.byDate(links, Sorters2.DESCENDING);
-                
+
                 data.put(rel.getId(), feeds);
             }
-            
+
             feedSubportalLinks = data;
         } catch (Exception e) {
             log.error("Selhalo nacitani odkazu feedu podportalu", e);
@@ -764,7 +764,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             log.error("Selhalo nacitani clanku", e);
         }
     }
-    
+
     public void refreshHPSubportalArticles() {
         try {
             int maximum = (Integer) maxSizes.get(KEY_SUBPORTAL_ARTICLE);
@@ -776,29 +776,29 @@ public class VariableFetcher extends TimerTask implements Configurable {
             log.error("Selhalo nacitani clanku ze skupin pro HP", e);
         }
     }
-    
+
     public void refreshSubportalEvents(Relation where) {
         try {
             Map<Integer, Relation> map, mapUpdated;
             List<Relation> children;
             String date = Constants.isoFormat.format(new Date());
-            
+
             // get a list of subportals
             if (where == null) {
                 Category subportals = new Category(Constants.CAT_SUBPORTALS);
-                map = new HashMap();
-                mapUpdated = new HashMap();
+                map = new HashMap<Integer, Relation>();
+                mapUpdated = new HashMap<Integer, Relation>();
                 children = Tools.syncList(subportals.getChildren());
             } else {
                 map = nextSubportalEvent;
                 mapUpdated = freshSubportalEvent;
                 children = Collections.singletonList((Relation) Tools.sync(where));
             }
-            
+
             // get an event for every subportal
             for (Relation rel : children) {
                 int rid = Misc.parseInt(Tools.xpath(rel.getChild(), "/data/events"), 0);
-                
+
                 // get the next event
                 Qualifier[] qualifiers = new Qualifier[] {
                     new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, date),
@@ -806,15 +806,15 @@ public class VariableFetcher extends TimerTask implements Configurable {
                     Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING,
                     new LimitQualifier(0, 1)
                 };
-                
+
                 List<Relation> list = sqlTool.findItemRelationsWithType(Item.EVENT, qualifiers);
-                
+
                 if (!Misc.empty(list)) {
                     Relation event = list.get(0);
                     Tools.sync(event);
                     map.put(rid, event);
                 }
-                
+
                 // get the last modified event
                 qualifiers = new Qualifier[] {
                     new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, date),
@@ -822,223 +822,206 @@ public class VariableFetcher extends TimerTask implements Configurable {
                     Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING,
                     new LimitQualifier(0, 1)
                 };
-                
+
                 list = sqlTool.findItemRelationsWithType(Item.EVENT, qualifiers);
-                
+
                 if (!Misc.empty(list)) {
                     Relation event = list.get(0);
                     Tools.sync(event);
                     mapUpdated.put(rid, event);
                 }
             }
-            
+
             nextSubportalEvent = map;
             freshSubportalEvent = mapUpdated;
         } catch (Exception e) {
             log.error("Selhalo nacitani akci pro subportaly", e);
         }
     }
-   
+
     public void refreshSubportalWikiPages(Relation where) {
         try {
-            Map<Integer, List> map;
+            Map<Integer, List<Relation>> map;
             List<Relation> children;
             Persistence persistence = PersistenceFactory.getPersistence();
-            
+
             // get a list of subportals
             if (where == null) {
                 Category subportals = new Category(Constants.CAT_SUBPORTALS);
-                map = new HashMap();
+                map = new HashMap<Integer, List<Relation>>();
                 children = Tools.syncList(subportals.getChildren());
             } else {
                 map = freshSubportalWikiPages;
                 children = Collections.singletonList((Relation) Tools.sync(where));
             }
-            
+
             // get wikis for every subportal
             for (Relation rel : children) {
                 int rid = Misc.parseInt(Tools.xpath(rel.getChild(), "/data/wiki"), 0);
                 List<ChangedContent> changes;
                 List<Relation> result;
                 Relation wikiRelation = new Relation(rid);
-                
-                Tools.sync(wikiRelation);
-                
+                try {
+                    Tools.sync(wikiRelation);
+                } catch (Exception e) {
+                    log.warn("Wiki " + rid + " nebyla nalezena");
+                    continue;
+                }
                 changes = ContentChanges.changedContentList(wikiRelation, persistence, ContentChanges.COLUMN_DATE, true);
-                result = new ArrayList(changes.size());
-                
+                result = new ArrayList<Relation>(changes.size());
+
                 for (ChangedContent change : changes)
                     result.add(change.getRelation());
-                
+
                 map.put(rid, result);
             }
-            
+
             freshSubportalWikiPages = map;
         } catch (Exception e) {
             log.error("Selhalo nacitani wiki pro subportaly", e);
         }
     }
-    
+
     public void refreshSubportalArticles(Relation where) {
         try {
             List<Relation> children;
-            Map<Integer, List> map;
+            Map<Integer, List<Relation>> map;
             int maximum = (Integer) maxSizes.get(KEY_ARTICLE);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            
+
             // get a list of subportals
             if (where == null) {
                 Category subportals = new Category(Constants.CAT_SUBPORTALS);
-                map = new HashMap();
+                map = new HashMap<Integer, List<Relation>>();
                 children = Tools.syncList(subportals.getChildren());
             } else {
                 map = freshSubportalArticles;
                 children = Collections.singletonList((Relation) Tools.sync(where));
             }
-            
+
             // get articles for every subportal
             for (Relation rel : children) {
                 // get the rid of the article section of that subportal
                 int rid = Misc.parseInt(Tools.xpath(rel.getChild(), "/data/articles"), 0);
                 Relation r = new Relation(rid);
-                
                 Tools.sync(r);
-                
+
                 // get the articles
                 List<Relation> articles = sqlTool.findArticleRelations(qualifiers, r.getChild().getId());
                 Tools.syncList(articles);
-                
+
                 map.put(rid, articles);
             }
-            
+
             freshSubportalArticles = map;
         } catch (Exception e) {
             log.error("Selhalo nacitani clanku pro subportaly", e);
         }
     }
-    
-    private static class SubportalChangeComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            if (o1 instanceof Relation)
-                return compare((Relation) o1, (Relation) o2);
-            else if (o1 instanceof Map)
-                return compare((Map) o1, (Map) o2);
-            else
-                return 0;
-        }
-        public int compare(Map m1, Map m2) {
-            return compare((Relation) m1.get("relation"), (Relation) m2.get("relation"));
-        }
-        public int compare(Relation r1, Relation r2) {
-            GenericDataObject gdo1 = (GenericDataObject) r1.getChild();
-            GenericDataObject gdo2 = (GenericDataObject) r2.getChild();
 
-            return gdo1.getUpdated().compareTo(gdo2.getUpdated());
-        }
-    }
     public void refreshLatestSubportalChanges() {
         // get the latest change for every subportal
-        Map<Integer,List> latestSubportal = new HashMap();
+        Map<Integer,List<Relation>> latestSubportal = new HashMap<Integer, List<Relation>>();
         List<Map> latestChanges;
-        
+
         // add articles to the mix
         for (Integer rid : freshSubportalArticles.keySet()) {
             Relation relArticles = new Relation(rid);
             Tools.sync(relArticles);
             List<Relation> listObjects = latestSubportal.get(relArticles.getUpper());
-            
+
             if (listObjects == null)
-                listObjects = new ArrayList();
-            
+                listObjects = new ArrayList<Relation>();
+
             listObjects.addAll(freshSubportalArticles.get(rid));
             latestSubportal.put(relArticles.getUpper(), listObjects);
         }
-        
+
         // add wiki pages
         for (Integer rid : freshSubportalWikiPages.keySet()) {
             Relation relArticles = new Relation(rid);
             Tools.sync(relArticles);
             List<Relation> listObjects = latestSubportal.get(relArticles.getUpper());
-            
+
             if (listObjects == null)
-                listObjects = new ArrayList();
-            
+                listObjects = new ArrayList<Relation>();
+
             listObjects.addAll(freshSubportalWikiPages.get(rid));
             latestSubportal.put(relArticles.getUpper(), listObjects);
         }
-        
+
         // add events
         for (Integer rid : freshSubportalEvent.keySet()) {
             Relation relArticles = new Relation(rid);
             Tools.sync(relArticles);
             List<Relation> listObjects = latestSubportal.get(relArticles.getUpper());
-            
+
             if (listObjects == null)
-                listObjects = new ArrayList();
-            
+                listObjects = new ArrayList<Relation>();
+
             listObjects.add(freshSubportalEvent.get(rid));
             latestSubportal.put(relArticles.getUpper(), listObjects);
         }
-        
-        latestChanges = new ArrayList(latestSubportal.size());
-        
+
+        latestChanges = new ArrayList<Map>(latestSubportal.size());
+
         // now perform sorting
         Comparator comparator = new SubportalChangeComparator();
-        for (Map.Entry<Integer,List> entry : latestSubportal.entrySet()) {
+        for (Map.Entry<Integer,List<Relation>> entry : latestSubportal.entrySet()) {
             List<Relation> list = entry.getValue();
+            if (list.isEmpty())
+                continue;
+
             Collections.sort(list, comparator);
             // get the latest change
             Map map = new HashMap(2);
             map.put("relation", list.get(list.size()-1));
             map.put("subportal", Tools.createRelation(entry.getKey()));
-            
             latestChanges.add(map);
         }
-        
+
         Collections.sort(latestChanges, comparator);
         Collections.reverse(latestChanges);
-        
+
         latestSubportalChanges = latestChanges;
     }
-    
+
     public void refreshForumQuestions() {
         try {
-            Map<Integer, List> map;
+            Map<Integer, List<Relation>> map;
             Category subportals = new Category(Constants.CAT_SUBPORTALS);
             int maximum = (Integer) maxSizes.get(KEY_QUESTION);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            
+
             // get a list of subportals
             List<Relation> children = Tools.syncList(subportals.getChildren());
-            
-            map = new HashMap(children.size() + mainForums.size());
-            
+            map = new HashMap<Integer, List<Relation>>(children.size() + mainForums.size());
+
             // get forums for every subportal
             for (Relation rel : children) {
                 // get the rid of the forum of that subportal
                 int rid = Misc.parseInt(Tools.xpath(rel.getChild(), "/data/forum"), 0);
-                
+
                 // get the articles
                 List<Relation> dizs = sqlTool.findDiscussionRelationsWithParent(rid, qualifiers);
                 Tools.syncList(dizs);
-                
+
                 map.put(rid, dizs);
             }
-            
+
             for (Integer rel : mainForums.keySet()) {
                 List<Relation> dizs = sqlTool.findDiscussionRelationsWithParent(rel, qualifiers);
                 Tools.syncList(dizs);
-                
                 map.put(rel, dizs);
             }
-            
+
             freshForumQuestions = map;
             refreshCombinedSubportalQuestions();
         } catch (Exception e) {
             log.error("Selhalo nacitani diskuzi pro sekce", e);
         }
     }
-    
+
     public void refreshForumQuestions(int rid) {
         int maximum = (Integer) maxSizes.get(KEY_QUESTION);
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
@@ -1048,24 +1031,24 @@ public class VariableFetcher extends TimerTask implements Configurable {
         freshForumQuestions.put(rid, dizs);
         refreshCombinedSubportalQuestions();
     }
-    
+
     /**
      * This function is to be called only from refreshForumQuestions
      */
     public void refreshCombinedSubportalQuestions() {
-        List<Relation> combined = new ArrayList(40*freshForumQuestions.size());
+        List<Relation> combined = new ArrayList<Relation>(40 * freshForumQuestions.size());
         int maximum = (Integer) maxSizes.get(KEY_QUESTION);
-        
-        for(Map.Entry<Integer,List> entry : freshForumQuestions.entrySet()) {
+
+        for (Map.Entry<Integer,List<Relation>> entry : freshForumQuestions.entrySet()) {
             if (mainForums.containsKey(entry.getKey()) || entry.getKey() < 0)
                 continue;
             combined.addAll(entry.getValue());
         }
-        
+
         Sorters2.byDate(combined, Sorters2.DESCENDING);
         freshForumQuestions.put(-1, getSubList(combined, maximum));
     }
-    
+
     public void refreshQuestions() {
         try {
             int maximum = (Integer) maxSizes.get(KEY_QUESTION);
@@ -1158,7 +1141,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             log.error("Selhalo nacitani kvizu", e);
         }
     }
-    
+
     public void refreshEvents() {
         try {
             int maximum = (Integer) maxSizes.get(KEY_EVENT);
@@ -1226,7 +1209,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             log.error("Selhalo nacitani desktopu", e);
         }
     }
-    
+
     public void refreshVideos() {
         try {
             int maximum = (Integer) maxSizes.get(KEY_VIDEO);
@@ -1261,23 +1244,23 @@ public class VariableFetcher extends TimerTask implements Configurable {
             log.error("Selhalo nacitani pracovnich pozic serveru jobs.cz", e);
         }
     }
-    
+
     public void refreshTopStatistics() {
         try {
             String monthago;
             Qualifier[] qualifiers = new Qualifier[]{ new LimitQualifier(0, 10) };
-            
+
             mostReadArticles = sqlTool.getMostReadRelations(Item.ARTICLE, "", qualifiers);
             mostReadStories = sqlTool.getMostReadRelations(Item.BLOG, "", qualifiers);
             mostCommentedArticles = sqlTool.getMostCommentedRelations(Item.ARTICLE, "", qualifiers);
             mostCommentedStories = sqlTool.getMostCommentedRelations(Item.BLOG, "", qualifiers);
             mostCommentedNews = sqlTool.getMostCommentedRelations(Item.NEWS, "", qualifiers);
-            
+
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.MONTH, -1);
-            
+
             monthago = Constants.isoFormat.format(cal.getTime());
-            
+
             recentMostCommentedArticles = sqlTool.getMostCommentedRelations(Item.ARTICLE, monthago, qualifiers);
             recentMostCommentedStories = sqlTool.getMostCommentedRelations(Item.BLOG, monthago, qualifiers);
             recentMostReadArticles = sqlTool.getMostReadRelations(Item.ARTICLE, monthago, qualifiers);
@@ -1338,16 +1321,15 @@ public class VariableFetcher extends TimerTask implements Configurable {
             }
             counter.put("WAITING_NEWS", waiting);
             counter.put("SLEEPING_NEWS", sleeping);
-            
+
             int numEvents = sqlTool.countItemRelationsWithType(Item.UNPUBLISHED_EVENT,
                         new Qualifier[] { new CompareCondition(Field.UPPER, Operation.EQUAL, Constants.REL_EVENTS) });
-            
             counter.put("WAITING_EVENTS", numEvents);
         } catch (Exception e) {
             log.error("Selhalo nacitani velikosti", e);
         }
     }
-    
+
     public void refreshSubportalSizes(Relation where) {
         try {
             Map<Relation, Map<String,Integer>> map;
@@ -1357,17 +1339,17 @@ public class VariableFetcher extends TimerTask implements Configurable {
             // get a list of subportals
             if (where == null) {
                 Category subportals = new Category(Constants.CAT_SUBPORTALS);
-                map = new HashMap();
+                map = new HashMap<Relation, Map<String, Integer>>();
                 children = Tools.syncList(subportals.getChildren());
             } else {
                 map = subportalCounter;
                 children = Collections.singletonList((Relation) Tools.sync(where));
             }
-            
+
             double total = sqlTool.maxSubportalReads();
 
             for (Relation rel : children) {
-                Map<String,Integer> portal = new HashMap(6);
+                Map<String,Integer> portal = new HashMap<String, Integer>(6);
 
                 Relation articles = Tools.createRelation(Tools.xpath(rel.getChild(), "//articles"));
                 Relation wiki = Tools.createRelation(Tools.xpath(rel.getChild(), "//wiki"));
@@ -1377,26 +1359,26 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
                 portal.put("ARTICLES", persistence.findChildren(articles.getChild()).size());
                 portal.put("WAITING_ARTICLES", persistence.findChildren(pool.getChild()).size());
-                
+
                 int wikiPages = 0;
-                LinkedList<Relation> stack = new LinkedList(persistence.findChildren(wiki.getChild()));
+                LinkedList<Relation> stack = new LinkedList<Relation>(persistence.findChildren(wiki.getChild()));
                 while (stack.size() > 0) {
                     Relation current = stack.removeFirst();
-                    
+
                     wikiPages++;
 
                     stack.addAll(0, persistence.findChildren(current.getChild()));
                 }
-                
+
                 portal.put("WIKIS", wikiPages);
                 portal.put("QUESTIONS", persistence.findChildren(forum.getChild()).size());
 
                 int numEvents = sqlTool.countItemRelationsWithType(Item.EVENT,
                         new Qualifier[] { new CompareCondition(Field.UPPER, Operation.EQUAL, events.getId()) });
-                
+
                 portal.put("EVENTS", numEvents);
                 portal.put("WAITING_EVENTS", persistence.findChildren(events.getChild()).size() - numEvents);
-                
+
                 if (where == null && total > 0) {
                     double sp = Tools.getCounterValue(rel.getChild(), Constants.COUNTER_READ);
                     double pct = 100.0/(total/sp);
@@ -1427,13 +1409,13 @@ public class VariableFetcher extends TimerTask implements Configurable {
                 log.warn("Damaged list of servers: '"+servers+"'!");
                 continue;
             }
-            
+
             try {
                 server = (Server) persistence.findById(new Server(id));
             } catch (Exception e) {
                 continue;
             }
-            
+
             links = feedLinks.get(server);
             if (links == null) // unmaintained
                 continue;
@@ -1524,13 +1506,13 @@ public class VariableFetcher extends TimerTask implements Configurable {
         size = prefs.getInt(PREF_MAX + KEY_SCREENSHOT, 3);
         maxSizes.put(KEY_SCREENSHOT, size);
         freshScreenshots = Collections.emptyList();
-        
+
         size = prefs.getInt(PREF_DEFAULT + KEY_VIDEO, 3);
         defaultSizes.put(KEY_VIDEO, size);
         size = prefs.getInt(PREF_MAX + KEY_VIDEO, 3);
         maxSizes.put(KEY_VIDEO, size);
         freshVideos = Collections.emptyList();
-        
+
         size = prefs.getInt(PREF_DEFAULT + KEY_EVENT, 3);
         defaultSizes.put(KEY_EVENT, size);
         size = prefs.getInt(PREF_MAX + KEY_EVENT, 3);
@@ -1550,7 +1532,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         size = prefs.getInt(PREF_MAX + KEY_TRIVIA, 10);
         maxSizes.put(KEY_TRIVIA, size);
         freshTrivias = Collections.EMPTY_LIST;
-        
+
         size = prefs.getInt(PREF_DEFAULT + KEY_SUBPORTAL_ARTICLE, 2);
         defaultSizes.put(KEY_SUBPORTAL_ARTICLE, size);
         size = prefs.getInt(PREF_MAX + KEY_SUBPORTAL_ARTICLE, 5);
@@ -1569,7 +1551,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         maxSizes.put(KEY_TEMPLATE_LINKS, size);
 
         sectionCacheFrequency = prefs.getInt(PREF_SECTION_CACHE_FREQUENCY, 6);
-        
+
         Preferences subprefs = prefs.node(PREF_MAIN_FORUMS);
         String order = subprefs.get("order", null);
 
@@ -1582,6 +1564,28 @@ public class VariableFetcher extends TimerTask implements Configurable {
             int questions = Integer.parseInt(subprefs.get(srid, null));
 
             mainForums.put(rid, questions);
+        }
+    }
+
+    private static class SubportalChangeComparator implements Comparator {
+        public int compare(Object o1, Object o2) {
+            if (o1 instanceof Relation)
+                return compare((Relation) o1, (Relation) o2);
+            else if (o1 instanceof Map)
+                return compare((Map) o1, (Map) o2);
+            else
+                return 0;
+        }
+
+        public int compare(Map m1, Map m2) {
+            return compare((Relation) m1.get("relation"), (Relation) m2.get("relation"));
+        }
+
+        public int compare(Relation r1, Relation r2) {
+            GenericDataObject gdo1 = (GenericDataObject) r1.getChild();
+            GenericDataObject gdo2 = (GenericDataObject) r2.getChild();
+
+            return gdo1.getUpdated().compareTo(gdo2.getUpdated());
         }
     }
 }

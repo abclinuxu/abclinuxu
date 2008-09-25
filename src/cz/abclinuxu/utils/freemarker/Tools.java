@@ -130,7 +130,7 @@ public class Tools implements Configurable {
             } catch (BackingStoreException e) {
                 throw new ConfigurationException(e.getMessage(), e.getCause());
             }
-            
+
             String hostname = AbcConfig.getHostname().replaceAll("\\.", "\\\\.");
             String regexp = "<a href=\"https?://" + hostname + "([^\"]+)\"";
             reDetectLink = reCompiler.compile(regexp);
@@ -509,7 +509,7 @@ public class Tools implements Configurable {
 
         return null;
     }
-    
+
     static public Relation getParentSubportal(Relation rel) {
         List parents = persistence.findParents(rel);
         return getParentSubportal(parents);
@@ -1270,6 +1270,24 @@ public class Tools implements Configurable {
         return renderText(input, renderEmoticons, simple);
     }
 
+    /**
+     * Renders text.
+     * @param text string to be rendered
+     * @param emoticons when true, emoticons will be replaced by images
+     * @param simpleFormat when true, empty lines will be replaced by <p> tag
+     * @return text
+     */
+    public static String renderText(String text, boolean emoticons, boolean simpleFormat) {
+        Map params = new HashMap(1, 1.0f);
+        if (emoticons)
+            params.put(Renderer.RENDER_EMOTICONS, Boolean.TRUE);
+
+        if (simpleFormat)
+            return SimpleFormatRenderer.getInstance().render(text, params);
+        else
+            return HTMLFormatRenderer.getInstance().render(text, params);
+    }
+
     public static boolean detectSimpleFormat(Element element) {
         int f = Misc.parseInt(element.attributeValue("format"), -1);
         switch (f) {
@@ -1299,24 +1317,6 @@ public class Tools implements Configurable {
                 renderEmoticons = false;
         }
         return renderEmoticons;
-    }
-
-    /**
-     * Renders text.
-     * @param text string to be rendered
-     * @param emoticons when true, emoticons will be replaced by images
-     * @param simpleFormat when true, empty lines will be replaced by <p> tag
-     * @return text
-     */
-    public static String renderText(String text, boolean emoticons, boolean simpleFormat) {
-        Map params = new HashMap(1, 1.0f);
-        if (emoticons)
-            params.put(Renderer.RENDER_EMOTICONS, Boolean.TRUE);
-
-        if (simpleFormat)
-            return SimpleFormatRenderer.getInstance().render(text, params);
-        else
-            return HTMLFormatRenderer.getInstance().render(text, params);
     }
 
     /**
@@ -1667,25 +1667,25 @@ public class Tools implements Configurable {
         discussion.title = removeTags(discussion.title);
         return discussion;
     }
-    
+
     public static String getUrlForDiscussion(Relation relation) {
         sync(relation);
         if (relation.getUrl() != null)
             return relation.getUrl();
-        
+
         if (relation.getParent() instanceof Category) {
             Relation relUpper = (Relation) persistence.findById(new Relation(relation.getUpper()));
             if (relUpper.getUrl() != null)
                 return relUpper.getUrl() + "/show/" + relation.getId();
         }
-        
+
         if (relation.getParent() instanceof Item) {
             Item item = (Item) sync(relation.getParent());
-            
+
             if (item.getType() == Item.NEWS)
                 return "/zpravicky/show/" + relation.getId();
         }
-        
+
         return "/forum/show/" + relation.getId();
     }
 
@@ -1979,12 +1979,12 @@ public class Tools implements Configurable {
      */
     public List<Relation> attachmentsFor(GenericDataObject obj) {
         if (obj == null)
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
 
-        Map byType = groupByType(obj.getChildren(), "Data");
+        Map<String, List> byType = groupByType(obj.getChildren(), "Data");
         List objs = (List) byType.get(Constants.TYPE_DATA);
         if (objs == null)
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
 
         return objs;
     }
@@ -2178,7 +2178,7 @@ public class Tools implements Configurable {
     public static Map<Integer, Integer> getUserForums(User user) {
         VariableFetcher vars = VariableFetcher.getInstance();
         Map<Integer, Integer> mainForums = vars.getMainForums();
-        Map<Integer, Integer> retval = new LinkedHashMap(mainForums.size());
+        Map<Integer, Integer> retval = new LinkedHashMap<Integer, Integer>(mainForums.size());
 
         retval.putAll(mainForums);
 
@@ -2206,7 +2206,7 @@ public class Tools implements Configurable {
         String stripped = removeTags(text);
 
         stripped = stripped.replaceAll("[ \t\n\r\f,.<]", "");
-        
+
         if (stripped.length() < newsLetterHardLimit)
             return null;
 
@@ -2251,7 +2251,7 @@ public class Tools implements Configurable {
         } catch (Exception e) {
             return null;
         }
-        
+
         return result.toString();
     }
 
@@ -2263,14 +2263,14 @@ public class Tools implements Configurable {
     public static List<Map> processArticle(String text) {
         RE regexpPolls = new RE(rePollTag, RE.MATCH_MULTILINE);
         int pos = 0;
-        List<Map> items = new ArrayList(3);
+        List<Map> items = new ArrayList<Map>(3);
 
         while (true) {
             if (regexpPolls.match(text, pos)) {
                 Map<String,String> map;
 
                 // add the preceding text
-                map = new HashMap(2);
+                map = new HashMap<String, String>(2);
                 map.put("type", "text");
                 map.put("value", text.substring(pos, regexpPolls.getParenStart(0)));
                 items.add(map);
@@ -2281,7 +2281,7 @@ public class Tools implements Configurable {
 
                 if ("poll".equals(type) || "video".equals(type)) {
                     // add a poll or video
-                    map = new HashMap(2);
+                    map = new HashMap<String, String>(2);
                     map.put("type", type);
                     map.put("value", regexpPolls.getParen(2));
                     items.add(map);
@@ -2292,7 +2292,7 @@ public class Tools implements Configurable {
 
         // add the remaining text
         if (pos < text.length()) {
-            Map<String,String> map = new HashMap(2);
+            Map<String,String> map = new HashMap<String, String>(2);
             map.put("type", "text");
             map.put("value", text.substring(pos));
             items.add(map);
@@ -2304,7 +2304,7 @@ public class Tools implements Configurable {
     public static Map<String,String> getOfferedCssStyles() {
         return offeredCssStyles;
     }
-    
+
     public static String processLocalLinks(String text, Relation discussion) {
         try {
             RE regexp = new RE(reDetectLink, RE.MATCH_MULTILINE);

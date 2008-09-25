@@ -80,7 +80,7 @@ public class ContentChanges implements AbcAction {
         String order = (String) params.get(PARAM_ORDER);
         if (ORDER_ASCENDING.equalsIgnoreCase(order))
             orderDesc = false;
-		
+
 		List result = changedContentList(relation, persistence, column, orderDesc);
 
         env.put(VAR_DATA, result);
@@ -88,11 +88,12 @@ public class ContentChanges implements AbcAction {
         env.put(VAR_ORDER_DESCENDING, Boolean.valueOf(orderDesc));
         return FMTemplateSelector.select("ContentChanges", "show", env, request);
     }
-	
+
 	public static List<ChangedContent> changedContentList(Relation relation, Persistence persistence,
 			String sortColumn, boolean orderDesc) {
-		
-		List result = new ArrayList(), stack = new ArrayList(), children;
+
+		List<ChangedContent> result = new ArrayList<ChangedContent>();
+        List<Relation> stack = new ArrayList<Relation>(), children;
         stack.add(relation);
 
         while (stack.size()>0) {
@@ -110,12 +111,12 @@ public class ContentChanges implements AbcAction {
 
             result.add(createChangedContent(childRelation, persistence));
         }
-		
+
 		Comparator comparator = new ChangesComparator(sortColumn);
         if (orderDesc)
             comparator = new OpaqueComparator(comparator);
         Collections.sort(result, comparator);
-		
+
 		return result;
 	}
 

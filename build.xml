@@ -86,7 +86,6 @@
                 <exclude name="junit.jar"/>
                 <exclude name="commons-httpclient.jar"/>
                 <exclude name="commons-codec.jar"/>
-                <exclude name="htmlcleaner.jar"/>
             </fileset>
         </copy>
 
