@@ -121,7 +121,7 @@ CREATE TABLE spolecne (
  skupina INT(6) NOT NULL,                        -- cislo skupiny
  prava INT(6) NOT NULL                           -- maska prav
 );
-ALTER TABLE spolecne ADD INDEX in_predek (typ,cislo);
+ALTER TABLE spolecne ADD UNIQUE in_predek (typ,cislo);
 ALTER TABLE spolecne ADD INDEX in_jmeno (jmeno);
 ALTER TABLE spolecne ADD INDEX in_vytvoreno (vytvoreno);
 ALTER TABLE spolecne ADD INDEX in_zmeneno (zmeneno);
