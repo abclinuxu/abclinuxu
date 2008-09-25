@@ -1229,7 +1229,7 @@ public class MySqlPersistence implements Persistence {
                 if (obj == null) {
                     if (!ignoreMissing) {
                         // this cannot happen
-                        log.warn("Datova položka nebyla nalezena: " + id);
+                        log.warn("Datová položka nebyla nalezena: " + id);
                     }
                     continue;
                 }
@@ -1523,11 +1523,11 @@ public class MySqlPersistence implements Persistence {
         link.setUrl(resultSet.getString(4));
         link.setFixed(resultSet.getBoolean(5));
         link.setOwner(resultSet.getInt(6));
-        
+
         Timestamp ts = resultSet.getTimestamp(7);
         if (ts != null)
             link.setUpdated(new java.util.Date(ts.getTime()));
-        
+
         link.setInitialized(true);
     }
 
@@ -1757,19 +1757,19 @@ public class MySqlPersistence implements Persistence {
             statement.setString(2,obj.getSubType());
             statement.setBytes(3,obj.getDataAsString().getBytes());
             statement.setInt(10,obj.getId());
-            
+
             Integer intgr = obj.getNumeric1();
             if (intgr != null)
                 statement.setInt(4,intgr);
             else
                 statement.setString(4,null);
-            
+
             intgr = obj.getNumeric2();
             if (intgr != null)
                 statement.setInt(5,intgr);
             else
                 statement.setString(5,null);
-            
+
             statement.setString(6,obj.getString1());
             statement.setString(7,obj.getString2());
             if ((obj.getDate1() != null))
@@ -1981,7 +1981,7 @@ public class MySqlPersistence implements Persistence {
             releaseSQLResources(con,statement,resultSet);
         }
     }
-    
+
     /**
      * updates a server in the database
      */
