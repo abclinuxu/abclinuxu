@@ -25,6 +25,7 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Poll;
+import cz.abclinuxu.data.Data;
 import cz.abclinuxu.data.view.Discussion;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.RowComment;
@@ -66,6 +67,10 @@ public class GenerateDevelDatabase {
         GenerateDevelDatabase app = new GenerateDevelDatabase();
         app.dump(new Relation(185423)); // discussion in forum
         app.dump(new Relation(184502)); // discussion in forum
+        app.dump(new Relation(239840)); // discussion in forum
+        app.dump(new Relation(239618)); // discussion in forum
+        app.dump(new Relation(238770)); // discussion in forum
+        app.dump(new Relation(234907)); // discussion in forum
         app.dump(new Relation(185123)); // news
         app.dump(new Relation(185127)); // news
         app.dump(new Relation(182452)); // article
@@ -87,6 +92,17 @@ public class GenerateDevelDatabase {
         app.dump(new Relation(110144)); // blog story
         app.dump(new Relation(175086)); // blog story
         app.dump(new Relation(184944)); // blog story
+        app.dump(new Relation(209238)); // story's attachment
+        app.dump(new Relation(237337)); // group vyvoj
+        app.dump(new Relation(237338)); // wiki of group vyvoj
+        app.dump(new Item(121523)); // group for group vyvoj
+        app.dump(new Relation(238602)); // group portal
+        app.dump(new Relation(238603)); // wiki of group portal
+        app.dump(new Item(122139)); // group for group portal
+        app.dump(new Relation(110149)); // question in group vyvoj
+        app.dump(new Relation(134680)); // question in group vyvoj
+        app.dump(new Relation(63921)); // question in group vyvoj
+        app.dump(new Relation(239374)); // question in group portal
 
         Relation relation = (Relation) persistence.findById(new Relation(184564));
         Poll poll = (Poll) relation.getChild();
@@ -101,9 +117,10 @@ public class GenerateDevelDatabase {
         Statement statement = con.createStatement();
         try {
             /* prenest vsechny sekce krome blogu */
-            int count = statement.executeUpdate("insert into devel.kategorie select * from abc.kategorie where typ!=3");
+            int count = statement.executeUpdate("insert into devel.kategorie select * from abc.kategorie where typ!=3 and typ!=7");
             System.out.println(count);
-            count = statement.executeUpdate("insert into devel.relace select R.* from abc.relace R, abc.kategorie K where typ_potomka='K' and potomek=K.cislo and typ!=3");
+            count = statement.executeUpdate("insert into devel.relace select R.* from abc.relace R, abc.kategorie K where typ_potomka='K'" +
+                    " and potomek=K.cislo and typ!=3 and typ!=7");
             System.out.println(count);
 
             /* prenest servery vcetne jejich odkazu */
@@ -121,7 +138,8 @@ public class GenerateDevelDatabase {
             System.out.println(count);
 
             /* dynamic RSS polozka */
-            count = statement.executeUpdate("insert into devel.polozka values(59516,0,NULL,'<data><title>Dynamicka konfigurace</title></data>')");
+            count = statement.executeUpdate("insert into devel.polozka values(59516,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL," +
+                    "'<data><title>Dynamicka konfigurace</title></data>')");
             System.out.println(count);
 
             /* konstanty data objektu */
@@ -129,7 +147,8 @@ public class GenerateDevelDatabase {
             System.out.println(count);
 
             /* prenest historii wiki dokumentu */
-            count = statement.executeUpdate("insert into devel.verze select V.* from abc.verze V, devel.relace R where R.typ_potomka=V.typ and R.potomek=V.cislo");
+            count = statement.executeUpdate("insert into devel.verze select V.* from abc.verze V, devel.relace R where " +
+                    "R.typ_potomka=V.typ and R.potomek=V.cislo");
             System.out.println(count);
             ResultSet resultSet = statement.executeQuery("select kdo from devel.verze");
             while (resultSet.next()) {
@@ -172,6 +191,8 @@ public class GenerateDevelDatabase {
             dump((Category) child);
         else if (child instanceof Poll)
             dump((Poll) child);
+        else if (child instanceof Data)
+            dump((Data) child);
     }
 
     private void dump(Item item) {
@@ -193,6 +214,12 @@ public class GenerateDevelDatabase {
         Tools.sync(record);
         dumpOwner(record.getOwner());
         save(record);
+    }
+
+    private void dump(Data data) {
+        Tools.sync(data);
+        dumpOwner(data.getOwner());
+        save(data);
     }
 
     private void dump(User user) {
