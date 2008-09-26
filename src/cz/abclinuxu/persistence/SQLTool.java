@@ -145,6 +145,7 @@ public final class SQLTool implements Configurable {
 
     public static final String MOST_COMMENTED_RELATIONS = "most.commented.relations";
     public static final String MOST_READ_RELATIONS = "most.read.relations";
+	public static final String HIGHEST_SCORE_USERS = "highest.score.users";
 
     public static final String SUBPORTALS_COUNT_ARTICLES = "subportal.count.articles";
     public static final String SUBPORTALS_COUNT_EVENTS = "subportal.count.events";
@@ -1826,6 +1827,43 @@ public final class SQLTool implements Configurable {
             persistance.releaseSQLResources(con, statement, null);
         }
     }
+	
+	public Map<User, Integer> getHighestScoreUsers(Qualifier[] qualifiers) {
+		MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+		
+		try {
+			List params = new ArrayList();
+            Map<User, Integer> result = new LinkedHashMap<User, Integer>();
+            con = persistance.getSQLConnection();
+
+            StringBuilder sb = new StringBuilder((String) sql.get(HIGHEST_SCORE_USERS));
+			
+			appendQualifiers(sb, qualifiers, params, null, null);
+			statement = con.prepareStatement(sb.toString());
+			
+			int i = 1;
+            for ( Iterator iter = params.iterator(); iter.hasNext(); )
+                statement.setObject(i++, iter.next());
+
+            rs = statement.executeQuery();
+			
+			while (rs.next()) {
+				User user = new User(rs.getInt(1));
+				int score = rs.getInt(2);
+				persistance.synchronize(user);
+				result.put(user, score);
+			}
+			
+			return result;
+		} catch (SQLException e) {
+            throw new PersistenceException("Chyba v SQL!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, rs);
+        }
+	}
 
     public Map<Relation, Integer> getMostReadRelations(int itemType, String dateFrom, Qualifier[] qualifiers) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
@@ -2392,6 +2430,7 @@ public final class SQLTool implements Configurable {
         store(FIND_SUBPORTAL_MEMBERSHIP, prefs);
         store(FIND_HP_SUBPORTAL_ARTICLES, prefs);
         store(MAX_SUBPORTAL_READS, prefs);
+		store(HIGHEST_SCORE_USERS, prefs);
     }
 
     /**

@@ -109,6 +109,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     Map<Relation, Integer> recentMostReadArticles, recentMostCommentedArticles;
     Map<Relation, Integer> recentMostCommentedStories, recentMostReadStories;
     Map<Relation, Integer> mostCommentedNews, recentMostCommentedNews;
+	Map<User, Integer> highestScoreUsers;
 
     List<Screenshot> freshScreenshots;
     String indexFeeds, templateFeeds;
@@ -441,6 +442,10 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public Map<Relation,Integer> getRecentMostCommentedNews() {
         return recentMostCommentedNews;
     }
+	
+	public Map<User,Integer> getHighestScoreUsers() {
+		return highestScoreUsers;
+	}
 
     /**
      * Finds list of servers and their links to be displayed for this user. If user does not want
@@ -1255,6 +1260,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             mostCommentedArticles = sqlTool.getMostCommentedRelations(Item.ARTICLE, "", qualifiers);
             mostCommentedStories = sqlTool.getMostCommentedRelations(Item.BLOG, "", qualifiers);
             mostCommentedNews = sqlTool.getMostCommentedRelations(Item.NEWS, "", qualifiers);
+			highestScoreUsers = sqlTool.getHighestScoreUsers(qualifiers);
 
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.MONTH, -1);
