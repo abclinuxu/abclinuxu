@@ -44,33 +44,34 @@ Teprve když neuspějete, položte nový dotaz.</p>
     </#if>
 </#list>
 
-<h2>Přehled aktuálních diskusí</h2>
-
 <#assign questions=TOOL.analyzeDiscussions(VARS.getFreshQuestions(USER?if_exists))>
+<#if questions?exists>
+	<h2>Přehled aktuálních diskusí</h2>
 
-<table class="ds">
-<thead>
-  <tr>
-    <td class="td-nazev">Dotaz</td>
-    <td class="td-meta">Stav</td>
-    <td class="td-meta">Reakcí</td>
-    <td class="td-datum">Poslední</td>
-  </tr>
-</thead>
-<tbody>
- <#list questions as diz>
-  <tr>
-    <td><a href="${diz.url?default("/forum/show/"+diz.relationId)}">${TOOL.limit(diz.title,60,"...")}</a></td>
-    <td class="td-meta"><@lib.showDiscussionState diz /></td>
-    <td class="td-meta">${diz.responseCount}</td>
-    <td class="td-datum">${DATE.show(diz.updated,"CZ_SHORT")}</td>
-  </tr>
- </#list>
-</tbody>
-</table>
+	<table class="ds">
+	<thead>
+	  <tr>
+		<td class="td-nazev">Dotaz</td>
+		<td class="td-meta">Stav</td>
+		<td class="td-meta">Reakcí</td>
+		<td class="td-datum">Poslední</td>
+	  </tr>
+	</thead>
+	<tbody>
+	 <#list questions as diz>
+	  <tr>
+		<td><a href="${diz.url?default("/forum/show/"+diz.relationId)}">${TOOL.limit(diz.title,60,"...")}</a></td>
+		<td class="td-meta"><@lib.showDiscussionState diz /></td>
+		<td class="td-meta">${diz.responseCount}</td>
+		<td class="td-datum">${DATE.show(diz.updated,"CZ_SHORT")}</td>
+	  </tr>
+	 </#list>
+	</tbody>
+	</table>
 
-<ul>
-    <li><a href="/History?type=discussions&amp;from=${questions?size}&amp;count=20">Starší diskuse</a></li>
-</ul>
+	<ul>
+		<li><a href="/History?type=discussions&amp;from=${questions?size}&amp;count=20">Starší diskuse</a></li>
+	</ul>
+</#if>
 
 <#include "../footer.ftl">

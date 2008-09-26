@@ -199,6 +199,7 @@ public class ShowObject implements AbcAction {
                 env.put(Constants.VAR_RSS, FeedGenerator.getDictionariesFeedUrl());
                 return ShowDictionary.processDefinition(request, relation, env);
             }
+			case Item.UNPUBLISHED_BLOG:
             case Item.BLOG:
                 return ViewBlog.processStory(request, relation, env);
             case Item.FAQ:
