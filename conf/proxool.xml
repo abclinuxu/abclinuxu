@@ -9,7 +9,7 @@
   </driver-properties>
 
   <minimum-connection-count>1</minimum-connection-count>
-  <maximum-connection-count>30</maximum-connection-count>
+  <maximum-connection-count>100</maximum-connection-count>
   <maximum-active-time>180000</maximum-active-time>
 <!--  <maximum-active-time>30000000</maximum-active-time> -->
   <maximum-connection-lifetime>1800000</maximum-connection-lifetime>
