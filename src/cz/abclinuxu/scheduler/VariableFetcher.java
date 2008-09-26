@@ -311,7 +311,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             return getSubList(questions, count);
     }
 
-    public List getFreshQuestions(User user) {
+    public List getFreshQuestions(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_QUESTION, "/data/settings/index_discussions");
         return getSubList(freshQuestions, userLimit);
     }
