@@ -95,6 +95,9 @@ public class HTMLVersion implements Configurable {
             int pos = uri.indexOf('?');
             if (pos != -1)
                 uri = uri.substring(0, pos);
+            pos = uri.indexOf(';');
+            if (pos != -1)
+                uri = uri.substring(0, pos);
             
             if (regexp.match(uri)) {
                 int rid = Integer.parseInt(regexp.getParen(1));
