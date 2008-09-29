@@ -29,6 +29,7 @@
         <@lib.showUser TOOL.createUser(ITEM.owner)/>
         <#assign subportal_article=true>
     </#if>
+    <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times;
 </p>
 
 <#if inPool>
