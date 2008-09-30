@@ -152,13 +152,13 @@ public final class SQLTool implements Configurable {
     public static final String SUBPORTALS_COUNT_FORUM_QUESTIONS = "subportal.count.forum.questions";
     public static final String SUBPORTALS_ORDERED_BY_SCORE = "subportals.ordered.by.score";
     public static final String SUBPORTALS_ORDERED_BY_MEMBER_COUNT = "subportals.ordered.by.member.count";
-    
+
     public static final String VALID_SERVERS = "valid.servers";
     public static final String SERVER_RELATIONS_IN_CATEGORY = "server.relations.in.category";
     public static final String QUESTIONS_WITH_TAGS = "questions.with.tags";
     public static final String FIND_SUBPORTAL_MEMBERSHIP  = "find.subportal.membership";
     public static final String FIND_HP_SUBPORTAL_ARTICLES = "find.hp.subportal.articles";
-    
+
     public static final String MAX_SUBPORTAL_READS = "max.subportal.reads";
 
     private static SQLTool singleton;
@@ -516,7 +516,7 @@ public final class SQLTool implements Configurable {
         appendQualifiers(sb, qualifiers, params, null, fieldMappings);
         return loadNumber(sb.toString(), params);
     }
-    
+
     /**
      * @param uid
      * @return Subportal relations where the user is a member.
@@ -567,6 +567,9 @@ public final class SQLTool implements Configurable {
     public List<Relation> findItemRelationsWithTypeWithFilters(int type, Qualifier[] qualifiers,
                                                                Map<String, Set<String>> filters) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        if (filters.isEmpty())
+            return findItemRelationsWithType(type, qualifiers);
+
         StringBuilder sb = new StringBuilder((String) sql.get(ITEM_RELATIONS_BY_TYPE_WITH_FILTERS));
         List params = new ArrayList();
         params.add(type);
@@ -633,7 +636,7 @@ public final class SQLTool implements Configurable {
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
-    
+
     /**
      * Finds subportals and orders them by the score value
      * @return List of initialized relations
@@ -645,7 +648,7 @@ public final class SQLTool implements Configurable {
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
-    
+
     /**
      * Finds subportals and orders them by the member count
      * @return List of initialized relations
@@ -709,52 +712,52 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         return loadNumber(sb.toString(), params);
     }
-    
+
     private StringBuilder discussionRelationsWithTagsQuery(TagExpression expr, List<String> tags, List params) {
         StringBuilder sb = new StringBuilder();
-        
+
         sb.append("select R.cislo from (select T.cislo from stitkovani T where T.typ = 'P' and T.stitek in (");
-        
+
         boolean first = true;
         Iterator it = tags.iterator();
         while (it.hasNext()) {
             String next = (String) it.next();
-            
+
             if (!first)
                 sb.append(',');
             params.add(next);
             sb.append('?');
             first = false;
         }
-        
+
         sb.append(") group by T.cislo having ");
         sb.append(expr.toString());
         sb.append(") T join relace R on (T.cislo = R.potomek) join spolecne S on (S.cislo = R.potomek and S.typ = 'P')"
                 +" where R.typ_potomka = 'P' and R.predchozi = ?");
-        
+
         return sb;
     }
-    
+
     public List<Relation> findDiscussionRelationsWithTags(TagExpression expr, List<String> tags, int parent, Qualifier[] qualifiers) {
         if (tags.size() == 0 || expr == null)
             return findDiscussionRelationsWithParent(parent, qualifiers);
-        
+
         List params = new ArrayList(tags.size()+2);
         StringBuilder sb = discussionRelationsWithTagsQuery(expr, tags, params);
         params.add(parent);
-        
+
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
-    
+
     public int countDiscussionRelationsWithTags(TagExpression expr, List<String> tags, int parent) {
         if (tags.size() == 0 || expr == null)
             return countDiscussionRelationsWithParent(parent);
-        
+
         List params = new ArrayList(tags.size()+2);
         StringBuilder sb = discussionRelationsWithTagsQuery(expr, tags, params);
         params.add(parent);
-        
+
         changeToCountStatement(sb);
         return loadNumber(sb.toString(), params);
     }
@@ -831,7 +834,7 @@ public final class SQLTool implements Configurable {
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadRelations(sb.toString(), params);
     }
-    
+
     /**
      * Finds articles from subportals that are supposed to be shown on the HP.
      * @param qualifiers
@@ -1827,36 +1830,36 @@ public final class SQLTool implements Configurable {
             persistance.releaseSQLResources(con, statement, null);
         }
     }
-	
+
 	public Map<User, Integer> getHighestScoreUsers(Qualifier[] qualifiers) {
 		MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-		
+
 		try {
 			List params = new ArrayList();
             Map<User, Integer> result = new LinkedHashMap<User, Integer>();
             con = persistance.getSQLConnection();
 
             StringBuilder sb = new StringBuilder((String) sql.get(HIGHEST_SCORE_USERS));
-			
+
 			appendQualifiers(sb, qualifiers, params, null, null);
 			statement = con.prepareStatement(sb.toString());
-			
+
 			int i = 1;
             for ( Iterator iter = params.iterator(); iter.hasNext(); )
                 statement.setObject(i++, iter.next());
 
             rs = statement.executeQuery();
-			
+
 			while (rs.next()) {
 				User user = new User(rs.getInt(1));
 				int score = rs.getInt(2);
 				persistance.synchronize(user);
 				result.put(user, score);
 			}
-			
+
 			return result;
 		} catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
@@ -2295,7 +2298,7 @@ public final class SQLTool implements Configurable {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
     }
-    
+
     public List<Server> getValidServers() {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
@@ -2311,7 +2314,7 @@ public final class SQLTool implements Configurable {
                 Server server = new Server(resultSet.getInt(1));
                 result.add(server);
             }
-            
+
             persistance.synchronizeList(result);
             return result;
         } catch (SQLException e) {
@@ -2320,12 +2323,12 @@ public final class SQLTool implements Configurable {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
     }
-    
+
     public List<Relation> findServerRelationsInCategory(int cat) {
         String query = (String) sql.get(SERVER_RELATIONS_IN_CATEGORY);
         return loadRelations(query, Collections.singletonList(new Integer(cat)));
     }
-    
+
     /**
      * Sums all read counters across subportals.
      * @return The number of reads.
