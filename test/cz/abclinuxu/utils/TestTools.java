@@ -88,4 +88,12 @@ public class TestTools extends TestCase {
         assertEquals(new Integer(4), out.get(3));
         assertEquals(new Integer(2), out.get(4));
     }
+
+    public void testLimitNewsLength() {
+        Tools.setNewsLetterHardLimit(30);
+        Tools.setNewsLetterSoftLimit(40);
+        assertEquals(null, Tools.limitNewsLength("this is a short news"));
+        assertEquals("12345 12345 12345 12345 12345 12345", Tools.limitNewsLength("12345 12345 12345 12345 12345 12345"));
+        assertEquals("12345 12345 12345 12345 12345 123456", Tools.limitNewsLength("12345 12345 12345 12345 12345 123456"));
+    }
 }

@@ -85,6 +85,7 @@ public class Tools implements Configurable {
     public static final String PREF_CSS_STYLES = "css.styles";
 
     static Persistence persistence = PersistenceFactory.getPersistence();
+    // TODO replace with java regexp
     static REProgram reRemoveTags, reVlnka, lineBreak, reRemoveParagraphs, rePollTag, reDetectLink;
     static Pattern reAmpersand;
     static String vlnkaReplacement;
@@ -123,7 +124,7 @@ public class Tools implements Configurable {
             try {
                 Preferences subprefs = prefs.node(PREF_CSS_STYLES);
                 String[] keys = subprefs.keys();
-                offeredCssStyles = new HashMap(keys.length);
+                offeredCssStyles = new HashMap<String, String>(keys.length);
 
                 for (int i = 0; i < keys.length; i++)
                     offeredCssStyles.put(keys[i], subprefs.get(keys[i], null));
@@ -2204,7 +2205,6 @@ public class Tools implements Configurable {
      */
     public static String limitNewsLength(String text) {
         String stripped = removeTags(text);
-
         stripped = stripped.replaceAll("[ \t\n\r\f,.<]", "");
 
         if (stripped.length() < newsLetterHardLimit)
@@ -2356,7 +2356,20 @@ public class Tools implements Configurable {
 
             return sb.toString();
         } catch (Exception e) { // just in case
+            log.warn("processLocalLinks failed on '" + text + "'", e);
             return text;
         }
+    }
+
+    public static void setStoryReservePercents(int storyReservePercents) {
+        Tools.storyReservePercents = storyReservePercents;
+    }
+
+    public static void setNewsLetterSoftLimit(int newsLetterSoftLimit) {
+        Tools.newsLetterSoftLimit = newsLetterSoftLimit;
+    }
+
+    public static void setNewsLetterHardLimit(int newsLetterHardLimit) {
+        Tools.newsLetterHardLimit = newsLetterHardLimit;
     }
 }
