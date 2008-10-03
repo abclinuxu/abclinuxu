@@ -566,7 +566,8 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findItemRelationsWithTypeWithFilters(int type, Qualifier[] qualifiers,
                                                                Map<String, Set<String>> filters) {
-        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        if (qualifiers == null)
+            qualifiers = new Qualifier[]{};
         if (filters.isEmpty())
             return findItemRelationsWithType(type, qualifiers);
 
@@ -587,7 +588,11 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countItemRelationsWithTypeWithFilters(int type, Qualifier[] qualifiers, Map<String, Set<String>> filters) {
-        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        if (qualifiers == null)
+            qualifiers = new Qualifier[]{};
+        if (filters.isEmpty())
+            return countItemRelationsWithType(type, qualifiers);
+
         StringBuilder sb = new StringBuilder((String) sql.get(ITEM_RELATIONS_BY_TYPE_WITH_FILTERS));
         changeToCountStatement(sb);
         List params = new ArrayList();
