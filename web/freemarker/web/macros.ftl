@@ -432,21 +432,21 @@
 
 <#macro showUser user><a href="/lide/${user.login}">${user.nick?default(user.name)}</a></#macro>
 
-<#macro showRevisions relation>
+<#macro showRevisions relation info = TOOL.getRevisionInfo(relation.child)>
     <p class="documentHistory">
-        <#local info = TOOL.getRevisionInfo(relation.child)>
-        Dokument vytvořil: <@showUser info.creator/>, ${DATE.show(relation.child.created,"SMART")}.
+        Dokument vytvořil: <@showUser info.creator/>, ${DATE.show(relation.child.created,"SMART")}
         <#if (info.lastRevision > 1)>
-            Poslední úprava: <@showUser info.lastCommiter/>, ${DATE.show(relation.child.updated,"SMART")}.
+            | Poslední úprava: <@showUser info.lastCommiter/>, ${DATE.show(relation.child.updated,"SMART")}
             <#if (info.committers?size > 0)>
-                Další přispěvatelé:
+                | Další přispěvatelé:
                 <#list info.committers as committer><#rt>
                     <@showUser committer/><#rt>
-                    <#lt><#if committer_has_next>, <#else>.</#if>
+                    <#lt><#if committer_has_next>,</#if>
                 </#list>
             </#if>
-            <a href="/revize?rid=${relation.id}&amp;prefix=${URL.prefix}" rel="nofollow">Historie změn</a>
+            | <a href="/revize?rid=${relation.id}&amp;prefix=${URL.prefix}" rel="nofollow">Historie změn</a>
         </#if>
+        | Zobrazeno: <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times;</p>
     </p>
 </#macro>
 

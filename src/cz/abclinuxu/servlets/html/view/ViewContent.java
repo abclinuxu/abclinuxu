@@ -22,8 +22,11 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.view.Chapter;
 import cz.abclinuxu.data.view.TOC;
+import cz.abclinuxu.data.view.RevisionInfo;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.freemarker.Tools;
 import org.dom4j.Element;
 
@@ -44,6 +47,9 @@ public class ViewContent {
     public static String show(HttpServletRequest request, Map env) throws Exception {
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Item item = (Item) relation.getChild();
+        RevisionInfo revisionInfo = Tools.getRevisionInfo(item);
+        env.put(Constants.VAR_REVISIONS, revisionInfo);
+        Misc.recordReadByNonCommitter(item, revisionInfo, env);
 
         Element element = (Element) item.getData().selectSingleNode("/data/toc");
         if (element != null) {

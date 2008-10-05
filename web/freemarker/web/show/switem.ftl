@@ -73,7 +73,7 @@
     <@lib.showRelated ITEM/>
 </div>
 
-<@lib.showRevisions RELATION/>
+<@lib.showRevisions RELATION, REVISIONS/>
 
 <@lib.advertisement id="arbo-sq" />
 <@lib.advertisement id="hosting90" />

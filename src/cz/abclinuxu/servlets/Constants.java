@@ -218,6 +218,8 @@ public class Constants implements Configurable {
     public static final String VAR_ASSIGNED_TAGS = "ASSIGNED_TAGS";
     /** always present instance of RichTextEditor class */
     public static final String VAR_RICH_TEXT_EDITOR = "RTE";
+    /** variable for wiki documents with RevisionInfo instance */
+    public static final String VAR_REVISIONS = "REVISIONS";
 
     /** parameter holding description of changes */
     public static final String PARAM_REVISION_DESCRIPTION = "rev_descr";

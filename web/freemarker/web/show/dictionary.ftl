@@ -47,7 +47,7 @@
 
 <@lib.showRelated ITEM/>
 
-<@lib.showRevisions RELATION/>
+<@lib.showRevisions RELATION, REVISIONS/>
 
 <p class="dalsi_pojmy">
     Další pojmy:

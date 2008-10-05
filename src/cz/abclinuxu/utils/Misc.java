@@ -25,6 +25,7 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.view.Discussion;
 import cz.abclinuxu.data.view.Comment;
+import cz.abclinuxu.data.view.RevisionInfo;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ShowForum;
@@ -71,6 +72,32 @@ public class Misc {
             return Constants.ERROR;
         }
         return description;
+    }
+
+    /**
+     * Record read for wiki object unless current user committed revision to it.
+     * @param obj wiki object
+     * @param revisionInfo info about committers
+     * @param env environment
+     */
+    public static void recordReadByNonCommitter(GenericDataObject obj, RevisionInfo revisionInfo, Map env) {
+        boolean record = true;
+        User user = (User) env.get(Constants.VAR_USER);
+        if (user != null) {
+            if (revisionInfo.getCreator().getId() == user.getId())
+                record = false;
+            else {
+                for (User commiter : revisionInfo.getCommitters()) {
+                    if (commiter.getId() == user.getId()) {
+                        record = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (record)
+            ReadRecorder.log(obj, Constants.COUNTER_READ, env);
     }
 
     /**

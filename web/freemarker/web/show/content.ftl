@@ -73,7 +73,7 @@ ${content}
 </#if>
 
 <#if exec!="yes" || (USER?exists && USER.hasRole("root"))>
-    <@lib.showRevisions RELATION/>
+    <@lib.showRevisions RELATION, REVISIONS/>
 </#if>
 
 <#include "../footer.ftl">

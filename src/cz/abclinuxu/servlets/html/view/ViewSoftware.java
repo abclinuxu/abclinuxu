@@ -24,6 +24,7 @@ import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.view.SectionTreeCache;
 import cz.abclinuxu.data.view.SectionNode;
+import cz.abclinuxu.data.view.RevisionInfo;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -40,7 +41,6 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -230,7 +230,9 @@ public class ViewSoftware implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Item item = (Item) relation.getChild();
         env.put(VAR_ITEM, item);
-        ReadRecorder.log(item, Constants.COUNTER_READ, env);
+        RevisionInfo revisionInfo = Tools.getRevisionInfo(item);
+        env.put(Constants.VAR_REVISIONS, revisionInfo);
+        Misc.recordReadByNonCommitter(item, revisionInfo, env);
 
         List parents = persistence.findParents(relation);
 
@@ -245,7 +247,7 @@ public class ViewSoftware implements AbcAction {
         if (revision != -1) {
             Versioning versioning = VersioningFactory.getVersioning();
             versioning.load(item, revision);
-            
+
             Link link = new Link("Revize "+revision, relation.getUrl()+"?revize="+revision, null);
             parents.add(link);
         }

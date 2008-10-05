@@ -412,7 +412,7 @@ public class Tools implements Configurable {
      * @param obj object that is wiki
      * @return view object encapsulating information from /data/versioning/revisions element
      */
-    public RevisionInfo getRevisionInfo(GenericDataObject obj) {
+    public static RevisionInfo getRevisionInfo(GenericDataObject obj) {
         if (! Misc.isWiki(obj))
             throw new InvalidDataException("Objekt " + obj.getId() + " typu " + obj.getType() + " neni wiki!");
         Element elementRevisions = (Element) obj.getData().selectSingleNode("/data/versioning/revisions");

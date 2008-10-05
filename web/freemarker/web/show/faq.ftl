@@ -46,6 +46,6 @@
 
 <@lib.showRelated ITEM/>
 
-<@lib.showRevisions RELATION/>
+<@lib.showRevisions RELATION, REVISIONS/>
 
 <#include "../footer.ftl">

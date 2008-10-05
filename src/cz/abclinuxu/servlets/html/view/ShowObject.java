@@ -27,6 +27,7 @@ import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.DiscussionRecord;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.data.view.NewsCategories;
+import cz.abclinuxu.data.view.RevisionInfo;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -110,7 +111,7 @@ public class ShowObject implements AbcAction {
 
         List parents = persistence.findParents(relation);
         env.put(VAR_PARENTS, parents);
-        
+
         Relation subportal = Tools.getParentSubportal(parents);
         if (subportal != null) {
             env.put(VAR_SUBPORTAL, subportal);
@@ -152,7 +153,7 @@ public class ShowObject implements AbcAction {
         if (revision != -1) {
             Versioning versioning = VersioningFactory.getVersioning();
             versioning.load(item, revision);
-            
+
             List parents = (List) env.get(ShowObject.VAR_PARENTS);
             Link link = new Link("Revize "+revision, relation.getUrl()+"?revize="+revision, null);
             parents.add(link);
@@ -174,10 +175,17 @@ public class ShowObject implements AbcAction {
                 return FMTemplateSelector.select("ShowObject", "discussion", env, request);
             }
             case Item.HARDWARE: {
+                RevisionInfo revisionInfo = Tools.getRevisionInfo(item);
+                env.put(Constants.VAR_REVISIONS, revisionInfo);
+                Misc.recordReadByNonCommitter(item, revisionInfo, env);
                 env.put(Constants.VAR_RSS, FeedGenerator.getHardwareFeedUrl());
                 return FMTemplateSelector.select("ShowObject", "hardware", env, request);
             }
             case Item.DRIVER: {
+                RevisionInfo revisionInfo = Tools.getRevisionInfo(item);
+                env.put(Constants.VAR_REVISIONS, revisionInfo);
+                Misc.recordReadByNonCommitter(item, revisionInfo, env);
+
                 SQLTool sqlTool = SQLTool.getInstance();
                 List<VersionedDocument> history = sqlTool.getLastRevisions(item, 6);
                 String revisionParam = "?" + ShowRevisions.PARAM_REVISION + "=";
