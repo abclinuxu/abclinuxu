@@ -47,6 +47,14 @@ public class HtmlPurifier {
         reEmptyLine = Pattern.compile("\n{2,}", Pattern.MULTILINE);
     }
 
+    /*
+        TODO wrap all paragraphs in P tag
+        1) only top level paragraphs, that are not enclosed already in block tags (like, P, DIV, UL, OL, DL, PRE, TABLE)
+        2) calculate tag nesting depth
+        3) be carefull for paragraphs starting with inline tags (like B)
+        4) see TestHtmlPurifier for some options
+    */
+
     /**
      * Performs some transformations and cleaning of input text. Currently it transforms
      * simple text to HTML format (adds line breaks instead of empty lines to separate
