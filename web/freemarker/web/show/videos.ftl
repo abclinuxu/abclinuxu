@@ -12,6 +12,7 @@
 
 <@lib.showMessages/>
 
+<#global READS = TOOL.getRelationCountersValue(ITEMS.data,"read")/>
 <#list ITEMS.data as video>
     <#assign item=video.child, tmp=TOOL.groupByType(item.children, "Item"),
         icon=TOOL.xpath(item,"/data/thumbnail")?default("UNDEF")>
@@ -26,7 +27,7 @@
     <p>${TOOL.xpath(item,"//description")?default("")}</p>
     <p class="meta-vypis">
         ${DATE.show(item.created, "SMART")} | <@lib.showUser TOOL.createUser(item.owner)/>
-        | Zhlédnuto: <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times;
+        | Zhlédnuto: <@lib.showCounter item, .globals["READS"]?if_exists, "read" />&times;
         <#if diz?exists>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
     </p>
     <hr style="clear:right" />
