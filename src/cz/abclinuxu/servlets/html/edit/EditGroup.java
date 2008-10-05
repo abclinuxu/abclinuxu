@@ -34,6 +34,7 @@ import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 
@@ -81,13 +82,13 @@ public class EditGroup implements AbcAction {
             response.sendRedirect(response.encodeRedirectURL("/"));
             return null;
         }
-		
+
         Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params, request);
 		boolean groupGroup = false;
 
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-		
+
 		if (group != null) {
             Tools.sync(group);
 			groupGroup = user.isMemberOf(group.getId());
@@ -96,18 +97,18 @@ public class EditGroup implements AbcAction {
 		if ( ACTION_SHOW_USERS.equals(action) ) {
 			if ( !user.hasRole(Roles.USER_ADMIN) && !groupGroup)
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             return actionShowUsers(request, env);
 		}
 
         if ( ACTION_REMOVE_GROUP_MEMBERS.equals(action) ) {
 			if ( !user.hasRole(Roles.USER_ADMIN) && !groupGroup)
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             ActionProtector.ensureContract(request, EditGroup.class, true, true, true, false);
             return actionRemoveMembers(request, response, env);
         }
-		
+
 		if ( !user.hasRole(Roles.USER_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -328,6 +329,7 @@ public class EditGroup implements AbcAction {
             return false;
         }
         Node node = DocumentHelper.makeElement(group.getData(), "/data/desc");
+        desc = HtmlPurifier.clean(desc);
         node.setText(desc);
         return true;
     }

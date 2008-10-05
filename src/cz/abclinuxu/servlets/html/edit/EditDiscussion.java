@@ -40,10 +40,9 @@ import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.email.forum.ForumPool;
-import cz.abclinuxu.utils.format.Format;
-import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.security.Roles;
@@ -51,9 +50,6 @@ import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.config.ConfigurationManager;
 import org.dom4j.*;
 import org.htmlparser.util.ParserException;
 import org.joda.time.Days;
@@ -70,10 +66,6 @@ import java.net.URLDecoder;
 import java.io.UnsupportedEncodingException;
 import java.io.File;
 import java.io.IOException;
-import java.util.prefs.Preferences;
-import org.apache.regexp.RE;
-import org.apache.regexp.RECompiler;
-import org.apache.regexp.REProgram;
 
 /**
  * This class is responsible for adding new
@@ -129,11 +121,11 @@ public class EditDiscussion implements AbcAction {
     public static final String ACTION_THREAD_TO_DIZ = "toQuestion";
     public static final String ACTION_THREAD_TO_DIZ_STEP2 = "toQuestion2";
     public static final String ACTION_SOLVED = "solved";
-    
+
 //    private static final String LOGIN_REQUIRED = "Litujeme, ale bez registrace je možné komentovat jen otázky v diskusním fóru, " +
 //                        "kde se řeší problémy. U ostatních diskusí (zprávičky, články, blogy) je nutné se nejdříve přihlásit. " +
 //                        "Toto opatření jsme zavedli z důvodu zvýšené aktivity spambotů a trollů.";
-    
+
 // prepsat a overit kazdou jednotlivou funkci
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -319,9 +311,9 @@ public class EditDiscussion implements AbcAction {
 
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item discussion = new Item(0,Item.DISCUSSION);
-		
+
 		Tools.sync(relation);
-		
+
 		discussion.setSubType(Constants.SUBTYPE_QUESTION);
 
         Document document = DocumentHelper.createDocument();
@@ -1255,6 +1247,7 @@ public class EditDiscussion implements AbcAction {
         String tmp = (String) params.get(PARAM_TEXT);
         if ( tmp!=null && tmp.length()>0 ) {
             try {
+                tmp = HtmlPurifier.clean(tmp);
                 SafeHTMLGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '"+tmp+"'", e);
@@ -1268,8 +1261,6 @@ public class EditDiscussion implements AbcAction {
             tmp = Misc.filterDangerousCharacters(tmp);
             tmp = Tools.processLocalLinks(tmp, rel);
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         } else {
             ServletUtils.addError(PARAM_TEXT, "Zadejte text vašeho " + ((question) ? "dotazu" : "komentáře"), env, null);
             return false;
@@ -1288,10 +1279,9 @@ public class EditDiscussion implements AbcAction {
     static boolean setTextNoHTMLCheck(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_TEXT);
         if ( tmp!=null && tmp.length()>0 ) {
+            tmp = HtmlPurifier.clean(tmp); // todo tady jednou budou kontroly validity
             Element element = DocumentHelper.makeElement(root,"text");
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         } else {
             ServletUtils.addError(PARAM_TEXT, "Zadejte text vašeho dotazu.", env, null);
             return false;
@@ -1353,11 +1343,10 @@ public class EditDiscussion implements AbcAction {
         if (files == null)
             files = new ArrayList<FileItem>(2);
         env.put(VAR_ATTACHMENTS, files);
-        
+
         List rmAttachments = Tools.asList(params.get(PARAM_REMOVE_ATTACHMENT));
-        
         if (rmAttachments.size() != 0) {
-            List<Integer> rmAttachmentIds = new ArrayList(rmAttachments.size());
+            List<Integer> rmAttachmentIds = new ArrayList<Integer>(rmAttachments.size());
             Iterator iterator = rmAttachments.iterator();
 
             // first convert indexes from Strings to Integers, or the sorting would be incorrect
@@ -1378,8 +1367,11 @@ public class EditDiscussion implements AbcAction {
         }
 
         Object o = params.get(PARAM_ATTACHMENT);
+        if (o instanceof String) {
+            return true;
+        }
         if (! (o instanceof FileItem) && o != null) {
-            log.warn("Parametr " + PARAM_ATTACHMENT + " neni FileItem, ale " + o.getClass() + ", hodnota je " + o);
+            log.warn("Parametr " + PARAM_ATTACHMENT + " neni FileItem, ale " + o.getClass() + ", hodnota je '" + o + "'");
             ServletUtils.addError(PARAM_ATTACHMENT, "Vstupní parametr má nečekanou hodnotu! Kontaktujte prosím adminy s popisem vaší akce.", env, null);
             return false;
         }

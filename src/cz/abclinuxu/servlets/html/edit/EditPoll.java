@@ -34,6 +34,8 @@ import cz.abclinuxu.security.AccessKeeper;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -41,6 +43,8 @@ import cz.abclinuxu.exceptions.AccessDeniedException;
 import cz.abclinuxu.AbcException;
 
 import java.util.*;
+
+import org.htmlparser.util.ParserException;
 
 /**
  * Servlet for manipulation with Polls.
@@ -353,6 +357,18 @@ public class EditPoll implements AbcAction {
             ServletUtils.addError(PARAM_QUESTION, "Nezadal jste otázku!", env, null);
             return false;
         }
+
+        try {
+            text = HtmlPurifier.clean(text);
+            SafeHTMLGuard.check(text);
+        } catch (ParserException e) {
+            log.error("ParseException on '" + text + "'", e);
+            ServletUtils.addError(PARAM_QUESTION, e.getMessage(), env, null);
+            return false;
+        } catch (Exception e) {
+            ServletUtils.addError(PARAM_QUESTION, e.getMessage(), env, null);
+            return false;
+        }
         poll.setText(text);
         return true;
     }
@@ -372,6 +388,18 @@ public class EditPoll implements AbcAction {
             String choice = (String) iter.next();
             if (choice == null || choice.length() == 0)
                 continue;
+
+            try {
+                choice = HtmlPurifier.clean(choice);
+                SafeHTMLGuard.check(choice);
+            } catch (ParserException e) {
+                log.error("ParseException on '" + choice + "'", e);
+                ServletUtils.addError(PARAM_QUESTION, e.getMessage(), env, null);
+                return false;
+            } catch (Exception e) {
+                ServletUtils.addError(PARAM_QUESTION, e.getMessage(), env, null);
+                return false;
+            }
 
             PollChoice pollChoice = new PollChoice(choice);
             pollChoice.setId(i++);

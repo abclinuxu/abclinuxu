@@ -195,7 +195,7 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             }
             tmp = values.get(LdapUserManager.ATTRIB_SEX);
             if (tmp != null && tmp.length() > 0) {
-                if (!EditUser.setSex(Collections.singletonMap(EditUser.PARAM_SEX, tmp), user, env))
+                if (!EditUser.setSex(Collections.singletonMap(EditUser.PARAM_SEX, tmp), user))
                     throw createException(EditUser.PARAM_SEX, env, LdapUserManager.ATTRIB_SEX);
             }
             mgr.updateUser(login, values);
@@ -338,7 +338,7 @@ public class UserAccountServiceImpl implements UserAccountService, Configurable 
             }
             tmp = account.getSex();
             if (tmp != null && tmp.length() > 0) {
-                if (! EditUser.setSex(Collections.singletonMap(EditUser.PARAM_SEX, tmp), user, env))
+                if (! EditUser.setSex(Collections.singletonMap(EditUser.PARAM_SEX, tmp), user))
                     throw createException(EditUser.PARAM_SEX, env, LdapUserManager.ATTRIB_SEX);
                 userMap.put(LdapUserManager.ATTRIB_SEX, tmp);
             }

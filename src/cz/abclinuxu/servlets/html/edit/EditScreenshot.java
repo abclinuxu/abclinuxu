@@ -41,9 +41,8 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.PathGenerator;
 import cz.abclinuxu.utils.ImageTool;
 import cz.abclinuxu.utils.TagTool;
-import cz.abclinuxu.utils.format.Format;
-import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -92,7 +91,7 @@ public class EditScreenshot implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 		Relation parent = new Relation(Constants.REL_SCREENSHOTS);
-		
+
         if (action == null)
             throw new MissingArgumentException("Chybí parametr action!");
 
@@ -108,14 +107,14 @@ public class EditScreenshot implements AbcAction {
         if (action.equals(ACTION_ADD)) {
 			if (!Tools.permissionsFor(user, parent).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-				
+
             return FMTemplateSelector.select("Screenshot", "add", env, request);
 		}
 
         if (action.equals(ACTION_ADD_STEP2)) {
 			if (!Tools.permissionsFor(user, parent).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             ActionProtector.ensureContract(request, EditScreenshot.class, true, false, true, false);
             return actionAddStep2(request, response, env, true);
         }
@@ -165,7 +164,7 @@ public class EditScreenshot implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
 		Relation parent = new Relation(Constants.REL_SCREENSHOTS);
-		
+
 		Tools.sync(parent);
 
         Document documentItem = DocumentHelper.createDocument();
@@ -174,7 +173,7 @@ public class EditScreenshot implements AbcAction {
         item.setData(documentItem);
         item.setOwner(user.getId());
 		item.setGroup( ((Category) parent.getChild()).getGroup() );
-		
+
         Relation relation = new Relation(parent.getChild(), item, parent.getId());
 
         boolean canContinue = setName(params, item, env);
@@ -334,11 +333,10 @@ public class EditScreenshot implements AbcAction {
             element = DocumentHelper.makeElement(root, "description");
 
         try {
+            tmp = HtmlPurifier.clean(tmp);
             SafeHTMLGuard.check(tmp);
             tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
             return true;
         } catch (ParserException e) {
             log.error("ParseException on '" + tmp + "'", e);

@@ -34,10 +34,10 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.format.Format;
-import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.WikiContentGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,17 +56,17 @@ public class EditForum implements AbcAction {
     public static final String PARAM_NAME = "name";
     public static final String PARAM_NOTE = "note";
     public static final String PARAM_RULES = "rules";
-    
+
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
-    
+
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditForum.class);
-    
+
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
-        
+
         if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
             return null;
@@ -75,74 +75,75 @@ public class EditForum implements AbcAction {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation == null)
             throw new MissingArgumentException("Chybí parametr relationId!");
-        
+
         Tools.sync(relation);
-        
+
         env.put(ShowObject.VAR_RELATION, relation);
-        
+
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if ( !Tools.permissionsFor(user, relation).canModify() ||
-                !Tools.permissionsFor(user, relation.getUpper()).canModify()) {
-            
+        if ( ! Tools.permissionsFor(user, relation).canModify() ||
+                ! Tools.permissionsFor(user, relation.getUpper()).canModify()) {
+
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
         }
-        
+
         if (ACTION_EDIT.equals(action))
             return actionEditStep1(request, response, env);
-        
+
         if (ACTION_EDIT_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditForum.class, true, true, true, false);
             return actionEditStep2(request, response, env);
         }
-        
+
         throw new MissingArgumentException("Chybí parametr action!");
     }
-    
+
     protected String actionEditStep1(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Category category = (Category) relation.getChild();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Document document = category.getData();
-        
+
         params.put(PARAM_NAME, category.getTitle());
         Node node = document.selectSingleNode("data/note");
         if (node != null)
             params.put(PARAM_NOTE, node.getText());
-        
+
         node = document.selectSingleNode("data/rules");
         if (node != null)
             params.put(PARAM_RULES, node.getText());
-        
+
         return FMTemplateSelector.select("EditForum", "edit", env, request);
     }
-    
+
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Category category = (Category) relation.getChild();
         Document document = category.getData();
-        
+
         boolean canContinue = setDescription(params, document, env);
         canContinue &= setRules(params, document, env);
         canContinue &= setName(params, category, env);
-        
+
         if (!canContinue)
             FMTemplateSelector.select("EditForum", "edit", env, request);
-        
+
         persistence.update(category);
-        
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
     }
-    
+
     private boolean setDescription(Map params, Document document, Map env) {
         String tmp = (String) params.get(PARAM_NOTE);
         tmp = Misc.filterDangerousCharacters(tmp);
         if (tmp != null && tmp.length() > 0) {
             try {
+                tmp = HtmlPurifier.clean(tmp);
                 WikiContentGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '" + tmp + "'", e);
@@ -154,8 +155,6 @@ public class EditForum implements AbcAction {
             }
             Element element = DocumentHelper.makeElement(document, "data/note");
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         } else {
             Element element = document.getRootElement().element("note");
             if (element != null)
@@ -163,12 +162,13 @@ public class EditForum implements AbcAction {
         }
         return true;
     }
-    
+
     private boolean setRules(Map params, Document document, Map env) {
         String tmp = (String) params.get(PARAM_RULES);
         tmp = Misc.filterDangerousCharacters(tmp);
         if (tmp != null && tmp.length() > 0) {
             try {
+                tmp = HtmlPurifier.clean(tmp);
                 WikiContentGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '" + tmp + "'", e);
@@ -180,8 +180,6 @@ public class EditForum implements AbcAction {
             }
             Element element = DocumentHelper.makeElement(document, "data/rules");
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         } else {
             Element element = document.getRootElement().element("rules");
             if (element != null)
@@ -189,7 +187,7 @@ public class EditForum implements AbcAction {
         }
         return true;
     }
-    
+
     private boolean setName(Map params, Category category, Map env) {
         String tmp = (String) params.get(PARAM_NAME);
         tmp = Misc.filterDangerousCharacters(tmp);

@@ -38,6 +38,7 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.AbcException;
@@ -132,15 +133,15 @@ public class EditRequest implements AbcAction, Configurable {
         // check permissions
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-		
+
 		if ( action.equals(ACTION_DELETE) ) {
 			if ( !Tools.permissionsFor(user, relation).canDelete() )
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             ActionProtector.ensureContract(request, EditRequest.class, true, false, false, true);
             return actionDelete(request, response, env);
         }
-		
+
         if ( !Tools.permissionsFor(user, relation).canModify() )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -219,6 +220,7 @@ public class EditRequest implements AbcAction, Configurable {
         }
 
         try {
+            text = HtmlPurifier.clean(text);
             SafeHTMLGuard.check(text);
         } catch (ParserException e) {
             log.error("ParseException on '"+text+"'", e);
@@ -248,7 +250,7 @@ public class EditRequest implements AbcAction, Configurable {
         Item req = new Item(0,Item.REQUEST);
         if (user != null)
             req.setOwner(user.getId());
-		
+
         Tools.sync(parent);
         Category parentCat = (Category) parent.getChild();
 		req.setGroup(parentCat.getGroup());

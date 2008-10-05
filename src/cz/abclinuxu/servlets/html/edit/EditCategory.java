@@ -39,11 +39,11 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
-import cz.abclinuxu.utils.format.Format;
-import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.forms.PermissionsSet;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.WikiContentGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+
 import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -118,7 +118,7 @@ public class EditCategory implements AbcAction {
             ActionProtector.ensureContract(request, EditCategory.class, true, true, true, false);
             return actionAddStep2(request, response, env);
         }
-        
+
         int upper = relation.getUpper();
         if (upper != 0) {
             if ( !Tools.permissionsFor(user, new Relation(upper)).canModify() )
@@ -135,26 +135,26 @@ public class EditCategory implements AbcAction {
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
-	
+
 	/**
      * First step of creating a new category
      */
 	protected String actionAddStep1(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
 		Category category = (Category) env.get(VAR_CATEGORY);
-		
+
 		setTypeParam(params, category);
-		
+
 		int perms = category.getPermissions();
 		PermissionsSet group, others;
-		
+
 		group = new PermissionsSet(new Permissions((perms >> Permissions.PERMISSIONS_GROUP_SHIFT) & 0xff));
 		env.put(VAR_GROUP_PERMISSIONS, group);
 		others = new PermissionsSet(new Permissions((perms >> Permissions.PERMISSIONS_OTHERS_SHIFT) & 0xff));
 		env.put(VAR_OTHERS_PERMISSIONS, others);
-		
+
 		params.put(PARAM_GROUP, category.getGroup());
-		
+
         return FMTemplateSelector.select("EditCategory", "add", env, request);
 	}
 
@@ -173,7 +173,7 @@ public class EditCategory implements AbcAction {
         document.addElement("data");
         category.setData(document);
         category.setOwner(user.getId());
-		
+
 		PermissionsSet group, others;
 		group = new PermissionsSet(params.get(PARAM_GROUP_PERMISSIONS));
 		env.put(VAR_GROUP_PERMISSIONS, group);
@@ -232,15 +232,15 @@ public class EditCategory implements AbcAction {
         params.put(PARAM_SUBTYPE, category.getSubType());
         params.put(PARAM_UPPER, relation.getUpper());
 		params.put(PARAM_GROUP, category.getGroup());
-		
+
 		int perms = category.getPermissions();
 		PermissionsSet group, others;
-		
+
 		group = new PermissionsSet(new Permissions((perms >> Permissions.PERMISSIONS_GROUP_SHIFT) & 0xff));
 		env.put(VAR_GROUP_PERMISSIONS, group);
 		others = new PermissionsSet(new Permissions((perms >> Permissions.PERMISSIONS_OTHERS_SHIFT) & 0xff));
 		env.put(VAR_OTHERS_PERMISSIONS, others);
-		
+
         return FMTemplateSelector.select("EditCategory","edit",env,request);
     }
 
@@ -254,7 +254,7 @@ public class EditCategory implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
         Category category = (Category) env.get(VAR_CATEGORY);
         Document document = category.getData();
-		
+
 		PermissionsSet group, others;
 		group = new PermissionsSet(params.get(PARAM_GROUP_PERMISSIONS));
 		env.put(VAR_GROUP_PERMISSIONS, group);
@@ -316,6 +316,7 @@ public class EditCategory implements AbcAction {
         tmp = Misc.filterDangerousCharacters(tmp);
         if (tmp != null && tmp.length() > 0) {
             try {
+                tmp = HtmlPurifier.clean(tmp);
                 WikiContentGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '" + tmp + "'", e);
@@ -327,8 +328,6 @@ public class EditCategory implements AbcAction {
             }
             Element element = DocumentHelper.makeElement(document, "data/note");
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         } else {
             Element element = document.getRootElement().element("note");
             if (element != null)
@@ -443,34 +442,16 @@ public class EditCategory implements AbcAction {
         }
     }
 
-    /**
-     * Updates open flag from parameters. Changes are not synchronized with persistence.
-     * @param params   map holding request's parameters
-     * @param document document to be update
-     * @return false, if there is a major error.
-     */
-    private boolean setOpen(Map params, Document document) {
-        Boolean open = Boolean.valueOf((String) params.get(PARAM_OPEN));
-        if (open.booleanValue())
-            DocumentHelper.makeElement(document, "/data/writeable").setText("true");
-        else {
-            Element element = document.getRootElement().element("writeable");
-            if (element != null)
-                element.detach();
-        }
-        return true;
-    }
-	
 	/**
      * Updates the group from parameters. Changes may be synchronized with persistence.
      * @param params   map holding request's parameters
-     * @param catgeory category to be updated
+     * @param category category to be updated
      * @return false, if there is a major error.
      */
 	private boolean setGroup(Map params, Category category, Map env) {
 		String tmp = (String) params.get(PARAM_GROUP);
 		int gid = Misc.parseInt(tmp, 0);
-		
+
         if (gid != 0) {
             try {
                 Item group = new Item(gid);
@@ -494,22 +475,22 @@ public class EditCategory implements AbcAction {
                 return false;
             }
         }
-		
+
 		Boolean recurse = Boolean.valueOf((String) params.get(PARAM_RECURSE));
 		if (!recurse.booleanValue())
 			category.setGroup(gid);
 		else
 			setGroupRecurse(category, gid);
-		
+
 		return true;
 	}
-	
+
 	private void setGroupRecurse(Category category, int gid) {
 		List<Relation> rels = Tools.syncList(category.getChildren());
 		Persistence persistence = PersistenceFactory.getPersistence();
-		
+
 		category.setGroup(gid);
-		
+
 		for (Relation rel : rels) {
 			GenericObject child = rel.getChild();
 			if (child instanceof Category)
@@ -519,32 +500,32 @@ public class EditCategory implements AbcAction {
 			persistence.update(child);
 		}
 	}
-	
+
 	private boolean setPermissions(Map params, Category category, Map env) {
-		
+
 		PermissionsSet group = (PermissionsSet) env.get(VAR_GROUP_PERMISSIONS);
 		PermissionsSet others = (PermissionsSet) env.get(VAR_OTHERS_PERMISSIONS);
-		
+
 		int permissions;
-		
+
 		permissions = group.getPermissions() << Permissions.PERMISSIONS_GROUP_SHIFT;
 		permissions |= others.getPermissions() << Permissions.PERMISSIONS_OTHERS_SHIFT;
-		
+
 		Boolean recurse = Boolean.valueOf((String) params.get(PARAM_RECURSE));
 		if (!recurse.booleanValue())
 			category.setPermissions(permissions);
 		else
 			setPermissionsRecurse(category, permissions);
-		
+
 		return true;
 	}
-	
+
 	private void setPermissionsRecurse(Category category, int permissions) {
 		List<Relation> rels = Tools.syncList(category.getChildren());
 		Persistence persistence = PersistenceFactory.getPersistence();
-		
+
 		category.setPermissions(permissions);
-		
+
 		for (Relation rel : rels) {
 			GenericObject child = rel.getChild();
 			if (child instanceof Category)

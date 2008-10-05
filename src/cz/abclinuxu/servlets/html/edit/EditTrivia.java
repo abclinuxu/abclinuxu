@@ -19,7 +19,6 @@
 package cz.abclinuxu.servlets.html.edit;
 
 import cz.abclinuxu.data.Category;
-import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -32,9 +31,8 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.format.Format;
-import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.persistence.Persistence;
@@ -90,7 +88,7 @@ public class EditTrivia implements AbcAction {
             response.sendRedirect(response.encodeRedirectURL("/"));
             return null;
         }
-		
+
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if (relation != null) {
             Tools.sync(relation);
@@ -100,22 +98,22 @@ public class EditTrivia implements AbcAction {
         // check permissions
         if (user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-		
+
         if (ACTION_ADD.equals(action)) {
 			if (!Tools.permissionsFor(user, parent).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             return FMTemplateSelector.select("EditTrivia", "add", env, request);
 		}
 
         if (ACTION_ADD_STEP2.equals(action)) {
 			if (!Tools.permissionsFor(user, parent).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             ActionProtector.ensureContract(request, EditTrivia.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
         }
-		
+
 		if (!Tools.permissionsFor(user, relation).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -144,7 +142,7 @@ public class EditTrivia implements AbcAction {
         Item item = new Item(0, Item.TRIVIA);
         item.setData(document);
         item.setOwner(user.getId());
-		
+
 		Category cat = (Category) upper.getChild();
 		item.setGroup(cat.getGroup());
 		item.setPermissions(cat.getPermissions());
@@ -286,6 +284,7 @@ public class EditTrivia implements AbcAction {
         if (tmp != null && tmp.length() > 0) {
             try {
                 tmp = Misc.filterDangerousCharacters(tmp);
+                tmp = HtmlPurifier.clean(tmp);
                 SafeHTMLGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '" + tmp + "'", e);
@@ -298,8 +297,6 @@ public class EditTrivia implements AbcAction {
 
             Element element = DocumentHelper.makeElement(root, "description");
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         } else {
             ServletUtils.addError(PARAM_DESCRIPTION, "Zadejte popis kvízu!", env, null);
             return false;

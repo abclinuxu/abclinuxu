@@ -53,36 +53,36 @@ public class EditServers implements AbcAction {
     public static final String PARAM_RSS_URL = "rssUrl";
     public static final String PARAM_URL = "url";
     public static final String PARAM_CONTACT = "contact";
-    
+
     public static final String ACTION_LIST = "list";
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
     public static final String ACTION_REMOVE = "remove";
-    
+
     public static final String VAR_SERVERS = "SERVERS";
-    
+
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
-        
+
         if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
             return null;
         }
-        
+
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if (relation != null) {
             Tools.sync(relation);
             env.put(ShowObject.VAR_RELATION, relation);
         } else
             throw new MissingArgumentException("Chybí číslo relace!");
-        
+
         if (user == null)
-            return FMTemplateSelector.select("ViewUser", "login", env, request);        
-        
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+
         if (ACTION_EDIT.equals(action)) {
             Relation parentRelation = new Relation(relation.getUpper());
             Tools.sync(parentRelation);
@@ -93,7 +93,7 @@ public class EditServers implements AbcAction {
         }
         if (ACTION_EDIT_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditServers.class, true, true, true, false);
-            
+
             Relation parentRelation = new Relation(relation.getUpper());
             Tools.sync(parentRelation);
 
@@ -101,183 +101,183 @@ public class EditServers implements AbcAction {
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionEditStep2(request, response, env, parentRelation);
         }
-        
+
         if (Misc.empty(action) || ACTION_LIST.equals(action)) {
             if (!Tools.permissionsFor(user, relation).canModify())
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            return processSection(request, response, env, relation);
+            return processSection(request, env, relation);
         }
-        
+
         if (ACTION_ADD.equals(action)) {
             if (!Tools.permissionsFor(user, relation).canCreate())
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            
+
             return FMTemplateSelector.select("EditServers", "add", env, request);
         }
-        
+
         if (ACTION_ADD_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditServers.class, true, true, true, false);
-            
+
             if (!Tools.permissionsFor(user, relation).canCreate())
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            
+
             return actionAddStep2(request, response, env);
         }
-        
+
         if (ACTION_REMOVE.equals(action)) {
             if (!Tools.permissionsFor(user, relation).canDelete())
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            
+
             return actionRemove(request, response, env);
         }
-        
+
         return null;
     }
-    
-    public static String processSection(HttpServletRequest request, HttpServletResponse response, Map env, Relation relation) {
+
+    public static String processSection(HttpServletRequest request, Map env, Relation relation) {
         SQLTool sqlTool = SQLTool.getInstance();
-        
+
         List servers = sqlTool.findServerRelationsInCategory(relation.getChild().getId());
         Tools.syncList(servers);
         env.put(VAR_SERVERS, servers);
-        
+
         return FMTemplateSelector.select("EditServers", "list", env, request);
     }
-    
+
     public String actionRemove(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         List servers = Tools.asList(params.get(PARAM_SERVER));
-        
+
         for (Iterator it = servers.iterator(); it.hasNext(); ) {
             String srid = (String) it.next();
             Relation rel = new Relation(Integer.parseInt(srid));
-            
+
             Tools.sync(rel);
             persistence.remove(rel);
         }
-        
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/EditServers/"+relation.getId());
         return null;
     }
-    
+
     public String actionEditStep1(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Server server = (Server) relation.getChild();
-        
+
         params.put(PARAM_NAME, server.getName());
         params.put(PARAM_RSS_URL, server.getRssUrl());
         params.put(PARAM_URL, server.getUrl());
         params.put(PARAM_CONTACT, server.getContact());
-        
+
         return FMTemplateSelector.select("EditServers", "edit", env, request);
     }
-    
+
     public String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env, Relation parentRelation) throws Exception {
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Server server = (Server) relation.getChild().clone();
         Persistence persistence = PersistenceFactory.getPersistence();
-        
+
         boolean canContinue;
         canContinue = setName(params, server, env);
         canContinue &= setRssUrl(params, server, env);
         canContinue &= setUrl(params, server, env);
-        canContinue &= setContact(params, server, env);
-        
+        canContinue &= setContact(params, server);
+
         if (!canContinue)
             return FMTemplateSelector.select("EditServers", "edit", env, request);
-        
+
         persistence.update(server);
-        
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/EditServers/"+parentRelation.getId());
         return null;
     }
-    
+
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Relation parentRelation = (Relation) env.get(ShowObject.VAR_RELATION);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Server server = new Server();
         Persistence persistence = PersistenceFactory.getPersistence();
-        
+
         boolean canContinue;
         canContinue = setName(params, server, env);
         canContinue &= setRssUrl(params, server, env);
         canContinue &= setUrl(params, server, env);
-        canContinue &= setContact(params, server, env);
-        
+        canContinue &= setContact(params, server);
+
         if (!canContinue)
             return FMTemplateSelector.select("EditServers", "edit", env, request);
-        
+
         Relation relation = new Relation(parentRelation.getChild(), server, parentRelation.getId());
-        
+
         persistence.create(server);
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
-        
+
         ServletUtils.addMessage("Server přidán, bude načten při dalším cyklu.", env, request.getSession());
-        
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/EditServers/"+parentRelation.getId());
         return null;
     }
-    
+
     private boolean setName(Map params, Server server, Map env) {
         String name = (String) params.get(PARAM_NAME);
-        
+
         if (Misc.empty(name)) {
             ServletUtils.addError(PARAM_NAME, "Zadejte jméno serveru!", env, null);
             return false;
         }
-        
+
         if (name.indexOf('<') != -1) {
             ServletUtils.addError(PARAM_NAME, "HTML zde není povoleno!", env, null);
             return false;
         }
-        
+
         server.setName(name);
         return true;
     }
-    
+
     private boolean setRssUrl(Map params, Server server, Map env) {
         String url = (String) params.get(PARAM_RSS_URL);
-        
+
         if (Misc.empty(url)) {
             ServletUtils.addError(PARAM_RSS_URL, "Zadejte URL RSS kanálu!", env, null);
             return false;
         }
-        
+
         if (!url.startsWith("http://")) {
             ServletUtils.addError(PARAM_RSS_URL, "Zadejte platné URL RSS kanálu!", env, null);
             return false;
         }
-        
+
         server.setRssUrl(url);
         return true;
     }
-    
+
     private boolean setUrl(Map params, Server server, Map env) {
         String url = (String) params.get(PARAM_URL);
-        
+
         if (Misc.empty(url)) {
             ServletUtils.addError(PARAM_URL, "Zadejte URL webu!", env, null);
             return false;
         }
-        
+
         if (!url.startsWith("http://")) {
             ServletUtils.addError(PARAM_URL, "Zadejte platné URL webu!", env, null);
             return false;
         }
-        
+
         server.setUrl(url);
         return true;
     }
-    
-    private boolean setContact(Map params, Server server, Map env) {
+
+    private boolean setContact(Map params, Server server) {
         String contact = (String) params.get(PARAM_CONTACT);
         server.setContact(contact);
         return true;

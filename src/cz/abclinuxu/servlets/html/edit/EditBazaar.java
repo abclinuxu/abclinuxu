@@ -35,9 +35,8 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.format.Format;
-import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.scheduler.VariableFetcher;
@@ -112,24 +111,24 @@ public class EditBazaar implements AbcAction {
         }
 
         Item ad = (Item) relation.getChild();
-		
+
 		permissions = Tools.permissionsFor(user, relation);
 
         if (ACTION_EDIT.equals(action)) {
 			if (user.getId() != ad.getOwner() && !permissions.canModify())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             return actionEdit(request, env);
 		}
 
         if (ACTION_EDIT_STEP2.equals(action)) {
 			if (user.getId() != ad.getOwner() && !permissions.canModify())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             ActionProtector.ensureContract(request, EditBazaar.class, true, true, true, false);
             return actionEditStep2(request, response, env);
         }
-		
+
 		if (user.getId() != ad.getOwner() && !permissions.canDelete())
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -176,9 +175,9 @@ public class EditBazaar implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         item.setOwner(user.getId());
         item.setCreated(new Date());
-		
+
 		Tools.sync(parent);
-		
+
 		Category cat = ((Category) parent.getChild());
 		item.setGroup(cat.getGroup());
 		item.setPermissions(cat.getPermissions());
@@ -334,6 +333,7 @@ public class EditBazaar implements AbcAction {
         tmp = Misc.filterDangerousCharacters(tmp);
         if (tmp != null && tmp.length() > 0) {
             try {
+                tmp = HtmlPurifier.clean(tmp);
                 SafeHTMLGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '" + tmp + "'", e);
@@ -346,8 +346,6 @@ public class EditBazaar implements AbcAction {
             Element element = DocumentHelper.makeElement(document, "data/text");
             tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         } else {
             ServletUtils.addError(PARAM_TEXT, "Zadejte obsah inzerátu!", env, null);
             return false;
@@ -367,6 +365,7 @@ public class EditBazaar implements AbcAction {
         tmp = Misc.filterDangerousCharacters(tmp);
         if (tmp != null && tmp.length() > 0) {
             try {
+                tmp = HtmlPurifier.clean(tmp);
                 SafeHTMLGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '" + tmp + "'", e);
@@ -378,8 +377,6 @@ public class EditBazaar implements AbcAction {
             }
             Element element = DocumentHelper.makeElement(document, "data/price");
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         } else {
             Element element = (Element) document.selectSingleNode("/data/price");
             if (element != null)
@@ -400,6 +397,7 @@ public class EditBazaar implements AbcAction {
         tmp = Misc.filterDangerousCharacters(tmp);
         if (tmp != null && tmp.length() > 0) {
             try {
+                tmp = HtmlPurifier.clean(tmp);
                 SafeHTMLGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '" + tmp + "'", e);
@@ -411,8 +409,6 @@ public class EditBazaar implements AbcAction {
             }
             Element element = DocumentHelper.makeElement(document, "data/contact");
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         } else {
             Element element = (Element) document.selectSingleNode("/data/contact");
             if (element != null)

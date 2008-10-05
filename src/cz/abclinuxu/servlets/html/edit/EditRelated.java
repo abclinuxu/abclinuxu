@@ -35,6 +35,7 @@ import cz.abclinuxu.data.view.RelatedDocument;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -98,7 +99,7 @@ public class EditRelated implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         if (user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-		
+
 		if (!Tools.permissionsFor(user, relation).canModify())
 			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -354,6 +355,7 @@ public class EditRelated implements AbcAction {
         if (desc != null) {
             desc = Misc.filterDangerousCharacters(desc);
             try {
+                desc = HtmlPurifier.clean(desc);
                 SafeHTMLGuard.check(desc);
             } catch (ParserException e) {
                 log.error("ParseException on '" + desc + "'", e);

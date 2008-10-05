@@ -36,9 +36,9 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.parser.safehtml.BlogHTMLGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.Operation;
@@ -484,15 +484,15 @@ public class EditBlog implements AbcAction, Configurable {
             text = node.getText();
         params.put(PARAM_CONTENT, text);
         params.put(PARAM_CATEGORY_ID, story.getSubType());
-        
+
         Date created = story.getCreated();
         Date now = Calendar.getInstance().getTime();
-        
+
         if (created.compareTo(now) > 0) {
             String date = Constants.isoFormat.format(created);
             params.put(PARAM_PUBLISH, date);
         }
-        
+
         env.put(VAR_IS_DELAYED, Boolean.valueOf(story.getType() == Item.UNPUBLISHED_BLOG));
 
         storeCategories(blog, env);
@@ -512,7 +512,7 @@ public class EditBlog implements AbcAction, Configurable {
         Item story = (Item) relation.getChild();
         Document document = story.getData();
         Element root = document.getRootElement();
-        
+
         Date previousDate = story.getCreated();
 
         boolean canContinue = setStoryTitle(params, story, env);
@@ -528,7 +528,7 @@ public class EditBlog implements AbcAction, Configurable {
             storeCategories(blog, env);
             return FMTemplateSelector.select("EditBlog", "edit", env, request);
         }
-        
+
         if (!previousDate.equals(story.getCreated())) {
             String storyUrl = generateStoryURL(blog, story);
 
@@ -536,7 +536,7 @@ public class EditBlog implements AbcAction, Configurable {
                 relation.setUrl(storyUrl);
                 persistence.update(relation);
             }
-            
+
             decrementArchiveRecord(blog.getData().getRootElement(), previousDate);
             incrementArchiveRecord(blog.getData().getRootElement(), story.getCreated());
         }
@@ -567,10 +567,10 @@ public class EditBlog implements AbcAction, Configurable {
         }
 
         story.setType(Item.BLOG);
-        
+
         if (timeNow.after(story.getCreated()))
             story.setCreated(timeNow);
-        
+
         story.setUpdated(timeNow);
         persistence.update(story);
 
@@ -1528,8 +1528,11 @@ public class EditBlog implements AbcAction, Configurable {
         }
 
         try {
-            if (perex != null)
+            if (perex != null) {
+                perex = HtmlPurifier.clean(perex);
                 BlogHTMLGuard.checkPerex(perex);
+            }
+            content = HtmlPurifier.clean(content);
             BlogHTMLGuard.check(content);
         } catch (ParserException e) {
             log.error("ParseException on '" + content + "'", e);
@@ -1543,11 +1546,10 @@ public class EditBlog implements AbcAction, Configurable {
         Element tagPerex = root.element("perex");
         if (perex != null) {
             perex = Tools.processLocalLinks(perex, null);
-            
+
             if (tagPerex == null)
                 tagPerex = root.addElement("perex");
             tagPerex.setText(perex);
-            tagPerex.addAttribute("format", Integer.toString(Format.HTML.getId()));
         } else {
             if (tagPerex != null)
                 tagPerex.detach();
@@ -1558,7 +1560,6 @@ public class EditBlog implements AbcAction, Configurable {
             tagContent = root.addElement("content");
         content = Tools.processLocalLinks(content, null);
         tagContent.setText(content);
-        tagContent.addAttribute("format", Integer.toString(Format.HTML.getId()));
         return true;
     }
 
@@ -1573,7 +1574,7 @@ public class EditBlog implements AbcAction, Configurable {
         story.setSubType(category);
         return true;
     }
-    
+
     /**
      * Sets the time the story is supposed to be published
      * @param params a map holding request's parameters
@@ -1583,18 +1584,18 @@ public class EditBlog implements AbcAction, Configurable {
      */
     boolean setStoryPublishTime(Map params, Item story, Map env) {
         String publishTime = (String) params.get(PARAM_PUBLISH);
-        
+
         if (Misc.empty(publishTime))
             return true;
-        
+
         Date now = new Date();
         Date created = story.getCreated();
-        
+
         if (story.getType() == Item.BLOG && created != null && created.before(now)) {
             ServletUtils.addError(PARAM_PUBLISH, "Nemůžete změnit čas vydaného zápisku!", env, null);
             return false;
         }
-        
+
         Date date;
         try {
             synchronized (Constants.isoFormat) {
@@ -1604,14 +1605,14 @@ public class EditBlog implements AbcAction, Configurable {
             ServletUtils.addError(PARAM_PUBLISH, "Neplatné datum/čas!", env, null);
             return false;
         }
-        
+
         if (date.before(now)) {
             ServletUtils.addError(PARAM_PUBLISH, "Nemůžete publikovat v minulosti!", env, null);
             return false;
         }
-        
+
         story.setCreated(date);
-        
+
         return true;
     }
 

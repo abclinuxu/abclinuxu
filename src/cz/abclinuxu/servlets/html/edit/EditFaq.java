@@ -39,10 +39,9 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.email.monitor.*;
-import cz.abclinuxu.utils.format.Format;
-import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
 import org.dom4j.Document;
@@ -100,18 +99,18 @@ public class EditFaq implements AbcAction {
         if (ACTION_ADD.equals(action)) {
 			if (!Tools.permissionsFor(user, relation).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             return actionAddStep1(request, env);
 		}
 
         if (ACTION_ADD_STEP2.equals(action)) {
 			if (!Tools.permissionsFor(user, relation).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             ActionProtector.ensureContract(request, EditFaq.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
         }
-		
+
 		if (!Tools.permissionsFor(user, relation).canModify())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -152,7 +151,7 @@ public class EditFaq implements AbcAction {
         item.setOwner(user.getId());
 		item.setGroup(section.getGroup());
         item.setPermissions(section.getPermissions());
-		
+
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         item.setData(document);
@@ -307,6 +306,7 @@ public class EditFaq implements AbcAction {
         tmp = Misc.filterDangerousCharacters(tmp);
         if (tmp != null && tmp.length() > 0) {
             try {
+                tmp = HtmlPurifier.clean(tmp);
                 SafeHTMLGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '" + tmp + "'", e);
@@ -319,8 +319,6 @@ public class EditFaq implements AbcAction {
             Element element = DocumentHelper.makeElement(root, "text");
             tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         } else {
             ServletUtils.addError(PARAM_TEXT, "Zadejte text odpovědi!", env, null);
             return false;

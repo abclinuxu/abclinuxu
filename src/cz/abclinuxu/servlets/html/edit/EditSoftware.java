@@ -45,10 +45,9 @@ import cz.abclinuxu.utils.email.monitor.MonitorPool;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.format.Format;
-import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.security.ActionProtector;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -126,23 +125,23 @@ public class EditSoftware implements AbcAction, Configurable {
         if (ACTION_ADD.equals(action)) {
 			if (!Tools.permissionsFor(user, relation).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             return actionAddStep1(request, response, env);
 		}
 
         if (ACTION_ADD_STEP2.equals(action)) {
 			if (!Tools.permissionsFor(user, relation).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             ActionProtector.ensureContract(request, EditSoftware.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
         }
-		
+
 		if (ACTION_I_USE.equals(action)) {
             ActionProtector.ensureContract(request, EditSoftware.class, true, false, false, true);
             return actionIUse(request, response, env);
         }
-		
+
 		if (!Tools.permissionsFor(user, relation).canModify())
 			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -174,7 +173,7 @@ public class EditSoftware implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation upper = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
-		
+
 		Tools.sync(upper);
 
         Document document = DocumentHelper.createDocument();
@@ -182,7 +181,7 @@ public class EditSoftware implements AbcAction, Configurable {
         Item item = new Item(0, Item.SOFTWARE);
         item.setData(document);
         item.setOwner(user.getId());
-		
+
 		Category cat = (Category) upper.getChild();
 		item.setGroup(cat.getGroup());
 		item.setPermissions(cat.getPermissions());
@@ -378,6 +377,7 @@ public class EditSoftware implements AbcAction, Configurable {
         if (tmp != null && tmp.length() > 0) {
             try {
                 tmp = Misc.filterDangerousCharacters(tmp);
+                tmp = HtmlPurifier.clean(tmp);
                 SafeHTMLGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '" + tmp + "'", e);
@@ -391,8 +391,6 @@ public class EditSoftware implements AbcAction, Configurable {
             Element element = DocumentHelper.makeElement(root, "description");
             tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
 
             String noHtml = Tools.removeTags(tmp);
             int position = noHtml.indexOf(". ");

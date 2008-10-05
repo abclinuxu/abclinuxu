@@ -37,9 +37,8 @@ import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.email.monitor.*;
-import cz.abclinuxu.utils.format.Format;
-import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
@@ -101,18 +100,18 @@ public class EditDictionary implements AbcAction {
         if ( action.equals(ACTION_ADD) ) {
 			if (!Tools.permissionsFor(user, relation).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             return FMTemplateSelector.select("Dictionary", "add", env, request);
 		}
 
         if ( action.equals(ACTION_ADD_STEP2) ) {
 			if (!Tools.permissionsFor(user, relation).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             ActionProtector.ensureContract(request, EditDictionary.class, true, false, true, false);
             return actionAddStep2(request, response, env, true);
         }
-		
+
 		if (!Tools.permissionsFor(user, relation).canModify())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -132,7 +131,7 @@ public class EditDictionary implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
 		Relation parent = new Relation(Constants.REL_DICTIONARY);
-		
+
 		Tools.sync(parent);
 
         Document documentItem = DocumentHelper.createDocument();
@@ -141,7 +140,7 @@ public class EditDictionary implements AbcAction {
         item.setData(documentItem);
         item.setOwner(user.getId());
 		item.setGroup( ((Category) parent.getChild()).getGroup() );
-		
+
         Relation relation = new Relation(parent.getChild(), item, parent.getId());
 
         boolean canContinue = true;
@@ -299,6 +298,7 @@ public class EditDictionary implements AbcAction {
         }
 
         try {
+            tmp = HtmlPurifier.clean(tmp);
             SafeHTMLGuard.check(tmp);
         } catch (ParserException e) {
             log.error("ParseException on '"+tmp+"'", e);
@@ -312,8 +312,6 @@ public class EditDictionary implements AbcAction {
         Element element = DocumentHelper.makeElement(root, "description");
         tmp = Tools.processLocalLinks(tmp, null);
         element.setText(tmp);
-        Format format = FormatDetector.detect(tmp);
-        element.addAttribute("format", Integer.toString(format.getId()));
 
         return true;
     }

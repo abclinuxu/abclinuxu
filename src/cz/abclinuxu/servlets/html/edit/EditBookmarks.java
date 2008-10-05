@@ -69,69 +69,69 @@ public class EditBookmarks implements AbcAction {
     public static final String PARAM_MOVE = "move";
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_ORDER_BY = "orderBy";
-    
+
     public static final String VAR_BOOKMARKS = "BOOKMARKS";
     public static final String VAR_MANAGED = "MANAGED";
-    
+
     public static final String ACTION_TO_BOOKMARKS = "add";
     public static final String ACTION_ADD_LINK = "addLink";
     public static final String ACTION_ADD_LINK_STEP2 = "addLink2";
     public static final String ACTION_MANAGE_BOOKMARKS = "manage";
     public static final String ACTION_CREATE_DIRECTORY = "createDirectory";
     public static final String ACTION_REMOVE_DIRECTORY = "removeDirectory";
-    
+
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) InstanceUtils.instantiateParam(ViewUser.PARAM_USER_SHORT, User.class, params, request);
         String action = (String) params.get(PARAM_ACTION);
-        
+
         if (managed == null)
             throw new MissingArgumentException("Chybi userId!");
-        
+
         if (!Misc.empty(action)) {
             User user = (User) env.get(Constants.VAR_USER);
-            
+
             if (user == null)
                 return FMTemplateSelector.select("ViewUser", "login", env, request);
-            
+
             managed = (User) PersistenceFactory.getPersistence().findById(managed);
             if (!user.hasRole(Roles.USER_ADMIN) && managed.getId() != user.getId())
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            
+
             env.put(VAR_MANAGED, managed);
             if (action.equals(ACTION_ADD_LINK))
                 return FMTemplateSelector.select("EditBookmarks", "add", env, request);
-            
+
             ActionProtector.ensureContract(request, EditBookmarks.class, true, false, false, true);
-            
+
             if (action.equals(ACTION_TO_BOOKMARKS))
                 return actionAddToBookmarks(request, response, managed, env);
-            
+
             if (action.equals(ACTION_ADD_LINK_STEP2))
                 return actionAddLinkStep2(request, response, managed, env);
-            
+
             if (action.equals(ACTION_MANAGE_BOOKMARKS))
                 return actionManageBookmarks(request, response, env, managed);
-            
+
             if (action.equals(ACTION_CREATE_DIRECTORY))
                 return actionCreateDirectory(request, response, env, managed);
-            
+
             if (action.equals(ACTION_REMOVE_DIRECTORY))
                 return actionRemoveDirectory(request, response, env, managed);
         }
-        
-        return processList(request, response, env, managed);
+
+        return processList(request, env, managed);
     }
-    
-    public static String processList(HttpServletRequest request, HttpServletResponse response, Map env, User user) {
+
+    public static String processList(HttpServletRequest request, Map env, User user) {
         Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String path = (String) params.get(PARAM_PATH);
-        
+
         env.put(VAR_MANAGED, user);
-        
+
         Element nodeLinks = (Element) resolveBookmarkDirectory(user, path);
-        
+
         if (nodeLinks == null) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Cesta neexistuje nebo neexistují žádné záložky!", env, null);
         } else {
@@ -146,10 +146,10 @@ public class EditBookmarks implements AbcAction {
                 List relations = new ArrayList(elements.size());
                 for (Iterator iter = elements.iterator(); iter.hasNext();) {
                     element = (Element) iter.next();
-                    
+
                     type = element.elementText("type");
                     title = element.elementText("title");
-                    
+
                     if (type.equals(Constants.TYPE_EXTERNAL_DOCUMENT)) {
                         url = element.elementText("url");
                         bookmark = new Bookmark(url, title);
@@ -170,17 +170,17 @@ public class EditBookmarks implements AbcAction {
                     if (r != null && r.isInitialized())
                         b.setTitle(Tools.childName(r));
                 }
-                
+
                 Comparator comparator;
                 String order = (String) params.get(PARAM_ORDER_BY);
-                
+
                 if ("type".equals(order))
                     comparator = new Bookmark.TypeComparator();
                 else if ("modified".equals(order))
                     comparator = new Bookmark.ModifiedComparator();
                 else
                     comparator = new Bookmark.TitleComparator();
-                
+
                 Collections.sort(bookmarks, comparator);
             }
             env.put(VAR_BOOKMARKS, bookmarks);
@@ -188,7 +188,7 @@ public class EditBookmarks implements AbcAction {
 
         return FMTemplateSelector.select("EditBookmarks", "editAll", env, request);
     }
-    
+
     /**
      * Adds an internal object to the bookmarks.
      */
@@ -206,14 +206,14 @@ public class EditBookmarks implements AbcAction {
         urlUtils.redirect(response, url);
         return null;
     }
-    
+
     /**
      * Adds a link to the bookmarks
      */
     protected String actionAddLinkStep2(HttpServletRequest request, HttpServletResponse response, User managed, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String path = (String) params.get(PARAM_PATH);
-        
+
         Element elem = (Element) resolveBookmarkDirectory(managed, path);
         if (elem == null)
             ServletUtils.addError(Constants.ERROR_GENERIC, "Cesta neexistuje!", env, request.getSession());
@@ -221,61 +221,61 @@ public class EditBookmarks implements AbcAction {
             updateUser(managed, env);
         else
             return FMTemplateSelector.select("EditBookmarks", "add", env, request);
-        
+
         if (path == null)
             path = "";
-        
+
         String url = "/lide/" + managed.getLogin() + "/zalozky?path=" + path;
-        
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);
         return null;
     }
-    
+
     protected String actionCreateDirectory(HttpServletRequest request, HttpServletResponse response, Map env, User user) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String path = (String) params.get(PARAM_PATH);
-        
+
         Element nodeLinks = (Element) resolveBookmarkDirectory(user, path);
-        
+
         if (nodeLinks == null)
             ServletUtils.addError(Constants.ERROR_GENERIC, "Cesta neexistuje!", env, request.getSession());
         else if(addBookmarkDirectory(request, params, nodeLinks, env))
             updateUser(user, env);
-        
+
         path = (String) params.get(PARAM_PATH);
         if (path == null)
             path = "";
-        
+
         String url = "/lide/" + user.getLogin() + "/zalozky" + "?path=" + path;
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);
         return null;
     }
-    
+
     protected String actionRemoveDirectory(HttpServletRequest request, HttpServletResponse response, Map env, User user) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String path = (String) params.get(PARAM_PATH);
-        
+
         Element nodeLinks = (Element) resolveBookmarkDirectory(user, path);
-        
+
         if (nodeLinks == null)
             ServletUtils.addError(Constants.ERROR_GENERIC, "Cesta neexistuje!", env, request.getSession());
         else if (removeBookmarkDirectory(request, params, nodeLinks, env))
             updateUser(user, env);
-       
+
         String url = "/lide/" + user.getLogin() + "/zalozky";
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);
         return null;
     }
-    
+
     protected String actionManageBookmarks(HttpServletRequest request, HttpServletResponse response, Map env, User managed) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String path = (String) params.get(PARAM_PATH);
 
         Element nodeLinks = (Element) resolveBookmarkDirectory(managed, path);
-        
+
         if (nodeLinks == null)
             ServletUtils.addError(Constants.ERROR_GENERIC, "Cesta neexistuje!", env, request.getSession());
         else if (params.containsKey(PARAM_REMOVE))
@@ -290,7 +290,7 @@ public class EditBookmarks implements AbcAction {
         urlUtils.redirect(response, url);
         return null;
     }
-    
+
     /**
      * Adds an internal object to the bookmarks.
      */
@@ -311,7 +311,7 @@ public class EditBookmarks implements AbcAction {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Cesta neexistuje!", env, request.getSession());
             return false;
         }
-        
+
         Node node = elem.selectSingleNode("link/rid[text()=\"" + rid + "\"]");
         if (node != null)
             return true;
@@ -340,7 +340,7 @@ public class EditBookmarks implements AbcAction {
         return true;
 
     }
-    
+
     /**
      * Adds a link to the bookmarks, invokes addToBookmarks() if the link is internal
      */
@@ -350,15 +350,15 @@ public class EditBookmarks implements AbcAction {
             ServletUtils.addError(PARAM_URL, "Zadejte URL!", env, null);
             return false;
         }
-        
+
         String path = (String) params.get(PARAM_PATH);
         Element elem = (Element) resolveBookmarkDirectory(user, path);
-        
+
         if (elem == null) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Neplatná cesta!", env, null);
             return false;
         }
-        
+
         String myurl;
         String domain = AbcConfig.getDomain();
         int domainPosition = url.indexOf(domain);
@@ -366,7 +366,7 @@ public class EditBookmarks implements AbcAction {
             int position = url.indexOf("/", domainPosition + domain.length());
             url = url.substring(position);
         }
-        
+
         int hashPosition = url.indexOf('#');
 
         if (hashPosition != -1)
@@ -375,75 +375,75 @@ public class EditBookmarks implements AbcAction {
             myurl = url;
 
         Relation relation = null;
-        
+
         if (!myurl.startsWith("http://"))
             relation = URLMapper.loadRelationFromUrl(myurl);
-        
+
         if (relation == null) {
             String title = (String) params.get(PARAM_TITLE);
             if (Misc.empty(title)) {
                 ServletUtils.addError(PARAM_TITLE, "Zadejte titulek!", env, null);
                 return false;
             }
-            
+
             Element link = elem.addElement("link");
             link.addElement("url").setText(url);
             link.addElement("title").setText(title);
             link.addElement("type").setText(Constants.TYPE_EXTERNAL_DOCUMENT);
-            
+
             ServletUtils.addMessage("Stránka byla přidána do vašich záložek.", env, request.getSession());
-            
+
             return true;
         } else {
             String prefix = UrlUtils.getPrefix(url);
-            
+
             params.put(PARAM_PREFIX, prefix);
             params.put(PARAM_RID, String.valueOf(relation.getId()));
-            
+
             return addToBookmarks(request, params, user, env);
         }
-        
+
     }
-    
+
     protected static boolean addBookmarkDirectory(HttpServletRequest request, Map params, Element parentDir, Map env) {
         String name = (String) params.get(PARAM_DIRECTORY_NAME);
-        
+
         if (Misc.empty(name)) {
             ServletUtils.addError(PARAM_DIRECTORY_NAME, "Zadejte jméno adresáře!", env, request.getSession());
             return false;
         }
-        
+
         if (name.indexOf('/') != -1) {
             ServletUtils.addError(PARAM_DIRECTORY_NAME, "Chybné jméno adresáře!", env, request.getSession());
             return false;
         }
-        
+
         Element elemDir = parentDir.addElement("dir");
         elemDir.addAttribute("name", name);
-        
+
         ServletUtils.addMessage("Adresář vytvořen", env, request.getSession());
-        
+
         return true;
     }
-    
+
     protected static boolean removeBookmarkDirectory(HttpServletRequest request, Map params, Element parentDir, Map env) {
         String path = (String) params.get(PARAM_PATH);
-        
+
         if (Misc.empty(path) || path.equals("/")) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Nelze smazat \"/\" !", env, request.getSession());
             return false;
         }
-        
+
         parentDir.detach();
         params.put(PARAM_PATH, null);
-        
+
         ServletUtils.addMessage("Adresář odstraněn", env, request.getSession());
         return true;
     }
-    
+
     protected static Node resolveBookmarkDirectory(User user, String path) {
         Element nodeLinks = (Element) user.getData().selectSingleNode("/data/links");
-        
+
         if (path != null) {
             StringTokenizer st = new StringTokenizer(path, "/");
             while (st.hasMoreTokens()) {
@@ -454,25 +454,24 @@ public class EditBookmarks implements AbcAction {
                     return null;
             }
         }
-        
+
         return nodeLinks;
     }
-    
+
     /**
      * Removes a rids from user's bookmarks. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param user user to be updated
      * @return false, if there is a major error.
      */
     protected static boolean removeFromBookmarks(HttpServletRequest request, Map params, Element parentDir, Map env) {
         List rids = Tools.asList(params.get(PARAM_RID));
         List urls = Tools.asList(params.get(PARAM_URL));
-        
+
         if (rids.isEmpty() && urls.isEmpty()) {
             ServletUtils.addError(PARAM_RID, "Nevybral jste žádné dokumenty.", env, request.getSession());
             return false;
         }
-        
+
         for (Iterator iter = rids.iterator(); iter.hasNext();) {
             String s = (String) iter.next();
             Node node = parentDir.selectSingleNode("link/rid[text()=\"" + s + "\"]");
@@ -480,7 +479,7 @@ public class EditBookmarks implements AbcAction {
                 node.getParent().detach();
             }
         }
-        
+
         for (Iterator iter = urls.iterator(); iter.hasNext();) {
             String s = (String) iter.next();
             Node node = parentDir.selectSingleNode("link/url[text()=\"" + s + "\"]");
@@ -492,29 +491,29 @@ public class EditBookmarks implements AbcAction {
         ServletUtils.addMessage("Vybrané stránky byly odstraněny ze záložek.", env, request.getSession());
         return true;
     }
-    
+
     private boolean moveBookmarks(HttpServletRequest request, Map params, User user, Map env) {
         List rids = Tools.asList(params.get(PARAM_RID));
         if (rids.isEmpty()) {
             ServletUtils.addError(PARAM_RID, "Nevybral jste žádné dokumenty.", env, request.getSession());
             return false;
         }
-        
+
         String sourcePath = (String) params.get(PARAM_PATH);
         String targetPath = (String) params.get(PARAM_TARGET_PATH);
         Element bookmarksSource = (Element) resolveBookmarkDirectory(user, sourcePath);
         Element bookmarksTarget = (Element) resolveBookmarkDirectory(user, targetPath);
-        
+
         if (bookmarksSource == null) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Zdrojový adresář neexistuje!", env, request.getSession());
             return false;
         }
-        
+
         if (bookmarksTarget == null) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Cílový adresář neexistuje!", env, request.getSession());
             return false;
         }
-        
+
         for (Iterator iter = rids.iterator(); iter.hasNext();) {
             String s = (String) iter.next();
             Node node = bookmarksSource.selectSingleNode("link/rid[text()=\"" + s + "\"]");
@@ -524,11 +523,11 @@ public class EditBookmarks implements AbcAction {
                 bookmarksTarget.add(parent);
             }
         }
-        
+
         ServletUtils.addMessage("Vybrané záložky byly přesunuty.", env, request.getSession());
         return true;
     }
-    
+
     /**
      * Synchronizes the user with the persistence and with the session, if necessary
      * @param user

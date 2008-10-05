@@ -38,6 +38,7 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.parser.safehtml.WikiContentGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.freemarker.Tools;
 import java.util.Date;
@@ -145,21 +146,21 @@ public class EditContent implements AbcAction {
         if ( ACTION_ADD.equals(action) ) {
 			if (!perms.canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             return FMTemplateSelector.select("EditContent", "add", env, request);
 		}
 
         if ( action.equals(ACTION_ADD_STEP2) ) {
 			if (!perms.canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             ActionProtector.ensureContract(request, EditContent.class, true, true, true, false);
             return actionAddStep2(request, response, env);
         }
-		
+
 		// Since the following operations may involve template changes
 		// right changes etc., we should check for the rights of the upper relation too
-		
+
 		if (!Tools.permissionsFor(user, relation.getUpper()).canModify() || !perms.canModify())
 			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -199,7 +200,7 @@ public class EditContent implements AbcAction {
         canContinue &= setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setURL(params, relation, env);
-        
+
         if (user.hasRole(Roles.ROOT))
             canContinue &= setClass(params, item);
 
@@ -224,9 +225,9 @@ public class EditContent implements AbcAction {
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
         MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
-		
+
         Relation section = Tools.getParentSubportal(relation);
-        
+
         if (section != null)
             VariableFetcher.getInstance().refreshSubportalWikiPages(section);
 
@@ -261,10 +262,10 @@ public class EditContent implements AbcAction {
 			item.setPermissions(gdo.getPermissions());
 			item.setGroup(gdo.getGroup());
 		}
-		
+
         if (parent instanceof Item) {
             Item parentItem = ((Item)parent);
-			
+
             if (parentItem.getType()==Item.CONTENT) {
 
                 Element element = (Element) parentItem.getData().selectSingleNode("/data/toc");
@@ -299,7 +300,7 @@ public class EditContent implements AbcAction {
 
         relation.setChild(item);
         persistence.create(relation);
-        
+
         parent.addChildRelation(relation);
 
         if (toc!=null) {
@@ -314,9 +315,9 @@ public class EditContent implements AbcAction {
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
         MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
-		
+
         Relation sp = Tools.getParentSubportal(relation);
-        
+
         if (sp != null) {
             VariableFetcher.getInstance().refreshSubportalWikiPages(sp);
             Category cat = (Category) sp.getChild();
@@ -379,9 +380,9 @@ public class EditContent implements AbcAction {
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
-		
+
         Relation sp = Tools.getParentSubportal(relation);
-        
+
         if (sp != null) {
             VariableFetcher.getInstance().refreshSubportalWikiPages(sp);
             Category cat = (Category) sp.getChild();
@@ -456,9 +457,9 @@ public class EditContent implements AbcAction {
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.CONTENT, relation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
-		
+
         Relation sp = Tools.getParentSubportal(relation);
-        
+
         if (sp != null) {
             VariableFetcher.getInstance().refreshSubportalWikiPages(sp);
             Category cat = (Category) sp.getChild();
@@ -480,7 +481,7 @@ public class EditContent implements AbcAction {
         Item content = (Item) persistence.findById(relation.getChild());
 
 		int permissions = content.getPermissions();
-		
+
 		// switch the PERMISSION_CREATE bit
 		permissions ^= ((Permissions.PERMISSION_CREATE | Permissions.PERMISSION_MODIFY) << Permissions.PERMISSIONS_OTHERS_SHIFT);
 		content.setPermissions(permissions);
@@ -533,6 +534,7 @@ public class EditContent implements AbcAction {
         // Freemarker code wouldn't pass this test
         if (!user.hasRole(Roles.ROOT) || ! "yes".equals(exec)) {
             try {
+                content = HtmlPurifier.clean(content);
                 WikiContentGuard.check(content);
             } catch (ParserException e) {
                 log.error("ParseException on '" + content + "'", e);
@@ -546,6 +548,8 @@ public class EditContent implements AbcAction {
 
         Element element = DocumentHelper.makeElement(item.getData(), "/data/content");
         content = Tools.processLocalLinks(content, null);
+
+        // todo tuto volbu smi nastavovat jen a pouze root
         element.setText(content);
         if (! "yes".equals(exec))
             exec = "no";
@@ -577,7 +581,7 @@ public class EditContent implements AbcAction {
             ServletUtils.addError(PARAM_URL, e.getMessage(), env, null);
             return false;
         }
-        
+
         if (!user.hasRole(Roles.ROOT)) {
             Relation parent = new Relation(relation.getUpper());
             Tools.sync(parent);
@@ -590,7 +594,7 @@ public class EditContent implements AbcAction {
                 return false;
             }
         }
-        
+
         relation.setUrl(url);
 
         if (!URLManager.isURLUnique(relation.getUrl(), relation.getId())) {

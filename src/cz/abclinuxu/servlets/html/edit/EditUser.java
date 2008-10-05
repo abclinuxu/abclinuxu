@@ -43,8 +43,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.parser.safehtml.ProfileGuard;
 import cz.abclinuxu.utils.parser.safehtml.NoHTMLGuard;
 import cz.abclinuxu.utils.parser.safehtml.SignatureHTMLGuard;
-import cz.abclinuxu.utils.format.Format;
-import cz.abclinuxu.utils.format.FormatDetector;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
@@ -341,15 +340,15 @@ public class EditUser implements AbcAction {
             ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
             return actionUploadAvatar2(request, response, env);
         }
-        
+
         if (action.equals(ACTION_EDIT_GPG))
             return FMTemplateSelector.select("EditUser", "editGPG", env, request);
-        
+
         if ( action.equals(ACTION_EDIT_GPG_STEP2) ) {
             ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
             return actionEditGPG2(request, response, env);
         }
-        
+
         if (action.equals(ACTION_CHANGE_FORUM_MODE)) {
             ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
             return actionChangeForumMode(request, response, env);
@@ -422,7 +421,7 @@ public class EditUser implements AbcAction {
         canContinue &= setName(params, managed, env);
         canContinue &= setNick(params, managed, env);
         canContinue &= setEmail(params, managed, env);
-        canContinue &= setSex(params, managed, env);
+        canContinue &= setSex(params, managed);
         canContinue &= setWeeklySummary(params, managed);
         canContinue &= setMonthlySummary(params, managed);
         managed.addProperty(Constants.PROPERTY_TICKET, generateTicket(managed.getId()));
@@ -639,7 +638,7 @@ public class EditUser implements AbcAction {
         if (!canContinue)
             return FMTemplateSelector.select("EditUser", "editPersonal", env, request);
 
-        canContinue = setSex(params, managed, env);
+        canContinue = setSex(params, managed);
         canContinue &= setBirthYear(params, managed, env);
         canContinue &= setCity(params, managed, env);
         canContinue &= setArea(params, managed, env);
@@ -1056,28 +1055,28 @@ public class EditUser implements AbcAction {
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
     }
-    
+
     protected String actionChangeForumMode(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         User managed = (User) env.get(VAR_MANAGED);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         URL referer = ServletUtils.getReferer(request);
         Persistence persistence = PersistenceFactory.getPersistence();
         String url;
-        
+
         setForumMode(params, managed);
-        
+
         persistence.update(managed);
-        
+
         User sessionUser = (User) env.get(Constants.VAR_USER);
         if (managed.getId() == sessionUser.getId()) {
             sessionUser.synchronizeWith(managed);
         }
-        
+
         if (referer != null)
             url = referer.toString();
         else
             url = "/";
-        
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);
         return null;
@@ -1108,11 +1107,11 @@ public class EditUser implements AbcAction {
         urlUtils.redirect(response, url);
         return null;
     }
-        
+
     protected String actionEditGPG2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
-        
+
         User user = (User) env.get(Constants.VAR_USER);
         Persistence persistence = PersistenceFactory.getPersistence();
 
@@ -1122,7 +1121,7 @@ public class EditUser implements AbcAction {
 
         if ( ! canContinue)
             return FMTemplateSelector.select("EditUser", "editGPG", env, request);
-        
+
         canContinue &= setGPG(params, managed, env);
 
         if ( ! canContinue )
@@ -1716,16 +1715,15 @@ public class EditUser implements AbcAction {
      * Updates sex from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
-     * @param env environment
      * @return false, if there is a major error.
      */
-    public static boolean setSex(Map params, User user, Map env) {
+    public static boolean setSex(Map params, User user) {
         String sex = (String) params.get(PARAM_SEX);
         if ( !("man".equals(sex) || "woman".equals(sex)) ) {
             Node node = user.getData().selectSingleNode("/data/personal/sex");
             if (node != null)
                 node.detach();
-            
+
             return true;
         }
         Node node = DocumentHelper.makeElement(user.getData(),"/data/personal/sex");
@@ -1900,13 +1898,12 @@ public class EditUser implements AbcAction {
             return true;
         }
 
+        about = HtmlPurifier.clean(about);
         if (!verifyGuard(ProfileGuard.class, about, PARAM_ABOUT_ME, env))
             return false;
 
         Element element = DocumentHelper.makeElement(profile, "about_myself");
         element.setText(about);
-        Format format = FormatDetector.detect(about);
-        element.addAttribute("format", Integer.toString(format.getId()));
         return true;
     }
 
@@ -1927,6 +1924,7 @@ public class EditUser implements AbcAction {
         Element distributions = DocumentHelper.makeElement(profile, "distributions");
         for ( Iterator iter = distros.iterator(); iter.hasNext(); ) {
             String distro = (String) iter.next();
+            distro = HtmlPurifier.clean(distro);
             if (!verifyGuard(NoHTMLGuard.class, distro, PARAM_DISTRIBUTION, env))
                 return false;
 
@@ -1959,6 +1957,7 @@ public class EditUser implements AbcAction {
             return false;
         }
 
+        signature = HtmlPurifier.clean(signature);
         if (!verifyGuard(SignatureHTMLGuard.class, signature, PARAM_SIGNATURE, env))
             return false;
 
@@ -2082,10 +2081,10 @@ public class EditUser implements AbcAction {
 
         boolean singleMode = false;
         Element modeElem = (Element) user.getData().selectSingleNode("/data/profile/forum_mode");
-        
+
         if (modeElem != null)
             singleMode = "single".equals(modeElem.getText());
-        
+
         if (!singleMode) {
             Element forumsElem = DocumentHelper.makeElement(user.getData(), "/data/forums");
             Map<Integer,Integer> mainForums = VariableFetcher.getInstance().getMainForums();
@@ -2437,7 +2436,7 @@ public class EditUser implements AbcAction {
         photo.setText("/"+fileName);
         return true;
     }
-    
+
     private boolean setGPG(Map params, User user, Map env) throws Exception {
         String key = (String) params.get(PARAM_KEY);
         if (Misc.empty(key)) {
@@ -2449,21 +2448,21 @@ public class EditUser implements AbcAction {
             }
             return true;
         }
-        
+
         String fileName = "data/gpg/" + user.getId() + ".asc";
-        
+
         BufferedWriter out = new BufferedWriter(new FileWriter(AbcConfig.calculateDeployedPath(fileName)));
         out.write(key);
         out.close();
-        
+
         Element gpg = DocumentHelper.makeElement(user.getData(), "/data/profile/gpg");
         gpg.setText(fileName);
         return true;
     }
-    
+
     private boolean setForumMode(Map params, User user) {
         String mode = (String) params.get(PARAM_FORUM_MODE);
-        
+
         if ("single".equals(mode)) {
             Element emode = DocumentHelper.makeElement(user.getData(), "/data/profile/forum_mode");
             emode.setText(mode);

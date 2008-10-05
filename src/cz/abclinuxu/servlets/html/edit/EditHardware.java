@@ -34,9 +34,8 @@ import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.email.monitor.*;
-import cz.abclinuxu.utils.format.Format;
-import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
@@ -113,18 +112,18 @@ public class EditHardware implements AbcAction {
         if ( action.equals(ACTION_ADD) ) {
 			if (!Tools.permissionsFor(user, relation).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             return FMTemplateSelector.select("EditHardware", "add", env, request);
 		}
 
         if ( action.equals(ACTION_ADD_STEP2) ) {
 			if (!Tools.permissionsFor(user, relation).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
+
             ActionProtector.ensureContract(request, EditHardware.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
         }
-		
+
 		if (!Tools.permissionsFor(user, relation).canModify())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -150,7 +149,7 @@ public class EditHardware implements AbcAction {
         Item item = new Item(0, Item.HARDWARE);
         item.setData(document);
         item.setOwner(user.getId());
-		
+
 		if (upper.getChild() instanceof GenericDataObject) {
 			GenericDataObject gdo = (GenericDataObject) upper.getChild();
 			item.setGroup(gdo.getGroup());
@@ -407,6 +406,7 @@ public class EditHardware implements AbcAction {
         tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
             try {
+                tmp = HtmlPurifier.clean(tmp);
                 SafeHTMLGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '"+tmp+"'", e);
@@ -419,8 +419,6 @@ public class EditHardware implements AbcAction {
             Element element = DocumentHelper.makeElement(root, "setup");
             tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         }
         return true;
     }
@@ -436,6 +434,7 @@ public class EditHardware implements AbcAction {
         tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
             try {
+                tmp = HtmlPurifier.clean(tmp);
                 SafeHTMLGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '"+tmp+"'", e);
@@ -448,8 +447,6 @@ public class EditHardware implements AbcAction {
             Element element = DocumentHelper.makeElement(root, "params");
             tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         }
         return true;
     }
@@ -465,6 +462,7 @@ public class EditHardware implements AbcAction {
         tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
             try {
+                tmp = HtmlPurifier.clean(tmp);
                 SafeHTMLGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '"+tmp+"'", e);
@@ -477,8 +475,6 @@ public class EditHardware implements AbcAction {
             Element element = DocumentHelper.makeElement(root, "identification");
             tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         }
         return true;
     }
@@ -494,6 +490,7 @@ public class EditHardware implements AbcAction {
         tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
             try {
+                tmp = HtmlPurifier.clean(tmp);
                 SafeHTMLGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '"+tmp+"'", e);
@@ -506,8 +503,6 @@ public class EditHardware implements AbcAction {
             Element element = DocumentHelper.makeElement(root, "note");
             tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         }
         return true;
     }

@@ -20,14 +20,13 @@ package cz.abclinuxu.utils.format;
 
 /**
  * Holds text formats, that Render can understand.
+ * todo soon to be obsoleted
  */
 public class Format {
     /** Empty line is replaced with P tag, it may contain HTML tags except P, DIV and PRE. */
     public static final Format SIMPLE = new Format("SIMPLE",0);
     /** HTML-formatted text */
     public static final Format HTML = new Format("HTML",1);
-    /** new proposed format similar to wiki */
-    public static final Format WIKI = new Format("WIKI",2);
 
     private final String myName;
     private final int id;

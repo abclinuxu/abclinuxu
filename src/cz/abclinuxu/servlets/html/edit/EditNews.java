@@ -42,7 +42,7 @@ import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.NewsGuard;
-import cz.abclinuxu.utils.format.Format;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
@@ -451,12 +451,11 @@ public class EditNews implements AbcAction {
 
         Document doc = item.getData();
         try {
-//            text = HtmlPurifier.clean(text);
+            text = HtmlPurifier.clean(text);
             NewsGuard.check(text);
 
             Element element = DocumentHelper.makeElement(doc, "/data/content");
             element.setText(text);
-            element.addAttribute("format", Integer.toString(Format.HTML.getId())); // todo remove
 
             String perex = Tools.limitNewsLength(text);
             if (perex == null) {

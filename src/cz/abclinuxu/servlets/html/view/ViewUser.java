@@ -35,7 +35,6 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.freemarker.Tools;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -130,14 +129,14 @@ public class ViewUser implements AbcAction {
         profile = (User) persistence.findById(profile);
 
         if (ACTION_BOOKMARKS.equals(action))
-            return EditBookmarks.processList(request, response, env, profile);
+            return EditBookmarks.processList(request, env, profile);
 
         env.put(VAR_PROFILE, profile);
         env.put(VAR_INVALID_EMAIL, ! Misc.hasValidEmail(profile));
 
         if (ACTION_SHOW_MY_OBJECTS.equals(action))
             return handleMyObjects(request, env);
-        
+
         if (ACTION_GPG.equals(action))
             return handleGPG(request, response, env);
 
@@ -175,7 +174,7 @@ public class ViewUser implements AbcAction {
             Tools.syncList(stories);
             env.put(ViewBlog.VAR_STORIES, stories);
         }
-        
+
         List<Relation> subportals = sqlTool.findSubportalMembership(user.getId());
         Tools.syncList(subportals);
         env.put(VAR_SUBPORTALS, subportals);
@@ -191,7 +190,7 @@ public class ViewUser implements AbcAction {
         List<Relation> desktops = sqlTool.findItemRelationsWithTypeWithFilters(Item.SCREENSHOT, null, filters);
         Tools.syncList(desktops);
         env.put(VAR_DESKTOPS, desktops);
-        
+
         // find user's favourite videos
         filters = Collections.singletonMap(Constants.PROPERTY_FAVOURITED_BY, property);
         List<Relation> videos = sqlTool.findItemRelationsWithTypeWithFilters(Item.VIDEO, null, filters);
@@ -247,21 +246,21 @@ public class ViewUser implements AbcAction {
 
         return FMTemplateSelector.select("ViewUser","counter",env,request);
     }
-    
+
     /**
      * Sends the contents of the file with the GPG public key
      */
     protected String handleGPG(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         User user = (User) env.get(VAR_PROFILE);
         Element element = (Element) user.getData().selectSingleNode("/data/profile/gpg");
-        
+
         if (element == null)
             return null;
         else {
             File file = new File(AbcConfig.calculateDeployedPath(element.getText()));
             FileInputStream fis = new FileInputStream(file);
             byte[] data = new byte[(int) file.length()];
-            
+
             fis.read(data);
             response.getWriter().write(new String(data));
             return null;

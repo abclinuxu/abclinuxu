@@ -33,9 +33,8 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.email.monitor.*;
-import cz.abclinuxu.utils.format.Format;
-import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
@@ -100,18 +99,18 @@ public class EditDriver implements AbcAction {
         if ( ACTION_ADD.equals(action) ) {
 			if (!Tools.permissionsFor(user, new Relation(Constants.REL_DRIVERS)).canCreate())
 				return FMTemplateSelector.select("ViewUser", "login", env, request);
-			
+
             return actionAddStep1(request, env);
 		}
 
         if ( ACTION_ADD_STEP2.equals(action) ) {
 			if (!Tools.permissionsFor(user, new Relation(Constants.REL_DRIVERS)).canCreate())
 				return FMTemplateSelector.select("ViewUser", "login", env, request);
-			
+
             ActionProtector.ensureContract(request, EditDriver.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
         }
-		
+
 		if (!Tools.permissionsFor(user, relation).canModify())
 			return FMTemplateSelector.select("ViewUser", "login", env, request);
 
@@ -147,7 +146,7 @@ public class EditDriver implements AbcAction {
         Item item = new Item(0, Item.DRIVER);
         Document document = DocumentHelper.createDocument();
         item.setData(document);
-		
+
 		Tools.sync(parent);
 
         boolean canContinue = true;
@@ -162,11 +161,11 @@ public class EditDriver implements AbcAction {
 
         User user = (User) env.get(Constants.VAR_USER);
         item.setOwner(user.getId());
-		
+
 		Category cat = (Category) parent.getChild();
 		item.setGroup(cat.getGroup());
 		item.setPermissions(cat.getPermissions());
-		
+
         item.setCreated(new Date());
 
         String title = item.getTitle();
@@ -357,6 +356,7 @@ public class EditDriver implements AbcAction {
         tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
             try {
+                tmp = HtmlPurifier.clean(tmp);
                 SafeHTMLGuard.check(tmp);
             } catch (ParserException e) {
                 log.error("ParseException on '"+tmp+"'", e);
@@ -369,8 +369,6 @@ public class EditDriver implements AbcAction {
             Element element = DocumentHelper.makeElement(document, "data/note");
             tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
-            Format format = FormatDetector.detect(tmp);
-            element.addAttribute("format", Integer.toString(format.getId()));
         } else {
             ServletUtils.addError(PARAM_NOTE, "Zadejte poznámku!", env, null);
             return false;
