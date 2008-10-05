@@ -57,6 +57,7 @@ import java.text.ParseException;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Document;
 import org.htmlparser.util.ParserException;
 
 /**
@@ -172,13 +173,13 @@ public class EditNews implements AbcAction {
 
     private String actionAddStep1(HttpServletRequest request, Map env) throws Exception {
         env.put(VAR_CATEGORIES, NewsCategories.getAllCategories());
-        
+
         Category catWaitingNews = new Category(Constants.CAT_NEWS_POOL);
         Tools.sync(catWaitingNews);
-        
+
         List news = catWaitingNews.getChildren();
         env.put(VAR_WAITING_NEWS, news);
-        
+
         return FMTemplateSelector.select("EditNews", "add", env, request);
     }
 
@@ -323,6 +324,9 @@ public class EditNews implements AbcAction {
         }
 
         User user = (User) env.get(Constants.VAR_USER);
+        boolean pooled = item.getCreated().getTime() >= System.currentTimeMillis();
+        if (! pooled)
+            item.setCreated(new Date());
         element = DocumentHelper.makeElement(item.getData(), "/data/approved_by");
         element.setText(Integer.toString(user.getId()));
         persistence.update(item);
@@ -336,7 +340,9 @@ public class EditNews implements AbcAction {
 
         AdminLogger.logEvent(user, "  approve | news " + relation.getUrl());
 
-        if (item.getCreated().getTime() <= System.currentTimeMillis()) {
+        if (pooled) {
+            ServletUtils.addMessage("Zprávička čeká na čas publikování.", env, request.getSession());
+        } else {
             relation.getParent().removeChildRelation(relation);
             relation.getParent().setId(Constants.CAT_NEWS);
             relation.setUpper(Constants.REL_NEWS);
@@ -345,8 +351,7 @@ public class EditNews implements AbcAction {
 
             FeedGenerator.updateNews();
             VariableFetcher.getInstance().refreshNews();
-        } else
-            ServletUtils.addMessage("Zprávička čeká na čas publikování.", env, request.getSession());
+        }
 
         urlUtils.redirect(response, url);
         return null;
@@ -439,13 +444,30 @@ public class EditNews implements AbcAction {
     private boolean setContent(Map params, Item item, Map env) {
         String text = (String) params.get(PARAM_CONTENT);
         text = Misc.filterDangerousCharacters(text);
-        if ( text==null || text.trim().length()==0 ) {
+        if (text == null || text.trim().length() == 0) {
             ServletUtils.addError(PARAM_CONTENT, "Vyplňte obsah zprávičky", env, null);
             return false;
         }
+
+        Document doc = item.getData();
         try {
+//            text = HtmlPurifier.clean(text);
             NewsGuard.check(text);
+
+            String perex = Tools.limitNewsLength(text);
+            if (perex == null) {
+                Element element = doc.getRootElement().element("perex");
+                if (element != null)
+                    element.detach();
+            } else {
+                DocumentHelper.makeElement(doc, "/data/perex").setText(perex);
+            }
+
 //            text = Tools.encodeSpecial(text);
+            Element element = DocumentHelper.makeElement(doc, "/data/content");
+            element.setText(text);
+            element.addAttribute("format", Integer.toString(Format.HTML.getId())); // todo remove
+            return true;
         } catch (ParserException e) {
             log.error("ParseException on '"+text+"'", e);
             ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
@@ -454,10 +476,6 @@ public class EditNews implements AbcAction {
             ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
             return false;
         }
-        Element element = DocumentHelper.makeElement(item.getData(), "/data/content");
-        element.setText(text);
-        element.addAttribute("format", Integer.toString(Format.HTML.getId()));
-        return true;
     }
 
     /**
