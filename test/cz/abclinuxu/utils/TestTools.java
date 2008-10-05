@@ -90,10 +90,20 @@ public class TestTools extends TestCase {
     }
 
     public void testLimitNewsLength() {
-        Tools.setNewsLetterHardLimit(30);
-        Tools.setNewsLetterSoftLimit(40);
-        assertEquals(null, Tools.limitNewsLength("this is a short news"));
-        assertEquals("12345 12345 12345 12345 12345 12345", Tools.limitNewsLength("12345 12345 12345 12345 12345 12345"));
-        assertEquals("12345 12345 12345 12345 12345 123456", Tools.limitNewsLength("12345 12345 12345 12345 12345 123456"));
+        Tools.setNewsLetterSoftLimit(30);
+        Tools.setNewsLetterHardLimit(35);
+        assertEquals(null, Tools.limitNewsLength("AAAAA BBBBB CCCCC DDDDD EEEEE"));
+        assertEquals(null, Tools.limitNewsLength("AAAAA BBBBB CCCCC DDDDD EEEEE FFFFF"));
+        assertEquals(null, Tools.limitNewsLength("AAAAA BBBBB CCCCC DDDDD EEEEE FFFFFF"));
+        assertEquals(null, Tools.limitNewsLength("AAAAA BBBBB CCCCC DDDDD EEEEE FFFFF GGGGG"));
+        assertEquals("AAAAA BBBBB CCCCC DDDDD EEEEE FFFFF", Tools.limitNewsLength("AAAAA BBBBB CCCCC DDDDD EEEEE FFFFF GGGGGG"));
+        assertEquals("AAAAA BBBBB CCCCC DDDDD EEEEE ", Tools.limitNewsLength("AAAAA BBBBB CCCCC DDDDD EEEEE FFFFFF GGGGGG"));
+        assertEquals(null, Tools.limitNewsLength("AAAAA <a href=\"123\">BBBBB</a> <b>CCCCC</b> DDDDD EEEEE FFFFF GGGGG"));
+        assertEquals("AAAAA <a href=\"123\">BBBBB</a> <b>CCCCC</b> DDDDD EEEEE FFFFF", Tools.limitNewsLength("AAAAA <a href=\"123\">BBBBB</a> <b>CCCCC</b> DDDDD EEEEE FFFFF GGGGG HHHHH"));
+        assertEquals("AAAAA BBBBB <b>CCCCC DDDDD EEEEE FFFFF</b>", Tools.limitNewsLength("AAAAA BBBBB <b>CCCCC DDDDD EEEEE FFFFF GGGGG</b> HHHHH"));
+        assertEquals(null, Tools.limitNewsLength("<p>AAAAA BBBBB <b>CCCCC</b> DDDDD EEEEE FFFFF</p>"));
+        assertEquals("<p>AAAAA BBBBB CCCCC</p> ", Tools.limitNewsLength("<p>AAAAA BBBBB CCCCC</p> <p>DDDDD EEEEE FFFFF</p>"));
+        assertEquals("AAAAA BBBBB CCCCC", Tools.limitNewsLength("AAAAA BBBBB CCCCC<p>DDDDD EEEEE FFFFF</p>"));
+        assertEquals("AAAAA BBBBB CCCCC", Tools.limitNewsLength("AAAAA BBBBB CCCCC<br>DDDDD EEEEE FFFFF"));
     }
 }

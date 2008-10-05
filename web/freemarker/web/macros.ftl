@@ -88,17 +88,21 @@
    ITEM=TOOL.sync(relation.child),
    autor=TOOL.createUser(ITEM.owner),
    diz=TOOL.findComments(ITEM),
-   url=relation.url?default("/zpravicky/show/"+relation.id)
+   url=relation.url?default("/zpravicky/show/"+relation.id),
+   shortened=TOOL.xpath(ITEM,"data/perex")?default("UNDEFINED")
  >
     <h3 class="st_nadpis"><a href="${url}" title="${ITEM.title}">${ITEM.title}</a></h3>
-    <p>
-        ${TOOL.xpath(ITEM,"data/content")}<br>
-        <span style="font-size: smaller">
+    <#if shortened!="UNDEFINED" && (RELATION.upper=37672 || RELATION.upper=0)>
+        <div style="padding-left: 30pt"><strong>Perex:</strong>${shortened}</div>
+    </#if>
+    <div>
+        ${TOOL.xpath(ITEM,"data/content")}
+    </div>
+    <span style="font-size: smaller">
         <@showUser autor/> | ${DATE.show(ITEM.created,"CZ_FULL")} |
         <a href="${url}" title="${ITEM.title}">Komentáře: ${diz.responseCount}</a><#rt>
         <#lt><#if diz.responseCount gt 0><@markNewComments diz/>, poslední ${DATE.show(diz.updated, "SMART")}</#if>
-        </span>
-    </p>
+    </span>
 </#macro>
 
 <#macro showTemplateNews(relation)>
@@ -107,11 +111,13 @@
     diz=TOOL.findComments(item),
     url=relation.url?default("/zpravicky/show/"+relation.id)>
     <span>${DATE.show(item.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[item.subType].name}</span>
-    <#local text=TOOL.xpath(item,"data/content"), shortened=TOOL.limitNewsLength(text)?default("UNDEFINED")>
+    <#local text=TOOL.xpath(item,"data/content"), shortened=TOOL.xpath(item,"data/perex")?default("UNDEFINED")>
     <#if shortened=="UNDEFINED">
-        <p>${text}</p>
+        <div>${text}</div>
     <#else>
-        <p>${shortened}... <i><a href="${url}">Více&raquo;</a></i></p>
+        <div>
+            ${shortened}... <i><a href="${url}">Více&raquo;</a></i>
+        </div>
     </#if>
     <span><@showUser autor/>
     | <a href="${url}" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"

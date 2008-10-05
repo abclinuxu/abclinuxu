@@ -30,6 +30,10 @@
         <br>
     </#if>
     <#if USER?exists && USER.hasRole("news admin")>
+        <#assign shortened=TOOL.xpath(ITEM,"data/perex")?default("UNDEFINED")>
+        <#if shortened != "UNDEFINED" && RELATION.upper=37672>
+            <div style="padding-left: 30pt"><strong>Perex:</strong>${shortened}</div>
+        </#if>
         <#if locked>
             <#assign admin=TOOL.createUser(TOOL.xpath(ITEM, "//locked_by"))>
                 Uzamknul <@lib.showUser admin/> -

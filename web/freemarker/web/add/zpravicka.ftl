@@ -19,12 +19,16 @@ jako dotazy, žádosti o pomoc či předem nedomluvené reklamy.
 
 <h2>Jak ji mám napsat?</h2>
 
-<p>Povolenými HTML značkami jsou odkaz (A), URL musí být absolutní
-(začínat http://) a ACRONYM. Obsah vždy pište s háčky a čárkami.
-<b>Zprávička by měla mít alespoň dvě věty a obsahovat takové podrobnosti,
-aby dávala smysl, aniž by člověk musel navštívit zmíněná URL.</b>
-Titulek by měl krátce popsat hlavní téma zprávičky, bude použit v RSS
-a vygeneruje se z něj URL (ve výpisu zpráviček však zobrazen nebude).</p>
+<p>
+    Pište s háčky a čárkami, jinak vás požádáme o nápravu. Titulek by měl krátce popsat
+    hlavní téma zprávičky, bude použit v RSS a vygeneruje se z něj URL.
+    Ve výpisu zpráviček však zobrazen nebude, proto vlastní obsah zprávičky musí dávat smysl
+    i bez něj. <b>Zprávička by měla mít alespoň dvě věty a obsahovat takové podrobnosti,
+    aby dávala smysl, aniž by člověk musel navštívit odkazovanou stránku.</b> Pokud je text příliš
+    dlouhý nebo obsahuje více odstavců, bude ve výpise zobrazen jen jeho začátek či první odstavec.
+    Povolenými HTML značkami jsou A (odkaz, URL musí být absolutní, tedy začínat na http://),
+    ACRONYM, BR a P.
+</p>
 
 <h2>A co dále?</h2>
 

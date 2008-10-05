@@ -56,6 +56,10 @@ import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
 import org.apache.regexp.REProgram;
 import org.apache.regexp.RECompiler;
+import org.htmlparser.lexer.Lexer;
+import org.htmlparser.nodes.TagNode;
+import org.htmlparser.util.ParserException;
+import org.htmlparser.Text;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -2199,60 +2203,59 @@ public class Tools implements Configurable {
     }
 
     /**
-     * Detects whether the text of a news item is too long to be displayed on the HP.
+     * Detects whether the text of a news item is too long to be displayed on the HP. If text contains more
+     * than newsLetterHardLimit characters, then shorter version consisting of newsLetterSoftLimit
+     * characters is returned. Only words are counted, not whitespace, end tags are not skipped. If text contains
+     * P or BR tags, then text before them is returned. The text may start with P tag.
      * @param text The text to be checked
      * @return Null if the text is short enough or the shortened text.
      */
     public static String limitNewsLength(String text) {
-        String stripped = removeTags(text);
-        stripped = stripped.replaceAll("[ \t\n\r\f,.<]", "");
-
-        if (stripped.length() < newsLetterHardLimit)
-            return null;
-
-        String delims = " \t\n\r\f,.<";
-        StringTokenizer stk = new StringTokenizer(text, delims, true);
-        StringBuffer result = new StringBuffer();
-        int letters = 0;
-        boolean intag = false;
-
         try {
-            while (stk.hasMoreTokens() && (letters < newsLetterSoftLimit || intag) ) {
-                String next = stk.nextToken(delims);
-
-                // have we hit a delimiter?
-                if (next.length() == 1) {
-
-                    // do the tag processing
-                    if (next.equals("<")) {
-                        // append the opening bracket
-                        result.append(next);
-                        // append the tag's contents
-                        result.append(stk.nextToken(">"));
-                        // append the closing bracket
-                        result.append(stk.nextToken());
-
-                        // assumes that all tags are in pairs
-                        intag = !intag;
-
-                        continue;
+            Lexer lexer = new Lexer(text);
+            org.htmlparser.Node node;
+            TagNode tag;
+            int count = 0;
+            boolean shortened = false, oversized = false, textFound = false, breakFound = false;
+            StringBuilder sb = new StringBuilder(text.length());
+            while ((node = lexer.nextNode()) != null) {
+                if ((node instanceof Text)) {
+                    if ( ! oversized) {
+                        StringTokenizer stk = new StringTokenizer(node.getText(), " \t\n\r\f", true);
+                        while (stk.hasMoreTokens()) {
+                            String s = stk.nextToken();
+                            if (! Character.isWhitespace(s.charAt(0))) {
+                                textFound = true;
+                                count += s.length();
+                                if (! shortened) {
+                                    if (count <= newsLetterSoftLimit)
+                                        sb.append(s);
+                                    if (count >= newsLetterSoftLimit)
+                                        shortened = true;
+                                }
+                                if (count > newsLetterHardLimit) {
+                                    oversized = true;
+                                    break;
+                                }
+                            } else if (! shortened)
+                                sb.append(s);
+                        }
                     }
-                    if (delims.indexOf(next.charAt(0)) != -1) {
-                        result.append(next);
-                        //letters++;
-                        // so that the delimiter doesn't get counted as a word
-                        continue;
+                } else if (node instanceof TagNode) {
+                    tag = (TagNode) node;
+                    String tagName = tag.getTagName();
+                    if (textFound && ! tag.isEndTag() && ("P".equals(tagName) || "BR".equals(tagName))) {
+                        breakFound = true;
+                        break;
                     }
+                    sb.append(tag.toHtml());
                 }
-
-                result.append(next);
-                letters += next.length();
             }
-        } catch (Exception e) {
+            return (oversized || breakFound) ? sb.toString() : null;
+        } catch (ParserException e) {
+            log.error("Failed to shorten news '" + text + "'!");
             return null;
         }
-
-        return result.toString();
     }
 
     /**
