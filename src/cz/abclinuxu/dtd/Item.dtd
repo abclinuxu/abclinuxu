@@ -89,9 +89,10 @@
 <!ELEMENT suffix (#PCDATA)> <!-- file will end with this suffix -->
 
 <!-- Item.NEWS -->
-<!ELEMENT data (category?, content, approved_by?)>
+<!ELEMENT data (perex?, content, approved_by?)>
 <!ELEMENT content (#PCDATA)> <!-- text of the news -->
 <!ATTLIST content format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
+<!ELEMENT perex (#PCDATA)> <!-- shorter version if the text is too long or contains more paragraphs -->
 <!ELEMENT approved_by (#PCDATA)> <!-- id of admin, who approved the news -->
 <!ELEMENT locked_by (#PCDATA)> <!-- id of admin, who locked this news -->
 
