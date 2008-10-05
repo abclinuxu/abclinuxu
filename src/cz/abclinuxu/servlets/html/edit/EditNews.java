@@ -454,19 +454,18 @@ public class EditNews implements AbcAction {
 //            text = HtmlPurifier.clean(text);
             NewsGuard.check(text);
 
+            Element element = DocumentHelper.makeElement(doc, "/data/content");
+            element.setText(text);
+            element.addAttribute("format", Integer.toString(Format.HTML.getId())); // todo remove
+
             String perex = Tools.limitNewsLength(text);
             if (perex == null) {
-                Element element = doc.getRootElement().element("perex");
+                element = doc.getRootElement().element("perex");
                 if (element != null)
                     element.detach();
             } else {
                 DocumentHelper.makeElement(doc, "/data/perex").setText(perex);
             }
-
-//            text = Tools.encodeSpecial(text);
-            Element element = DocumentHelper.makeElement(doc, "/data/content");
-            element.setText(text);
-            element.addAttribute("format", Integer.toString(Format.HTML.getId())); // todo remove
             return true;
         } catch (ParserException e) {
             log.error("ParseException on '"+text+"'", e);
