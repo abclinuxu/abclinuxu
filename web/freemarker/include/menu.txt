@@ -92,6 +92,7 @@
         <li><a href="/Admin">Administrace portálu</a></li>
         <li><a href="/system">Sekce Systém</a></li>
     </#if>
+    <li><a href="/napoveda/mapa-serveru">Mapa stránek</a></li>
     <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Jak se stát autorem</a></li>
     <li><a href="/clanky/show/44049">Náš tým</a></li>
     <li><a href="/doc/propagace">Propagace</a></li>
