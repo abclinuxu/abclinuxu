@@ -19,6 +19,8 @@
 package cz.abclinuxu.utils.parser.clean;
 
 import org.htmlparser.lexer.Lexer;
+import org.htmlparser.lexer.Cursor;
+import org.htmlparser.lexer.Page;
 import org.htmlparser.Node;
 import org.htmlparser.Remark;
 import org.htmlparser.Text;
@@ -101,6 +103,27 @@ public class HtmlPurifier {
                     paragraphDetected = true;
                 if ("PRE".equals(tagName))
                     inPre = ! tag.isEndTag();
+                if ("BLOCKQUOTE".equals(tagName)) {
+                    if (tag.isEndTag()) {
+                        Cursor cursor = lexer.getCursor();
+                        Page page = tag.getPage();
+                        char nextChar = page.getCharacter(cursor);
+                        if (nextChar != '\n')
+                            page.ungetCharacter(cursor);
+                        else {
+                            nextChar = page.getCharacter(cursor);
+                            if (nextChar != '\n')
+                                page.ungetCharacter(cursor);
+                            else {
+                                sb.append(node.toHtml()).append("\n\n");
+                                continue;
+                            }
+                        }
+                    } else {
+                        if (! emptyLines.isEmpty() && emptyLines.get(emptyLines.size() - 1) + 2 >= sb.length())
+                            emptyLines.remove(emptyLines.size() - 1);
+                    }
+                }
 
                 sb.append(node.toHtml());
             }

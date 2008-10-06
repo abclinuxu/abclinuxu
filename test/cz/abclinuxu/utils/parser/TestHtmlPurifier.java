@@ -70,4 +70,13 @@ public class TestHtmlPurifier extends TestCase {
 //        String expected = "<p>a</p>\n<p>\n\n>b</p>\n";
         assertEquals("failed", expected, HtmlPurifier.clean(s));
     }
+
+    public void testBlockquote() throws Exception {
+        String s = "a\n\nb\n\n<blockquote>c</blockquote>\n\nd\n\ne";
+        String expected = "a\n<br><br>\nb\n\n<blockquote>c</blockquote>\n\nd\n<br><br>\ne";
+        assertEquals("failed", expected, HtmlPurifier.clean(s));
+        s = "a\n\nb\n\n<blockquote>c</blockquote>\n";
+        expected = "a\n<br><br>\nb\n\n<blockquote>c</blockquote>\n";
+        assertEquals("failed", expected, HtmlPurifier.clean(s));
+    }
 }
