@@ -54,7 +54,7 @@ public class HtmlToTextFormatter implements Configurable {
     }
 
     public String format(String input) throws AbcException {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes());
         Lexer lexer = null;
         try {
@@ -94,7 +94,7 @@ public class HtmlToTextFormatter implements Configurable {
         }
     }
 
-    private void processTag(TagNode tag, StringBuffer sb) {
+    private void processTag(TagNode tag, StringBuilder sb) {
         if ("A".equals(tag.getTagName()) && !tag.isEndTag()) {
             links.add(tag.getAttribute("href"));
             sb.append("[" + links.size() + "] ");
@@ -108,14 +108,5 @@ public class HtmlToTextFormatter implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         String pref = prefs.get(PREF_EMAIL_LINE_LENGTH, "60");
         lineLength = Integer.parseInt(pref);
-    }
-
-    public static void main(String[] args) {
-        HtmlToTextFormatter f = new HtmlToTextFormatter();
-        String text1 = "<p>Server <a href=\"http://none.net\">None</a> nic neohlasil...<br/>"
-                        + "Tym    padom pokracuje vo svojej <i>strategii</i> <a href=\"http://none.net/strategy\">prilakat uzivatelov ich netrpezlivostou</a></p>";
-        String text2 = "<i>Stříbrná</i>\n kočka\n <b>skákala</b>\n přes růžového koně <u>u šišatého</u> melounu.";
-        System.out.println(f.format(text1));
-        System.out.println(f.format(text2));
     }
 }
