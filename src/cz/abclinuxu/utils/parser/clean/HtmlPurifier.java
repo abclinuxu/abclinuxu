@@ -103,7 +103,7 @@ public class HtmlPurifier {
                     paragraphDetected = true;
                 if ("PRE".equals(tagName))
                     inPre = ! tag.isEndTag();
-                if ("BLOCKQUOTE".equals(tagName)) {
+                if (tag.breaksFlow()) {
                     if (tag.isEndTag()) {
                         Cursor cursor = lexer.getCursor();
                         Page page = tag.getPage();
