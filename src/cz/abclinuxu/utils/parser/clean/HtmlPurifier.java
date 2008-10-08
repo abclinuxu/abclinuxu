@@ -104,8 +104,8 @@ public class HtmlPurifier {
                 if ("PRE".equals(tagName))
                     inPre = ! tag.isEndTag();
                 if (tag.breaksFlow()) {
-                    if (tag.isEndTag()) {
-                        Cursor cursor = lexer.getCursor();
+                    Cursor cursor = lexer.getCursor();
+                    if (tag.isEndTag() && cursor.getPosition() < input.length()) {
                         Page page = tag.getPage();
                         char nextChar = page.getCharacter(cursor);
                         if (nextChar != '\n')
