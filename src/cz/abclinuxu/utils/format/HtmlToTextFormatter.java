@@ -21,21 +21,20 @@ package cz.abclinuxu.utils.format;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.AbcException;
 
 import org.htmlparser.Node;
 import org.htmlparser.lexer.Lexer;
-import org.htmlparser.lexer.Page;
 import org.htmlparser.nodes.TagNode;
 import org.htmlparser.Text;
 import org.gjt.jedit.TextUtilities;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.prefs.Preferences;
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * This class is able to format HTML code into text by skipping tags
@@ -43,66 +42,76 @@ import java.io.UnsupportedEncodingException;
  */
 public class HtmlToTextFormatter implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(HtmlToTextFormatter.class);
+    static Pattern pattern = Pattern.compile("[\r\n]{2,}");
 
     private static final String PREF_EMAIL_LINE_LENGTH = "line.length";
 
-    private List links = new ArrayList();
-    private int lineLength = 80;
+    private static int lineLength = 80;
 
-    public HtmlToTextFormatter() {
-        ConfigurationManager.getConfigurator().configureMe(this);
+    static {
+        ConfigurationManager.getConfigurator().configureMe(new HtmlToTextFormatter());
     }
 
-    public String format(String input) throws AbcException {
+    /**
+     * Formats text from HTML to txt representation, limiting its line width
+     * and putting URLs after the text.
+     * @param input input text
+     * @return formatted text
+     * @throws AbcException some error
+     */
+    public static String format(String input) throws AbcException {
         StringBuilder sb = new StringBuilder();
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes());
-        Lexer lexer = null;
-        try {
-            lexer = new Lexer(new Page(bais, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new AbcException(e.getMessage(), e);
-        }
+        List<String> links = new ArrayList<String>();
         Node node;
 
         try {
+            Lexer lexer = new Lexer(input);
             links.clear();
             while ((node = lexer.nextNode()) != null) {
                 if (node instanceof TagNode) {
-                    processTag((TagNode) node, sb);
+                    processTag((TagNode) node, sb, links);
                 } else if (node instanceof Text) {
                     sb.append(((Text) node).getText());
                 }
             }
 
             String formatted = TextUtilities.format(sb.toString(), lineLength, 4);
-            if (links.size() > 0) {
-                sb.setLength(0);
-                sb.append(formatted);
-                sb.append("\n\n");
+            Matcher matcher = pattern.matcher(formatted);
+            formatted = matcher.replaceAll("\n\n");
+            if (links.isEmpty())
+                return formatted;
 
-                int  i = 1;
-                for (Iterator iter = links.iterator(); iter.hasNext(); i++) {
-                    sb.append(i).append(". ").append((String) iter.next()).append('\n');
-                }
-                formatted = sb.toString();
+            sb.setLength(0);
+            sb.append(formatted);
+            sb.append("\n\n");
+
+            int i = 1;
+            for (String url : links) {
+                sb.append(i++).append(". ").append(url).append('\n');
             }
-
-            return formatted;
+            return sb.toString();
         } catch (Exception e) {
             log.error("Failed to format following text: \n'"+input+"'\n", e);
             return input;
         }
     }
 
-    private void processTag(TagNode tag, StringBuilder sb) {
-        if ("A".equals(tag.getTagName()) && !tag.isEndTag()) {
-            links.add(tag.getAttribute("href"));
-            sb.append("[" + links.size() + "] ");
+    private static void processTag(TagNode tag, StringBuilder sb, List<String> links) {
+        if ("A".equals(tag.getTagName()) && tag.isEndTag()) {
+            String url = tag.getAttribute("href");
+            if (url.indexOf("://") == -1)
+                url = AbcConfig.getAbsoluteUrl() + url;
+            links.add(url);
+            sb.append(" [" + links.size() + "] ");
         } else if ("BR".equals(tag.getTagName())) {
-            sb.append('\n').append('\n');
-        } else if ("P".equals(tag.getTagName())) {
+            sb.append('\n');
+        } else if (tag.breaksFlow()) {
             sb.append('\n').append('\n');
         }
+    }
+
+    public static void setLineLength(int length) {
+        lineLength = length;
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {

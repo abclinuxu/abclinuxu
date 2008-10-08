@@ -117,8 +117,8 @@ public class CommentDecorator implements Configurable {
         }
         env.put(EmailSender.KEY_TEMPLATE, "/mail/forum/comment.ftl");
         env.put(EmailSender.KEY_SENT_DATE, dizComment.getCreated());
-        env.put(EmailSender.KEY_MESSAGE_ID, "" + comment.discussionId + "." + comment.threadId + AbcConfig.getDomain());
-        env.put(EmailSender.KEY_REFERENCES, "" + comment.discussionId + "." + parent + AbcConfig.getDomain());
+        env.put(EmailSender.KEY_MESSAGE_ID, "" + comment.discussionId + "." + comment.threadId + "@" + AbcConfig.getDomain());
+        env.put(EmailSender.KEY_REFERENCES, "" + comment.discussionId + "." + parent + "@" + AbcConfig.getDomain());
         env.put(EmailSender.KEY_STATS_KEY, Constants.EMAIL_FORUM);
 
         JobOffer offer = JobOfferManager.getOffer(counter++);

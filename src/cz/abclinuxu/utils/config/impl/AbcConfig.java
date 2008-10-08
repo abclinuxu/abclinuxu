@@ -121,6 +121,13 @@ public class AbcConfig implements Configurable {
     }
 
     /**
+     * @return http url to this computer (e.g. http://www.abclinuxu.cz)
+     */
+    public static String getAbsoluteUrl() {
+        return "http://" + hostname;
+    }
+
+    /**
      * If given path is not absolute, we expect, that it is relative
      * to deploy path and concatenates them.
      * @return absolute path
@@ -237,7 +244,7 @@ public class AbcConfig implements Configurable {
     public static PathGenerator getPathGenerator() {
         return new PathGeneratorImpl();
     }
-    
+
     /**
      * @return Whether HTTPS should be used for login
      */
