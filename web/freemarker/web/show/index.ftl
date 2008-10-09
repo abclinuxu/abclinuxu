@@ -146,6 +146,7 @@
     <span title="Počet&nbsp;komentářů<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if><#if tooltip!=""> [${tooltip}]</#if>">
         (${diz.responseCount}<@lib.markNewComments diz/>${signs})
     </span>
+    <#if (story.getProperty("digest")?size > 0)><img src="/ikony/digest.png" alt="Digest blog" title="Kvalitní zápisek vybraný do digestu"></#if>
 </#macro>
 
 <#assign SUBPORTALS = VARS.getLatestSubportalChanges(USER?if_exists)>
