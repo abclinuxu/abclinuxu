@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export LC_CTYPE=cs_Cz
+#export LC_CTYPE=cs_Cz
 export JAVA_HOME=/usr/local/java
 export PATH=$PATH:$JAVA_HOME/bin
 
@@ -11,6 +11,7 @@ ARGS="-Xmx900m -Dlog4j.configuration=log4j.xml -Dabc.config=@DEPLOY_ABCLINUXU@/W
 JARS=$LIBS/dom4j.jar:$LIBS/jaxen.jar:$LIBS/log4j.jar:$LIBS/mysql-connector.jar:$LIBS/proxool.jar
 JARS=$JARS:$LIBS/lucene.jar:$LIBS/regexp.jar:$LIBS/servlet.jar:$LIBS/whirlycache.jar:$LIBS/concurrent.jar
 JARS=$JARS:$LIBS/activation.jar:$LIBS/mail.jar:$LIBS/commons-collections.jar:$LIBS/commons-logging.jar
+JARS=$JARS:$LIBS/htmlparser.jar
 export CLASSPATH=$CLASSPATH:$BUILD:$JARS
 
 INDEX_REAL=@DEPLOY_ABCLINUXU@/WEB-INF/index
@@ -24,7 +25,7 @@ mkdir -p ${INDEX_TMP}
 java $ARGS -cp $CLASSPATH cz.abclinuxu.utils.search.CreateIndex ${INDEX_TMP}
 
 #remove old index
-rm ${INDEX_REAL}/*
+rm ${INDEX_REAL}/* >& /dev/null
 
 #move new index to correct location
 mv ${INDEX_TMP}/* ${INDEX_REAL}
