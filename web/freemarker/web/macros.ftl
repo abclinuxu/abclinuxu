@@ -117,7 +117,7 @@
         <p>${shortened}...&nbsp;<i><a href="${url}">více&nbsp;&raquo;</a></i></p>
     </#if>
     <span><@showUser autor/>
-    | <a href="${url}" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"
+    | <a href="${diz.url}" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"
     >Komentářů: ${diz.responseCount}<@lib.markNewComments diz/></a></span>
 </#macro>
 
