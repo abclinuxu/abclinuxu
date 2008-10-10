@@ -95,14 +95,12 @@
     <#if shortened!="UNDEFINED" && (RELATION.upper=37672 || RELATION.upper=0)>
         <div style="padding-left: 30pt"><strong>Perex:</strong>${shortened}</div>
     </#if>
-    <div>
-        ${TOOL.xpath(ITEM,"data/content")}
-    </div>
-    <span style="font-size: smaller">
+    <p>${TOOL.xpath(ITEM,"data/content")}</p>
+    <p class="meta-vypis">
         <@showUser autor/> | ${DATE.show(ITEM.created,"CZ_FULL")} |
         <a href="${url}" title="${ITEM.title}">Komentáře: ${diz.responseCount}</a><#rt>
         <#lt><#if diz.responseCount gt 0><@markNewComments diz/>, poslední ${DATE.show(diz.updated, "SMART")}</#if>
-    </span>
+    </p>
 </#macro>
 
 <#macro showTemplateNews(relation)>
@@ -110,14 +108,13 @@
     autor=TOOL.createUser(item.owner),
     diz=TOOL.findComments(item),
     url=relation.url?default("/zpravicky/show/"+relation.id)>
+    <h4 class="st_nadpis"><a href="${url}">${item.title}</a></h4>
     <span>${DATE.show(item.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[item.subType].name}</span>
     <#local text=TOOL.xpath(item,"data/content"), shortened=TOOL.xpath(item,"data/perex")?default("UNDEFINED")>
     <#if shortened=="UNDEFINED">
-        <div>${text}</div>
+        <p>${text}</p>
     <#else>
-        <div>
-            ${shortened}... <i><a href="${url}">Více&raquo;</a></i>
-        </div>
+        <p>${shortened}...&nbsp;<i><a href="${url}">více&nbsp;&raquo;</a></i></p>
     </#if>
     <span><@showUser autor/>
     | <a href="${url}" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"
