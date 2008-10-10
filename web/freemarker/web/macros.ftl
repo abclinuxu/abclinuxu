@@ -108,7 +108,7 @@
     autor=TOOL.createUser(item.owner),
     diz=TOOL.findComments(item),
     url=relation.url?default("/zpravicky/show/"+relation.id)>
-    <h4 class="st_nadpis"><a href="${url}">${item.title}</a></h4>
+    <div class="st_nadpis"><a href="${url}" title="${item.title}">${item.title}</a></div>
     <span>${DATE.show(item.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[item.subType].name}</span>
     <#local text=TOOL.xpath(item,"data/content"), shortened=TOOL.xpath(item,"data/perex")?default("UNDEFINED")>
     <#if shortened=="UNDEFINED">

@@ -803,6 +803,13 @@ a,
 	font-size: 95%;
 }
 
+.ls_zpr .st_nadpis {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	font-weight: bold;
+}
+
 .s hr {
 	margin: 0.3em 0.5em;
 }
