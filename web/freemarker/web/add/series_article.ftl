@@ -8,8 +8,8 @@
 
 <form action="${URL.noPrefix("/serialy/edit")}" method="POST">
     <#list SERIES as series>
-        <input type="radio" name="rid" value="${series.id}">
-        <label> ... ... ... </label><a href="${series.url}">${TOOL.childName(series)}</a><br />
+        <label><input type="radio" name="rid" value="${series.id}">
+        ------------ </label><a href="${series.url}">${TOOL.childName(series)}</a><br />
     </#list>
     <input type="submit" value="Dokonči">
     <input type="hidden" name="action" value="addArticle2">
