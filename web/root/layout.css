@@ -196,6 +196,7 @@ blockquote {
 	border: 1px solid;
 	border-top: none;
 	margin-top: -1px; /* kvuli FF, kompenzace 'margin-bottom:-1px;' u '.menu' */
+	letter-spacing: normal;
 }
 
 .menu li.r ul {
@@ -808,6 +809,7 @@ a,
 	text-overflow: ellipsis;
 	overflow: hidden;
 	font-weight: bold;
+	letter-spacing: -0.05em;
 }
 
 .s hr {
