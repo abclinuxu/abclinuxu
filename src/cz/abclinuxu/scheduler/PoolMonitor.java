@@ -33,6 +33,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditArticle;
 import cz.abclinuxu.servlets.html.edit.EditSeries;
 import cz.abclinuxu.servlets.html.edit.EditDiscussion;
+import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.email.monitor.MonitorAction;
@@ -139,8 +140,19 @@ public class PoolMonitor extends TimerTask {
 						persistence.update(relation);
 						relation.getParent().addChildRelation(relation);
 
-						if (item.getData().selectSingleNode("/data/forbid_discussions") == null)
-							EditDiscussion.createEmptyDiscussion(relation, new User(Constants.USER_REDAKCE), persistence);
+						if (item.getData().selectSingleNode("/data/forbid_discussions") == null) {
+                            Map<String,List> archildren = Tools.groupByType(item.getChildren());
+        
+                            if (archildren.containsKey(Constants.TYPE_DISCUSSION)) {
+                                Relation disc = (Relation) archildren.get(Constants.TYPE_DISCUSSION).get(0);
+
+                                String urldisc = relation.getUrl() + "/diskuse";
+                                urldisc = URLManager.protectFromDuplicates(urldisc);
+                                disc.setUrl(urldisc);
+                                persistence.update(disc);
+                            } else
+                                EditDiscussion.createEmptyDiscussion(relation, new User(Constants.USER_REDAKCE), persistence);
+                        }
                         
                         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
                         MonitorAction action = new MonitorAction("", UserAction.ADD, ObjectType.ARTICLE, relation, absoluteUrl);
