@@ -540,9 +540,7 @@ div.desktop {
 	display: none;
 }
 
-.ds_text {
-	padding: 5px;
-}
+.ds_text { padding: 5px; }
 
 .signature {
 	font-size: 80%;
@@ -800,7 +798,7 @@ a,
 }
 
 .ls_zpr p {
-	margin: 0.5em 0.2em;
+	margin: 0.4em 0.2em;
 	font-size: 95%;
 }
 

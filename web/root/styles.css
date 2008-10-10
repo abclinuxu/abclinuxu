@@ -273,6 +273,8 @@ a.info:hover span.tooltip {
 	color: white;
 }
 
+.ls_zpr span { color: #454545; }
+
 .s_reklama a:hover,
 .s_logo a:hover { background-color: transparent; }
 
