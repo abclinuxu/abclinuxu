@@ -151,12 +151,14 @@
 </#if>
 
 <#if SUBPORTALS?size gt 0>
-    <h3>Jsem členem těchto skupin:</h3>
+<div class="profile_list reverse_anchor">
+    <h2>Jsem členem těchto skupin:</h2>
     <ul>
         <#list SUBPORTALS as rel>
             <li><a href="${rel.url}">${TOOL.childName(rel)}</a></li>
         </#list>
     </ul>
+</div>
 </#if>
 
 <#if LAST_DESKTOP?exists>
@@ -169,14 +171,17 @@
     </p>
 </#if>
 
-<p>
-    <#if TOOL.xpath(PROFILE,"/data/profile/gpg")?default("UNDEF")!="UNDEF">
-        <li><a href="/lide/${PROFILE.login}/gpg">Veřejný GPG klíč</a></li>
-    </#if>
-    <li><a href="/lide/${PROFILE.login}/zalozky">Záložky uživatele</a></li>
-    <li><a href="/lide/${PROFILE.login}/objekty" rel="nofollow">Seznam příspěvků na abclinuxu.cz</a><br />
-    (články, komentáře, dotazy, zprávičky, softwarové a hardwarové záznamy, pojmy ve slovníku a texty v učebnici)</li>
-</p>
+<div class="profile_list reverse_anchor">
+    <h2>Ostatní</h2>
+    <ul>
+      <#if TOOL.xpath(PROFILE,"/data/profile/gpg")?default("UNDEF")!="UNDEF">
+        <li><a href="/lide/${PROFILE.login}/gpg">Můj veřejný GPG klíč</a></li>
+      </#if>
+        <li><a href="/lide/${PROFILE.login}/zalozky">Moje záložky</a></li>
+        <li><a href="/lide/${PROFILE.login}/objekty" rel="nofollow">Seznam příspěvků na abclinuxu.cz</a><br />
+        (články, komentáře, dotazy, zprávičky, softwarové a hardwarové záznamy, pojmy ve slovníku a texty v učebnici)</li>
+    </ul>
+</div>
 
 <#if PROFILE.email?exists>
   <div>
