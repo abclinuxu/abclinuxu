@@ -814,6 +814,8 @@ a,
 	margin: 0.3em 0.5em;
 }
 
+.blog_digest { vertical-align:bottom; }
+
 .rozc a.server {
 	margin-left: 1.3em;
 	padding: 0 0.3em;
