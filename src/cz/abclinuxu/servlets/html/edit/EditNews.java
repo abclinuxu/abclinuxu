@@ -338,17 +338,17 @@ public class EditNews implements AbcAction {
         persistence.update(relation);
         TagTool.assignDetectedTags(item, user);
         
-        Relation disc;
         Map<String,List> children = Tools.groupByType(item.getChildren());
         
-        if (children.containsKey(Constants.TYPE_DISCUSSION))
-            disc = (Relation) children.get(Constants.TYPE_DISCUSSION).get(0);
-        else
-            disc = EditDiscussion.createEmptyDiscussion(relation, user, persistence);
-        String urldisc = url + "/diskuse";
-        urldisc = URLManager.protectFromDuplicates(urldisc);
-        disc.setUrl(urldisc);
-        persistence.update(disc);
+        if (children.containsKey(Constants.TYPE_DISCUSSION)) {
+            Relation disc = (Relation) children.get(Constants.TYPE_DISCUSSION).get(0);
+            
+            String urldisc = url + "/diskuse";
+            urldisc = URLManager.protectFromDuplicates(urldisc);
+            disc.setUrl(urldisc);
+            persistence.update(disc);
+        } else
+            EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
         AdminLogger.logEvent(user, "  approve | news " + relation.getUrl());
 
