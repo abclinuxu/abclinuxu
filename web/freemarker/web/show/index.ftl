@@ -128,7 +128,7 @@
 </#if>
 
 <#macro printStory relation>
-	<!-- UID: ${relation.parent.owner} -->
+    <!-- UID: ${relation.parent.owner} -->
     <#assign story=relation.child, blog=relation.parent, title=blog.title?default("UNDEF"),
              url=TOOL.getUrlForBlogStory(relation), CHILDREN=TOOL.groupByType(story.children),
              author=TOOL.createUser(blog.owner)>
@@ -146,7 +146,9 @@
     <span title="Počet&nbsp;komentářů<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if><#if tooltip!=""> [${tooltip}]</#if>">
         (${diz.responseCount}<@lib.markNewComments diz/>${signs})
     </span>
-    <#if (story.getProperty("digest")?size > 0)><img src="/ikony/digest.png" alt="Digest blog" title="Kvalitní zápisek vybraný do digestu"></#if>
+    <#if (story.getProperty("digest")?size > 0)>
+        <img src="/ikony/digest.png" class="blog_digest" alt="Digest blog" title="Kvalitní zápisek vybraný do digestu">
+    </#if>
 </#macro>
 
 <#assign SUBPORTALS = VARS.getLatestSubportalChanges(USER?if_exists)>
@@ -259,9 +261,7 @@
     <div class="s_sekce">
         <ul>
         <#list FAQ as rel>
-             <li>
-                <a href="${rel.url}">${rel.child.title}</a>
-             </li>
+             <li><a href="${rel.url}">${rel.child.title}</a></li>
         </#list>
         </ul>
         <span class="s_sekce_dalsi"><a href="/History?type=faq">další&nbsp;&raquo;</a></span>
@@ -276,9 +276,7 @@
       <div class="s_sekce">
         <ul>
           <#list DICTIONARY as rel>
-            <li>
-                <a href="${rel.url}">${rel.child.title}</a>
-            </li>
+            <li><a href="${rel.url}">${rel.child.title}</a></li>
           </#list>
         </ul>
         <span class="s_sekce_dalsi"><a href="/History?type=dictionary">další&nbsp;&raquo;</a></span>
@@ -294,9 +292,7 @@
     <div class="s_sekce">
         <ul>
             <#list PERSONALITY as rel>
-                <li>
-                    <a href="${rel.url}">${rel.child.title}</a>
-                </li>
+                <li><a href="${rel.url}">${rel.child.title}</a></li>
             </#list>
         </ul>
         <span class="s_sekce_dalsi"><a href="/History?type=personalities">další&nbsp;&raquo;</a></span>
@@ -338,9 +334,7 @@
       <div class="s_sekce">
         <ul>
         <#list TRIVIAS as rel>
-             <li>
-                <a href="${rel.url}">${rel.child.title}</a>
-             </li>
+             <li><a href="${rel.url}">${rel.child.title}</a></li>
         </#list>
         </ul>
         <span class="s_sekce_dalsi"><a href="/hry">další&nbsp;&raquo;</a></span>
