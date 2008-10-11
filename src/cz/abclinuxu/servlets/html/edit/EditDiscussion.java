@@ -436,7 +436,7 @@ public class EditDiscussion implements AbcAction {
     private void initializeParentComment(Map env, Comment parentThread) {
         env.put(VAR_THREAD, parentThread);
         Element element = (Element) parentThread.getData().selectSingleNode("//text");
-        env.put(VAR_COMMENTED_TEXT, Tools.renderText(element.getText(), false, Tools.detectSimpleFormat(element)));
+        env.put(VAR_COMMENTED_TEXT, Tools.renderText(element.getText(), false));
     }
 
     /**

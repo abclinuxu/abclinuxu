@@ -20,7 +20,7 @@ package cz.abclinuxu.utils.format;
 
 /**
  * Holds text formats, that Render can understand.
- * todo soon to be obsoleted
+ * @deprecated 
  */
 public class Format {
     /** Empty line is replaced with P tag, it may contain HTML tags except P, DIV and PRE. */

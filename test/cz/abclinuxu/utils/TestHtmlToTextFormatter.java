@@ -27,11 +27,27 @@ import cz.abclinuxu.utils.format.HtmlToTextFormatter;
  */
 public class TestHtmlToTextFormatter extends TestCase {
 
-    public void testSimpleFormat() throws Exception {
+    public void testDoubleBrSimpleFormat() throws Exception {
         String input = "a\n<br><br>\nb";
         String expected = "a\n\nb";
         assertEquals("error", expected, HtmlToTextFormatter.format(input));
         input = "a\n<br><br>\n\nb";
+        expected = "a\n\nb";
+        assertEquals("error", expected, HtmlToTextFormatter.format(input));
+    }
+
+    public void testNewSimpleFormat() throws Exception {
+        String  input = "a\n<br class=\"separator\">\nb";
+        String expected = "a\n\nb";
+        assertEquals("error", expected, HtmlToTextFormatter.format(input));
+    }
+
+    public void testTrailingNewLinesSimpleFormat() throws Exception {
+        String  input = "a\n<br class=\"separator\">\nb\n";
+        String expected = "a\n\nb";
+        input = "a\n<br class=\"separator\">\nb\n\n\n";
+        expected = "a\n\nb";
+        input = "a\n<br class=\"separator\">\nb<p></p>";
         expected = "a\n\nb";
         assertEquals("error", expected, HtmlToTextFormatter.format(input));
     }

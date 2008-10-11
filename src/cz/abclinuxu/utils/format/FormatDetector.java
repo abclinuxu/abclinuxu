@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Guesses the format of the text.
+ * @deprecated 
  */
 public class FormatDetector implements Configurable {
     static Logger log = Logger.getLogger(FormatDetector.class);

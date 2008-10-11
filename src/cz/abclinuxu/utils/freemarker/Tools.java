@@ -1239,9 +1239,8 @@ public class Tools implements Configurable {
     }
 
     /**
-     * This method performs visualization enhancements. If string
-     * doesn't contain already HTML breaks (&lt;p>, &lt;br>), it inserts them.
-     * It also replaces smilies with appropriate images.
+     * This method performs visualization enhancements.
+     * It replaces smilies with appropriate images.
      * @param str   text to be rendered
      * @param o     optional User instance
      */
@@ -1249,17 +1248,12 @@ public class Tools implements Configurable {
         if ( Misc.empty(str) )
             return "";
 
-        boolean renderEmoticons = allowEmoticons(o), simple = false;
-        Format format = FormatDetector.detect(str);
-        if (format.equals(Format.SIMPLE))
-            simple = true;
-
-        return renderText(str, renderEmoticons, simple);
+        boolean renderEmoticons = allowEmoticons(o);
+        return renderText(str, renderEmoticons);
     }
 
     /**
-     * This method renders given Element. It may contain attribute, which specify
-     * format of the text.
+     * This method renders given Element.
      * @param el   DOM4J element to be rendered
      * @param o    optional User instance
      */
@@ -1270,27 +1264,20 @@ public class Tools implements Configurable {
         boolean renderEmoticons = allowEmoticons(o);
         Element element = (Element) el;
         String input = element.getText();
-        boolean simple = detectSimpleFormat(element);
-
-        return renderText(input, renderEmoticons, simple);
+        return renderText(input, renderEmoticons);
     }
 
     /**
      * Renders text.
      * @param text string to be rendered
      * @param emoticons when true, emoticons will be replaced by images
-     * @param simpleFormat when true, empty lines will be replaced by <p> tag
      * @return text
      */
-    public static String renderText(String text, boolean emoticons, boolean simpleFormat) {
+    public static String renderText(String text, boolean emoticons) {
         Map params = new HashMap(1, 1.0f);
         if (emoticons)
             params.put(Renderer.RENDER_EMOTICONS, Boolean.TRUE);
-
-        if (simpleFormat)
-            return SimpleFormatRenderer.getInstance().render(text, params);
-        else
-            return HTMLFormatRenderer.getInstance().render(text, params);
+        return HTMLFormatRenderer.getInstance().render(text, params);
     }
 
     public static boolean detectSimpleFormat(Element element) {

@@ -65,6 +65,10 @@ blockquote {
 
 .button { height: 1.8em; font-size: small; }
 
+br.separator {
+    margin-bottom: 0.5em;
+}
+
 /********************************************************/
 #zh-kont {
 	padding: 5px 240px 0 160px; /* right: zh-hledat + zh-text padding */

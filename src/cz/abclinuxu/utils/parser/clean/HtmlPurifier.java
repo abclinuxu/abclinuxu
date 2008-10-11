@@ -131,7 +131,7 @@ public class HtmlPurifier {
             if (! paragraphDetected && ! emptyLines.isEmpty()) {
                 for (ListIterator<Integer> iter = emptyLines.listIterator(emptyLines.size()); iter.hasPrevious();) {
                     Integer position = iter.previous();
-                    sb.insert(position + 1, "<br><br>");
+                    sb.insert(position + 1, "<br class=\"separator\">");
                 }
             }
         } catch (ParserException e) {

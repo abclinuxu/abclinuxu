@@ -30,36 +30,36 @@ public class TestHtmlPurifier extends TestCase {
 
     public void testOrdinaryText() throws Exception {
         String s = "a\n\nb\n";
-        String expected = "a\n<br><br>\nb\n";
+        String expected = "a\n<br class=\"separator\">\nb\n";
 //        String expected = "<p>a</p>\n\n<p>b</p>\n"; todo nice to have behaviour
         assertEquals("failed", expected, HtmlPurifier.clean(s));
     }
 
     public void testOrdinaryTextMoreEmptyLines() throws Exception {
         String s = "a\n\n\nb\n";
-//        String expected = "a\n<br><br>\nb\n"; not implemented freedy behaviour
-        String expected = "a\n<br><br>\n\nb\n";
+//        String expected = "a\n<br class=\"separator\">\nb\n"; not implemented freedy behaviour
+        String expected = "a\n<br class=\"separator\">\n\nb\n";
 //        String expected = "<p>a</p>\n\n\n<p>b</p>\n";
         assertEquals("failed", expected, HtmlPurifier.clean(s));
     }
 
     public void testOrdinaryTextMultipleParagraphs() throws Exception {
         String s = "a\n\nb\nc\n\nd";
-        String expected = "a\n<br><br>\nb\nc\n<br><br>\nd";
+        String expected = "a\n<br class=\"separator\">\nb\nc\n<br class=\"separator\">\nd";
 //        String expected = "<p>a</p>\n\n<p>b\nc</p>\n\n<p>d</p>";
         assertEquals("failed", expected, HtmlPurifier.clean(s));
     }
 
     public void testOrdinaryTextWin() throws Exception {
         String s = "a\r\n\r\nb";
-        String expected = "a\n<br><br>\nb";
+        String expected = "a\n<br class=\"separator\">\nb";
 //        String expected = "<p>a</p>\n\n<p>b</p>";
         assertEquals("failed", expected, HtmlPurifier.clean(s));
     }
 
     public void testOrdinaryTextWithPre() throws Exception {
         String s = "a\n\nb\n<pre>c\n\nd</pre>e";
-        String expected = "a\n<br><br>\nb\n<pre>c\n\nd</pre>e";
+        String expected = "a\n<br class=\"separator\">\nb\n<pre>c\n\nd</pre>e";
 //        String expected = "<p>a</p>\n\n<p>b\n</p><pre>c\n\nd</pre><p>e</p>";
         assertEquals("failed", expected, HtmlPurifier.clean(s));
     }
@@ -73,10 +73,10 @@ public class TestHtmlPurifier extends TestCase {
 
     public void testBlockquote() throws Exception {
         String s = "a\n\nb\n\n<blockquote>c</blockquote>\n\nd\n\ne";
-        String expected = "a\n<br><br>\nb\n\n<blockquote>c</blockquote>\n\nd\n<br><br>\ne";
+        String expected = "a\n<br class=\"separator\">\nb\n\n<blockquote>c</blockquote>\n\nd\n<br class=\"separator\">\ne";
         assertEquals("failed", expected, HtmlPurifier.clean(s));
         s = "a\n\nb\n\n<blockquote>c</blockquote>\n";
-        expected = "a\n<br><br>\nb\n\n<blockquote>c</blockquote>\n";
+        expected = "a\n<br class=\"separator\">\nb\n\n<blockquote>c</blockquote>\n";
         assertEquals("failed", expected, HtmlPurifier.clean(s));
     }
 

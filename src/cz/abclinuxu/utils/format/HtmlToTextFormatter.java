@@ -74,6 +74,8 @@ public class HtmlToTextFormatter implements Configurable {
                     sb.append(((Text) node).getText());
                 }
             }
+            while (sb.charAt(sb.length() - 1) == '\n')
+                sb.setLength(sb.length() - 1);
 
             String formatted = TextUtilities.format(sb.toString(), lineLength, 4);
             Matcher matcher = pattern.matcher(formatted);
