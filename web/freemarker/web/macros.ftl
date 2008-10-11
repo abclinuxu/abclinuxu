@@ -107,8 +107,11 @@
   <#local item=TOOL.sync(relation.child),
     autor=TOOL.createUser(item.owner),
     diz=TOOL.findComments(item),
-    url=relation.url?default("/zpravicky/show/"+relation.id)>
-    <div class="st_nadpis"><a href="${url}" title="${item.title}">${item.title}</a></div>
+    url=relation.url?default("/zpravicky/show/"+relation.id),
+    showtitle="yes">
+    <#if USER?exists><#local showtitle=TOOL.xpath(USER,"/data/settings/news_titles")?default("yes")></#if>
+
+    <#if showtitle=="yes"><div class="st_nadpis"><a href="${url}" title="${item.title}">${item.title}</a></div></#if>
     <span>${DATE.show(item.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[item.subType].name}</span>
     <#local text=TOOL.xpath(item,"data/content"), shortened=TOOL.xpath(item,"data/perex")?default("UNDEFINED")>
     <#if shortened=="UNDEFINED">
@@ -117,7 +120,7 @@
         <p>${shortened}...&nbsp;<i><a href="${url}">více&nbsp;&raquo;</a></i></p>
     </#if>
     <span><@showUser autor/>
-    | <a href="${diz.url}" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"
+    | <a href="<#if showtitle=="yes">${diz.url}<#else>${url}</#if>" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"
     >Komentářů: ${diz.responseCount}<@lib.markNewComments diz/></a></span>
 </#macro>
 

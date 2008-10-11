@@ -139,6 +139,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_TOKEN = "token";
     public static final String PARAM_KEY = "key";
     public static final String PARAM_FORUM_MODE = "forumMode";
+    public static final String PARAM_NEWS_TITLES = "newsTitles";
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
@@ -761,6 +762,9 @@ public class EditUser implements AbcAction {
         node = document.selectSingleNode("/data/settings/avatars");
         if ( node!=null )
             params.put(PARAM_AVATARS, node.getText());
+        node = document.selectSingleNode("/data/settings/news_titles");
+        if ( node!=null )
+            params.put(PARAM_NEWS_TITLES, node.getText());
         node = document.selectSingleNode("/data/settings/hp_all_stories");
         if ( node!=null )
             params.put(PARAM_DISPLAY_BANNED_STORIES, node.getText());
@@ -852,6 +856,7 @@ public class EditUser implements AbcAction {
         canContinue &= setSignatures(params, managed);
         canContinue &= setBannedStories(params, managed);
         canContinue &= setAvatars(params, managed);
+        canContinue &= setNewsTitles(params, managed);
         canContinue &= setGuidepost(params, managed);
         canContinue &= setDiscussionsSizeLimit(params, managed, env);
         canContinue &= setScreenshotsSizeLimit(params, managed, env);
@@ -2023,6 +2028,20 @@ public class EditUser implements AbcAction {
         String avatars = (String) params.get(PARAM_AVATARS);
         Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/avatars");
         String value = ("yes".equals(avatars))? "yes":"no";
+        element.setText(value);
+        return true;
+    }
+    
+    /**
+     * Updates news title display settings from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setNewsTitles(Map params, User user) {
+        String newstitles = (String) params.get(PARAM_NEWS_TITLES);
+        Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/news_titles");
+        String value = ("yes".equals(newstitles))? "yes":"no";
         element.setText(value);
         return true;
     }
