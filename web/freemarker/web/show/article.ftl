@@ -175,18 +175,6 @@
 </#if>
 
 <div class="cl_perex souvisejici">
-    <#if SERIES?exists>
-        <h3>Seriál <a href="${SERIES.series.url}" title="${TOOL.childName(SERIES.series)}">${TOOL.childName(SERIES.series)}</a> (dílů: ${SERIES.total})</h3>
-        <#if SERIES.first?exists><a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a> (první díl)<br /></#if>
-        <#if SERIES.previous?exists>
-            &lt;&mdash;&laquo; <a href="${SERIES.previous.url}">${TOOL.childName(SERIES.previous)}</a><br />
-        </#if>
-        <#if SERIES.next?exists>
-            &raquo;&mdash;&gt; <a href="${SERIES.next.url}">${TOOL.childName(SERIES.next)}</a><br />
-        </#if>
-        <#if (SERIES.total > 1)><a href="${SERIES.last.url}">${TOOL.childName(SERIES.last)}</a> (poslední díl)<br /></#if>
-    </#if>
-
     <div style="float: right">
         <#if VARS.recentMostReadArticles?exists>
             <h3>Nejčtenější články posledního měsíce</h3>
@@ -204,6 +192,18 @@
             &nbsp; <a href="/nej">všechny statistiky &raquo;</a>
         </#if>
     </div>
+
+    <#if SERIES?exists>
+        <h3>Seriál <a href="${SERIES.series.url}" title="${TOOL.childName(SERIES.series)}">${TOOL.childName(SERIES.series)}</a> (dílů: ${SERIES.total})</h3>
+        <#if SERIES.first?exists><a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a> (první díl)<br /></#if>
+        <#if SERIES.previous?exists>
+            &lt;&mdash;&laquo; <a href="${SERIES.previous.url}">${TOOL.childName(SERIES.previous)}</a><br />
+        </#if>
+        <#if SERIES.next?exists>
+            &raquo;&mdash;&gt; <a href="${SERIES.next.url}">${TOOL.childName(SERIES.next)}</a><br />
+        </#if>
+        <#if (SERIES.total > 1)><a href="${SERIES.last.url}">${TOOL.childName(SERIES.last)}</a> (poslední díl)<br /></#if>
+    </#if>
 
     <#if RELATED?exists>
         <h3>Související články</h3>
