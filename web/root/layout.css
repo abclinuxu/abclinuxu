@@ -65,8 +65,8 @@ blockquote {
 
 .button { height: 1.8em; font-size: small; }
 
-br.separator {
-    margin-bottom: 0.5em;
+p.separator {
+    line-height: 0.5em;
 }
 
 /********************************************************/
