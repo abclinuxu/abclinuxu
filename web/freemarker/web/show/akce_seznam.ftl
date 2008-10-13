@@ -140,13 +140,13 @@
 <#if (ITEMS.currentPage.row > 0) >
     <#assign start=ITEMS.currentPage.row-ITEMS.pageSize><#if (start<0)><#assign start=0></#if>
     <li>
-        <a href="/akce?from=${start}&amp;count=${ITEMS.pageSize}">Novější akce</a>
+        <a href="/akce?from=${start}&amp;count=${ITEMS.pageSize}&amp;subtype=${PARAMS.subtype?if_exists}&amp;mode=${PARAMS.mode?if_exists}">Novější akce</a>
     </li>
 </#if>
 <#assign start=ITEMS.currentPage.row + ITEMS.pageSize>
 <#if (start < ITEMS.total) >
     <li>
-        <a href="/akce?from=${start}&amp;count=${ITEMS.pageSize}">Starší akce</a>
+        <a href="/akce?from=${start}&amp;count=${ITEMS.pageSize}&amp;subtype=${PARAMS.subtype?if_exists}&amp;mode=${PARAMS.mode?if_exists}">Starší akce</a>
     </li>
 </#if>
 
