@@ -18,18 +18,15 @@
  */
 package cz.abclinuxu.utils;
 
-import cz.abclinuxu.data.*;
-import cz.abclinuxu.data.view.DiscussionHeader;
-import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.comparator.OpaqueComparator;
+import cz.abclinuxu.utils.comparator.DateComparator;
+import cz.abclinuxu.utils.comparator.IdComparator;
+import cz.abclinuxu.utils.comparator.NameComparator;
+import cz.abclinuxu.utils.comparator.XPathComparator;
 
 import java.util.List;
 import java.util.Comparator;
 import java.util.Collections;
-import java.util.Date;
-import java.text.Collator;
-
-import org.dom4j.Node;
 
 /**
  * This class provides several methods for sorting relations
@@ -115,100 +112,5 @@ public class Sorters2 {
             comparator = new OpaqueComparator(comparator);
         Collections.sort(objects,comparator);
         return objects;
-    }
-
-    /**
-     * This comparator sorts relations by their name
-     * in ascending order.
-     */
-    public static class NameComparator implements Comparator {
-        Collator collator = Collator.getInstance();
-
-        public int compare(Object o1, Object o2) {
-            String s1 = Tools.childName((Relation) o1).toLowerCase();
-            String s2 = Tools.childName((Relation) o2).toLowerCase();
-            return collator.compare(s1, s2);
-        }
-    }
-
-    /**
-     * This comparator sorts GenericObjects by their
-     * modified property in ascending order. If GenericObject
-     * is an relation, then its child is compared.
-     */
-    public static class DateComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            Date d1 = getValue(o1);
-            Date d2 = getValue(o2);
-            return d1.compareTo(d2);
-        }
-        /**
-         * Extracts date value of GenericObject.
-         */
-        private Date getValue(Object obj) {
-            if ( obj instanceof Relation )
-                obj = ((Relation)obj).getChild();
-
-            if ( obj instanceof Link )
-                return ((Link)obj).getUpdated();
-            if ( obj instanceof DiscussionHeader )
-                return ((DiscussionHeader)obj).getUpdated();
-            if ( obj instanceof GenericDataObject ) {
-                GenericDataObject gdo = (GenericDataObject) obj;
-                if ( gdo instanceof Item && gdo.getType()==Item.ARTICLE )
-                    return gdo.getCreated();
-                else
-                    return gdo.getUpdated();
-            }
-            if ( obj instanceof Poll )
-                return ((Poll)obj).getCreated();
-
-            log.warn("Don't know how to handle "+obj);
-            return new Date(0);
-        }
-    }
-
-    /**
-     * This comparator sorts GenericObjects by their id
-     * in ascending order.
-     */
-    public static class IdComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            int i = ((GenericObject) o1).getId();
-            int j = ((GenericObject) o2).getId();
-            return i-j;
-        }
-    }
-
-    /**
-     * This comparator sorts relations containg GenericDataObject by specified xpath.
-     */
-    public static class XPathComparator implements Comparator {
-        String xpath;
-
-        public XPathComparator(String xpath) {
-            this.xpath = xpath;
-        }
-
-        public int compare(Object o1, Object o2) {
-            GenericDataObject i1 = (GenericDataObject) ((Relation) o1).getChild();
-            GenericDataObject i2 = (GenericDataObject) ((Relation) o2).getChild();
-
-            Node n1 = i1.getData().selectSingleNode(xpath);
-            Node n2 = i2.getData().selectSingleNode(xpath);
-
-            if (n1 == null) {
-                if (n2 == null)
-                    return 0;
-                else
-                    return -1;
-            }
-            if (n2 == null)
-                return 1;
-
-            String s1 = n1.getText();
-            String s2 = n2.getText();
-            return s1.compareTo(s2);
-        }
     }
 }

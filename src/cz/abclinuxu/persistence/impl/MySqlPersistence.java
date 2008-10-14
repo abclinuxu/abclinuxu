@@ -29,6 +29,8 @@ import cz.abclinuxu.exceptions.*;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.comparator.IdComparator;
+import cz.abclinuxu.utils.comparator.IdComparator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.servlets.utils.url.CustomURLCache;
 import cz.abclinuxu.persistence.Persistence;
@@ -574,39 +576,39 @@ public class MySqlPersistence implements Persistence {
             }
 
             if (obj instanceof Relation) {
-                if (relations==null) relations = new TreeSet(new Sorters2.IdComparator());
+                if (relations==null) relations = new TreeSet(new IdComparator());
                 relations.add(obj);
                 type = "relation";
             } else if (obj instanceof Item) {
-                if (items == null) items = new TreeSet(new Sorters2.IdComparator());
+                if (items == null) items = new TreeSet(new IdComparator());
                 items.add(obj);
                 type = "item";
             } else if (obj instanceof Category) {
-                if (categories == null) categories = new TreeSet(new Sorters2.IdComparator());
+                if (categories == null) categories = new TreeSet(new IdComparator());
                 categories.add(obj);
                 type = "category";
             } else if (obj instanceof Record) {
-                if (records == null) records = new TreeSet(new Sorters2.IdComparator());
+                if (records == null) records = new TreeSet(new IdComparator());
                 records.add(obj);
                 type = "record";
             } else if (obj instanceof Link) {
-                if (links == null) links = new TreeSet(new Sorters2.IdComparator());
+                if (links == null) links = new TreeSet(new IdComparator());
                 links.add(obj);
                 type = "link";
             } else if (obj instanceof Server) {
-                if (servers == null) servers = new TreeSet(new Sorters2.IdComparator());
+                if (servers == null) servers = new TreeSet(new IdComparator());
                 servers.add(obj);
                 type = "server";
             } else if (obj instanceof User) {
-                if (users == null) users = new TreeSet(new Sorters2.IdComparator());
+                if (users == null) users = new TreeSet(new IdComparator());
                 users.add(obj);
                 type = "user";
             } else if (obj instanceof Poll) {
-                if (polls == null) polls = new TreeSet(new Sorters2.IdComparator());
+                if (polls == null) polls = new TreeSet(new IdComparator());
                 polls.add(obj);
                 type = "poll";
             } else if (obj instanceof Data) {
-                if (data == null) data = new TreeSet(new Sorters2.IdComparator());
+                if (data == null) data = new TreeSet(new IdComparator());
                 data.add(obj);
                 type = "data";
             }

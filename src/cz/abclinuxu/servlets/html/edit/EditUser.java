@@ -40,6 +40,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.html.view.ViewUser;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.comparator.NameComparator;
 import cz.abclinuxu.utils.parser.safehtml.ProfileGuard;
 import cz.abclinuxu.utils.parser.safehtml.NoHTMLGuard;
 import cz.abclinuxu.utils.parser.safehtml.SignatureHTMLGuard;
@@ -895,6 +896,7 @@ public class EditUser implements AbcAction {
             Server server = (Server) persistence.findById(new Server(id));
             servers.add(server);
         }
+        Collections.sort(servers, new NameComparator());
         env.put(VAR_SERVERS, servers);
 
         Map defaultSizes = VariableFetcher.getInstance().getDefaultSizes();
@@ -2031,7 +2033,7 @@ public class EditUser implements AbcAction {
         element.setText(value);
         return true;
     }
-    
+
     /**
      * Updates news title display settings from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
