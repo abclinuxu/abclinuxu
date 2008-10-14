@@ -313,18 +313,16 @@
         <tr>
             <td class="required" width="200px">Zobrazovat servery</td>
             <td>
-                <#assign half = SERVERS?size/2 >
-                <#if SERVERS?size%2==1><#assign half=half+1></#if>
                 <table class="siroka">
                     <#list SERVERS as server>
-                        <tr>
+                        <#if server_index % 3 == 0><tr></#if>
                             <td>
                                 <label>
                                     <#assign feedParam = "feed"+server.id>
                                     <input type="checkbox" name="${feedParam}"<#if PARAMS[feedParam]?exists> checked</#if>> ${server.name}<br>
                                 </label>
                             </td>
-                        </tr>
+                        <#if server_index % 3 == 2 || ! server_has_next></tr></#if>
                     </#list>
                 </table>
             </td>
@@ -342,7 +340,7 @@
             <td>
                 <input type="text" name="indexFeedSize" value="${PARAMS.indexFeedSize?if_exists}" size="3">
                 <span class="error">${ERRORS.indexFeedSize?if_exists}</span>
-                na hlavní stránce
+                na hlavní stránce<br>
                 <input type="text" name="feedSize" value="${PARAMS.feedSize?if_exists}" size="3">
                 <span class="error">${ERRORS.feedSize?if_exists}</span>
                 mimo hlavní stránku
