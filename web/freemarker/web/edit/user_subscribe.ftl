@@ -59,7 +59,7 @@ možné odpovědět.
    <td width="60">Diskusní fórum</td>
    <td>
     <select name="forum" tabindex="4">
-     <#assign forum=PARAMS.forum?if_exists>
+     <#assign forum=PARAMS.forum?default("no")>
      <option value="yes" <#if forum=="yes">SELECTED</#if>>ano</option>
      <option value="no"<#if forum=="no">SELECTED</#if>>ne</option>
     </select>
