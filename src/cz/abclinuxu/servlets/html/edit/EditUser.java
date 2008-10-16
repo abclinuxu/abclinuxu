@@ -104,6 +104,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_DISTRIBUTION = "distribution";
     public static final String PARAM_ABOUT_ME = "about";
     public static final String PARAM_EMOTICONS = "emoticons";
+    public static final String PARAM_RICH_TEXT_EDITOR = "rte";
     public static final String PARAM_SIGNATURES = "signatures";
     public static final String PARAM_AVATARS = "avatars";
     public static final String PARAM_DISPLAY_BANNED_STORIES = "bannedStories";
@@ -814,6 +815,10 @@ public class EditUser implements AbcAction {
         if ( node!=null )
             params.put(PARAM_INDEX_FEED_SIZE, node.getText());
 
+        node = document.selectSingleNode("/data/settings/rte");
+        if (node != null)
+            params.put(PARAM_RICH_TEXT_EDITOR, node.getText());
+
         node = document.selectSingleNode("/data/settings/return_to_forum");
         if ( node!=null )
             params.put(PARAM_RETURN_TO_FORUM, node.getText());
@@ -868,6 +873,7 @@ public class EditUser implements AbcAction {
         canContinue &= setReturnBackToForum(params, managed);
         canContinue &= setFeeds(params, managed);
         canContinue &= setFeedSize(params, managed, env);
+        canContinue &= setRichTextEditor(params, managed);
 
         if ( !canContinue ) {
             setDefaultValuesForEditSettings(env);
@@ -2003,6 +2009,26 @@ public class EditUser implements AbcAction {
         Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/emoticons");
         String value = ("yes".equals(emoticons))? "yes":"no";
         element.setText(value);
+        return true;
+    }
+
+    /**
+     * Updates rich text editor settings from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setRichTextEditor(Map params, User user) {
+        String value = (String) params.get(PARAM_RICH_TEXT_EDITOR);
+        if (!("wysiwyg".equals(value) || "textarea".equals(value))) {
+            Node node = user.getData().selectSingleNode("/data/settings/rte");
+            if (node != null)
+                node.detach();
+
+            return true;
+        }
+        Node node = DocumentHelper.makeElement(user.getData(), "/data/settings/rte");
+        node.setText(value);
         return true;
     }
 

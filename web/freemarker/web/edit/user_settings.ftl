@@ -4,21 +4,17 @@
 
 <h1>Nastavení vašeho účtu</h1>
 
-<p>Pro vaši ochranu nejdříve zadejte vaše heslo.</p>
+<p>
+    Pro vaši ochranu nejdříve zadejte vaše heslo:
+    <input type="password" name="PASSWORD" size="16" tabindex="1">
+    <@lib.showError key="PASSWORD"/>
+</p>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
 
     <h2 style="margin-bottom: 1em">Bezpečnost</h2>
 
     <table class="siroka" cellspacing="10px">
-        <tr>
-            <td class="required" width="200px">Heslo</td>
-            <td>
-                <input type="password" name="PASSWORD" size="16" tabindex="1">
-                <@lib.showError key="PASSWORD"/>
-            </td>
-        </tr>
-
         <tr>
             <td class="required" width="200px">Doba platnosti přihlašovací cookie</td>
             <td>
@@ -52,13 +48,33 @@
         </tr>
     </table>
 
+    <h2 style="margin-bottom: 1em">Ovládání</h2>
+
+    <table class="siroka" cellspacing="10px">
+        <tr>
+            <td class="required" width="200px">Wysiwyg editor</td>
+            <td>
+                <@lib.showOption "rte", "wysiwyg", "ano", "radio", "tabindex='3'" />
+                <@lib.showOption "rte", "textarea", "ne", "radio", "tabindex='3'" />
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                V případě přístupu z kompatibilního prohlížeče (Firefox, Internet Explorer či Opera) povolí či zakáže
+                použití WYSIWYG editoru. Jde o aplikaci napsanou v Javascriptu, která umožňuje nastavovat formátování,
+                aniž byste museli znát syntaxi HTML (poznámka - v přípravě).
+            </td>
+        </tr>
+    </table>
+
     <h2 style="margin-bottom: 1em">Vzhled</h2>
 
     <table class="siroka" cellspacing="10px">
         <tr>
             <td class="required" width="200px">Vlastní CSS</td>
             <td>
-                <input type="text" name="css" size="40" value="${PARAMS.css?if_exists}" tabindex="3">
+                <input type="text" name="css" size="40" value="${PARAMS.css?if_exists}" tabindex="4">
                 <@lib.showError key="css"/>
             </td>
         </tr>
@@ -75,11 +91,8 @@
         <tr>
             <td class="required" width="200px">Grafické emotikony</td>
             <td>
-                <select name="emoticons" tabindex="4">
-                    <#assign emoticons=PARAMS.emoticons?default("yes")>
-                    <option value="yes" <#if emoticons=="yes">SELECTED</#if>>ano</option>
-                    <option value="no"<#if emoticons=="no">SELECTED</#if>>ne</option>
-                </select>
+                <@lib.showOption "emoticons", "yes", "ano", "radio", "tabindex='5'" />
+                <@lib.showOption "emoticons", "no", "ne", "radio", "tabindex='5'" />
             </td>
         </tr>
 
@@ -93,11 +106,8 @@
         <tr>
             <td class="required" width="200px">Zobrazovat patičku</td>
             <td>
-                <select name="signatures" tabindex="5">
-                    <#assign emoticons=PARAMS.signatures?default("yes")>
-                    <option value="yes" <#if emoticons=="yes">SELECTED</#if>>ano</option>
-                    <option value="no"<#if emoticons=="no">SELECTED</#if>>ne</option>
-                </select>
+                <@lib.showOption "signatures", "yes", "ano", "radio", "tabindex='6'" />
+                <@lib.showOption "signatures", "no", "ne", "radio", "tabindex='6'" />
             </td>
         </tr>
 
@@ -110,11 +120,8 @@
         <tr>
             <td class="required" width="200px">Zobrazovat avatary</td>
             <td>
-                <select name="avatars" tabindex="6">
-                    <#assign avatars=PARAMS.avatars?default("yes")>
-                    <option value="yes" <#if avatars=="yes">SELECTED</#if>>ano</option>
-                    <option value="no"<#if avatars=="no">SELECTED</#if>>ne</option>
-                </select>
+                <@lib.showOption "avatars", "yes", "ano", "radio", "tabindex='7'" />
+                <@lib.showOption "avatars", "no", "ne", "radio", "tabindex='7'" />
             </td>
         </tr>
 
@@ -148,7 +155,7 @@
                             <tr>
                                 <td>${name}</td>
                                 <td>
-                                    <input type="text" name="discussions_${forum.key}" value="${forum.value}" size="3" tabindex="7">
+                                    <input type="text" name="discussions_${forum.key}" value="${forum.value}" size="3" tabindex="8">
                                 </td>
                             </tr>
                         </#list>
@@ -158,7 +165,7 @@
                     |
                     všechny dotazy v jednom výpisu
                     <br>
-                    <select name="discussions" tabindex="7">
+                    <select name="discussions" tabindex="8">
                         <#assign discussions=PARAMS.discussions?default("20")>
                         <option value="-2"<#if discussions=="-2">SELECTED</#if>>default</option>
                         <option value="0" <#if discussions=="0">SELECTED</#if>>žádné</option>
@@ -185,7 +192,7 @@
         <tr>
             <td class="required" width="200px">Velikost stránky poradny</td>
             <td>
-                <input type="text" name="forum" value="${PARAMS.forum?if_exists}" size="3" tabindex="13">
+                <input type="text" name="forum" value="${PARAMS.forum?if_exists}" size="3" tabindex="9">
                 <@lib.showError key="forum"/>
             </td>
         </tr>
@@ -201,7 +208,7 @@
         <tr>
             <td class="required" width="200px">Počet zpráviček</td>
             <td>
-                <input type="text" name="news" value="${PARAMS.news?if_exists}" size="3" tabindex="8">
+                <input type="text" name="news" value="${PARAMS.news?if_exists}" size="3" tabindex="10">
                 <@lib.showError key="news"/>
             </td>
         </tr>
@@ -216,11 +223,8 @@
         <tr>
             <td class="required" width="200px">Zobrazovat titulky zpráviček</td>
             <td>
-                <select name="newsTitles" tabindex="7">
-                    <#assign newsTitles=PARAMS.newsTitles?default("yes")>
-                    <option value="yes" <#if newsTitles=="yes">SELECTED</#if>>ano</option>
-                    <option value="no"<#if newsTitles=="no">SELECTED</#if>>ne</option>
-                </select>
+                <@lib.showOption "newsTitles", "yes", "ano", "radio", "tabindex='11'" />
+                <@lib.showOption "newsTitles", "no", "ne", "radio", "tabindex='11'" />
             </td>
         </tr>
     </table>
@@ -231,7 +235,7 @@
         <tr>
             <td class="required" width="200px">Počet zápisků</td>
             <td>
-                <input type="text" name="stories" value="${PARAMS.stories?if_exists}" size="3" tabindex="9">
+                <input type="text" name="stories" value="${PARAMS.stories?if_exists}" size="3" tabindex="12">
                 <@lib.showError key="stories"/>
             </td>
         </tr>
@@ -247,11 +251,8 @@
         <tr>
             <td class="required" width="200px">Zobrazovat všechny zápisky</td>
             <td>
-                <select name="bannedStories" tabindex="10">
-                    <#assign bannedStories=PARAMS.bannedStories?default("no")>
-                    <option value="yes" <#if bannedStories=="yes">SELECTED</#if>>ano</option>
-                    <option value="no" <#if bannedStories=="no">SELECTED</#if>>ne</option>
-                </select>
+                <@lib.showOption "bannedStories", "yes", "ano", "radio", "tabindex='13'" />
+                <@lib.showOption "bannedStories", "no", "ne", "radio", "tabindex='13'" />
             </td>
         </tr>
 
@@ -266,7 +267,7 @@
         <tr>
             <td class="required" width="200px">Počet desktopů</td>
             <td>
-                <input type="text" name="screenshots" value="${PARAMS.screenshots?if_exists}" size="3" tabindex="11">
+                <input type="text" name="screenshots" value="${PARAMS.screenshots?if_exists}" size="3" tabindex="14">
                 <@lib.showError key="screenshots"/>
             </td>
         </tr>
@@ -282,7 +283,7 @@
         <tr>
             <td class="required" width="200px">Velikost stránky při hledání</td>
             <td>
-                <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="12">
+                <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="15">
                 <@lib.showError key="search"/>
             </td>
         </tr>
@@ -298,11 +299,8 @@
         <tr>
             <td class="required" width="200px">Zobrazovat rozcestník</td>
             <td>
-                <select name="guidepost" tabindex="14">
-                    <#assign guidepost=PARAMS.guidepost?default("yes")>
-                    <option value="yes" <#if guidepost=="yes">SELECTED</#if>>ano</option>
-                    <option value="no" <#if guidepost=="no">SELECTED</#if>>ne</option>
-                </select>
+                <@lib.showOption "guidepost", "yes", "ano", "radio", "tabindex='16'" />
+                <@lib.showOption "guidepost", "no", "ne", "radio", "tabindex='16'" />
             </td>
         </tr>
 
@@ -317,10 +315,8 @@
                     <#list SERVERS as server>
                         <#if server_index % 3 == 0><tr></#if>
                             <td>
-                                <label>
-                                    <#assign feedParam = "feed"+server.id>
-                                    <input type="checkbox" name="${feedParam}"<#if PARAMS[feedParam]?exists> checked</#if>> ${server.name}<br>
-                                </label>
+                                <#assign feedParam = "feed"+server.id>
+                                <@lib.showOption3 feedParam, "yes", server.name, "checkbox", PARAMS[feedParam]?exists />
                             </td>
                         <#if server_index % 3 == 2 || ! server_has_next></tr></#if>
                     </#list>
@@ -339,11 +335,9 @@
             <td class="required" width="200px">Počet odkazů</td>
             <td>
                 <input type="text" name="indexFeedSize" value="${PARAMS.indexFeedSize?if_exists}" size="3">
-                <span class="error">${ERRORS.indexFeedSize?if_exists}</span>
-                na hlavní stránce<br>
+                na hlavní stránce<br><@lib.showError key="indexFeedSize"/>
                 <input type="text" name="feedSize" value="${PARAMS.feedSize?if_exists}" size="3">
-                <span class="error">${ERRORS.feedSize?if_exists}</span>
-                mimo hlavní stránku
+                mimo hlavní stránku <@lib.showError key="feedSize"/>
             </td>
         </tr>
 
