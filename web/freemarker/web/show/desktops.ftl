@@ -42,7 +42,7 @@
         <@lib.showUser autor/> |
         ${DATE.show(item.created,"SMART_DMY")} |
         <a href="${diz.url}">Komentářů: ${diz.responseCount}<@lib.markNewComments diz/></a> |
-        Zhlédnuto: <@lib.showCounter item, .globals["CITACE"]?if_exists, "read" />&times;
+        Shlédnuto: <@lib.showCounter item, .globals["CITACE"]?if_exists, "read" />&times;
         <#if (usedBy?size > 0)>
             | <a href="${relation.url}?action=users" title="Seznam uživatelů abclinuxu, kterým se líbí tento desktop">Oblíbenost: ${usedBy?size}</a>
         </#if>
