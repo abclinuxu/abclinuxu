@@ -1,3 +1,5 @@
+<#import "/web/rte-macro.ftl" as rte>
+<@rte.addRTE textAreaId="content" formId="form" inputMode="wiki" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -33,19 +35,9 @@ nebudete moci změnit.
    <td width="90" class="required">Obsah stránky</td>
    <td>
     <p>Všechna URL na články, obrázky a soubory z našeho serveru musí být relativní!</p>
-    <div class="form-edit">
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="Vložit značku odstavce">&lt;p&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;h1&gt;', '&lt;/h1&gt;');" id="mono" title="Vložit značku nadpisu">&lt;h1&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;h2&gt;', '&lt;/h2&gt;');" id="mono" title="Vložit značku nadpisu">&lt;h2&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;h3&gt;', '&lt;/h3&gt;');" id="mono" title="Vložit značku nadpisu">&lt;h3&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vložit značku tučně"><b>B</b></a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="Vložit značku kurzíva"><i>I</i></a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="Vložit značku odkazu">&lt;a&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="Vložit formátovaný text. Vhodné pouze pro konfigurační soubory či výpisy.">&lt;pre&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
-    </div>
-    <div class="error">${ERRORS.content?if_exists}</div>
+    <@rte.showFallback "content"/>
     <textarea name="content" class="siroka" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
+    <@lib.showError key="content"/>
    </td>
   </tr>
   <tr>

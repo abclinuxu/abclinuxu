@@ -270,6 +270,16 @@
                             </node>
                         </node>
                     </node>
+                    <node name="forms">
+                        <map/>
+                        <node name="RichTextEditor">
+                            <map>
+                                <entry key="regexp.js.buttons.textarea.ua" value="konqueror"/>
+                                <entry key="regexp.only.textarea.ua" value="lynx|links"/>
+                                <entry key="disabled" value="true"/>
+                            </map>
+                        </node>
+                    </node>
                     <node name="format">
                         <map/>
                         <node name="FormatDetector">

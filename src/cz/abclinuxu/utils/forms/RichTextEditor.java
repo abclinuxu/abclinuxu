@@ -20,6 +20,7 @@ package cz.abclinuxu.utils.forms;
 
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.data.User;
 
@@ -28,6 +29,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.dom4j.Element;
 
@@ -37,11 +40,14 @@ import org.dom4j.Element;
  * @since 27.7.2008
  */
 public class RichTextEditor {
-    public static final String PREF_BROWSERS_TEXTAREA_JS_BUTTONS = "js.buttons.textarea.ua";
-    public static final String PREF_BROWSERS_ONLY_TEXTAREA = "only.textarea.ua";
+    public static final String PREF_BROWSERS_TEXTAREA_JS_BUTTONS = "regexp.js.buttons.textarea.ua";
+    public static final String PREF_BROWSERS_ONLY_TEXTAREA = "regexp.only.textarea.ua";
+    public static final String PREF_DISABLED = "disabled";
 
     public static final String SETTING_TEXTAREA = "textarea";
     public static final String SETTING_WYSIWYG = "wysiwyg";
+
+    static Config config = new Config();
 
     List<EditorInstance> instances;
     boolean wysiwygMode = true;
@@ -57,13 +63,30 @@ public class RichTextEditor {
 
         String ua = (String) env.get(Constants.VAR_USER_AGENT);
         if (ua != null) {
+            boolean jsDisabled = false;
+            if (config.reNoJavascriptBrowsers != null) {
+                Matcher matcher = config.reNoJavascriptBrowsers.matcher(ua);
+                if (matcher.find()) {
+                    wysiwygMode = false;
+                    displayJavascriptButtons = false;
+                    jsDisabled = true;
+                }
+            }
 
+            if (! jsDisabled && config.reOnlyJsButtonsBrowsers != null) {
+                Matcher matcher = config.reOnlyJsButtonsBrowsers.matcher(ua);
+                if (matcher.find())
+                    wysiwygMode = false;
+            }
         }
+
+        if (wysiwygMode && config.disabled)
+            wysiwygMode = false;
     }
 
     public void addInstance(EditorInstance rte) {
         if (instances == null)
-            instances = new ArrayList<EditorInstance>();
+            instances = new ArrayList<EditorInstance>(1);
         instances.add(rte);
     }
 
@@ -122,6 +145,9 @@ public class RichTextEditor {
             this.inputMode = inputMode;
         }
 
+        /**
+         * @return text area id
+         */
         public String getId() {
             return id;
         }
@@ -130,6 +156,9 @@ public class RichTextEditor {
             this.id = id;
         }
 
+        /**
+         * @return form id
+         */
         public String getForm() {
             return form;
         }
@@ -146,6 +175,9 @@ public class RichTextEditor {
             this.commentedContent = commentedContent;
         }
 
+        /**
+         * @return requested toolbar (list of tags)
+         */
         public String getInputMode() {
             return inputMode;
         }
@@ -155,12 +187,26 @@ public class RichTextEditor {
         }
     }
 
+    /**
+     * Configuration for RichTextEditor, intentionally separated from main class
+     * so it is not reloaded too often or not reconfigured.
+     */
     static class Config implements Configurable {
-        String onlyTextArea, jsButtonsTextArea;
+        Pattern reOnlyJsButtonsBrowsers, reNoJavascriptBrowsers;
+        boolean disabled;
+
+        private Config() {
+            ConfigurationManager.getConfigurator().configureAndRememberMe(this);
+        }
 
         public void configure(Preferences prefs) throws ConfigurationException {
-            onlyTextArea = prefs.get(PREF_BROWSERS_ONLY_TEXTAREA, null);
-            jsButtonsTextArea = prefs.get(PREF_BROWSERS_TEXTAREA_JS_BUTTONS, null);
+            disabled = prefs.getBoolean(PREF_DISABLED, false);
+            String pattern = prefs.get(PREF_BROWSERS_ONLY_TEXTAREA, null);
+            if (pattern != null)
+                reOnlyJsButtonsBrowsers = Pattern.compile(pattern);
+            pattern = prefs.get(PREF_BROWSERS_TEXTAREA_JS_BUTTONS, null);
+            if (pattern != null)
+                reNoJavascriptBrowsers = Pattern.compile(pattern);
         }
     }
 }
