@@ -115,9 +115,9 @@
     <span>${DATE.show(item.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[item.subType].name}</span>
     <#local text=TOOL.xpath(item,"data/content"), shortened=TOOL.xpath(item,"data/perex")?default("UNDEFINED")>
     <#if shortened=="UNDEFINED">
-        <p>${text}</p>
+        <div>${text}</div>
     <#else>
-        <p>${shortened}...&nbsp;<i><a href="${url}">více&nbsp;&raquo;</a></i></p>
+        <div>${shortened}...&nbsp;<i><a href="${url}">více&nbsp;&raquo;</a></i></div>
     </#if>
     <span><@showUser autor/>
     | <a href="<#if showtitle=="yes">${diz.url}<#else>${url}</#if>" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"
