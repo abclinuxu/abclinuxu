@@ -4,13 +4,12 @@
 
 <h1>Nastavení vašeho účtu</h1>
 
-<p>
-    Pro vaši ochranu nejdříve zadejte vaše heslo:
-    <input type="password" name="PASSWORD" size="16" tabindex="1">
-    <@lib.showError key="PASSWORD"/>
-</p>
-
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
+    <p>
+        Pro vaši ochranu nejdříve zadejte vaše heslo:
+        <input type="password" name="PASSWORD" size="16" tabindex="1">
+        <@lib.showError key="PASSWORD"/>
+    </p>
 
     <h2 style="margin-bottom: 1em">Bezpečnost</h2>
 
