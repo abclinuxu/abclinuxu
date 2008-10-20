@@ -1,3 +1,31 @@
+<#import "../macros.ftl" as lib>
+<#if RELATION.upper==250>
+    <#assign plovouci_sloupec>
+    <div class="s_nadpis"><a href="/nej">Nej anket na AbcLinuxu</a></div>
+    <div class="s_sekce">
+        <#if VARS.mostVotedOnPolls?exists>
+            <b>Ankety s nejvíce hlasy</b>
+            <ul>
+                <#list VARS.mostVotedOnPolls.entrySet() as rel>
+                    <#if rel_index gt 2><#break></#if>
+                    <li><a href="${rel.key.url?default("/ankety/show/"+rel.key.id)}">${TOOL.childName(rel.key)}</a></li>
+                </#list>
+            </ul>
+        </#if>
+
+        <#if VARS.mostCommentedPolls?exists>
+            <b>Nejkomentovanější ankety</b>
+            <ul>
+                <#list VARS.mostCommentedPolls.entrySet() as rel>
+                    <#if rel_index gt 2><#break></#if>
+                    <li><a href="${rel.key.url?default("/ankety/show/"+rel.key.id)}">${TOOL.childName(rel.key)}</a></li>
+                </#list>
+            </ul>
+        </#if>
+    </div>
+    </#assign>
+</#if>
+
 <#include "../header.ftl">
 
 <@lib.showMessages/>
