@@ -145,6 +145,8 @@ public final class SQLTool implements Configurable {
 
     public static final String MOST_COMMENTED_RELATIONS = "most.commented.relations";
     public static final String MOST_READ_RELATIONS = "most.read.relations";
+    public static final String MOST_COMMENTED_POLLS = "most.commented.polls";
+    public static final String MOST_VOTED_POLLS = "most.voted.polls";
 	public static final String HIGHEST_SCORE_USERS = "highest.score.users";
 
     public static final String SUBPORTALS_COUNT_ARTICLES = "subportal.count.articles";
@@ -1872,6 +1874,82 @@ public final class SQLTool implements Configurable {
             persistance.releaseSQLResources(con, statement, rs);
         }
 	}
+    
+    public Map<Relation, Integer> getMostCommentedPolls(Qualifier[] qualifiers) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+            Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
+            con = persistance.getSQLConnection();
+            
+            StringBuilder sb = new StringBuilder((String) sql.get(MOST_COMMENTED_POLLS));
+            List params = new ArrayList();
+            
+            appendQualifiers(sb, qualifiers, params, null, null);
+            statement = con.prepareStatement(sb.toString());
+            
+            int i = 1;
+            for ( Iterator iter = params.iterator(); iter.hasNext(); )
+                statement.setObject(i++, iter.next());
+
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Relation rel = new Relation(rs.getInt(1));
+                int reads = rs.getInt(2);
+
+                persistance.synchronize(rel);
+                result.put(rel, reads);
+            }
+
+            return result;
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba v SQL!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, rs);
+        }
+    }
+    
+    public Map<Relation, Integer> getMostVotedPolls(Qualifier[] qualifiers) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+            Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
+            con = persistance.getSQLConnection();
+            
+            StringBuilder sb = new StringBuilder((String) sql.get(MOST_VOTED_POLLS));
+            List params = new ArrayList();
+            
+            appendQualifiers(sb, qualifiers, params, null, null);
+            statement = con.prepareStatement(sb.toString());
+            
+            int i = 1;
+            for ( Iterator iter = params.iterator(); iter.hasNext(); )
+                statement.setObject(i++, iter.next());
+
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Relation rel = new Relation(rs.getInt(1));
+                int reads = rs.getInt(2);
+
+                persistance.synchronize(rel);
+                result.put(rel, reads);
+            }
+
+            return result;
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba v SQL!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, rs);
+        }
+    }
 
     public Map<Relation, Integer> getMostReadRelations(int itemType, String dateFrom, Qualifier[] qualifiers) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
@@ -2438,6 +2516,8 @@ public final class SQLTool implements Configurable {
         store(FIND_SUBPORTAL_MEMBERSHIP, prefs);
         store(FIND_HP_SUBPORTAL_ARTICLES, prefs);
         store(MAX_SUBPORTAL_READS, prefs);
+        store(MOST_COMMENTED_POLLS, prefs);
+        store(MOST_VOTED_POLLS, prefs);
 		store(HIGHEST_SCORE_USERS, prefs);
     }
 

@@ -105,10 +105,11 @@ public class VariableFetcher extends TimerTask implements Configurable {
     Map<Integer, Integer> mainForums;
     List<CloudTag> freshCloudTags;
     Map<Relation, Integer> mostReadStories, mostReadArticles;
-    Map<Relation, Integer> mostCommentedArticles, mostCommentedPolls, mostCommentedStories;
+    Map<Relation, Integer> mostCommentedArticles, mostCommentedStories;
     Map<Relation, Integer> recentMostReadArticles, recentMostCommentedArticles;
     Map<Relation, Integer> recentMostCommentedStories, recentMostReadStories;
     Map<Relation, Integer> mostCommentedNews, recentMostCommentedNews;
+    Map<Relation, Integer> mostVotedOnPolls, mostCommentedPolls, recentMostVotedOnPolls, recentMostCommentedPolls;
 	Map<User, Integer> highestScoreUsers;
 
     List<Screenshot> freshScreenshots;
@@ -445,6 +446,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
 	
 	public Map<User,Integer> getHighestScoreUsers() {
 		return highestScoreUsers;
+	}
+    
+    public Map<Relation,Integer> getMostCommentedPolls() {
+		return mostCommentedPolls;
+	}
+    
+    public Map<Relation,Integer> getMostVotedOnPolls() {
+		return mostVotedOnPolls;
 	}
 
     /**
@@ -1260,6 +1269,8 @@ public class VariableFetcher extends TimerTask implements Configurable {
             mostCommentedArticles = sqlTool.getMostCommentedRelations(Item.ARTICLE, "", qualifiers);
             mostCommentedStories = sqlTool.getMostCommentedRelations(Item.BLOG, "", qualifiers);
             mostCommentedNews = sqlTool.getMostCommentedRelations(Item.NEWS, "", qualifiers);
+            mostCommentedPolls = sqlTool.getMostCommentedPolls(qualifiers);
+            mostVotedOnPolls = sqlTool.getMostVotedPolls(qualifiers);
 			highestScoreUsers = sqlTool.getHighestScoreUsers(qualifiers);
 
             Calendar cal = Calendar.getInstance();
