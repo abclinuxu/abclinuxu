@@ -872,12 +872,16 @@ public class FeedGenerator implements Configurable {
                 Item item = (Item) found.getChild();
                 User author = (User) persistence.findById(new User(item.getOwner()));
 
+                String url = found.getUrl();
                 String content = Tools.xpath(item, "data/content");
                 String withoutTags = Tools.removeTags(content);
                 title = item.getTitle();
+                
+                if (url == null)
+                    url = UrlUtils.PREFIX_NEWS+"/show/"+found.getId();
 
                 entry = new SyndEntryImpl();
-                entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
+                entry.setLink("http://"+AbcConfig.getHostname() + url);
                 entry.setTitle(title);
                 description = new SyndContentImpl();
                 description.setType("text/plain");
