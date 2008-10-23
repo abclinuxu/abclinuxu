@@ -142,6 +142,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_KEY = "key";
     public static final String PARAM_FORUM_MODE = "forumMode";
     public static final String PARAM_NEWS_TITLES = "newsTitles";
+    public static final String PARAM_NEWS_MULTILINE = "newsMultiline";
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
@@ -767,6 +768,9 @@ public class EditUser implements AbcAction {
         node = document.selectSingleNode("/data/settings/news_titles");
         if ( node!=null )
             params.put(PARAM_NEWS_TITLES, node.getText());
+        node = document.selectSingleNode("/data/settings/news_multiline");
+        if ( node!=null )
+            params.put(PARAM_NEWS_MULTILINE, node.getText());
         node = document.selectSingleNode("/data/settings/hp_all_stories");
         if ( node!=null )
             params.put(PARAM_DISPLAY_BANNED_STORIES, node.getText());
@@ -863,6 +867,7 @@ public class EditUser implements AbcAction {
         canContinue &= setBannedStories(params, managed);
         canContinue &= setAvatars(params, managed);
         canContinue &= setNewsTitles(params, managed);
+        canContinue &= setNewsMultiline(params, managed);
         canContinue &= setGuidepost(params, managed);
         canContinue &= setDiscussionsSizeLimit(params, managed, env);
         canContinue &= setScreenshotsSizeLimit(params, managed, env);
@@ -2069,6 +2074,14 @@ public class EditUser implements AbcAction {
     private boolean setNewsTitles(Map params, User user) {
         String newstitles = (String) params.get(PARAM_NEWS_TITLES);
         Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/news_titles");
+        String value = ("yes".equals(newstitles))? "yes":"no";
+        element.setText(value);
+        return true;
+    }
+    
+    private boolean setNewsMultiline(Map params, User user) {
+        String newstitles = (String) params.get(PARAM_NEWS_MULTILINE);
+        Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/news_multiline");
         String value = ("yes".equals(newstitles))? "yes":"no";
         element.setText(value);
         return true;

@@ -226,6 +226,13 @@
                 <@lib.showOption "newsTitles", "no", "ne", "radio", "tabindex='11'" />
             </td>
         </tr>
+        <tr>
+            <td class="required" width="200px">Titulky zpráviček na více řádků</td>
+            <td>
+                <@lib.showOption "newsMultiline", "yes", "ano", "radio", "tabindex='12'" />
+                <@lib.showOption "newsMultiline", "no", "ne", "radio", "tabindex='12'" />
+            </td>
+        </tr>
     </table>
 
     <h2 style="margin-bottom: 1em">Velikost zobrazených dat</h2>
@@ -234,7 +241,7 @@
         <tr>
             <td class="required" width="200px">Počet zápisků</td>
             <td>
-                <input type="text" name="stories" value="${PARAMS.stories?if_exists}" size="3" tabindex="12">
+                <input type="text" name="stories" value="${PARAMS.stories?if_exists}" size="3" tabindex="13">
                 <@lib.showError key="stories"/>
             </td>
         </tr>
@@ -250,8 +257,8 @@
         <tr>
             <td class="required" width="200px">Zobrazovat všechny zápisky</td>
             <td>
-                <@lib.showOption "bannedStories", "yes", "ano", "radio", "tabindex='13'" />
-                <@lib.showOption "bannedStories", "no", "ne", "radio", "tabindex='13'" />
+                <@lib.showOption "bannedStories", "yes", "ano", "radio", "tabindex='14'" />
+                <@lib.showOption "bannedStories", "no", "ne", "radio", "tabindex='14'" />
             </td>
         </tr>
 
@@ -266,7 +273,7 @@
         <tr>
             <td class="required" width="200px">Počet desktopů</td>
             <td>
-                <input type="text" name="screenshots" value="${PARAMS.screenshots?if_exists}" size="3" tabindex="14">
+                <input type="text" name="screenshots" value="${PARAMS.screenshots?if_exists}" size="3" tabindex="15">
                 <@lib.showError key="screenshots"/>
             </td>
         </tr>
@@ -282,7 +289,7 @@
         <tr>
             <td class="required" width="200px">Velikost stránky při hledání</td>
             <td>
-                <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="15">
+                <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="16">
                 <@lib.showError key="search"/>
             </td>
         </tr>
@@ -298,8 +305,8 @@
         <tr>
             <td class="required" width="200px">Zobrazovat rozcestník</td>
             <td>
-                <@lib.showOption "guidepost", "yes", "ano", "radio", "tabindex='16'" />
-                <@lib.showOption "guidepost", "no", "ne", "radio", "tabindex='16'" />
+                <@lib.showOption "guidepost", "yes", "ano", "radio", "tabindex='17'" />
+                <@lib.showOption "guidepost", "no", "ne", "radio", "tabindex='17'" />
             </td>
         </tr>
 
