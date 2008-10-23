@@ -812,6 +812,7 @@ a,
 	overflow: hidden;
 	font-weight: bold;
 }
+.ls_zpr .st_nadpis.no_overflow { white-space: normal; }
 
 .s hr {
 	margin: 0.3em 0.5em;
