@@ -801,7 +801,7 @@ a,
 	margin: 0 0 0.5em 3em;
 }
 
-.ls_zpr div {
+.ls_zpr .zpr_telo {
 	margin: 0.4em 0.2em;
 	font-size: 95%;
 }
@@ -811,7 +811,6 @@ a,
 	text-overflow: ellipsis;
 	overflow: hidden;
 	font-weight: bold;
-	letter-spacing: -0.05em;
 }
 
 .s hr {
