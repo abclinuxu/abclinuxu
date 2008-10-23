@@ -111,7 +111,7 @@
     showtitle="yes", multilinetitle="no">
     <#if USER?exists>
         <#local showtitle=TOOL.xpath(USER,"/data/settings/news_titles")?default("yes"),
-            multilinetitle=TOOL.xpath(USER,"/data/settings/news_multiline")?default("yes")>
+            multilinetitle=TOOL.xpath(USER,"/data/settings/news_multiline")?default("no")>
     </#if>
 
     <#if showtitle=="yes"><div class="st_nadpis<#if multilinetitle=="yes"> no_overflow</#if>"><a href="${url}" title="${item.title}">${item.title}</a></div></#if>
