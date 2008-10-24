@@ -272,6 +272,10 @@
           </div>
 
           <#if ASSIGNED_TAGS?exists>
+            <#if ASSIGNED_TAGS?seq_contains(TOOL.findTag("virtualizace"))>
+              <@lib.advertisement id="stitky" />
+            </#if>
+
             <div class="tag-box">
               <a href="/stitky">Štítky</a>:
               <span id="prirazeneStitky">
@@ -290,10 +294,8 @@
         <#if SYSTEM_CONFIG.isMaintainanceMode()>
             <div style="color: red; border: medium solid red; margin: 10px; padding: 3ex">
                 <p style="font-size: xx-large; text-align: center">Režim údržby</p>
-                <p>
-                    Právě provádíme údržbu portálu. Prohlížení obsahu by mělo nadále fungovat,
-                    úpravy obsahu bohužel nejsou prozatím k dispozici. Děkujeme za pochopení.
-                </p>
+                <p>Právě provádíme údržbu portálu. Prohlížení obsahu by mělo nadále fungovat,
+                   úpravy obsahu bohužel nejsou prozatím k dispozici. Děkujeme za pochopení.</p>
             </div>
         </#if>
 
