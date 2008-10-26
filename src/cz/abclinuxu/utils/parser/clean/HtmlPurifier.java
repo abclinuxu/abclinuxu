@@ -85,7 +85,7 @@ public class HtmlPurifier {
                 }
                 if ((node instanceof Text)) {
                     String text = node.getText();
-                    if (! inPre) {
+                    if (! inPre && ! paragraphDetected) {
                         int offset = sb.length();
                         matcher = reEmptyLine.matcher(text);
                         while (matcher.find()) {
@@ -112,9 +112,11 @@ public class HtmlPurifier {
                             page.ungetCharacter(cursor);
                         else {
                             nextChar = page.getCharacter(cursor);
-                            if (nextChar != '\n')
+                            if (nextChar != '\n') {
                                 page.ungetCharacter(cursor);
-                            else {
+                                if (nextChar != Page.EOF)
+                                    page.ungetCharacter(cursor);
+                            } else {
                                 sb.append(node.toHtml()).append("\n\n");
                                 continue;
                             }

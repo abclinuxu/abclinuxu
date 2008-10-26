@@ -30,7 +30,7 @@ public class TestHtmlPurifier extends TestCase {
 
     public void testOrdinaryText() throws Exception {
         String s = "a\n\nb\n";
-        String expected = "a\n<br class=\"separator\">\nb\n";
+        String expected = "a\n<p class=\"separator\"></p>\nb\n";
 //        String expected = "<p>a</p>\n\n<p>b</p>\n"; todo nice to have behaviour
         assertEquals("failed", expected, HtmlPurifier.clean(s));
     }
@@ -38,28 +38,28 @@ public class TestHtmlPurifier extends TestCase {
     public void testOrdinaryTextMoreEmptyLines() throws Exception {
         String s = "a\n\n\nb\n";
 //        String expected = "a\n<br class=\"separator\">\nb\n"; not implemented freedy behaviour
-        String expected = "a\n<br class=\"separator\">\n\nb\n";
+        String expected = "a\n<p class=\"separator\"></p>\n\nb\n";
 //        String expected = "<p>a</p>\n\n\n<p>b</p>\n";
         assertEquals("failed", expected, HtmlPurifier.clean(s));
     }
 
     public void testOrdinaryTextMultipleParagraphs() throws Exception {
         String s = "a\n\nb\nc\n\nd";
-        String expected = "a\n<br class=\"separator\">\nb\nc\n<br class=\"separator\">\nd";
+        String expected = "a\n<p class=\"separator\"></p>\nb\nc\n<p class=\"separator\"></p>\nd";
 //        String expected = "<p>a</p>\n\n<p>b\nc</p>\n\n<p>d</p>";
         assertEquals("failed", expected, HtmlPurifier.clean(s));
     }
 
     public void testOrdinaryTextWin() throws Exception {
         String s = "a\r\n\r\nb";
-        String expected = "a\n<br class=\"separator\">\nb";
+        String expected = "a\n<p class=\"separator\"></p>\nb";
 //        String expected = "<p>a</p>\n\n<p>b</p>";
         assertEquals("failed", expected, HtmlPurifier.clean(s));
     }
 
     public void testOrdinaryTextWithPre() throws Exception {
         String s = "a\n\nb\n<pre>c\n\nd</pre>e";
-        String expected = "a\n<br class=\"separator\">\nb\n<pre>c\n\nd</pre>e";
+        String expected = "a\n<p class=\"separator\"></p>\nb\n<pre>c\n\nd</pre>e";
 //        String expected = "<p>a</p>\n\n<p>b\n</p><pre>c\n\nd</pre><p>e</p>";
         assertEquals("failed", expected, HtmlPurifier.clean(s));
     }
@@ -73,18 +73,35 @@ public class TestHtmlPurifier extends TestCase {
 
     public void testBlockquote() throws Exception {
         String s = "a\n\nb\n\n<blockquote>c</blockquote>\n\nd\n\ne";
-        String expected = "a\n<br class=\"separator\">\nb\n\n<blockquote>c</blockquote>\n\nd\n<br class=\"separator\">\ne";
+        String expected = "a\n<p class=\"separator\"></p>\nb\n\n<blockquote>c</blockquote>\n\nd\n<p class=\"separator\"></p>\ne";
         assertEquals("failed", expected, HtmlPurifier.clean(s));
         s = "a\n\nb\n\n<blockquote>c</blockquote>\n";
-        expected = "a\n<br class=\"separator\">\nb\n\n<blockquote>c</blockquote>\n";
+        expected = "a\n<p class=\"separator\"></p>\nb\n\n<blockquote>c</blockquote>\n";
         assertEquals("failed", expected, HtmlPurifier.clean(s));
     }
 
     public void testUl() throws Exception {
         String s = "a\n\n<ul>\n\n<li>c</li>\n\n</ul>\n\nd";
         String expected = "a\n\n<ul>\n\n<li>c</li>\n\n</ul>\n\nd";
-        s = "a\n\n<ul>\n\n<li>c</li>\n\n</ul>";
-        expected = "a\n\n<ul>\n\n<li>c</li>\n\n</ul>";
+        assertEquals("failed", expected, HtmlPurifier.clean(s));
+        s = "a\n\n<ul>\n\n<li>c</li>\n\n<li>d</li>\n\n</ul>";
+        expected = "a\n\n<ul>\n\n<li>c</li>\n\n<li>d</li>\n\n</ul>";
+        assertEquals("failed", expected, HtmlPurifier.clean(s));
+    }
+
+    // bug #1173
+    public void testP() throws Exception {
+        String s = "<p>a</p>\n\n<p>b</p>";
+        String expected = "<p>a</p>\n\n<p>b</p>";
+        assertEquals("failed", expected, HtmlPurifier.clean(s));
+    }
+
+    public void testSingleNewLine() throws Exception {
+        String s = "<p>a</p>\n<p>b</p>";
+        String expected = "<p>a</p>\n<p>b</p>";
+        assertEquals("failed", expected, HtmlPurifier.clean(s));
+        s = "a\n<ul>\n<li>c</li>\n<li>d</li>\n</ul>";
+        expected = "a\n<ul>\n<li>c</li>\n<li>d</li>\n</ul>";
         assertEquals("failed", expected, HtmlPurifier.clean(s));
     }
 }
