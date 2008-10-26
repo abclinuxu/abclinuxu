@@ -16,24 +16,20 @@
         <#if intro!="UNDEF">${intro}</#if>
     </div>
 
-    <div class="s_nadpis">
-        <#if USER?exists && USER.id==BLOG.owner>
-            <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Kategorie zápisů</a>
-        <#else>
-            Kategorie zápisů
-        </#if>
-    </div>
+    <#if (CATEGORIES!?size > 0)>
+        <div class="s_nadpis">Kategorie zápisků</div>
+        <div class="s_sekce">
+            <ul>
+                <#list CATEGORIES as cat>
+                    <#if cat.url?exists>
+                        <li><a href="/blog/${BLOG.subType + "/" + cat.url}">${cat.name}</a></li>
+                    </#if>
+                </#list>
+            </ul>
+        </div>
+    </#if>
 
-    <div class="s_sekce">
-    <ul>
-        <#list CATEGORIES as cat>
-            <#if cat.url?exists>
-                <li><a href="/blog/${BLOG.subType + "/" + cat.url}">${cat.name}</a></li>
-            </#if>
-        </#list>
-    </div>
-
-    <#if UNPUBLISHED_STORIES?exists>
+    <#if (UNPUBLISHED_STORIES!?size > 0)>
         <div class="s_nadpis">Rozepsané zápisy</div>
 
         <div class="s_sekce">
@@ -48,7 +44,7 @@
         </div>
     </#if>
 
-    <#if WAITING_STORIES?exists>
+    <#if (WAITING_STORIES!?size > 0)>
         <div class="s_nadpis">Čekající zápisky</div>
 
         <div class="s_sekce">
@@ -73,6 +69,7 @@
                 <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlož nový zápis</a></li>
                 <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavit blog</a></li>
                 <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Přejmenovat blog</a></li>
+                <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Správa kategorií</a></li>
                 <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=links")}">Upravit oblíbené stránky</a></li>
                 <li><a href="${URL.noPrefix("/blog/"+BLOG.subType+"/export")}">Export do Movable Type</a></li>
             </ul>

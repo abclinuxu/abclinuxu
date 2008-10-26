@@ -16,7 +16,7 @@
         <#if intro!="UNDEF">${intro}</#if>
     </div>
 
-    <#if CATEGORIES?exists>
+    <#if (CATEGORIES!?size > 0)>
         <div class="s_nadpis">Kategorie zápisků</div>
         <div class="s_sekce">
             <ul>
@@ -29,7 +29,7 @@
         </div>
     </#if>
 
-    <#if UNPUBLISHED_STORIES?exists>
+    <#if (UNPUBLISHED_STORIES!?size > 0)>
         <div class="s_nadpis">Rozepsané zápisky</div>
         <div class="s_sekce">
             <ul>
@@ -41,7 +41,7 @@
         </div>
     </#if>
 
-    <#if WAITING_STORIES?exists>
+    <#if (WAITING_STORIES!?size > 0)>
         <div class="s_nadpis">Čekající zápisky</div>
         <div class="s_sekce">
             <ul>
