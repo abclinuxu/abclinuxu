@@ -1,3 +1,5 @@
+<#import "/web/rte-macro.ftl" as rte>
+<@rte.addRTE textAreaId="note" formId="form" inputMode="wiki" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -40,7 +42,7 @@
 
 <h2>Zde zadejte své úpravy</h2>
 
-<form action="${URL.make("/edit")}" method="POST">
+<form action="${URL.make("/edit")}" method="POST" name="form">
  <table cellpadding="0" border="0" style="margin-top: 1em;">
   <tr>
    <td class="required">Jméno</td>
@@ -83,8 +85,9 @@
   </tr>
   <tr>
    <td colspan="2">
+    <@rte.showFallback "note"/>
     <textarea name="note" cols="70" rows="15" tabindex="5">${PARAMS.note?if_exists?html}</textarea>
-    <div class="error">${ERRORS.note?if_exists}</div>
+    <@lib.showError key="note"/>
    </td>
   </tr>
   <tr>

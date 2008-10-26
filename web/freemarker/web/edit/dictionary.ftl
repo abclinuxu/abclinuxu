@@ -1,3 +1,5 @@
+<#import "/web/rte-macro.ftl" as rte>
+<@rte.addRTE textAreaId="desc" formId="dictForm" inputMode="wiki" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -42,19 +44,9 @@
         <tr>
             <td class="required">Popis</td>
             <td>
-                <div class="form-edit">
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vložit značku tučně"><b>B</b></a>
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="Vložit značku kurzíva"><i>I</i></a>
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="Vložit značku odkazu">&lt;a&gt;</a>
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="Vložit značku odstavce">&lt;p&gt;</a>
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="Vložit značku formátovaného textu. Vhodné pro konfigurační soubory či výpisy.">&lt;pre&gt;</a>
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&amp;lt;', '');" id="mono" title="Vložit písmeno &lt;">&lt;</a>
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&amp;gt;', '');" id="mono" title="Vložit písmeno &gt;">&gt;</a>
-                </div>
-
+                <@rte.showFallback "desc"/>
                 <textarea tabindex="2" name="desc" class="siroka" rows="20" tabindex="2">${PARAMS.desc?if_exists?html}</textarea>
-                <div class="error">${ERRORS.desc?if_exists}</div>
+                <@lib.showError key="desc"/>
             </td>
         </tr>
         <tr>

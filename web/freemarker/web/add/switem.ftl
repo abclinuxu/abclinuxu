@@ -1,3 +1,5 @@
+<#import "/web/rte-macro.ftl" as rte>
+<@rte.addRTE textAreaId="description" formId="softForm" inputMode="wiki" />
 <#include "../header.ftl">
 <#import "../misc/software.ftl" as swlib>
 
@@ -47,15 +49,9 @@
         <tr>
             <td class="required">Popis</td>
             <td>
-                <div class="form-edit">
-                    <a href="javascript:insertAtCursor(document.softForm.description, '<b>', '</b>');" id="serif" title="Vložit značku tučně"><b>B</b></a>
-                    <a href="javascript:insertAtCursor(document.softForm.description, '<i>', '</i>');" id="serif" title="Vložit značku kurzíva"><i>I</i></a>
-                    <a href="javascript:insertAtCursor(document.softForm.description, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vložit značku odkazu">&lt;a&gt;</a>
-                    <a href="javascript:insertAtCursor(document.softForm.description, '<p>', '</p>');" id="mono" title="Vložit značku odstavce">&lt;p&gt;</a>
-                    <a href="javascript:insertAtCursor(document.softForm.description, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
-                </div>
+                <@rte.showFallback "description"/>
                 <textarea name="description" rows="11" tabindex="2" class="siroka">${PARAMS.description?if_exists?html}</textarea>
-                <div class="error">${ERRORS.description?if_exists}</div>
+                <@lib.showError key="description"/>
             </td>
         </tr>
 

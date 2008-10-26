@@ -1,3 +1,8 @@
+<#import "/web/rte-macro.ftl" as rte>
+<@rte.addRTE textAreaId="note" formId="form" inputMode="wiki" />
+<@rte.addRTE textAreaId="setup" formId="form" inputMode="wiki" />
+<@rte.addRTE textAreaId="params" formId="form" inputMode="wiki" />
+<@rte.addRTE textAreaId="identification" formId="form" inputMode="wiki" />
 <#include "../header.ftl">
 <#import "../misc/hardware.ftl" as hwlib>
 
@@ -33,7 +38,7 @@
     <a href="#formatovani">najdete</a> pod formulářem.
 </p>
 
-<form action="${URL.make("/edit")}" method="POST">
+<form action="${URL.make("/edit")}" method="POST" name="form">
     <table class="siroka" border="0" cellpadding="5">
         <tr>
             <td class="required">Jméno</td>
@@ -90,37 +95,39 @@
             <td>Identifikace pod Linuxem</td>
             <td>
                 <div>
-                    Identifikaci zařízení pod Linuxem se věnuje
-                    <a href="/faq/hardware/jak-zjistim-co-mam-za-hardware">FAQ</a>.
+                    Identifikaci zařízení pod Linuxem se věnuje <a href="/faq/hardware/jak-zjistim-co-mam-za-hardware">FAQ</a>.
                     Zadejte jen skutečně relevantní údaje, buďte struční.
-                    Doporučujeme používat značku <code>PRE</code>.
                 </div>
+                <@rte.showFallback "identification"/>
                 <textarea name="identification" class="siroka" rows="12" tabindex="8" class="wide">${PARAMS.identification?if_exists?html}</textarea>
-                <div class="error">${ERRORS.identification?if_exists}</div>
+                <@lib.showError key="identification"/>
             </td>
         </tr>
 
         <tr>
             <td>Technické parametry</td>
             <td>
+                <@rte.showFallback "params"/>
                 <textarea name="params" class="siroka" rows="12" tabindex="9" class="wide">${PARAMS.params?if_exists?html}</textarea>
-                <div class="error">${ERRORS.params?if_exists}</div>
+                <@lib.showError key="params"/>
             </td>
         </tr>
 
         <tr>
             <td>Postup zprovoznění</td>
             <td>
+                <@rte.showFallback "setup"/>
                 <textarea name="setup" class="siroka" rows="16" tabindex="10" class="wide">${PARAMS.setup?if_exists?html}</textarea>
-                <div class="error">${ERRORS.setup?if_exists}</div>
+                <@lib.showError key="setup"/>
             </td>
         </tr>
 
         <tr>
             <td>Poznámka</td>
             <td>
+                <@rte.showFallback "note"/>
                 <textarea name="note" class="siroka" rows="10" tabindex="11" class="wide">${PARAMS.note?if_exists?html}</textarea>
-                <div class="error">${ERRORS.note?if_exists}</div>
+                <@lib.showError key="note"/>
             </td>
         </tr>
 
