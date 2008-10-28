@@ -64,7 +64,6 @@
     <li><a href="/clanky/tipy">Tipy a triky</a></li>
     <li><a href="/clanky/pr" style="border-width:3px">Tiskové zprávy</a></li>
     <li><a href="/serialy">Seriály</a></li>
-    <li><a href="/download/abicko.jsp">PDF</a></li>
   </ul></li>
 <li><a href="/ucebnice">Učebnice</a>
   <ul>
@@ -92,20 +91,20 @@
         <li><a href="/Admin">Administrace portálu</a></li>
         <li><a href="/system">Sekce Systém</a></li>
     </#if>
-    <li><a href="/napoveda/mapa-serveru">Mapa stránek</a></li>
     <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Jak se stát autorem</a></li>
     <li><a href="/clanky/show/44049">Náš tým</a></li>
-    <li><a href="/doc/propagace">Propagace</a></li>
+    <li><a href="/portal/propagace">Propagace</a></li>
     <li><a href="mailto:info@stickfish.com">Inzerce</a></li>
-    <li><a href="/doc/portal/rss-a-jine-pristupy">RSS a PDA</a></li>
+    <li><a href="/napoveda/rss-a-jine-pristupy">RSS a PDA</a></li>
     <li><a href="http://bugzilla.abclinuxu.cz" rel="nofollow">Hlášení chyb a námětů</a></li>
     <li><a href="/pozadavky">Vzkazy správcům (${VARS.counter.REQUESTS})</a></li>
-    <li><a href="/projekty/zdrojaky">Zdrojové kódy</a></li>
+    <li><a href="/vyvoj">Zdrojové kódy</a></li>
     <li><a href="javascript:addSidebar();">Přidej sidebar</a></li>
     <li><a href="javascript:addBookmark();">Přidej mezi oblíbené</a></li>
     <li><a href="javascript:setHomepage();">Nastav jako domácí stránku</a></li>
   </ul></li>
 <li><a href="http://www.abcprace.cz">Práce</a></li>
+<li><a href="/napoveda/mapa-serveru" title="Mapa stránek a dalších služeb">Mapa</a></li>
 </ul>
 
 </div>
