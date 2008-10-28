@@ -79,6 +79,7 @@
     <li><a href="/blog/souhrn">Stručný souhrn</a></li>
     <li><a href="/blogy">Seznam blogů</a></li>
   </ul></li>
+<li><a href="/skupiny">Skupiny</a></li>
 <li><a href="/desktopy">Desktopy</a></li>
 <li><a href="/hry">Hry</a></li>
 <li><a href="/slovnik">Slovník</a></li>
