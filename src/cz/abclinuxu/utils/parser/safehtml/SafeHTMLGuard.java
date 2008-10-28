@@ -65,9 +65,9 @@ public class SafeHTMLGuard {
         TAGS.put("STRONG", new CheckedTag("STRONG", true, null));
         TAGS.put("SUB", new CheckedTag("SUB", true, null));
         TAGS.put("SUP", new CheckedTag("SUP", true, null));
-        TAGS.put("TABLE", new CheckedTag("TABLE", true, null));
+        TAGS.put("TABLE", new CheckedTag("TABLE", true, new String[]{"CELLSPACING", "CELLPADDING", "BORDER", "WIDTH"}));
         TAGS.put("TBODY", new CheckedTag("TBODY", true, null));
-        TAGS.put("TD", new CheckedTag("TD", true, null));
+        TAGS.put("TD", new CheckedTag("TD", true, new String[]{"ALIGN", "VALIGN", "ROWSPAN", "COLSPAN"}));
         TAGS.put("TFOOT", new CheckedTag("TFOOT", true, null));
         TAGS.put("TH", new CheckedTag("TH", true, null));
         TAGS.put("THEAD", new CheckedTag("THEAD", true, null));
