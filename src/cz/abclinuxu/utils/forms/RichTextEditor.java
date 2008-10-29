@@ -47,7 +47,7 @@ public class RichTextEditor {
     public static final String SETTING_TEXTAREA = "textarea";
     public static final String SETTING_WYSIWYG = "wysiwyg";
 
-    static Config config = new Config();
+    static Config config = Config.getConfig();
 
     List<EditorInstance> instances;
     boolean wysiwygMode = true;
@@ -192,21 +192,30 @@ public class RichTextEditor {
      * so it is not reloaded too often or not reconfigured.
      */
     static class Config implements Configurable {
+        static Config instance;
+        static {
+            instance = new Config();
+            ConfigurationManager.getConfigurator().configureAndRememberMe(instance);
+        }
+
         Pattern reOnlyJsButtonsBrowsers, reNoJavascriptBrowsers;
         boolean disabled;
 
-        private Config() {
-            ConfigurationManager.getConfigurator().configureAndRememberMe(this);
-        }
-
         public void configure(Preferences prefs) throws ConfigurationException {
             disabled = prefs.getBoolean(PREF_DISABLED, false);
-            String pattern = prefs.get(PREF_BROWSERS_ONLY_TEXTAREA, null);
+            String pattern = prefs.get(PREF_BROWSERS_TEXTAREA_JS_BUTTONS, null);
             if (pattern != null)
-                reOnlyJsButtonsBrowsers = Pattern.compile(pattern);
-            pattern = prefs.get(PREF_BROWSERS_TEXTAREA_JS_BUTTONS, null);
+                reOnlyJsButtonsBrowsers = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+            pattern = prefs.get(PREF_BROWSERS_ONLY_TEXTAREA, null);
             if (pattern != null)
-                reNoJavascriptBrowsers = Pattern.compile(pattern);
+                reNoJavascriptBrowsers = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+        }
+
+        private Config() {
+        }
+
+        public static Config getConfig() {
+            return instance;
         }
     }
 }

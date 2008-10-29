@@ -272,7 +272,7 @@
                     </node>
                     <node name="forms">
                         <map/>
-                        <node name="RichTextEditor">
+                        <node name="RichTextEditor$Config">
                             <map>
                                 <entry key="regexp.js.buttons.textarea.ua" value="konqueror"/>
                                 <entry key="regexp.only.textarea.ua" value="lynx|links"/>

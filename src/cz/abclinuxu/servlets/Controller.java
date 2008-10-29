@@ -175,6 +175,7 @@ public class Controller extends HttpServlet implements Configurable {
         ServletUtils.setCurrentURL(ServletUtils.getURL(request));
         ServletUtils.handleMessages(request, env);
         ServletUtils.handleLogin(request, response, env);
+        // todo optimalizace - at se to inicializuje jen v edit strankach, kde se pouziva RichTextEditor
         env.put(Constants.VAR_RICH_TEXT_EDITOR, new RichTextEditor(env));
     }
 

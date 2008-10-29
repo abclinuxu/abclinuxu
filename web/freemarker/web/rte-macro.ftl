@@ -8,7 +8,7 @@
 </#macro>
 
 <#macro showFallback textAreaId>
-    <#if ! RTE.wysiwygMode && RTE.displayJavascriptButtons>
+    <#if (! RTE.wysiwygMode) && RTE.displayJavascriptButtons>
         <#local editor = RTE[textAreaId]>
         <div class="form-edit">
             <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vložit značku tučně"><b>B</b></a>
