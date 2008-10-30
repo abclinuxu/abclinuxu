@@ -130,16 +130,19 @@ public class EditDictionary implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
-		Relation parent = new Relation(Constants.REL_DICTIONARY);
+        Relation parent = new Relation(Constants.REL_DICTIONARY);
 
-		Tools.sync(parent);
+        Tools.sync(parent);
 
         Document documentItem = DocumentHelper.createDocument();
         Element root = documentItem.addElement("data");
         Item item = new Item(0, Item.DICTIONARY);
+        Category parentCat = (Category) parent.getChild();
+
         item.setData(documentItem);
         item.setOwner(user.getId());
-		item.setGroup( ((Category) parent.getChild()).getGroup() );
+        item.setGroup(parentCat.getGroup());
+        item.setPermissions(parentCat.getPermissions());
 
         Relation relation = new Relation(parent.getChild(), item, parent.getId());
 
