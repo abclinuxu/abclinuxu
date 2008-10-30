@@ -113,14 +113,14 @@
             </td>
         </tr>
     </#if>
-  <tr>
+  <!--<tr>
     <td class="required">Jméno tohoto serveru</td>
     <td>
         <input type="text" name="antispam" value="${antispam?if_exists}" size="20" tabindex="3">
         (antispamová kontrola)
         <div class="error">${ERRORS.antispam?if_exists}</div>
     </td>
-  </tr>
+  </tr>-->
   <tr>
     <td>Typ požadavku</td>
     <td>
