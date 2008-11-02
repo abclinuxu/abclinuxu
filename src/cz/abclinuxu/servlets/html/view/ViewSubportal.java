@@ -36,7 +36,6 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
 import java.util.ArrayList;
@@ -55,38 +54,38 @@ public class ViewSubportal implements AbcAction {
     public static final String PARAM_FROM = "from";
     public static final String PARAM_ORDER_BY = "orderBy";
     public static final String PARAM_ORDER_DIR = "orderDir";
-	
+
 	public static final String ACTION_MEMBERS = "members";
     public static final String ACTION_ADMINS = "admins";
-    
+
     public static final String VAR_SUBPORTALS = "SUBPORTALS";
     public static final String VAR_ADMINS = "ADMINS";
 
 	public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
 		Persistence persistence = PersistenceFactory.getPersistence();
-		
+
 		Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation == null)
             throw new MissingArgumentException("Parametr relationId je prázdný!");
         relation = (Relation) persistence.findById(relation);
         env.put(ShowObject.VAR_RELATION,relation);
-		
+
 		return processSection(request, relation, env);
 	}
-	
+
 	public static String processSection(HttpServletRequest request, Relation relation, Map env) {
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
 		String action = (String) params.get(PARAM_ACTION);
-        
+
         Category cat = (Category) relation.getChild();
         env.put(ShowObject.VAR_ITEM, cat);
-        
+
 		if (ACTION_MEMBERS.equals(action)) {
             List parents = (List) env.get(ShowObject.VAR_PARENTS);
             Link link = new Link("Členové", relation.getUrl()+"?action="+ACTION_MEMBERS, null);
             parents.add(link);
-        
+
 			return FMTemplateSelector.select("ViewSubportal", "members", env, request);
         } else if (ACTION_ADMINS.equals(action)) {
             Item group = new Item(cat.getGroup());
@@ -99,19 +98,19 @@ public class ViewSubportal implements AbcAction {
                 Integer key = (Integer) iter.next();
                 users.add(Tools.sync(new User(key.intValue())));
             }
-            
+
             env.put(VAR_ADMINS, users);
-            
+
             List parents = (List) env.get(ShowObject.VAR_PARENTS);
             Link link = new Link("Admini", relation.getUrl()+"?action="+ACTION_ADMINS, null);
             parents.add(link);
-            
+
             return FMTemplateSelector.select("ViewSubportal", "admins", env, request);
         }
-		
+
 		return FMTemplateSelector.select("ViewSubportal", "view", env, request);
 	}
-    
+
     public static String processSectionList(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
@@ -122,15 +121,15 @@ public class ViewSubportal implements AbcAction {
         List list;
         String orderBy = (String) params.get(PARAM_ORDER_BY);
         String orderDir = (String) params.get(PARAM_ORDER_DIR);
-        
+
         if (Misc.empty(orderBy))
             orderBy = "score";
         if (Misc.empty(orderDir))
             orderDir = "desc";
-        
+
         if ("updated".equals(orderBy)) {
             List<Map> portals = VariableFetcher.getInstance().getAllSubportalChanges();
-            
+
             list = new ArrayList(portals.size());
             if ("asc".equals(orderDir)) {
                 for (int i = portals.size()-1; i >= 0; i--)
@@ -139,29 +138,29 @@ public class ViewSubportal implements AbcAction {
                 for (Map map : portals)
                     list.add(map.get("subportal"));
             }
-            
+
             total = list.size();
         } else {
-            List<Qualifier> qualifiers = new ArrayList(3);
+            List<Qualifier> qualifiers = new ArrayList<Qualifier>(3);
             Qualifier[] qa;
-            
+
             if ("created".equals(orderBy))
                 qualifiers.add(Qualifier.SORT_BY_CREATED);
             else if ("title".equals(orderBy))
                 qualifiers.add(Qualifier.SORT_BY_TITLE);
-            
+
             if ("desc".equals(orderDir))
                 qualifiers.add(Qualifier.ORDER_DESCENDING);
             else
                 qualifiers.add(Qualifier.ORDER_ASCENDING);
-            
+
             qualifiers.add(new LimitQualifier(from, count));
-            
+
             qa = new Qualifier[qualifiers.size()];
             qualifiers.toArray(qa);
-            
+
             total = sqlTool.countCategoryRelationsWithType(Category.SUBPORTAL);
-            
+
             if ("score".equals(orderBy))
                 list = sqlTool.findSubportalsOrderedByScore(qa);
             else if ("members".equals(orderBy))
