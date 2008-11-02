@@ -276,7 +276,7 @@
                             <map>
                                 <entry key="regexp.js.buttons.textarea.ua" value="konqueror"/>
                                 <entry key="regexp.only.textarea.ua" value="lynx|links"/>
-                                <entry key="disabled" value="true"/>
+                                <entry key="disabled" value="false"/>
                             </map>
                         </node>
                     </node>
