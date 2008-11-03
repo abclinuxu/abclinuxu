@@ -157,7 +157,6 @@ public final class SQLTool implements Configurable {
 
     public static final String VALID_SERVERS = "valid.servers";
     public static final String SERVER_RELATIONS_IN_CATEGORY = "server.relations.in.category";
-    public static final String QUESTIONS_WITH_TAGS = "questions.with.tags";
     public static final String FIND_SUBPORTAL_MEMBERSHIP  = "find.subportal.membership";
     public static final String FIND_HP_SUBPORTAL_ARTICLES = "find.hp.subportal.articles";
 
@@ -720,28 +719,16 @@ public final class SQLTool implements Configurable {
         return loadNumber(sb.toString(), params);
     }
 
-    private StringBuilder discussionRelationsWithTagsQuery(TagExpression expr, List<String> tags, List params) {
+    // todo fakt by to neslo nejak dat do systemPrefs.xml? Snazim se externalizovat vsechna SQLka
+    private StringBuilder constructDiscussionRelationsWithTagsQuery(TagExpression expr, List<String> tags, List params) {
         StringBuilder sb = new StringBuilder();
-
-        sb.append("select R.cislo from (select T.cislo from stitkovani T where T.typ = 'P' and T.stitek in (");
-
-        boolean first = true;
-        Iterator it = tags.iterator();
-        while (it.hasNext()) {
-            String next = (String) it.next();
-
-            if (!first)
-                sb.append(',');
-            params.add(next);
-            sb.append('?');
-            first = false;
-        }
-
-        sb.append(") group by T.cislo having ");
+        sb.append("select R.cislo from (select T.cislo from stitkovani T where T.typ = 'P' and T.stitek in ");
+        sb.append(Misc.getInCondition(tags.size()));
+        params.addAll(tags);
+        sb.append(" group by T.cislo having ");
         sb.append(expr.toString());
         sb.append(") T join relace R on (T.cislo = R.potomek) join spolecne S on (S.cislo = R.potomek and S.typ = 'P')"
                 +" where R.typ_potomka = 'P' and R.predchozi = ?");
-
         return sb;
     }
 
@@ -750,7 +737,7 @@ public final class SQLTool implements Configurable {
             return findDiscussionRelationsWithParent(parent, qualifiers);
 
         List params = new ArrayList(tags.size()+2);
-        StringBuilder sb = discussionRelationsWithTagsQuery(expr, tags, params);
+        StringBuilder sb = constructDiscussionRelationsWithTagsQuery(expr, tags, params);
         params.add(parent);
 
         appendQualifiers(sb, qualifiers, params, null, null);
@@ -762,7 +749,7 @@ public final class SQLTool implements Configurable {
             return countDiscussionRelationsWithParent(parent);
 
         List params = new ArrayList(tags.size()+2);
-        StringBuilder sb = discussionRelationsWithTagsQuery(expr, tags, params);
+        StringBuilder sb = constructDiscussionRelationsWithTagsQuery(expr, tags, params);
         params.add(parent);
 
         changeToCountStatement(sb);
@@ -1874,7 +1861,7 @@ public final class SQLTool implements Configurable {
             persistance.releaseSQLResources(con, statement, rs);
         }
 	}
-    
+
     public Map<Relation, Integer> getMostCommentedPolls(Qualifier[] qualifiers) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
@@ -1884,13 +1871,13 @@ public final class SQLTool implements Configurable {
         try {
             Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
             con = persistance.getSQLConnection();
-            
+
             StringBuilder sb = new StringBuilder((String) sql.get(MOST_COMMENTED_POLLS));
             List params = new ArrayList();
-            
+
             appendQualifiers(sb, qualifiers, params, null, null);
             statement = con.prepareStatement(sb.toString());
-            
+
             int i = 1;
             for ( Iterator iter = params.iterator(); iter.hasNext(); )
                 statement.setObject(i++, iter.next());
@@ -1912,7 +1899,7 @@ public final class SQLTool implements Configurable {
             persistance.releaseSQLResources(con, statement, rs);
         }
     }
-    
+
     public Map<Relation, Integer> getMostVotedPolls(Qualifier[] qualifiers) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
@@ -1922,13 +1909,13 @@ public final class SQLTool implements Configurable {
         try {
             Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
             con = persistance.getSQLConnection();
-            
+
             StringBuilder sb = new StringBuilder((String) sql.get(MOST_VOTED_POLLS));
             List params = new ArrayList();
-            
+
             appendQualifiers(sb, qualifiers, params, null, null);
             statement = con.prepareStatement(sb.toString());
-            
+
             int i = 1;
             for ( Iterator iter = params.iterator(); iter.hasNext(); )
                 statement.setObject(i++, iter.next());
@@ -2510,7 +2497,6 @@ public final class SQLTool implements Configurable {
         store(SUBPORTALS_COUNT_FORUM_QUESTIONS, prefs);
         store(SUBPORTALS_ORDERED_BY_SCORE, prefs);
         store(SUBPORTALS_ORDERED_BY_MEMBER_COUNT, prefs);
-        store(QUESTIONS_WITH_TAGS, prefs);
         store(VALID_SERVERS, prefs);
         store(SERVER_RELATIONS_IN_CATEGORY, prefs);
         store(FIND_SUBPORTAL_MEMBERSHIP, prefs);
