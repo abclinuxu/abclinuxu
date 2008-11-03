@@ -703,9 +703,9 @@ public class Tools implements Configurable {
      * @return relations not banned for any reason
      */
 
-    public static List filterBannedStories(List stories, Object aUser, int count, boolean filterBanned) {
+    public static List<Relation> filterBannedStories(List<Relation> stories, Object aUser, int count, boolean filterBanned) {
         Set blockedUsers = Collections.EMPTY_SET;
-        List result = new ArrayList(count);
+        List<Relation> result = new ArrayList<Relation>(count);
 
         if (aUser != null && (aUser instanceof User)) {
             User user = (User) aUser;

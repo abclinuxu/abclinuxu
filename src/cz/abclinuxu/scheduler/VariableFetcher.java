@@ -95,9 +95,10 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String PREF_SECTION_CACHE_FREQUENCY = "section.cache.rebuild.frequency";
     public static final String PREF_MAIN_FORUMS = "forums";
 
-    List freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
-    List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities;
-    List freshTrivias, freshEvents, freshVideos, freshHPSubportalArticles;
+    List<Relation> freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
+    List<Relation> freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities;
+    List<Relation> freshTrivias, freshEvents, freshVideos, freshHPSubportalArticles;
+    List<Relation> topSubportals;
     List<Map> latestSubportalChanges;
     Map<Integer, List<Relation>> freshSubportalArticles, freshForumQuestions, freshSubportalWikiPages;
     Map<Integer, Relation> nextSubportalEvent, freshSubportalEvent;
@@ -199,7 +200,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     /**
      * List of the most fresh hardware relations according to user preference or system setting.
      */
-    public List getFreshHardware(Object user) {
+    public List<Relation> getFreshHardware(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_HARDWARE, null);
         return getSubList(freshHardware, userLimit);
     }
@@ -207,7 +208,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     /**
      * List of the most fresh software relations according to user preference or system setting.
      */
-    public List getFreshSoftware(Object user) {
+    public List<Relation> getFreshSoftware(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_SOFTWARE, null);
         return getSubList(freshSoftware, userLimit);
     }
@@ -215,7 +216,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     /**
      * List of the most fresh driver relations according to user preference or system setting.
      */
-    public List getFreshDrivers(Object user) {
+    public List<Relation> getFreshDrivers(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_DRIVER, null);
         return getSubList(freshDrivers, userLimit);
     }
@@ -223,24 +224,31 @@ public class VariableFetcher extends TimerTask implements Configurable {
     /**
      * List of the most fresh blog story relations according to user preference or system setting.
      */
-    public List getFreshStories(Object user) {
+    public List<Relation> getFreshStories(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_STORY, "/data/settings/index_stories");
-        List unfiltered = getSubList(freshStories, Tools.getPreloadedStoryCount(userLimit) );
+        List<Relation> unfiltered = getSubList(freshStories, Tools.getPreloadedStoryCount(userLimit) );
         return Tools.filterBannedStories(unfiltered, user, userLimit, true);
     }
 
     /**
      * List of the most fresh article relations according to user preference or system setting.
      */
-    public List getFreshArticles(Object user) {
+    public List<Relation> getFreshArticles(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_ARTICLE, null);
         return getSubList(freshArticles, userLimit);
     }
 
     /**
+     * List of the subportals with highest score.
+     */
+    public List<Relation> getTopSubportals(int count) {
+        return getSubList(topSubportals, count);
+    }
+
+    /**
      * List of the freshest subportal article relations according to user preference or system setting.
      */
-    public List getFreshHPSubportalArticles(Object user) {
+    public List<Relation> getFreshHPSubportalArticles(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_SUBPORTAL_ARTICLE, null);
         return getSubList(freshHPSubportalArticles, userLimit);
     }
@@ -249,12 +257,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * List of the most fresh article relations from a subportal
      * according to user preference or system setting.
      */
-    public List getFreshSubportalArticles(Object user, int rel) {
+    public List<Relation> getFreshSubportalArticles(Object user, int rel) {
         int userLimit = getObjectCountForUser(user, KEY_ARTICLE, null);
-        List articles = freshSubportalArticles.get(rel);
+        List<Relation> articles = freshSubportalArticles.get(rel);
 
         if (articles == null)
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         else
             return getSubList(articles, userLimit);
     }
@@ -263,12 +271,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * List of the most fresh content relations from a subportal
      * according to user preference or system setting.
      */
-    public List getFreshSubportalWikiPages(Object user, int rel) {
+    public List<Relation> getFreshSubportalWikiPages(Object user, int rel) {
         int userLimit = getObjectCountForUser(user, KEY_SOFTWARE, null);
-        List articles = freshSubportalWikiPages.get(rel);
+        List<Relation> articles = freshSubportalWikiPages.get(rel);
 
         if (articles == null)
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         else
             return getSubList(articles, userLimit);
     }
@@ -301,31 +309,30 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * List of the most fresh discussion question relations from a subportal
      * according to user preference or system setting.
      */
-    public List getFreshQuestions(int count, int rid) {
+    public List<Relation> getFreshQuestions(int count, int rid) {
         if (freshForumQuestions == null)
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
 
-        List questions = freshForumQuestions.get(rid);
-
+        List<Relation> questions = freshForumQuestions.get(rid);
         if (questions == null)
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         else
             return getSubList(questions, count);
     }
 
-    public List getFreshQuestions(Object user) {
+    public List<Relation> getFreshQuestions(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_QUESTION, "/data/settings/index_discussions");
         return getSubList(freshQuestions, userLimit);
     }
 
-    public List getFreshQuestions(int count) {
+    public List<Relation> getFreshQuestions(int count) {
         return getSubList(freshQuestions, count);
     }
 
     /**
      * List of the most fresh frequently asked question relations according to user preference or system setting.
      */
-    public List getFreshFaqs(Object user) {
+    public List<Relation> getFreshFaqs(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_FAQ, null);
         return getSubList(freshFaqs, userLimit);
     }
@@ -333,7 +340,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     /**
      * List of the most fresh dictionary relations according to user preference or system setting.
      */
-    public List getFreshDictionary(Object user) {
+    public List<Relation> getFreshDictionary(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_DICTIONARY, null);
         return getSubList(freshDictionary, userLimit);
     }
@@ -341,7 +348,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     /**
      * List of the most fresh personality relations according to user preference or system setting.
      */
-    public List getFreshPersonalities(Object user) {
+    public List<Relation> getFreshPersonalities(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_PERSONALITIES, null);
         return getSubList(freshPersonalities, userLimit);
     }
@@ -349,7 +356,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     /**
      * List of the most fresh dictionary relations according to user preference or system setting.
      */
-    public List getFreshBazaarAds(Object user) {
+    public List<Relation> getFreshBazaarAds(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_BAZAAR, null);
         return getSubList(freshBazaarAds, userLimit);
     }
@@ -357,7 +364,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     /**
      * List of the most fresh news relations according to user preference or system setting.
      */
-    public List getFreshNews(Object user) {
+    public List<Relation> getFreshNews(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_NEWS, "/data/settings/index_news");
         return getSubList(freshNews, userLimit);
     }
@@ -365,7 +372,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     /**
      * List of the most fresh news relations according to user preference or system setting.
      */
-    public List getFreshTrivia(Object user) {
+    public List<Relation> getFreshTrivia(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_TRIVIA, null);
         return getSubList(freshTrivias, userLimit);
     }
@@ -373,7 +380,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     /**
      * List of the most fresh event relations according to user preference or system setting.
      */
-    public List getFreshEvents(Object user) {
+    public List<Relation> getFreshEvents(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_EVENT, null);
         return getSubList(freshEvents, userLimit);
     }
@@ -381,7 +388,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     /**
      * List of the most fresh screenshot relations according to user preference or system setting.
      */
-    public List getFreshScreenshots(Object user) {
+    public List<Screenshot> getFreshScreenshots(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_SCREENSHOT, "/data/settings/index_screenshots");
         return getSubList(freshScreenshots, userLimit);
     }
@@ -389,7 +396,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     /**
      * List of the freshest video relations according to user preference or system setting.
      */
-    public List getFreshVideos(Object user) {
+    public List<Relation> getFreshVideos(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_VIDEO, "/data/settings/index_screenshots");
         return getSubList(freshVideos, userLimit);
     }
@@ -443,15 +450,15 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public Map<Relation,Integer> getRecentMostCommentedNews() {
         return recentMostCommentedNews;
     }
-	
+
 	public Map<User,Integer> getHighestScoreUsers() {
 		return highestScoreUsers;
 	}
-    
+
     public Map<Relation,Integer> getMostCommentedPolls() {
 		return mostCommentedPolls;
 	}
-    
+
     public Map<Relation,Integer> getMostVotedOnPolls() {
 		return mostVotedOnPolls;
 	}
@@ -670,6 +677,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshCloudTags();
             refreshTrivia();
             refreshEvents();
+            refreshTopSubportals();
 
             // jobs are refreshed from another thread (JobsCzFetcher)
             // refreshJobsCz();
@@ -759,7 +767,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             int maximum = (Integer) maxSizes.get(KEY_NEWS);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List news = SQLTool.getInstance().findNewsRelations(qualifiers);
+            List<Relation> news = SQLTool.getInstance().findNewsRelations(qualifiers);
             Tools.syncList(news);
             freshNews = news;
         } catch (Exception e) {
@@ -771,7 +779,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             int maximum = (Integer) maxSizes.get(KEY_ARTICLE);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List articles = sqlTool.findIndexArticlesRelations(qualifiers);
+            List<Relation> articles = sqlTool.findIndexArticlesRelations(qualifiers);
             Tools.syncList(articles);
             freshArticles = articles;
         } catch (Exception e) {
@@ -779,11 +787,23 @@ public class VariableFetcher extends TimerTask implements Configurable {
         }
     }
 
+    public void refreshTopSubportals() {
+        try {
+            int maximum = 5; // maybe introduce custom settings
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
+            List<Relation> list = sqlTool.findSubportalsOrderedByScore(qualifiers);
+            Tools.syncList(list);
+            topSubportals = list;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani nej skupin", e);
+        }
+    }
+
     public void refreshHPSubportalArticles() {
         try {
             int maximum = (Integer) maxSizes.get(KEY_SUBPORTAL_ARTICLE);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List articles = sqlTool.findHPSubportalArticles(qualifiers);
+            List<Relation> articles = sqlTool.findHPSubportalArticles(qualifiers);
             Tools.syncList(articles);
             freshHPSubportalArticles = articles;
         } catch (Exception e) {
@@ -1067,7 +1087,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             int maximum = (Integer) maxSizes.get(KEY_QUESTION);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List found = SQLTool.getInstance().findDiscussionRelations(qualifiers);
+            List<Relation> found = SQLTool.getInstance().findDiscussionRelations(qualifiers);
             Tools.syncList(found);
             freshQuestions = found;
         } catch (Exception e) {
@@ -1082,7 +1102,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
                 new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW),
                 Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)
             };
-            List list = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
+            List<Relation> list = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
             List blogs = new ArrayList(list.size());
             for (Object aList : list) {
                 Relation relation = (Relation) aList;
@@ -1100,7 +1120,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             int maximum = (Integer) maxSizes.get(KEY_HARDWARE);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List list = sqlTool.findItemRelationsWithType(Item.HARDWARE, qualifiers);
+            List<Relation> list = sqlTool.findItemRelationsWithType(Item.HARDWARE, qualifiers);
             Tools.syncList(list);
             freshHardware = list;
         } catch (Exception e) {
@@ -1112,7 +1132,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             int maximum = (Integer) maxSizes.get(KEY_SOFTWARE);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List list = sqlTool.findItemRelationsWithType(Item.SOFTWARE, qualifiers);
+            List<Relation> list = sqlTool.findItemRelationsWithType(Item.SOFTWARE, qualifiers);
             Tools.syncList(list);
             freshSoftware = list;
         } catch (Exception e) {
@@ -1124,7 +1144,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             int maximum = (Integer) maxSizes.get(KEY_DRIVER);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List list = sqlTool.findItemRelationsWithType(Item.DRIVER, qualifiers);
+            List<Relation> list = sqlTool.findItemRelationsWithType(Item.DRIVER, qualifiers);
             Tools.syncList(list);
             freshDrivers = list;
         } catch (Exception e) {
@@ -1136,7 +1156,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             int maximum = (Integer) maxSizes.get(KEY_DICTIONARY);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List data = sqlTool.findItemRelationsWithType(Item.DICTIONARY, qualifiers);
+            List<Relation> data = sqlTool.findItemRelationsWithType(Item.DICTIONARY, qualifiers);
             Tools.syncList(data);
             freshDictionary = data;
         } catch (Exception e) {
@@ -1148,7 +1168,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             int maximum = (Integer) maxSizes.get(KEY_TRIVIA);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List data = sqlTool.findItemRelationsWithType(Item.TRIVIA, qualifiers);
+            List<Relation> data = sqlTool.findItemRelationsWithType(Item.TRIVIA, qualifiers);
             Tools.syncList(data);
             freshTrivias = data;
         } catch (Exception e) {
@@ -1163,7 +1183,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
                 new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, SpecialValue.NOW),
                 Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING, new LimitQualifier(0, maximum)
             };
-            List data = sqlTool.findItemRelationsWithType(Item.EVENT, qualifiers);
+            List<Relation> data = sqlTool.findItemRelationsWithType(Item.EVENT, qualifiers);
             Tools.syncList(data);
             freshEvents = data;
         } catch (Exception e) {
@@ -1175,7 +1195,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             int maximum = (Integer) maxSizes.get(KEY_PERSONALITIES);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List data = sqlTool.findItemRelationsWithType(Item.PERSONALITY, qualifiers);
+            List<Relation> data = sqlTool.findItemRelationsWithType(Item.PERSONALITY, qualifiers);
             Tools.syncList(data);
             freshPersonalities = data;
         } catch (Exception e) {
@@ -1187,7 +1207,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             int maximum = (Integer) maxSizes.get(KEY_FAQ);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List list = sqlTool.findItemRelationsWithType(Item.FAQ, qualifiers);
+            List<Relation> list = sqlTool.findItemRelationsWithType(Item.FAQ, qualifiers);
             Tools.syncList(list);
             freshFaqs = list;
         } catch (Exception e) {
@@ -1199,7 +1219,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             int maximum = (Integer) maxSizes.get(KEY_BAZAAR);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List list = sqlTool.findItemRelationsWithType(Item.BAZAAR, qualifiers);
+            List<Relation> list = sqlTool.findItemRelationsWithType(Item.BAZAAR, qualifiers);
             Tools.syncList(list);
             freshBazaarAds = list;
         } catch (Exception e) {
@@ -1457,49 +1477,49 @@ public class VariableFetcher extends TimerTask implements Configurable {
         defaultSizes.put(KEY_ARTICLE, size);
         size = prefs.getInt(PREF_MAX + KEY_ARTICLE, 20);
         maxSizes.put(KEY_ARTICLE, size);
-        freshArticles = Collections.EMPTY_LIST;
+        freshArticles = Collections.emptyList();
 
         size = prefs.getInt(PREF_DEFAULT + KEY_DICTIONARY, 3);
         defaultSizes.put(KEY_DICTIONARY, size);
         size = prefs.getInt(PREF_MAX + KEY_DICTIONARY, 10);
         maxSizes.put(KEY_DICTIONARY, size);
-        freshDictionary = Collections.EMPTY_LIST;
+        freshDictionary = Collections.emptyList();
 
         size = prefs.getInt(PREF_DEFAULT + KEY_PERSONALITIES, 3);
         defaultSizes.put(KEY_PERSONALITIES, size);
         size = prefs.getInt(PREF_MAX + KEY_PERSONALITIES, 10);
         maxSizes.put(KEY_PERSONALITIES, size);
-        freshDictionary = Collections.EMPTY_LIST;
+        freshDictionary = Collections.emptyList();
 
         size = prefs.getInt(PREF_DEFAULT + KEY_DRIVER, 3);
         defaultSizes.put(KEY_DRIVER, size);
         size = prefs.getInt(PREF_MAX + KEY_DRIVER, 10);
         maxSizes.put(KEY_DRIVER, size);
-        freshDrivers = Collections.EMPTY_LIST;
+        freshDrivers = Collections.emptyList();
 
         size = prefs.getInt(PREF_DEFAULT + KEY_FAQ, 3);
         defaultSizes.put(KEY_FAQ, size);
         size = prefs.getInt(PREF_MAX + KEY_FAQ, 3);
         maxSizes.put(KEY_FAQ, size);
-        freshFaqs = Collections.EMPTY_LIST;
+        freshFaqs = Collections.emptyList();
 
         size = prefs.getInt(PREF_DEFAULT + KEY_HARDWARE, 3);
         defaultSizes.put(KEY_HARDWARE, size);
         size = prefs.getInt(PREF_MAX + KEY_HARDWARE, 3);
         maxSizes.put(KEY_HARDWARE, size);
-        freshHardware = Collections.EMPTY_LIST;
+        freshHardware = Collections.emptyList();
 
         size = prefs.getInt(PREF_DEFAULT + KEY_SOFTWARE, 3);
         defaultSizes.put(KEY_SOFTWARE, size);
         size = prefs.getInt(PREF_MAX + KEY_SOFTWARE, 3);
         maxSizes.put(KEY_SOFTWARE, size);
-        freshSoftware = Collections.EMPTY_LIST;
+        freshSoftware = Collections.emptyList();
 
         size = prefs.getInt(PREF_DEFAULT + KEY_NEWS, 5);
         defaultSizes.put(KEY_NEWS, size);
         size = prefs.getInt(PREF_MAX + KEY_NEWS, 5);
         maxSizes.put(KEY_NEWS, size);
-        freshNews = Collections.EMPTY_LIST;
+        freshNews = Collections.emptyList();
 
         size = prefs.getInt(PREF_DEFAULT + KEY_QUESTION, 20);
         defaultSizes.put(KEY_QUESTION, size);
@@ -1510,13 +1530,13 @@ public class VariableFetcher extends TimerTask implements Configurable {
         defaultSizes.put(KEY_STORY, size);
         size = prefs.getInt(PREF_MAX + KEY_STORY, 5);
         maxSizes.put(KEY_STORY, Tools.getPreloadedStoryCount(size));
-        freshStories = Collections.EMPTY_LIST;
+        freshStories = Collections.emptyList();
 
         size = prefs.getInt(PREF_DEFAULT + KEY_BAZAAR, 5);
         defaultSizes.put(KEY_BAZAAR, size);
         size = prefs.getInt(PREF_MAX + KEY_BAZAAR, 5);
         maxSizes.put(KEY_BAZAAR, size);
-        freshBazaarAds = Collections.EMPTY_LIST;
+        freshBazaarAds = Collections.emptyList();
 
         size = prefs.getInt(PREF_DEFAULT + KEY_SCREENSHOT, 3);
         defaultSizes.put(KEY_SCREENSHOT, size);
@@ -1548,13 +1568,13 @@ public class VariableFetcher extends TimerTask implements Configurable {
         defaultSizes.put(KEY_TRIVIA, size);
         size = prefs.getInt(PREF_MAX + KEY_TRIVIA, 10);
         maxSizes.put(KEY_TRIVIA, size);
-        freshTrivias = Collections.EMPTY_LIST;
+        freshTrivias = Collections.emptyList();
 
         size = prefs.getInt(PREF_DEFAULT + KEY_SUBPORTAL_ARTICLE, 2);
         defaultSizes.put(KEY_SUBPORTAL_ARTICLE, size);
         size = prefs.getInt(PREF_MAX + KEY_SUBPORTAL_ARTICLE, 5);
         maxSizes.put(KEY_SUBPORTAL_ARTICLE, size);
-        freshHPSubportalArticles = Collections.EMPTY_LIST;
+        freshHPSubportalArticles = Collections.emptyList();
 
         indexFeeds = prefs.get(PREF_INDEX_FEEDS, "");
         templateFeeds = prefs.get(PREF_TEMPLATE_FEEDS, "");
