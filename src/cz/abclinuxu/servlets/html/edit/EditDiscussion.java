@@ -348,12 +348,7 @@ public class EditDiscussion implements AbcAction {
         TagTool.assignDetectedTags(discussion, user);
 
         // run monitor
-        String url = relation.getUrl();
-        if (url == null)
-            url = "http://www.abclinuxu.cz" + urlUtils.getPrefix() + "/show/" + relation.getId();
-        else
-            url = "http://www.abclinuxu.cz" + url;
-
+        String url = AbcConfig.getAbsoluteUrl() + Tools.getUrlForDiscussion(rel2);
         MonitorAction action = null;
         if (user!=null)
             action = new MonitorAction(user, UserAction.ADD, ObjectType.DISCUSSION, relation, url);
@@ -535,19 +530,14 @@ public class EditDiscussion implements AbcAction {
         persistence.update(discussion);
 
         // run monitor
-        String url = relation.getUrl();
-        if (url==null)
-            url = "http://www.abclinuxu.cz" + Tools.getUrlForDiscussion(relation);
-        else
-            url = "http://www.abclinuxu.cz" + url;
+        String url = AbcConfig.getAbsoluteUrl() + Tools.getUrlForDiscussion(relation);
         url += "#" + comment.getId();
-
         MonitorAction action = null;
         if (user!=null)
-            action = new MonitorAction(user, UserAction.ADD, ObjectType.DISCUSSION, relation, url);
+            action = new MonitorAction(user, UserAction.REPLY, ObjectType.DISCUSSION, relation, url);
         else {
             String author = (String) params.get(PARAM_AUTHOR);
-            action = new MonitorAction(author, UserAction.ADD, ObjectType.DISCUSSION, relation, url);
+            action = new MonitorAction(author, UserAction.REPLY, ObjectType.DISCUSSION, relation, url);
         }
         action.setProperty(DiscussionDecorator.PROPERTY_NAME, comment.getTitle());
         String content = root.elementText("text");
@@ -646,7 +636,7 @@ public class EditDiscussion implements AbcAction {
                     comment.set_dirty(true);
 
                     // run monitor
-                    String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/show/"+relation.getId();
+                    String url = AbcConfig.getAbsoluteUrl()+urlUtils.getPrefix()+"/show/"+relation.getId();
                     MonitorAction monitor = new MonitorAction(user, UserAction.CENSORE, ObjectType.DISCUSSION, relation, url);
                     monitor.setProperty(DiscussionDecorator.PROPERTY_NAME, comment.getTitle());
                     MonitorPool.scheduleMonitorAction(monitor);
@@ -846,7 +836,7 @@ public class EditDiscussion implements AbcAction {
         // run monitor
         String url = mainRelation.getUrl();
         if (url == null)
-            url = "http://www.abclinuxu.cz" + urlUtils.getPrefix() + "/show/" + mainRelation.getId();
+            url = AbcConfig.getAbsoluteUrl() + urlUtils.getPrefix() + "/show/" + mainRelation.getId();
         MonitorAction action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DISCUSSION, mainRelation, url);
         action.setProperty(DiscussionDecorator.PROPERTY_NAME, title);
         action.setProperty(DiscussionDecorator.PROPERTY_CONTENT, content);

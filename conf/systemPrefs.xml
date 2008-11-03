@@ -164,7 +164,8 @@
                             <node name="DiscussionDecorator">
                                 <map>
                                     <entry key="subject" value="AbcMonitor: zmena v diskusi"/>
-                                    <entry key="action.add" value="pridal komentar"/>
+                                    <entry key="action.add" value="polozil dotaz"/>
+                                    <entry key="action.reply" value="pridal komentar"/>
                                     <entry key="action.remove" value="smazal diskusi"/>
                                     <entry key="action.censore" value="uvalil cenzuru na komentar"/>
                                 </map>

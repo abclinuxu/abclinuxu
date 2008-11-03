@@ -34,12 +34,13 @@ import java.util.prefs.Preferences;
  */
 public class DiscussionDecorator implements Decorator, Configurable {
     public static final String PREF_ACTION_ADD = "action.add";
+    public static final String PREF_ACTION_REPLY = "action.reply";
     public static final String PREF_ACTION_REMOVE = "action.remove";
     public static final String PREF_ACTION_CENSORE = "action.censore";
 
     public static final String PROPERTY_CONTENT = "CONTENT";
 
-    String subject, actionAdd, actionRemove, actionCensore;
+    String subject, actionAdd, actionReply, actionRemove, actionCensore;
 
     /**
      * Creates environment for given MonitorAction. This
@@ -49,7 +50,6 @@ public class DiscussionDecorator implements Decorator, Configurable {
      * @return environment
      */
     public Map getEnvironment(MonitorAction action) {
-        HtmlToTextFormatter formatter = new HtmlToTextFormatter();
         Map env = new HashMap();
         if (action.url!=null)
             env.put(VAR_URL, action.url);
@@ -59,17 +59,21 @@ public class DiscussionDecorator implements Decorator, Configurable {
 
         String text = (String) action.getProperty(PROPERTY_CONTENT);
         if (text != null) {
-            text = formatter.format(text);
+            text = HtmlToTextFormatter.format(text);
             env.put(PROPERTY_CONTENT, text);
         }
 
         String changeMessage = "";
-        if (UserAction.ADD.equals(action.action))
-            changeMessage = actionAdd;
-        else if (UserAction.REMOVE.equals(action.action))
-            changeMessage = actionRemove;
-        else if (UserAction.CENSORE.equals(action.action))
-            changeMessage = actionCensore;
+        switch (action.action) {
+            case ADD:
+                changeMessage = actionAdd; break;
+            case REMOVE:
+                changeMessage = actionRemove; break;
+            case REPLY:
+                changeMessage = actionReply; break;
+            case CENSORE:
+                changeMessage = actionCensore;
+        }
 
         env.put(VAR_ACTION,changeMessage);
 //        env.put(EmailSender.KEY_SENDER_NAME, action.actor);
@@ -88,6 +92,7 @@ public class DiscussionDecorator implements Decorator, Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         subject = prefs.get(PREF_SUBJECT, "AbcMonitor");
         actionAdd = prefs.get(PREF_ACTION_ADD, "");
+        actionReply = prefs.get(PREF_ACTION_REPLY, "");
         actionRemove = prefs.get(PREF_ACTION_REMOVE, "");
         actionCensore = prefs.get(PREF_ACTION_CENSORE, "");
     }
