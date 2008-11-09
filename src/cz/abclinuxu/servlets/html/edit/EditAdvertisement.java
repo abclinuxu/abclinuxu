@@ -18,23 +18,35 @@
  */
 package cz.abclinuxu.servlets.html.edit;
 
+import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.view.Link;
+import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -44,14 +56,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.dom4j.Node;
 import static cz.abclinuxu.servlets.Constants.PARAM_NAME;
 import static cz.abclinuxu.servlets.Constants.PARAM_DESCRIPTION;
 
@@ -67,15 +76,21 @@ public class EditAdvertisement implements AbcAction, Configurable {
     public static final String PARAM_NEW_IDENTIFIER = "newIdentifier";
     public static final String PARAM_MAIN_CODE = "main_code";
     public static final String PARAM_CODE = "code";
+    public static final String PARAM_HTML_CODE = "htmlCode";
     public static final String PARAM_REGEXP = "regexp";
     public static final String PARAM_DYNAMIC = "dynamic";
-    public static final String PARAM_INDEX = "index";
+    public static final String PARAM_RELATION_SHORT = "rid";
+    public static final String PARAM_VARIANT = "variant";
+    public static final String PARAM_TAGS = "tags";
 
     public static final String VAR_POSITION = "POSITION";
     public static final String VAR_POSITIONS = "POSITIONS";
     public static final String VAR_DEFAULT_CODE = "DEFAULT_CODE";
     public static final String VAR_CODES = "CODES";
+    public static final String VAR_CODE = "CODE";
+    public static final String VAR_VARIANTS = "VARIANTS";
 
+    public static final String ACTION_LIST = "list";
     public static final String ACTION_ADD_POSITION = "addPosition";
     public static final String ACTION_ADD_POSITION_STEP2 = "addPosition2";
     public static final String ACTION_EDIT_POSITION = "editPosition";
@@ -84,12 +99,19 @@ public class EditAdvertisement implements AbcAction, Configurable {
     public static final String ACTION_ACTIVATE_POSITION = "activatePosition";
     public static final String ACTION_DEACTIVATE_POSITION = "deactivatePosition";
     public static final String ACTION_SHOW_POSITION = "showPosition";
+    public static final String ACTION_SHOW_CODE = "showCode";
+    public static final String ACTION_ADD_VARIANT = "addVariant";
+    public static final String ACTION_ADD_VARIANT_STEP2 = "addVariant2";
+    public static final String ACTION_EDIT_VARIANT = "editVariant";
+    public static final String ACTION_EDIT_VARIANT_STEP2 = "editVariant2";
+    public static final String ACTION_REMOVE_VARIANT = "rmVariant";
     public static final String ACTION_TEST_URL = "testUrl";
     public static final String ACTION_ADD_CODE = "addCode";
     public static final String ACTION_ADD_CODE_STEP2 = "addCode2";
     public static final String ACTION_EDIT_CODE = "editCode";
-    public static final String ACTION_EDIT_CODE_STEP2 = "editCodeTwo";
+    public static final String ACTION_EDIT_CODE_STEP2 = "editCode2";
     public static final String ACTION_REMOVE_CODE = "rmCode";
+    public static final String ACTION_TOGGLE_VARIANT = "toggleVariant";
 
     static Pattern identifierPattern;
     static {
@@ -101,6 +123,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
+        Persistence persistence = PersistenceFactory.getPersistence();
 
         if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
@@ -113,22 +136,34 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
         if (!user.hasRole(Roles.ADVERTISEMENT_ADMIN))
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+        
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
+        if (relation != null) {
+            relation = (Relation) Tools.sync(relation);
+            env.put(ShowObject.VAR_RELATION, relation);
+        }
 
-        if (ACTION_ADD_POSITION.equals(action) || params.containsKey(ACTION_ADD_POSITION))
+        if (ACTION_LIST.equals(action) || Misc.empty(action))
+            return actionShowMain(request, env);
+        
+        if (ACTION_ADD_POSITION.equals(action))
             return actionAddStep1(request, env);
 
-        if (ACTION_ADD_POSITION_STEP2.equals(action) || params.containsKey(ACTION_ADD_POSITION_STEP2)) {
+        if (ACTION_ADD_POSITION_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
             return actionAddStep2(request, response, env);
         }
+        
+        if (relation == null)
+            throw new MissingArgumentException("Chybi cislo relace!");
 
-        if (ACTION_SHOW_POSITION.equals(action) || params.containsKey(ACTION_SHOW_POSITION))
+        if (ACTION_SHOW_POSITION.equals(action))
             return actionShowPosition(request, response, env);
 
         if (ACTION_EDIT_POSITION.equals(action) || params.containsKey(ACTION_EDIT_POSITION))
             return actionEditPositionStep1(request, response, env);
 
-        if (ACTION_EDIT_POSITION_STEP2.equals(action) || params.containsKey(ACTION_EDIT_POSITION_STEP2)) {
+        if (ACTION_EDIT_POSITION_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
             return actionEditPositionStep2(request, response, env);
         }
@@ -150,75 +185,80 @@ public class EditAdvertisement implements AbcAction, Configurable {
         if (ACTION_ADD_CODE.equals(action) || params.containsKey(ACTION_ADD_CODE))
             return actionAddCodeStep1(request, env);
 
-        if (ACTION_ADD_CODE_STEP2.equals(action) || params.containsKey(ACTION_ADD_CODE_STEP2)) {
+        if (ACTION_ADD_CODE_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
             return actionAddCodeStep2(request, response, env);
         }
-
-        for (Iterator iter = params.keySet().iterator(); iter.hasNext();) {
-            String param = (String) iter.next();
-            if (param.startsWith(ACTION_EDIT_CODE_STEP2)) {
-                ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
-                return actionEditCodeStep2(request, response, env);
-            }
-            if (param.startsWith(ACTION_EDIT_CODE))
-                return actionEditCodeStep1(request, response, env);
-            if (param.startsWith(ACTION_REMOVE_CODE)) {
-                ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
-                return actionRemoveCode(request, response, env);
-            }
+        
+        if (ACTION_ADD_VARIANT.equals(action))
+            return FMTemplateSelector.select("EditAdvertisement", "addVariant", env, request);
+        
+        if (ACTION_ADD_VARIANT_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
+            return actionAddVariantStep2(request, response, env);
         }
-
-        return actionShowMain(request, env);
+        
+        if (ACTION_EDIT_VARIANT.equals(action))
+            return actionEditVariant(request, response, env);
+        
+        if (ACTION_EDIT_VARIANT_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
+            return actionEditVariantStep2(request, response, env);
+        }
+            
+        if (ACTION_SHOW_CODE.equals(action))
+            return actionShowCode(request, response, env);
+        
+        if (ACTION_REMOVE_VARIANT.equals(action)) {
+            ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, false, true);
+            return actionRemoveVariant(request, response, env);
+        }
+        
+        if (ACTION_TOGGLE_VARIANT.equals(action))
+            return actionToggleVariant(request, response, env);
+        
+        if (ACTION_EDIT_CODE.equals(action) || params.containsKey(ACTION_EDIT_CODE))
+            return actionEditCodeStep1(request, response, env);
+        
+        if (ACTION_EDIT_CODE_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
+            return actionEditCodeStep2(request, response, env);
+        }
+        
+        if (ACTION_REMOVE_CODE.equals(action) || params.containsKey(ACTION_REMOVE_CODE)) {
+            ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, false, true);
+            return actionRemoveCode(request, response, env);
+        }
+        
+        throw new MissingArgumentException("Neplatny parametr action!");
     }
 
     public String actionShowMain(HttpServletRequest request, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistence();
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
-        Element element = (Element) item.getData().selectSingleNode("//advertisement");
-        if (element != null) {
-            List list = element.elements("position");
-            if (list.size() > 0) {
-                list = new ArrayList(list);
-                Collections.sort(list, new Comparator() {
-                    public int compare(Object o, Object o1) {
-                        String name1 = ((Element)o).elementText("name").toLowerCase();
-                        String name2 = ((Element)o1).elementText("name").toLowerCase();
-                        return name1.compareTo(name2);
-                    }
-                });
-                env.put(VAR_POSITIONS, list);
-            }
-        }
+        Category catAdvertisements = (Category) Tools.sync(new Category(Constants.CAT_ADVERTISEMENTS));
+        
+        List<Relation> children = Tools.syncList(catAdvertisements.getChildren());
+        Sorters2.byName(children);
+        env.put(VAR_POSITIONS, children);
+        
+        List parents = new ArrayList(2);
+        parents.add(new Link("Administrace", "/Admin", null));
+        parents.add(new Link("Reklamy", "/EditAdvertisement", null));
+        env.put(ShowObject.VAR_PARENTS, parents);
+        
         return FMTemplateSelector.select("EditAdvertisement", "main", env, request);
     }
 
     public String actionShowPosition(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistence();
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Relation rel = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) rel.getChild();
+        
+        List parents = new ArrayList(3);
+        parents.add(new Link("Administrace", "/Admin", null));
+        parents.add(new Link("Reklamy", "/EditAdvertisement", null));
+        parents.add(new Link(item.getTitle(), "/EditAdvertisement/"+rel.getId()+"?action=showPosition", null));
+        env.put(ShowObject.VAR_PARENTS, parents);
 
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
-        Element position = getPosition(params, item, request, env);
-        if (position == null) {
-            urlUtils.redirect(response, "/EditAdvertisement?action=list");
-            return null;
-        }
-
-        Element defaultCode = null;
-        List otherCodes = new ArrayList();
-        List codes = position.elements("code");
-        for (Iterator iter = codes.iterator(); iter.hasNext();) {
-            Element code = (Element) iter.next();
-            if (code.attribute("regexp") == null)
-                defaultCode = code;
-            else
-                otherCodes.add(code);
-        }
-
-        env.put(VAR_POSITION, position);
-        env.put(VAR_DEFAULT_CODE, defaultCode);
-        env.put(VAR_CODES, otherCodes);
+        env.put(VAR_POSITION, item);
         return FMTemplateSelector.select("EditAdvertisement", "showPosition", env, request);
     }
 
@@ -233,56 +273,104 @@ public class EditAdvertisement implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
 
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION)).clone();
-        Document document = item.getData();
-        Element root = document.getRootElement();
-        Element position = createNewPosition(params, root, env);
-        if (position == null)
-            return FMTemplateSelector.select("EditAdvertisement", "addPosition", env, request);
-        String id = position.attributeValue("id");
+        Item item = new Item();
+        item.setType(Item.ADVERTISEMENT);
+        
+        Category catUpper = (Category) persistence.findById(new Category(Constants.CAT_ADVERTISEMENTS));
+        
+        Document document = DocumentHelper.createDocument();
+        Element root = document.addElement("data");
+        String id = (String) params.get(PARAM_NEW_IDENTIFIER);
+        
+        item.setData(document);
 
         boolean canContinue = true;
-        canContinue &= setName(params, position, env);
-        canContinue &= setPositionDescription(params, position);
-        canContinue &= setDefaultCode(params, position);
+        canContinue &= setName(params, item, env);
+        canContinue &= setIdentifier(params, item, env);
+        canContinue &= setPositionDescription(params, root);
+        DocumentHelper.makeElement(root, "active").setText("yes");
+        root.addElement("codes");
 
         if (! canContinue)
             return FMTemplateSelector.select("EditAdvertisement", "addPosition", env, request);
 
-        persistence.update(item);
+        persistence.create(item);
+        
+        Relation relation = new Relation(catUpper, item, Constants.REL_ADVERTISEMENTS);
+        persistence.create(relation);
 
         AdminLogger.logEvent(user, "pridal reklamni pozici " + id);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/EditAdvertisement?action=" + ACTION_SHOW_POSITION+"&"+PARAM_IDENTIFIER+"=" + id);
+        urlUtils.redirect(response, "/EditAdvertisement?action=" + ACTION_SHOW_POSITION+"&"+PARAM_RELATION_SHORT+"=" + relation.getId());
         return null;
     }
-
-    public String actionEditPositionStep1(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistence();
+    
+    public String actionShowCode(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
-        Element position = getPosition(params, item, request, env);
-        if (position == null) {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        
+        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        
+        List<Node> codes = item.getData().selectNodes("//code");
+        int index = Misc.parseInt((String) params.get(PARAM_CODE), -1);
+        
+        if (index < 0 || index >= codes.size()) {
             urlUtils.redirect(response, "/EditAdvertisement?action=list");
             return null;
         }
+        
+        Element code = (Element) codes.get(index);
+        List<Element> variants = code.selectNodes("variants/variant");
+        List<Map> variantsData = new ArrayList<Map>(variants.size());
+        
+        for (Element elem : variants) {
+            Map map = new HashMap();
+            
+            map.put("code", elem.getText());
+            map.put("description", elem.attributeValue("description"));
+            map.put("active", elem.attributeValue("active"));
+            
+            String tags = elem.attributeValue("tags");
+            if (!Misc.empty(tags))
+                map.put("tags", tags.split(" "));
+            
+            variantsData.add(map);
+        }
+        
+        env.put(VAR_VARIANTS, variantsData);
+        
+        Map codeData = new HashMap();
+        codeData.put("name", code.attributeValue("name"));
+        codeData.put("description", code.attributeValue("description"));
+        codeData.put("regexp", code.attributeValue("regexp"));
+        
+        env.put(VAR_CODE, codeData);
+        
+        List parents = new ArrayList(4);
+        parents.add(new Link("Administrace", "/Admin", null));
+        parents.add(new Link("Reklamy", "/EditAdvertisement", null));
+        parents.add(new Link(item.getTitle(), "/EditAdvertisement/"+relation.getId()+"?action=showPosition", null));
+        parents.add(new Link((String) codeData.get("name"), "/EditAdvertisement/"+relation.getId()+"?action=showCode&code="+params.get(PARAM_CODE), null));
+        env.put(ShowObject.VAR_PARENTS, parents);
+        
+        return FMTemplateSelector.select("EditAdvertisement", "showCode", env, request);
+    }
+    
 
-        Element element = position.element("name");
-        params.put(PARAM_NAME, element.getText());
-        params.put(PARAM_NEW_IDENTIFIER, position.attributeValue("id"));
-        element = position.element("description");
+    public String actionEditPositionStep1(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+
+        Relation rel = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) rel.getChild();
+
+        Element root = item.getData().getRootElement();
+        params.put(PARAM_NAME, item.getTitle());
+        params.put(PARAM_NEW_IDENTIFIER, item.getString1());
+        Element element = root.element("description");
         if (element != null)
             params.put(PARAM_DESCRIPTION, element.getText());
-        element = (Element) position.selectSingleNode("code[string-length(@id)=0]");
-        if (element != null) {
-            params.put(PARAM_MAIN_CODE, element.getText());
-            Attribute attribute = element.attribute("dynamic");
-            if (attribute != null)
-                params.put(PARAM_DYNAMIC, Boolean.TRUE);
-        }
 
         return FMTemplateSelector.select("EditAdvertisement", "editPosition", env, request);
     }
@@ -293,57 +381,35 @@ public class EditAdvertisement implements AbcAction, Configurable {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION)).clone();
-        Element position = getPosition(params, item, request, env);
-        if (position == null) {
-            urlUtils.redirect(response, "/EditAdvertisement?action=list");
-            return null;
-        }
-
-        Element adsRoot = item.getData().getRootElement().element("advertisement");
+        Relation rel = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) rel.getChild();
 
         boolean canContinue = true;
-        canContinue &= setName(params, position, env);
-        canContinue &= setIdentifier(params, adsRoot, position, env);
-        canContinue &= setPositionDescription(params, position);
-        canContinue &= setDefaultCode(params, position);
+        canContinue &= setName(params, item, env);
+        canContinue &= setIdentifier(params, item, env);
+        canContinue &= setPositionDescription(params, item.getData().getRootElement());
 
         if (! canContinue)
             return FMTemplateSelector.select("EditAdvertisement", "editPosition", env, request);
 
         persistence.update(item);
 
-        String id = position.attributeValue("id");
+        String id = (String) params.get(PARAM_IDENTIFIER);
         AdminLogger.logEvent(user, "upravil reklamni pozici " + id);
 
-        urlUtils.redirect(response, "/EditAdvertisement?action=" + ACTION_SHOW_POSITION+"&"+PARAM_IDENTIFIER+"=" + id);
+        urlUtils.redirect(response, "/EditAdvertisement?action=" + ACTION_SHOW_POSITION+"&"+PARAM_RELATION_SHORT+"=" + rel.getId());
         return null;
     }
 
     public String actionChangePositionState(HttpServletRequest request, HttpServletResponse response, boolean activate, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
 
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION)).clone();
-        Document document = item.getData();
-        Element adsRoot = document.getRootElement().element("advertisement");
+        Relation rel = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) rel.getChild();
 
-        List ids = Tools.asList(params.get(PARAM_IDENTIFIER));
-        String id = null;
-        for (Iterator iter = ids.iterator(); iter.hasNext();) {
-            Object o = iter.next();
-            if (!(o instanceof String))
-                continue;
-            id = (String) o;
-            Element position = (Element) adsRoot.selectSingleNode("position[@id='" + id + "']");
-            if (position == null) {
-                ServletUtils.addError(Constants.ERROR_GENERIC, "Pozice "+id+" nebyla nalezena!", env, request.getSession());
-                continue;
-            }
-            position.attribute("active").setText(activate ? "yes":"no");
-            AdminLogger.logEvent(user, (activate ? "":"de") + "aktivoval reklamni pozici " + id);
-        }
+        DocumentHelper.makeElement(item.getData(), "/data/active").setText(activate ? "yes":"no");
+        AdminLogger.logEvent(user, (activate ? "":"de") + "aktivoval reklamni pozici " + item.getString1());
 
         persistence.update(item);
 
@@ -356,31 +422,16 @@ public class EditAdvertisement implements AbcAction, Configurable {
     }
 
     public String actionRemovePosition(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
 
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION)).clone();
-        Document document = item.getData();
-        Element adsRoot = document.getRootElement().element("advertisement");
+        Relation rel = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) rel.getChild();
+            
+        AdminLogger.logEvent(user, "smazal reklamni pozici " + item.getString1());
 
-        List ids = Tools.asList(params.get(PARAM_IDENTIFIER));
-        String id = null;
-        for (Iterator iter = ids.iterator(); iter.hasNext();) {
-            Object o = iter.next();
-            if (!(o instanceof String))
-                continue;
-            id = (String) o;
-            Element position = (Element) adsRoot.selectSingleNode("position[@id='" + id + "']");
-            if (position == null) {
-                ServletUtils.addError(Constants.ERROR_GENERIC, "Pozice " + id + " nebyla nalezena!", env, request.getSession());
-                continue;
-            }
-            position.detach();
-            AdminLogger.logEvent(user, "smazal reklamni pozici " + id);
-        }
-
-        persistence.update(item);
+        persistence.remove(rel);
+        persistence.remove(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/EditAdvertisement?action=list");
@@ -397,60 +448,59 @@ public class EditAdvertisement implements AbcAction, Configurable {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION)).clone();
-        Element position = getPosition(params, item, request, env);
-        if (position == null) {
-            urlUtils.redirect(response, "/EditAdvertisement?action=list");
-            return null;
-        }
+        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        Element position = item.getData().getRootElement();
 
         boolean canContinue = true;
-        Element code = position.addElement("code");
+        Element codes = DocumentHelper.makeElement(position, "codes");
+        Element code = codes.addElement("code");
+        canContinue &= setCodeName(params, code, null, env);
         canContinue &= setCodeRegexp(params, code, env);
-        canContinue &= setCodeDynamicFlag(params, code);
         canContinue &= setCodeDescription(params, code);
-        canContinue &= setCode(params, code);
+        
+        Element variants = DocumentHelper.makeElement(code, "variants");
+        Element defaultVariant = variants.addElement("variant");
+        canContinue &= setVariantDynamicFlag(params, defaultVariant);
+        canContinue &= setVariantCode(params, defaultVariant);
+        defaultVariant.addAttribute("description", "defaultní");
 
         if (!canContinue)
             return FMTemplateSelector.select("EditAdvertisement", "addCode", env, request);
 
         persistence.update(item);
 
-        String id = position.attributeValue("id");
+        String id = item.getString1();
         AdminLogger.logEvent(user, "pridal reklamni kod k pozici " + id);
 
-        urlUtils.redirect(response, "/EditAdvertisement?action=" + ACTION_SHOW_POSITION + "&" + PARAM_IDENTIFIER + "=" + id);
+        urlUtils.redirect(response, "/EditAdvertisement?action=" + ACTION_SHOW_POSITION + "&" + PARAM_RELATION_SHORT + "=" + relation.getId());
         return null;
     }
 
     public String actionEditCodeStep1(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistence();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
 
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
-        Element position = getPosition(params, item, request, env);
-        if (position == null) {
-            urlUtils.redirect(response, "/EditAdvertisement?action=list");
-            return null;
-        }
-        Element code = getCode(position, params, ACTION_EDIT_CODE, request, env);
+        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        
+        Element code = getCode(params, item.getData().getRootElement());
+        
         if (code == null) {
-            urlUtils.redirect(response, "/EditAdvertisement?action=list");
+            urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showPosition");
             return null;
         }
 
-        params.put(PARAM_CODE, code.getText());
         Attribute attribute = code.attribute("regexp");
         if (attribute != null)
             params.put(PARAM_REGEXP, attribute.getText());
         attribute = code.attribute("description");
         if (attribute != null)
             params.put(PARAM_DESCRIPTION, attribute.getText());
-        attribute = code.attribute("dynamic");
+        attribute = code.attribute("name");
         if (attribute != null)
-            params.put(PARAM_DYNAMIC, Boolean.TRUE);
-
+            params.put(PARAM_NAME, attribute.getText());
+        
         return FMTemplateSelector.select("EditAdvertisement", "editCode", env, request);
     }
 
@@ -460,33 +510,32 @@ public class EditAdvertisement implements AbcAction, Configurable {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION)).clone();
-        Element position = getPosition(params, item, request, env);
-        if (position == null) {
-            urlUtils.redirect(response, "/EditAdvertisement?action=list");
-            return null;
-        }
-        Element code = getCode(position, params, ACTION_EDIT_CODE_STEP2, request, env);
+        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) relation.getChild().clone();
+        
+        Element code = getCode(params, item.getData().getRootElement());
+        
         if (code == null) {
-            urlUtils.redirect(response, "/EditAdvertisement?action=list");
+            urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showPosition");
             return null;
         }
-
+        
+        List<Element> codes = item.getData().selectNodes("//code");
+        
         boolean canContinue = true;
         canContinue &= setCodeRegexp(params, code, env);
-        canContinue &= setCodeDynamicFlag(params, code);
         canContinue &= setCodeDescription(params, code);
-        canContinue &= setCode(params, code);
+        canContinue &= setCodeName(params, code, codes, env);
 
         if (!canContinue)
             return FMTemplateSelector.select("EditAdvertisement", "editCode", env, request);
 
         persistence.update(item);
 
-        String id = position.attributeValue("id");
+        String id = item.getString1();
         AdminLogger.logEvent(user, "upravil reklamni kod k pozici " + id);
 
-        urlUtils.redirect(response, "/EditAdvertisement?action=" + ACTION_SHOW_POSITION + "&" + PARAM_IDENTIFIER + "=" + id);
+        urlUtils.redirect(response, "/EditAdvertisement/" + relation.getId() + "?action=" + ACTION_SHOW_CODE + "&" + PARAM_CODE + "=" + params.get(PARAM_CODE));
         return null;
     }
 
@@ -496,25 +545,253 @@ public class EditAdvertisement implements AbcAction, Configurable {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION)).clone();
-        Element position = getPosition(params, item, request, env);
-        if (position == null) {
-            urlUtils.redirect(response, "/EditAdvertisement?action=list");
-            return null;
-        }
-        Element code = getCode(position, params, ACTION_REMOVE_CODE, request, env);
+        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        
+        Element code = getCode(params, item.getData().getRootElement());
+        
         if (code == null) {
-            urlUtils.redirect(response, "/EditAdvertisement?action=list");
+            urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showPosition");
             return null;
         }
 
         code.detach();
         persistence.update(item);
 
-        String id = position.attributeValue("id");
-        AdminLogger.logEvent(user, "upravil reklamni kod k pozici " + id);
+        String id = item.getString1();
+        AdminLogger.logEvent(user, "smazal reklamni kod k pozici " + id);
 
-        urlUtils.redirect(response, "/EditAdvertisement?action=" + ACTION_SHOW_POSITION + "&" + PARAM_IDENTIFIER + "=" + id);
+        urlUtils.redirect(response, "/EditAdvertisement/" + relation.getId() + "?action=" + ACTION_SHOW_POSITION);
+        return null;
+    }
+    
+    public String actionRemoveVariant(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistence persistence = PersistenceFactory.getPersistence();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        User user = (User) env.get(Constants.VAR_USER);
+
+        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        
+        Element code = getCode(params, item.getData().getRootElement());
+        
+        if (code == null) {
+            urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showPosition");
+            return null;
+        }
+        
+        Element variant = getVariant(params, code);
+        
+        if (variant == null) {
+            urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showCode&code="+params.get(PARAM_CODE));
+            return null;
+        }
+
+        variant.detach();
+        persistence.update(item);
+
+        String id = item.getString1();
+        AdminLogger.logEvent(user, "smazal variantu reklamniho kod k pozici " + id);
+
+        urlUtils.redirect(response, "/EditAdvertisement/" + relation.getId() + "?action=" + ACTION_SHOW_CODE + "&code=" + params.get(PARAM_CODE));
+        return null;
+    }
+    
+    public String actionAddVariantStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistence persistence = PersistenceFactory.getPersistence();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        User user = (User) env.get(Constants.VAR_USER);
+
+        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) relation.getChild().clone();
+        
+        Element code = getCode(params, item.getData().getRootElement());
+        
+        if (code == null) {
+            urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showPosition");
+            return null;
+        }
+        
+        boolean canContinue = true;
+        Element variants = DocumentHelper.makeElement(code, "variants");
+        Element variant = variants.addElement("variant");
+        
+        canContinue &= setVariantDynamicFlag(params, variant);
+        canContinue &= setVariantCode(params, variant);
+        canContinue &= setVariantTags(params, variant);
+        canContinue &= setVariantDescription(params, variant);
+        
+        variant.addAttribute("active", "no");
+        
+        if (!canContinue)
+            return FMTemplateSelector.select("EditAdvertisement", "addVariant", env, request);
+        
+        persistence.update(item);
+        
+        AdminLogger.logEvent(user, "pridal variantu reklamniho kod k pozici " + item.getString1());
+        
+        urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=" + ACTION_SHOW_CODE + "&code="+params.get(PARAM_CODE));
+        return null;
+    }
+    
+    public String actionEditVariant(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+
+        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        
+        Element code = getCode(params, item.getData().getRootElement());
+        
+        if (code == null) {
+            urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showPosition");
+            return null;
+        }
+        
+        Element variant = getVariant(params, code);
+        if (variant == null) {
+            urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showCode&code="+params.get(PARAM_CODE));
+            return null;
+        }
+        
+        Attribute attr = variant.attribute("description");
+        if (attr != null)
+            params.put(PARAM_DESCRIPTION, attr.getText());
+        attr = variant.attribute("tags");
+        if (attr != null)
+            params.put(PARAM_TAGS, attr.getText());
+        attr = variant.attribute("dynamic");
+        if (attr != null)
+            params.put(PARAM_DYNAMIC, attr.getText());
+        params.put(PARAM_HTML_CODE, variant.getText());
+        
+        return FMTemplateSelector.select("EditAdvertisement", "editVariant", env, request);
+    }
+    
+    public String actionEditVariantStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Persistence persistence = PersistenceFactory.getPersistence();
+        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) relation.getChild().clone();
+        User user = (User) env.get(Constants.VAR_USER);
+        
+        Element code = getCode(params, item.getData().getRootElement());
+        
+        if (code == null) {
+            urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showPosition");
+            return null;
+        }
+        
+        Element variant = getVariant(params, code);
+        if (variant == null) {
+            urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showCode&code="+params.get(PARAM_CODE));
+            return null;
+        }
+        
+        boolean canContinue = true;
+        
+        canContinue &= setVariantDescription(params, variant);
+        canContinue &= setVariantCode(params, variant);
+        canContinue &= setVariantDynamicFlag(params, variant);
+        canContinue &= setVariantTags(params, variant);
+        
+        if (!canContinue)
+            return FMTemplateSelector.select("EditAdvertisement", "editVariant", env, request);
+        
+        AdminLogger.logEvent(user, "upravil variantu reklamniho kod k pozici " + item.getString1());
+        
+        persistence.update(item);
+        
+        urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showCode&code="+params.get(PARAM_CODE));
+        return null;
+    }
+    
+    public String actionToggleVariant(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistence persistence = PersistenceFactory.getPersistence();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        User user = (User) env.get(Constants.VAR_USER);
+
+        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
+        Item item = (Item) relation.getChild().clone();
+        
+        Element code = getCode(params, item.getData().getRootElement());
+        
+        if (code == null) {
+            urlUtils.redirect(response, "/EditAdvertisement/" + relation.getId() + "?action=showPosition");
+            return null;
+        }
+        
+        Element variant = getVariant(params, code);
+        
+        if (variant == null) {
+            urlUtils.redirect(response, "/EditAdvertisement/" + relation.getId() + "?action=showCode&code=" + params.get(PARAM_CODE));
+            return null;
+        }
+        
+        boolean nowActive = false;
+        String active = variant.attributeValue("active");
+        if (active != null) {
+            if (active.equals("yes"))
+                variant.addAttribute("active", "no");
+            else {
+                variant.addAttribute("active", "yes");
+                nowActive = true;
+            }
+        } else
+            variant.addAttribute("active", "no");
+        
+        String tags = variant.attributeValue("tags");
+        List<String> myTags = Collections.EMPTY_LIST;
+        
+        if (!Misc.empty(tags))
+            myTags = new ArrayList<String>(Arrays.asList(tags.split(" ")));
+        
+        if (nowActive) {
+            boolean problem = false;
+            List<Element> listVariants = code.selectNodes("//variant");
+            
+            if (myTags.size() > 0) {
+                List<String> usedTags = new ArrayList<String>();
+
+                for (Element var : listVariants) {
+                    String ctags = var.attributeValue("tags");
+                    if (ctags == null)
+                        continue;
+                    if ("no".equals(var.attributeValue("active")) || var == variant)
+                        continue;
+
+                    usedTags.addAll(Arrays.asList(ctags.split(" ")));
+                }
+
+                myTags.retainAll(usedTags);
+                problem = myTags.size() > 0;
+            } else {
+                for (Element var : listVariants) {
+                    if ("no".equals(var.attributeValue("active")) || var == variant)
+                        continue;
+                    
+                    String ctags = var.attributeValue("tags");
+                    if (Misc.empty(ctags) || ctags.trim().length() == 0) {
+                        problem = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (problem) {
+                ServletUtils.addError(Constants.ERROR_GENERIC, "Varianta se překrývá s jinou aktivní variantou", env, request.getSession());
+                urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showCode&code="+params.get(PARAM_CODE));
+                return null;
+            }
+        }
+        
+        persistence.update(item);
+        
+        urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showCode&code="+params.get(PARAM_CODE));
         return null;
     }
 
@@ -523,93 +800,26 @@ public class EditAdvertisement implements AbcAction, Configurable {
         identifierPattern = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE);
     }
 
-    // setters
-
-    /**
-     * Finds position parameter and locates specified position in the configuration item.
-     * @return element position or null
-     */
-    private Element getPosition(Map params, Item item, HttpServletRequest request, Map env) {
-        String id = (String) params.get(PARAM_IDENTIFIER);
-        if (id == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nebyl definován povinný parametr id!", env, request.getSession());
+    // helper methods
+    
+    private Element getCode(Map params, Element root) {
+        List<Node> codes = root.selectNodes("//code");
+        int index = Misc.parseInt((String) params.get(PARAM_CODE), -1);
+        
+        if (index < 0 || index >= codes.size())
             return null;
-        }
-
-        Document document = item.getData();
-        Element adsRoot = document.getRootElement().element("advertisement");
-        Element position = (Element) adsRoot.selectSingleNode("position[@id='" + id + "']");
-        if (position == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Pozice " + id + " nebyla nalezena!", env, request.getSession());
-            return null;
-        }
-        return position;
+        else
+            return (Element) codes.get(index);
     }
-
-    /**
-     * Finds non default code with index specified in params with certain prefix.
-     * @return code element or null, if not found.
-     */
-    public Element getCode(Element position, Map params, String prefix, HttpServletRequest request, Map env) {
-        int index = -1;
-        for (Iterator iter = params.keySet().iterator(); iter.hasNext();) {
-            String param = (String) iter.next();
-            if (param.startsWith(prefix)) {
-                String rest = param.substring(prefix.length());
-                index = Misc.parseInt(rest, -1);
-                break;
-            }
-        }
-        if (index == -1) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Kód nebyl nalezen!", env, request.getSession());
+    
+    private Element getVariant(Map params, Element code) {
+        List<Node> variants = code.selectNodes("//variant");
+        int index = Misc.parseInt((String) params.get(PARAM_VARIANT), -1);
+        
+        if (index < 0 || index >= variants.size())
             return null;
-        }
-
-        int i = 0;
-        params.put(PARAM_INDEX, index);
-        List codes = position.elements("code");
-        for (Iterator iter = codes.iterator(); iter.hasNext();) {
-            Element code = (Element) iter.next();
-            if (code.attribute("regexp") == null)
-                continue;
-            if (i == index)
-                return code;
-            i++;
-        }
-
-        ServletUtils.addError(Constants.ERROR_GENERIC, "Kód nebyl nalezen!", env, request.getSession());
-        return null;
-    }
-
-    /**
-     * Creates new position element. It verifies that valid identifier exists and that it does
-     * not conflict with other position. It returns null in case of error.
-     * @return element with identifier set or null
-     */
-    private Element createNewPosition(Map params, Element root, Map env) {
-        String id = (String) params.get(PARAM_IDENTIFIER);
-        if (id == null) {
-            ServletUtils.addError(PARAM_IDENTIFIER, "Zadejte identifikátor.", env, null);
-            return null;
-        }
-
-        Matcher matcher = identifierPattern.matcher(id);
-        if (! matcher.matches() ) {
-            ServletUtils.addError(PARAM_IDENTIFIER, "Neplatný identifikátor.", env, null);
-            return null;
-        }
-
-        Element adsRoot = DocumentHelper.makeElement(root, "advertisement");
-        Element position = (Element) adsRoot.selectSingleNode("position[@id='"+id+"']");
-        if (position != null) {
-            ServletUtils.addError(PARAM_IDENTIFIER, "Tento identifikátor je již použit, zadejte jiný.", env, null);
-            return null;
-        }
-
-        position = adsRoot.addElement("position");
-        position.addAttribute("id", id);
-        position.addAttribute("active", "yes");
-        return position;
+        else
+            return (Element) variants.get(index);
     }
 
     /**
@@ -619,33 +829,14 @@ public class EditAdvertisement implements AbcAction, Configurable {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setName(Map params, Element position, Map env) {
+    private boolean setName(Map params, Item item, Map env) {
         String name = (String) params.get(PARAM_NAME);
         if (Misc.empty(name)) {
             ServletUtils.addError(PARAM_NAME, "Zadejte jméno.", env, null);
             return false;
         }
 
-        DocumentHelper.makeElement(position, "name").setText(name);
-        return true;
-    }
-
-    /**
-     * Updates position default code from parameters. Changes are not synchronized with persistance.
-     * @param params map holding request's parameters
-     * @param position position element to be updated
-     * @return false, if there is a major error.
-     */
-    private boolean setDefaultCode(Map params, Element position) {
-        String code = (String) params.get(PARAM_MAIN_CODE);
-        if (Misc.empty(code))
-            code = "<!-- empty -->";
-
-        Element element = (Element) position.selectSingleNode("code[string-length(@id)=0]");
-        if (element == null)
-            element = position.addElement("code");
-        element.setText(code);
-        setCodeDynamicFlag(params, element);
+        item.setTitle(name);
         return true;
     }
 
@@ -675,9 +866,9 @@ public class EditAdvertisement implements AbcAction, Configurable {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setIdentifier(Map params, Element adsRoot, Element position, Map env) {
+    private boolean setIdentifier(Map params, Item item, Map env) {
         String id = (String) params.get(PARAM_NEW_IDENTIFIER);
-        if (id == null) {
+        if (Misc.empty(id)) {
             ServletUtils.addError(PARAM_NEW_IDENTIFIER, "Zadejte identifikátor.", env, null);
             return false;
         }
@@ -688,13 +879,13 @@ public class EditAdvertisement implements AbcAction, Configurable {
             return false;
         }
 
-        Element existingPosition = (Element) adsRoot.selectSingleNode("position[@id='" + id + "']");
-        if (existingPosition != null && ! existingPosition.equals(position)) {
-            ServletUtils.addError(PARAM_NEW_IDENTIFIER, "Tento identifikátor je již použit pro pozici "+existingPosition.elementText("name")+".", env, null);
+        Item itemExisting = SQLTool.getInstance().findAdvertisementByString(id);
+        if (itemExisting != null && itemExisting.getId() != item.getId()) {
+            ServletUtils.addError(PARAM_NEW_IDENTIFIER, "Identifikátor se už používá!", env, null);
             return false;
         }
 
-        position.attribute("id").setText(id);
+        item.setString1(id);
         return true;
     }
 
@@ -707,10 +898,12 @@ public class EditAdvertisement implements AbcAction, Configurable {
      */
     private boolean setCodeRegexp(Map params, Element code, Map env) {
         String regexp = (String) params.get(PARAM_REGEXP);
-        if (Misc.empty(regexp)) {
+        /*if (Misc.empty(regexp)) {
             ServletUtils.addError(PARAM_REGEXP, "Zadejte regulární výraz.", env, null);
             return false;
-        }
+        }*/
+        if (regexp == null)
+            regexp = "";
 
         try {
             Pattern.compile(regexp);
@@ -747,6 +940,30 @@ public class EditAdvertisement implements AbcAction, Configurable {
         }
         return true;
     }
+    
+    private boolean setCodeName(Map params, Element code, List<Element> codes, Map env) {
+        String name = (String) params.get(PARAM_NAME);
+        
+        if (Misc.empty(name)) {
+            ServletUtils.addError(PARAM_NAME, "Zadejte název!", env, null);
+            return false;
+        }
+        
+        if (codes != null) {
+            for (Element elem : codes) {
+                if (elem == code)
+                    continue;
+                if (elem.attributeValue("name").equals(name)) {
+                    ServletUtils.addError(PARAM_NAME, "Kód s takovým názvem už existuje!", env, null);
+                    return false;
+                }
+            }
+        }
+        
+        code.addAttribute("name", name);
+
+        return true;
+    }
 
     /**
      * Updates code's dynamic flag from parameters. Changes are not synchronized with persistance.
@@ -754,15 +971,15 @@ public class EditAdvertisement implements AbcAction, Configurable {
      * @param code element to be updated
      * @return false, if there is a major error.
      */
-    private boolean setCodeDynamicFlag(Map params, Element code) {
+    private boolean setVariantDynamicFlag(Map params, Element variant) {
         String flag = (String) params.get(PARAM_DYNAMIC);
-        Attribute attribute = code.attribute("dynamic");
+        Attribute attribute = variant.attribute("dynamic");
         if (Misc.empty(flag)) {
             if (attribute != null)
                 attribute.detach();
         } else {
             if (attribute == null)
-                code.addAttribute("dynamic", "yes");
+                variant.addAttribute("dynamic", "yes");
         }
         return true;
     }
@@ -773,12 +990,34 @@ public class EditAdvertisement implements AbcAction, Configurable {
      * @param code element to be updated
      * @return false, if there is a major error.
      */
-    private boolean setCode(Map params, Element code) {
-        String s = (String) params.get(PARAM_CODE);
+    private boolean setVariantCode(Map params, Element variant) {
+        String s = (String) params.get(PARAM_HTML_CODE);
         if (Misc.empty(s))
             s = "<!-- empty -->";
 
-        code.setText(s);
+        variant.setText(s);
+        return true;
+    }
+    
+    private boolean setVariantDescription(Map params, Element variant) {
+        String description = (String) params.get(PARAM_DESCRIPTION);
+        Attribute attr = variant.attribute("description");
+        if (Misc.empty(description)) {
+            if (attr != null)
+                attr.detach();
+        } else {
+            if (attr != null)
+                attr.setText(description);
+            else
+                variant.addAttribute("description", description);
+        }
+        
+        return true;
+    }
+    
+    private boolean setVariantTags(Map params, Element variant) {
+        String tags = (String) params.get(PARAM_TAGS);
+        variant.addAttribute("tags", tags);
         return true;
     }
 }

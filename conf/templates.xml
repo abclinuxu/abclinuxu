@@ -842,11 +842,20 @@
         <action name="showPosition" content="/show/adPosition.ftl">
             <var name="TITLE" value="Reklamní pozice"/>
         </action>
+        <action name="showCode" content="/show/adCode.ftl">
+            <var name="TITLE" value="Reklamní pozice - kód"/>
+        </action>
         <action name="addCode" content="/add/adCode.ftl">
             <var name="TITLE" value="Vložit reklamní kód"/>
         </action>
         <action name="editCode" content="/edit/adCode.ftl">
             <var name="TITLE" value="Upravit reklamní kód"/>
+        </action>
+        <action name="addVariant" content="/add/adVariant.ftl">
+            <var name="TITLE" value="Vložit variantu reklamy"/>
+        </action>
+        <action name="editVariant" content="/edit/adVariant.ftl">
+            <var name="TITLE" value="Upravit variantu reklamy"/>
         </action>
     </servlet>
 

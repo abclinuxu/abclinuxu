@@ -163,6 +163,22 @@
 <!ATTLIST code description (#PCDATA)> <!-- description of this code -->
 <!ATTLIST code dynamic (yes,no) #OPTIONAL)> <!-- boolean, determines whether this code must be preprocessed with freemarker, defaults to false -->
 
+<!-- Item.ADVERTISEMENT -->
+<!ELEMENT data (active,description?,codes?)>
+<!ELEMENT description (#PCDATA)> <!-- description of this position -->
+<!ELEMENT active (yes,no) #REQUIRED)> <!-- boolean, whether this position is active -->
+<!ELEMENT codes (code*)> <!-- container for codes -->
+<!ELEMENT code (variants?)> <!-- a code -->
+<!ATTLIST code regexp CDATA #IMPLIED> <!-- code regexp -->
+<!ATTLIST code name (#PCDATA)> <!-- name of the code -->
+<!ATTLIST code description (#PCDATA)> <!-- the code's description -->
+<!ELEMENT variants (variant*)> <!-- container for variants -->
+<!ELEMENT variant (#PCDATA)> <!-- HTML code of the advertisement -->
+<!ATTLIST variant description (#PCDATA) #OPTIONAL> <!-- description of this variant -->
+<!ATTLIST variant tags (#PCDATA) #OPTIONAL> <!-- a list of tags separated by spaces -->
+<!ATTLIST variant dynamic (yes,no) #OPTIONAL)> <!-- boolean, determines whether this variant's code must be preprocessed with freemarker, defaults to false -->
+<!ATTLIST variant active (yes,no)> <!-- boolean, determines whether this variant is active -->
+
 <!-- Item.BAZAAR -->
 <!ELEMENT data (text)>
 <!ELEMENT text (#PCDATA)> <!-- content of the advertisement -->

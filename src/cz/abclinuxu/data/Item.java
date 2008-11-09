@@ -80,6 +80,8 @@ public class Item extends GenericDataObject {
     public static final int UNPUBLISHED_EVENT = 27;
     /** video items, standalone or as attachments */
     public static final int VIDEO = 28;
+    /** advertisement (banner) object */
+    public static final int ADVERTISEMENT = 29;
 
     public Item() {
         super();

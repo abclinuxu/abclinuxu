@@ -161,6 +161,7 @@ public final class SQLTool implements Configurable {
     public static final String FIND_HP_SUBPORTAL_ARTICLES = "find.hp.subportal.articles";
 
     public static final String MAX_SUBPORTAL_READS = "max.subportal.reads";
+    public static final String FIND_ADVERTISEMENT_BY_STRING = "find.advertisement.by.string";
 
     private static SQLTool singleton;
     static {
@@ -1747,6 +1748,7 @@ public final class SQLTool implements Configurable {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
+        ResultSet rs = null;
         try {
             int id, size;
             Map<Integer, Integer> result = new HashMap<Integer, Integer> (categories.size());
@@ -1764,7 +1766,7 @@ public final class SQLTool implements Configurable {
                 statement.setInt(i++, id);
             }
 
-            ResultSet rs = statement.executeQuery();
+            rs = statement.executeQuery();
             while (rs.next()) {
                 id = rs.getInt(1);
                 size = rs.getInt(2);
@@ -1775,7 +1777,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, null);
+            persistance.releaseSQLResources(con, statement, rs);
         }
     }
 
@@ -1792,6 +1794,8 @@ public final class SQLTool implements Configurable {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
         PreparedStatement statement = null;
+        ResultSet rs = null;
+        
         try {
             int id, size, last;
             Map<Integer, Integer[]> result = new HashMap<Integer, Integer[]> (categories.size());
@@ -1809,7 +1813,7 @@ public final class SQLTool implements Configurable {
                 statement.setInt(i++, id);
             }
 
-            ResultSet rs = statement.executeQuery();
+            rs = statement.executeQuery();
             while (rs.next()) {
                 id = rs.getInt(1);
                 size = rs.getInt(2);
@@ -1821,7 +1825,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, null);
+            persistance.releaseSQLResources(con, statement, rs);
         }
     }
 
@@ -2398,6 +2402,29 @@ public final class SQLTool implements Configurable {
         String query = (String) sql.get(SERVER_RELATIONS_IN_CATEGORY);
         return loadRelations(query, Collections.singletonList(new Integer(cat)));
     }
+    
+    public Item findAdvertisementByString(String str) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement((String) sql.get(FIND_ADVERTISEMENT_BY_STRING));
+            statement.setString(1, str);
+            resultSet = statement.executeQuery();
+            
+            if (!resultSet.next())
+                return null;
+            
+            Item item = (Item) persistance.findById(new Item(resultSet.getInt(1)));
+            return item;
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba při hledání reklamy!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
 
     /**
      * Sums all read counters across subportals.
@@ -2505,6 +2532,7 @@ public final class SQLTool implements Configurable {
         store(MOST_COMMENTED_POLLS, prefs);
         store(MOST_VOTED_POLLS, prefs);
 		store(HIGHEST_SCORE_USERS, prefs);
+        store(FIND_ADVERTISEMENT_BY_STRING, prefs);
     }
 
     /**

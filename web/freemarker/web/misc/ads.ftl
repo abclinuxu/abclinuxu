@@ -1,4 +1,13 @@
+<#assign plovouci_sloupec>
+    <div class="s_sekce">
+    <ul>
+        <li><a href="${URL.noPrefix("/EditAdvertisement?action=addPosition")}">Přidat pozici</a></li>
+    </ul>
+    </div>
+</#assign>
+
 <#include "../header.ftl">
+<#include "../ads-macro.ftl">
 
 <@lib.showMessages/>
 
@@ -15,54 +24,41 @@
     je třeba kódy rozlišit podle URL adresy.
 </p>
 
-<form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
-    <#if POSITIONS?exists>
-        <table border="0">
-            <thead>
-                <tr>
-                    <td>&nbsp;</td>
-                    <td>název</td>
-                    <td>identifikátor</td>
-                    <td>stav</td>
-                </tr>
-            </thead>
-            <#list POSITIONS as position>
-                <#assign id = TOOL.xpath(position,"@id")>
-                <tr>
-                    <td>
-                        <input type="checkbox" name="identifier" value="${id}">
-                    </td>
-                    <td>
-                        <a href="${URL.noPrefix("/EditAdvertisement?action=showPosition&amp;identifier="+id)}">
-                            ${TOOL.xpath(position, "name/text()")}
-                        </a>
-                    </td>
-                    <td>
-			            <code>${id}</code>
-                    </td>
-                    <td>
-                        <#if TOOL.xpath(position, "@active")=="yes">
-                            <span class="ad_active">aktivní</span>
-                        <#else>
-                            <span class="ad_inactive">neaktivní</span>
-                        </#if>
-                    </td>
-                </tr>
-            </#list>
-            <tr>
-                <td>
-                    <!-- select none/all checkbox -->
-                </td>
-                <td colspan="2">
-                    <input type="submit" name="activatePosition" value="Zapnout">
-                    <input type="submit" name="deactivatePosition" value="Vypnout">
-                    <input type="submit" name="rmPosition" value="Smazat" onclick="return confirm('Opravdu chcete smazat zvolené pozice?')">
-                    vybrané pozice
-                </td>
-            </tr>
-        </table>
-    </#if>
-    <input type="submit" name="addPosition" value="Vložit novou pozici">
-</form>
+<table class="siroka">
+    <tr><th>Název</th><th>Identifikátor</th><th>Stav</th><th>Popis</th></tr>
+    <#list POSITIONS as ad>
+        <tr>
+            <td><a href="${URL.noPrefix("/EditAdvertisement/"+ad.id+"?action=showPosition")}">${TOOL.childName(ad)}</a></td>
+            <td>${ad.child.string1}</td>
+            <td>
+                <#if TOOL.xpath(ad.child, "/data/active")?default("yes")=="yes">
+                    aktivní
+                <#else>
+                    <span style="color: red">neaktivní</span>
+                </#if>
+            </td>
+            <td>${TOOL.xpath(ad.child, "/data/description")?if_exists}</td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                Kódy: ${TOOL.xpathValue(ad.child.data, "count(//code)")?eval}<#--
+                --><#assign codeid=0>
+                <#macro code><#--
+                    -->, <a href="${URL.noPrefix("/EditAdvertisement?action=showCode&amp;rid="+thisad.id+"&amp;code="+codeid)}">${.node.@name}</a> (${.node.variants?children?size})
+                    <#assign codeid=codeid+1>
+                </#macro>
+
+                <#macro @element></#macro>
+                <#assign thisad=ad>
+                <#recurse TOOL.asNode(ad.child.data).data.codes>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <hr>
+            </td>
+        </tr>
+    </#list>
+</table>
 
 <#include "../footer.ftl">

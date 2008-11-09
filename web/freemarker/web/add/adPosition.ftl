@@ -34,8 +34,8 @@
         <tr>
             <td width="90" class="required">Identifikátor</td>
             <td>
-                <input type="text" name="identifier" value="${PARAMS.identifier?if_exists?html}" size="60" tabindex="2">
-                <div class="error">${ERRORS.identifier?if_exists}</div>
+                <input type="text" name="newIdentifier" value="${PARAMS.newIdentifier?if_exists?html}" size="60" tabindex="2">
+                <div class="error">${ERRORS.newIdentifier?if_exists}</div>
             </td>
         </tr>
         <tr>
@@ -43,19 +43,6 @@
             <td>
                 <textarea name="desc" rows="3" class="siroka" tabindex="3">${PARAMS.desc?if_exists?html}</textarea>
                 <div class="error">${ERRORS.desc?if_exists}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="90">Dynamický kód</td>
-            <td>
-                <input type="checkbox" name="dynamic"<#if PARAMS.dynamic?if_exists>checked</#if> tabindex="4">
-            </td>
-        </tr>
-        <tr>
-            <td width="90">Reklamní kód</td>
-            <td>
-                <textarea name="main_code" rows="15" class="siroka" tabindex="5">${PARAMS.main_code?if_exists?html}</textarea>
-                <div class="error">${ERRORS.main_code?if_exists}</div>
             </td>
         </tr>
         <tr>

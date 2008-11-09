@@ -1499,6 +1499,7 @@ public class Tools implements Configurable {
         env.put(Constants.VAR_REQUEST_URI, vars.get(Constants.VAR_REQUEST_URI));
         env.put(Constants.VAR_CSS_URI, vars.get(Constants.VAR_CSS_URI));
         env.put(Constants.VAR_USER, vars.get(Constants.VAR_USER));
+        env.put("ASSIGNED_TAGS", vars.get("ASSIGNED_TAGS"));
         return Advertisement.getAdvertisement(position, env);
     }
 
@@ -2361,5 +2362,9 @@ public class Tools implements Configurable {
 
     public static void setNewsLetterHardLimit(int newsLetterHardLimit) {
         Tools.newsLetterHardLimit = newsLetterHardLimit;
+    }
+    
+    public static Map getStandardAdRegexps() {
+        return Advertisement.standardRegexps;
     }
 }

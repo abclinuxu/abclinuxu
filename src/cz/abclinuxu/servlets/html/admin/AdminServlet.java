@@ -42,6 +42,7 @@ import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
 
+import cz.abclinuxu.utils.Advertisement;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -50,7 +51,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.List;
-import java.util.Collections;
 
 import org.logicalcobwebs.proxool.ProxoolFacade;
 import org.logicalcobwebs.proxool.admin.SnapshotIF;
@@ -130,6 +130,7 @@ public class AdminServlet implements AbcAction {
 	    DateTool.calculateTodayTimes();
         VariableFetcher.getInstance().run(); // refresh variables
         TagTool.init();
+        Advertisement.clearCache();
 
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "promazal cache");

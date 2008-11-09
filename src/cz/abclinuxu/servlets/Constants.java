@@ -70,6 +70,7 @@ public class Constants implements Configurable {
 	public static int CAT_SUBPORTALS;
 	public static int CAT_EVENTS;
     public static int CAT_VIDEOS;
+    public static int CAT_ADVERTISEMENTS;
 
     public static int ITEM_DIZ_TODO;
     /** item holding dynamic configuration */
@@ -118,6 +119,7 @@ public class Constants implements Configurable {
 	public static int REL_SUBPORTALS;
 	public static int REL_EVENTS;
     public static int REL_VIDEOS;
+    public static int REL_ADVERTISEMENTS;
 
     public static int GROUP_ADMINI;
     public static int GROUP_AUTORI;
