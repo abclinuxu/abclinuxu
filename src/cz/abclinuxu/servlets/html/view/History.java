@@ -26,9 +26,12 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.exceptions.*;
 import cz.abclinuxu.exceptions.SecurityException;
 
@@ -80,6 +83,7 @@ public class History implements AbcAction {
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistence persistence = PersistenceFactory.getPersistence();
         SQLTool sqlTool = SQLTool.getInstance();
 
         String type = (String) params.get(PARAM_TYPE);
@@ -89,7 +93,8 @@ public class History implements AbcAction {
         int uid = Misc.parseInt((String)params.get(PARAM_USER_SHORT),0);
         String filter = (String) params.get(PARAM_FILTER);
 
-        List data;
+        List<Relation> data;
+        List parents = new ArrayList();
         int total;
         Paging found;
         Qualifier[] qualifiers;
@@ -100,6 +105,7 @@ public class History implements AbcAction {
             data = sqlTool.findArticleRelations(qualifiers, 0);
             found = new Paging(data,from,count,total,qualifiers);
             type = VALUE_TYPE_ARTICLES;
+            parents.add(persistence.findById(new Relation(Constants.REL_ARTICLES)));
 
         } else if ( VALUE_TYPE_NEWS.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
@@ -112,6 +118,7 @@ public class History implements AbcAction {
             }
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_NEWS;
+            parents.add(persistence.findById(new Relation(Constants.REL_NEWS)));
 
         } else if ( VALUE_TYPE_FAQ.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
@@ -119,6 +126,7 @@ public class History implements AbcAction {
             data = sqlTool.findItemRelationsWithType(Item.FAQ, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_FAQ;
+            parents.add(persistence.findById(new Relation(Constants.REL_FAQ)));
 
         } else if ( VALUE_TYPE_HARDWARE.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
@@ -126,6 +134,7 @@ public class History implements AbcAction {
             data = sqlTool.findItemRelationsWithType(Item.HARDWARE, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_HARDWARE;
+            parents.add(persistence.findById(new Relation(Constants.REL_HARDWARE)));
 
         } else if ( VALUE_TYPE_WIKI.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_WHEN, Qualifier.ORDER_DESCENDING, from, count);
@@ -149,6 +158,7 @@ public class History implements AbcAction {
             data = sqlTool.findItemRelationsWithType(Item.SOFTWARE, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_SOFTWARE;
+            parents.add(persistence.findById(new Relation(Constants.REL_SOFTWARE)));
 
         } else if ( VALUE_TYPE_DISCUSSION.equalsIgnoreCase(type) ) {
             if (uid > 0 && VALUE_FILTER_LAST.equals(filter)) {
@@ -198,6 +208,7 @@ public class History implements AbcAction {
             data = sqlTool.findItemRelationsWithType(Item.DICTIONARY, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_DICTIONARY;
+            parents.add(persistence.findById(new Relation(Constants.REL_DICTIONARY)));
 
         } else if ( VALUE_TYPE_PERSONALITIES.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
@@ -214,6 +225,7 @@ public class History implements AbcAction {
             data = sqlTool.findItemRelationsWithType(Item.PERSONALITY, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_PERSONALITIES;
+            parents.add(persistence.findById(new Relation(Constants.REL_PERSONALITIES)));
 
         } else
             return ServletUtils.showErrorPage("Chybí parametr type!",env,request);
@@ -229,6 +241,8 @@ public class History implements AbcAction {
             sb.append("&amp;").append(Constants.PARAM_ORDER_BY).append("=").append(Constants.ORDER_BY_WHEN);
         else if (found.isQualifierSet(Qualifier.SORT_BY_ID.toString()))
             sb.append("&amp;").append(Constants.PARAM_ORDER_BY ).append("=").append(Constants.ORDER_BY_ID);
+        else if (found.isQualifierSet(Qualifier.SORT_BY_TITLE.toString()))
+            sb.append("&amp;").append(Constants.PARAM_ORDER_BY ).append("=").append(Constants.ORDER_BY_TITLE);
 
         if ( found.isQualifierSet(Qualifier.ORDER_DESCENDING.toString()) )
             sb.append("&amp;").append(Constants.PARAM_ORDER_DIR).append("=").append(Constants.ORDER_DIR_DESC);
@@ -240,6 +254,9 @@ public class History implements AbcAction {
 
         if (filter != null)
             sb.append("&amp;").append(PARAM_FILTER).append("=").append(filter);
+
+        if (! parents.isEmpty())
+            env.put(Constants.VAR_PARENTS, parents);
 
         env.put(VAR_URL_BEFORE_FROM, "/History?type="+type+"&amp;from=");
         env.put(VAR_URL_AFTER_FROM, sb.toString());
@@ -268,6 +285,8 @@ public class History implements AbcAction {
                 sortBy = Qualifier.SORT_BY_WHEN;
             else if (Constants.ORDER_BY_ID.equals(sBy))
                 sortBy = Qualifier.SORT_BY_ID;
+            else if (Constants.ORDER_BY_TITLE.equals(sBy))
+                sortBy = Qualifier.SORT_BY_TITLE;
         }
 
         String sDir = (String) params.get(Constants.PARAM_ORDER_DIR);

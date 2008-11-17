@@ -708,7 +708,7 @@
             <var name="TITLE" value="Přístup odepřen" />
         </action>
     </servlet>
-    
+
     <servlet name="ViewJobsCz">
 	<action name="show" content="/show/jobscz.ftl">
 	    <var name="TITLE" value="Výpis volných pracovních pozic jobs.cz" />
@@ -737,19 +737,19 @@
         <action name="comments" content="/show/history_dizs.ftl">
             <var name="TITLE" value="Výpis komentářů" />
         </action>
-        <action name="hardware" content="/show/history_records.ftl">
+        <action name="hardware" content="/show/history_wiki.ftl">
             <var name="TITLE" value="Výpis hardwaru" />
         </action>
-        <action name="software" content="/show/history_records.ftl">
+        <action name="software" content="/show/history_wiki.ftl">
             <var name="TITLE" value="Výpis softwaru" />
         </action>
-        <action name="dictionary" content="/show/history_dictionary.ftl">
+        <action name="dictionary" content="/show/history_wiki.ftl">
             <var name="TITLE" value="Výpis pojmů" />
         </action>
-        <action name="personalities" content="/show/history_personalities.ftl">
+        <action name="personalities" content="/show/history_wiki.ftl">
             <var name="TITLE" value="Výpis osobností" />
         </action>
-        <action name="faq" content="/show/history_faq.ftl">
+        <action name="faq" content="/show/history_wiki.ftl">
             <var name="TITLE" value="Výpis často kladených otázek" />
         </action>
         <action name="wiki" content="/show/history_wiki.ftl">

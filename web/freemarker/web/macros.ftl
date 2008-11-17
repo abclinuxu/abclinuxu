@@ -418,6 +418,10 @@
     <option value="${value}"<#if TOOL.isWithin(values, value)> selected</#if>>${caption}</option>
 </#macro>
 
+<#macro showOption5 (value caption condition)>
+    <option value="${value}"<#if condition> selected</#if>>${caption}</option>
+</#macro>
+
 <#macro advertisement (id)>${TOOL.getAdvertisement(id, .vars)}</#macro>
 
 <#macro showDiscussionState diz>

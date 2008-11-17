@@ -1,12 +1,47 @@
 <#include "../header.ftl">
+<#if FOUND.isQualifierSet("SORT_BY_CREATED")>
+    <#assign sortByCreated = "true">
+<#elseif FOUND.isQualifierSet("SORT_BY_TITLE")>
+    <#assign sortByTitle = "true">
+<#else>
+    <#assign sortByUpdated = "true">
+</#if>
 
-<ul>
+<table class="siroka">
+    <tr>
+        <th>Název</th>
+        <th>
+            <#if sortByCreated??>
+                Vytvořeno
+            <#else>
+                Poslední změna
+            </#if>
+        </th>
+        <th>Autor</th>
+    </tr>
     <#list FOUND.data as relation>
-        <li>
-            <a href="${relation.url?default("/show/"+relation.id)}">${TOOL.childName(relation)}</a>
-        </li>
+        <tr>
+            <td>
+                <a href="${relation.url?default("/show/"+relation.id)}">${TOOL.childName(relation)}</a>
+            </td>
+            <td>
+                <#if sortByCreated??>
+                    ${DATE.show(relation.child.created, "SMART")}
+                <#else>
+                    ${DATE.show(relation.child.updated, "SMART")}
+                </#if>
+            </td>
+            <td>
+                <#if sortByCreated??>
+                    <#assign revInfo = TOOL.getRevisionInfo(relation.child)>
+                    <@lib.showUser revInfo.creator/>
+                <#else>
+                    <@lib.showUser TOOL.createUser(relation.child.owner)/>
+                </#if>
+            </td>
+        </tr>
     </#list>
-</ul>
+</table>
 
 <form action="/History">
     <table border="0">
@@ -22,13 +57,15 @@
             <td><input type="text" size="3" value="${FOUND.pageSize}" name="count" tabindex="2"></td>
             <td>
                 <select name="orderBy" tabindex="3">
-                    <option value="update">data poslední změny</option>
+                    <@lib.showOption5 "update", "data poslední změny", sortByUpdated??/>
+                    <@lib.showOption5 "create", "data vytvoření", sortByCreated??/>
+                    <@lib.showOption5 "title", "názvu", sortByTitle??/>
                 </select>
             </td>
             <td>
                 <select name="orderDir" tabindex="4">
-                <option value="desc">sestupně</option>
-                <option value="asc">vzestupně</option>
+                    <@lib.showOption5 "desc", "sestupně", FOUND.isQualifierSet("ORDER_DESCENDING")/>
+                    <@lib.showOption5 "asc", "vzestupně", FOUND.isQualifierSet("ORDER_ASCENDING")/>
                 </select>
             </td>
             <td><input type="submit" value="Zobrazit"></td>

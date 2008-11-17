@@ -83,7 +83,7 @@ public class ShowObject implements AbcAction {
     public static final String ACTION_SHOW_CENSORED = "censored";
 
     public static final String VAR_RELATION = "RELATION";
-    public static final String VAR_PARENTS = "PARENTS";
+    public static final String VAR_PARENTS = Constants.VAR_PARENTS;
     public static final String VAR_ITEM = "ITEM";
     public static final String VAR_DRIVER_VERSIONS = "DRIVER_VERSIONS";
     /** children relation of Item, grouped by their type */
@@ -110,7 +110,7 @@ public class ShowObject implements AbcAction {
         env.put(VAR_RELATION,relation);
 
         List parents = persistence.findParents(relation);
-        env.put(VAR_PARENTS, parents);
+        env.put(Constants.VAR_PARENTS, parents);
 
         Relation subportal = Tools.getParentSubportal(parents);
         if (subportal != null) {
@@ -154,7 +154,7 @@ public class ShowObject implements AbcAction {
             Versioning versioning = VersioningFactory.getVersioning();
             versioning.load(item, revision);
 
-            List parents = (List) env.get(ShowObject.VAR_PARENTS);
+            List parents = (List) env.get(Constants.VAR_PARENTS);
             Link link = new Link("Revize "+revision, relation.getUrl()+"?revize="+revision, null);
             parents.add(link);
         }
