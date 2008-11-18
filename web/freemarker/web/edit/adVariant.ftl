@@ -28,7 +28,7 @@
         <tr>
             <td width="90" class="required">Kód</td>
             <td>
-                <textarea name="htmlCode" rows="3" class="siroka" tabindex="3">${PARAMS.htmlCode?if_exists?html}</textarea>
+                <textarea name="htmlCode" rows="15" class="siroka" tabindex="3">${PARAMS.htmlCode?if_exists?html}</textarea>
                 <div class="error">${ERRORS.htmlCode?if_exists}</div>
             </td>
         </tr>
