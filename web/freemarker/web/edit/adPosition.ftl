@@ -40,26 +40,13 @@
             </td>
         </tr>
         <tr>
-            <td width="90">Dynamický kód</td>
-            <td>
-                <input type="checkbox" name="dynamic"<#if PARAMS.dynamic?if_exists>checked</#if> tabindex="4">
-            </td>
-        </tr>
-        <tr>
-            <td width="90">Reklamní kód</td>
-            <td>
-                <textarea name="main_code" rows="15" class="siroka" tabindex="5">${PARAMS.main_code?if_exists?html}</textarea>
-                <div class="error">${ERRORS.main_code?if_exists}</div>
-            </td>
-        </tr>
-        <tr>
             <td width="90">&nbsp;</td>
             <td>
                 <input tabindex="5" type="submit" name="finish" value="Dokonči">
             </td>
         </tr>
     </table>
-    <input type="hidden" name="identifier" value="${PARAMS.identifier}">
+    <input type="hidden" name="rid" value="${PARAMS.rid}">
     <input type="hidden" name="action" value="editPosition2">
 </form>
 
