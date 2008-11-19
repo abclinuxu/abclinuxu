@@ -1,0 +1,263 @@
+<config>
+    <!--
+        when some element has attribute id, then it creates new instance of this element
+        when some element has attribute rel, then it reuses predefined instance of this element
+    -->
+
+    <!-- reusable definitions -->
+    <definitions>
+        <attributes>
+            <attribute id="ALIGN"/>
+            <attribute id="ALT"/>
+            <attribute id="BORDER"/>
+            <attribute id="CELLPADDING"/>
+            <attribute id="CELLSPACING"/>
+            <attribute id="COLSPAN"/>
+            <attribute id="HEIGHT"/>
+            <attribute id="HREF"/>
+            <attribute id="ID"/>
+            <attribute id="NAME"/>
+            <attribute id="REL"/>
+            <attribute id="ROWSPAN"/>
+            <attribute id="SRC"/>
+            <attribute id="STYLE"/>
+            <attribute id="TARGET"/>
+            <attribute id="TITLE"/>
+            <attribute id="VALIGN"/>
+            <attribute id="WIDTH"/>
+        </attributes>
+        <tags>
+            <tag id="A" mustBeClosed="true">
+                <attribute rel="HREF"/>
+                <attribute rel="NAME"/>
+                <attribute rel="REL"/>
+                <attribute rel="TARGET"/>
+                <attribute rel="TITLE"/>
+            </tag>
+            <tag id="ABBR" mustBeClosed="true">
+                <attribute rel="TITLE"/>
+            </tag>
+            <tag id="ACRONYM" mustBeClosed="true">
+                <attribute rel="TITLE"/>
+            </tag>
+            <tag id="B" mustBeClosed="true"/>
+            <tag id="BIG" mustBeClosed="true"/>
+            <tag id="BLOCKQUOTE" mustBeClosed="true">
+                <attribute rel="ID"/>
+            </tag>
+            <tag id="BR" mustBeClosed="false"/>
+            <tag id="CENTER" mustBeClosed="true"/>
+            <tag id="CITE" mustBeClosed="true"/>
+            <tag id="CODE" mustBeClosed="true"/>
+            <tag id="DD" mustBeClosed="true"/>
+            <tag id="DEL" mustBeClosed="true"/>
+            <tag id="DIV" mustBeClosed="true">
+                <attribute id="CLASS">
+                    <values>
+                        <value>cleaner</value>
+                    </values>
+                </attribute>
+                <attribute rel="ID"/>
+            </tag>
+            <tag id="DL" mustBeClosed="true"/>
+            <tag id="DT" mustBeClosed="true"/>
+            <tag id="EM" mustBeClosed="true"/>
+            <tag id="HR" mustBeClosed="false"/>
+            <tag id="H1" mustBeClosed="true">
+                <attribute rel="ID"/>
+            </tag>
+            <tag id="H2" mustBeClosed="true">
+                <attribute rel="ID"/>
+            </tag>
+            <tag id="H3" mustBeClosed="true">
+                <attribute rel="ID"/>
+            </tag>
+            <tag id="H4" mustBeClosed="true">
+                <attribute rel="ID"/>
+            </tag>
+            <tag id="H5" mustBeClosed="true">
+                <attribute rel="ID"/>
+            </tag>
+            <tag id="I" mustBeClosed="true"/>
+            <tag id="IMG" mustBeClosed="true">
+                <attribute rel="ALT"/>
+                <attribute rel="BORDER"/>
+                <attribute id="CLASS">
+                    <values>
+                        <value>floatleft</value>
+                        <value>floatright</value>
+                    </values>
+                </attribute>
+                <attribute rel="HEIGHT"/>
+                <attribute rel="WIDTH"/>
+                <attribute rel="SRC"/>
+            </tag>
+            <tag id="INS" mustBeClosed="true"/>
+            <tag id="KBD" mustBeClosed="true"/>
+            <tag id="LI" mustBeClosed="false"/>
+            <tag id="OL" mustBeClosed="true">
+                <attribute rel="ID"/>
+            </tag>
+            <tag id="P" mustBeClosed="true">
+                <attribute id="CLASS">
+                    <values>
+                        <value>cleaner</value>
+                    </values>
+                </attribute>
+                <attribute rel="ID"/>
+            </tag>
+            <tag id="PRE" mustBeClosed="true">
+                <attribute id="CLASS">
+                    <values>
+                        <value>kod</value>
+                    </values>
+                </attribute>
+                <attribute rel="ID"/>
+                <attribute rel="WIDTH"/>
+            </tag>
+            <tag id="Q" mustBeClosed="true">
+                <attribute rel="ID"/>
+            </tag>
+            <tag id="SMALL" mustBeClosed="true"/>
+            <tag id="SPAN" mustBeClosed="true">
+                <attribute rel="ID"/>
+            </tag>
+            <tag id="STRONG" mustBeClosed="true"/>
+            <tag id="SUB" mustBeClosed="true"/>
+            <tag id="SUP" mustBeClosed="true"/>
+            <tag id="TABLE" mustBeClosed="true">
+                <attribute rel="BORDER"/>
+                <attribute rel="CELLPADDING"/>
+                <attribute rel="CELLSPACING"/>
+                <attribute id="CLASS">
+                    <values>
+                        <value>tabulka</value>
+                    </values>
+                </attribute>
+                <attribute rel="ID"/>
+            </tag>
+            <tag id="TBODY" mustBeClosed="true"/>
+            <tag id="TD" mustBeClosed="true">
+                <attribute rel="ALIGN"/>
+                <attribute rel="COLSPAN"/>
+                <attribute rel="ROWSPAN"/>
+                <attribute rel="VALIGN"/>
+            </tag>
+            <tag id="TFOOT" mustBeClosed="true"/>
+            <tag id="TH" mustBeClosed="true">
+                <attribute rel="ALIGN"/>
+                <attribute rel="COLSPAN"/>
+                <attribute rel="ROWSPAN"/>
+                <attribute rel="VALIGN"/>
+            </tag>
+            <tag id="THEAD" mustBeClosed="true"/>
+            <tag id="TR" mustBeClosed="true"/>
+            <tag id="TT" mustBeClosed="true"/>
+            <tag id="U" mustBeClosed="true"/>
+            <tag id="UL" mustBeClosed="true">
+                <attribute rel="ID"/>
+            </tag>
+            <tag id="VAR" mustBeClosed="true"/>
+        </tags>
+    </definitions>
+
+    <!-- allowed tags for user's signature -->
+    <rules id="signature">
+        <tag rel="A"/>
+        <tag rel="ABBR"/>
+        <tag rel="ACRONYM"/>
+        <tag rel="CITE"/>
+        <tag rel="CODE"/>
+    </rules>
+
+    <!-- allowed tags for news, it does not use some predefined tags to control number of attributes -->
+    <rules id="news">
+        <tag id="A" mustBeClosed="true">
+            <attribute rel="HREF"/>
+            <attribute rel="REL"/>
+            <attribute rel="TITLE"/>
+        </tag>
+        <tag rel="ABBR"/>
+        <tag rel="ACRONYM"/>
+        <tag rel="BR"/>
+        <tag id="CITE" mustBeClosed="true"/>
+        <tag id="CODE" mustBeClosed="true"/>
+        <tag id="P" mustBeClosed="true"/>
+        <tag id="Q" mustBeClosed="true"/>
+    </rules>
+
+    <!-- -->
+    <rules id="default">
+        <tag rel="A"/>
+        <tag rel="ABBR"/>
+        <tag rel="ACRONYM"/>
+        <tag rel="B"/>
+        <tag rel="BIG"/>
+        <tag rel="BLOCKQUOTE"/>
+        <tag rel="BR"/>
+        <tag rel="CENTER"/>
+        <tag rel="CITE"/>
+        <tag rel="CODE"/>
+        <tag rel="DD"/>
+        <tag rel="DEL"/>
+        <tag rel="DIV"/>
+        <tag rel="DL"/>
+        <tag rel="DT"/>
+        <tag rel="EM"/>
+        <tag rel="HR"/>
+        <tag rel="H1"/>
+        <tag rel="H2"/>
+        <tag rel="H3"/>
+        <tag rel="H4"/>
+        <tag rel="H5"/>
+        <tag rel="I"/>
+        <tag rel="INS"/>
+        <tag rel="KBD"/>
+        <tag rel="LI"/>
+        <tag rel="OL"/>
+        <tag rel="P"/>
+        <tag rel="PRE"/>
+        <tag rel="Q"/>
+        <tag rel="SMALL"/>
+        <tag rel="SPAN"/>
+        <tag rel="STRONG"/>
+        <tag rel="SUB"/>
+        <tag rel="SUP"/>
+        <tag rel="TABLE"/>
+        <tag rel="TBODY"/>
+        <tag rel="TD"/>
+        <tag rel="TFOOT"/>
+        <tag rel="TH"/>
+        <tag rel="THEAD"/>
+        <tag rel="TR"/>
+        <tag rel="TT"/>
+        <tag rel="U"/>
+        <tag rel="UL"/>
+        <tag rel="VAR"/>
+    </rules>
+
+    <!-- -->
+    <rules id="wiki" extends="default">
+        <tag rel="IMG"/>
+
+    </rules>
+
+    <!-- -->
+    <rules id="blog" extends="default">
+        <tag rel="IMG"/>
+    </rules>
+
+    <!-- -->
+    <rules id="blog-perex" extends="default" checker="cz.abclinuxu.utils.parser.safehtml.BlogPerexChecker">
+        <remove>
+            <tag rel="B"/>
+            <tag rel="BIG"/>
+            <tag rel="H1"/>
+            <tag rel="H2"/>
+            <tag rel="H3"/>
+            <tag rel="H4"/>
+            <tag rel="H5"/>
+            <tag rel="STRONG"/>
+        </remove>
+    </rules>
+</config>
