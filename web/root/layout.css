@@ -1190,3 +1190,15 @@ p.documentHistory {
 	border-style: solid;
 	margin-left: 0.5em;
 }
+
+/* styly pro uzivatele */
+
+.tabulka {border-collapse: collapse;border:2px solid black}
+.tabulka td, .tabulka th {border: 1px solid black}
+.tabulka th {background-color: whitesmoke;}
+
+img.floatleft {float:left; margin: 0 5px 0 0; border: none;}
+img.floatright {float:right; margin: 0 0 0 5px; border: none;}
+
+.cleaner {clear:both}
+
