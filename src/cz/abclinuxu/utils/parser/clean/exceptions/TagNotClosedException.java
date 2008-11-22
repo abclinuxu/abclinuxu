@@ -16,7 +16,9 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  */
-package cz.abclinuxu.utils.parser.safehtml;
+package cz.abclinuxu.utils.parser.clean.exceptions;
+
+import cz.abclinuxu.utils.parser.clean.exceptions.HtmlCheckException;
 
 /**
  * The tag is not closed.

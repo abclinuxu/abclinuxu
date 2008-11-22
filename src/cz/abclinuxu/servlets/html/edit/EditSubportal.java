@@ -45,8 +45,9 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.monitor.MonitorTools;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
+import cz.abclinuxu.utils.parser.clean.Rules;
 
 import java.io.File;
 import java.util.Date;
@@ -63,7 +64,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.htmlparser.util.ParserException;
 
 /**
  *
@@ -466,10 +466,7 @@ public class EditSubportal implements AbcAction {
 
         try {
             desc = HtmlPurifier.clean(desc);
-            SafeHTMLGuard.check(desc);
-        } catch (ParserException e) {
-            ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
-            return false;
+            HtmlChecker.check(Rules.DEFAULT, desc);
         } catch (Exception e) {
             ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
             return false;
@@ -491,10 +488,7 @@ public class EditSubportal implements AbcAction {
 
         try {
             desc = HtmlPurifier.clean(desc);
-            SafeHTMLGuard.check(desc);
-        } catch (ParserException e) {
-            ServletUtils.addError(PARAM_DESCRIPTION_SHORT, e.getMessage(), env, null);
-            return false;
+            HtmlChecker.check(Rules.DEFAULT, desc);
         } catch (Exception e) {
             ServletUtils.addError(PARAM_DESCRIPTION_SHORT, e.getMessage(), env, null);
             return false;

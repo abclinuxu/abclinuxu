@@ -34,8 +34,9 @@ import cz.abclinuxu.security.AccessKeeper;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
+import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -44,7 +45,6 @@ import cz.abclinuxu.AbcException;
 
 import java.util.*;
 
-import org.htmlparser.util.ParserException;
 
 /**
  * Servlet for manipulation with Polls.
@@ -360,11 +360,7 @@ public class EditPoll implements AbcAction {
 
         try {
             text = HtmlPurifier.clean(text);
-            SafeHTMLGuard.check(text);
-        } catch (ParserException e) {
-            log.error("ParseException on '" + text + "'", e);
-            ServletUtils.addError(PARAM_QUESTION, e.getMessage(), env, null);
-            return false;
+            HtmlChecker.check(Rules.DEFAULT, text);
         } catch (Exception e) {
             ServletUtils.addError(PARAM_QUESTION, e.getMessage(), env, null);
             return false;
@@ -391,11 +387,7 @@ public class EditPoll implements AbcAction {
 
             try {
                 choice = HtmlPurifier.clean(choice);
-                SafeHTMLGuard.check(choice);
-            } catch (ParserException e) {
-                log.error("ParseException on '" + choice + "'", e);
-                ServletUtils.addError(PARAM_QUESTION, e.getMessage(), env, null);
-                return false;
+                HtmlChecker.check(Rules.DEFAULT, choice);
             } catch (Exception e) {
                 ServletUtils.addError(PARAM_QUESTION, e.getMessage(), env, null);
                 return false;

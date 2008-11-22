@@ -41,15 +41,15 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.forms.PermissionsSet;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.parser.safehtml.WikiContentGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
+import cz.abclinuxu.utils.parser.clean.Rules;
 
 import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -317,11 +317,7 @@ public class EditCategory implements AbcAction {
         if (tmp != null && tmp.length() > 0) {
             try {
                 tmp = HtmlPurifier.clean(tmp);
-                WikiContentGuard.check(tmp);
-            } catch (ParserException e) {
-                log.error("ParseException on '" + tmp + "'", e);
-                ServletUtils.addError(PARAM_NOTE, e.getMessage(), env, null);
-                return false;
+                HtmlChecker.check(Rules.WIKI, tmp);
             } catch (Exception e) {
                 ServletUtils.addError(PARAM_NOTE, e.getMessage(), env, null);
                 return false;

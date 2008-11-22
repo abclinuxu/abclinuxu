@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005 Leos Literak
+ *  Copyright (C) 2006 Leos Literak
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -16,13 +16,13 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  */
-package cz.abclinuxu.utils.parser.safehtml;
+package cz.abclinuxu.utils.parser.clean.exceptions;
 
 /**
  * The portal policy forbids given (any) attribute.
  */
-public class AttributeNotAllowedException extends HtmlCheckException {
-    public AttributeNotAllowedException(String message) {
+public class AttributeValueNotAllowedException extends HtmlCheckException {
+    public AttributeValueNotAllowedException(String message) {
         super(message);
     }
 }

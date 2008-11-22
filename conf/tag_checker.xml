@@ -14,13 +14,21 @@
             <attribute id="CELLSPACING"/>
             <attribute id="COLSPAN"/>
             <attribute id="HEIGHT"/>
-            <attribute id="HREF"/>
+            <attribute id="HREF" checker="cz.abclinuxu.utils.parser.clean.impl.LinkAttributeChecker"/>
             <attribute id="ID"/>
             <attribute id="NAME"/>
             <attribute id="REL"/>
             <attribute id="ROWSPAN"/>
-            <attribute id="SRC"/>
-            <attribute id="STYLE"/>
+            <attribute id="SRC" checker="cz.abclinuxu.utils.parser.clean.impl.LinkAttributeChecker"/>
+            <attribute id="STYLE" checker="cz.abclinuxu.utils.parser.clean.impl.StyleAttributeChecker">
+                <property id="TEXT-ALIGN">
+                    <values>
+                        <value>center</value>
+                        <value>left</value>
+                        <value>right</value>
+                    </values>
+                </property>
+            </attribute>
             <attribute id="TARGET"/>
             <attribute id="TITLE"/>
             <attribute id="VALIGN"/>
@@ -44,6 +52,7 @@
             <tag id="BIG" mustBeClosed="true"/>
             <tag id="BLOCKQUOTE" mustBeClosed="true">
                 <attribute rel="ID"/>
+                <attribute rel="STYLE"/>
             </tag>
             <tag id="BR" mustBeClosed="false"/>
             <tag id="CENTER" mustBeClosed="true"/>
@@ -58,6 +67,7 @@
                     </values>
                 </attribute>
                 <attribute rel="ID"/>
+                <attribute rel="STYLE"/>
             </tag>
             <tag id="DL" mustBeClosed="true"/>
             <tag id="DT" mustBeClosed="true"/>
@@ -105,6 +115,7 @@
                     </values>
                 </attribute>
                 <attribute rel="ID"/>
+                <attribute rel="STYLE"/>
             </tag>
             <tag id="PRE" mustBeClosed="true">
                 <attribute id="CLASS">
@@ -113,6 +124,7 @@
                     </values>
                 </attribute>
                 <attribute rel="ID"/>
+                <attribute rel="STYLE"/>
                 <attribute rel="WIDTH"/>
             </tag>
             <tag id="Q" mustBeClosed="true">
@@ -135,12 +147,14 @@
                     </values>
                 </attribute>
                 <attribute rel="ID"/>
+                <attribute rel="WIDTH"/>
             </tag>
             <tag id="TBODY" mustBeClosed="true"/>
             <tag id="TD" mustBeClosed="true">
                 <attribute rel="ALIGN"/>
                 <attribute rel="COLSPAN"/>
                 <attribute rel="ROWSPAN"/>
+                <attribute rel="STYLE"/>
                 <attribute rel="VALIGN"/>
             </tag>
             <tag id="TFOOT" mustBeClosed="true"/>
@@ -148,10 +162,13 @@
                 <attribute rel="ALIGN"/>
                 <attribute rel="COLSPAN"/>
                 <attribute rel="ROWSPAN"/>
+                <attribute rel="STYLE"/>
                 <attribute rel="VALIGN"/>
             </tag>
             <tag id="THEAD" mustBeClosed="true"/>
-            <tag id="TR" mustBeClosed="true"/>
+            <tag id="TR" mustBeClosed="true">
+                <attribute rel="STYLE"/>
+            </tag>
             <tag id="TT" mustBeClosed="true"/>
             <tag id="U" mustBeClosed="true"/>
             <tag id="UL" mustBeClosed="true">
@@ -186,7 +203,7 @@
         <tag id="Q" mustBeClosed="true"/>
     </rules>
 
-    <!-- -->
+    <!-- default set of tags -->
     <rules id="default">
         <tag rel="A"/>
         <tag rel="ABBR"/>
@@ -236,19 +253,21 @@
         <tag rel="VAR"/>
     </rules>
 
-    <!-- -->
+    <!-- set of tags for wiki pages -->
     <rules id="wiki" extends="default">
         <tag rel="IMG"/>
-
     </rules>
 
-    <!-- -->
+    <!-- rules for texts where no HTML tags are allowed -->
+    <rules id="empty"/>
+
+    <!-- tags for blog story content -->
     <rules id="blog" extends="default">
         <tag rel="IMG"/>
     </rules>
 
-    <!-- -->
-    <rules id="blog-perex" extends="default" checker="cz.abclinuxu.utils.parser.safehtml.BlogPerexChecker">
+    <!-- tags for short blog stories or perex of longer stories -->
+    <rules id="blog-perex" extends="default" checker="cz.abclinuxu.utils.parser.clean.impl.BlogPerexChecker">
         <remove>
             <tag rel="B"/>
             <tag rel="BIG"/>

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006 Leos Literak
+ *  Copyright (C) 2008 Leos Literak
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -16,13 +16,18 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  */
-package cz.abclinuxu.utils.parser.safehtml;
+package cz.abclinuxu.utils.parser.clean.impl;
+
+import org.dom4j.Element;
 
 /**
- * The portal policy forbids given (any) attribute.
+ * Extensible way how to peform some additional or non-standard checks on attributes or definitions.
  */
-public class AttributeValueNotAllowedException extends HtmlCheckException {
-    public AttributeValueNotAllowedException(String message) {
-        super(message);
-    }
+public interface Checker {
+
+    /**
+     * Possibility to configure this object, called after instantiation.
+     * @param element configuration element
+     */
+    public void configure(Element element);
 }

@@ -16,13 +16,26 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  */
-package cz.abclinuxu.utils.parser.safehtml;
+package cz.abclinuxu.utils.parser.clean.exceptions;
 
 /**
- * The tag is not closed.
+ * Parent for all exceptions from html checkers.
+ * User: literakl
+ * Date: 17.8.2005
  */
-public class CrossedTagException extends HtmlCheckException {
-    public CrossedTagException(String message) {
+public class HtmlCheckException extends Exception {
+    public HtmlCheckException() {
+    }
+
+    public HtmlCheckException(String message) {
         super(message);
+    }
+
+    public HtmlCheckException(Throwable cause) {
+        super(cause);
+    }
+
+    public HtmlCheckException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

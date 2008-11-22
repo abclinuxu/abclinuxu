@@ -16,26 +16,15 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  */
-package cz.abclinuxu.utils.parser.safehtml;
+package cz.abclinuxu.utils.parser.clean.exceptions;
+
+import cz.abclinuxu.utils.parser.clean.exceptions.HtmlCheckException;
 
 /**
- * Parent for all exceptions from html checkers.
- * User: literakl
- * Date: 17.8.2005
+ * The tag is not allowed by portal policy.
  */
-public class HtmlCheckException extends Exception {
-    public HtmlCheckException() {
-    }
-
-    public HtmlCheckException(String message) {
+public class TagNotAllowedException extends HtmlCheckException {
+    public TagNotAllowedException(String message) {
         super(message);
-    }
-
-    public HtmlCheckException(Throwable cause) {
-        super(cause);
-    }
-
-    public HtmlCheckException(String message, Throwable cause) {
-        super(message, cause);
     }
 }

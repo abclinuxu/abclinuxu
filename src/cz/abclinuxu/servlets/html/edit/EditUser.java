@@ -41,10 +41,9 @@ import cz.abclinuxu.servlets.html.view.ViewUser;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.comparator.NameComparator;
-import cz.abclinuxu.utils.parser.safehtml.ProfileGuard;
-import cz.abclinuxu.utils.parser.safehtml.NoHTMLGuard;
-import cz.abclinuxu.utils.parser.safehtml.SignatureHTMLGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.Rules;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
@@ -75,8 +74,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.*;
 import java.util.regex.Matcher;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 /**
@@ -1520,27 +1517,17 @@ public class EditUser implements AbcAction {
 
     /**
      * Executes given guard.
-     * @param guard class of the guard. It must implement static method check(String)
+     * @param rules rules to be applied
      * @param text text to be checked
      * @param paramName error message will be associated with this parameter
      * @return true if everything is ok, false if guard throws exception
      */
-    private static boolean verifyGuard(Class guard, String text, String paramName, Map env) {
+    private static boolean verifyGuard(Rules rules, String text, String paramName, Map env) {
         try {
-            Method method = guard.getMethod("check", String.class);
-            method.invoke(null, text);
-        } catch(InvocationTargetException e) {
-            Throwable e1 = e.getCause();
-            if (e1 instanceof ParserException) {
-                log.error("ParseException on '" + text + "'", e);
-                ServletUtils.addError(paramName, e.getMessage(), env, null);
-                return false;
-            } else {
-                ServletUtils.addError(paramName, e1.getMessage(), env, null);
-                return false;
-            }
-        } catch (Exception e) {
-            log.error("Failed to run HTML guard "+guard.getName(), e);
+            HtmlChecker.check(rules, text);
+        } catch(Exception e) {
+            ServletUtils.addError(paramName, e.getMessage(), env, null);
+            return false;
         }
         return true;
     }
@@ -1635,7 +1622,7 @@ public class EditUser implements AbcAction {
             return false;
         }
 
-        if (! verifyGuard(NoHTMLGuard.class, name, PARAM_NAME, env))
+        if (! verifyGuard(Rules.EMPTY, name, PARAM_NAME, env))
             return false;
 
         user.setName(name);
@@ -1655,7 +1642,7 @@ public class EditUser implements AbcAction {
         if (openid != null && openid.length() == 0)
             openid = null;
 
-        if (! verifyGuard(NoHTMLGuard.class, openid, PARAM_OPEN_ID, env))
+        if (! verifyGuard(Rules.EMPTY, openid, PARAM_OPEN_ID, env))
             return false;
 
         user.setOpenId(openid);
@@ -1683,7 +1670,7 @@ public class EditUser implements AbcAction {
             return false;
         }
 
-        if (!verifyGuard(NoHTMLGuard.class, nick, PARAM_NICK, env))
+        if (!verifyGuard(Rules.EMPTY, nick, PARAM_NICK, env))
             return false;
 
         List<Integer> users = SQLTool.getInstance().findUsersWithNick(nick, null);
@@ -1791,7 +1778,7 @@ public class EditUser implements AbcAction {
             return true;
         }
 
-        if (!verifyGuard(NoHTMLGuard.class, city, PARAM_CITY, env))
+        if (!verifyGuard(Rules.EMPTY, city, PARAM_CITY, env))
             return false;
 
         DocumentHelper.makeElement(personal, "city").setText(city);
@@ -1815,7 +1802,7 @@ public class EditUser implements AbcAction {
             return true;
         }
 
-        if (!verifyGuard(NoHTMLGuard.class, area, PARAM_AREA, env))
+        if (!verifyGuard(Rules.EMPTY, area, PARAM_AREA, env))
             return false;
 
         DocumentHelper.makeElement(personal, "area").setText(area);
@@ -1839,7 +1826,7 @@ public class EditUser implements AbcAction {
             return true;
         }
 
-        if (!verifyGuard(NoHTMLGuard.class, country, PARAM_COUNTRY, env))
+        if (!verifyGuard(Rules.EMPTY, country, PARAM_COUNTRY, env))
             return false;
 
         DocumentHelper.makeElement(personal, "country").setText(country);
@@ -1868,7 +1855,7 @@ public class EditUser implements AbcAction {
             return false;
         }
 
-        if (!verifyGuard(NoHTMLGuard.class, page, PARAM_HOME_PAGE, env))
+        if (!verifyGuard(Rules.EMPTY, page, PARAM_HOME_PAGE, env))
             return false;
 
         DocumentHelper.makeElement(profile, "home_page").setText(page);
@@ -1917,7 +1904,7 @@ public class EditUser implements AbcAction {
         }
 
         about = HtmlPurifier.clean(about);
-        if (!verifyGuard(ProfileGuard.class, about, PARAM_ABOUT_ME, env))
+        if (!verifyGuard(Rules.DEFAULT, about, PARAM_ABOUT_ME, env))
             return false;
 
         Element element = DocumentHelper.makeElement(profile, "about_myself");
@@ -1943,7 +1930,7 @@ public class EditUser implements AbcAction {
         for ( Iterator iter = distros.iterator(); iter.hasNext(); ) {
             String distro = (String) iter.next();
             distro = HtmlPurifier.clean(distro);
-            if (!verifyGuard(NoHTMLGuard.class, distro, PARAM_DISTRIBUTION, env))
+            if (!verifyGuard(Rules.EMPTY, distro, PARAM_DISTRIBUTION, env))
                 return false;
 
             Element element = DocumentHelper.createElement("distribution");
@@ -1976,7 +1963,7 @@ public class EditUser implements AbcAction {
         }
 
         signature = HtmlPurifier.clean(signature);
-        if (!verifyGuard(SignatureHTMLGuard.class, signature, PARAM_SIGNATURE, env))
+        if (!verifyGuard(Rules.SIGNATURE, signature, PARAM_SIGNATURE, env))
             return false;
 
         signature = Misc.addRelNofollowToLink(signature);
@@ -2078,7 +2065,7 @@ public class EditUser implements AbcAction {
         element.setText(value);
         return true;
     }
-    
+
     private boolean setNewsMultiline(Map params, User user) {
         String newstitles = (String) params.get(PARAM_NEWS_MULTILINE);
         Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/news_multiline");

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006 Leos Literak
+ *  Copyright (C) 2008 Leos Literak
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -16,30 +16,21 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  */
-package cz.abclinuxu.utils.parser.safehtml;
+package cz.abclinuxu.utils.parser.clean.impl;
 
-import org.htmlparser.util.ParserException;
-
-import java.util.Collections;
+import cz.abclinuxu.utils.parser.clean.exceptions.HtmlCheckException;
 
 /**
- * This guard forbids any HTML tags. To be used for texts
- * supposed not to hold HTML, e.g. user names etc. Especially
- * neccessary for XSS protection.
+ * Extensible way how to peform some additional or non-standard checks on definitions.
  * @author literakl
- * @since 2.5.2006
+ * @since 22.11.2008
  */
-public class NoHTMLGuard {
+public interface DefinitionChecker extends Checker {
 
     /**
-     * Performs check of html string.
-     *
-     * @param s html to be checked.
-     * @throws TagNotAllowedException       If tag is not allowed or recognized.
-     * @throws TagNotClosedException        If tag is not closed.
-     * @throws AttributeNotAllowedException If attribute is not allowed.
+     * Performs some check on passed text and throws exception, if its contract is not fullfilled.
+     * @param text HTML text to be checked, it is never null
+     * @throws HtmlCheckException
      */
-    public static void check(String s) throws HtmlCheckException, ParserException {
-        TagValidator.check(s, Collections.EMPTY_MAP);
-    }
+    public void check(String text) throws HtmlCheckException;
 }

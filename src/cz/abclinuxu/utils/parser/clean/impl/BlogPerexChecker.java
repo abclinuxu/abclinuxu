@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005 Leos Literak
+ *  Copyright (C) 2008 Leos Literak
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -16,26 +16,24 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  */
-package cz.abclinuxu.utils.parser.safehtml;
+package cz.abclinuxu.utils.parser.clean.impl;
+
+import cz.abclinuxu.utils.parser.clean.exceptions.HtmlCheckException;
+import org.dom4j.Element;
 
 /**
- * Representation of tag and its policy.
+ * @author literakl
+ * @since 22.11.2008
  */
-class CheckedTag {
-    /** uper case tag name */
-    final String name;
-    /** whether this tag must be closed */
-    final boolean mustBeClosed;
-    /** array of allowed attributes */
-    final String[] attributes;
+public class BlogPerexChecker implements DefinitionChecker {
 
-    public CheckedTag(String name, boolean mustBeClosed, String[] attributes) {
-        this.name = name;
-        this.mustBeClosed = mustBeClosed;
-        this.attributes = attributes;
+    public void check(String text) throws HtmlCheckException {
+        String lower = text.toLowerCase();
+        if (lower.indexOf("<p") != lower.lastIndexOf("<p"))
+            throw new HtmlCheckException("V perexu není povolen více než jeden odstavec!");
+        if (lower.indexOf("<br") != lower.lastIndexOf("<br"))
+            throw new HtmlCheckException("V perexu není povolen více než jeden tag BR!");
     }
 
-    public String toString() {
-        return name;
-    }
+    public void configure(Element element) {}
 }

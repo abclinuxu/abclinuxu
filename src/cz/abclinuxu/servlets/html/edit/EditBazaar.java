@@ -35,8 +35,9 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.Rules;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.scheduler.VariableFetcher;
@@ -53,7 +54,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.htmlparser.util.ParserException;
 
 /**
  * This class is used to add new advertisements, edit or delete them
@@ -334,11 +334,7 @@ public class EditBazaar implements AbcAction {
         if (tmp != null && tmp.length() > 0) {
             try {
                 tmp = HtmlPurifier.clean(tmp);
-                SafeHTMLGuard.check(tmp);
-            } catch (ParserException e) {
-                log.error("ParseException on '" + tmp + "'", e);
-                ServletUtils.addError(PARAM_TEXT, e.getMessage(), env, null);
-                return false;
+                HtmlChecker.check(Rules.DEFAULT, tmp);
             } catch (Exception e) {
                 ServletUtils.addError(PARAM_TEXT, e.getMessage(), env, null);
                 return false;
@@ -366,11 +362,7 @@ public class EditBazaar implements AbcAction {
         if (tmp != null && tmp.length() > 0) {
             try {
                 tmp = HtmlPurifier.clean(tmp);
-                SafeHTMLGuard.check(tmp);
-            } catch (ParserException e) {
-                log.error("ParseException on '" + tmp + "'", e);
-                ServletUtils.addError(PARAM_PRICE, e.getMessage(), env, null);
-                return false;
+                HtmlChecker.check(Rules.DEFAULT, tmp);
             } catch (Exception e) {
                 ServletUtils.addError(PARAM_PRICE, e.getMessage(), env, null);
                 return false;
@@ -398,11 +390,7 @@ public class EditBazaar implements AbcAction {
         if (tmp != null && tmp.length() > 0) {
             try {
                 tmp = HtmlPurifier.clean(tmp);
-                SafeHTMLGuard.check(tmp);
-            } catch (ParserException e) {
-                log.error("ParseException on '" + tmp + "'", e);
-                ServletUtils.addError(PARAM_CONTACT, e.getMessage(), env, null);
-                return false;
+                HtmlChecker.check(Rules.DEFAULT, tmp);
             } catch (Exception e) {
                 ServletUtils.addError(PARAM_CONTACT, e.getMessage(), env, null);
                 return false;

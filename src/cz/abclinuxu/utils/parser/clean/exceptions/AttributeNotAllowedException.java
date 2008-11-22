@@ -16,27 +16,13 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  */
-package cz.abclinuxu.utils.parser.safehtml;
-
-import org.htmlparser.util.ParserException;
-
-import java.util.*;
+package cz.abclinuxu.utils.parser.clean.exceptions;
 
 /**
- * This class is responsible for keeping HTML content in user's profile
- * to be safe. It blocks XSS and invalid HTML constructs.
+ * The portal policy forbids given (any) attribute.
  */
-public class ProfileGuard {
-    static final Map TAGS = new HashMap(SafeHTMLGuard.TAGS);
-
-    /**
-     * Performs check of html string.
-     * @param s html to be checked.
-     * @throws TagNotAllowedException If tag is not allowed or recognized.
-     * @throws TagNotClosedException If tag is not closed.
-     * @throws AttributeNotAllowedException If attribute is not allowed.
-     */
-    public static void check(String s) throws ParserException, HtmlCheckException {
-        TagValidator.check(s, TAGS);
+public class AttributeNotAllowedException extends HtmlCheckException {
+    public AttributeNotAllowedException(String message) {
+        super(message);
     }
 }

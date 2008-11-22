@@ -35,8 +35,9 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.parser.safehtml.WikiContentGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
+import cz.abclinuxu.utils.parser.clean.Rules;
 
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +46,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.htmlparser.util.ParserException;
 
 /**
  *
@@ -144,11 +144,7 @@ public class EditForum implements AbcAction {
         if (tmp != null && tmp.length() > 0) {
             try {
                 tmp = HtmlPurifier.clean(tmp);
-                WikiContentGuard.check(tmp);
-            } catch (ParserException e) {
-                log.error("ParseException on '" + tmp + "'", e);
-                ServletUtils.addError(PARAM_NOTE, e.getMessage(), env, null);
-                return false;
+                HtmlChecker.check(Rules.WIKI, tmp);
             } catch (Exception e) {
                 ServletUtils.addError(PARAM_NOTE, e.getMessage(), env, null);
                 return false;
@@ -169,11 +165,7 @@ public class EditForum implements AbcAction {
         if (tmp != null && tmp.length() > 0) {
             try {
                 tmp = HtmlPurifier.clean(tmp);
-                WikiContentGuard.check(tmp);
-            } catch (ParserException e) {
-                log.error("ParseException on '" + tmp + "'", e);
-                ServletUtils.addError(PARAM_RULES, e.getMessage(), env, null);
-                return false;
+                HtmlChecker.check(Rules.WIKI, tmp);
             } catch (Exception e) {
                 ServletUtils.addError(PARAM_RULES, e.getMessage(), env, null);
                 return false;

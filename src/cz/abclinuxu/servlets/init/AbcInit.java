@@ -25,6 +25,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.TagTool;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
 import cz.abclinuxu.data.view.NewsCategories;
 import cz.abclinuxu.data.view.DriverCategories;
 import cz.abclinuxu.utils.config.Configurable;
@@ -84,6 +85,7 @@ public class AbcInit extends HttpServlet implements Configurable {
 
     Timer scheduler, slowScheduler;
     VariableFetcher fetcher;
+    HtmlChecker htmlChecker;
 
     private final int SERVICE_COUNT = 22;
 
@@ -121,6 +123,14 @@ public class AbcInit extends HttpServlet implements Configurable {
             FMTemplateSelector.initialize(path+tmp);
         } catch (Exception e) {
             log.fatal("Nemohu inicializovat systém šablon!", e);
+        }
+
+        htmlChecker = new HtmlChecker();
+        htmlChecker.setConfigFileName(path + "WEB-INF/conf/tag_checker.xml");
+        try {
+            ConfigurationManager.getConfigurator().configureAndRememberMe(htmlChecker);
+        } catch (ConfigurationException e) {
+            log.fatal("Nemohu inicializovat systém na kontrolu HTML vstupu!", e);
         }
 
         TagTool.init();

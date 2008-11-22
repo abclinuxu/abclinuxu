@@ -16,13 +16,13 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  */
-package cz.abclinuxu.utils.parser.safehtml;
+package cz.abclinuxu.utils.parser.clean.exceptions;
 
 /**
- * The tag is not allowed by portal policy.
+ * The tag is not closed.
  */
-public class TagNotAllowedException extends HtmlCheckException {
-    public TagNotAllowedException(String message) {
+public class CrossedTagException extends HtmlCheckException {
+    public CrossedTagException(String message) {
         super(message);
     }
 }

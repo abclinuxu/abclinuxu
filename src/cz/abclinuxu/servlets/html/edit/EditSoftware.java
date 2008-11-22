@@ -46,14 +46,14 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
+import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.security.ActionProtector;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -378,11 +378,7 @@ public class EditSoftware implements AbcAction, Configurable {
             try {
                 tmp = Misc.filterDangerousCharacters(tmp);
                 tmp = HtmlPurifier.clean(tmp);
-                SafeHTMLGuard.check(tmp);
-            } catch (ParserException e) {
-                log.error("ParseException on '" + tmp + "'", e);
-                ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
-                return false;
+                HtmlChecker.check(Rules.DEFAULT, tmp);
             } catch (Exception e) {
                 ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
                 return false;

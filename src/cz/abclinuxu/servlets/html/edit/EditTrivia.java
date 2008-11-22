@@ -31,8 +31,9 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
+import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.persistence.Persistence;
@@ -52,7 +53,6 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.Attribute;
-import org.htmlparser.util.ParserException;
 
 /**
  * Editor for the trivia games.
@@ -285,11 +285,7 @@ public class EditTrivia implements AbcAction {
             try {
                 tmp = Misc.filterDangerousCharacters(tmp);
                 tmp = HtmlPurifier.clean(tmp);
-                SafeHTMLGuard.check(tmp);
-            } catch (ParserException e) {
-                log.error("ParseException on '" + tmp + "'", e);
-                ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
-                return false;
+                HtmlChecker.check(Rules.DEFAULT, tmp);
             } catch (Exception e) {
                 ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
                 return false;

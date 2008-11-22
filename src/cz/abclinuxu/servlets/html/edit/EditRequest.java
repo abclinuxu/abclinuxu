@@ -37,15 +37,15 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
+import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.AbcException;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
-import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -221,11 +221,7 @@ public class EditRequest implements AbcAction, Configurable {
 
         try {
             text = HtmlPurifier.clean(text);
-            SafeHTMLGuard.check(text);
-        } catch (ParserException e) {
-            log.error("ParseException on '"+text+"'", e);
-            ServletUtils.addError(PARAM_TEXT, e.getMessage(), env, null);
-            error = true;
+            HtmlChecker.check(Rules.DEFAULT, text);
         } catch (Exception e) {
             ServletUtils.addError(PARAM_TEXT, e.getMessage(), env, null);
             error = true;

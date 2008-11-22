@@ -43,8 +43,9 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
+import cz.abclinuxu.utils.parser.clean.Rules;
 
 import java.io.File;
 import java.text.ParseException;
@@ -64,7 +65,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.htmlparser.util.ParserException;
 
 /**
  *
@@ -566,10 +566,7 @@ public class EditEvent implements AbcAction {
 
         try {
             tmp = HtmlPurifier.clean(tmp);
-            SafeHTMLGuard.check(tmp);
-        } catch (ParserException e) {
-            ServletUtils.addError(PARAM_DESCRIPTION_SHORT, e.getMessage(), env, null);
-            return false;
+            HtmlChecker.check(Rules.DEFAULT, tmp);
         } catch (Exception e) {
             ServletUtils.addError(PARAM_DESCRIPTION_SHORT, e.getMessage(), env, null);
             return false;
@@ -593,10 +590,7 @@ public class EditEvent implements AbcAction {
 
         try {
             tmp = HtmlPurifier.clean(tmp);
-            SafeHTMLGuard.check(tmp);
-        } catch (ParserException e) {
-            ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
-            return false;
+            HtmlChecker.check(Rules.DEFAULT, tmp);
         } catch (Exception e) {
             ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
             return false;

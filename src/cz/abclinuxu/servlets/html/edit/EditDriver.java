@@ -32,8 +32,9 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
-import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
+import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.scheduler.VariableFetcher;
@@ -42,7 +43,6 @@ import cz.abclinuxu.data.view.DriverCategories;
 
 import cz.abclinuxu.utils.freemarker.Tools;
 import org.dom4j.*;
-import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -357,11 +357,7 @@ public class EditDriver implements AbcAction {
         if ( tmp!=null && tmp.length()>0 ) {
             try {
                 tmp = HtmlPurifier.clean(tmp);
-                SafeHTMLGuard.check(tmp);
-            } catch (ParserException e) {
-                log.error("ParseException on '"+tmp+"'", e);
-                ServletUtils.addError(PARAM_NOTE, e.getMessage(), env, null);
-                return false;
+                HtmlChecker.check(Rules.DEFAULT, tmp);
             } catch (Exception e) {
                 ServletUtils.addError(PARAM_NOTE, e.getMessage(), env, null);
                 return false;

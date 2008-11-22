@@ -41,8 +41,9 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.parser.safehtml.NewsGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
+import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
@@ -58,7 +59,6 @@ import java.text.ParseException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Document;
-import org.htmlparser.util.ParserException;
 
 /**
  * This servlet manipulates with News.
@@ -337,12 +337,12 @@ public class EditNews implements AbcAction {
         relation.setUrl(url);
         persistence.update(relation);
         TagTool.assignDetectedTags(item, user);
-        
+
         Map<String,List> children = Tools.groupByType(item.getChildren());
-        
+
         if (children.containsKey(Constants.TYPE_DISCUSSION)) {
             Relation disc = (Relation) children.get(Constants.TYPE_DISCUSSION).get(0);
-            
+
             String urldisc = url + "/diskuse";
             urldisc = URLManager.protectFromDuplicates(urldisc);
             disc.setUrl(urldisc);
@@ -464,7 +464,7 @@ public class EditNews implements AbcAction {
         Document doc = item.getData();
         try {
             text = HtmlPurifier.clean(text);
-            NewsGuard.check(text);
+            HtmlChecker.check(Rules.NEWS, text);
 
             Element element = DocumentHelper.makeElement(doc, "/data/content");
             element.setText(text);
@@ -478,10 +478,6 @@ public class EditNews implements AbcAction {
                 DocumentHelper.makeElement(doc, "/data/perex").setText(perex);
             }
             return true;
-        } catch (ParserException e) {
-            log.error("ParseException on '"+text+"'", e);
-            ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
-            return false;
         } catch (Exception e) {
             ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
             return false;

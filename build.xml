@@ -61,6 +61,7 @@
                 <include name="property_set_license.xml"/>
 				<include name="document_types.xml"/>
 				<include name="search_types.xml"/>
+				<include name="tag_checker.xml"/>
             </fileset>
         </copy>
 

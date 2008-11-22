@@ -35,8 +35,9 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
-import cz.abclinuxu.utils.parser.safehtml.BlogHTMLGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
+import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.persistence.extra.CompareCondition;
@@ -74,7 +75,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 import org.dom4j.io.DOMWriter;
-import org.htmlparser.util.ParserException;
 import freemarker.ext.dom.NodeModel;
 
 /**
@@ -1334,11 +1334,7 @@ public class EditBlog implements AbcAction, Configurable {
                 intro.detach();
         } else {
             try {
-                BlogHTMLGuard.check(s);
-            } catch (ParserException e) {
-                log.error("ParseException on '" + s + "'", e);
-                ServletUtils.addError(PARAM_INTRO, e.getMessage(), env, null);
-                return false;
+                HtmlChecker.check(Rules.BLOG, s);
             } catch (Exception e) {
                 ServletUtils.addError(PARAM_INTRO, e.getMessage(), env, null);
                 return false;
@@ -1530,14 +1526,10 @@ public class EditBlog implements AbcAction, Configurable {
         try {
             if (perex != null) {
                 perex = HtmlPurifier.clean(perex);
-                BlogHTMLGuard.checkPerex(perex);
+                HtmlChecker.check(Rules.BLOG_PEREX, perex);
             }
             content = HtmlPurifier.clean(content);
-            BlogHTMLGuard.check(content);
-        } catch (ParserException e) {
-            log.error("ParseException on '" + content + "'", e);
-            ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
-            return false;
+            HtmlChecker.check(Rules.BLOG, content);
         } catch (Exception e) {
             ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
             return false;

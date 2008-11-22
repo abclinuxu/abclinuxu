@@ -41,8 +41,9 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.PathGenerator;
 import cz.abclinuxu.utils.ImageTool;
 import cz.abclinuxu.utils.TagTool;
-import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
+import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -52,7 +53,6 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.apache.commons.fileupload.FileItem;
-import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -334,14 +334,10 @@ public class EditScreenshot implements AbcAction {
 
         try {
             tmp = HtmlPurifier.clean(tmp);
-            SafeHTMLGuard.check(tmp);
+            HtmlChecker.check(Rules.DEFAULT, tmp);
             tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
             return true;
-        } catch (ParserException e) {
-            log.error("ParseException on '" + tmp + "'", e);
-            ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
-            return false;
         } catch (Exception e) {
             ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
             return false;

@@ -37,8 +37,9 @@ import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
-import cz.abclinuxu.utils.parser.safehtml.WikiContentGuard;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
+import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.freemarker.Tools;
 import java.util.Date;
@@ -46,7 +47,6 @@ import org.apache.log4j.Logger;
 import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Document;
-import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -535,11 +535,7 @@ public class EditContent implements AbcAction {
         if (!user.hasRole(Roles.ROOT) || ! "yes".equals(exec)) {
             try {
                 content = HtmlPurifier.clean(content);
-                WikiContentGuard.check(content);
-            } catch (ParserException e) {
-                log.error("ParseException on '" + content + "'", e);
-                ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
-                return false;
+                HtmlChecker.check(Rules.WIKI, content);
             } catch (Exception e) {
                 ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
                 return false;
