@@ -112,6 +112,7 @@
                 <attribute id="CLASS">
                     <values>
                         <value>cleaner</value>
+                        <value>separator</value>
                     </values>
                 </attribute>
                 <attribute rel="ID"/>
