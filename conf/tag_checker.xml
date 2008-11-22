@@ -89,7 +89,7 @@
                 <attribute rel="ID"/>
             </tag>
             <tag id="I" mustBeClosed="true"/>
-            <tag id="IMG" mustBeClosed="true">
+            <tag id="IMG" mustBeClosed="false">
                 <attribute rel="ALT"/>
                 <attribute rel="BORDER"/>
                 <attribute id="CLASS">
