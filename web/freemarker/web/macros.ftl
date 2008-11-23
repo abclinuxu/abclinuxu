@@ -489,7 +489,8 @@
                 <#if editor.commentedContent?exists>
                     aFCKeditor.Config['AbcCitationContent'] = '${editor.commentedContent?js_string}';
                 </#if>
-                aFCKeditor.Config['ProcessHTMLEntities'] = false ;
+                aFCKeditor.Config['ProcessHTMLEntities'] = false;
+                aFCKeditor.Height ='250';
                 aFCKeditor.ReplaceTextarea();
             </#list>
         }

@@ -2,12 +2,12 @@ FCKConfig.StylesXmlPath = '/data/fckeditor/SafeHTMLGuard_styles.xml';
 FCKConfig.Plugins.Add( 'citation', null, '/data/fckeditor/editor/plugins/' );
 
 FCKConfig.ToolbarSets['SafeHTMLGuard'] = [
-	['Undo','Redo','Bold','Italic','-','Link','Unlink','Anchor','-','OrderedList','UnorderedList','Table','Style','-','SpecialChar'],
+	['Undo','Redo','Bold','Italic','-','Link','Unlink','-','OrderedList','UnorderedList','Table','Style','-','SpecialChar'],
 	['RemoveFormat','ShowBlocks'],['AbcCitation'],['Source'],['About']
 ] ;
 
 FCKConfig.ToolbarSets['BlogGuard'] = [
-	['Undo','Redo','Bold','Italic','-','Link','Unlink','Anchor','-','Image','OrderedList','UnorderedList','Table','Style','-','SpecialChar'],
+	['Undo','Redo','Bold','Italic','-','Link','Unlink','-','Image','OrderedList','UnorderedList','Table','Style','-','SpecialChar'],
 	['RemoveFormat','ShowBlocks'],['Source'],['About']
 ] ;
 
