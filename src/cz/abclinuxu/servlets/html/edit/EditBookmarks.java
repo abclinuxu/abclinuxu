@@ -419,6 +419,11 @@ public class EditBookmarks implements AbcAction {
             return false;
         }
 
+        if (parentDir.selectSingleNode("dir[@name='"+name+"']") != null) {
+            ServletUtils.addError(PARAM_DIRECTORY_NAME, "Adresář už existuje!", env, request.getSession());
+            return false;
+        }
+
         Element elemDir = parentDir.addElement("dir");
         elemDir.addAttribute("name", name);
 
