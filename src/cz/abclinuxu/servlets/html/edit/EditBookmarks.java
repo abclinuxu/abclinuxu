@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
@@ -442,12 +443,14 @@ public class EditBookmarks implements AbcAction {
     }
 
     protected static Node resolveBookmarkDirectory(User user, String path) {
-        Element nodeLinks = (Element) user.getData().selectSingleNode("/data/links");
+        Element nodeLinks = DocumentHelper.makeElement(user.getData(), "/data/links");
 
         if (path != null) {
             StringTokenizer st = new StringTokenizer(path, "/");
             while (st.hasMoreTokens()) {
                 String dir = st.nextToken();
+                if (dir.length() == 0)
+                    continue;
                 nodeLinks = (Element) nodeLinks.selectSingleNode("dir[@name='"+dir+"']");
 
                 if (nodeLinks == null)
