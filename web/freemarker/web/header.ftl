@@ -272,9 +272,7 @@
           </div>
 
           <#if ASSIGNED_TAGS?exists>
-            <#if ASSIGNED_TAGS?seq_contains(TOOL.findTag("virtualizace"))>
-              <@lib.advertisement id="stitky" />
-            </#if>
+            <@lib.advertisement id="stitky" />
 
             <div class="tag-box">
               <a href="/stitky">Štítky</a>:
