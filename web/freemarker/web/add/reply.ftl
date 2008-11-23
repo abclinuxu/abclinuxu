@@ -1,9 +1,9 @@
-<#--<#import "/web/rte-macro.ftl" as rte>
+<#import "/web/rte-macro.ftl" as rte>
 <#if COMMENTED_TEXT?exists>
     <@rte.addRTE textAreaId="text" formId="replyForm" inputMode="comment" commentedText="${COMMENTED_TEXT}" />
 <#else>
     <@rte.addRTE textAreaId="text" formId="replyForm" inputMode="comment" />
-</#if>-->
+</#if>
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -71,25 +71,12 @@
    <input tabindex="4" type="text" name="title" size="60" maxlength="70" value="${title?if_exists?html}">
    <div class="error">${ERRORS.title?if_exists}</div>
   </p>
-  <p>
-    <span class="required">Váš komentář</span>
-    <div class="form-edit">
-        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vložit značku tučně"><b>B</b></a>
-        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="Vložit značku kurzíva"><i>I</i></a>
-        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="Vložit značku odkazu">&lt;a&gt;</a>
-        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;blockquote&gt;', '&lt;/blockquote&gt;');" id="mono" title="Vložit značku citace">BQ</a>
-        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="Vložit značku odstavce">&lt;p&gt;</a>
-        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="Vložit značku formátovaného textu. Vhodné pro konfigurační soubory či výpisy.">&lt;pre&gt;</a>
-	    <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
-	    <a href="javascript:insertAtCursor(document.replyForm.text, '&amp;lt;', '');" id="mono" title="Vložit písmeno &lt;">&lt;</a>
-	    <a href="javascript:insertAtCursor(document.replyForm.text, '&amp;gt;', '');" id="mono" title="Vložit písmeno &gt;">&gt;</a>
-        <#if THREAD?exists>
-            <a href="javascript:cituj(document.replyForm.text);" id="mono" title="Vloží komentovaný příspěvek jako citaci">Citace</a>
-        </#if>
+    <div>
+        <span class="required">Váš komentář</span>
+        <@lib.showError key="text"/>
+        <@rte.showFallback "text"/>
+        <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea>
     </div>
-   <div class="error">${ERRORS.text?if_exists}</div>
-   <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea>
-  </p>
     <p>
         Vložení přílohy: <input type="file" name="attachment" tabindex="6">
         <@lib.showHelp>Například výpis logu, konfigurační soubor, snímek obrazovky a podobně.</@lib.showHelp>

@@ -49,9 +49,9 @@
         <tr>
             <td class="required">Popis</td>
             <td>
-                <@rte.showFallback "description"/>
-                <textarea name="description" rows="11" tabindex="2" class="siroka">${PARAMS.description?if_exists?html}</textarea>
                 <@lib.showError key="description"/>
+                <@rte.showFallback "description"/>
+                <textarea name="description" rows="20" tabindex="2" class="siroka">${PARAMS.description?if_exists?html}</textarea>
             </td>
         </tr>
 

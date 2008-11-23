@@ -526,6 +526,13 @@ public class TestSafeHTML extends TestCase {
         HtmlChecker.check(Rules.DEFAULT, nested);
     }
 
+    public void testXHtmlTag() throws Exception {
+        String nested = "<p><img src=\"a\"/></p>";
+        HtmlChecker.check(Rules.WIKI, nested);
+        nested = "<ul/>";
+        HtmlChecker.check(Rules.WIKI, nested);
+    }
+
     public TestSafeHTML(String s) {
         super(s);
     }

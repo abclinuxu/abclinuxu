@@ -1,3 +1,5 @@
+<#import "/web/rte-macro.ftl" as rte>
+<@rte.addRTE textAreaId="text" formId="form" inputMode="wiki" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -49,14 +51,8 @@
         <tr>
             <td class="required">Dotaz</td>
             <td>
-                <div class="form-edit">
-                    <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="Vložit značku tučně"><b>B</b></a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="Vložit značku kurzíva"><i>I</i></a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vložit značku odkazu">&lt;a&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="Vložit značku odstavce">&lt;p&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vložit značku formátovaného textu. Vhodné pro konfigurační soubory či výpisy.">&lt;pre&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
-                </div>
+                <@lib.showError key="text"/>
+                <@rte.showFallback "text"/>
                 <textarea tabindex="5" name="text" class="siroka" rows="20"></textarea><br>
             </td>
         </tr>

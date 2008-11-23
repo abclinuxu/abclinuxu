@@ -60,10 +60,10 @@ pak však potřebuje podporu programátora, který připraví data.</p>
   <tr>
    <td width="90" class="required">Obsah stránky</td>
    <td>
-    <p>Všechna URL na články, obrázky a soubory z našeho serveru musí být relativní!</p>
-    <@rte.showFallback "content"/>
-    <textarea name="content" class="siroka" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
-    <@lib.showError key="content"/>
+        <p>Všechna URL na články, obrázky a soubory z našeho serveru musí být relativní!</p>
+        <@lib.showError key="content"/>
+        <@rte.showFallback "content"/>
+        <textarea name="content" class="siroka" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
    </td>
   </tr>
     <#if PARAMS.action=="edit" || PARAMS.action="edit2" >

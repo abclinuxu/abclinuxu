@@ -20,10 +20,8 @@ package cz.abclinuxu.utils.parser.clean.impl;
 
 import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.utils.parser.clean.exceptions.CrossedTagException;
-import cz.abclinuxu.utils.parser.clean.exceptions.CrossedTagException;
 import cz.abclinuxu.utils.parser.clean.exceptions.HtmlCheckException;
 import cz.abclinuxu.utils.parser.clean.exceptions.TagNotAllowedException;
-import cz.abclinuxu.utils.parser.clean.exceptions.TagNotClosedException;
 import cz.abclinuxu.utils.parser.clean.exceptions.TagNotClosedException;
 import org.htmlparser.Node;
 import org.htmlparser.lexer.Lexer;
@@ -81,7 +79,7 @@ public class Definition {
 
                     if (! lastTag.id.equals(currentTagName))
                         throw new CrossedTagException("Značky " + lastTag.id + " a " + currentTagName + " jsou překříženy!");
-                } else
+                } else if (! tagNode.isEmptyXmlTag())
                     tagStack.add(tag);
 
                 tag.check(tagNode);

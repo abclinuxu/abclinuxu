@@ -1,12 +1,14 @@
+<#import "/web/rte-macro.ftl" as rte>
+<@rte.addRTE textAreaId="note" formId="form" inputMode="wiki" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
 
 <h2>Úprava sekce</h2>
 
-<form action="${URL.make("/EditCategory")}" method="POST" name="abcForm">
+<form action="${URL.make("/EditCategory")}" method="POST" name="form">
 
-    <table width="100" border="0" cellpadding="5">
+    <table class="siroka" border="0" cellpadding="5">
         <tr>
             <td width="120" class="required">Jméno sekce</td>
             <td>
@@ -72,18 +74,9 @@
         <tr>
             <td width="120">Poznámka</td>
             <td>
-                <div class="form-edit">
-                    <a href="javascript:insertAtCursor(document.abcForm.note, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vložit značku tučně"><b>B</b></a>
-                    <a href="javascript:insertAtCursor(document.abcForm.note, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="Vložit značku kurzíva"><i>I</i></a>
-                    <a href="javascript:insertAtCursor(document.abcForm.note, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="Vložit značku odkazu">&lt;a&gt;</a>
-                    <a href="javascript:insertAtCursor(document.abcForm.note, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="Vložit značku odstavce">&lt;p&gt;</a>
-                    <a href="javascript:insertAtCursor(document.abcForm.note, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="Vložit značku formátovaného textu. Vhodné pro konfigurační soubory či výpisy.">&lt;pre&gt;</a>
-                    <a href="javascript:insertAtCursor(document.abcForm.note, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
-                    <a href="javascript:insertAtCursor(document.abcForm.note, '&amp;lt;', '');" id="mono" title="Vložit písmeno &lt;">&lt;</a>
-                    <a href="javascript:insertAtCursor(document.abcForm.note, '&amp;gt;', '');" id="mono" title="Vložit písmeno &gt;">&gt;</a>
-                </div>
-                <textarea name="note" cols="80" rows="15" tabindex="8">${PARAMS.note?if_exists?html}</textarea>
-                <div class="error">${ERRORS.note?if_exists}</div>
+                <@lib.showError key="note"/>
+                <@rte.showFallback "note"/>
+                <textarea name="note" class="siroka" rows="20" tabindex="8">${PARAMS.note?if_exists?html}</textarea>
             </td>
         </tr>
         <tr>

@@ -1,3 +1,5 @@
+<#import "/web/rte-macro.ftl" as rte>
+<@rte.addRTE textAreaId="intro" formId="form" inputMode="blog" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -14,8 +16,8 @@ nastavíte <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}"
 přidat obrázek, odkazy na své přátelé nebo blogy, které čtete.
 </p>
 
-<form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST">
- <table cellpadding="5">
+<form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST" name="form">
+ <table cellpadding="5" class="siroka">
   <tr>
    <td class="required">Titulek stránky
        <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek celé stránky</span></a>
@@ -34,13 +36,14 @@ přidat obrázek, odkazy na své přátelé nebo blogy, které čtete.
     <div class="error">${ERRORS.title?if_exists}</div>
    </td>
   </tr>
-  <tr>
-   <td>Popis blogu</td>
-   <td>
-    <textarea name="intro" cols="60" rows="20">${PARAMS.intro?if_exists?html}</textarea>
-    <div class="error">${ERRORS.intro?if_exists}</div>
-   </td>
-  </tr>
+    <tr>
+        <td>Popis blogu</td>
+        <td>
+            <@lib.showError key="intro"/>
+            <@rte.showFallback "intro"/>
+            <textarea name="intro" class="siroka" rows="20">${PARAMS.intro?if_exists?html}</textarea>
+        </td>
+    </tr>
   <tr>
    <td>&nbsp;</td>
    <td>

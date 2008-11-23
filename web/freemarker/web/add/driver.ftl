@@ -49,7 +49,7 @@ verzi.
 <h2>Nový ovladač</h2>
 
 <form action="${URL.make("/edit")}" method="POST" name="form">
- <table cellpadding="0" border="0" style="margin-top: 1em;">
+ <table cellpadding="0" border="0" style="margin-top: 1em;" class="siroka">
   <tr>
    <td class="required">Jméno</td>
    <td>
@@ -90,9 +90,9 @@ verzi.
   </tr>
   <tr>
    <td colspan="2">
-    <@rte.showFallback "note"/>
-    <textarea name="note" cols="70" rows="15" tabindex="5">${PARAMS.note?if_exists?html}</textarea>
     <@lib.showError key="note"/>
+    <@rte.showFallback "note"/>
+    <textarea name="note" class="siroka" rows="20" tabindex="5">${PARAMS.note?if_exists?html}</textarea>
    </td>
   </tr>
   <tr>

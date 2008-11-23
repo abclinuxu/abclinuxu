@@ -98,36 +98,36 @@
                     Identifikaci zařízení pod Linuxem se věnuje <a href="/faq/hardware/jak-zjistim-co-mam-za-hardware">FAQ</a>.
                     Zadejte jen skutečně relevantní údaje, buďte struční.
                 </div>
-                <@rte.showFallback "identification"/>
-                <textarea name="identification" class="siroka" rows="12" tabindex="8" class="wide">${PARAMS.identification?if_exists?html}</textarea>
                 <@lib.showError key="identification"/>
+                <@rte.showFallback "identification"/>
+                <textarea name="identification" class="siroka" rows="15" tabindex="8">${PARAMS.identification?if_exists?html}</textarea>
             </td>
         </tr>
 
         <tr>
             <td>Technické parametry</td>
             <td>
-                <@rte.showFallback "params"/>
-                <textarea name="params" class="siroka" rows="14" tabindex="9" class="wide">${PARAMS.params?if_exists?html}</textarea>
                 <@lib.showError key="params"/>
+                <@rte.showFallback "params"/>
+                <textarea name="params" class="siroka" rows="15" tabindex="9">${PARAMS.params?if_exists?html}</textarea>
             </td>
         </tr>
 
         <tr>
             <td>Postup zprovoznění</td>
             <td>
-                <@rte.showFallback "setup"/>
-                <textarea name="setup" class="siroka" rows="16" tabindex="10" class="wide">${PARAMS.setup?if_exists?html}</textarea>
                 <@lib.showError key="setup"/>
+                <@rte.showFallback "setup"/>
+                <textarea name="setup" class="siroka" rows="20" tabindex="10">${PARAMS.setup?if_exists?html}</textarea>
             </td>
         </tr>
 
         <tr>
             <td>Poznámka</td>
             <td>
-                <@rte.showFallback "note"/>
-                <textarea name="note" class="siroka" rows="16" tabindex="11" class="wide">${PARAMS.note?if_exists?html}</textarea>
                 <@lib.showError key="note"/>
+                <@rte.showFallback "note"/>
+                <textarea name="note" class="siroka" rows="20" tabindex="11">${PARAMS.note?if_exists?html}</textarea>
             </td>
         </tr>
 

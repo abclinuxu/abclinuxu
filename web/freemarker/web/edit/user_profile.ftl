@@ -1,3 +1,5 @@
+<#import "/web/rte-macro.ftl" as rte>
+<@rte.addRTE textAreaId="about" formId="form" inputMode="wiki" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -17,8 +19,8 @@
     které chcete sdělit čtenářům. Může to být jen pár slov, ale i delší povídání.
 </p>
 
-<form action="${URL.noPrefix("/EditUser")}" method="POST">
-    <table width="100%" border=0 cellpadding=5>
+<form action="${URL.noPrefix("/EditUser")}" method="POST" name="form">
+    <table class="siroka" border=0 cellpadding=5>
         <tr>
             <td class="required" width="120">Heslo</td>
             <td>
@@ -87,8 +89,9 @@
         </tr>
         <tr>
             <td colspan="2">
-                <textarea name="about" rows="25" cols="70" tabindex="9">${PARAMS.about?if_exists?html}</textarea>
-                <div class="error">${ERRORS.about?if_exists}</div>
+                <@lib.showError key="about"/>
+                <@rte.showFallback "about"/>
+                <textarea name="about" rows="25" class="siroka" tabindex="9">${PARAMS.about?if_exists?html}</textarea>
             </td>
         </tr>
         <tr>

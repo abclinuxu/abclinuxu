@@ -35,7 +35,7 @@
 </#if>
 
 <form action="${URL.make("/edit")}" method="POST" name="dictForm">
-    <table cellpadding="0" border="0" width="100%">
+    <table cellpadding="0" border="0" class="siroka">
         <tr>
             <td class="required">Pojem</td>
             <td>
@@ -46,9 +46,9 @@
         <tr>
             <td class="required">Popis</td>
             <td>
+                <@lib.showError key="desc"/>
                 <@rte.showFallback "desc"/>
                 <textarea tabindex="2" name="desc" class="siroka" rows="20" tabindex="2">${PARAMS.desc?if_exists?html}</textarea>
-                <@lib.showError key="desc"/>
             </td>
         </tr>
         <tr>
