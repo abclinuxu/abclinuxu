@@ -267,7 +267,7 @@ ${TOOL.xpath(ITEM, "/data/content")}
         <#if USER?exists>
             <#if TOOL.permissionsFor(USER,video).canModify() || video.child.owner == USER.id><#assign showVideoManagement=true></#if>
         </#if>
-        <@lib.showVideo video, 300, 300, showVideoManagement />
+        <@lib.showVideoPlayer video, 300, 300, showVideoManagement />
         </div>
     </#list>
 </#if>
