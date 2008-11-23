@@ -78,7 +78,7 @@
         <tr>
             <td width="60">Patička</td>
             <td>
-                <textarea name="signature" rows="4" cols="40" tabindex="8"
+                <textarea name="signature" rows="4" class="siroka" tabindex="8"
                 onkeyup="writeRemainingCharsCount(this);">${PARAMS.signature?if_exists?html}</textarea>
                 <div id="signatureTextCounter">&nbsp;</div>
                 <div class="error">${ERRORS.signature?if_exists}</div>
