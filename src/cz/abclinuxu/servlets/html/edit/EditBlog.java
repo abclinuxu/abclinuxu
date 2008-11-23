@@ -807,7 +807,7 @@ public class EditBlog implements AbcAction, Configurable {
         canContinue &= setBlogIntro(params, root, env);
 
         if ( !canContinue )
-            return actionEditCustomStep1(request, blog, env);
+            return FMTemplateSelector.select("EditBlog", "custom", env, request);
 
         persistence.update(blog);
 
