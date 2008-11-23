@@ -1050,7 +1050,7 @@ public class EditDiscussion implements AbcAction {
 
         // vytvorit novou prazdnou diskusi
         Item newDiz = new Item(0, Item.DISCUSSION);
-        newDiz.setSubType("question");
+        newDiz.setSubType(Constants.SUBTYPE_QUESTION);
         Document newItemDoc = DocumentHelper.createDocument();
         Element newItemRoot = newItemDoc.addElement("data");
         newDiz.setData(newItemDoc);
