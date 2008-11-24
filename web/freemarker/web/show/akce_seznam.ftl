@@ -19,7 +19,7 @@
         </ul>
     </div>
     <#if "unpublished"!=PARAMS.mode?default("UNDEF")>
-        <#assign subtype=PARAMS.subtype?default("")>
+        <#assign subtype=PARAMS.subtype?default("")?html>
         <div class="s_nadpis">Kalendář</div>
         <div class="s_sekce">
             <table cellspacing="0" class="eventCalendar">
