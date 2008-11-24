@@ -167,6 +167,9 @@ public class QualifierTool {
                                         String defaultTableNick, Map<Field, String> fieldMapping) {
         appendField(condition.getField(), fieldMapping, defaultTableNick, sb);
 
+        if (condition.isNegated())
+            sb.append(" NOT ");        
+
         Operation operation = condition.getOperation();
         if (operation == Operation.GREATER)
             sb.append(">");

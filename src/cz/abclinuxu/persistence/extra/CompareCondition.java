@@ -25,6 +25,7 @@ public class CompareCondition extends Qualifier {
     Field field;
     Operation operation;
     Object value;
+    boolean negated;
 
     /**
      * Creates new CompareCondition.
@@ -37,6 +38,17 @@ public class CompareCondition extends Qualifier {
         this.field = field;
         this.operation = operation;
         this.value = value;
+    }
+
+    /**
+     * Creates new CompareCondition.
+     * @param field field to be compared.
+     * @param operation comparation operation.
+     * @param value value to be compared.
+     */
+    public CompareCondition(Field field, Operation operation, Object value, boolean negated) {
+        this(field, operation, value);
+        this.negated = negated;
     }
 
     /**
@@ -58,5 +70,12 @@ public class CompareCondition extends Qualifier {
      */
     public Object getValue() {
         return value;
+    }
+
+    /**
+     * @return when this operation shall be negated
+     */
+    public boolean isNegated() {
+        return negated;
     }
 }

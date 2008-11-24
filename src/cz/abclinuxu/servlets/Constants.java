@@ -296,6 +296,8 @@ public class Constants implements Configurable {
     public static final String PAGE_WAP = "wap";
     public static final String PAGE_WIKITOOLS = "wikitools";
 
+    public static final String TAG_PREFIX = "tag-";
+
     public static final String EMAIL_FORUM = "email-forum";
     public static final String EMAIL_WEEKLY = "email-weekly";
     public static final String EMAIL_SCRIPT = "email-script";

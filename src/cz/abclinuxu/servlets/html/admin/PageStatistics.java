@@ -96,16 +96,17 @@ public class PageStatistics implements AbcAction {
 
         List found = null;
         SQLTool sqlTool = SQLTool.getInstance();
+        CompareCondition noTagsCondition = new CompareCondition(Field.TYPE, Operation.LIKE, Constants.TAG_PREFIX + "%", true);
         String type = (String) params.get(PARAM_TYPE);
         if (TYPE_MONTHLY.equals(type)) {
             found = sqlTool.getStatisticsByMonth();
         } else if (TYPE_PERIOD.equals(type)) {
             CompareCondition startCondition = new CompareCondition(Field.DAY, Operation.GREATER, startPeriod);
             CompareCondition stopCondition = new CompareCondition(Field.DAY, Operation.SMALLER, endPeriod);
-            found = sqlTool.getStatistics(new Qualifier[]{startCondition, stopCondition});
+            found = sqlTool.getStatistics(new Qualifier[]{noTagsCondition, startCondition, stopCondition});
         } else {
             CompareCondition condition = new CompareCondition(Field.DAY, Operation.EQUAL, day);
-            found = sqlTool.getStatistics(new Qualifier[]{condition});
+            found = sqlTool.getStatistics(new Qualifier[]{noTagsCondition, condition});
         }
 
         env.put("DATA", found);

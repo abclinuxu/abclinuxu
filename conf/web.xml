@@ -11,8 +11,16 @@
             <param-value>gzip_first</param-value>
         </init-param>
     </filter>
+    <filter>
+        <filter-name>RecordTags</filter-name>
+        <filter-class>cz.abclinuxu.servlets.filters.RecordTagViewFilter</filter-class>
+    </filter>
     <filter-mapping>
         <filter-name>Compress</filter-name>
+        <servlet-name>Controller</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>RecordTags</filter-name>
         <servlet-name>Controller</servlet-name>
     </filter-mapping>
 
