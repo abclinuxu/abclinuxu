@@ -114,7 +114,7 @@
             multilinetitle=TOOL.xpath(USER,"/data/settings/news_multiline")?default("no")>
     </#if>
 
-    <#if showtitle=="yes"><div class="st_nadpis<#if multilinetitle=="yes"> no_overflow</#if>"><a href="${url}" title="${item.title}">${item.title}</a></div></#if>
+    <#if showtitle=="yes"><div class="st_nadpis<#if multilinetitle=="yes"> no_overflow</#if>"><a href="${url}" title="${item.title?html}">${item.title?html}</a></div></#if>
     <span>${DATE.show(item.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[item.subType].name}</span>
     <#local text=TOOL.xpath(item,"data/content"), shortened=TOOL.xpath(item,"data/perex")?default("UNDEFINED")>
     <#if shortened=="UNDEFINED">
