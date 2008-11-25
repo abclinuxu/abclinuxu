@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -82,6 +83,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_VARIANT = "variant";
     public static final String PARAM_TAGS = "tags";
+    public static final String PARAM_MODE = "mode";
 
     public static final String VAR_POSITION = "POSITION";
     public static final String VAR_POSITIONS = "POSITIONS";
@@ -235,8 +237,25 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
     public String actionShowMain(HttpServletRequest request, Map env) throws Exception {
         Category catAdvertisements = (Category) Tools.sync(new Category(Constants.CAT_ADVERTISEMENTS));
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String mode = (String) params.get(PARAM_MODE);
+        boolean modeActive;
+        
+        if (Misc.empty(mode) || mode.equals("active"))
+            modeActive = true;
+        else
+            modeActive = false;
         
         List<Relation> children = Tools.syncList(catAdvertisements.getChildren());
+        
+        for (Iterator<Relation> it = children.iterator(); it.hasNext();) {
+            Item item = (Item) it.next().getChild();
+            String active = Tools.xpath(item, "/data/active");
+            
+            if ("no".equals(active) == modeActive)
+                it.remove();
+        }
+        
         Sorters2.byName(children);
         env.put(VAR_POSITIONS, children);
         

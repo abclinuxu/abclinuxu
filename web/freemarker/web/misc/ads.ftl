@@ -2,6 +2,11 @@
     <div class="s_sekce">
     <ul>
         <li><a href="${URL.noPrefix("/EditAdvertisement?action=addPosition")}">Přidat pozici</a></li>
+        <#if PARAMS.mode?default("active")=="active">
+            <li><a href="${URL.noPrefix("/EditAdvertisement?mode=inactive")}">Zobrazit neaktivní pozice</a></li>
+        <#else>
+            <li><a href="${URL.noPrefix("/EditAdvertisement?mode=active")}">Zobrazit aktivní pozice</a></li>
+        </#if>
     </ul>
     </div>
 </#assign>
@@ -22,6 +27,16 @@
     třeba nadefinovat jeden či více reklamních kódů, které mají za úkol
     zobrazit vlastní reklamu. V případě více kódu pro jednu pozici
     je třeba kódy rozlišit podle URL adresy.
+</p>
+
+<p>
+<#if PARAMS.mode?default("active")=="active">
+    Zobrazuji pouze <span style="color: green">aktivní</span> pozice.
+    <a href="${URL.noPrefix("/EditAdvertisement?mode=inactive")}">Zobrazit neaktivní</a>.
+<#else>
+    Zobrazuji pouze <span style="color: red">neaktivní</span> pozice.
+    <a href="${URL.noPrefix("/EditAdvertisement?mode=active")}">Zobrazit aktivní</a>.
+</#if>
 </p>
 
 <table class="siroka">
