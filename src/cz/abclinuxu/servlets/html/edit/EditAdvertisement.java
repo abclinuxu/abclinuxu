@@ -832,7 +832,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
     }
     
     private Element getVariant(Map params, Element code) {
-        List<Node> variants = code.selectNodes("//variant");
+        List<Node> variants = code.selectNodes("variants/variant");
         int index = Misc.parseInt((String) params.get(PARAM_VARIANT), -1);
         
         if (index < 0 || index >= variants.size())
