@@ -33,6 +33,7 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.dom4j.Element;
+import org.apache.log4j.Logger;
 
 import java.util.Map;
 import java.util.List;
@@ -49,6 +50,8 @@ import java.util.regex.Matcher;
  * @since 26.12.2006
  */
 public class Advertisement implements Configurable {
+    static Logger log = Logger.getLogger(Advertisement.class);
+
     public static final String PREF_STANDARD_REGEXPS = "standard.regexps";
     static Map<String, Pattern> regexps;
     static Map<String, Integer> positions;
@@ -56,11 +59,11 @@ public class Advertisement implements Configurable {
     static {
         regexps = new ConcurrentHashMap<String, Pattern>(50);
         positions = new ConcurrentHashMap<String, Integer>(50);
-        
+
         Advertisement ad = new Advertisement();
         ConfigurationManager.getConfigurator().configureAndRememberMe(ad);
     }
-    
+
     public void configure(Preferences prefs) throws ConfigurationException {
         try {
             Preferences subprefs = prefs.node(PREF_STANDARD_REGEXPS);
@@ -89,10 +92,10 @@ public class Advertisement implements Configurable {
             return "";
 
         Item position = getPosition(id);
-        
+
         if (position == null)
             return "<!-- the advertisement position '" + id + "' is not defined! -->";
-        
+
         Element root = position.getData().getRootElement();
         if ("no".equals(Tools.xpath(position, "/data/active")))
             return "<!-- the advertisement position " + id + " is not active -->";
@@ -100,51 +103,51 @@ public class Advertisement implements Configurable {
         Element selected = null;
         int selLen = -1;
         List<Element> codes = root.selectNodes("//code");
-        
+
         for (Element code : codes) {
             String regexp = code.attributeValue("regexp");
-            
+
             if (regexp == null)
                 regexp = "";
-            
+
             Matcher matcher = getPattern(regexp).matcher(uri);
             if (matcher.find() && regexp.length() > selLen) {
                 selLen = regexp.length();
                 selected = code;
             }
         }
-        
+
         if (selected == null)
             return "<!-- error: no code available for position '" + id + "'! -->";
-        
+
         List<Element> variants = selected.selectNodes("variants/variant");
         List<Element> availableVariants = new ArrayList<Element>(2);
         Element defaultVariant = null, selectedVariant;
-        
+
         List<Tag> assignedTags = (List<Tag>) env.get("ASSIGNED_TAGS");
-        
+
         for (Element variant : variants) {
             if ("no".equals(variant.attributeValue("active")))
                 continue;
-            
+
             String tags = variant.attributeValue("tags");
             if (tags != null && tags.trim().length() == 0)
                 tags = null;
-            
+
             if (tags == null) {
                 defaultVariant = variant;
                 continue;
             }
-            
+
             if (assignedTags == null || assignedTags.size() == 0)
                 continue;
-            
+
             String[] tagList = tags.split(" ");
 
 mainCycle:
             for (Tag tag : assignedTags) {
                 for (int i = 0; i < tagList.length; i++) {
-                    if (tagList[i].equals(tag.getId())) {
+                    if (tagList[i].equalsIgnoreCase(tag.getId())) {
                         availableVariants.add(variant);
                         break mainCycle;
                     }
@@ -152,7 +155,7 @@ mainCycle:
             }
 
         }
-        
+
         if (availableVariants.size() > 1) {
             int index = new Random().nextInt(availableVariants.size());
             selectedVariant = availableVariants.get(index);
@@ -160,7 +163,7 @@ mainCycle:
             selectedVariant = availableVariants.get(0);
         else
             selectedVariant = defaultVariant;
-        
+
         if (selectedVariant == null)
             return "<!-- error: no variant available for position '" + id + "', code '" + selected.attributeValue("regexp") + "' -->";
 
@@ -169,7 +172,8 @@ mainCycle:
             try {
                 return FMUtils.executeCode(content, env);
             } catch (Exception e) {
-                return "<!-- error: the code defined for position '" + id + "' threw an error: " + e.getMessage() + "! -->";
+                log.warn("Position " + id + " threw an exception. Content: \n" + content + "\n", e);
+                return "<!-- error: the code defined for position '" + id + "' failed! -->";
             }
         else
             return content;
@@ -186,7 +190,7 @@ mainCycle:
         }
         return pattern;
     }
-    
+
     /**
      * Returns the ad item with the specified identificator.
      * The function caches the data, so that a search by string id doesn't always
@@ -196,18 +200,18 @@ mainCycle:
      */
     private static Item getPosition(String id) {
         Integer objid = positions.get(id);
-        
+
         if (objid != null) {
             try {
                 Persistence persistence = PersistenceFactory.getPersistence();
                 Item item = (Item) persistence.findById(new Item(objid));
-                
+
                 if (id.equals(item.getString1()))
                     return item;
             } catch (Exception e) {
                 // The position has probably been erased
             }
-            
+
             positions.remove(id);
         }
 
@@ -218,7 +222,7 @@ mainCycle:
 
         return item;
     }
-    
+
     public static void clearCache() {
         positions.clear();
     }
