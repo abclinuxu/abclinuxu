@@ -22,6 +22,8 @@
 <p>
     Příznak dynamického kódu nastavte jen tehdy, obsahuje-li reklamní kód
     programovací instrukce jazyku Freemarker a musí se nejdříve zpracovat.
+    To je potřeba například i pro makra na zobrazení aktuální ceny produktu
+    z eshopu 64bit.cz.
 </p>
 
 <form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">

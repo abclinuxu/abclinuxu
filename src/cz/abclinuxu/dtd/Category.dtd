@@ -26,3 +26,11 @@
 <!ATTLIST month value (#NMTOKEN) #REQUIRED> <!-- integer, value of the month -->
 <!ELEMENT unpublished (rid)*> <!-- container for relation id of unpublished blog stories -->
 <!ELEMENT rid #NMTOKEN> <!-- integer, id of unpublished story relation -->
+
+<!-- DTD for Import/Shop64bitCz category -->
+<!ELEMENT data (item*)>
+<!ELEMENT item (url, name)>
+<!ATTLIST item id (#NMTOKEN) #REQUIRED> <!-- integer, id of product in 64bit database -->
+<!ATTLIST item price (#NMTOKEN) #REQUIRED> <!-- price of the product in current currency -->
+<!ELEMENT url (#PCDATA)> <!-- url to the product detail -->
+<!ELEMENT name (#PCDATA)> <!-- name of the product -->

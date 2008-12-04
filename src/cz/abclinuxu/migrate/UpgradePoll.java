@@ -90,7 +90,7 @@ public class UpgradePoll {
 
             return result;
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 

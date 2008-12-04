@@ -71,14 +71,23 @@ reklamních kódů, které mohou být v budoucnu opět aktivovány.
             </td>
         </tr>
         <tr>
-            <td colspan="2">
-                <pre class="kod">${variant.code?html}</pre>
+            <td>Náhled:</td>
+            <td>
+                <#if (variant.dynamic!"no") == "yes">
+                    <#attempt>
+                        <#assign inlineTemplate = variant.code?interpret>
+                        <@inlineTemplate />
+                    <#recover>
+                        Dynamický reklamní kód obsahuje chybu! ${.error}
+                    </#attempt>
+                <#else>
+                    ${variant.code}
+                </#if>
             </td>
         </tr>
         <tr>
             <td>
                 <a href="${URL.noPrefix("/EditAdvertisement/"+PARAMS.rid+"?code="+PARAMS.code+"&amp;action=editVariant&amp;variant="+variant_index)}">Upravit</a>
-                
                 <a href="${URL.noPrefix("/EditAdvertisement/"+PARAMS.rid+"?code="+PARAMS.code+"&amp;action=rmVariant&amp;variant="+variant_index+TOOL.ticket(USER,false))}" onclick="return confirm('Opravdu smazat tuto variantu?')">Smazat</a>
             </td>
         </tr>

@@ -172,7 +172,7 @@ public class GenerateDevelDatabase {
             count = statement.executeUpdate("replace into devel.spolecne select AC.* from abc.spolecne AC, devel.data DD where AC.typ='D' and DD.cislo=AC.cislo");
             System.out.println(count);
 
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         } catch (SQLException e) {
             e.printStackTrace();
             System.exit(1);

@@ -857,6 +857,12 @@
         <action name="editVariant" content="/edit/adVariant.ftl">
             <var name="TITLE" value="Upravit variantu reklamy"/>
         </action>
+        <action name="show64Bit" content="/show/shop64bit_products.ftl">
+            <var name="TITLE" value="Zobrazit načítané produkty"/>
+        </action>
+        <action name="edit64Bit" content="/add/shop64bit_products.ftl">
+            <var name="TITLE" value="Upravit seznam načítaných produktů"/>
+        </action>
     </servlet>
 
     <servlet name="EditSubportal">

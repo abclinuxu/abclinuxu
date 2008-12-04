@@ -83,7 +83,7 @@ public class UpgradeDiscusssions {
             }
             return list;
         } finally {
-            mp.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -105,7 +105,7 @@ public class UpgradeDiscusssions {
                 statement.executeUpdate();
                 return true;
             } finally {
-                mp.releaseSQLResources(con, statement, null);
+                PersistenceFactory.releaseSQLResources(con, statement, null);
             }
         }
         return false;

@@ -2363,7 +2363,7 @@ public class Tools implements Configurable {
     public static void setNewsLetterHardLimit(int newsLetterHardLimit) {
         Tools.newsLetterHardLimit = newsLetterHardLimit;
     }
-    
+
     public static Map getStandardAdRegexps() {
         return Advertisement.standardRegexps;
     }

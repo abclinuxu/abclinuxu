@@ -43,11 +43,12 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.scheduler.Shop64bitFetcher;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -57,6 +58,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
+import java.util.Iterator;
+import java.util.StringTokenizer;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -72,6 +75,7 @@ import static cz.abclinuxu.servlets.Constants.PARAM_DESCRIPTION;
  */
 public class EditAdvertisement implements AbcAction, Configurable {
     public static final String PREF_IDENTIFIER_REGEXP = "regexp.valid.identifier";
+    public static final String PREF_SHOP64BIT_URL_REGEXP = "regexp.64bit.url";
 
     public static final String PARAM_IDENTIFIER = "identifier";
     public static final String PARAM_NEW_IDENTIFIER = "newIdentifier";
@@ -84,6 +88,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
     public static final String PARAM_VARIANT = "variant";
     public static final String PARAM_TAGS = "tags";
     public static final String PARAM_MODE = "mode";
+    public static final String PARAM_PRODUCT_URLS = "urls";
 
     public static final String VAR_POSITION = "POSITION";
     public static final String VAR_POSITIONS = "POSITIONS";
@@ -91,6 +96,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
     public static final String VAR_CODES = "CODES";
     public static final String VAR_CODE = "CODE";
     public static final String VAR_VARIANTS = "VARIANTS";
+    public static final String VAR_SHOP_PRODUCTS = "PRODUCTS";
 
     public static final String ACTION_LIST = "list";
     public static final String ACTION_ADD_POSITION = "addPosition";
@@ -114,8 +120,11 @@ public class EditAdvertisement implements AbcAction, Configurable {
     public static final String ACTION_EDIT_CODE_STEP2 = "editCode2";
     public static final String ACTION_REMOVE_CODE = "rmCode";
     public static final String ACTION_TOGGLE_VARIANT = "toggleVariant";
+    public static final String ACTION_SHOW_64BIT_ITEMS = "show64Bit";
+    public static final String ACTION_SET_64BIT_ITEMS = "set64Bit";
+    public static final String ACTION_SET_64BIT_ITEMS_STEP2 = "set64Bit2";
 
-    static Pattern identifierPattern;
+    static Pattern identifierPattern, shop64BitUrlPattern;
     static {
         EditAdvertisement instance = new EditAdvertisement();
         ConfigurationManager.getConfigurator().configureAndRememberMe(instance);
@@ -125,7 +134,6 @@ public class EditAdvertisement implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
-        Persistence persistence = PersistenceFactory.getPersistence();
 
         if (ServletUtils.handleMaintainance(request, env)) {
             response.sendRedirect(response.encodeRedirectURL("/"));
@@ -138,7 +146,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
         if (!user.hasRole(Roles.ADVERTISEMENT_ADMIN))
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-        
+
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation != null) {
             relation = (Relation) Tools.sync(relation);
@@ -147,7 +155,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
         if (ACTION_LIST.equals(action) || Misc.empty(action))
             return actionShowMain(request, env);
-        
+
         if (ACTION_ADD_POSITION.equals(action))
             return actionAddStep1(request, env);
 
@@ -155,9 +163,20 @@ public class EditAdvertisement implements AbcAction, Configurable {
             ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
             return actionAddStep2(request, response, env);
         }
-        
+
+        if (ACTION_SHOW_64BIT_ITEMS.equals(action))
+            return actionShow64BitItems(request, response, env);
+
+        if (ACTION_SET_64BIT_ITEMS.equals(action))
+            return actionEdit64BitItemsStep1(request, response, env);
+
+        if (ACTION_SET_64BIT_ITEMS_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
+            return actionEdit64BitItemsStep2(request, response, env);
+        }
+
         if (relation == null)
-            throw new MissingArgumentException("Chybi cislo relace!");
+            throw new MissingArgumentException("Chybí číslo relace!");
 
         if (ACTION_SHOW_POSITION.equals(action))
             return actionShowPosition(request, response, env);
@@ -191,47 +210,47 @@ public class EditAdvertisement implements AbcAction, Configurable {
             ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
             return actionAddCodeStep2(request, response, env);
         }
-        
+
         if (ACTION_ADD_VARIANT.equals(action))
             return FMTemplateSelector.select("EditAdvertisement", "addVariant", env, request);
-        
+
         if (ACTION_ADD_VARIANT_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
             return actionAddVariantStep2(request, response, env);
         }
-        
+
         if (ACTION_EDIT_VARIANT.equals(action))
             return actionEditVariant(request, response, env);
-        
+
         if (ACTION_EDIT_VARIANT_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
             return actionEditVariantStep2(request, response, env);
         }
-            
+
         if (ACTION_SHOW_CODE.equals(action))
             return actionShowCode(request, response, env);
-        
+
         if (ACTION_REMOVE_VARIANT.equals(action)) {
             ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, false, true);
             return actionRemoveVariant(request, response, env);
         }
-        
+
         if (ACTION_TOGGLE_VARIANT.equals(action))
             return actionToggleVariant(request, response, env);
-        
+
         if (ACTION_EDIT_CODE.equals(action) || params.containsKey(ACTION_EDIT_CODE))
             return actionEditCodeStep1(request, response, env);
-        
+
         if (ACTION_EDIT_CODE_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
             return actionEditCodeStep2(request, response, env);
         }
-        
+
         if (ACTION_REMOVE_CODE.equals(action) || params.containsKey(ACTION_REMOVE_CODE)) {
             ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, false, true);
             return actionRemoveCode(request, response, env);
         }
-        
+
         throw new MissingArgumentException("Neplatny parametr action!");
     }
 
@@ -240,41 +259,39 @@ public class EditAdvertisement implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String mode = (String) params.get(PARAM_MODE);
         boolean modeActive;
-        
+
         if (Misc.empty(mode) || mode.equals("active"))
             modeActive = true;
         else
             modeActive = false;
-        
+
         List<Relation> children = Tools.syncList(catAdvertisements.getChildren());
-        
+
         for (Iterator<Relation> it = children.iterator(); it.hasNext();) {
             Item item = (Item) it.next().getChild();
             String active = Tools.xpath(item, "/data/active");
-            
+
             if ("no".equals(active) == modeActive)
                 it.remove();
         }
-        
+
         Sorters2.byName(children);
         env.put(VAR_POSITIONS, children);
-        
+
         List parents = new ArrayList(2);
-        parents.add(new Link("Administrace", "/Admin", null));
-        parents.add(new Link("Reklamy", "/EditAdvertisement", null));
+        storeNavigationPathForAdvertisements(parents);
         env.put(ShowObject.VAR_PARENTS, parents);
-        
+
         return FMTemplateSelector.select("EditAdvertisement", "main", env, request);
     }
 
     public String actionShowPosition(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Relation rel = (Relation) env.get(ShowObject.VAR_RELATION);
         Item item = (Item) rel.getChild();
-        
+
         List parents = new ArrayList(3);
-        parents.add(new Link("Administrace", "/Admin", null));
-        parents.add(new Link("Reklamy", "/EditAdvertisement", null));
-        parents.add(new Link(item.getTitle(), "/EditAdvertisement/"+rel.getId()+"?action=showPosition", null));
+        storeNavigationPathForAdvertisements(parents);
+        storeNavigationPathForPosition(parents, item, rel);
         env.put(ShowObject.VAR_PARENTS, parents);
 
         env.put(VAR_POSITION, item);
@@ -294,13 +311,13 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
         Item item = new Item();
         item.setType(Item.ADVERTISEMENT);
-        
+
         Category catUpper = (Category) persistence.findById(new Category(Constants.CAT_ADVERTISEMENTS));
-        
+
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         String id = (String) params.get(PARAM_NEW_IDENTIFIER);
-        
+
         item.setData(document);
 
         boolean canContinue = true;
@@ -314,7 +331,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditAdvertisement", "addPosition", env, request);
 
         persistence.create(item);
-        
+
         Relation relation = new Relation(catUpper, item, Constants.REL_ADVERTISEMENTS);
         persistence.create(relation);
 
@@ -324,59 +341,58 @@ public class EditAdvertisement implements AbcAction, Configurable {
         urlUtils.redirect(response, "/EditAdvertisement?action=" + ACTION_SHOW_POSITION+"&"+PARAM_RELATION_SHORT+"=" + relation.getId());
         return null;
     }
-    
+
     public String actionShowCode(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        
+
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Item item = (Item) relation.getChild();
-        
+
         List<Node> codes = item.getData().selectNodes("//code");
         int index = Misc.parseInt((String) params.get(PARAM_CODE), -1);
-        
+
         if (index < 0 || index >= codes.size()) {
             urlUtils.redirect(response, "/EditAdvertisement?action=list");
             return null;
         }
-        
+
         Element code = (Element) codes.get(index);
         List<Element> variants = code.selectNodes("variants/variant");
         List<Map> variantsData = new ArrayList<Map>(variants.size());
-        
+
         for (Element elem : variants) {
             Map map = new HashMap();
-            
             map.put("code", elem.getText());
             map.put("description", elem.attributeValue("description"));
             map.put("active", elem.attributeValue("active"));
-            
+            map.put("dynamic", elem.attributeValue("dynamic"));
+
             String tags = elem.attributeValue("tags");
             if (!Misc.empty(tags))
                 map.put("tags", tags.split(" "));
-            
+
             variantsData.add(map);
         }
-        
+
         env.put(VAR_VARIANTS, variantsData);
-        
+
         Map codeData = new HashMap();
         codeData.put("name", code.attributeValue("name"));
         codeData.put("description", code.attributeValue("description"));
         codeData.put("regexp", code.attributeValue("regexp"));
-        
+
         env.put(VAR_CODE, codeData);
-        
+
         List parents = new ArrayList(4);
-        parents.add(new Link("Administrace", "/Admin", null));
-        parents.add(new Link("Reklamy", "/EditAdvertisement", null));
-        parents.add(new Link(item.getTitle(), "/EditAdvertisement/"+relation.getId()+"?action=showPosition", null));
+        storeNavigationPathForAdvertisements(parents);
+        storeNavigationPathForPosition(parents, item, relation);
         parents.add(new Link((String) codeData.get("name"), "/EditAdvertisement/"+relation.getId()+"?action=showCode&code="+params.get(PARAM_CODE), null));
         env.put(ShowObject.VAR_PARENTS, parents);
-        
+
         return FMTemplateSelector.select("EditAdvertisement", "showCode", env, request);
     }
-    
+
 
     public String actionEditPositionStep1(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -446,7 +462,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
         Relation rel = (Relation) env.get(ShowObject.VAR_RELATION);
         Item item = (Item) rel.getChild();
-            
+
         AdminLogger.logEvent(user, "smazal reklamni pozici " + item.getString1());
 
         persistence.remove(rel);
@@ -477,7 +493,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
         canContinue &= setCodeName(params, code, null, env);
         canContinue &= setCodeRegexp(params, code, env);
         canContinue &= setCodeDescription(params, code);
-        
+
         Element variants = DocumentHelper.makeElement(code, "variants");
         Element defaultVariant = variants.addElement("variant");
         canContinue &= setVariantDynamicFlag(params, defaultVariant);
@@ -502,9 +518,9 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Item item = (Item) relation.getChild();
-        
+
         Element code = getCode(params, item.getData().getRootElement());
-        
+
         if (code == null) {
             urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showPosition");
             return null;
@@ -519,7 +535,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
         attribute = code.attribute("name");
         if (attribute != null)
             params.put(PARAM_NAME, attribute.getText());
-        
+
         return FMTemplateSelector.select("EditAdvertisement", "editCode", env, request);
     }
 
@@ -531,16 +547,16 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Item item = (Item) relation.getChild().clone();
-        
+
         Element code = getCode(params, item.getData().getRootElement());
-        
+
         if (code == null) {
             urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showPosition");
             return null;
         }
-        
+
         List<Element> codes = item.getData().selectNodes("//code");
-        
+
         boolean canContinue = true;
         canContinue &= setCodeRegexp(params, code, env);
         canContinue &= setCodeDescription(params, code);
@@ -566,9 +582,9 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Item item = (Item) relation.getChild();
-        
+
         Element code = getCode(params, item.getData().getRootElement());
-        
+
         if (code == null) {
             urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showPosition");
             return null;
@@ -583,7 +599,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
         urlUtils.redirect(response, "/EditAdvertisement/" + relation.getId() + "?action=" + ACTION_SHOW_POSITION);
         return null;
     }
-    
+
     public String actionRemoveVariant(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
@@ -592,16 +608,16 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Item item = (Item) relation.getChild();
-        
+
         Element code = getCode(params, item.getData().getRootElement());
-        
+
         if (code == null) {
             urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showPosition");
             return null;
         }
-        
+
         Element variant = getVariant(params, code);
-        
+
         if (variant == null) {
             urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showCode&code="+params.get(PARAM_CODE));
             return null;
@@ -616,7 +632,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
         urlUtils.redirect(response, "/EditAdvertisement/" + relation.getId() + "?action=" + ACTION_SHOW_CODE + "&code=" + params.get(PARAM_CODE));
         return null;
     }
-    
+
     public String actionAddVariantStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
@@ -625,56 +641,56 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Item item = (Item) relation.getChild().clone();
-        
+
         Element code = getCode(params, item.getData().getRootElement());
-        
+
         if (code == null) {
             urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showPosition");
             return null;
         }
-        
+
         boolean canContinue = true;
         Element variants = DocumentHelper.makeElement(code, "variants");
         Element variant = variants.addElement("variant");
-        
+
         canContinue &= setVariantDynamicFlag(params, variant);
         canContinue &= setVariantCode(params, variant);
         canContinue &= setVariantTags(params, variant);
         canContinue &= setVariantDescription(params, variant);
-        
+
         variant.addAttribute("active", "no");
-        
+
         if (!canContinue)
             return FMTemplateSelector.select("EditAdvertisement", "addVariant", env, request);
-        
+
         persistence.update(item);
-        
+
         AdminLogger.logEvent(user, "pridal variantu reklamniho kod k pozici " + item.getString1());
-        
+
         urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=" + ACTION_SHOW_CODE + "&code="+params.get(PARAM_CODE));
         return null;
     }
-    
+
     public String actionEditVariant(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
 
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Item item = (Item) relation.getChild();
-        
+
         Element code = getCode(params, item.getData().getRootElement());
-        
+
         if (code == null) {
             urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showPosition");
             return null;
         }
-        
+
         Element variant = getVariant(params, code);
         if (variant == null) {
             urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showCode&code="+params.get(PARAM_CODE));
             return null;
         }
-        
+
         Attribute attr = variant.attribute("description");
         if (attr != null)
             params.put(PARAM_DESCRIPTION, attr.getText());
@@ -685,10 +701,10 @@ public class EditAdvertisement implements AbcAction, Configurable {
         if (attr != null)
             params.put(PARAM_DYNAMIC, attr.getText());
         params.put(PARAM_HTML_CODE, variant.getText());
-        
+
         return FMTemplateSelector.select("EditAdvertisement", "editVariant", env, request);
     }
-    
+
     public String actionEditVariantStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -696,38 +712,38 @@ public class EditAdvertisement implements AbcAction, Configurable {
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Item item = (Item) relation.getChild().clone();
         User user = (User) env.get(Constants.VAR_USER);
-        
+
         Element code = getCode(params, item.getData().getRootElement());
-        
+
         if (code == null) {
             urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showPosition");
             return null;
         }
-        
+
         Element variant = getVariant(params, code);
         if (variant == null) {
             urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showCode&code="+params.get(PARAM_CODE));
             return null;
         }
-        
+
         boolean canContinue = true;
-        
+
         canContinue &= setVariantDescription(params, variant);
         canContinue &= setVariantCode(params, variant);
         canContinue &= setVariantDynamicFlag(params, variant);
         canContinue &= setVariantTags(params, variant);
-        
+
         if (!canContinue)
             return FMTemplateSelector.select("EditAdvertisement", "editVariant", env, request);
-        
-        AdminLogger.logEvent(user, "upravil variantu reklamniho kod k pozici " + item.getString1());
-        
+
+        AdminLogger.logEvent(user, "upravil variantu reklamniho kodu k pozici " + item.getString1());
+
         persistence.update(item);
-        
+
         urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showCode&code="+params.get(PARAM_CODE));
         return null;
     }
-    
+
     public String actionToggleVariant(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
@@ -736,21 +752,19 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Item item = (Item) relation.getChild().clone();
-        
+
         Element code = getCode(params, item.getData().getRootElement());
-        
         if (code == null) {
             urlUtils.redirect(response, "/EditAdvertisement/" + relation.getId() + "?action=showPosition");
             return null;
         }
-        
+
         Element variant = getVariant(params, code);
-        
         if (variant == null) {
             urlUtils.redirect(response, "/EditAdvertisement/" + relation.getId() + "?action=showCode&code=" + params.get(PARAM_CODE));
             return null;
         }
-        
+
         boolean nowActive = false;
         String active = variant.attributeValue("active");
         if (active != null) {
@@ -762,17 +776,17 @@ public class EditAdvertisement implements AbcAction, Configurable {
             }
         } else
             variant.addAttribute("active", "no");
-        
+
         String tags = variant.attributeValue("tags");
-        List<String> myTags = Collections.EMPTY_LIST;
-        
+        List<String> myTags = Collections.emptyList();
+
         if (!Misc.empty(tags))
             myTags = new ArrayList<String>(Arrays.asList(tags.split(" ")));
-        
+
         if (nowActive) {
             boolean problem = false;
             List<Element> listVariants = code.selectNodes("//variant");
-            
+
             if (myTags.size() > 0) {
                 List<String> usedTags = new ArrayList<String>();
 
@@ -792,7 +806,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
                 for (Element var : listVariants) {
                     if ("no".equals(var.attributeValue("active")) || var == variant)
                         continue;
-                    
+
                     String ctags = var.attributeValue("tags");
                     if (Misc.empty(ctags) || ctags.trim().length() == 0) {
                         problem = true;
@@ -800,41 +814,140 @@ public class EditAdvertisement implements AbcAction, Configurable {
                     }
                 }
             }
-            
+
             if (problem) {
                 ServletUtils.addError(Constants.ERROR_GENERIC, "Varianta se překrývá s jinou aktivní variantou", env, request.getSession());
                 urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showCode&code="+params.get(PARAM_CODE));
                 return null;
             }
         }
-        
+
         persistence.update(item);
-        
+        AdminLogger.logEvent(user, "(de)aktivoval variantu reklamniho kod k pozici " + item.getString1());
+
         urlUtils.redirect(response, "/EditAdvertisement/"+relation.getId()+"?action=showCode&code="+params.get(PARAM_CODE));
         return null;
     }
 
+    public String actionShow64BitItems(HttpServletRequest request, HttpServletResponse response, Map env) {
+        Persistence persistence = PersistenceFactory.getPersistence();
+        Category importCategory = (Category) persistence.findById(new Category(Constants.CAT_SHOP_64BIT_CZ));
+
+        List<Map> items = new ArrayList<Map>();
+        List elements = importCategory.getData().getRootElement().elements("item");
+        for (Iterator iter = elements.iterator(); iter.hasNext();) {
+            Element element = (Element) iter.next();
+            Map map = new HashMap();
+            map.put("id", element.attributeValue("id"));
+            map.put("price", element.attributeValue("price"));
+            map.put("url", element.elementText("url"));
+            map.put("name", element.elementText("name"));
+            items.add(map);
+        }
+
+        env.put(VAR_SHOP_PRODUCTS, items);
+
+        List parents = new ArrayList(3);
+        storeNavigationPathForAdvertisements(parents);
+        parents.add(new Link("Produkty z 64bit.cz", "/EditAdvertisement?" + PARAM_ACTION + "=" + ACTION_SHOW_64BIT_ITEMS, null));
+        env.put(ShowObject.VAR_PARENTS, parents);
+
+        return FMTemplateSelector.select("EditAdvertisement", "show64Bit", env, request);
+    }
+
+    public String actionEdit64BitItemsStep1(HttpServletRequest request, HttpServletResponse response, Map env) {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistence persistence = PersistenceFactory.getPersistence();
+
+        Category importCategory = (Category) persistence.findById(new Category(Constants.CAT_SHOP_64BIT_CZ));
+        StringBuilder sb = new StringBuilder();
+        List elements = importCategory.getData().getRootElement().elements("item");
+        for (Iterator iter = elements.iterator(); iter.hasNext();) {
+            Element element = (Element) iter.next();
+            sb.append(element.elementText("url")).append('\n');
+        }
+
+        params.put(PARAM_PRODUCT_URLS, sb.toString());
+        return FMTemplateSelector.select("EditAdvertisement", "edit64Bit", env, request);
+    }
+
+    public String actionEdit64BitItemsStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user = (User) env.get(Constants.VAR_USER);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Persistence persistence = PersistenceFactory.getPersistence();
+
+        Category category = (Category) persistence.findById(new Category(Constants.CAT_SHOP_64BIT_CZ)).clone();
+        Document document = DocumentHelper.createDocument();
+        Element root = document.addElement("data");
+        category.setData(document);
+
+        String urls = (String) params.get(PARAM_PRODUCT_URLS);
+        if (urls == null)
+            urls = "";
+
+        StringTokenizer stk = new StringTokenizer(urls, "\n");
+        while (stk.hasMoreTokens()) {
+            String url = stk.nextToken().trim();
+            if (url.length() == 0)
+                continue;
+
+            Matcher matcher = shop64BitUrlPattern.matcher(url);
+            if (matcher.find()) {
+                String id = matcher.group(1);
+                Element item = root.addElement("item");
+                item.addAttribute("id", id);
+                item.addElement("url").setText(url);
+            } else {
+                ServletUtils.addError(PARAM_PRODUCT_URLS, "Zadali jste neplatné URL produktu '" + url + "'.", env, null);
+                return FMTemplateSelector.select("EditAdvertisement", "edit64Bit", env, request);
+            }
+        }
+
+        persistence.update(category);
+        Shop64bitFetcher.getInstance().run();
+
+        AdminLogger.logEvent(user, "zmenil seznam produktu z 64bit.cz");
+
+        urlUtils.redirect(response, "/EditAdvertisement/?action=show64Bit");
+        return null;
+    }
+
+
+
+    // helper methods
+
+
     public void configure(Preferences prefs) throws ConfigurationException {
         String regexp = prefs.get(PREF_IDENTIFIER_REGEXP, null);
         identifierPattern = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE);
+        regexp = prefs.get(PREF_SHOP64BIT_URL_REGEXP, null);
+        shop64BitUrlPattern = Pattern.compile(regexp);
     }
 
-    // helper methods
-    
+    private void storeNavigationPathForPosition(List parents, Item item, Relation rel) {
+        parents.add(new Link(item.getTitle(), "/EditAdvertisement/" + rel.getId() + "?" + PARAM_ACTION + "=" + ACTION_SHOW_POSITION, null));
+    }
+
+    private void storeNavigationPathForAdvertisements(List parents) {
+        parents.add(new Link("Administrace", "/Admin", null));
+        parents.add(new Link("Reklamy", "/EditAdvertisement", null));
+    }
+
     private Element getCode(Map params, Element root) {
         List<Node> codes = root.selectNodes("//code");
         int index = Misc.parseInt((String) params.get(PARAM_CODE), -1);
-        
+
         if (index < 0 || index >= codes.size())
             return null;
         else
             return (Element) codes.get(index);
     }
-    
+
     private Element getVariant(Map params, Element code) {
         List<Node> variants = code.selectNodes("variants/variant");
         int index = Misc.parseInt((String) params.get(PARAM_VARIANT), -1);
-        
+
         if (index < 0 || index >= variants.size())
             return null;
         else
@@ -844,7 +957,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
     /**
      * Updates position name from parameters. Changes are not synchronized with persistance.
      * @param params map holding request's parameters
-     * @param position position element to be updated
+     * @param item item to be updated
      * @param env environment
      * @return false, if there is a major error.
      */
@@ -880,8 +993,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
     /**
      * Updates position identifier from parameters. Changes are not synchronized with persistance.
      * @param params map holding request's parameters
-     * @param adsRoot container for all positions
-     * @param position position element to be updated
+     * @param item item to be updated
      * @param env environment
      * @return false, if there is a major error.
      */
@@ -959,15 +1071,15 @@ public class EditAdvertisement implements AbcAction, Configurable {
         }
         return true;
     }
-    
+
     private boolean setCodeName(Map params, Element code, List<Element> codes, Map env) {
         String name = (String) params.get(PARAM_NAME);
-        
+
         if (Misc.empty(name)) {
             ServletUtils.addError(PARAM_NAME, "Zadejte název!", env, null);
             return false;
         }
-        
+
         if (codes != null) {
             for (Element elem : codes) {
                 if (elem == code)
@@ -978,7 +1090,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
                 }
             }
         }
-        
+
         code.addAttribute("name", name);
 
         return true;
@@ -987,7 +1099,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
     /**
      * Updates code's dynamic flag from parameters. Changes are not synchronized with persistance.
      * @param params map holding request's parameters
-     * @param code element to be updated
+     * @param variant element to be updated
      * @return false, if there is a major error.
      */
     private boolean setVariantDynamicFlag(Map params, Element variant) {
@@ -1006,7 +1118,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
     /**
      * Updates code's content from parameters. Changes are not synchronized with persistance.
      * @param params map holding request's parameters
-     * @param code element to be updated
+     * @param variant element to be updated
      * @return false, if there is a major error.
      */
     private boolean setVariantCode(Map params, Element variant) {
@@ -1017,7 +1129,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
         variant.setText(s);
         return true;
     }
-    
+
     private boolean setVariantDescription(Map params, Element variant) {
         String description = (String) params.get(PARAM_DESCRIPTION);
         Attribute attr = variant.attribute("description");
@@ -1030,10 +1142,10 @@ public class EditAdvertisement implements AbcAction, Configurable {
             else
                 variant.addAttribute("description", description);
         }
-        
+
         return true;
     }
-    
+
     private boolean setVariantTags(Map params, Element variant) {
         String tags = (String) params.get(PARAM_TAGS);
         variant.addAttribute("tags", tags);

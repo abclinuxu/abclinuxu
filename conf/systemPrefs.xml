@@ -494,7 +494,7 @@
                         <map/>
                         <node name="JobOfferManager">
                             <map>
-                                <entry key="jdbc.url" value="jdbc:mysql://@PRACE_DB_HOST@/@PRACE_DB_SCHEMA@?user=@PRACE_DB_USER@&amp;password=@PRACE_DB_PASSWORD@&amp;useUnicode=true"/>
+                                <entry key="jdbc.url" value="jdbc:mysql://@DB_HOST@/@PRACE_DB_SCHEMA@?user=@PRACE_DB_USER@&amp;password=@PRACE_DB_PASSWORD@&amp;useUnicode=true"/>
                                 <entry key="sql.offers" value="select O.id,O.title,O.last_modify_date,O.it,O.linux,C.name as category,R.name as region,F.name as firma,T.name as typ
                                 from hr_offer as O, hr_category as C, hr_region as R, hr_company as F, hr_relation as T
                                 where C.id=O.idcategory and R.id=O.idregion and F.id=O.idcompany and T.id=O.idrelation
@@ -570,7 +570,8 @@
                     </node>
                     <node name="Shop64bitFetcher">
                         <map>
-                            <entry key="uri" value="http://www.64bit.cz/data/abclinuxu.xml"/>
+                            <entry key="jdbc.url" value="jdbc:mysql://@DB_HOST@/@SHOP64BIT_DB_SCHEMA@?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true&amp;characterEncoding=Cp1250"/>
+                            <entry key="sql.products" value="select id,price,discount,title from ko_shop_product where id in "/>
                         </map>
                     </node>
                     <node name="InvalidateEmails">
@@ -712,6 +713,7 @@
                             <entry key="CAT_EVENTS" value="2117"/>
                             <entry key="CAT_VIDEOS" value="2123"/>
                             <entry key="CAT_ADVERTISEMENTS" value="2228"/>
+                            <entry key="CAT_SHOP_64BIT_CZ" value="2085"/>
                             <entry key="ITEM_DIZ_TODO" value="11606"/>
                             <entry key="ITEM_DYNAMIC_CONFIGURATION" value="59516"/>
                             <entry key="REC_DIZ_TODO" value="38280"/>
@@ -813,7 +815,7 @@
                                 <entry key="rss.jobscz.delay" value="50"/>
                                 <entry key="rss.jobscz.period" value="1800"/>
                                 <entry key="start.rss.64bit" value="@START.RSS.64BIT@"/>
-                                <entry key="rss.64bit.delay" value="30"/>
+                                <entry key="rss.64bit.delay" value="130"/>
                                 <entry key="rss.64bit.period" value="3600"/>
                                 <entry key="start.variable.fetcher" value="@START.VARIABLE.FETCHER@"/>
                                 <entry key="variable.fetcher.delay" value="0"/>
@@ -918,6 +920,7 @@
                             <node name="EditAdvertisement">
                                 <map>
                                     <entry key="regexp.valid.identifier" value="[a-z0-9_-]+"/>
+                                    <entry key="regexp.64bit.url" value="/([\d]+)/product.html" />
                                 </map>
                             </node>
                             <node name="EditVideo">

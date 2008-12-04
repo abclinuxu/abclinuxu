@@ -67,6 +67,7 @@ public class Constants implements Configurable {
     public static int CAT_SERIES;
     public static int CAT_SURVEY;
     public static int CAT_PERSONALITIES;
+	public static int CAT_SHOP_64BIT_CZ;
 	public static int CAT_SUBPORTALS;
 	public static int CAT_EVENTS;
     public static int CAT_VIDEOS;

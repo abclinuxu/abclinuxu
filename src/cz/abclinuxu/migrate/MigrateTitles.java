@@ -179,7 +179,7 @@ public class MigrateTitles {
                 break;
             position += 50;
         }
-        persistence.releaseSQLResources(con, new Statement[] {selectStatement, updateStatement}, null);
+        PersistenceFactory.releaseSQLResources(con, new Statement[] {selectStatement, updateStatement}, null);
 
         resetHash();
         int seconds = (int) (System.currentTimeMillis() - start) / 1000;

@@ -117,7 +117,7 @@ public class SetTags {
                 foundCategories.add(new Category(id));
             }
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
 
         List<Category> categories = new ArrayList<Category>(50);

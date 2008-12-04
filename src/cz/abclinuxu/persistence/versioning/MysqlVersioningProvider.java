@@ -185,7 +185,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("SQL error", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -273,7 +273,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("SQL error", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -309,7 +309,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("SQL error", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -332,7 +332,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("SQL error", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 

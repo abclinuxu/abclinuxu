@@ -18,24 +18,28 @@
  */
 package cz.abclinuxu.scheduler;
 
-import cz.abclinuxu.data.view.HostingPrice;
-import cz.abclinuxu.data.view.HostingServer;
-import cz.abclinuxu.data.view.HostingService;
+import cz.abclinuxu.data.Category;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.config.Configurator;
 import org.apache.log4j.Logger;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import java.util.TimerTask;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.prefs.Preferences;
 
 /**
@@ -46,95 +50,88 @@ import java.util.prefs.Preferences;
 public class Shop64bitFetcher extends TimerTask implements Configurable {
     static Logger log = Logger.getLogger(Shop64bitFetcher.class);
 
-    static final String PREF_URI = "uri";
+    private static Shop64bitFetcher instance ;
 
-    String uri;
+    static {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+            log.fatal("Nemohu vytvořit instanci JDBC driveru, zkontroluj CLASSPATH!", e);
+        }
+
+        instance = new Shop64bitFetcher();
+        ConfigurationManager.getConfigurator().configureAndRememberMe(instance);
+    }
+
+    public static final String PREF_JDBC_URL = "jdbc.url";
+    public static final String PREF_SQL_QUERY = "sql.products";
+
+
+    private String jdbcUrl;
+    private String sqlQuery;
+
 
     public void run() {
-        log.debug("Fetching 64bit.cz XML starts ..");
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
         try {
-            SAXReader reader = new SAXReader();
-            Document document = reader.read(uri);
-            Element productsElement = document.getRootElement().element("products");
-            Element servicesElement = document.getRootElement().element("services");
-            Element softwareElement = document.getRootElement().element("softwares");
+            Persistence persistence = PersistenceFactory.getPersistence();
+            Category importCategory = (Category) persistence.findById(new Category(Constants.CAT_SHOP_64BIT_CZ)).clone();
 
-            List<HostingServer> servers = new ArrayList<HostingServer>();
-            for (Iterator iter = productsElement.elements().iterator(); iter.hasNext();) {
+            List<Integer> ids = new ArrayList<Integer>();
+            Element rootElement = importCategory.getData().getRootElement();
+            List elements = rootElement.elements("item");
+            for (Iterator iter = elements.iterator(); iter.hasNext();) {
                 Element element = (Element) iter.next();
-                servers.add(parseServer(element));
+                String id = element.attributeValue("id");
+                ids.add(Integer.parseInt(id));
             }
 
-            List<HostingService> services = new ArrayList<HostingService>();
-            for (Iterator iter = servicesElement.elements().iterator(); iter.hasNext();) {
-                Element element = (Element) iter.next();
-                services.add(parse(element));
+            connection = DriverManager.getConnection(jdbcUrl);
+            statement = connection.prepareStatement(sqlQuery + Misc.getInCondition(ids.size()));
+            for (int i = 0; i < ids.size(); i++)
+                statement.setInt(i + 1, ids.get(i));
+
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Element element = (Element) rootElement.selectSingleNode("item[@id=" + resultSet.getInt(1) + "]");
+                if (element == null) {
+                    log.warn("Nenalezen produkt s id " + resultSet.getInt(1));
+                    continue;
+                }
+
+                double price = resultSet.getDouble(2), discount = 1 - resultSet.getDouble(3) / 100.0;
+                double endPrice = Math.ceil(price * discount);
+                element.addAttribute("price", Double.toString(endPrice));
+                DocumentHelper.makeElement(element, "name").setText(resultSet.getString(4));
             }
+            persistence.update(importCategory);
 
-            List<HostingService> software = new ArrayList<HostingService>();
-            for (Iterator iter = softwareElement.elements().iterator(); iter.hasNext();) {
-                Element element = (Element) iter.next();
-                services.add(parse(element));
-            }
-
-            int random = new Random(System.currentTimeMillis()).nextInt(servers.size());
-            VariableFetcher.getInstance().setOffer64bit(servers.get(random));
-
-            log.debug("AbcHost content generated");
-        } catch (DocumentException e) {
-            log.error("IO problems for " + uri + ": " + e.getMessage());
         } catch (Exception e) {
-            log.error("Cannot parse links from " + uri, e);
+            log.error("Shop64bitFetcher failed", e);
+        } finally {
+            PersistenceFactory.releaseSQLResources(connection, statement, resultSet);
         }
     }
 
-    private HostingPrice parsePrice(Element element) {
-        float price = Float.parseFloat(element.getText());
-        float vat = Float.parseFloat(element.attributeValue("vat"));
-        HostingPrice hostingPrice = new HostingPrice(price, vat);
-        hostingPrice.setCurrency(element.attributeValue("currency"));
-        return hostingPrice;
+    public static Shop64bitFetcher getInstance() {
+        return instance;
     }
 
-    private HostingService parse(Element element) {
-        HostingService service = new HostingService(element.elementText("name"), element.elementText("url"));
-        if ("true".equalsIgnoreCase(element.attributeValue("action")))
-            service.setAction(true);
-//        if ("true".equalsIgnoreCase(element.attributeValue("new")))
-//            server.setNewArrival(true);
-        Element el = element.element("price");
-        if (el != null)
-            service.setPrice(parsePrice(el));
-        return service;
-    }
-    
-    private HostingServer parseServer(Element element) {
-        HostingServer server;
-        boolean action = "true".equals(element.attributeValue("action"));
-        boolean _new = "true".equals(element.attributeValue("new"));
-        
-        String name = element.elementText("name");
-        String url = element.elementText("url");
-        
-        server = new HostingServer(name, url);
-        server.setAction(action);
-        server.setNewArrival(_new);
-        server.setDescription(element.attributeValue("config"));
-        server.setPrice(parsePrice(element.element("price")));
-        
-        return server;
-    }
-
-    public Shop64bitFetcher() {
-        Configurator configurator = ConfigurationManager.getConfigurator();
-        configurator.configureMe(this);
+    private Shop64bitFetcher() {
     }
 
     /**
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        uri = prefs.get(PREF_URI, null);
+        jdbcUrl = prefs.get(PREF_JDBC_URL, null);
+        if (jdbcUrl == null)
+            throw new ConfigurationException("Configuration for " + PREF_JDBC_URL + " is missing!");
+        sqlQuery = prefs.get(PREF_SQL_QUERY, null);
+        if (sqlQuery == null)
+            throw new ConfigurationException("Configuration for " + PREF_SQL_QUERY + " is missing!");
     }
 
     public static void main(String[] args) throws Exception {

@@ -212,7 +212,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu vykonat SQL příkaz "+sql, e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -245,7 +245,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu vykonat SQL příkaz "+sql, e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -278,7 +278,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu vykonat SQL příkaz "+sql, e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -311,7 +311,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu vykonat SQL příkaz "+sql, e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -351,7 +351,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu vykonat SQL příkaz " + sql, e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -380,7 +380,7 @@ public final class SQLTool implements Configurable {
             statement = con.prepareStatement(sql.get(DELETE_USER));
             statement.setInt(1, uid);
             statement.executeUpdate();
-            persistance.releaseSQLResources(null, statement, null);
+            PersistenceFactory.releaseSQLResources(null, statement, null);
 
             statement = con.prepareStatement(sql.get(DELETE_USER_TICKET));
             statement.setInt(1, uid);
@@ -389,7 +389,7 @@ public final class SQLTool implements Configurable {
             persistance.clearCache();
             VariableFetcher.getInstance().run();
         } finally {
-            persistance.releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -413,7 +413,7 @@ public final class SQLTool implements Configurable {
             mergeUsersStep(con, CHANGE_CATEGORY_OWNER, from, to);
             mergeUsersStep(con, CHANGE_PROPERTY_OWNER, from, to);
         } finally {
-            persistance.releaseSQLResources(con, (Statement) null, null);
+            PersistenceFactory.releaseSQLResources(con, (Statement) null, null);
         }
     }
 
@@ -433,7 +433,7 @@ public final class SQLTool implements Configurable {
             statement.executeUpdate();
         } finally {
             MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
-            persistance.releaseSQLResources(null, statement, null);
+            PersistenceFactory.releaseSQLResources(null, statement, null);
         }
     }
 
@@ -1401,7 +1401,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -1429,7 +1429,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -1464,7 +1464,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -1499,7 +1499,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -1532,7 +1532,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -1633,7 +1633,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba pri ukladani!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -1668,7 +1668,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba pri ukladani!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -1693,7 +1693,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba pri ukladani!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -1732,7 +1732,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba pri mazani!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -1777,7 +1777,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, rs);
+            PersistenceFactory.releaseSQLResources(con, statement, rs);
         }
     }
 
@@ -1795,7 +1795,7 @@ public final class SQLTool implements Configurable {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        
+
         try {
             int id, size, last;
             Map<Integer, Integer[]> result = new HashMap<Integer, Integer[]> (categories.size());
@@ -1825,7 +1825,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, rs);
+            PersistenceFactory.releaseSQLResources(con, statement, rs);
         }
     }
 
@@ -1862,7 +1862,7 @@ public final class SQLTool implements Configurable {
 		} catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, rs);
+            PersistenceFactory.releaseSQLResources(con, statement, rs);
         }
 	}
 
@@ -1900,7 +1900,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, rs);
+            PersistenceFactory.releaseSQLResources(con, statement, rs);
         }
     }
 
@@ -1938,7 +1938,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, rs);
+            PersistenceFactory.releaseSQLResources(con, statement, rs);
         }
     }
 
@@ -1979,7 +1979,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, rs);
+            PersistenceFactory.releaseSQLResources(con, statement, rs);
         }
     }
 
@@ -2020,7 +2020,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, rs);
+            PersistenceFactory.releaseSQLResources(con, statement, rs);
         }
     }
 
@@ -2055,7 +2055,7 @@ public final class SQLTool implements Configurable {
             }
             throw new PersistenceException("Chyba v SQL!", e);
         } finally {
-            persistance.releaseSQLResources(con, new Statement[]{statementInsert, statementUpdate}, null);
+            PersistenceFactory.releaseSQLResources(con, new Statement[]{statementInsert, statementUpdate}, null);
         }
     }
 
@@ -2114,7 +2114,7 @@ public final class SQLTool implements Configurable {
             }
             throw new PersistenceException("Chyba v SQL!", e);
         } finally {
-            persistance.releaseSQLResources(con, new Statement[]{statementInsert, statementUpdate}, null);
+            PersistenceFactory.releaseSQLResources(con, new Statement[]{statementInsert, statementUpdate}, null);
         }
     }
 
@@ -2158,7 +2158,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -2185,7 +2185,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -2228,7 +2228,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při logování akce se štítkem!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -2270,7 +2270,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání autora štítku!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
 	}
 
@@ -2299,7 +2299,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při ukládání staré adresy!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -2330,7 +2330,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -2369,7 +2369,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -2394,7 +2394,7 @@ public final class SQLTool implements Configurable {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání serverů!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -2402,7 +2402,7 @@ public final class SQLTool implements Configurable {
         String query = (String) sql.get(SERVER_RELATIONS_IN_CATEGORY);
         return loadRelations(query, Collections.singletonList(new Integer(cat)));
     }
-    
+
     public Item findAdvertisementByString(String str) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
         Connection con = null;
@@ -2413,16 +2413,16 @@ public final class SQLTool implements Configurable {
             statement = con.prepareStatement((String) sql.get(FIND_ADVERTISEMENT_BY_STRING));
             statement.setString(1, str);
             resultSet = statement.executeQuery();
-            
+
             if (!resultSet.next())
                 return null;
-            
+
             Item item = (Item) persistance.findById(new Item(resultSet.getInt(1)));
             return item;
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání reklamy!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 

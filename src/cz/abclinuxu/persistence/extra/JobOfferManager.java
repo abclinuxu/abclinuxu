@@ -22,6 +22,7 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.data.view.JobOffer;
+import cz.abclinuxu.persistence.PersistenceFactory;
 
 import java.util.prefs.Preferences;
 import java.util.TimerTask;
@@ -113,11 +114,14 @@ public class JobOfferManager extends TimerTask implements Configurable {
     }
 
     public void run() {
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
         try {
             List newOffers = new ArrayList(100);
-            Connection connection = DriverManager.getConnection(jdbcUrl);
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sqlQuery);
+            connection = DriverManager.getConnection(jdbcUrl);
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(sqlQuery);
             while (resultSet.next()) {
                 JobOffer offer = convert(resultSet);
                 newOffers.add(offer);
@@ -129,6 +133,8 @@ public class JobOfferManager extends TimerTask implements Configurable {
             }
         } catch (Exception e) {
             log.error("JobOfferManager failed", e);
+        } finally {
+            PersistenceFactory.releaseSQLResources(connection, statement, resultSet);
         }
     }
 

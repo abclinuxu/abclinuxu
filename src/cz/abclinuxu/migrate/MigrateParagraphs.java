@@ -129,7 +129,7 @@ public class MigrateParagraphs {
             System.out.println();
             System.out.println();
         } finally {
-            persistance.releaseSQLResources(con, new Statement[] {statement, updateStatement}, new ResultSet[] {rs});
+            PersistenceFactory.releaseSQLResources(con, new Statement[] {statement, updateStatement}, new ResultSet[] {rs});
         }
     }
 

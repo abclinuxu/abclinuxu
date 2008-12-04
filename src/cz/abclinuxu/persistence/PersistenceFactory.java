@@ -19,6 +19,9 @@
 package cz.abclinuxu.persistence;
 
 import java.util.prefs.Preferences;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
 
 import org.logicalcobwebs.proxool.configuration.JAXPConfigurator;
 import org.logicalcobwebs.proxool.ProxoolException;
@@ -171,6 +174,62 @@ public class PersistenceFactory implements Configurable {
             } catch (ClassNotFoundException e) {
                 log.error("Add proxool jar to your classpath!", e);
             }
+        }
+    }
+
+    /**
+     * Closes database connection and logs any errors
+     */
+    public static void releaseSQLResources(Connection con, Statement statement, ResultSet rs) {
+        try {
+            if (rs != null)
+                rs.close();
+        } catch (Exception e) {
+            log.warn("Problems while closing ResultSet!", e);
+        }
+        try {
+            if (statement != null)
+                statement.close();
+        } catch (Exception e) {
+            log.warn("Problems while closing statement!", e);
+        }
+        try {
+            if (con != null)
+                con.close();
+        } catch (Exception e) {
+            log.warn("Problems while closing connection to database!", e);
+        }
+    }
+
+    /**
+     * Closes database connection and logs any errors
+     */
+    public static void releaseSQLResources(Connection con, Statement[] statements, ResultSet[] rs) {
+        if (rs != null)
+            for (ResultSet resultSet : rs) {
+                try {
+                    if (resultSet != null)
+                        resultSet.close();
+                } catch (Exception e) {
+                    log.warn("Problems while closing ResultSet!", e);
+                }
+            }
+
+        if (statements != null)
+            for (Statement statement : statements) {
+                try {
+                    if (statement != null)
+                        statement.close();
+                } catch (Exception e) {
+                    log.warn("Problems while closing statement!", e);
+                }
+            }
+
+        try {
+            if (con != null)
+                con.close();
+        } catch (Exception e) {
+            log.warn("Problems while closing connection to database!", e);
         }
     }
 }

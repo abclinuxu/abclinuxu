@@ -27,9 +27,7 @@ import cz.abclinuxu.data.view.RowComment;
 import cz.abclinuxu.data.view.DiscussionRecord;
 import cz.abclinuxu.exceptions.*;
 import cz.abclinuxu.AbcException;
-import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.comparator.IdComparator;
 import cz.abclinuxu.utils.comparator.IdComparator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.servlets.utils.url.CustomURLCache;
@@ -38,6 +36,7 @@ import cz.abclinuxu.persistence.cache.TransparentCache;
 import cz.abclinuxu.persistence.cache.TagCache;
 import cz.abclinuxu.persistence.Nursery;
 import cz.abclinuxu.persistence.PersistenceMapping;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import org.logicalcobwebs.proxool.ProxoolException;
 import org.logicalcobwebs.proxool.ProxoolFacade;
 import org.dom4j.DocumentHelper;
@@ -161,7 +160,7 @@ public class MySqlPersistence implements Persistence {
                 throw new PersistenceException("Nemohu uložit "+obj,e);
             }
         } finally {
-            releaseSQLResources(con,statement,null);
+            PersistenceFactory.releaseSQLResources(con,statement,null);
         }
     }
 
@@ -267,7 +266,7 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             throw new PersistenceException("Databázová chyba!", e);
         } finally {
-            releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -296,7 +295,7 @@ public class MySqlPersistence implements Persistence {
         } catch ( SQLException e ) {
             throw new PersistenceException("Nemohu provést zadané vyhledávání!" + statement, e);
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -373,7 +372,7 @@ public class MySqlPersistence implements Persistence {
         } catch ( SQLException e ) {
             throw new PersistenceException("Chyba při hledání podle "+command+"!",e);
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
         return result;
     }
@@ -443,7 +442,7 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             throw new PersistenceException("Cannot find relation by example of "+example,e);
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -537,7 +536,7 @@ public class MySqlPersistence implements Persistence {
         } catch ( SQLException e ) {
             throw new PersistenceException("Nemohu smazat objekt!",e);
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -681,7 +680,7 @@ public class MySqlPersistence implements Persistence {
         } catch ( SQLException e ) {
             log.error("Nepodařilo se zvýšit čítač pro "+obj,e);
         } finally {
-            releaseSQLResources(con,statement,null);
+            PersistenceFactory.releaseSQLResources(con,statement,null);
         }
     }
 
@@ -702,7 +701,7 @@ public class MySqlPersistence implements Persistence {
             log.error("Nepodařilo se zjistit hodnotu čítače pro "+obj,e);
             return 0;
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -745,7 +744,7 @@ public class MySqlPersistence implements Persistence {
             log.error("Selhalo hledání čítačů pro " + objects, e);
             throw new PersistenceException("Selhalo hledání čítačů!");
         } finally {
-            releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -766,7 +765,7 @@ public class MySqlPersistence implements Persistence {
         } catch ( SQLException e ) {
             log.error("Nepodařilo se smazat čítač pro "+obj,e);
         } finally {
-            releaseSQLResources(con,statement,null);
+            PersistenceFactory.releaseSQLResources(con,statement,null);
         }
     }
 
@@ -815,7 +814,7 @@ public class MySqlPersistence implements Persistence {
             log.error("Selhalo hledání potomků pro "+obj, e);
             throw new PersistenceException("Selhalo hledání potomků pro " + obj);
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -852,7 +851,7 @@ public class MySqlPersistence implements Persistence {
             log.error("Selhalo hledání potomků pro "+objects, e);
             throw new PersistenceException("Selhalo hledání potomků!");
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1072,7 +1071,7 @@ public class MySqlPersistence implements Persistence {
                 choice.setId(i);
             }
         } finally {
-            releaseSQLResources(con,statement,null);
+            PersistenceFactory.releaseSQLResources(con,statement,null);
         }
     }
 
@@ -1096,7 +1095,7 @@ public class MySqlPersistence implements Persistence {
             loadCommonObjectProperties(user);
             return user;
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1138,7 +1137,7 @@ public class MySqlPersistence implements Persistence {
                 cache.store(user);
             }
         } finally {
-            releaseSQLResources(con,statement,rs);
+            PersistenceFactory.releaseSQLResources(con,statement,rs);
         }
     }
 
@@ -1195,7 +1194,7 @@ public class MySqlPersistence implements Persistence {
 
             return data;
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1244,7 +1243,7 @@ public class MySqlPersistence implements Persistence {
                     objects.remove(id);
             }
         } finally {
-            releaseSQLResources(con, statement, rs);
+            PersistenceFactory.releaseSQLResources(con, statement, rs);
         }
 
         loadCommonObjectsProperties(objects, PersistenceMapping.getGenericObjectType(representant));
@@ -1347,7 +1346,7 @@ public class MySqlPersistence implements Persistence {
             diz.setMaxCommentId(max);
             record.setCustom(diz);
         } finally {
-            releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -1389,7 +1388,7 @@ public class MySqlPersistence implements Persistence {
             syncRelationFromRS(relation, resultSet);
             return relation;
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1425,7 +1424,7 @@ public class MySqlPersistence implements Persistence {
                 cache.store(relation);
             }
         } finally {
-            releaseSQLResources(con, statement, rs);
+            PersistenceFactory.releaseSQLResources(con, statement, rs);
         }
     }
 
@@ -1476,7 +1475,7 @@ public class MySqlPersistence implements Persistence {
             syncLinkFromRS(link, resultSet);
             return link;
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1511,7 +1510,7 @@ public class MySqlPersistence implements Persistence {
                 cache.store(link);
             }
         } finally {
-            releaseSQLResources(con, statement, rs);
+            PersistenceFactory.releaseSQLResources(con, statement, rs);
         }
     }
 
@@ -1555,7 +1554,7 @@ public class MySqlPersistence implements Persistence {
             poll.setInitialized(true);
             return poll;
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1591,7 +1590,7 @@ public class MySqlPersistence implements Persistence {
                 cache.store(poll);
             }
         } finally {
-            releaseSQLResources(con, statement, rs);
+            PersistenceFactory.releaseSQLResources(con, statement, rs);
         }
     }
 
@@ -1667,7 +1666,7 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             log.error("Nepodařilo se zvýšit čítač pro " + firstChoice, e);
         } finally {
-            releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -1691,7 +1690,7 @@ public class MySqlPersistence implements Persistence {
             syncServerFromRS(server, resultSet);
             return server;
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1726,7 +1725,7 @@ public class MySqlPersistence implements Persistence {
                 cache.store(server);
             }
         } finally {
-            releaseSQLResources(con, statement, rs);
+            PersistenceFactory.releaseSQLResources(con, statement, rs);
         }
     }
 
@@ -1808,7 +1807,7 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu uložit změny do databáze!",e);
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1865,7 +1864,7 @@ public class MySqlPersistence implements Persistence {
                 }
             }
         } finally {
-            releaseSQLResources(null, new Statement[] {statement1, statement2, statement3}, null);
+            PersistenceFactory.releaseSQLResources(null, new Statement[] {statement1, statement2, statement3}, null);
         }
     }
 
@@ -1905,7 +1904,7 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu uložit změny do databáze!",e);
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1941,7 +1940,7 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu uložit změny v "+link.toString()+" do databáze!",e);
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1980,7 +1979,7 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu uložit změny v "+poll.toString()+" do databáze!",e);
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -2010,7 +2009,7 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu uložit změny v "+server.toString()+" do databáze!",e);
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -2052,7 +2051,7 @@ public class MySqlPersistence implements Persistence {
                 throw new PersistenceException("Nemohu uložit změny do databáze!",e);
             }
         } finally {
-            releaseSQLResources(con,statement,resultSet);
+            PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -2082,7 +2081,7 @@ public class MySqlPersistence implements Persistence {
             e.printStackTrace();
             throw e;
         } finally {
-            releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -2121,7 +2120,7 @@ public class MySqlPersistence implements Persistence {
             e.printStackTrace();
             throw e;
         } finally {
-            releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -2141,7 +2140,7 @@ public class MySqlPersistence implements Persistence {
             e.printStackTrace();
             throw e;
         } finally {
-            releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -2180,7 +2179,7 @@ public class MySqlPersistence implements Persistence {
             log.error(e);
             throw e;
         } finally {
-            releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -2208,7 +2207,7 @@ public class MySqlPersistence implements Persistence {
                 throw new PersistenceException("Nemohu uložit " + tag, e);
             }
         } finally {
-            releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -2230,7 +2229,7 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu uložit " + tag, e);
         } finally {
-            releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -2255,7 +2254,7 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu smazat " + tag, e);
         } finally {
-            releaseSQLResources(con, new Statement[] {statement, statement2, statement3}, null);
+            PersistenceFactory.releaseSQLResources(con, new Statement[] {statement, statement2, statement3}, null);
         }
     }
 
@@ -2283,7 +2282,7 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu získat seznam štítků!", e);
         } finally {
-            releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -2314,7 +2313,7 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu načíst štítky pro " + obj, e);
         } finally {
-            releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -2340,7 +2339,7 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu uložit štítky pro " + obj, e);
         } finally {
-            releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -2366,7 +2365,7 @@ public class MySqlPersistence implements Persistence {
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu smazat štítky pro " + obj, e);
         } finally {
-            releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -2395,62 +2394,6 @@ public class MySqlPersistence implements Persistence {
             return DriverManager.getConnection(dbUrl);
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu se spojit s databazi!",e);
-        }
-    }
-
-    /**
-     * Closes database connection and logs any errors
-     */
-    public void releaseSQLResources(Connection con, Statement statement, ResultSet rs) {
-        try {
-            if ( rs!=null )
-                rs.close();
-        } catch (Exception e) {
-            log.warn("Problems while closing ResultSet!",e);
-        }
-        try {
-            if ( statement!=null )
-                statement.close();
-        } catch (Exception e) {
-            log.warn("Problems while closing statement!",e);
-        }
-        try {
-            if ( con!=null )
-                con.close();
-        } catch (Exception e) {
-            log.warn("Problems while closing connection to database!",e);
-        }
-    }
-
-    /**
-     * Closes database connection and logs any errors
-     */
-    public void releaseSQLResources(Connection con, Statement[] statements, ResultSet[] rs) {
-        if (rs != null)
-            for (int i = 0; i < rs.length; i++) {
-                ResultSet resultSet = rs[i];
-                try {
-                    if (resultSet != null)
-                        resultSet.close();
-                } catch (Exception e) {
-                    log.warn("Problems while closing ResultSet!", e);
-                }
-            }
-        if (statements != null)
-            for (int i = 0; i < statements.length; i++) {
-                Statement statement = statements[i];
-                try {
-                    if (statement != null)
-                        statement.close();
-                } catch (Exception e) {
-                    log.warn("Problems while closing statement!", e);
-                }
-            }
-        try {
-            if (con != null)
-                con.close();
-        } catch (Exception e) {
-            log.warn("Problems while closing connection to database!", e);
         }
     }
 

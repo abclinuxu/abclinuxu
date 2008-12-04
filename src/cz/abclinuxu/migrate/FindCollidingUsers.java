@@ -247,7 +247,7 @@ public class FindCollidingUsers {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 
@@ -264,7 +264,7 @@ public class FindCollidingUsers {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, null);
+            PersistenceFactory.releaseSQLResources(con, statement, null);
         }
     }
 

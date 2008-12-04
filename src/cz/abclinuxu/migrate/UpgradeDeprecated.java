@@ -113,7 +113,7 @@ public class UpgradeDeprecated {
                 resultSet.close(); resultSet = null;
             }
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
         System.out.println("Total number of deprecated URLS: "+total);
     }
@@ -233,7 +233,7 @@ public class UpgradeDeprecated {
                 }
             }
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
         log.info("Total number of converted Records: "+total);
         System.out.println("Total number of converted Records: "+total);
@@ -257,7 +257,7 @@ public class UpgradeDeprecated {
                 result.add(id);
             }
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
         return result;
     }

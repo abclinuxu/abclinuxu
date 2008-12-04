@@ -228,7 +228,7 @@ public class TestTags extends TestCase {
             statement.executeUpdate("delete from stitkovani");
             statement.executeUpdate("delete from stitky_log");
         } finally {
-            ((MySqlPersistence) persistence).releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -250,7 +250,7 @@ public class TestTags extends TestCase {
             statement.executeUpdate("delete from stitkovani");
             statement.executeUpdate("delete from stitky_log");
         } finally {
-            ((MySqlPersistence) persistence).releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 

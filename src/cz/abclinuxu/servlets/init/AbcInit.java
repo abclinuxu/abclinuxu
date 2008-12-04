@@ -234,14 +234,14 @@ public class AbcInit extends HttpServlet implements Configurable {
 
     protected void start64bitFetcher() {
         if ( !isSet(PREF_RSS_64BIT) ) {
-            log.info("64bit.cz RSS monitor configured not to run");
+            log.info("64bit.cz prices monitor configured not to run");
             return;
         }
 
-        log.info("Scheduling the 64bit.cz RSS monitor");
+        log.info("Scheduling the 64bit.cz prices monitor");
         int delay = getDelay(PREF_RSS_64BIT);
         int period = getPeriod(PREF_RSS_64BIT);
-        slowScheduler.schedule(new Shop64bitFetcher(), delay, period);
+        slowScheduler.schedule(Shop64bitFetcher.getInstance(), delay, period);
     }
 
     /**

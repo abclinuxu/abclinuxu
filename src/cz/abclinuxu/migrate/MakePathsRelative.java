@@ -117,7 +117,7 @@ public class MakePathsRelative {
             }
             return total;
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -177,7 +177,7 @@ public class MakePathsRelative {
                 }
             }
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
         log.info("Total number of converted "+table+"s: "+total);
         return total;
@@ -199,7 +199,7 @@ public class MakePathsRelative {
                 result.add(id);
             }
         } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
         return result;
     }
