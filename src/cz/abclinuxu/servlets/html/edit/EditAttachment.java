@@ -78,17 +78,17 @@ public class EditAttachment implements AbcAction {
 
     public static final String PARAM_SCREENSHOT = "screenshot";
     public static final String PARAM_ATTACHMENT = "attachment";
-	public static final String PARAM_REMOVE = "remove";
-	public static final String PARAM_SET_VISIBLE = "setVisible";
-	public static final String PARAM_SET_HIDDEN = "setHidden";
+    public static final String PARAM_REMOVE = "remove";
+    public static final String PARAM_SET_VISIBLE = "setVisible";
+    public static final String PARAM_SET_HIDDEN = "setHidden";
     public static final String PARAM_THREAD = "threadId";
 
     public static final String ACTION_ADD_SCREENSHOT = "addScreenshot";
     public static final String ACTION_ADD_SCREENSHOT_STEP2 = "addScreenshot2";
-	public static final String ACTION_ADD_FILE = "addFile";
+    public static final String ACTION_ADD_FILE = "addFile";
     public static final String ACTION_ADD_FILE_STEP2 = "addFile2";
     public static final String ACTION_MANAGE = "manage";
-	public static final String ACTION_MANAGE_STEP2 = "manage2";
+    public static final String ACTION_MANAGE_STEP2 = "manage2";
     public static final String ACTION_REMOVE = "remove";
     public static final String ACTION_REMOVE_STEP2 = "remove2";
 
@@ -108,10 +108,10 @@ public class EditAttachment implements AbcAction {
         Tools.sync(relation);
         env.put(VAR_RELATION, relation);
         GenericObject child = relation.getChild();
-		GenericDataObject gdo = null;
+        GenericDataObject gdo = null;
 
-		if (child instanceof GenericDataObject)
-			gdo = (GenericDataObject) child;
+        if (child instanceof GenericDataObject)
+            gdo = (GenericDataObject) child;
 
         if (action == null)
             throw new MissingArgumentException("Chybí parametr action!");
@@ -126,11 +126,11 @@ public class EditAttachment implements AbcAction {
             int type = item.getType();
 
             if ( (type == Item.BLOG || type == Item.UNPUBLISHED_BLOG) && item.getOwner() != user.getId()) {
-				if (gdo != null)
-					allowed = Tools.permissionsFor(user, relation).canModify();
-				else
-					allowed = false;
-			}
+                if (gdo != null)
+                    allowed = Tools.permissionsFor(user, relation).canModify();
+                else
+                    allowed = false;
+            }
         }
 
         if ( ! allowed)
@@ -144,10 +144,10 @@ public class EditAttachment implements AbcAction {
             return actionAddScreenshotStep2(request, response, env);
         }
 
-		if (gdo != null)
-			allowed = Tools.permissionsFor(user, relation).canDelete();
-		else
-			allowed = false;
+        if (gdo != null)
+            allowed = Tools.permissionsFor(user, relation).canDelete();
+        else
+            allowed = false;
 
         if (child instanceof Item) {
             Item item = (Item) child;
@@ -166,7 +166,7 @@ public class EditAttachment implements AbcAction {
         if (action.equals(ACTION_MANAGE))
             return actionManageAttachments(request, env);
 
-		if (action.equals(ACTION_MANAGE_STEP2)) {
+        if (action.equals(ACTION_MANAGE_STEP2)) {
             ActionProtector.ensureContract(request, EditAttachment.class, true, true, true, false);
             return actionManageAttachmentsStep2(request, response, env);
         }
@@ -180,11 +180,11 @@ public class EditAttachment implements AbcAction {
         }
 
         if (action.equals(ACTION_ADD_FILE))
-			return FMTemplateSelector.select("EditAttachment", "addFile", env, request);
-		if (action.equals(ACTION_ADD_FILE_STEP2)) {
-			ActionProtector.ensureContract(request, EditAttachment.class, true, true, true, false);
-			return actionAddFilesStep2(request, response, env);
-		}
+            return FMTemplateSelector.select("EditAttachment", "addFile", env, request);
+        if (action.equals(ACTION_ADD_FILE_STEP2)) {
+            ActionProtector.ensureContract(request, EditAttachment.class, true, true, true, false);
+            return actionAddFilesStep2(request, response, env);
+        }
 
         return null;
     }
@@ -199,10 +199,10 @@ public class EditAttachment implements AbcAction {
         data.setType(Data.IMAGE);
         data.setOwner(user.getId());
 
-		if (relation.getChild() instanceof GenericDataObject) {
-			GenericDataObject gdo = (GenericDataObject) relation.getChild();
-			data.setGroup(gdo.getGroup());
-		}
+        if (relation.getChild() instanceof GenericDataObject) {
+            GenericDataObject gdo = (GenericDataObject) relation.getChild();
+            data.setGroup(gdo.getGroup());
+        }
 
         boolean canContinue = addScreenshot(params, data, relation, env);
         if (!canContinue)
@@ -218,20 +218,20 @@ public class EditAttachment implements AbcAction {
         return null;
     }
 
-	private String actionAddFilesStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    private String actionAddFilesStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Relation relation = (Relation) env.get(VAR_RELATION);
-		Item item = (Item) relation.getChild();
-		Tools.sync(item);
+        Item item = (Item) relation.getChild();
+        Tools.sync(item);
 
-		boolean success = storeAttachments(relation, env);
+        boolean success = storeAttachments(relation, env);
 
-		if (success) {
-			UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-			urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
-			return null;
-		} else
-			return FMTemplateSelector.select("EditAttachment", "addFile", env, request);
-	}
+        if (success) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+            return null;
+        } else
+            return FMTemplateSelector.select("EditAttachment", "addFile", env, request);
+    }
 
     private String actionManageAttachments(HttpServletRequest request, Map env) throws Exception {
         Relation relation = (Relation) env.get(VAR_RELATION);
@@ -301,28 +301,28 @@ public class EditAttachment implements AbcAction {
         return FMTemplateSelector.select("EditAttachment", "remove", env, request);
     }
 
-	private String actionManageAttachmentsStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-		Map params = (Map) env.get(Constants.VAR_PARAMS);
-		Relation relation = (Relation) env.get(VAR_RELATION);
+    private String actionManageAttachmentsStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
 
-		if (params.containsKey(PARAM_REMOVE))
-			return actionRemoveAttachmentStep2(response, env);
+        if (params.containsKey(PARAM_REMOVE))
+            return actionRemoveAttachmentStep2(response, env);
 
-		boolean setHidden, setVisible;
-		setHidden = params.containsKey(PARAM_SET_HIDDEN);
-		setVisible = params.containsKey(PARAM_SET_VISIBLE);
+        boolean setHidden, setVisible;
+        setHidden = params.containsKey(PARAM_SET_HIDDEN);
+        setVisible = params.containsKey(PARAM_SET_VISIBLE);
 
-		boolean bSuccess = false;
-		if (setHidden || setVisible)
-			bSuccess = setAttachmentVisibility(env, setHidden);
+        boolean bSuccess = false;
+        if (setHidden || setVisible)
+            bSuccess = setAttachmentVisibility(env, setHidden);
 
-		if (bSuccess) {
-			UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-			urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
-			return null;
-		} else
-			return FMTemplateSelector.select("EditAttachment", "manage", env, request);
-	}
+        if (bSuccess) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+            return null;
+        } else
+            return FMTemplateSelector.select("EditAttachment", "manage", env, request);
+    }
 
     private String actionRemoveAttachmentStep2(HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -351,10 +351,10 @@ public class EditAttachment implements AbcAction {
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             int rid = Misc.parseInt((String) iter.next(), -1);
             Relation dataRelation = (Relation) persistence.findById(new Relation(rid));
-			String path = Tools.xpath(dataRelation.getChild(), "/data/object/@path");
+            String path = Tools.xpath(dataRelation.getChild(), "/data/object/@path");
 
-			if (!Misc.empty(path))
-				new File(path).delete();
+            if (!Misc.empty(path))
+                new File(path).delete();
 
             if (comment != null) {
                 Node node = comment.getData().selectSingleNode("//attachment[text()='"+rid+"']");
@@ -508,32 +508,32 @@ public class EditAttachment implements AbcAction {
         return true;
     }
 
-	/**
-	 * Stores generic attachments
-	 * @param relation
-	 * @param env
-	 * @return true if the operation was successful
-	 * @throws java.io.IOException
-	 */
-	static boolean storeAttachments(Relation relation, Map env) throws IOException {
-		Map params = (Map) env.get(Constants.VAR_PARAMS);
-		User user = (User) env.get(Constants.VAR_USER);
+    /**
+     * Stores generic attachments
+     * @param relation
+     * @param env
+     * @return true if the operation was successful
+     * @throws java.io.IOException
+     */
+    static boolean storeAttachments(Relation relation, Map env) throws IOException {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user = (User) env.get(Constants.VAR_USER);
         PathGenerator pathGenerator = AbcConfig.getPathGenerator();
         Persistence persistence = PersistenceFactory.getPersistence();
 
-		List<FileItem> files = (List<FileItem>) Tools.asList(params.get(PARAM_ATTACHMENT));
+        List<FileItem> files = (List<FileItem>) Tools.asList(params.get(PARAM_ATTACHMENT));
 
         for (FileItem fileItem : files) {
 
-			if (fileItem.getSize() == 0)
-				continue;
+            if (fileItem.getSize() == 0)
+                continue;
 
             Data data = new Data();
-			Item item = (Item) relation.getChild();
+            Item item = (Item) relation.getChild();
 
             data.setSubType(fileItem.getContentType());
-			data.setOwner(user.getId());
-			data.setGroup(item.getGroup());
+            data.setOwner(user.getId());
+            data.setGroup(item.getGroup());
 
             String fileName = EditAttachment.getNormalizedFileName(fileItem.getName());
             int i = fileName.lastIndexOf('.');
@@ -546,12 +546,12 @@ public class EditAttachment implements AbcAction {
                 suffix = fileName.substring(i + 1);
             }
 
-			File file;
+            File file;
 
-			if (item.getType() == Item.ARTICLE)
-				file = pathGenerator.getPath(relation, PathGenerator.Type.ARTICLE_ATTACHMENT, prefix, "." + suffix);
-			else
-				file = pathGenerator.getPath(item, PathGenerator.Type.ATTACHMENT, prefix, "." + suffix);
+            if (item.getType() == Item.ARTICLE)
+                file = pathGenerator.getPath(relation, PathGenerator.Type.ARTICLE_ATTACHMENT, prefix, "." + suffix);
+            else
+                file = pathGenerator.getPath(item, PathGenerator.Type.ATTACHMENT, prefix, "." + suffix);
 
             try {
                 fileItem.write(file);
@@ -578,24 +578,28 @@ public class EditAttachment implements AbcAction {
         return true;
     }
 
-	boolean setAttachmentVisibility(Map env, boolean hidden) {
-		Map params = (Map) env.get(Constants.VAR_PARAMS);
-		List<String> list = (List<String>) Tools.asList(params.get(PARAM_ATTACHMENT));
+    boolean setAttachmentVisibility(Map env, boolean hidden) {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistence persistence = PersistenceFactory.getPersistence();
+        List<String> list = (List<String>) Tools.asList(params.get(PARAM_ATTACHMENT));
         for (String srid : list) {
             int rid = Misc.parseInt(srid, -1);
             Relation dataRelation = new Relation(rid);
-			Tools.sync(dataRelation);
-			Document doc = ((GenericDataObject) dataRelation.getChild()).getData();
+            Tools.sync(dataRelation);
 
-			Element object = (Element) doc.selectSingleNode("/data/object");
-			Attribute attr = object.attribute("hidden");
+            GenericDataObject gdo = (GenericDataObject) dataRelation.getChild();
+            Document doc = gdo.getData();
 
-			if (attr == null)
-				object.addAttribute("hidden", String.valueOf(hidden));
-			else
-				attr.setValue(String.valueOf(hidden));
-		}
+            Element object = (Element) doc.selectSingleNode("/data/object");
+            Attribute attr = object.attribute("hidden");
 
-		return true;
-	}
+            if (attr == null)
+                object.addAttribute("hidden", String.valueOf(hidden));
+            else
+                attr.setValue(String.valueOf(hidden));
+            persistence.update(gdo);
+        }
+
+        return true;
+    }
 }
