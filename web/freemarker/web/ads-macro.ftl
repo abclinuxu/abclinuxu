@@ -5,11 +5,7 @@
     <#if !found?exists>${regexp}</#if>
 </#macro>
 
-<#macro showTagAdvertisement url = "UNDEFINED",
-                             text = "UNDEFINED",
-                             image = "UNDEFINED",
-                             trackerImage = {"src":"UNDEFINED"},
-                             cssClass = "stitek-ad">
+<#macro showTagAdvertisement url = "UNDEFINED", text = "UNDEFINED", image = "UNDEFINED", trackerImage = {"src":"UNDEFINED"}, cssClass = "stitek-ad">
     <div class="${cssClass}">
         <#if trackerImage.src != "UNDEFINED">
             <img src="${trackerImage.src}" border='0' alt='' />
