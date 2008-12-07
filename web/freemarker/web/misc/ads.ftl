@@ -61,7 +61,7 @@
                 </#macro>
                 <#macro @element></#macro>
                 <#assign thisad=ad>
-                <ul>
+                <ul style="margin:0">
                     <#recurse TOOL.asNode(ad.child.data).data.codes>
                 </ul>
             </td>
