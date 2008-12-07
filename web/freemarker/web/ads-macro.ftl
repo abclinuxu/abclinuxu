@@ -6,19 +6,11 @@
 </#macro>
 
 <#macro showTagAdvertisement text, image, trackerImage = {"src":"UNDEFINED"}, cssClass = {"name":"stitek-ad"}>
-    <div class="${cssClass.name}">
-        <table border="0" width="100%">
-            <tr>
-                <td width="${image.width}" valign="middle">
-                    <#if trackerImage.src != "UNDEFINED">
-                        <img src="${trackerImage.src}" border='0' alt='' />
-                    </#if>
-                    <a href="${text.url}"><img src="${image.src}" width="${image.width}" height="${image.height}" alt="${image.alt}"></a>
-                </td>
-                <td>
-                    <a href="${text.url}">${text.text}</a><br /> Vaše&nbsp;cena:&nbsp;<b>${text.price}&nbsp;Kč</b>.
-                </td>
-            </tr>
-        </table>
+    <div class="${cssClass.name}" style="height:${image.height}px">
+        <#if trackerImage.src != "UNDEFINED">
+            <img src="${trackerImage.src}" border='0' alt='' />
+        </#if>
+        <a href="${text.url}"><img src="${image.src}" width="${image.width}" height="${image.height}" alt="${image.alt}" style="vertical-align:middle"></a>
+        <a href="${text.url}">${text.text}</a><br /> Vaše&nbsp;cena:&nbsp;<b>${text.price}&nbsp;Kč</b>.
     </div>
 </#macro>
