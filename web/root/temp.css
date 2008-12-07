@@ -34,3 +34,12 @@
 #ibm-cl a:hover { text-decoration: none;
                         background-color: white;
                         color: #336699; }
+
+.stitek-ad { background:white;
+             color:black;
+             padding:0.3em 0.5em 0.5em 0.5em;
+             margin:0.5em;
+             border: 2px solid silver; }
+.stitek-ad a { color:black; }
+.stitek-ad a:hover { color:white; background:black; }
+.stitek-ad img { margin:0 0.5em 0 -0.3em; float:left; }
