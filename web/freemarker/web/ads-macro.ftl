@@ -14,11 +14,13 @@
         <#if trackerImage.src != "UNDEFINED">
             <img src="${trackerImage.src}" border='0' alt='' />
         </#if>
-        <#if image != "UNDEFINED">
-            <a href="${url}"><img src="${image.src}" width="${image.width}" height="${image.height}" alt="${image.alt}"></a>
-        </#if>
-        <#if text != "UNDEFINED">
-            <a href="${url}">${text.text}</a><br /> Vaše&nbsp;cena:&nbsp;<b>${text.price}&nbsp;Kč</b>.
+        <#if url != "UNDEFINED">
+            <#if image != "UNDEFINED">
+                <a href="${url}"><img src="${image.src}" width="${image.width}" height="${image.height}" alt="${image.alt}"></a>
+            </#if>
+            <#if text != "UNDEFINED">
+                <a href="${url}">${text.text}</a><br /> Vaše&nbsp;cena:&nbsp;<b>${text.price}&nbsp;Kč</b>.
+            </#if>
         </#if>
     </div>
 </#macro>
