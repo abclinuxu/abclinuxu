@@ -31,37 +31,44 @@
 </p>
 
 <table class="siroka">
-    <tr><th>Název</th><th>Identifikátor</th><th>Stav</th><th>Popis</th></tr>
+    <tr>
+        <th>Název</th>
+        <th>Identifikátor</th>
+        <th>Stav</th>
+        <th>Popis</th>
+    </tr>
     <#list POSITIONS as ad>
         <tr>
             <td><a href="${URL.noPrefix("/EditAdvertisement/"+ad.id+"?action=showPosition")}">${TOOL.childName(ad)}</a></td>
-            <td>${ad.child.string1}</td>
+            <td><tt>${ad.child.string1}</tt></td>
             <td>
                 <#if TOOL.xpath(ad.child, "/data/active")?default("yes")=="yes">
-                    aktivní
+                    <span style="color: green">aktivní</span> &nbsp; &nbsp;
                 <#else>
                     <span style="color: red">neaktivní</span>
                 </#if>
             </td>
             <td>${TOOL.xpath(ad.child, "/data/description")?if_exists}</td>
         </tr>
-        <tr>
-            <td colspan="4">
-                Kódy: ${TOOL.xpathValue(ad.child.data, "count(//code)")?eval}<#--
-                --><#assign codeid=0>
-                <#macro code><#--
-                    -->, <a href="${URL.noPrefix("/EditAdvertisement?action=showCode&amp;rid="+thisad.id+"&amp;code="+codeid)}">${.node.@name}</a> (${.node.variants?children?size})
-                    <#assign codeid=codeid+1>
+        <tr style="font-size:small;">
+            <td colspan="3">&nbsp;</td>
+            <td>
+                <#--Kódy: ${TOOL.xpathValue(ad.child.data, "count(//code)")?eval}-->
+                <#assign codeid=0>
+                <#macro code>
+                    <li><a href="${URL.noPrefix("/EditAdvertisement?action=showCode&amp;rid="+thisad.id+"&amp;code="+codeid)}">${.node.@name}</a> (${.node.variants?children?size})
+                    <#assign codeid=codeid+1></li>
                 </#macro>
-
                 <#macro @element></#macro>
                 <#assign thisad=ad>
-                <#recurse TOOL.asNode(ad.child.data).data.codes>
+                <ul>
+                    <#recurse TOOL.asNode(ad.child.data).data.codes>
+                </ul>
             </td>
         </tr>
         <tr>
             <td colspan="4">
-                <hr>
+                <hr />
             </td>
         </tr>
     </#list>
