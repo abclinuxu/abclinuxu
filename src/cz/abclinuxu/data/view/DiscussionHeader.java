@@ -75,4 +75,8 @@ public class DiscussionHeader {
     public int getLastCommentId() {
         return lastCommentId;
     }
+
+    public String toString() {
+        return "discussion item " + discussion.getId();
+    }
 }
