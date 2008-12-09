@@ -22,7 +22,7 @@
     <tr>
         <th>Produkt</th>
         <th>Cena</th>
-        <th>Makro</th>
+        <th>Id</th>
     </tr>
 <#list PRODUCTS as product>
     <tr>
@@ -35,7 +35,7 @@
             </#if>
         </td>
         <td>${product.price!}</td>
-        <td>TODO ${product.id}</td>
+        <td>${product.id}</td>
     </tr>
 </#list>
 </table>

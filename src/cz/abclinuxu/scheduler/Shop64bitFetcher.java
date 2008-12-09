@@ -19,6 +19,7 @@
 package cz.abclinuxu.scheduler;
 
 import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.view.ShopProduct;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.servlets.Constants;
@@ -107,6 +108,7 @@ public class Shop64bitFetcher extends TimerTask implements Configurable {
                 DocumentHelper.makeElement(element, "name").setText(resultSet.getString(4));
             }
             persistence.update(importCategory);
+            updateVariableFetcher();
 
         } catch (Exception e) {
             log.error("Shop64bitFetcher failed", e);
@@ -115,11 +117,29 @@ public class Shop64bitFetcher extends TimerTask implements Configurable {
         }
     }
 
+    private void updateVariableFetcher() {
+        List<ShopProduct> products = new ArrayList<ShopProduct>();
+        Persistence persistence = PersistenceFactory.getPersistence();
+        Category importCategory = (Category) persistence.findById(new Category(Constants.CAT_SHOP_64BIT_CZ));
+        Element rootElement = importCategory.getData().getRootElement();
+        List elements = rootElement.elements("item");
+        for (Iterator iter = elements.iterator(); iter.hasNext();) {
+            Element element = (Element) iter.next();
+            String name = element.elementText("name");
+            String id = element.attributeValue("id");
+            String price = element.attributeValue("price");
+            String url = element.elementText("url");
+            products.add(new ShopProduct(id, name, url, Float.parseFloat(price)));
+        }
+        VariableFetcher.getInstance().setShopProducts("64bit", products);
+    }
+
     public static Shop64bitFetcher getInstance() {
         return instance;
     }
 
     private Shop64bitFetcher() {
+        updateVariableFetcher();
     }
 
     /**

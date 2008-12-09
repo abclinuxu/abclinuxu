@@ -14,3 +14,7 @@
         <div style="vertical-align:middle"><a href="${text.url}">${text.text}</a><br /> Vaše&nbsp;cena:&nbsp;<b>${text.price}&nbsp;Kč</b>.</div>
     </div>
 </#macro>
+
+<#macro showPrice id>
+    ${(VARS.getProduct("64bit", id).price)!!}
+</#macro>

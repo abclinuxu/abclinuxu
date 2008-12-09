@@ -26,6 +26,7 @@ import cz.abclinuxu.data.view.HostingServer;
 import cz.abclinuxu.data.view.JobsCzHolder;
 import cz.abclinuxu.data.view.JobsCzItem;
 import cz.abclinuxu.data.view.Screenshot;
+import cz.abclinuxu.data.view.ShopProduct;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.persistence.*;
@@ -124,6 +125,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     int sectionCacheFrequency;
     HostingServer hostingServer;
     JobsCzHolder jobsCzHolderHP, jobsCzHolderPage;
+    Map<String, ShopProduct> shopProducts;
 
     SQLTool sqlTool;
     int cycle;
@@ -593,6 +595,29 @@ public class VariableFetcher extends TimerTask implements Configurable {
      public JobsCzHolder getJobsCzHolder() {
          return jobsCzHolderPage;
      }
+
+    /**
+     * Stores shop products.
+     * @param shop unused at this moment
+     * @param products list of initialized products
+     */
+    public void setShopProducts(String shop, List<ShopProduct> products) {
+        Map<String, ShopProduct> newShopProducts = new HashMap<String, ShopProduct>();
+        for (ShopProduct product : products) {
+            newShopProducts.put(product.getId(), product);
+        }
+        shopProducts = newShopProducts;
+    }
+
+    /**
+     * Retreives selected product from given shop.
+     * @param shop unused at this moment
+     * @param id product id
+     * @return instance with product information or null, if not found
+     */
+    public ShopProduct getProduct(String shop, String id) {
+        return shopProducts.get(id);
+    }
 
     /**
      * Finds number of objects for given user. If o is not User or xpath is not set, then default value
