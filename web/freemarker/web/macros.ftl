@@ -737,9 +737,9 @@
 </#macro>
 
 <#macro showVideo relation>
-    <#assign item = relation.child, tmp = TOOL.groupByType(item.children, "Item"),
+    <#local item = relation.child, tmp = TOOL.groupByType(item.children, "Item"),
     icon = TOOL.xpath(item,"/data/thumbnail")?default("UNDEF"), title = "${TOOL.childName(relation)}">
-    <#if tmp.discussion?exists><#assign diz = TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz = null></#if>
+    <#if tmp.discussion?exists><#local diz = TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#local diz = null></#if>
     <div class="video">
         <p title="${title}">${TOOL.limit(title, 22, "..")}</p>
         <a href="${relation.url}" class="thumb">
@@ -754,8 +754,8 @@
 </#macro>
 
 <#macro showDesktop desktop>
-    <#assign item = desktop.item, tmp = TOOL.groupByType(item.children, "Item")>
-    <#if tmp.discussion?exists><#assign diz = TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz = null></#if>
+    <#local item = desktop.item, tmp = TOOL.groupByType(item.children, "Item")>
+    <#if tmp.discussion?exists><#assign diz = TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#local diz = null></#if>
     <div class="desktop">
         <p title="${desktop.title}">${TOOL.limit(desktop.title, 28, "..")}</p>
         <a href="${desktop.url}" class="thumb">
