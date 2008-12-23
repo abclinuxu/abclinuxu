@@ -20,7 +20,7 @@
 <h1>${ITEM.title}</h1>
 <p class="meta-vypis">Vytvořeno: ${DATE.show(ITEM.created,"SMART")}
     | <@lib.showUser TOOL.createUser(ITEM.owner) />
-    | Shlédnuto: <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times;</p>
+    | Zhlédnuto: <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times;</p>
 
 <@lib.showVideoPlayer RELATION, 500, 400, false />
 

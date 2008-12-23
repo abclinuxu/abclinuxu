@@ -46,7 +46,7 @@
     <#assign usedBy=ITEM.getProperty("favourited_by"), autor=TOOL.createUser(ITEM.owner)>
         <@lib.showUser autor/> |
         ${DATE.show(ITEM.created,"SMART_DMY")} |
-        Shlédnuto: <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times; |
+        Zhlédnuto: <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times; |
         <#if (usedBy?size > 0)>
             <a href="?action=users" title="Seznam uživatelů abclinuxu, kterým se líbí tento desktop">Oblíbenost: ${usedBy?size}</a>
         <#else>

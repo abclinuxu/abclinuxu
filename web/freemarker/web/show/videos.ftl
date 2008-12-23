@@ -27,7 +27,7 @@
     <p>${TOOL.xpath(item,"//description")?default("")}</p>
     <p class="meta-vypis">
         ${DATE.show(item.created, "SMART")} | <@lib.showUser TOOL.createUser(item.owner)/>
-        | Shlédnuto: <@lib.showCounter item, .globals["READS"]?if_exists, "read" />&times;
+        | Zhlédnuto: <@lib.showCounter item, .globals["READS"]?if_exists, "read" />&times;
         <#if diz?exists>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
     </p>
     <hr style="clear:right" />
