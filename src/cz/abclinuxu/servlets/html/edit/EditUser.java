@@ -140,6 +140,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_FORUM_MODE = "forumMode";
     public static final String PARAM_NEWS_TITLES = "newsTitles";
     public static final String PARAM_NEWS_MULTILINE = "newsMultiline";
+    public static final String PARAM_ANTISPAM = EditDiscussion.PARAM_ANTISPAM;
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
@@ -425,6 +426,7 @@ public class EditUser implements AbcAction {
         canContinue &= setSex(params, managed);
         canContinue &= setWeeklySummary(params, managed);
         canContinue &= setMonthlySummary(params, managed);
+        canContinue &= checkSpambot(params, env, managed);
         managed.addProperty(Constants.PROPERTY_TICKET, generateTicket(managed.getId()));
 
         if ( !canContinue )
@@ -1527,6 +1529,23 @@ public class EditUser implements AbcAction {
             HtmlChecker.check(rules, text);
         } catch(Exception e) {
             ServletUtils.addError(paramName, e.getMessage(), env, null);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Performs anti-spambot detection. Logged in user or already verified user is automatically allowed
+     * to submit comment. Other users must enter current year. In such case new cookie is created, which
+     * will hold their name and its existence will show that anti-spambot detection was already successfully
+     * performed for this user.
+     * @return false if anti-spambot rules were not satisfied
+     */
+    public boolean checkSpambot(Map params, Map env, User user) {
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        String s = (String) params.get(PARAM_ANTISPAM);
+        if (! String.valueOf(year).equals(s)) {
+            ServletUtils.addError(PARAM_ANTISPAM, "Zadejte prosím letošní rok.", env, null);
             return false;
         }
         return true;

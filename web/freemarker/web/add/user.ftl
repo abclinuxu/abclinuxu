@@ -125,6 +125,17 @@
             </td>
         </tr>
         <tr>
+            <td class="required" width="160">
+                Aktuální rok
+                <@lib.showHelp>Vložte aktuální rok. Jedná se o ochranu před spamboty.</@lib.showHelp>
+            </td>
+            <td>
+                <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}">
+                <@lib.showError key="antispam" />
+            </td>
+            <td  colspan="2">&nbsp;</td>
+        </tr>
+        <tr>
             <td width="160">&nbsp;</td>
             <td align="right"><input type="submit" value="Dokonči" tabindex="11"></td>
             <td colspan="2">&nbsp;</td>
