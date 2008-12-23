@@ -51,9 +51,9 @@
        <p>
            <span class="required">Zadejte aktuální rok</span>
            <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}">
-           <a class="info" href="#">?<span class="tooltip">Vložte aktuální rok. Jedná se o ochranu před spamboty.
-           Po úspěšném ověření se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.</span></a>
-           <span class="error">${ERRORS.antispam?if_exists}</span>
+           <@lib.showHelp>Vložte aktuální rok. Jedná se o ochranu před spamboty. Po úspěšném ověření
+           se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.</@lib.showHelp>
+           <@lib.showError key="antispam" />
        </p>
    </#if>
   </#if>
