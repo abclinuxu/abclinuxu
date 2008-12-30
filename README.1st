@@ -5,7 +5,7 @@ Strucny navod
 
 * Sun JDK 1.5
 * Jakarta Ant 1.6
-* Mysql 4.1
+* Mysql 5
 * Jetty 6.1.4 ci novejsi
 
 Ant a jetty najdete v orezane verzi v adresari misc.
@@ -95,5 +95,5 @@ Uvitam vase pripominky k tomuto navodu,
 co vam delalo potize, co je treba lepe popsat.
 
 Leos Literak
-http://www.abclinuxu.cz/Profile/1
+http://www.abclinuxu.cz/lide/literakl
 
