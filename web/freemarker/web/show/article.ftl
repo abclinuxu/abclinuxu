@@ -19,10 +19,10 @@
 </#if>
 
 <p class="meta-vypis">
-    ${DATE.show(ITEM.created,"SMART_DMY")}
+    ${DATE.show(ITEM.created,"SMART_DMY")} |
     <#if autors?size gt 0>
       <#list autors as autor>
-          | <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
+          <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
       </#list>
       <#assign subportal_article=false>
     <#else>

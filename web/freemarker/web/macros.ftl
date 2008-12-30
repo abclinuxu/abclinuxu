@@ -741,7 +741,9 @@
     icon = TOOL.xpath(item,"/data/thumbnail")?default("UNDEF"), title = "${TOOL.childName(relation)}">
     <#if tmp.discussion?exists><#local diz = TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#local diz = null></#if>
     <div class="video">
-        <p title="${title}">${TOOL.limit(title, 22, "..")}</p>
+        <p class="st_nadpis">
+            <a href="${relation.url}" title="${title}">${TOOL.limit(title, 45, "..")}</a>
+        </p>
         <a href="${relation.url}" class="thumb">
             <img src="${icon}" alt="${title}" border="0">
         </a>
