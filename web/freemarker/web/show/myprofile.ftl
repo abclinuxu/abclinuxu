@@ -32,7 +32,7 @@
         </td>
         <td>
             jméno, přezdívka, email
-            <#if PROFILE.email?? && INVALID_EMAIL!>
+            <#if PROFILE.email?? && INVALID_EMAIL!false>
                 <p class="error">
                     Administrátoři označili váš email za neplatný! Stane se tak tehdy, pokud se některý odeslaný
                     email vrátí jako trvale nedoručitelný. Dokud si nezměníte adresu, žádný další email vám
@@ -107,7 +107,7 @@
             <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editSettings")}">změnit</a>
         </td>
         <td>
-            nastavení cookie, CSS, zobrazování avatarů, patičky, grafické emotikony, rozcestníku,
+            nastavení WYSIWYG editoru, cookie, CSS, zobrazování avatarů, patičky, grafické emotikony, rozcestníku,
             počet diskusí, zpráviček, zápisků, desktopů, nalezených dokumentů při hledání, serverů
             v rozcestníku
         </td>

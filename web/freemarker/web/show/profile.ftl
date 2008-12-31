@@ -21,8 +21,8 @@
     <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=myPage")}">Upravit</a>
 </#if>
 
-<#assign photo = TOOL.xpath(PROFILE,"/data/profile/photo")?default("UNDEFINED"),
-    sex = TOOL.xpath(PROFILE,"/data/personal/sex")?default("UNDEFINED")>
+<#assign photo = TOOL.xpath(PROFILE,"/data/profile/photo")!"UNDEFINED",
+    sex = TOOL.xpath(PROFILE,"/data/personal/sex")!"UNDEFINED">
 <#if photo=="UNDEFINED" && sex!="UNDEFINED">
     <#assign photo="/images/faces/default_"+sex+".gif">
 </#if>
@@ -36,7 +36,7 @@
 
 <#if PROFILE.nick??><p>Přezdívka: ${PROFILE.nick}</p></#if>
 
-<#assign homePage = TOOL.xpath(PROFILE,"/data/profile/home_page")?default("UNDEFINED")>
+<#assign homePage = TOOL.xpath(PROFILE,"/data/profile/home_page")!"UNDEFINED">
 <#if homePage != "UNDEFINED">
     <p>Moje domovská stránka: <a href="${homePage}" rel="nofollow">${homePage}</a></p>
 </#if>
@@ -46,22 +46,22 @@
 </#if>
 
 <p>
-<#assign birth = TOOL.xpath(PROFILE,"/data/personal/birth_year")?default("UNDEFINED")>
+<#assign birth = TOOL.xpath(PROFILE,"/data/personal/birth_year")!"UNDEFINED">
 <#if birth != "UNDEFINED">Rok narození: ${birth}<br /></#if>
 
-<#assign city = TOOL.xpath(PROFILE,"/data/personal/city")?default("UNDEFINED")>
+<#assign city = TOOL.xpath(PROFILE,"/data/personal/city")!"UNDEFINED">
 <#if city != "UNDEFINED">Bydliště: ${city}<br /></#if>
 
-<#assign area = TOOL.xpath(PROFILE,"/data/personal/area")?default("UNDEFINED")>
+<#assign area = TOOL.xpath(PROFILE,"/data/personal/area")!"UNDEFINED">
 <#if area != "UNDEFINED">Kraj: ${area}<br /></#if>
 
-<#assign country = TOOL.xpath(PROFILE,"/data/personal/country")?default("UNDEFINED")>
+<#assign country = TOOL.xpath(PROFILE,"/data/personal/country")!"UNDEFINED">
 <#if country != "UNDEFINED">Země: ${country}</#if>
 </p>
 
 <!-- sekce linux -->
 
-<#assign linuxUserFrom = TOOL.xpath(PROFILE,"/data/profile/linux_user_from_year")?default("UNDEFINED")>
+<#assign linuxUserFrom = TOOL.xpath(PROFILE,"/data/profile/linux_user_from_year")!"UNDEFINED">
 <#if linuxUserFrom != "UNDEFINED">
     <p>Linux používám od roku: ${linuxUserFrom}</p>
 </#if>
@@ -79,12 +79,12 @@
 
 <!-- sekce abclinuxu -->
 
-<#assign signature = TOOL.xpath(PROFILE,"/data/personal/signature")?default("UNDEFINED")>
+<#assign signature = TOOL.xpath(PROFILE,"/data/personal/signature")!"UNDEFINED">
 <#if signature != "UNDEFINED">
     <p>Patička: ${signature}</p>
 </#if>
 
-<#assign registered = TOOL.xpath(PROFILE,"/data/system/registration_date")?default("UNDEFINED")>
+<#assign registered = TOOL.xpath(PROFILE,"/data/system/registration_date")!"UNDEFINED">
 <p>
     Datum registrace:
     <#if registered != "UNDEFINED">
@@ -94,7 +94,7 @@
     </#if>
 </p>
 
-<#assign score=PROFILE.getIntProperty("score")?default(-1)>
+<#assign score=PROFILE.getIntProperty("score")!-1>
 <#if score != -1>
     <p><a href="/faq/abclinuxu.cz/co-je-to-skore">Skóre</a>: ${score}</p>
 </#if>
@@ -134,7 +134,7 @@
 
 <#if BLOG??>
 <div class="profile_list reverse_anchor">
-    <h2>Můj blog: <a href="/blog/${BLOG.subType}">${BLOG.title?default("blog")}</a></h2>
+    <h2>Můj blog: <a href="/blog/${BLOG.subType}">${BLOG.title!"blog"}</a></h2>
     <ul>
       <#list STORIES as relation>
         <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
@@ -174,7 +174,7 @@
 <div class="profile_list reverse_anchor">
     <h2>Ostatní</h2>
     <ul>
-      <#if TOOL.xpath(PROFILE,"/data/profile/gpg")?default("UNDEF")!="UNDEF">
+      <#if TOOL.xpath(PROFILE,"/data/profile/gpg")!"UNDEF"!="UNDEF">
         <li><a href="/lide/${PROFILE.login}/gpg">Můj veřejný GPG klíč</a></li>
       </#if>
         <li><a href="/lide/${PROFILE.login}/zalozky">Moje záložky</a></li>
@@ -185,7 +185,7 @@
 
 <#if PROFILE.email??>
   <div>
-    <#if ! INVALID_EMAIL!>
+    <#if ! INVALID_EMAIL!false>
         <form action="${URL.noPrefix("/Profile")}">
             <input type="hidden" name="action" value="sendEmail">
             <input type="hidden" name="uid" value="${PROFILE.id}">
