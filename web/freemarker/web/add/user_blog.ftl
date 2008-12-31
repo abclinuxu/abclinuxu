@@ -45,16 +45,16 @@ do kterých budete zařazovat své příspěvky. Například
     <tr>
         <td class="required">Jméno blogu</td>
         <td>
-            <input type="text" name="blogName" value="${PARAMS.blogName?if_exists}" size="32" tabindex="1" class="pole">
-            <div class="error">${ERRORS.blogName?if_exists}</div>
+            <input type="text" name="blogName" value="${PARAMS.blogName!}" size="32" tabindex="1" class="pole">
+            <div class="error">${ERRORS.blogName!}</div>
         </td>
     </tr>
     <tr>
         <td>Kategorie</td>
         <td>
-            <input type="text" name="category1" value="${PARAMS.category1?if_exists}" size="32" tabindex="2" class="pole"><br>
-            <input type="text" name="category2" value="${PARAMS.category2?if_exists}" size="32" tabindex="3" class="pole"><br>
-            <input type="text" name="category3" value="${PARAMS.category3?if_exists}" size="32" tabindex="4" class="pole"><br>
+            <input type="text" name="category1" value="${PARAMS.category1!}" size="32" tabindex="2" class="pole"><br>
+            <input type="text" name="category2" value="${PARAMS.category2!}" size="32" tabindex="3" class="pole"><br>
+            <input type="text" name="category3" value="${PARAMS.category3!}" size="32" tabindex="4" class="pole"><br>
         </td>
     </tr>
     <tr>

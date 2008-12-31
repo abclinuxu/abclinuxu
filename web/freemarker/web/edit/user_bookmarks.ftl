@@ -23,11 +23,11 @@
             ddtreemenu.createTree("treemenu1", true);
             ddtreemenu.flatten('treemenu1', 'expand');
         </script>
-        <#if USER?exists && MANAGED.id==USER.id>
+        <#if USER?? && MANAGED.id==USER.id>
             <div class="s_nadpis">Nástroje</div>
             <div class="s_sekce">
                 <ul>
-                    <li><a href="${URL.noPrefix("/EditBookmarks/"+MANAGED.id+"?action=addLink&amp;path="+PARAMS.path?if_exists)}">Přidat záložku</a></li>
+                    <li><a href="${URL.noPrefix("/EditBookmarks/"+MANAGED.id+"?action=addLink&amp;path="+PARAMS.path!)}">Přidat záložku</a></li>
                 </ul>
             </div>
         </#if>
@@ -40,7 +40,7 @@
 
 <h1>Seznam záložek</h1>
 
-<#if USER?exists && MANAGED.id==USER.id>
+<#if USER?? && MANAGED.id==USER.id>
     <p>
     Zde můžete spravovat seznam svých záložek. Do záložek
     si můžete umístit libovolný dokument na AbcLinuxu přes
@@ -60,31 +60,31 @@
 <#if directory==""><#assign directory="/"></#if>
 <p><b>Adresář: ${directory}</b></p>
 
-<#if BOOKMARKS?exists && (BOOKMARKS?size > 0)>
+<#if BOOKMARKS?? && (BOOKMARKS?size > 0)>
     <p>V tomto adresáři záložek jsou následující stránky:</p>
     <form action="${URL.noPrefix("/EditBookmarks/"+MANAGED.id)}" method="POST">
     <table border="1">
         <thead>
             <tr>
-                <#if USER?exists && MANAGED.id==USER.id><th></th></#if>
-                <th><a href="${URL.noPrefix("/lide/"+MANAGED.login+"/zalozky?orderBy=title&amp;path="+PARAMS.path?if_exists)}">Název</a></th>
-                <th><a href="${URL.noPrefix("/lide/"+MANAGED.login+"/zalozky?orderBy=type&amp;path="+PARAMS.path?if_exists)}">Typ</a></th>
-                <th><a href="${URL.noPrefix("/lide/"+MANAGED.login+"/zalozky?orderBy=modified&amp;path="+PARAMS.path?if_exists)}">Poslední změna</a></th>
+                <#if USER?? && MANAGED.id==USER.id><th></th></#if>
+                <th><a href="${URL.noPrefix("/lide/"+MANAGED.login+"/zalozky?orderBy=title&amp;path="+PARAMS.path!)}">Název</a></th>
+                <th><a href="${URL.noPrefix("/lide/"+MANAGED.login+"/zalozky?orderBy=type&amp;path="+PARAMS.path!)}">Typ</a></th>
+                <th><a href="${URL.noPrefix("/lide/"+MANAGED.login+"/zalozky?orderBy=modified&amp;path="+PARAMS.path!)}">Poslední změna</a></th>
             </tr>
         </thead>
         <#list BOOKMARKS as item>
             <tr>
-                <#if USER?exists && MANAGED.id==USER.id>
-                    <#if item.relation?exists>
+                <#if USER?? && MANAGED.id==USER.id>
+                    <#if item.relation??>
                         <td><input type="checkbox" name="rid" value="${item.relation.id}"></td>
                     <#else>
                         <td><input type="checkbox" name="url" value="${item.url}"></td>
                     </#if>
                 </#if>
                 <td>
-                    <#if item.url?exists>
+                    <#if item.url??>
                         <a rel="nofollow" href="${item.url}">${item.title}</a>
-                    <#elseif item.relation?exists && item.relation.initialized>
+                    <#elseif item.relation?? && item.relation.initialized>
                         <a href="${URL.getRelationUrl(item.relation, item.prefix)}">${item.title}</a>
                     <#else>
                         <strike>${item.title}</strike>
@@ -92,9 +92,9 @@
                 </td>
                 <td>${item.getNiceType()}</td>
                 <td>
-                    <#if item.relation?exists && item.relation.initialized>
+                    <#if item.relation?? && item.relation.initialized>
                         ${DATE.show(item.relation.child.updated?default(item.relation.child.created), "SMART")}
-                    <#elseif item.url?exists>
+                    <#elseif item.url??>
                         ---
                     <#else>
                         smazáno
@@ -103,9 +103,9 @@
             </li>
         </#list>
         </table>
-        <#if USER?exists && MANAGED.id==USER.id>
+        <#if USER?? && MANAGED.id==USER.id>
             <p>
-                <input type="hidden" name="path" value="${PARAMS.path?if_exists}">
+                <input type="hidden" name="path" value="${PARAMS.path!}">
                 <input type="hidden" name="action" value="manage">
                 <input type="hidden" name="ticket" value="${USER.getSingleProperty('ticket')}">
                 <input type="submit" name="remove" value="Odstranit ze záložek">
@@ -132,7 +132,7 @@
     <p>Zde nejsou žádné záložky.</p>
 </#if>
 
-<#if USER?exists && MANAGED.id==USER.id>
+<#if USER?? && MANAGED.id==USER.id>
     <hr />
 
     <h2>Správa adresářů</h2>
@@ -140,7 +140,7 @@
     <p>
         Vytvořit v <b>${directory}</b> podadresář s názvem: <input type="text" name="directoryName" width="150"> <input type="submit" value="Vytvořit">
         <input type="hidden" name="ticket" value="${USER.getSingleProperty('ticket')}">
-        <input type="hidden" name="path" value="${PARAMS.path?if_exists}">
+        <input type="hidden" name="path" value="${PARAMS.path!}">
         <input type="hidden" name="action" value="createDirectory">
     </p>
     </form>
@@ -151,7 +151,7 @@
         Smazat aktuální adresář včetně obsahu:
         <input type="submit" value="Smazat adresář">
         <input type="hidden" name="ticket" value="${USER.getSingleProperty('ticket')}">
-        <input type="hidden" name="path" value="${PARAMS.path?if_exists}">
+        <input type="hidden" name="path" value="${PARAMS.path!}">
         <input type="hidden" name="action" value="removeDirectory">
     </p>
     </form>

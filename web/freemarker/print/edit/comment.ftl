@@ -10,7 +10,7 @@ zasahovat do smyslu komentáře, nýbrž opravovat chyby uživatelů.
 Například špatně zvolený titulek u dotazu, titulek porušující
 zásady (psán velkými písmeny apod.), nevhodné HTML značky, ...</p>
 
-<#if PREVIEW?exists>
+<#if PREVIEW??>
  <h2>Náhled příspěvku</h2>
  <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussionWithAttachments(DISCUSSION), false />
 </#if>
@@ -22,24 +22,24 @@ zásady (psán velkými písmeny apod.), nevhodné HTML značky, ...</p>
   <tr>
    <td class="required">Titulek</td>
    <td>
-    <input type="text" name="title" size="40" maxlength="70" value="${PARAMS.title?if_exists}">
-    <div class="error">${ERRORS.title?if_exists}</div>
+    <input type="text" name="title" size="40" maxlength="70" value="${PARAMS.title!}">
+    <div class="error">${ERRORS.title!}</div>
    </td>
   </tr>
   <tr>
    <td>Autor (id)</td>
    <td>
-    <input type="text" name="author_id" size="5" maxlength="5" value="${PARAMS.author_id?if_exists}">
+    <input type="text" name="author_id" size="5" maxlength="5" value="${PARAMS.author_id!}">
     <br>Jen ve výjimečných případech (sloučení dvou kont)!
-    <div class="error">${ERRORS.author_id?if_exists}</div>
+    <div class="error">${ERRORS.author_id!}</div>
    </td>
   </tr>
   <tr>
    <td>Autor</td>
    <td>
-    <input type="text" name="author" size="30" maxlength="50" value="${PARAMS.author?if_exists}">
+    <input type="text" name="author" size="30" maxlength="50" value="${PARAMS.author!}">
     <br>Jen ve výjimečných případech!
-    <div class="error">${ERRORS.author?if_exists}</div>
+    <div class="error">${ERRORS.author!}</div>
    </td>
   </tr>
   <tr>
@@ -53,10 +53,10 @@ zásady (psán velkými písmeny apod.), nevhodné HTML značky, ...</p>
         <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vložit značku odkazu">&lt;a&gt;</a>
         <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
     </div>
-    <textarea name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea>
+    <textarea name="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea>
     <div>Smíte používat základní HTML značky. Pokud je nepoužijete,
     prázdné řádky budou nahrazeny novým odstavcem.</div>
-    <div class="error">${ERRORS.text?if_exists}</div>
+    <div class="error">${ERRORS.text!}</div>
    </td>
   </tr>
   <tr>

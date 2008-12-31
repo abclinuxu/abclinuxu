@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<#if PARAMS.url?exists>
+<#if PARAMS.url??>
     <form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST" name="form">
         <p>
             Přejete si smazat tento odkaz - <a href="${PARAMS.url}">${PARAMS.title}</a>?

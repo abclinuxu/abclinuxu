@@ -6,13 +6,13 @@
 
 <p><a href="${URL.noPrefix("/editContent/66948?action=add")}">Vytvoř dokument</a></p>
 
-<#if TOOL.xpath(CATEGORY,"data/note")?exists>
- ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
+<#if TOOL.xpath(CATEGORY,"data/note")??>
+ ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER!)}
 </#if>
 
 <#assign map=TOOL.groupByType(CHILDREN)>
 
-<#if map.documents?exists>
+<#if map.documents??>
     <table border="0">
         <#list map.documents as relation>
             <tr>

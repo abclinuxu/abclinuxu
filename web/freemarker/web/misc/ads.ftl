@@ -48,7 +48,7 @@
                     <span style="color: red">neaktivní</span>
                 </#if>
             </td>
-            <td>${TOOL.xpath(ad.child, "/data/description")?if_exists}</td>
+            <td>${TOOL.xpath(ad.child, "/data/description")!}</td>
         </tr>
         <tr style="font-size:small;">
             <td colspan="3">&nbsp;</td>

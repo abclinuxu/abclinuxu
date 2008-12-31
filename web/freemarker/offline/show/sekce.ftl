@@ -3,11 +3,11 @@
 
 <@lib.showParents/>
 
-<#if TOOL.xpath(CATEGORY,"data/note")?exists>
- <p class="note">${TOOL.render(TOOL.xpath(CATEGORY,"data/note"),USER?if_exists)}</p>
+<#if TOOL.xpath(CATEGORY,"data/note")??>
+ <p class="note">${TOOL.render(TOOL.xpath(CATEGORY,"data/note"),USER!)}</p>
 </#if>
 
-<#if CHILDREN.article?exists>
+<#if CHILDREN.article??>
  <#list SORT.byDate(CHILDREN.article, "DESCENDING") as clanek>
   <@lib.showArticle clanek/>
   <#if clanek_has_next><@lib.separator/><#else><@lib.doubleSeparator/></#if>
@@ -15,7 +15,7 @@
  <br>
 </#if>
 
-<#if CHILDREN.category?exists>
+<#if CHILDREN.category??>
  <table width="100%" border="0" cellpadding="2">
  <tr><td colspan="3" class="cerna3"><strong>Sekce</strong></td></tr>
  <#list SORT.byName(CHILDREN.category) as sekce>
@@ -29,7 +29,7 @@
  <br>
 </#if>
 
-<#if CHILDREN.make?exists>
+<#if CHILDREN.make??>
  <table width="100%" border="0" cellpadding="2">
  <tr><td colspan="3" class="cerna3"><strong>Položky</strong></td></tr>
  <#list SORT.byName(CHILDREN.make) as polozka>
@@ -43,7 +43,7 @@
  <br>
 </#if>
 
-<#if CHILDREN.driver?exists>
+<#if CHILDREN.driver??>
  <ul>
  <#list SORT.byDate(CHILDREN.driver,"DESCENDING") as driver>
   <li><a href="../../${DUMP.getFile(driver.id)}">

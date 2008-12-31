@@ -4,7 +4,7 @@
     </h1>
 
     <div class="dict-item">
-        ${TOOL.render(TOOL.xpath(personality,"/data/description"),USER?if_exists)}
+        ${TOOL.render(TOOL.xpath(personality,"/data/description"),USER!)}
     </div>
 
     <table class="swdetail">
@@ -38,7 +38,7 @@
 
             <p class="galerie">
                 <#list images as image>
-                    <#if image.thumbnailPath?exists>
+                    <#if image.thumbnailPath??>
                         <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${TOOL.childName(personality)}" border="0"></a>
                     <#else>
                         <img src="${image.path}" alt="${TOOL.childName(personality)}">

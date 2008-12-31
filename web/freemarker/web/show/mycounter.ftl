@@ -5,11 +5,11 @@
 
 <@lib.showMessages/>
 
-<#if COUNTS?exists>
+<#if COUNTS??>
     <p>Moje:</p>
 
     <ul>
-        <#if AUTHOR?exists>
+        <#if AUTHOR??>
             <li>
                 <a href="${AUTHOR.url}">články</a>
                 (${COUNTS.article})
@@ -31,7 +31,7 @@
             <a href="${URL.noPrefix("/History?type=comments&amp;uid="+PROFILE.id)}">komentované diskuse</a>
             (${COUNTS.comment})
         </li>
-        <#if BLOG?exists>
+        <#if BLOG??>
             <li>
                 <a href="/blog/${BLOG.subType}">zápisky v blogu</a>
                 (${COUNTS.story})

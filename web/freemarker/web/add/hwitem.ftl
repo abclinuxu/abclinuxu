@@ -8,7 +8,7 @@
 
 <@lib.showMessages/>
 
-<#if PREVIEW?exists>
+<#if PREVIEW??>
  <h2>Náhled</h2>
  <p>
     Prohlédněte si vzhled vašeho záznamu. Opravte chyby a zvolte tlačítko <code>Náhled</code>.
@@ -43,8 +43,8 @@
         <tr>
             <td class="required">Jméno</td>
             <td>
-                <input type="text" name="name" value="${PARAMS.name?if_exists}" size="40" tabindex="1">
-                <div class="error">${ERRORS.name?if_exists}</div>
+                <input type="text" name="name" value="${PARAMS.name!}" size="40" tabindex="1">
+                <div class="error">${ERRORS.name!}</div>
             </td>
         </tr>
 
@@ -52,7 +52,7 @@
             <td class="required">Podpora pod Linuxem</td>
             <td>
                 <select name="support" tabindex="2">
-                    <#assign support=PARAMS.support?if_exists>
+                    <#assign support=PARAMS.support!>
                     <option value="complete"<#if support=="complete"> SELECTED</#if>>kompletní</option>
                     <option value="partial"<#if support=="partial"> SELECTED</#if>>částečná</option>
                     <option value="none"<#if support=="none"> SELECTED</#if>>žádná</option>
@@ -64,7 +64,7 @@
             <td class="required">Ovladač je dodáván</td>
             <td>
                 <select name="driver" tabindex="3">
-                    <#assign driver=PARAMS.driver?if_exists>
+                    <#assign driver=PARAMS.driver!>
                     <option value="kernel"<#if driver=="kernel"> SELECTED</#if>>v jádře</option>
                     <option value="xfree"<#if driver=="xfree"> SELECTED</#if>>v XFree86</option>
                     <option value="maker"<#if driver=="maker"> SELECTED</#if>>výrobcem</option>
@@ -78,16 +78,16 @@
         <tr>
             <td>Adresa ovladače</td>
             <td>
-                <input type="text" name="driverUrl" value="${PARAMS.driverUrl?if_exists}" size="60" tabindex="4" class="wide">
-                <div class="error">${ERRORS.driverUrl?if_exists}</div>
+                <input type="text" name="driverUrl" value="${PARAMS.driverUrl!}" size="60" tabindex="4" class="wide">
+                <div class="error">${ERRORS.driverUrl!}</div>
             </td>
         </tr>
 
         <tr>
             <td>Zastaralý</td>
             <td>
-                <input type="radio" name="outdated" value="yes"<#if PARAMS.outdated?if_exists=="yes"> checked</#if> tabindex="6"> ano
-                <input type="radio" name="outdated" value=""<#if (PARAMS.outdated?if_exists!="yes")> checked</#if> tabindex="7"> ne
+                <input type="radio" name="outdated" value="yes"<#if PARAMS.outdated! == "yes"> checked</#if> tabindex="6"> ano
+                <input type="radio" name="outdated" value=""<#if (PARAMS.outdated!!="yes")> checked</#if> tabindex="7"> ne
             </td>
         </tr>
 
@@ -100,7 +100,7 @@
                 </div>
                 <@lib.showError key="identification"/>
                 <@rte.showFallback "identification"/>
-                <textarea name="identification" class="siroka" rows="15" tabindex="8">${PARAMS.identification?if_exists?html}</textarea>
+                <textarea name="identification" class="siroka" rows="15" tabindex="8">${PARAMS.identification!?html}</textarea>
             </td>
         </tr>
 
@@ -109,7 +109,7 @@
             <td>
                 <@lib.showError key="params"/>
                 <@rte.showFallback "params"/>
-                <textarea name="params" class="siroka" rows="15" tabindex="9">${PARAMS.params?if_exists?html}</textarea>
+                <textarea name="params" class="siroka" rows="15" tabindex="9">${PARAMS.params!?html}</textarea>
             </td>
         </tr>
 
@@ -118,7 +118,7 @@
             <td>
                 <@lib.showError key="setup"/>
                 <@rte.showFallback "setup"/>
-                <textarea name="setup" class="siroka" rows="20" tabindex="10">${PARAMS.setup?if_exists?html}</textarea>
+                <textarea name="setup" class="siroka" rows="20" tabindex="10">${PARAMS.setup!?html}</textarea>
             </td>
         </tr>
 
@@ -127,14 +127,14 @@
             <td>
                 <@lib.showError key="note"/>
                 <@rte.showFallback "note"/>
-                <textarea name="note" class="siroka" rows="20" tabindex="11">${PARAMS.note?if_exists?html}</textarea>
+                <textarea name="note" class="siroka" rows="20" tabindex="11">${PARAMS.note!?html}</textarea>
             </td>
         </tr>
 
         <tr>
             <td width="120">&nbsp;</td>
             <td>
-                <#if PREVIEW?exists>
+                <#if PREVIEW??>
                     <input tabindex="12" type="submit" name="preview" value="Zopakuj náhled">
                     <input tabindex="13" type="submit" name="finish" value="Dokonči">
                 <#else>

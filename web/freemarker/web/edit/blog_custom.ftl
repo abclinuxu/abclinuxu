@@ -23,8 +23,8 @@ přidat obrázek, odkazy na své přátelé nebo blogy, které čtete.
        <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek celé stránky</span></a>
    </td>
    <td>
-    <input type="text" name="htitle" size="40" maxlength="70" value="${PARAMS.htitle?if_exists?html}">
-    <div class="error">${ERRORS.htitle?if_exists}</div>
+    <input type="text" name="htitle" size="40" maxlength="70" value="${PARAMS.htitle!?html}">
+    <div class="error">${ERRORS.htitle!}</div>
    </td>
   </tr>
   <tr>
@@ -32,8 +32,8 @@ přidat obrázek, odkazy na své přátelé nebo blogy, které čtete.
        <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek celé stránky</span></a>
    </td>
    <td>
-    <input type="text" name="title" size="40" maxlength="70" value="${PARAMS.title?if_exists?html}">
-    <div class="error">${ERRORS.title?if_exists}</div>
+    <input type="text" name="title" size="40" maxlength="70" value="${PARAMS.title!?html}">
+    <div class="error">${ERRORS.title!}</div>
    </td>
   </tr>
     <tr>
@@ -41,7 +41,7 @@ přidat obrázek, odkazy na své přátelé nebo blogy, které čtete.
         <td>
             <@lib.showError key="intro"/>
             <@rte.showFallback "intro"/>
-            <textarea name="intro" class="siroka" rows="20">${PARAMS.intro?if_exists?html}</textarea>
+            <textarea name="intro" class="siroka" rows="20">${PARAMS.intro!?html}</textarea>
         </td>
     </tr>
   <tr>

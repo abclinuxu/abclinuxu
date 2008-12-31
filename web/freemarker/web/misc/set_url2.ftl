@@ -42,8 +42,8 @@
         <tr>
             <td>Nové URL dokumentu</td>
             <td>
-                <input type="text" name="url" size="80" value="${PARAMS.url?if_exists}">
-                <div class="error">${ERRORS.url?if_exists}</div>
+                <input type="text" name="url" size="80" value="${PARAMS.url!}">
+                <div class="error">${ERRORS.url!}</div>
             </td>
         </tr>
         <tr>

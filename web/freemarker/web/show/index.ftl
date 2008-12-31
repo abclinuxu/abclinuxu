@@ -4,10 +4,10 @@
 
     <@lib.advertisement id="ps-upoutavka" />
 
-    <#assign EVENTS=VARS.getFreshEvents(USER?if_exists)>
+    <#assign EVENTS=VARS.getFreshEvents(USER!)>
     <div class="s_nadpis">
         <a class="s_nadpis-pravy-odkaz" href="${URL.make("/akce/edit/233274?action=add")}">zadejte &raquo;</a>
-        <#if USER?exists && TOOL.permissionsFor(USER,TOOL.createRelation(233274)).canModify()>
+        <#if USER?? && TOOL.permissionsFor(USER,TOOL.createRelation(233274)).canModify()>
             <a class="s_nadpis-pravy-odkaz" href="${URL.make("/akce?mode=unpublished")}" title="Počet neschválených akcí">(${VARS.counter.WAITING_EVENTS})&nbsp;</a>
         </#if>
         <a href="/akce">Kalendář akcí</a>
@@ -17,7 +17,7 @@
         <#list EVENTS as rel>
              <li>
                 <#assign date=DATE.show(rel.child.created, "CZ_DM")>
-                 <#if rel.child.date1?exists>
+                 <#if rel.child.date1??>
                     <#assign toDate=DATE.show(rel.child.date1, "CZ_DM")>
                     <#if toDate!=date><#assign date=date+"-"+toDate></#if>
                  </#if>
@@ -46,7 +46,7 @@
 
 <@lib.showMessages/>
 
-<#assign ARTICLES=VARS.getFreshArticles(USER?if_exists)>
+<#assign ARTICLES=VARS.getFreshArticles(USER!)>
 <#global CITACE = TOOL.getRelationCountersValue(ARTICLES,"read")/>
 <#if (ARTICLES?size>0) >
     <#list ARTICLES as rel>
@@ -65,7 +65,7 @@
 <#flush>
 
 <#assign single_mode=false>
-<#if USER?exists>
+<#if USER??>
     <#if TOOL.xpath(USER, "/data/profile/forum_mode")?default("")=="single">
         <#assign single_mode=true>
     </#if>
@@ -94,7 +94,7 @@
     <@lib.showForum 0, 0, true, true, true, single_mode/>
 </#if>
 
-<#assign STORIES=VARS.getFreshStories(USER?if_exists)>
+<#assign STORIES=VARS.getFreshStories(USER!)>
 <#if (STORIES?size>0) >
   <#assign half = STORIES?size/2 >
   <#if STORIES?size%2==1><#assign half=half+1></#if>
@@ -132,15 +132,15 @@
     <#assign story=relation.child, blog=relation.parent, title=blog.title?default("UNDEF"),
              url=TOOL.getUrlForBlogStory(relation), CHILDREN=TOOL.groupByType(story.children),
              author=TOOL.createUser(blog.owner)>
-    <#if CHILDREN.discussion?exists>
+    <#if CHILDREN.discussion??>
         <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
     <#else>
         <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
     </#if>
     <#local signs="", tooltip="">
-    <#if CHILDREN.poll?exists><#local signs=signs+", A", tooltip=tooltip+"anketa"></#if>
+    <#if CHILDREN.poll??><#local signs=signs+", A", tooltip=tooltip+"anketa"></#if>
     <#if TOOL.screenshotsFor(story)?size gt 0><#if tooltip!=""><#local tooltip=tooltip+", "></#if><#local signs=signs+", O", tooltip=tooltip+"obrázek"></#if>
-    <#if CHILDREN.video?exists><#if tooltip!=""><#local tooltip=tooltip+", "></#if><#local signs=signs+", V", tooltip=tooltip+"video"></#if>
+    <#if CHILDREN.video??><#if tooltip!=""><#local tooltip=tooltip+", "></#if><#local signs=signs+", V", tooltip=tooltip+"video"></#if>
 
     <a href="${url}" title="${author.nick?default(author.name)?html}<#if title!="UNDEF">, ${title}</#if>">${story.title}</a>
     <span title="Počet&nbsp;komentářů<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if><#if tooltip!=""> [${tooltip}]</#if>">
@@ -151,7 +151,7 @@
     </#if>
 </#macro>
 
-<#assign SUBPORTALS = VARS.getLatestSubportalChanges(USER?if_exists)>
+<#assign SUBPORTALS = VARS.getLatestSubportalChanges(USER!)>
 <#if (SUBPORTALS?size>0) >
 <#assign half = SUBPORTALS?size/2 >
 <#if SUBPORTALS?size%2==1><#assign half=half+1></#if>
@@ -197,7 +197,7 @@
   <#-- Prvni radek boxu -->
   <tr>
    <td>
-    <#assign HARDWARE = VARS.getFreshHardware(USER?if_exists)>
+    <#assign HARDWARE = VARS.getFreshHardware(USER!)>
     <#if (HARDWARE?size>0) >
         <div class="s_nadpis">
             <a class="info" href="#">?<span class="tooltip">Obrovská databáze znalostí o hardwaru, postupy zprovoznění v GNU/Linuxu.</span></a>
@@ -214,7 +214,7 @@
     </#if>
    </td>
    <td>
-    <#assign SOFTWARE = VARS.getFreshSoftware(USER?if_exists)>
+    <#assign SOFTWARE = VARS.getFreshSoftware(USER!)>
     <#if (SOFTWARE?size>0) >
         <div class="s_nadpis">
             <a class="info" href="#">?<span class="tooltip">Katalog softwaru pro GNU/Linux.</span></a>
@@ -232,7 +232,7 @@
     </td>
 
    <td>
-    <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
+    <#assign DRIVERS = VARS.getFreshDrivers(USER!)>
       <div class="s_nadpis">
         <a class="info" href="#">?<span class="tooltip">Nejčerstvější ovladače</span></a>
         <a href="/ovladace">Ovladače</a>
@@ -253,7 +253,7 @@
   <#-- druhy radek boxu -->
   <tr>
    <td>
-    <#assign FAQ = VARS.getFreshFaqs(USER?if_exists)>
+    <#assign FAQ = VARS.getFreshFaqs(USER!)>
     <div class="s_nadpis">
         <a class="info" href="#">?<span class="tooltip">Odpovědi na často kladené otázky.</span></a>
         <a href="/faq">FAQ</a>
@@ -268,7 +268,7 @@
     </div>
    </td>
    <td>
-    <#assign DICTIONARY=VARS.getFreshDictionary(USER?if_exists)>
+    <#assign DICTIONARY=VARS.getFreshDictionary(USER!)>
       <div class="s_nadpis">
         <a class="info" href="#">?<span class="tooltip">Výkladový slovník linuxových pojmů.</span></a>
         <a href="/slovnik">Slovník</a>
@@ -284,7 +284,7 @@
    </td>
 
   <td>
-    <#assign PERSONALITY=VARS.getFreshPersonalities(USER?if_exists)>
+    <#assign PERSONALITY=VARS.getFreshPersonalities(USER!)>
     <div class="s_nadpis">
         <a class="info" href="#">?<span class="tooltip">Databáze významných osobností z komunity.</span></a>
         <a href="/kdo-je">Kdo je</a>
@@ -303,7 +303,7 @@
   <#-- Treti radek boxu -->
   <tr>
     <td>
-    <#assign BAZAAR = VARS.getFreshBazaarAds(USER?if_exists)>
+    <#assign BAZAAR = VARS.getFreshBazaarAds(USER!)>
       <div class="s_nadpis">
         <a class="info" href="#">?<span class="tooltip">Inzeráty z AbcBazaru.</span></a>
         <a href="/bazar">Bazar</a>
@@ -326,7 +326,7 @@
    </td>
 
    <td>
-    <#assign TRIVIAS = VARS.getFreshTrivia(USER?if_exists)>
+    <#assign TRIVIAS = VARS.getFreshTrivia(USER!)>
       <div class="s_nadpis">
         <a class="info" href="#">?<span class="tooltip">Nejčerstvější kvízy</span></a>
         <a href="/hry">Kvízy</a>
@@ -343,7 +343,7 @@
   </tr>
 </table>
 
-<#assign DESKTOPS = VARS.getFreshScreenshots(USER?if_exists)>
+<#assign DESKTOPS = VARS.getFreshScreenshots(USER!)>
 <#if (DESKTOPS?size > 0)>
     <div class="ramec">
       <div class="s_nadpis">
@@ -365,7 +365,7 @@
     </div>
 </#if>
 
-<#assign VIDEOS = VARS.getFreshVideos(USER?if_exists)>
+<#assign VIDEOS = VARS.getFreshVideos(USER!)>
 <#if (VIDEOS?size > 0)>
     <div class="ramec">
       <div class="s_nadpis">
@@ -387,7 +387,7 @@
     </div>
 </#if>
 
-<#assign FEEDS = VARS.getFeeds(USER?if_exists,true)>
+<#assign FEEDS = VARS.getFeeds(USER!,true)>
 <#if (FEEDS.size() > 0)>
   <h2>Rozcestník</h2>
   <div class="rozc">

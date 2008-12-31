@@ -33,17 +33,17 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
     </p>
 </#if>
 
-<#if PREVIEW?exists>
+<#if PREVIEW??>
  <h2>Náhled vašeho zápisu</h2>
 
  <div style="padding-left: 30pt">
-    <h3>${PREVIEW.title?if_exists}</h3>
+    <h3>${PREVIEW.title!}</h3>
     <p class="cl_inforadek">${DATE.show(PREVIEW.created, "CZ_SHORT")} |
         Přečteno: ${TOOL.getCounterValue(PREVIEW,"read")}x
-        <#if PREVIEW.subType?exists>| ${CATEGORIES[PREVIEW.subType]?if_exists}</#if>
+        <#if PREVIEW.subType??>| ${CATEGORIES[PREVIEW.subType]!}</#if>
     </p>
-    ${TOOL.xpath(PREVIEW, "/data/perex")?if_exists}
-    ${TOOL.xpath(PREVIEW, "/data/content")?if_exists}
+    ${TOOL.xpath(PREVIEW, "/data/perex")!}
+    ${TOOL.xpath(PREVIEW, "/data/content")!}
  </div>
 </#if>
 
@@ -55,8 +55,8 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
         <td>
             <span class="required">Titulek zápisu</span>
             <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek vašeho zápisu. Je důležitý pro RSS.</span></a>
-            <input type="text" name="title" size="60" value="${PARAMS.title?if_exists?html}">
-            <div class="error">${ERRORS.title?if_exists}</div>
+            <input type="text" name="title" size="60" value="${PARAMS.title!?html}">
+            <div class="error">${ERRORS.title!}</div>
         </td>
     </tr>
     <tr>
@@ -73,7 +73,7 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
     <!--<tr>
         <td>
             <label>Vydat jako mikrozápisek
-            <input type="checkbox" name="micro" value="yes"<#if PARAMS.micro?exists> checked</#if>></label>
+            <input type="checkbox" name="micro" value="yes"<#if PARAMS.micro??> checked</#if>></label>
                 <a class="info" href="#">?<span class="tooltip">Pokud má váš text do 200 znaků, můžete jej vydat
                 jako mikrozápisek. Bude pak celý zobrazen na úvodní stránce AbcLinuxu.</span></a>
         </td>
@@ -90,19 +90,19 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
 		        <a href="javascript:insertAtCursor(document.form.content, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
                 <a href="javascript:insertAtCursor(document.form.content, '<break>', '');" id="mono" title="Vložit značku zlomu">&lt;break&gt;</a>
             </div>
-            <div class="error">${ERRORS.content?if_exists}</div>
-            <textarea tabindex="2" name="content" class="siroka" rows="30">${PARAMS.content?if_exists?html}</textarea>
+            <div class="error">${ERRORS.content!}</div>
+            <textarea tabindex="2" name="content" class="siroka" rows="30">${PARAMS.content!?html}</textarea>
         </td>
     </tr>
-    <#if STORY.child.type==15 || PARAMS.publish?exists>
+    <#if STORY.child.type==15 || PARAMS.publish??>
     <tr>
         <td>
             <div>Datum/čas zveřejnění</div>
             <div>
-                <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish?if_exists}">
+                <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish!}">
                     <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
                     Formát 2005-01-25 07:12
-                    <div class="error">${ERRORS.publish?if_exists}</div>
+                    <div class="error">${ERRORS.publish!}</div>
             </div>
         </td>
     </tr>

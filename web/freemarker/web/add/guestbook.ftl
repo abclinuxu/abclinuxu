@@ -18,12 +18,12 @@ prázdným řádkem.
 <form action="${URL.noPrefix("/kniha_navstev/edit")}" method="POST">
   <p>
    <span class="required">Vaše jméno</span><br>
-   <input tabindex="1" type="text" name="name" size="40" value="${PARAMS.name?if_exists}">
-   <div class="error">${ERRORS.name?if_exists}</div>
+   <input tabindex="1" type="text" name="name" size="40" value="${PARAMS.name!}">
+   <div class="error">${ERRORS.name!}</div>
 
    <span class="required">Vzkaz</span><br>
-   <textarea tabindex="2" name="message" cols="60" rows="10" tabindex="2">${PARAMS.message?if_exists?html}</textarea>
-   <div class="error">${ERRORS.message?if_exists}</div>
+   <textarea tabindex="2" name="message" cols="60" rows="10" tabindex="2">${PARAMS.message!?html}</textarea>
+   <div class="error">${ERRORS.message!}</div>
   </p>
    <p>
        <input tabindex="3" type="submit" value="Dokonči">

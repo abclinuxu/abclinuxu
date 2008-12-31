@@ -6,7 +6,7 @@
   ${TOOL.removeTags(TOOL.xpath(ITEM,"data/content"))}
   <br/><br/></p>
 </#list>
-<#if FOUND.nextPage?exists>
+<#if FOUND.nextPage??>
 <p>
  <anchor>Další<go href="/zpravicky" method="post"><postfield name="from" value="${FOUND.nextPage.row}"/></go></anchor>
 </p>

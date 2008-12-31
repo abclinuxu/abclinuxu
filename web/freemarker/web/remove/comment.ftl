@@ -21,7 +21,7 @@ včetně všech potomků!</p>
  <input type="hidden" name="threadId" value="${PARAMS.threadId}">
 </form>
 
-<#if THREAD?exists>
+<#if THREAD??>
  <h3>Náhled příspěvku</h3>
  <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussionWithAttachments(DISCUSSION), false />
 </#if>

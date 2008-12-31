@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<#if ! USER?exists>
+<#if ! USER??>
     <p>
         Pokud jste ${PROFILE.name}, <a href="${URL.noPrefix("/Profile?action=login")}">přihlaste se</a>
         a bude vám zobrazena vaše domovská stránka.
@@ -34,15 +34,15 @@
 
 <!-- sekce osobni udaje -->
 
-<#if PROFILE.nick?exists><p>Přezdívka: ${PROFILE.nick}</p></#if>
+<#if PROFILE.nick??><p>Přezdívka: ${PROFILE.nick}</p></#if>
 
 <#assign homePage = TOOL.xpath(PROFILE,"/data/profile/home_page")?default("UNDEFINED")>
 <#if homePage != "UNDEFINED">
     <p>Moje domovská stránka: <a href="${homePage}" rel="nofollow">${homePage}</a></p>
 </#if>
 
-<#if TOOL.xpath(PROFILE,"/data/profile/about_myself")?exists>
-    <p>O mně: ${TOOL.render(TOOL.element(PROFILE.data,"/data/profile/about_myself"),USER?if_exists)}</p>
+<#if TOOL.xpath(PROFILE,"/data/profile/about_myself")??>
+    <p>O mně: ${TOOL.render(TOOL.element(PROFILE.data,"/data/profile/about_myself"),USER!)}</p>
 </#if>
 
 <p>
@@ -66,7 +66,7 @@
     <p>Linux používám od roku: ${linuxUserFrom}</p>
 </#if>
 
-<#if TOOL.xpath(PROFILE,"/data/profile/distributions")?exists>
+<#if TOOL.xpath(PROFILE,"/data/profile/distributions")??>
 <div class="profile_list reverse_anchor">
     <h2>Používám tyto distribuce:</h2>
     <ul>
@@ -132,14 +132,14 @@
 </div>
 </#if>
 
-<#if BLOG?exists>
+<#if BLOG??>
 <div class="profile_list reverse_anchor">
     <h2>Můj blog: <a href="/blog/${BLOG.subType}">${BLOG.title?default("blog")}</a></h2>
     <ul>
       <#list STORIES as relation>
         <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
         <#assign CHILDREN=TOOL.groupByType(story.children)>
-        <#if CHILDREN.discussion?exists>
+        <#if CHILDREN.discussion??>
           <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
         <#else>
           <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
@@ -161,7 +161,7 @@
 </div>
 </#if>
 
-<#if LAST_DESKTOP?exists>
+<#if LAST_DESKTOP??>
     <h3>Můj současný desktop:</h3>
     <p>
         <#assign desktop_title=LAST_DESKTOP.title>
@@ -183,15 +183,15 @@
     </ul>
 </div>
 
-<#if PROFILE.email?exists>
+<#if PROFILE.email??>
   <div>
-    <#if ! INVALID_EMAIL?if_exists>
+    <#if ! INVALID_EMAIL!>
         <form action="${URL.noPrefix("/Profile")}">
             <input type="hidden" name="action" value="sendEmail">
             <input type="hidden" name="uid" value="${PROFILE.id}">
             <input type="submit" value="Pošlete mi email">
         </form>
-    <#elseif TOOL.xpath(PROFILE,"/data/communication/email[@valid='no']")?exists>
+    <#elseif TOOL.xpath(PROFILE,"/data/communication/email[@valid='no']")??>
         <p class="error">Administrátoři označili email uživatele za neplatný!</p>
     </#if>
   </div>

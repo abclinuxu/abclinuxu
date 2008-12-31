@@ -21,15 +21,15 @@ blíží datum konání akce.
     <tr>
         <td>Vaše jméno</td>
         <td>
-            <input type="text" name="name" value="${PARAMS.name?if_exists}">
-            <div class="error">${ERRORS.name?if_exists}</div>
+            <input type="text" name="name" value="${PARAMS.name!}">
+            <div class="error">${ERRORS.name!}</div>
         </td>
     </tr>
     <tr>
         <td>E-mail</td>
         <td>
-            <input type="text" name="email" value="${PARAMS.email?if_exists}">
-            <div class="error">${ERRORS.email?if_exists}</div>
+            <input type="text" name="email" value="${PARAMS.email!}">
+            <div class="error">${ERRORS.email!}</div>
         </td>
     </tr>
     <tr>

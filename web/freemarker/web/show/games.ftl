@@ -10,7 +10,7 @@
     jen o legraci.
 </p>
 
-<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canCreate()>
+<#if USER?? && TOOL.permissionsFor(USER, RELATION).canCreate()>
     <a href="/EditTrivia?action=add">Přidat kvíz</a>
 </#if>
 
@@ -28,7 +28,7 @@
         Hráno: ${stats.count}&times; |
         Průměrné skóre: ${stats.percent} |
         <@lib.showCommentsInListing diz, "SMART", "/hry" />
-        <#if USER?exists && TOOL.permissionsFor(USER, relation).canModify()>
+        <#if USER?? && TOOL.permissionsFor(USER, relation).canModify()>
             <a href="/EditTrivia/${relation.id}?action=edit">Upravit</a>
         </#if>
     </p>

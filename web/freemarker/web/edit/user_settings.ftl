@@ -73,7 +73,7 @@
         <tr>
             <td class="required" width="200px">Vlastní CSS</td>
             <td>
-                <input type="text" name="css" size="40" value="${PARAMS.css?if_exists}" tabindex="4">
+                <input type="text" name="css" size="40" value="${PARAMS.css!}" tabindex="4">
                 <@lib.showError key="css"/>
             </td>
         </tr>
@@ -191,7 +191,7 @@
         <tr>
             <td class="required" width="200px">Velikost stránky poradny</td>
             <td>
-                <input type="text" name="forum" value="${PARAMS.forum?if_exists}" size="3" tabindex="9">
+                <input type="text" name="forum" value="${PARAMS.forum!}" size="3" tabindex="9">
                 <@lib.showError key="forum"/>
             </td>
         </tr>
@@ -207,7 +207,7 @@
         <tr>
             <td class="required" width="200px">Počet zpráviček</td>
             <td>
-                <input type="text" name="news" value="${PARAMS.news?if_exists}" size="3" tabindex="10">
+                <input type="text" name="news" value="${PARAMS.news!}" size="3" tabindex="10">
                 <@lib.showError key="news"/>
             </td>
         </tr>
@@ -241,7 +241,7 @@
         <tr>
             <td class="required" width="200px">Počet zápisků</td>
             <td>
-                <input type="text" name="stories" value="${PARAMS.stories?if_exists}" size="3" tabindex="13">
+                <input type="text" name="stories" value="${PARAMS.stories!}" size="3" tabindex="13">
                 <@lib.showError key="stories"/>
             </td>
         </tr>
@@ -273,7 +273,7 @@
         <tr>
             <td class="required" width="200px">Počet desktopů</td>
             <td>
-                <input type="text" name="screenshots" value="${PARAMS.screenshots?if_exists}" size="3" tabindex="15">
+                <input type="text" name="screenshots" value="${PARAMS.screenshots!}" size="3" tabindex="15">
                 <@lib.showError key="screenshots"/>
             </td>
         </tr>
@@ -289,7 +289,7 @@
         <tr>
             <td class="required" width="200px">Velikost stránky při hledání</td>
             <td>
-                <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="16">
+                <input type="text" name="search" value="${PARAMS.search!}" size="3" tabindex="16">
                 <@lib.showError key="search"/>
             </td>
         </tr>
@@ -322,7 +322,7 @@
                         <#if server_index % 3 == 0><tr></#if>
                             <td>
                                 <#assign feedParam = "feed"+server.id>
-                                <@lib.showOption3 feedParam, "yes", server.name, "checkbox", PARAMS[feedParam]?exists />
+                                <@lib.showOption3 feedParam, "yes", server.name, "checkbox", PARAMS[feedParam]?? />
                             </td>
                         <#if server_index % 3 == 2 || ! server_has_next></tr></#if>
                     </#list>
@@ -340,9 +340,9 @@
         <tr>
             <td class="required" width="200px">Počet odkazů</td>
             <td>
-                <input type="text" name="indexFeedSize" value="${PARAMS.indexFeedSize?if_exists}" size="3">
+                <input type="text" name="indexFeedSize" value="${PARAMS.indexFeedSize!}" size="3">
                 na hlavní stránce<br><@lib.showError key="indexFeedSize"/>
-                <input type="text" name="feedSize" value="${PARAMS.feedSize?if_exists}" size="3">
+                <input type="text" name="feedSize" value="${PARAMS.feedSize!}" size="3">
                 mimo hlavní stránku <@lib.showError key="feedSize"/>
             </td>
         </tr>

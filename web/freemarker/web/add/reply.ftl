@@ -1,5 +1,5 @@
 <#import "/web/rte-macro.ftl" as rte>
-<#if COMMENTED_TEXT?exists>
+<#if COMMENTED_TEXT??>
     <@rte.addRTE textAreaId="text" formId="replyForm" inputMode="comment" commentedText="${COMMENTED_TEXT}" />
 <#else>
     <@rte.addRTE textAreaId="text" formId="replyForm" inputMode="comment" />
@@ -8,7 +8,7 @@
 
 <@lib.showMessages/>
 
-<#if PREVIEW?exists>
+<#if PREVIEW??>
  <p>
     Prohlédněte si vzhled vašeho komentáře. Zkontrolujte
     pravopis, obsah i tón vašeho textu. Někdy to vážně
@@ -17,7 +17,7 @@
  </p>
 </#if>
 
-<#if THREAD?exists>
+<#if THREAD??>
  <h2>Příspěvek, na který reagujete</h2>
  <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussionWithAttachments(DISCUSSION), false />
 
@@ -30,7 +30,7 @@
  </script>
 </#if>
 
-<#if PREVIEW?exists>
+<#if PREVIEW??>
  <h2>Náhled vašeho příspěvku</h2>
  <div style="padding-left: 30pt">
   <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
@@ -40,17 +40,17 @@
 <h2>Váš komentář</h2>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST" name="replyForm" enctype="multipart/form-data">
-  <#if ! USER?exists>
+  <#if ! USER??>
    <p>
     <span class="required">Zadejte vaše jméno</span>
-        <input tabindex="4" type="text" size="30" name="author" value="${PARAMS.author?if_exists?html}">
-    <span class="error">${ERRORS.author?if_exists}</span><br>
+        <input tabindex="4" type="text" size="30" name="author" value="${PARAMS.author!?html}">
+    <span class="error">${ERRORS.author!}</span><br>
         nebo <a href="/Profile?action=login">se přihlašte</a>.
    </p>
-   <#if ! USER_VERIFIED?if_exists>
+   <#if ! USER_VERIFIED!>
        <p>
            <span class="required">Zadejte aktuální rok</span>
-           <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}">
+           <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}">
            <@lib.showHelp>Vložte aktuální rok. Jedná se o ochranu před spamboty. Po úspěšném ověření
            se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.</@lib.showHelp>
            <@lib.showError key="antispam" />
@@ -59,29 +59,29 @@
   </#if>
   <p>
    <span class="required">Titulek</span><br>
-    <#if PARAMS.title?exists>
+    <#if PARAMS.title??>
         <#assign title=PARAMS.title>
-    <#elseif PARENT_TITLE?exists>
+    <#elseif PARENT_TITLE??>
         <#assign title=PARENT_TITLE>
         <#assign title="Re: "+title>
-    <#elseif THREAD?exists>
-        <#assign title=THREAD.title?if_exists>
+    <#elseif THREAD??>
+        <#assign title=THREAD.title!>
         <#if !title.startsWith("Re: ")><#assign title="Re: "+title></#if>
     </#if>
-   <input tabindex="4" type="text" name="title" size="60" maxlength="70" value="${title?if_exists?html}">
-   <div class="error">${ERRORS.title?if_exists}</div>
+   <input tabindex="4" type="text" name="title" size="60" maxlength="70" value="${title!?html}">
+   <div class="error">${ERRORS.title!}</div>
   </p>
     <div>
         <span class="required">Váš komentář</span>
         <@lib.showError key="text"/>
         <@rte.showFallback "text"/>
-        <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea>
+        <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea>
     </div>
     <p>
         Vložení přílohy: <input type="file" name="attachment" tabindex="6">
         <@lib.showHelp>Například výpis logu, konfigurační soubor, snímek obrazovky a podobně.</@lib.showHelp>
         <@lib.showError key="attachment" />
-        <#if ATTACHMENTS?exists>
+        <#if ATTACHMENTS??>
             <ul>
                 <#list ATTACHMENTS as file>
                     <li>${file.name} (${file.size} bytů) | <label><input type="checkbox" name="rmAttachment" value="${file_index}">Smazat</label></li>
@@ -90,7 +90,7 @@
         </#if>
     </p>
   <p>
-    <#if PREVIEW?exists>
+    <#if PREVIEW??>
      <input tabindex="7" type="submit" name="preview" value="Zopakuj náhled komentáře">
      <input tabindex="8" type="submit" name="finish" value="Dokonči">
     <#else>
@@ -101,10 +101,10 @@
  <input type="hidden" name="action" value="add2">
  <input type="hidden" name="rid" value="${RELATION.id}">
  <input type="hidden" name="dizId" value="${DISCUSSION.id}">
- <#if THREAD?exists>
+ <#if THREAD??>
   <input type="hidden" name="threadId" value="${THREAD.id}">
  </#if>
- <#if PARAMS.url?exists>
+ <#if PARAMS.url??>
   <input type="hidden" name="url" value="${PARAMS.url}">
  </#if>
 </form>

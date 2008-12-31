@@ -18,9 +18,9 @@
     </td>
   </tr>
 <#assign note=TOOL.xpath(ITEM,"data/note")>
-<#if note?exists>
+<#if note??>
   <tr>
-    <td valign="top">Poznámka</td><td>${TOOL.render(note,USER?if_exists)}</td>
+    <td valign="top">Poznámka</td><td>${TOOL.render(note,USER!)}</td>
   </tr>
 </#if>
 </table>

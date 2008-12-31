@@ -17,4 +17,4 @@ ${TOOL.xpath(ITEM, "/data/content")}
 </#macro>
 
 <#list STORIES as story><@exportStory story/></#list>
-<#list UNPUBLISHED_STORIES?if_exists as story><@exportStory story/></#list>
+<#list UNPUBLISHED_STORIES! as story><@exportStory story/></#list>

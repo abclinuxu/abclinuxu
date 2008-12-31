@@ -1,20 +1,20 @@
-<#if USER?exists && TOOL.xpath(CATEGORY,"//monitor/id[text()='"+USER.id+"']")?exists>
+<#if USER?? && TOOL.xpath(CATEGORY,"//monitor/id[text()='"+USER.id+"']")??>
     <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj sekci">
 </#if>
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
                 <li>
-                    <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
+                    <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}">${monitorState}</a>
                     <span title="Počet lidí, kteří sledují tuto sekci">(${TOOL.getMonitorCount(CATEGORY.data)})</span>
                     <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při novém dotazu v této sekci poradny.</span></a>
                 </li>
-                <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+                <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
                     <li><a href="/forum/edit/${RELATION.id}?action=edit">Nastavení poradny</a></li>
                 </#if>
          </ul>
     </div>
-    <#if SUBPORTAL?exists>
+    <#if SUBPORTAL??>
         <#import "../macros.ftl" as lib>
         <@lib.showSubportal SUBPORTAL, true/>
     </#if>
@@ -22,9 +22,9 @@
 
 <#include "../header.ftl">
 
-<#if USER?exists>
+<#if USER??>
     <#assign single_mode=false>
-    <#if USER?exists>
+    <#if USER??>
         <#if TOOL.xpath(USER, "/data/profile/forum_mode")?default("")=="single">
             <#assign single_mode=true>
         </#if>
@@ -47,11 +47,11 @@
 
 <h1 align="center">Fórum ${CATEGORY.title}</h1>
 
-<#if USER?exists && !single_mode></form></#if>
+<#if USER?? && !single_mode></form></#if>
 
-<#if TOOL.xpath(CATEGORY,"data/note")?exists>
+<#if TOOL.xpath(CATEGORY,"data/note")??>
 <p>
- ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
+ ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER!)}
 </p>
 </#if>
 
@@ -62,8 +62,8 @@
 <form action="" method="get">
 <div id="tagfilter">
     Filtr: <@lib.showHelp>Filtruje dotazy podle přiřazených štítků. Můžete použít logické operátory AND, OR a NOT a závorky.</@lib.showHelp>
-    <input type="text" name="tags" id="tags" value="${PARAMS.tags?if_exists?html}" size="50"> <input type="submit" value="Filtruj">
-    <div class="error">${ERRORS.tags?if_exists}</div>
+    <input type="text" name="tags" id="tags" value="${PARAMS.tags!?html}" size="50"> <input type="submit" value="Filtruj">
+    <div class="error">${ERRORS.tags!}</div>
     <br>
 </div>
 </form>
@@ -102,7 +102,7 @@
     <input type="hidden" name="typ" value="poradna">
    </form>
   <li><a href="${URL.make("/forum/EditDiscussion?action=addQuez&amp;rid="+RELATION.id)}">Položit nový dotaz</a>
-  <#if PARAMS.tags?exists>
+  <#if PARAMS.tags??>
     <#assign tags=PARAMS.tags.replace("\"", "%22")>
   <#else>
     <#assign tags="">

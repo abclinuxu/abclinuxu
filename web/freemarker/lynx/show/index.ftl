@@ -4,7 +4,7 @@
 
 Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní fórum</a>
 
-<#assign ARTICLES=VARS.getFreshArticles(USER?if_exists)>
+<#assign ARTICLES=VARS.getFreshArticles(USER!)>
 <#list ARTICLES as rel>
  <@lib.showArticle rel, "CZ_SHORT" />
  <@lib.separator double=!rel_has_next />
@@ -14,7 +14,7 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
  <a href="/History?type=articles&from=${ARTICLES?size}&count=10" title="Další">Starší články</a>
 </p>
 
-<#assign NEWS=VARS.getFreshNews(USER?if_exists)>
+<#assign NEWS=VARS.getFreshNews(USER!)>
 <a name="zpravicky"><h2>Zprávičky</h2></a>
 <#list NEWS as rel>
  <@lib.showNews rel/>
@@ -26,7 +26,7 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
 </p>
 
 <h3><a href="/ovladace">Ovladače</a></h3>
- <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
+ <#assign DRIVERS = VARS.getFreshDrivers(USER!)>
 <ul>
  <#list DRIVERS as rel>
   <li><a href="${rel.url?default("/ovladace/show/"+rel.id)}">
@@ -36,7 +36,7 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
 </ul>
 
 <h3><a href="/hardware">Hardware</a></h3>
- <#assign HARDWARE = VARS.getFreshHardware(USER?if_exists)>
+ <#assign HARDWARE = VARS.getFreshHardware(USER!)>
 <ul>
  <#list HARDWARE as rel>
   <li><a href="/hardware/show/${rel.id}">
@@ -55,13 +55,13 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
                 ${TOOL.limit(diz.discussion.title,50," ..")}
             </a>
             ${DATE.show(diz.updated,"CZ_SHORT")}, ${diz.responseCount}<@lib.markNewComments diz/> odp.,
-            <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
+            <#if TOOL.xpath(diz.discussion,"/data/frozen")??>
                 <b>Z</b>,
             </#if>
             <#if TOOL.isQuestionSolved(diz.discussion.data)>
                 <b>V</b>,
             </#if>
-            <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")?exists>
+            <#if USER?? && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")??>
                 <b>S</b>
             </#if>
             <br>
@@ -82,14 +82,14 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
 
 <h2><a href="/blog">Blogy na AbcLinuxu</a></h2>
   <ul>
-  <#assign STORIES=VARS.getFreshStories(USER?if_exists)>
+  <#assign STORIES=VARS.getFreshStories(USER!)>
   <#list STORIES as relation>
      <li>
      <#assign story=relation.child, blog=relation.parent>
      <#assign url=TOOL.getUrlForBlogStory(relation)>
      <#assign title=blog.title?default("UNDEF")>
      <#assign CHILDREN=TOOL.groupByType(story.children)>
-     <#if CHILDREN.discussion?exists>
+     <#if CHILDREN.discussion??>
        <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
      <#else>
        <#assign diz=TOOL.analyzeDiscussion("UNDEF")>

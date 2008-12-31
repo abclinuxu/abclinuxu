@@ -12,7 +12,7 @@
 
 <div class="sw">
 
-<#if ITEMS?exists>
+<#if ITEMS??>
     <@lib.showSoftwareList ITEMS />
 <#else>
     <p>

@@ -28,7 +28,7 @@ Ve vasem pripade se jedna o:
 <#if USER.illegalLogin>* zakazane znaky v loginu</#if>
 
 Odhad vygenerovaneho loginu: ${USER.newLogin?default("beze zmeny")}
-<#if USER.nick?exists>Odhad vygenerovane prezdivky: ${USER.newNick?default("beze zmeny")}</#if>
+<#if USER.nick??>Odhad vygenerovane prezdivky: ${USER.newNick?default("beze zmeny")}</#if>
 
 Podrobnejsi informace, vcetne rad, co delat, najdete v clanku na adrese
 http://www.abclinuxu.cz/clanky/novinky/upozorneni-pro-nase-uzivatele-loginy

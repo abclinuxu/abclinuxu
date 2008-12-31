@@ -37,7 +37,7 @@
 </ul>
 <br />
 
-<#if PARAMS.preview?exists>
+<#if PARAMS.preview??>
     <fieldset>
         <legend>Náhled</legend>
         <@bazarlib.showBazaarAd PREVIEW, USER />
@@ -50,8 +50,8 @@
         <tr>
             <td class="required">Titulek</td>
             <td>
-                <input tabindex="1" type="text" name="title" size="40" value="${PARAMS.title?if_exists?html}">
-                <div class="error">${ERRORS.title?if_exists}</div>
+                <input tabindex="1" type="text" name="title" size="40" value="${PARAMS.title!?html}">
+                <div class="error">${ERRORS.title!}</div>
             </td>
         </tr>
         <tr>
@@ -59,21 +59,21 @@
             <td>
                 <@lib.showOption "type", "sell", "Prodej", "radio", "tabindex='2'" />
                 <@lib.showOption "type", "buy", "Koupě", "radio", "tabindex='3'" />
-                <div class="error">${ERRORS.type?if_exists}</div>
+                <div class="error">${ERRORS.type!}</div>
             </td>
         </tr>
         <tr>
             <td>Cena</td>
             <td>
-                <input tabindex="4" type="text" name="price" size="40" value="${PARAMS.price?if_exists?html}">
-                <div class="error">${ERRORS.price?if_exists}</div>
+                <input tabindex="4" type="text" name="price" size="40" value="${PARAMS.price!?html}">
+                <div class="error">${ERRORS.price!}</div>
             </td>
         </tr>
         <tr>
             <td>Kontakt</td>
             <td>
-                <input tabindex="5" type="text" name="contact" size="40" value="${PARAMS.contact?if_exists?html}">
-                <div class="error">${ERRORS.contact?if_exists}</div>
+                <input tabindex="5" type="text" name="contact" size="40" value="${PARAMS.contact!?html}">
+                <div class="error">${ERRORS.contact!}</div>
             </td>
         </tr>
         <tr>
@@ -87,8 +87,8 @@
                     <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vložit značku formátovaného textu. Vhodné pro konfigurační soubory či výpisy.">&lt;pre&gt;</a>
                     <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
                 </div>
-                <textarea tabindex="6" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
-                <div class="error">${ERRORS.text?if_exists}</div>
+                <textarea tabindex="6" name="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea><br>
+                <div class="error">${ERRORS.text!}</div>
             </td>
         </tr>
         <#if PARAMS.action=="edit" || PARAMS.action="edit2" >
@@ -98,8 +98,8 @@
                     <a class="info" href="#">?<span class="tooltip">Text bude zobrazen v historii dokumentu</span></a>
                 </td>
                 <td>
-                    <input tabindex="5" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists?html}">
-                    <div class="error">${ERRORS.rev_descr?if_exists}</div>
+                    <input tabindex="5" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr!?html}">
+                    <div class="error">${ERRORS.rev_descr!}</div>
                 </td>
             </tr>
         </#if>

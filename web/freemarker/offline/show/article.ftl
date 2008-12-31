@@ -16,10 +16,10 @@ ${DATE.show(ITEM.created,"CZ_FULL")} |
 
 <p class="perex">${TOOL.xpath(ITEM,"/data/perex")}</p>
 
-${TOOL.render(TOOL.xpath(CHILDREN.record[0].child,"/data/content"),USER?if_exists)}
+${TOOL.render(TOOL.xpath(CHILDREN.record[0].child,"/data/content"),USER!)}
 
 
-<#if CHILDREN.discussion?exists>
+<#if CHILDREN.discussion??>
     <#assign DISCUSSION=CHILDREN.discussion[0].child>
     <#assign diz = TOOL.createDiscussionTree(DISCUSSION,"no",true)>
     <#if (diz.threads?size>0) >

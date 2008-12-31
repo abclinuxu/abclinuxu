@@ -21,7 +21,7 @@
 </#if>
 </p>
 
-<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+<#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
     <p>
     <a href="${URL.noPrefix("/autori/edit?rid="+RELATION.id+"&amp;action=edit")}">Upravit</a>
 
@@ -31,27 +31,27 @@
     <a href="${URL.noPrefix("/clanky/honorare?authorId="+RELATION.id)}">Honoráře</a>
     </p>
     <table border="0" cellpadding="2" cellspacing="0">
-        <#if TOOL.xpath(AUTHOR,"/data/birthNumber")?exists>
+        <#if TOOL.xpath(AUTHOR,"/data/birthNumber")??>
             <tr>
                 <td>Rodné číslo:</td><td>${TOOL.xpath(AUTHOR,"/data/birthNumber")}</td>
             </tr>
         </#if>
-        <#if TOOL.xpath(AUTHOR,"/data/accountNumber")?exists>
+        <#if TOOL.xpath(AUTHOR,"/data/accountNumber")??>
             <tr>
                  <td>Číslo účtu:</td><td>${TOOL.xpath(AUTHOR,"/data/accountNumber")}</td>
             </tr>
         </#if>
-        <#if TOOL.xpath(AUTHOR,"/data/email")?exists>
+        <#if TOOL.xpath(AUTHOR,"/data/email")??>
             <tr>
                  <td>Email:</td><td>${TOOL.xpath(AUTHOR,"/data/email")}</td>
             </tr>
         </#if>
-        <#if TOOL.xpath(AUTHOR,"/data/phone")?exists>
+        <#if TOOL.xpath(AUTHOR,"/data/phone")??>
             <tr>
                  <td>Telefon:</td><td>${TOOL.xpath(AUTHOR,"/data/phone")}</td>
             </tr>
         </#if>
-        <#if TOOL.xpath(AUTHOR,"/data/address")?exists>
+        <#if TOOL.xpath(AUTHOR,"/data/address")??>
             <tr>
                  <td>Adresa:</td><td>${TOOL.xpath(AUTHOR,"/data/address")}</td>
             </tr>
@@ -79,9 +79,9 @@
       <tr>
         <td><a href="${url}">${clanek.title}</a></td>
         <td class="td-datum">${DATE.show(clanek.created, "SMART_DMY")}</td>
-        <td class="td-meta td-right"><@lib.showCounter clanek, .globals["CITACE"]?if_exists, "read" />&times;</td>
+        <td class="td-meta td-right"><@lib.showCounter clanek, .globals["CITACE"]!, "read" />&times;</td>
         <td class="td-meta td-right">
-          <#if tmp.discussion?exists>
+          <#if tmp.discussion??>
               <#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])>
               <#if (diz.responseCount > 0)>
                   <a href="${diz.url?default("/clanky/show/"+diz.relationId)}">${diz.responseCount}<@lib.markNewComments diz/></a>

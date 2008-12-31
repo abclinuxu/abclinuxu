@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<#if USER?exists>
+<#if USER??>
  <p>
  <#if TOOL.permissionsFor(USER, RELATION).canCreate()>
      <a href="${URL.make("/EditCategory?action=add&rid="+RELATION.id)}"
@@ -19,8 +19,8 @@
  </#if>
 </#if>
 
-<#if TOOL.xpath(CATEGORY,"data/note")?exists>
- <p class="note">${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}</p>
+<#if TOOL.xpath(CATEGORY,"data/note")??>
+ <p class="note">${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER!)}</p>
 </#if>
 
 <h1>Seznam rubrik</h1>

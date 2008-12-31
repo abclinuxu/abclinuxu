@@ -20,10 +20,10 @@ blogu můžete později změnit, přestane-li vám vyhovovat.</p>
 <form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST">
     <p>
         <span class="required">Jméno</span>
-        <input type="text" name="blogName" size="40" maxlength="70" value="${PARAMS.blogName?if_exists?html}">
+        <input type="text" name="blogName" size="40" maxlength="70" value="${PARAMS.blogName!?html}">
         <input type="submit" name="finish" value="Dokonči">
     </p>
-    <div class="error">${ERRORS.blogName?if_exists}</div>
+    <div class="error">${ERRORS.blogName!}</div>
     <input type="hidden" name="action" value="rename2">
 </form>
 

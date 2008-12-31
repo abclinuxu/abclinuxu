@@ -7,7 +7,7 @@
   <meta name="keywords" content="linux,abclinuxu,hardware,USB,SCSI,modem,kernel,ovladač">
   <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
     <script type="text/javascript" src="/data/site/scripts.js"></script>
-    <#if html_header?exists>
+    <#if html_header??>
         ${html_header}
     </#if>
  </head>
@@ -17,7 +17,7 @@
 
 <p>
 ${DATE.show("CZ_FULL")}
- <#if USER?exists>
+ <#if USER??>
   Uživatel: ${USER.name}
   <a href="${URL.noPrefix("/Profile/"+USER.id)}">Můj profil</a>,
   <a href="${URL.noPrefix("/Index?logout=true")}">Odhlášení</a>

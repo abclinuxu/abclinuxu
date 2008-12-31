@@ -4,7 +4,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="robots" content="noindex,nofollow">
   <meta name="author" content="Leos Literak">
-    <#if html_header?exists>
+    <#if html_header??>
         ${html_header}
     </#if>
  </head>

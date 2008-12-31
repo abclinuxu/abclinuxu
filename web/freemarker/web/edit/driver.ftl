@@ -15,27 +15,27 @@
     řad, do políčka verze dávejte jen číslo aktuální řady.
 </p>
 
-<#if PARAMS.preview?exists>
+<#if PARAMS.preview??>
  <h2>Náhled příspěvku</h2>
 
  <table cellspacing=0 border=1 cellpadding=5 align="center">
   <tr>
-    <td>Jméno</td><td>${PARAMS.name?if_exists}</td>
+    <td>Jméno</td><td>${PARAMS.name!}</td>
   </tr>
   <tr>
-    <td>Kategorie ovladače</td><td><#if CATEGORY?exists>${CATEGORY.name}</#if></td>
+    <td>Kategorie ovladače</td><td><#if CATEGORY??>${CATEGORY.name}</#if></td>
   <tr>
   <tr>
-    <td>Verze</td><td>${PARAMS.version?if_exists}</td>
+    <td>Verze</td><td>${PARAMS.version!}</td>
   </tr>
   <tr>
     <td>Adresa</td>
     <td>
-      <a href="${PARAMS.url?if_exists?html}">${TOOL.limit(PARAMS.url?if_exists,50," ..")?html}</a>
+      <a href="${PARAMS.url!?html}">${TOOL.limit(PARAMS.url!,50," ..")?html}</a>
     </td>
   </tr>
   <tr>
-    <td valign="top">Poznámka</td><td>${TOOL.render(PARAMS.note?if_exists,USER?if_exists)}</td>
+    <td valign="top">Poznámka</td><td>${TOOL.render(PARAMS.note!,USER!)}</td>
   </tr>
  </table>
 </#if>
@@ -47,8 +47,8 @@
   <tr>
    <td class="required">Jméno</td>
    <td>
-    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="30" maxlength="30" tabindex="1">
-    <div class="error">${ERRORS.name?if_exists}</div>
+    <input type="text" name="name" value="${PARAMS.name!}" size="30" maxlength="30" tabindex="1">
+    <div class="error">${ERRORS.name!}</div>
    </td>
   </tr>
   <tr>
@@ -56,7 +56,7 @@
    <td>
     <select name="category" tabindex="2">
      <#assign selected = PARAMS.category?default("NONE")>
-     ${PARAMS.category?if_exists}
+     ${PARAMS.category!}
      <#list CATEGORIES as category>
       <option value="${category.key}"
        <#if category.key=selected>selected</#if> >
@@ -69,15 +69,15 @@
   <tr>
    <td class="required">Verze</td>
    <td>
-    <input type="text" name="version" value="${PARAMS.version?if_exists}" size="30" tabindex="2">
-    <div class="error">${ERRORS.version?if_exists}</div>
+    <input type="text" name="version" value="${PARAMS.version!}" size="30" tabindex="2">
+    <div class="error">${ERRORS.version!}</div>
    </td>
   </tr>
   <tr>
    <td class="required">URL</td>
    <td>
     <input type="text" name="url" value="${PARAMS.url?default("http://")?html}" size="70" tabindex="4">
-    <div class="error">${ERRORS.url?if_exists}</div>
+    <div class="error">${ERRORS.url!}</div>
    </td>
   </tr>
   <tr>
@@ -87,7 +87,7 @@
    <td colspan="2">
     <@lib.showError key="note"/>
     <@rte.showFallback "note"/>
-    <textarea name="note" class="siroka" rows="20" tabindex="5">${PARAMS.note?if_exists?html}</textarea>
+    <textarea name="note" class="siroka" rows="20" tabindex="5">${PARAMS.note!?html}</textarea>
    </td>
   </tr>
   <tr>
@@ -96,8 +96,8 @@
         <a class="info" href="#">?<span class="tooltip">Text bude zobrazen v historii dokumentu</span></a>
     </td>
    <td>
-    <input tabindex="6" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists?html}">
-    <div class="error">${ERRORS.rev_descr?if_exists}</div>
+    <input tabindex="6" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr!?html}">
+    <div class="error">${ERRORS.rev_descr!}</div>
    </td>
   </tr>
   <tr>

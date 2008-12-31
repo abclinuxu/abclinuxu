@@ -15,7 +15,7 @@
     <p>
         <span class="required">Jméno souboru</span><br/>
         <input type="file" name="screenshot" size="40" tabindex="1">
-        <div class="error">${ERRORS.screenshot?if_exists}</div>
+        <div class="error">${ERRORS.screenshot!}</div>
         <input tabindex="2" type="submit" name="finish" value="Nahrát" class="button">
         <input type="hidden" name="action" value="addScreenshot2">
     </p>

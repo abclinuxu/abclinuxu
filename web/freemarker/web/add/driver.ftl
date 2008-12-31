@@ -22,26 +22,26 @@ kam patří informace o schopnostech ovladače, či změnách oproti minulé
 verzi.
 </p>
 
-<#if PARAMS.preview?exists>
+<#if PARAMS.preview??>
  <h2>Náhled příspěvku</h2>
 
  <table cellspacing=0 border=1 cellpadding=5 align="center">
   <tr>
-    <td>Jméno ovladače</td><td>${PARAMS.name?if_exists}</td>
+    <td>Jméno ovladače</td><td>${PARAMS.name!}</td>
   </tr>
   <tr>
-    <td>Kategorie ovladače</td><td><#if CATEGORY?exists>${CATEGORY.name}</#if></td>
+    <td>Kategorie ovladače</td><td><#if CATEGORY??>${CATEGORY.name}</#if></td>
   <tr>
-    <td>Verze ovladače</td><td>${PARAMS.version?if_exists}</td>
+    <td>Verze ovladače</td><td>${PARAMS.version!}</td>
   </tr>
   <tr>
     <td>URL ovladače</td>
     <td>
-      <a href="${PARAMS.url?if_exists}">${TOOL.limit(PARAMS.url?if_exists,50," ..")}</a>
+      <a href="${PARAMS.url!}">${TOOL.limit(PARAMS.url!,50," ..")}</a>
     </td>
   </tr>
   <tr>
-    <td valign="top">Poznámka</td><td>${TOOL.render(PARAMS.note?if_exists,USER?if_exists)}</td>
+    <td valign="top">Poznámka</td><td>${TOOL.render(PARAMS.note!,USER!)}</td>
   </tr>
  </table>
 </#if>
@@ -53,8 +53,8 @@ verzi.
   <tr>
    <td class="required">Jméno</td>
    <td>
-    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="30" maxlength="30" tabindex="1">
-    <div class="error">${ERRORS.name?if_exists}</div>
+    <input type="text" name="name" value="${PARAMS.name!}" size="30" maxlength="30" tabindex="1">
+    <div class="error">${ERRORS.name!}</div>
    </td>
   </tr>
   <tr>
@@ -74,15 +74,15 @@ verzi.
   <tr>
    <td class="required">Verze</td>
    <td>
-    <input type="text" name="version" value="${PARAMS.version?if_exists}" size="30" tabindex="3">
-    <div class="error">${ERRORS.version?if_exists}</div>
+    <input type="text" name="version" value="${PARAMS.version!}" size="30" tabindex="3">
+    <div class="error">${ERRORS.version!}</div>
    </td>
   </tr>
   <tr>
    <td class="required">URL</td>
    <td>
     <input type="text" name="url" value="${PARAMS.url?default("http://")}" size="50" tabindex="4">
-    <div class="error">${ERRORS.url?if_exists}</div>
+    <div class="error">${ERRORS.url!}</div>
    </td>
   </tr>
   <tr>
@@ -92,7 +92,7 @@ verzi.
    <td colspan="2">
     <@lib.showError key="note"/>
     <@rte.showFallback "note"/>
-    <textarea name="note" class="siroka" rows="20" tabindex="5">${PARAMS.note?if_exists?html}</textarea>
+    <textarea name="note" class="siroka" rows="20" tabindex="5">${PARAMS.note!?html}</textarea>
    </td>
   </tr>
   <tr>

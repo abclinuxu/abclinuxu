@@ -9,7 +9,7 @@
         Prosím potvrďte, zda si opravdu přejete smazat tyto přílohy:
     </p>
     <ul>
-        <#list ATTACHMENTS?if_exists as rel>
+        <#list ATTACHMENTS! as rel>
             <#assign xml = TOOL.asNode(rel.child.data), path = xml.data.object.@path>
             <li><a href="${path}">${path}</a></li>
         </#list>

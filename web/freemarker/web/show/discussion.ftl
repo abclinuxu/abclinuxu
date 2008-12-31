@@ -1,9 +1,9 @@
-<#assign DIZ = TOOL.createDiscussionTree(ITEM,USER?if_exists,RELATION.id,true)>
+<#assign DIZ = TOOL.createDiscussionTree(ITEM,USER!,RELATION.id,true)>
 <#assign is_question=TOOL.isQuestion(RELATION)>
 <#if DIZ.monitored>
     <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj">
 </#if>
-<#if SUBPORTAL?exists>
+<#if SUBPORTAL??>
     <#import "../macros.ftl" as lib>
     <#assign plovouci_sloupec>
         <@lib.showSubportal SUBPORTAL, true/>
@@ -23,21 +23,21 @@
 
 <div class="ds_toolbox">
  <b>Nástroje:</b>
-   <#if DIZ.hasUnreadComments && DIZ.firstUnread?exists>
+   <#if DIZ.hasUnreadComments && DIZ.firstUnread??>
      <a href="#${DIZ.firstUnread}" title="Skočit na první nepřečtený komentář" rel="nofollow">První nepřečtený komentář</a>,
    </#if>
-   <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}" rel="nofollow">${monitorState}</a>
+   <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}" rel="nofollow">${monitorState}</a>
       <span title="Počet lidí, kteří sledují tuto diskusi">(${DIZ.monitorSize})</span>
       <a class="info" href="#">?<span class="tooltip">Zašle každý nový komentář emailem na vaši adresu</span></a>,
    <#if is_question>
-     Otázka <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=true"+TOOL.ticket(USER?if_exists, false))}" rel="nofollow">byla</a>
+     Otázka <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=true"+TOOL.ticket(USER!, false))}" rel="nofollow">byla</a>
         (${TOOL.xpath(ITEM,"//solved/@yes")?default("0")}) /
-     <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=false"+TOOL.ticket(USER?if_exists, false))}" rel="nofollow">nebyla</a>
+     <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=false"+TOOL.ticket(USER!, false))}" rel="nofollow">nebyla</a>
         (${TOOL.xpath(ITEM,"//solved/@no")?default("0")}) vyřešena
         <a class="info" href="#">?<span class="tooltip">Kliknutím na příslušný odkaz zvolte, jestli otázka <i>byla</i> nebo <i>nebyla</i> vyřešena.</span></a>,
    </#if>
    <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print" rel="nofollow">Tisk</a>
-   <#if USER?exists && (USER.hasRole("discussion admin") || USER.hasRole("move relation"))>
+   <#if USER?? && (USER.hasRole("discussion admin") || USER.hasRole("move relation"))>
      <br />
      <b>Admin:</b>
      <a href="/SelectRelation?prefix=/forum&amp;url=/EditRelation&amp;action=move&amp;rid=${RELATION.id}">Přesunout</a>,

@@ -31,36 +31,36 @@
         <tr>
             <td width="90" class="required">Název</td>
             <td>
-                <input type="text" name="name" value="${PARAMS.name?if_exists?html}" size="60" tabindex="0">
-                <div class="error">${ERRORS.name?if_exists}</div>
+                <input type="text" name="name" value="${PARAMS.name!?html}" size="60" tabindex="0">
+                <div class="error">${ERRORS.name!}</div>
             </td>
         </tr>
         <tr>
             <td width="90" class="required">Regulární výraz</td>
             <td>
                 <select id="regexp-select" onchange="changeRegexp(this)"></select>
-                <input type="text" name="regexp" id="regexp" value="${PARAMS.regexp?if_exists?html}" size="60" tabindex="1">
-                <div class="error">${ERRORS.regexp?if_exists}</div>
+                <input type="text" name="regexp" id="regexp" value="${PARAMS.regexp!?html}" size="60" tabindex="1">
+                <div class="error">${ERRORS.regexp!}</div>
             </td>
         </tr>
         <tr>
             <td width="90">Popis</td>
             <td>
-                <textarea name="desc" rows="3" class="siroka" tabindex="2">${PARAMS.desc?if_exists?html}</textarea>
-                <div class="error">${ERRORS.desc?if_exists}</div>
+                <textarea name="desc" rows="3" class="siroka" tabindex="2">${PARAMS.desc!?html}</textarea>
+                <div class="error">${ERRORS.desc!}</div>
             </td>
         </tr>
         <tr>
             <td width="90">Výchozí reklamní kód</td>
             <td>
-                <textarea name="htmlCode" rows="15" class="siroka" tabindex="3">${PARAMS.htmlCode?if_exists?html}</textarea>
-                <div class="error">${ERRORS.htmlCode?if_exists}</div>
+                <textarea name="htmlCode" rows="15" class="siroka" tabindex="3">${PARAMS.htmlCode!?html}</textarea>
+                <div class="error">${ERRORS.htmlCode!}</div>
             </td>
         </tr>
                 <tr>
             <td width="90">Dynamický kód</td>
             <td>
-                <input type="checkbox" name="dynamic"<#if PARAMS.dynamic?if_exists>checked</#if> tabindex="4">
+                <input type="checkbox" name="dynamic"<#if PARAMS.dynamic!>checked</#if> tabindex="4">
             </td>
         </tr>
         <tr>

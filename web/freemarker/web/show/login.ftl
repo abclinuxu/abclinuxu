@@ -13,7 +13,7 @@
 
 <h1>Přihlášení</h1>
 
-<#if EXTRA_TEMPLATE?exists>
+<#if EXTRA_TEMPLATE??>
     <#include EXTRA_TEMPLATE>
 </#if>
 
@@ -27,14 +27,14 @@
   <tr>
     <td>Login: </td>
     <td>
-     <input type="text" name="LOGIN" value="${PARAMS.LOGIN?if_exists}" size="8" tabindex="1">
-     <span class="error">${ERRORS.LOGIN?if_exists}</span>
+     <input type="text" name="LOGIN" value="${PARAMS.LOGIN!}" size="8" tabindex="1">
+     <span class="error">${ERRORS.LOGIN!}</span>
     </td>
   </tr>
   <tr>
     <td>Heslo:</td>
     <td><input type="password" name="PASSWORD" size="8" tabindex="2"> <a href="${URL.noPrefix("/EditUser?action=forgottenPassword")}">Zapomněli jste své heslo?</a>
-    <span class="error">${ERRORS.PASSWORD?if_exists}</span></td>
+    <span class="error">${ERRORS.PASSWORD!}</span></td>
   </tr>
   <tr>
     <td>&nbsp;</td>
@@ -56,10 +56,10 @@
     </td>
   </tr>
 </table>
-<#if PARAMS.action?if_exists=="login">
+<#if PARAMS.action! == "login">
   <input type="hidden" name="action" value="login2">
 <#else>
-  <input type="hidden" name="action" value="${PARAMS.action?if_exists}">
+  <input type="hidden" name="action" value="${PARAMS.action!}">
 </#if>
 ${TOOL.saveParams(PARAMS, ["LOGIN","PASSWORD","action","useHttps","noCookie"])}
 </form>

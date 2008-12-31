@@ -14,7 +14,7 @@
             <td class="required" width="120">Heslo</td>
             <td>
                 <input type="password" name="PASSWORD" size="20" tabindex="1">
-                <div class="error">${ERRORS.PASSWORD?if_exists}</div>
+                <div class="error">${ERRORS.PASSWORD!}</div>
             </td>
         </tr>
         <tr>

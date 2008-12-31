@@ -2,7 +2,7 @@
 <#assign intro=TOOL.xpath(BLOG,"//custom/intro")?default("UNDEF")>
 <#assign title=BLOG.title?default("UNDEF")>
 <#assign owner=TOOL.createUser(BLOG.owner)>
-<#if USER?exists && TOOL.xpath(BLOG,"//monitor/id[text()='"+USER.id+"']")?exists>
+<#if USER?? && TOOL.xpath(BLOG,"//monitor/id[text()='"+USER.id+"']")??>
     <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj blog">
 </#if>
 
@@ -21,7 +21,7 @@
         <div class="s_sekce">
             <ul>
                 <#list CATEGORIES as cat>
-                    <#if cat.url?exists>
+                    <#if cat.url??>
                         <li><a href="/blog/${BLOG.subType + "/" + cat.url}">${cat.name}</a></li>
                     </#if>
                 </#list>
@@ -59,7 +59,7 @@
         </div>
     </#if>
 
-    <#if (USER?exists && USER.id==BLOG.owner)>
+    <#if (USER?? && USER.id==BLOG.owner)>
         <div class="s_nadpis">
             Správa blogu
         </div>
@@ -121,7 +121,7 @@
         </div>
     </#if>
 
-    <#if LAST_DESKTOP?exists>
+    <#if LAST_DESKTOP??>
         <div class="s_nadpis">
             <a class="info" href="#">?<span class="tooltip">Poslední screenshot mého desktopu.</span></a>
             Současný desktop
@@ -151,7 +151,7 @@
 	        <li><a href="/blog/souhrn">Stručný souhrn blogů</a></li>
 	        <li><a href="/blog/vyber">Výběr z blogů</a></li>
 	    <li>
-                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
+                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}">${monitorState}</a>
                 <span title="Počet lidí, kteří sledují tento blog">(${TOOL.getMonitorCount(BLOG.data)})</span>
                 <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při vytvoření nového zápisku v tomto blogu.</span></a>
             </li>
@@ -160,7 +160,7 @@
 
     <div class="s_nadpis"><a href="/nej">Nej blogů na AbcLinuxu</a></div>
     <div class="s_sekce">
-        <#if VARS.recentMostReadStories?exists>
+        <#if VARS.recentMostReadStories??>
             <b>Nejčtenější za poslední měsíc</b>
             <ul>
                 <#list VARS.recentMostReadStories.entrySet() as rel>
@@ -170,7 +170,7 @@
             </ul>
         </#if>
 
-        <#if VARS.recentMostCommentedStories?exists>
+        <#if VARS.recentMostCommentedStories??>
             <b>Nejkomentovanější za poslední měsíc</b>
             <ul>
                 <#list VARS.recentMostCommentedStories.entrySet() as rel>
@@ -189,7 +189,7 @@
 <#include "../header.ftl">
 <@lib.showMessages/>
 
-<#if CATEGORY?exists>
+<#if CATEGORY??>
     <h2>Zápisy v kategorii ${CATEGORY.name}</h2>
 </#if>
 
@@ -205,7 +205,7 @@
             category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")>
     </#if>
     <div class="cl">
-        <#if SUMMARY?exists>
+        <#if SUMMARY??>
             <h3 class="st_nadpis">
                 <a href="${url}">${story.title}</a>
             </h3>
@@ -224,16 +224,16 @@
                 </#if>
             |</#if>
                Přečteno: ${TOOL.getCounterValue(story,"read")}&times;
-            <#if tmp.discussion?exists>| <@lib.showCommentsInListing TOOL.analyzeDiscussion(tmp.discussion[0]), "SMART_DMY", "/blog" /></#if>
+            <#if tmp.discussion??>| <@lib.showCommentsInListing TOOL.analyzeDiscussion(tmp.discussion[0]), "SMART_DMY", "/blog" /></#if>
             <@lib.showShortRating relation, "| " />
         </p>
-        <#if ! SUMMARY?exists>
+        <#if ! SUMMARY??>
             <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF"), showmore=false>
             <#if text!="UNDEF">
                 ${text}
                 <#assign showmore=true>
             <#else>
-                <#if TOOL.groupByType(story.children).poll?exists || TOOL.screenshotsFor(story)?size gt 0><#assign showmore=true></#if>
+                <#if TOOL.groupByType(story.children).poll?? || TOOL.screenshotsFor(story)?size gt 0><#assign showmore=true></#if>
                 ${TOOL.xpath(story, "/data/content")}
             </#if>
             <#if showmore>
@@ -245,15 +245,15 @@
 </#list>
 
 <p>
-    <#if SUMMARY?exists>
+    <#if SUMMARY??>
         <#assign url="/blog/"+BLOG.subType+"/souhrn">
-    <#elseif CATEGORY?exists>
+    <#elseif CATEGORY??>
         <#assign url="/blog/"+BLOG.subType+"/"+CATEGORY>
     <#else>
         <#assign url="/blog/"+BLOG.subType+"/">
-        <#if YEAR?exists><#assign url=url+YEAR+"/"></#if>
-        <#if MONTH?exists><#assign url=url+MONTH+"/"></#if>
-        <#if DAY?exists><#assign url=url+DAY+"/"></#if>
+        <#if YEAR??><#assign url=url+YEAR+"/"></#if>
+        <#if MONTH??><#assign url=url+MONTH+"/"></#if>
+        <#if DAY??><#assign url=url+DAY+"/"></#if>
     </#if>
     <#if (STORIES.currentPage.row > 0) >
         <#assign start=STORIES.currentPage.row-STORIES.pageSize><#if (start<0)><#assign start=0></#if>

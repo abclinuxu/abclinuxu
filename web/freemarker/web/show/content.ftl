@@ -1,19 +1,19 @@
 <#import "../macros.ftl" as lib>
-<#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
+<#if USER?? && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")??>
     <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj dokument">
 </#if>
-<#if (USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()) || SUBPORTAL?exists>
+<#if (USER?? && TOOL.permissionsFor(USER, RELATION).canModify()) || SUBPORTAL??>
     <#assign plovouci_sloupec>
-      <#if SUBPORTAL?exists><@lib.showSubportal SUBPORTAL, true/></#if>
+      <#if SUBPORTAL??><@lib.showSubportal SUBPORTAL, true/></#if>
       <div class="s_nadpis">Nástroje</div>
       <div class="s_sekce">
        <ul>
-        <#if PARAMS.revize?exists>
+        <#if PARAMS.revize??>
             <li><a href="${RELATION.url}">Návrat na aktuální verzi</a></li>
         <#else>
             <li><a href="${RELATION.url}?varianta=print" rel="nofollow">Tisk</a></li>
             <li>
-                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}" rel="nofollow">${monitorState}</a>
+                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}" rel="nofollow">${monitorState}</a>
                 <span title="Počet lidí, kteří sledují tento dokument">(${TOOL.getMonitorCount(ITEM.data)})</span>
                 <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při úpravě dokumentu</span></a>
             </li>
@@ -25,12 +25,12 @@
     </#assign>
 </#if>
 <#include "../header.ftl">
-<#if USER?exists>
+<#if USER??>
     <p>
         <#assign public=TOOL.permissionsFor(null, RELATION).canModify()>
         <#if TOOL.permissionsFor(USER, RELATION.upper).canModify()>
             <a href="${URL.make("/editContent/"+RELATION.id+"?action=edit")}">Uprav vše</a> &#8226;
-            <a href="${URL.make("/editContent/"+RELATION.id+"?action=alterPublic"+TOOL.ticket(USER?if_exists, false))}">
+            <a href="${URL.make("/editContent/"+RELATION.id+"?action=alterPublic"+TOOL.ticket(USER!, false))}">
                 <#if public>Zruš<#else>Nastav</#if> veřejnou editovatelnost</a> &#8226;
         </#if>
         <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
@@ -49,21 +49,21 @@ ${content}
 <@content?interpret />
 </#if>
 
-<#if TOC?exists>
+<#if TOC??>
     <div class="uceb-nav">
       <span>
-        <#if TOC.left?exists>
+        <#if TOC.left??>
             <a href="${TOC.left.url}" title="${TOOL.childName(TOC.left)}">&#171; Předchozí</a>
         <#else>
             &#171; Předchozí
         </#if>
-        <#if TOC.up?exists>
+        <#if TOC.up??>
             | <a href="${TOC.up.url}" title="${TOOL.childName(TOC.up)}">Nahoru</a> |
         <#else>
             | Nahoru |
         </#if>
         <a href="${TOC.relation.url}" title="Zobraz obsah">Obsah</a>
-        <#if TOC.right?exists>
+        <#if TOC.right??>
             | <a href="${TOC.right.url}" title="${TOOL.childName(TOC.right)}">Další &#187;</a>
         <#else>
             | Další &#187;
@@ -72,7 +72,7 @@ ${content}
     </div>
 </#if>
 
-<#if exec!="yes" || (USER?exists && USER.hasRole("root"))>
+<#if exec!="yes" || (USER?? && USER.hasRole("root"))>
     <@lib.showRevisions RELATION, REVISIONS/>
 </#if>
 

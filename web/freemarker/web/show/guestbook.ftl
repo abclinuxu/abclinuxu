@@ -23,8 +23,8 @@
     <fieldset style="margin-top: 1em">
         <legend>${DATE.show(entry.created, "CZ_SHORT")}</legend>
         <b>${TOOL.xpath(entry.data,"/data/author")}</b> -
-        ${TOOL.render(TOOL.xpath(entry.data,"/data/message"), USER?if_exists)}
-        <#if USER?exists && USER.hasRole("root")>
+        ${TOOL.render(TOOL.xpath(entry.data,"/data/message"), USER!)}
+        <#if USER?? && USER.hasRole("root")>
             <a href="${URL.noPrefix("/kniha_navstev/edit/"+relation.id+"?action=edit")}">upravit</a>,
             <a href="${URL.noPrefix("/EditRelation?action=remove&rid="+relation.id)}">smazat</a>
         </#if>

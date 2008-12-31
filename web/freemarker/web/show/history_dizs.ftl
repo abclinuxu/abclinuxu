@@ -17,13 +17,13 @@
     <td><a href="${diz.url?default("/forum/show/"+diz.relationId)}">${TOOL.limit(diz.title,100," ..")}</a></td>
     <td class="td-meta">
        <@lib.markNewCommentsQuestion diz/>
-       <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
+       <#if TOOL.xpath(diz.discussion,"/data/frozen")??>
          <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamčena">
        </#if>
        <#if TOOL.isQuestionSolved(diz.discussion.data)>
          <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle čtenářů vyřešena">
        </#if>
-       <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")?exists>
+       <#if USER?? && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")??>
          <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
        </#if>
     </td>
@@ -51,11 +51,11 @@
         <td><input type="text" size="3" value="${FOUND.pageSize}" name="count" tabindex="2"></td>
         <td>
             <select name="orderBy" tabindex="3">
-                <#if PARAMS.filter?exists>
+                <#if PARAMS.filter??>
                     <option value="date">data prohlédnutí</option>
                     <option value="update">data posledního komentáře</option>
                 <#else>
-                    <option value="update">data <#if PARAMS.uid?exists>mého </#if>posledního komentáře</option>
+                    <option value="update">data <#if PARAMS.uid??>mého </#if>posledního komentáře</option>
                 </#if>
             </select>
         </td>
@@ -70,17 +70,17 @@
     </table>
 
     <input type="hidden" name="type" value="${PARAMS.type}">
-    <#if PARAMS.uid?exists><input type="hidden" name="uid" value="${PARAMS.uid}"></#if>
-    <#if PARAMS.filter?exists><input type="hidden" name="filter" value="${PARAMS.filter}"></#if>
+    <#if PARAMS.uid??><input type="hidden" name="uid" value="${PARAMS.uid}"></#if>
+    <#if PARAMS.filter??><input type="hidden" name="filter" value="${PARAMS.filter}"></#if>
 </form>
 
-<#if FOUND.prevPage?exists>
+<#if FOUND.prevPage??>
  <a href="${URL_BEFORE_FROM}0${URL_AFTER_FROM}">0</a>
  <a href="${URL_BEFORE_FROM}${FOUND.prevPage.row}${URL_AFTER_FROM}">&lt;&lt;</a>
 <#else>0 &lt;&lt;
 </#if>
 ${FOUND.thisPage.row}-${FOUND.thisPage.row+FOUND.thisPage.size}
-<#if FOUND.nextPage?exists>
+<#if FOUND.nextPage??>
  <a href="${URL_BEFORE_FROM}${FOUND.nextPage.row?string["#"]}${URL_AFTER_FROM}">&gt;&gt;</a>
  <a href="${URL_BEFORE_FROM}${(FOUND.total - FOUND.pageSize)?string["#"]}${URL_AFTER_FROM}">${FOUND.total}</a>
 <#else>&gt;&gt; ${FOUND.total}

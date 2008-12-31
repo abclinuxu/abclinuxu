@@ -2,14 +2,14 @@
 
 <@lib.showMessages/>
 
-<#if PARAMS.rid?exists><h2>Výběr relace pro objekt: <i>${TOOL.childName(PARAMS.rid)}</i></h2></#if>
+<#if PARAMS.rid??><h2>Výběr relace pro objekt: <i>${TOOL.childName(PARAMS.rid)}</i></h2></#if>
 
 <p>Zvolte si relaci. Pokud chcete zobrazit její obsah, klikněte na tlačítko
 <b>Načti relaci</b>. V opačném případě zvolte tlačítko <b>Pokračuj</b>.</p>
 
 <form action="${URL.noPrefix("/SelectRelation")}" method="POST">
 
- <#if CURRENT?exists>
+ <#if CURRENT??>
 
   <p>
    <input type="submit" name="continue" value="Načti relaci"> &nbsp;
@@ -42,7 +42,7 @@
 
   <p>Pokud znáte číslo relace, vložte jej zde:
    <input type="text" name="enteredId" size="6">
-   <span class="error">${ERRORS?if_exists.enteredId?if_exists}</span>
+   <span class="error">${ERRORS!.enteredId!}</span>
    <input type="submit" name="continue" value="Načti relaci">
    <input type="submit" name="confirm" value="Pokračuj">
   </p>

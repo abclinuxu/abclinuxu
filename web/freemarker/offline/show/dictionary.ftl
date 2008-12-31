@@ -6,7 +6,7 @@
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
 <div class="dict-item">
-    ${TOOL.render(TOOL.xpath(ITEM,"/data/description"),USER?if_exists)}
+    ${TOOL.render(TOOL.xpath(ITEM,"/data/description"),USER!)}
 </div>
 
 <#include "../footer.ftl">

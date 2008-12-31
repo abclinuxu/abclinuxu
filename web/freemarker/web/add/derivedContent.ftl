@@ -16,7 +16,7 @@ zbaveného diakritiky a speciálních znaků. Toto URL už běžnými prostředk
 nebudete moci změnit.
 </p>
 
-<#if PREVIEW?exists>
+<#if PREVIEW??>
     <fieldset>
         <legend>Náhled</legend>
         ${TOOL.xpath(PREVIEW,"/data/content")}
@@ -27,8 +27,8 @@ nebudete moci změnit.
   <tr>
    <td width="90" class="required">Titulek stránky</td>
    <td>
-    <input type="text" name="title" value="${PARAMS.title?if_exists}" size=60 tabindex=1>
-    <div class="error">${ERRORS.title?if_exists}</div>
+    <input type="text" name="title" value="${PARAMS.title!}" size=60 tabindex=1>
+    <div class="error">${ERRORS.title!}</div>
    </td>
   </tr>
   <tr>
@@ -37,19 +37,19 @@ nebudete moci změnit.
         <p>Všechna URL na články, obrázky a soubory z našeho serveru musí být relativní!</p>
         <@lib.showError key="content"/>
         <@rte.showFallback "content"/>
-        <textarea name="content" class="siroka" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
+        <textarea name="content" class="siroka" rows="30" tabindex="5">${PARAMS.content!?html}</textarea>
    </td>
   </tr>
   <tr>
    <td width="90">&nbsp;</td>
    <td>
-     <input tabindex="8" type="submit" name="preview" value="<#if PREVIEW?exists>Zopakuj náhled<#else>Náhled</#if>">
+     <input tabindex="8" type="submit" name="preview" value="<#if PREVIEW??>Zopakuj náhled<#else>Náhled</#if>">
      <input tabindex="9" type="submit" name="finish" value="Dokonči">
    </td>
   </tr>
  </table>
  <input type="hidden" name="action" value="addDerivedPage2">
- <input type="hidden" name="rid" value="${PARAMS.rid?if_exists}">
+ <input type="hidden" name="rid" value="${PARAMS.rid!}">
 </form>
 
 <#include "/include/napoveda-k-html-formatovani.txt">

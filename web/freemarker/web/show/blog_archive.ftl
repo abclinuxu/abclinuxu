@@ -15,7 +15,7 @@
     </div>
 
     <div class="s_nadpis">
-        <#if USER?exists && USER.id==BLOG.owner>
+        <#if USER?? && USER.id==BLOG.owner>
             <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Kategorie zápisů</a>
         <#else>
             Kategorie zápisů
@@ -25,13 +25,13 @@
     <div class="s_sekce">
     <ul>
         <#list CATEGORIES as cat>
-            <#if cat.url?exists>
+            <#if cat.url??>
                 <li><a href="/blog/${BLOG.subType + "/" + cat.url}">${cat.name}</a></li>
             </#if>
         </#list>
     </div>
 
-    <#if UNPUBLISHED_STORIES?exists>
+    <#if UNPUBLISHED_STORIES??>
         <div class="s_nadpis">Rozepsané zápisy</div>
 
         <div class="s_sekce">
@@ -46,7 +46,7 @@
         </div>
     </#if>
 
-    <#if WAITING_STORIES?exists>
+    <#if WAITING_STORIES??>
         <div class="s_nadpis">Čekající zápisky</div>
 
         <div class="s_sekce">
@@ -90,7 +90,7 @@
         </div>
     </#if>
 
-    <#if LAST_DESKTOP?exists>
+    <#if LAST_DESKTOP??>
         <div class="s_nadpis">
             <a class="info" href="#">?<span class="tooltip">Poslední screenshot mého desktopu.</span></a>
             Současný desktop
@@ -122,7 +122,7 @@
     </div>
 
 
-    <#if (USER?exists && USER.id==BLOG.owner) || (! USER?exists)>
+    <#if (USER?? && USER.id==BLOG.owner) || (! USER??)>
         <div class="s_nadpis">
             <a class="info" href="#">?<span class="tooltip">Tato sekce sdružuje akce pro majitele blogu.</span></a>
             Nastavení
@@ -131,7 +131,7 @@
 
   <div class="s_sekce">
     <ul>
-    <#if USER?exists>
+    <#if USER??>
         <#if USER.id==BLOG.owner>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlož nový zápis</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavit blog</a></li>
@@ -146,7 +146,7 @@
 
     <div class="s_nadpis"><a href="/nej">Nej blogů na AbcLinuxu</a></div>
     <div class="s_sekce">
-        <#if VARS.recentMostReadStories?exists>
+        <#if VARS.recentMostReadStories??>
             <b>Nejčtenější za poslední měsíc</b>
             <ul>
                 <#list VARS.recentMostReadStories.entrySet() as rel>
@@ -156,7 +156,7 @@
             </ul>
         </#if>
 
-        <#if VARS.recentMostCommentedStories?exists>
+        <#if VARS.recentMostCommentedStories??>
             <b>Nejkomentovanější za poslední měsíc</b>
             <ul>
                 <#list VARS.recentMostCommentedStories.entrySet() as rel>

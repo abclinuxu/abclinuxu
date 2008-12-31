@@ -25,14 +25,14 @@
             <td class="required" width="120">Heslo</td>
             <td>
                 <input type="password" name="PASSWORD" size="20" tabindex="1">
-                <div class="error">${ERRORS.PASSWORD?if_exists}</div>
+                <div class="error">${ERRORS.PASSWORD!}</div>
             </td>
         </tr>
         <tr>
             <td width="120">Domovská stránka</td>
             <td>
-                <input type="text" name="www" value="${PARAMS.www?if_exists?html}" size="40" tabindex="2">
-                <div class="error">${ERRORS.www?if_exists}</div>
+                <input type="text" name="www" value="${PARAMS.www!?html}" size="40" tabindex="2">
+                <div class="error">${ERRORS.www!}</div>
             </td>
         </tr>
         <tr>
@@ -40,8 +40,8 @@
                 Linux používám<br>od roku
             </td>
             <td>
-                <input type="text" name="linuxFrom" value="${PARAMS.linuxFrom?if_exists?html}" size="40" tabindex="2">
-                <div class="error">${ERRORS.linuxFrom?if_exists}</div>
+                <input type="text" name="linuxFrom" value="${PARAMS.linuxFrom!?html}" size="40" tabindex="2">
+                <div class="error">${ERRORS.linuxFrom!}</div>
             </td>
         </tr>
         <tr>
@@ -79,9 +79,9 @@
             <td width="60">Patička</td>
             <td>
                 <textarea name="signature" rows="4" class="siroka" tabindex="8"
-                onkeyup="writeRemainingCharsCount(this);">${PARAMS.signature?if_exists?html}</textarea>
+                onkeyup="writeRemainingCharsCount(this);">${PARAMS.signature!?html}</textarea>
                 <div id="signatureTextCounter">&nbsp;</div>
-                <div class="error">${ERRORS.signature?if_exists}</div>
+                <div class="error">${ERRORS.signature!}</div>
             </td>
         </tr>
         <tr>
@@ -91,7 +91,7 @@
             <td colspan="2">
                 <@lib.showError key="about"/>
                 <@rte.showFallback "about"/>
-                <textarea name="about" rows="25" class="siroka" tabindex="9">${PARAMS.about?if_exists?html}</textarea>
+                <textarea name="about" rows="25" class="siroka" tabindex="9">${PARAMS.about!?html}</textarea>
             </td>
         </tr>
         <tr>

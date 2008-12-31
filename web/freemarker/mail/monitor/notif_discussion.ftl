@@ -6,7 +6,7 @@ Titulek: ${NAME}
 Datum: ${DATE.show(PERFORMED,"CZ_FULL",false)}
 URL:   ${URL?default("neni dostupne")}
 
-<#if CONTENT?exists>Obsah:
+<#if CONTENT??>Obsah:
 
 ${CONTENT}
 
@@ -15,5 +15,5 @@ ${CONTENT}
 
 --
 Sledovani tohoto objektu muzete zrusit na adrese:
-${URL?if_exists}
+${URL!}
 Vase prihlasovaci jmeno je ${USER.login}.

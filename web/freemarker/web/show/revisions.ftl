@@ -30,7 +30,7 @@ v prvním sloupečku.
                     <@lib.showUser who/>
                 </td>
                 <td align="right">${DATE.show(info.commited,"SMART")}</td>
-                <td>${info.description?if_exists}</td>
+                <td>${info.description!}</td>
             </tr>
         </#list>
     </table>

@@ -4,7 +4,7 @@
 <#assign plovouci_sloupec>
   <div class="s_sekce">
     <ul>
-    <#if USER?exists>
+    <#if USER??>
         <#if USER.id==ITEM.owner || TOOL.permissionsFor(USER, RELATION).canModify()>
             <li><a href="${URL.noPrefix("/bazar/edit/"+RELATION.id+"?action=edit")}">Uprav inzerát</a></li>
             <li><a href="${URL.noPrefix("/bazar/inset/"+RELATION.id+"?action=addScreenshot")}">Přidej obrázek</a></li>
@@ -33,7 +33,7 @@
 
     <p class="galerie">
         <#list images as image>
-            <#if image.thumbnailPath?exists>
+            <#if image.thumbnailPath??>
                 <a href="${image.path}"><img src="${image.thumbnailPath}" alt="Obrázek ${image_index}" border="0"></a>
             <#else>
                 <img src="${image.path}" alt="Obrázek ${image_index}">
@@ -44,7 +44,7 @@
 </div> <!-- bazar -->
 
 <h3>Komentáře</h3>
-<#if CHILDREN.discussion?exists>
+<#if CHILDREN.discussion??>
     <@lib.showDiscussion CHILDREN.discussion[0]/>
 <#else>
    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vložit první komentář</a>

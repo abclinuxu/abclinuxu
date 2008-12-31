@@ -13,7 +13,7 @@
   <tr>
    <td class="required">Komentář</td>
    <td>
-    <textarea name="text" cols="60" rows="5">${PARAMS.text?if_exists?html}</textarea>
+    <textarea name="text" cols="60" rows="5">${PARAMS.text!?html}</textarea>
    </td>
   </tr>
   <tr>

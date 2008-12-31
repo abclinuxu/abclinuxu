@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<#if USER?exists>
+<#if USER??>
     <#if TOOL.permissionsFor(USER, RELATION).canCreate()>
         <a href="/clanky/edit/${RELATION.id}?action=add">Přidej článek</a>
     </#if>
@@ -16,8 +16,8 @@
 
 <@lib.advertisement id="gg-sky" />
 
-<#if TOOL.xpath(CATEGORY,"data/note")?exists>
- <p>${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}</p>
+<#if TOOL.xpath(CATEGORY,"data/note")??>
+ <p>${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER!)}</p>
 </#if>
 
 <#global CITACE = TOOL.getRelationCountersValue(ARTICLES.data,"read")/>

@@ -17,7 +17,7 @@
             <td width="90">Adresy</td>
             <td>
                 <@lib.showError key="urls"/>
-                <textarea name="urls" rows="30" class="siroka" tabindex="1">${PARAMS.urls?if_exists?html}</textarea>
+                <textarea name="urls" rows="30" class="siroka" tabindex="1">${PARAMS.urls!?html}</textarea>
             </td>
         </tr>
         <tr>

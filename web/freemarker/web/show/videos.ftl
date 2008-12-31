@@ -1,4 +1,4 @@
-<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canCreate()>
+<#if USER?? && TOOL.permissionsFor(USER, RELATION).canCreate()>
     <#assign plovouci_sloupec>
         <div class="s_sekce">
         <ul>
@@ -16,7 +16,7 @@
 <#list ITEMS.data as video>
     <#assign item=video.child, tmp=TOOL.groupByType(item.children, "Item"),
         icon=TOOL.xpath(item,"/data/thumbnail")?default("UNDEF")>
-    <#if tmp.discussion?exists><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz=null></#if>
+    <#if tmp.discussion??><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz=null></#if>
 
     <h1 class="st_nadpis"><a href="${video.url?default("/videa/show/"+video.id)}">${TOOL.childName(video)}</a></h1>
     <#if icon!="UNDEF">
@@ -27,8 +27,8 @@
     <p>${TOOL.xpath(item,"//description")?default("")}</p>
     <p class="meta-vypis">
         ${DATE.show(item.created, "SMART")} | <@lib.showUser TOOL.createUser(item.owner)/>
-        | Zhlédnuto: <@lib.showCounter item, .globals["READS"]?if_exists, "read" />&times;
-        <#if diz?exists>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
+        | Zhlédnuto: <@lib.showCounter item, .globals["READS"]!, "read" />&times;
+        <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
     </p>
     <hr style="clear:right" />
 </#list>

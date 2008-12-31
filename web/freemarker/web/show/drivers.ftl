@@ -1,4 +1,4 @@
-<#if USER?exists && TOOL.xpath(CATEGORY,"//monitor/id[text()='"+USER.id+"']")?exists>
+<#if USER?? && TOOL.xpath(CATEGORY,"//monitor/id[text()='"+USER.id+"']")??>
     <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj sekci">
 </#if>
 <#assign plovouci_sloupec>
@@ -8,7 +8,7 @@
                 <a href="${URL.make("/edit?action=add")}">Vložit nový ovladač</a>
             </li>
             <li>
-                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
+                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}">${monitorState}</a>
                 <span title="Počet lidí, kteří sledují tuto sekci">(${TOOL.getMonitorCount(CATEGORY.data)})</span>
                 <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při nové položce v této a v podřazených sekcích.</span></a>
             </li>

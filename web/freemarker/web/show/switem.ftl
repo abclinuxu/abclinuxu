@@ -1,11 +1,11 @@
 <#assign who=TOOL.createUser(ITEM.owner)>
-<#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
+<#if USER?? && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")??>
     <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj záznam">
 </#if>
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <#if PARAMS.revize?exists>
+            <#if PARAMS.revize??>
                 <li>
                     <a href="${RELATION.url?default("/hardware/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
                 </li>
@@ -17,14 +17,14 @@
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
                 <li><a href="${RELATION.url?default("/software/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
-                    <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
+                    <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}">${monitorState}</a>
                     <span title="Počet lidí, kteří sledují tento záznam">(${TOOL.getMonitorCount(ITEM.data)})</span>
                     <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při úpravě záznamu.</span></a>
                 </li>
                 <form action="/hledani"><input type="text" class="text" name="dotaz" value="${ITEM.title}">
                     <input type="submit" class="button" value="Hledej">
                 </form>
-                <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canDelete()>
+                <#if USER?? && TOOL.permissionsFor(USER, RELATION).canDelete()>
                     <li><a href="${URL.make("/inset/"+RELATION.id+"?action=manage")}">Správa příloh</a></li>
                     <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Přesunout</a></li>
                     <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/software")}">Smazat</a></li>
@@ -51,11 +51,11 @@
             Aktuality
             <a href="${feedUrl}" rel="nofollow"><img src="/images/site2/feed16.png" width="16" height="16" border="0" alt="RSS URL"></a>
         </h3>
-        <#if FEED_LINKS?exists>
+        <#if FEED_LINKS??>
             <ul>
             <#list FEED_LINKS as link>
                 <li>
-                    <#if link.child.url?exists>
+                    <#if link.child.url??>
                         <a href="${"/presmeruj?class=P&amp;id="+ITEM.id+"&amp;url="+link.child.url?url}"
                             rel="nofollow">${link.child.text}</a>
                     <#else>

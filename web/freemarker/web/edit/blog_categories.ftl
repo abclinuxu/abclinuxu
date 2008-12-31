@@ -15,7 +15,7 @@ není dostupné. <a href="/blog/${BLOG.subType}">Zpět na váš blog</a>.</p>
     <#list CATEGORIES as category>
         <tr>
             <td>
-            <#if category.url?exists>
+            <#if category.url??>
                 <a href="/blog/${BLOG.subType + "/" + category.url}">${category.name}</a>
             <#else>
                 ${category.name}

@@ -3,7 +3,7 @@
     <#assign plovouci_sloupec>
     <div class="s_nadpis"><a href="/nej">Nej anket na AbcLinuxu</a></div>
     <div class="s_sekce">
-        <#if VARS.mostVotedOnPolls?exists>
+        <#if VARS.mostVotedOnPolls??>
             <b>Ankety s nejvíce hlasy</b>
             <ul>
                 <#list VARS.mostVotedOnPolls.entrySet() as rel>
@@ -13,7 +13,7 @@
             </ul>
         </#if>
 
-        <#if VARS.mostCommentedPolls?exists>
+        <#if VARS.mostCommentedPolls??>
             <b>Nejkomentovanější ankety</b>
             <ul>
                 <#list VARS.mostCommentedPolls.entrySet() as rel>
@@ -32,7 +32,7 @@
 
 <@lib.advertisement id="arbo-sq" />
 
-<#if USER?exists && USER.hasRole("poll admin")>
+<#if USER?? && USER.hasRole("poll admin")>
  <p>
   <a href="${URL.noPrefix("/EditPoll/"+RELATION.id+"?action=edit&amp;pollId="+POLL.id)}">Upravit</a>
  </p>
@@ -59,7 +59,7 @@
 <p>Celkem ${POLL.totalVoters} hlasů<br />
 Vytvořeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
 
-<#if CHILDREN.discussion?exists>
+<#if CHILDREN.discussion??>
     <h3>Komentáře</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>
 <#elseif forbidDiscussion?default("yes") != "yes">

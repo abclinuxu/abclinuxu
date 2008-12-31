@@ -1,4 +1,4 @@
-<#if USER?exists>
+<#if USER??>
     <#assign plovouci_sloupec>
         <div class="s_nadpis">Úpravy</div>
         <div class="s_sekce">
@@ -32,17 +32,17 @@
         <#else>
             Oblíbenost: 0
         </#if>
-        <#if USER?exists && usedBy.contains(""+USER.id)>
+        <#if USER?? && usedBy.contains(""+USER.id)>
             <input type="submit" value="Odebrat se" class="button">
         <#else>
             <input type="submit" value="Přidat se" class="button">
         </#if>
         <input type="hidden" name="action" value="favourite">
-        <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER?if_exists)}">
+        <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER!)}">
   </form>
 </p>
 
-<#if CHILDREN.discussion?exists>
+<#if CHILDREN.discussion??>
     <h3>Komentáře</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>
 </#if>

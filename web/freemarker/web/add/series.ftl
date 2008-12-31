@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1><#if EDIT_MODE?if_exists>Úprava seriálu<#else>Vytvoření seriálu</#if></h1>
+<h1><#if EDIT_MODE!>Úprava seriálu<#else>Vytvoření seriálu</#if></h1>
 
 <p>
     Seriál má své jméno a adresu. Adresa musí začínat prefixem <tt>/serialy</tt> a být unikátní.
@@ -15,17 +15,17 @@
         <tr>
             <td class="required">Jméno</td>
             <td>
-                <input type="text" name="name" value="${PARAMS.name?if_exists?html}" size="40" tabindex="1">
-                <div class="error">${ERRORS.name?if_exists}<div>
+                <input type="text" name="name" value="${PARAMS.name!?html}" size="40" tabindex="1">
+                <div class="error">${ERRORS.name!}<div>
             </td>
         </tr>
 
-        <#if ! EDIT_MODE?if_exists>
+        <#if ! EDIT_MODE!>
         <tr>
             <td class="required">URL seriálu</td>
             <td>
                 <input type="text" name="url" value="${PARAMS.url?default("/serialy/")}" size="40" tabindex="2">
-                <div class="error">${ERRORS.url?if_exists}</div>
+                <div class="error">${ERRORS.url!}</div>
             </td>
         </tr>
         </#if>
@@ -33,16 +33,16 @@
         <tr>
             <td>Popis</td>
             <td>
-                <textarea name="desc" class="siroka" tabindex="3">${PARAMS.desc?if_exists?html}</textarea>
-                <div class="error">${ERRORS.desc?if_exists}</div>
+                <textarea name="desc" class="siroka" tabindex="3">${PARAMS.desc!?html}</textarea>
+                <div class="error">${ERRORS.desc!}</div>
             </td>
         </tr>
 
         <tr>
             <td>URL obrázku</td>
             <td>
-                <input type="text" name="icon" value="${PARAMS.icon?if_exists}" size="40" tabindex="4">
-                <div class="error">${ERRORS.icon?if_exists}</div>
+                <input type="text" name="icon" value="${PARAMS.icon!}" size="40" tabindex="4">
+                <div class="error">${ERRORS.icon!}</div>
             </td>
         </tr>
 
@@ -51,7 +51,7 @@
             <td><input type="submit" value="Dokonči" tabindex="5"></td>
         </tr>
     </table>
-    <#if EDIT_MODE?if_exists>
+    <#if EDIT_MODE!>
         <input type="hidden" name="action" value="edit2">
         <input type="hidden" name="rid" value="${RELATION.id}">
     <#else>

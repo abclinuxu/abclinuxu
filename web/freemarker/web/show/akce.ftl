@@ -13,7 +13,7 @@
 </#if>
 
 <#assign plovouci_sloupec>
-    <#if SUBPORTAL?exists>
+    <#if SUBPORTAL??>
         <@lib.showSubportal SUBPORTAL, true/>
         <#assign counter=VARS.getSubportalCounter(SUBPORTAL)>
     </#if>
@@ -32,13 +32,13 @@
     <div class="s_sekce">
       <table cellspacing="0" class="s_table">
         <tr><td>Datum:</td>    <td>${DATE.show(ITEM.created,"CZ_DMY")}, od: ${DATE.show(ITEM.created,"TIME")}</td></tr>
-        <#if ITEM.date1?exists><tr><td>Konec:</td> <td>${DATE.show(ITEM.date1,"CZ_FULL")}</td></tr></#if>
+        <#if ITEM.date1??><tr><td>Konec:</td> <td>${DATE.show(ITEM.date1,"CZ_FULL")}</td></tr></#if>
         <tr><td>Kraj:</td>     <td><@lib.showRegion region/></td></tr>
         <tr><td>Typ akce:</td> <td>${subtype}</td></tr>
       </table>
     </div>
 
-    <#if USER?exists && (USER.id == ITEM.owner || TOOL.permissionsFor(USER, RELATION).canModify())>
+    <#if USER?? && (USER.id == ITEM.owner || TOOL.permissionsFor(USER, RELATION).canModify())>
         <div class="s_nadpis">Správa akce</div>
         <div class="s_sekce">
             <ul>
@@ -65,7 +65,7 @@
          desc=TOOL.xpath(ITEM,"/data/description")?default("UNDEF")>
 <#if ITEM.type==27>
 <p>Stav: čeká na schválení
-    <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+    <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
         (<a href="${URL.noPrefix("/akce/edit/"+RELATION.id+"?action=approve"+TOOL.ticket(USER,false))}">Schválit</a>
         | <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/akce")}">Smazat</a>)
     </#if>
@@ -74,15 +74,15 @@
 
 <#if desc!="UNDEF">
     <div class="cl_perex">
-        ${TOOL.render(descShort,USER?if_exists)}
+        ${TOOL.render(descShort,USER!)}
     </div>
     <div>
-        ${TOOL.render(desc,USER?if_exists)}
+        ${TOOL.render(desc,USER!)}
     </div>
 <#else>
     <hr />
     <div>
-        ${TOOL.render(descShort,USER?if_exists)}
+        ${TOOL.render(descShort,USER!)}
     </div>
 </#if>
 
@@ -145,7 +145,7 @@
         </#if>
     <br />
 
-    <#if USER?exists>
+    <#if USER??>
         <#assign myreg=TOOL.xpath(ITEM.data, "/data/registrations/registration[@uid="+USER.id+"]")?default("UNDEF")>
     <#else>
         <#assign myreg="UNDEF">
@@ -165,7 +165,7 @@
     </#if>
 </p>
 
-<#if CHILDREN.discussion?exists>
+<#if CHILDREN.discussion??>
     <h3>Komentáře</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>
 </#if>

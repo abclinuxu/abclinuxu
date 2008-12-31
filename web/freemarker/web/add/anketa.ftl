@@ -9,7 +9,7 @@
     může vybrat více voleb, nebo si musí zvolit jednu jedinou.
 </p>
 
-<#if POLL?exists>
+<#if POLL??>
     <fieldset>
     <legend>Náhled</legend>
         <@lib.showPoll POLL/>
@@ -17,21 +17,21 @@
 </#if>
 
 <form action="${URL.make("/EditPoll")}" method="POST">
- <#assign choices=PARAMS.choices?if_exists>
+ <#assign choices=PARAMS.choices!>
  <table class="siroka" border=0 cellpadding=5>
   <tr>
    <td class="required">Otázka</td>
    <td>
-    <textarea name="question" class="siroka" rows="3" tabindex="1">${PARAMS.question?if_exists?html}</textarea>
-    <div class="error">${ERRORS.question?if_exists}</div>
+    <textarea name="question" class="siroka" rows="3" tabindex="1">${PARAMS.question!?html}</textarea>
+    <div class="error">${ERRORS.question!}</div>
    </td>
   </tr>
   <#if RELATION.id==250>
       <tr>
        <td>URL</td>
        <td>
-        /ankety/<input type="text" name="url" size="20" value="${PARAMS.url?if_exists}" tabindex="2">
-        <div class="error">${ERRORS.url?if_exists}</div>
+        /ankety/<input type="text" name="url" size="20" value="${PARAMS.url!}" tabindex="2">
+        <div class="error">${ERRORS.url!}</div>
        </td>
       </tr>
   </#if>
@@ -39,7 +39,7 @@
    <td class="required">Více možností</td>
    <td>
     <select name="multichoice" tabindex="3">
-     <#assign multi=PARAMS.multichoice?if_exists>
+     <#assign multi=PARAMS.multichoice!>
      <option value="yes"<#if multi=="yes"> SELECTED</#if>>Ano</option>
      <option value="no"<#if multi!="yes"> SELECTED</#if>>Ne</option>
     </select>
@@ -50,7 +50,7 @@
    <td>
     <input type="text" name="choices" size="60" maxlength="255" tabindex="4"
     value="<#if choices?size gt 0>${choices[0]}</#if>">
-    <div class="error">${ERRORS.choices?if_exists}</div>
+    <div class="error">${ERRORS.choices!}</div>
    </td>
   </tr>
   <tr>

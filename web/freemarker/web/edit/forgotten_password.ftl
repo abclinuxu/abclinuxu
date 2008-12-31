@@ -16,8 +16,8 @@ zaslán odkaz, přes který si můžete nastavit heslo nové.
     <tr>
         <td>Login:</td>
         <td>
-            <input type="text" name="login" size="8" value="${PARAMS.login?if_exists}">
-            <div class="error">${ERRORS.login?if_exists}</div>
+            <input type="text" name="login" size="8" value="${PARAMS.login!}">
+            <div class="error">${ERRORS.login!}</div>
         </td>
     </tr>
     <tr>

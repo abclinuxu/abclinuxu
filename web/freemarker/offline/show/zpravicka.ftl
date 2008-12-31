@@ -15,7 +15,7 @@
 
 <p class="zpravicka">${TOOL.xpath(ITEM,"data/content")}</p>
 
-<#if CHILDREN.discussion?exists>
+<#if CHILDREN.discussion??>
     <#assign DISCUSSION=CHILDREN.discussion[0].child>
     <#assign diz = TOOL.createDiscussionTree(DISCUSSION,"no",true)>
     <#if (diz.threads?size>0) >

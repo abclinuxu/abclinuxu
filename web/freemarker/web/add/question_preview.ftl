@@ -4,7 +4,7 @@
 
 <@lib.showMessages/>
 
-<#if !RELATION.child.subType?exists || RELATION.child.subType!="subportal">
+<#if !RELATION.child.subType?? || RELATION.child.subType!="subportal">
   <h1>Náhled dotazu</h1>
 
   <p>
@@ -16,7 +16,7 @@
       zvolte <tt>Dokonči</tt>.
   </p>
 
-  <#if PREVIEW?exists>
+  <#if PREVIEW??>
       <h2>Náhled vašeho dotazu</h2>
       <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
   </#if>
@@ -28,7 +28,7 @@
     Pokud jste s příspěvkem spokojeni, stiskněte tlačítko <code>Dokonči</code>.
   </p>
 
-  <#if PREVIEW?exists>
+  <#if PREVIEW??>
       <h2>Náhled vašeho přispěvku</h2>
       <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
   </#if>
@@ -38,23 +38,23 @@
 
 <form action="${URL.make("/EditDiscussion")}" method="POST" name="form" enctype="multipart/form-data">
     <table class="siroka" cellpadding="5">
-        <#if ! USER?exists>
+        <#if ! USER??>
             <tr>
                 <td class="required">Zadejte vaše jméno</td>
                 <td>
-                    <input tabindex="4" type="text" size="30" name="author" value="${PARAMS.author?if_exists}">
-                    <div class="error">${ERRORS.author?if_exists}</div><br>
+                    <input tabindex="4" type="text" size="30" name="author" value="${PARAMS.author!}">
+                    <div class="error">${ERRORS.author!}</div><br>
                     nebo <a href="/Profile?action=login">se přihlašte</a>.
                 </td>
             </tr>
-            <#if ! USER_VERIFIED?if_exists>
+            <#if ! USER_VERIFIED!>
                 <tr>
                     <td class="required">Aktuální rok</td>
                     <td>
-                        <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}" tabindex="4">
+                        <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}" tabindex="4">
                         <a class="info" href="#">?<span class="tooltip">Vložte aktuální rok. Jedná se o ochranu před spamboty.
                         Po úspěšném ověření se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.</span></a>
-                        <div class="error">${ERRORS.antispam?if_exists}</div>
+                        <div class="error">${ERRORS.antispam!}</div>
                     </td>
                 </tr>
             </#if>
@@ -62,8 +62,8 @@
         <tr>
             <td class="required">Titulek</td>
             <td>
-                <input tabindex="4" type="text" name="title" size="40" maxlength="70" value="${PARAMS.title?if_exists?html}">
-                <div class="error">${ERRORS.title?if_exists}</div>
+                <input tabindex="4" type="text" name="title" size="40" maxlength="70" value="${PARAMS.title!?html}">
+                <div class="error">${ERRORS.title!}</div>
             </td>
         </tr>
         <tr>
@@ -71,7 +71,7 @@
             <td>
                 <@lib.showError key="text"/>
                 <@rte.showFallback "text"/>
-                <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea>
+                <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea>
             </td>
         </tr>
         <tr>
@@ -80,7 +80,7 @@
                 Vložení přílohy: <input type="file" name="attachment" tabindex="6">
                 <@lib.showHelp>Například výpis logu, konfigurační soubor, snímek obrazovky a podobně.</@lib.showHelp>
                 <@lib.showError key="attachment" />
-                <#if ATTACHMENTS?exists>
+                <#if ATTACHMENTS??>
                     <ul>
                         <#list ATTACHMENTS as file>
                             <li>${file.name} (${file.size} bytů)  | <label><input type="checkbox" name="rmAttachment" value="${file_index}">Smazat</label></li>

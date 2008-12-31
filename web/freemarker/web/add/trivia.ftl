@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<#if PARAMS.rid?exists>
+<#if PARAMS.rid??>
     <h1>Úprava kvízu</h1>
 <#else>
     <h1>Vložení kvízu</h1>
@@ -18,15 +18,15 @@ včetně správných odpovědí. Vyplňte prosím všechna políčka.</p>
         <tr>
             <td class="required">Jméno</td>
             <td>
-                <input type="text" name="title" value="${PARAMS.title?if_exists}" size="40" tabindex="1">
-                <div class="error">${ERRORS.title?if_exists}</div>
+                <input type="text" name="title" value="${PARAMS.title!}" size="40" tabindex="1">
+                <div class="error">${ERRORS.title!}</div>
             </td>
         </tr>
         <tr>
             <td class="required">Popis</td>
             <td>
-                <textarea name="desc" class="siroka" rows="4" tabindex="2">${PARAMS.desc?if_exists}</textarea>
-                <div class="error">${ERRORS.desc?if_exists}</div>
+                <textarea name="desc" class="siroka" rows="4" tabindex="2">${PARAMS.desc!}</textarea>
+                <div class="error">${ERRORS.desc!}</div>
             </td>
         </tr>
         <tr>
@@ -45,29 +45,29 @@ včetně správných odpovědí. Vyplňte prosím všechna políčka.</p>
                     <tr>
                         <td align="right" class="required">Otázka</td>
                         <td>
-                            <input type="text" name="q1question" value="${PARAMS.q1question?if_exists}" size="40">
-                            <div class="error">${ERRORS.q1question?if_exists}</div>
+                            <input type="text" name="q1question" value="${PARAMS.q1question!}" size="40">
+                            <div class="error">${ERRORS.q1question!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Správná odpověď</td>
                         <td>
-                            <input type="text" name="q1answear" value="${PARAMS.q1answear?if_exists}" size="40">
-                            <div class="error">${ERRORS.q1answear?if_exists}</div>
+                            <input type="text" name="q1answear" value="${PARAMS.q1answear!}" size="40">
+                            <div class="error">${ERRORS.q1answear!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 1</td>
                         <td>
-                            <input type="text" name="q1bad1" value="${PARAMS.q1bad1?if_exists}" size="40">
-                            <div class="error">${ERRORS.q1bad1?if_exists}</div>
+                            <input type="text" name="q1bad1" value="${PARAMS.q1bad1!}" size="40">
+                            <div class="error">${ERRORS.q1bad1!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 2</td>
                         <td>
-                            <input type="text" name="q1bad2" value="${PARAMS.q1bad2?if_exists}" size="40">
-                            <div class="error">${ERRORS.q1bad2?if_exists}</div>
+                            <input type="text" name="q1bad2" value="${PARAMS.q1bad2!}" size="40">
+                            <div class="error">${ERRORS.q1bad2!}</div>
                         </td>
                     </tr>
                 </table>
@@ -80,29 +80,29 @@ včetně správných odpovědí. Vyplňte prosím všechna políčka.</p>
                     <tr>
                         <td align="right" class="required">Otázka</td>
                         <td>
-                            <input type="text" name="q2question" value="${PARAMS.q2question?if_exists}" size="40">
-                            <div class="error">${ERRORS.q2question?if_exists}</div>
+                            <input type="text" name="q2question" value="${PARAMS.q2question!}" size="40">
+                            <div class="error">${ERRORS.q2question!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Správná odpověď</td>
                         <td>
-                            <input type="text" name="q2answear" value="${PARAMS.q2answear?if_exists}" size="40">
-                            <div class="error">${ERRORS.q2answear?if_exists}</div>
+                            <input type="text" name="q2answear" value="${PARAMS.q2answear!}" size="40">
+                            <div class="error">${ERRORS.q2answear!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 1</td>
                         <td>
-                            <input type="text" name="q2bad1" value="${PARAMS.q2bad1?if_exists}" size="40">
-                            <div class="error">${ERRORS.q2bad1?if_exists}</div>
+                            <input type="text" name="q2bad1" value="${PARAMS.q2bad1!}" size="40">
+                            <div class="error">${ERRORS.q2bad1!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 2</td>
                         <td>
-                            <input type="text" name="q2bad2" value="${PARAMS.q2bad2?if_exists}" size="40">
-                            <div class="error">${ERRORS.q2bad2?if_exists}</div>
+                            <input type="text" name="q2bad2" value="${PARAMS.q2bad2!}" size="40">
+                            <div class="error">${ERRORS.q2bad2!}</div>
                         </td>
                     </tr>
                 </table>
@@ -115,29 +115,29 @@ včetně správných odpovědí. Vyplňte prosím všechna políčka.</p>
                     <tr>
                         <td align="right" class="required">Otázka</td>
                         <td>
-                            <input type="text" name="q3question" value="${PARAMS.q3question?if_exists}" size="40">
-                            <div class="error">${ERRORS.q3question?if_exists}</div>
+                            <input type="text" name="q3question" value="${PARAMS.q3question!}" size="40">
+                            <div class="error">${ERRORS.q3question!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Správná odpověď</td>
                         <td>
-                            <input type="text" name="q3answear" value="${PARAMS.q3answear?if_exists}" size="40">
-                            <div class="error">${ERRORS.q3answear?if_exists}</div>
+                            <input type="text" name="q3answear" value="${PARAMS.q3answear!}" size="40">
+                            <div class="error">${ERRORS.q3answear!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 1</td>
                         <td>
-                            <input type="text" name="q3bad1" value="${PARAMS.q3bad1?if_exists}" size="40">
-                            <div class="error">${ERRORS.q3bad1?if_exists}</div>
+                            <input type="text" name="q3bad1" value="${PARAMS.q3bad1!}" size="40">
+                            <div class="error">${ERRORS.q3bad1!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 2</td>
                         <td>
-                            <input type="text" name="q3bad2" value="${PARAMS.q3bad2?if_exists}" size="40">
-                            <div class="error">${ERRORS.q3bad2?if_exists}</div>
+                            <input type="text" name="q3bad2" value="${PARAMS.q3bad2!}" size="40">
+                            <div class="error">${ERRORS.q3bad2!}</div>
                         </td>
                     </tr>
                 </table>
@@ -150,29 +150,29 @@ včetně správných odpovědí. Vyplňte prosím všechna políčka.</p>
                     <tr>
                         <td align="right" class="required">Otázka</td>
                         <td>
-                            <input type="text" name="q4question" value="${PARAMS.q4question?if_exists}" size="40">
-                            <div class="error">${ERRORS.q4question?if_exists}</div>
+                            <input type="text" name="q4question" value="${PARAMS.q4question!}" size="40">
+                            <div class="error">${ERRORS.q4question!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Správná odpověď</td>
                         <td>
-                            <input type="text" name="q4answear" value="${PARAMS.q4answear?if_exists}" size="40">
-                            <div class="error">${ERRORS.q4answear?if_exists}</div>
+                            <input type="text" name="q4answear" value="${PARAMS.q4answear!}" size="40">
+                            <div class="error">${ERRORS.q4answear!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 1</td>
                         <td>
-                            <input type="text" name="q4bad1" value="${PARAMS.q4bad1?if_exists}" size="40">
-                            <div class="error">${ERRORS.q4bad1?if_exists}</div>
+                            <input type="text" name="q4bad1" value="${PARAMS.q4bad1!}" size="40">
+                            <div class="error">${ERRORS.q4bad1!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 2</td>
                         <td>
-                            <input type="text" name="q4bad2" value="${PARAMS.q4bad2?if_exists}" size="40">
-                            <div class="error">${ERRORS.q4bad2?if_exists}</div>
+                            <input type="text" name="q4bad2" value="${PARAMS.q4bad2!}" size="40">
+                            <div class="error">${ERRORS.q4bad2!}</div>
                         </td>
                     </tr>
                 </table>
@@ -185,29 +185,29 @@ včetně správných odpovědí. Vyplňte prosím všechna políčka.</p>
                     <tr>
                         <td align="right" class="required">Otázka</td>
                         <td>
-                            <input type="text" name="q5question" value="${PARAMS.q5question?if_exists}" size="40">
-                            <div class="error">${ERRORS.q5question?if_exists}</div>
+                            <input type="text" name="q5question" value="${PARAMS.q5question!}" size="40">
+                            <div class="error">${ERRORS.q5question!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Správná odpověď</td>
                         <td>
-                            <input type="text" name="q5answear" value="${PARAMS.q5answear?if_exists}" size="40">
-                            <div class="error">${ERRORS.q5answear?if_exists}</div>
+                            <input type="text" name="q5answear" value="${PARAMS.q5answear!}" size="40">
+                            <div class="error">${ERRORS.q5answear!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 1</td>
                         <td>
-                            <input type="text" name="q5bad1" value="${PARAMS.q5bad1?if_exists}" size="40">
-                            <div class="error">${ERRORS.q5bad1?if_exists}</div>
+                            <input type="text" name="q5bad1" value="${PARAMS.q5bad1!}" size="40">
+                            <div class="error">${ERRORS.q5bad1!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 2</td>
                         <td>
-                            <input type="text" name="q5bad2" value="${PARAMS.q5bad2?if_exists}" size="40">
-                            <div class="error">${ERRORS.q5bad2?if_exists}</div>
+                            <input type="text" name="q5bad2" value="${PARAMS.q5bad2!}" size="40">
+                            <div class="error">${ERRORS.q5bad2!}</div>
                         </td>
                     </tr>
                 </table>
@@ -220,29 +220,29 @@ včetně správných odpovědí. Vyplňte prosím všechna políčka.</p>
                     <tr>
                         <td align="right" class="required">Otázka</td>
                         <td>
-                            <input type="text" name="q6question" value="${PARAMS.q6question?if_exists}" size="40">
-                            <div class="error">${ERRORS.q6question?if_exists}</div>
+                            <input type="text" name="q6question" value="${PARAMS.q6question!}" size="40">
+                            <div class="error">${ERRORS.q6question!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Správná odpověď</td>
                         <td>
-                            <input type="text" name="q6answear" value="${PARAMS.q6answear?if_exists}" size="40">
-                            <div class="error">${ERRORS.q6answear?if_exists}</div>
+                            <input type="text" name="q6answear" value="${PARAMS.q6answear!}" size="40">
+                            <div class="error">${ERRORS.q6answear!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 1</td>
                         <td>
-                            <input type="text" name="q6bad1" value="${PARAMS.q6bad1?if_exists}" size="40">
-                            <div class="error">${ERRORS.q6bad1?if_exists}</div>
+                            <input type="text" name="q6bad1" value="${PARAMS.q6bad1!}" size="40">
+                            <div class="error">${ERRORS.q6bad1!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 2</td>
                         <td>
-                            <input type="text" name="q6bad2" value="${PARAMS.q6bad2?if_exists}" size="40">
-                            <div class="error">${ERRORS.q6bad2?if_exists}</div>
+                            <input type="text" name="q6bad2" value="${PARAMS.q6bad2!}" size="40">
+                            <div class="error">${ERRORS.q6bad2!}</div>
                         </td>
                     </tr>
                 </table>
@@ -255,29 +255,29 @@ včetně správných odpovědí. Vyplňte prosím všechna políčka.</p>
                     <tr>
                         <td align="right" class="required">Otázka</td>
                         <td>
-                            <input type="text" name="q7question" value="${PARAMS.q7question?if_exists}" size="40">
-                            <div class="error">${ERRORS.q7question?if_exists}</div>
+                            <input type="text" name="q7question" value="${PARAMS.q7question!}" size="40">
+                            <div class="error">${ERRORS.q7question!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Správná odpověď</td>
                         <td>
-                            <input type="text" name="q7answear" value="${PARAMS.q7answear?if_exists}" size="40">
-                            <div class="error">${ERRORS.q7answear?if_exists}</div>
+                            <input type="text" name="q7answear" value="${PARAMS.q7answear!}" size="40">
+                            <div class="error">${ERRORS.q7answear!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 1</td>
                         <td>
-                            <input type="text" name="q7bad1" value="${PARAMS.q7bad1?if_exists}" size="40">
-                            <div class="error">${ERRORS.q7bad1?if_exists}</div>
+                            <input type="text" name="q7bad1" value="${PARAMS.q7bad1!}" size="40">
+                            <div class="error">${ERRORS.q7bad1!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 2</td>
                         <td>
-                            <input type="text" name="q7bad2" value="${PARAMS.q7bad2?if_exists}" size="40">
-                            <div class="error">${ERRORS.q7bad2?if_exists}</div>
+                            <input type="text" name="q7bad2" value="${PARAMS.q7bad2!}" size="40">
+                            <div class="error">${ERRORS.q7bad2!}</div>
                         </td>
                     </tr>
                 </table>
@@ -290,29 +290,29 @@ včetně správných odpovědí. Vyplňte prosím všechna políčka.</p>
                     <tr>
                         <td align="right" class="required">Otázka</td>
                         <td>
-                            <input type="text" name="q8question" value="${PARAMS.q8question?if_exists}" size="40">
-                            <div class="error">${ERRORS.q8question?if_exists}</div>
+                            <input type="text" name="q8question" value="${PARAMS.q8question!}" size="40">
+                            <div class="error">${ERRORS.q8question!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Správná odpověď</td>
                         <td>
-                            <input type="text" name="q8answear" value="${PARAMS.q8answear?if_exists}" size="40">
-                            <div class="error">${ERRORS.q8answear?if_exists}</div>
+                            <input type="text" name="q8answear" value="${PARAMS.q8answear!}" size="40">
+                            <div class="error">${ERRORS.q8answear!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 1</td>
                         <td>
-                            <input type="text" name="q8bad1" value="${PARAMS.q8bad1?if_exists}" size="40">
-                            <div class="error">${ERRORS.q8bad1?if_exists}</div>
+                            <input type="text" name="q8bad1" value="${PARAMS.q8bad1!}" size="40">
+                            <div class="error">${ERRORS.q8bad1!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 2</td>
                         <td>
-                            <input type="text" name="q8bad2" value="${PARAMS.q8bad2?if_exists}" size="40">
-                            <div class="error">${ERRORS.q8bad2?if_exists}</div>
+                            <input type="text" name="q8bad2" value="${PARAMS.q8bad2!}" size="40">
+                            <div class="error">${ERRORS.q8bad2!}</div>
                         </td>
                     </tr>
                 </table>
@@ -325,29 +325,29 @@ včetně správných odpovědí. Vyplňte prosím všechna políčka.</p>
                     <tr>
                         <td align="right" class="required">Otázka</td>
                         <td>
-                            <input type="text" name="q9question" value="${PARAMS.q9question?if_exists}" size="40">
-                            <div class="error">${ERRORS.q9question?if_exists}</div>
+                            <input type="text" name="q9question" value="${PARAMS.q9question!}" size="40">
+                            <div class="error">${ERRORS.q9question!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Správná odpověď</td>
                         <td>
-                            <input type="text" name="q9answear" value="${PARAMS.q9answear?if_exists}" size="40">
-                            <div class="error">${ERRORS.q9answear?if_exists}</div>
+                            <input type="text" name="q9answear" value="${PARAMS.q9answear!}" size="40">
+                            <div class="error">${ERRORS.q9answear!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 1</td>
                         <td>
-                            <input type="text" name="q9bad1" value="${PARAMS.q9bad1?if_exists}" size="40">
-                            <div class="error">${ERRORS.q9bad1?if_exists}</div>
+                            <input type="text" name="q9bad1" value="${PARAMS.q9bad1!}" size="40">
+                            <div class="error">${ERRORS.q9bad1!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 2</td>
                         <td>
-                            <input type="text" name="q9bad2" value="${PARAMS.q9bad2?if_exists}" size="40">
-                            <div class="error">${ERRORS.q9bad2?if_exists}</div>
+                            <input type="text" name="q9bad2" value="${PARAMS.q9bad2!}" size="40">
+                            <div class="error">${ERRORS.q9bad2!}</div>
                         </td>
                     </tr>
                 </table>
@@ -360,29 +360,29 @@ včetně správných odpovědí. Vyplňte prosím všechna políčka.</p>
                     <tr>
                         <td align="right" class="required">Otázka</td>
                         <td>
-                            <input type="text" name="q10question" value="${PARAMS.q10question?if_exists}" size="40">
-                            <div class="error">${ERRORS.q10question?if_exists}</div>
+                            <input type="text" name="q10question" value="${PARAMS.q10question!}" size="40">
+                            <div class="error">${ERRORS.q10question!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Správná odpověď</td>
                         <td>
-                            <input type="text" name="q10answear" value="${PARAMS.q10answear?if_exists}" size="40">
-                            <div class="error">${ERRORS.q10answear?if_exists}</div>
+                            <input type="text" name="q10answear" value="${PARAMS.q10answear!}" size="40">
+                            <div class="error">${ERRORS.q10answear!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 1</td>
                         <td>
-                            <input type="text" name="q10bad1" value="${PARAMS.q10bad1?if_exists}" size="40">
-                            <div class="error">${ERRORS.q10bad1?if_exists}</div>
+                            <input type="text" name="q10bad1" value="${PARAMS.q10bad1!}" size="40">
+                            <div class="error">${ERRORS.q10bad1!}</div>
                         </td>
                     </tr>
                     <tr>
                         <td align="right" class="required">Špatná odpověď 2</td>
                         <td>
-                            <input type="text" name="q10bad2" value="${PARAMS.q10bad2?if_exists}" size="40">
-                            <div class="error">${ERRORS.q10bad2?if_exists}</div>
+                            <input type="text" name="q10bad2" value="${PARAMS.q10bad2!}" size="40">
+                            <div class="error">${ERRORS.q10bad2!}</div>
                         </td>
                     </tr>
                 </table>
@@ -395,15 +395,15 @@ včetně správných odpovědí. Vyplňte prosím všechna políčka.</p>
                     <a class="info" href="#">?<span class="tooltip">Text bude zobrazen v historii dokumentu</span></a>
                 </td>
                 <td>
-                    <input type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists?html}">
-                    <div class="error">${ERRORS.rev_descr?if_exists}</div>
+                    <input type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr!?html}">
+                    <div class="error">${ERRORS.rev_descr!}</div>
                 </td>
             </tr>
         </#if>
     </table>
 
     <input type="submit" value="Dokončit">
-    <#if PARAMS.rid?exists>
+    <#if PARAMS.rid??>
         <input type="hidden" name="action" value="edit2">
         <input type="hidden" name="rid" value="${PARAMS.rid}">
     <#else>

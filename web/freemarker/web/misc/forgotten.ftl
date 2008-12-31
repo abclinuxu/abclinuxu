@@ -15,13 +15,13 @@ však bude vrácen seznam maximálně pěti nalezených uživatelů.</p>
 <table cellpadding=5>
   <tr>
     <td>Přihlašovací jméno: </td>
-    <td><input type="text" name="login" value="${PARAMS.login?if_exists}" size=8 tabindex=1>
-    <span class="error">${ERRORS?if_exists.login?if_exists}</span></td>
+    <td><input type="text" name="login" value="${PARAMS.login!}" size=8 tabindex=1>
+    <span class="error">${ERRORS!.login!}</span></td>
   </tr>
   <tr>
     <td>Vaše jméno: </td>
-    <td><input type="text" name="name" value="${PARAMS.name?if_exists}" size=16 tabindex=2>
-    <span class="error">${ERRORS?if_exists.name?if_exists}</span></td>
+    <td><input type="text" name="name" value="${PARAMS.name!}" size=16 tabindex=2>
+    <span class="error">${ERRORS!.name!}</span></td>
   </tr>
   <tr>
     <td colspan="2"><input type="submit" name="finish" value="OK" tabindex=3></td>

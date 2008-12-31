@@ -16,10 +16,10 @@ na 50&times;50 pixelů. Maximální velikost souboru je
             <td class="required" width="120">Heslo</td>
             <td>
                 <input type="password" name="PASSWORD" size="20" tabindex="1">
-                <div class="error">${ERRORS.PASSWORD?if_exists}</div>
+                <div class="error">${ERRORS.PASSWORD!}</div>
             </td>
         </tr>
-        <#assign avatar = TOOL.getUserAvatar(MANAGED?if_exists, USER?if_exists)?default("UNDEFINED")>
+        <#assign avatar = TOOL.getUserAvatar(MANAGED!, USER!)?default("UNDEFINED")>
         <#if avatar != "UNDEFINED">
             <tr>
                 <td>Současný avatar</td>
@@ -33,7 +33,7 @@ na 50&times;50 pixelů. Maximální velikost souboru je
             <td width="120">Avatar</td>
             <td>
                 <input type="file" name="avatar" size="20" tabindex="2">
-                <div class="error">${ERRORS.avatar?if_exists}</div>
+                <div class="error">${ERRORS.avatar!}</div>
             </td>
         </tr>
         <tr>

@@ -20,7 +20,7 @@
             <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
             <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '&amp;lt;', '');" id="mono" title="Vložit písmeno &lt;">&lt;</a>
             <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '&amp;gt;', '');" id="mono" title="Vložit písmeno &gt;">&gt;</a>
-            <#if editor.commentedContent?exists>
+            <#if editor.commentedContent??>
                 <script language="javascript1.2" type="text/javascript">
                 original = "<blockquote>" + ${editor.commentedContent?js_string} + "</blockquote>";
                 function cituj(input) {

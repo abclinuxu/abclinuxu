@@ -7,8 +7,8 @@
         <tr>
             <td class="required">Název</td>
             <td>
-                <input type="text" name="name" value="${PARAMS.name?if_exists}" size="40">
-                <div class="error">${ERRORS.name?if_exists}</div>
+                <input type="text" name="name" value="${PARAMS.name!}" size="40">
+                <div class="error">${ERRORS.name!}</div>
             </td>
         </tr>
         <tr>
@@ -25,8 +25,8 @@
                     <a href="javascript:insertAtCursor(document.forumForm.note, '&amp;gt;', '');" id="mono" title="Vložit písmeno &gt;">&gt;</a>
                 </div>
 
-                <textarea name="note" cols="80" rows="15" tabindex="8">${PARAMS.note?if_exists?html}</textarea>
-                <div class="error">${ERRORS.note?if_exists}</div>
+                <textarea name="note" cols="80" rows="15" tabindex="8">${PARAMS.note!?html}</textarea>
+                <div class="error">${ERRORS.note!}</div>
             </td>
         </tr>
         <tr>
@@ -43,8 +43,8 @@
                     <a href="javascript:insertAtCursor(document.forumForm.rules, '&amp;gt;', '');" id="mono" title="Vložit písmeno &gt;">&gt;</a>
                 </div>
 
-                <textarea name="rules" cols="80" rows="15" tabindex="8">${PARAMS.rules?if_exists?html}</textarea>
-                <div class="error">${ERRORS.rules?if_exists}</div>
+                <textarea name="rules" cols="80" rows="15" tabindex="8">${PARAMS.rules!?html}</textarea>
+                <div class="error">${ERRORS.rules!}</div>
             </td>
         </tr>
         <tr>

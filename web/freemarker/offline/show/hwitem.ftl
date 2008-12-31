@@ -25,7 +25,7 @@
   <tr>
     <td width="90">Ovladač je dodáván</td>
     <td>
-    <#switch TOOL.xpath(RECORD,"data/driver")?if_exists>
+    <#switch TOOL.xpath(RECORD,"data/driver")!>
      <#case "kernel">v jádře<#break>
      <#case "xfree">v XFree86<#break>
      <#case "maker">výrobcem<#break>
@@ -38,7 +38,7 @@
   <tr>
     <td width="90">Cena</td>
     <td>
-    <#switch TOOL.xpath(RECORD,"data/price")?if_exists>
+    <#switch TOOL.xpath(RECORD,"data/price")!>
      <#case "verylow">velmi nízká<#break>
      <#case "low">nízká<#break>
      <#case "good">přiměřená<#break>
@@ -48,28 +48,28 @@
     </#switch>
     </td>
   </tr>
-  <#if TOOL.xpath(RECORD,"data/setup")?exists>
+  <#if TOOL.xpath(RECORD,"data/setup")??>
    <tr>
     <td width="90">Postup zprovoznění pod Linuxem</td>
-    <td>${TOOL.render(TOOL.xpath(RECORD,"data/setup"),USER?if_exists)}</td>
+    <td>${TOOL.render(TOOL.xpath(RECORD,"data/setup"),USER!)}</td>
    </tr>
   </#if>
-  <#if TOOL.xpath(RECORD,"data/params")?exists>
+  <#if TOOL.xpath(RECORD,"data/params")??>
    <tr>
     <td width="90">Technické parametry</td>
-    <td>${TOOL.render(TOOL.xpath(RECORD,"data/params"),USER?if_exists)}</td>
+    <td>${TOOL.render(TOOL.xpath(RECORD,"data/params"),USER!)}</td>
    </tr>
   </#if>
-  <#if TOOL.xpath(RECORD,"data/identification")?exists>
+  <#if TOOL.xpath(RECORD,"data/identification")??>
    <tr>
     <td width="90">Linux jej identifikuje jako:</td>
-    <td>${TOOL.render(TOOL.xpath(RECORD,"data/identification"),USER?if_exists)}</td>
+    <td>${TOOL.render(TOOL.xpath(RECORD,"data/identification"),USER!)}</td>
    </tr>
   </#if>
-  <#if TOOL.xpath(RECORD,"data/note")?exists>
+  <#if TOOL.xpath(RECORD,"data/note")??>
    <tr>
     <td width="90">Poznámka</td>
-    <td>${TOOL.render(TOOL.xpath(RECORD,"data/note"),USER?if_exists)}</td>
+    <td>${TOOL.render(TOOL.xpath(RECORD,"data/note"),USER!)}</td>
    </tr>
   </#if>
  </table>

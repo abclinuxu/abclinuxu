@@ -8,10 +8,10 @@
 
 <#assign rules=TOOL.xpath(RELATION.child, "data/rules")?default("UNDEF")>
 <#if rules!="UNDEF">
-    ${TOOL.render(rules,USER?if_exists)}
+    ${TOOL.render(rules,USER!)}
 </#if>
 
-<#if ! USER?exists>
+<#if ! USER??>
  <h2>Proč se přihlásit</h2>
 
  <p>Registrovaní čtenáři si mohou nechat sledovat diskusi, takže jim budou emailem posílány
@@ -22,21 +22,21 @@
 
 <form action="${URL.make("/EditDiscussion")}" method="POST" name="form" enctype="multipart/form-data">
     <table class="siroka" cellpadding="5">
-        <#if ! USER?exists>
+        <#if ! USER??>
             <tr>
                 <td class="required">Zadejte vaše jméno</td>
                 <td>
-                    <input tabindex="4" type="text" size="30" name="author" value="${PARAMS.author?if_exists?html}">
+                    <input tabindex="4" type="text" size="30" name="author" value="${PARAMS.author!?html}">
                 </td>
                 <td>
                     nebo <a href="/Profile?action=login">se přihlašte</a>.
                 </td>
             </tr>
-            <#if ! USER_VERIFIED?if_exists>
+            <#if ! USER_VERIFIED!>
                 <tr>
                     <td class="required">Aktuální rok</td>
                     <td>
-                        <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}" tabindex="4">
+                        <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}" tabindex="4">
                         <a class="info" href="#">?<span class="tooltip">Vložte aktuální rok. Jedná se o ochranu
                         před spamboty. Po úspěšném ověření se uloží cookie (včetně vašeho jména) a tato kontrola
                         přestane být prováděna.</span></a>

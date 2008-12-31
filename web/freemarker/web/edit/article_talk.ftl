@@ -24,15 +24,15 @@ otázku do článku.</p>
 <h3>Nová otázka</h3>
 
 <form action="${URL.make("/edit/"+RELATION.id)}" method="POST">
-    Jméno tazatele: <input type="text" name="name" value="${PARAMS.name?if_exists}" size=40 tabindex=1><br>
+    Jméno tazatele: <input type="text" name="name" value="${PARAMS.name!}" size=40 tabindex=1><br>
     Otázka<br>
-    <textarea name="content" cols="80" rows="4" tabindex="2">${PARAMS.content?if_exists?html}</textarea>
-    <div class="error">${ERRORS.name?if_exists}${ERRORS.content?if_exists}</div>
+    <textarea name="content" cols="80" rows="4" tabindex="2">${PARAMS.content!?html}</textarea>
+    <div class="error">${ERRORS.name!}${ERRORS.content!}</div>
     <input type="hidden" name="action" value="addQuestion">
     <input type="submit" value="Ulož" tabindex="3">
 </form>
 
-<#list XML.data.talk.question?if_exists as question>
+<#list XML.data.talk.question! as question>
     <p>
         <b>${question.@id}. otázka</b>, autor: ${question.@name}<br>
         ${question}<br>

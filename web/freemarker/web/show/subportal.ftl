@@ -3,13 +3,13 @@
 <#assign desc=TOOL.xpath(ITEM,"/data/description")?default(TOOL.xpath(ITEM,"/data/descriptionShort")),
         articles=TOOL.createRelation(TOOL.xpath(ITEM,"/data/articles")),
         events=TOOL.createRelation(TOOL.xpath(ITEM,"/data/events"))>
-<#if USER?exists && TOOL.xpath(articles.child,"//monitor/id[text()='"+USER.id+"']")?exists>
+<#if USER?? && TOOL.xpath(articles.child,"//monitor/id[text()='"+USER.id+"']")??>
     <#assign monitorState="Přestaň sledovat články"><#else><#assign monitorState="Sleduj články">
 </#if>
 
 <#assign plovouci_sloupec>
     <@lib.showSubportal RELATION, true />
-    <#if USER?exists && (USER.hasRole("root") || TOOL.permissionsFor(USER, RELATION).canModify())>
+    <#if USER?? && (USER.hasRole("root") || TOOL.permissionsFor(USER, RELATION).canModify())>
     <div class="s_nadpis">
         Správa skupiny
     </div>
@@ -33,7 +33,7 @@
             <li><a href="?action=admins">Seznam administrátorů</a></li>
             <li><a href="/akce/edit/${events.id}?action=add">Přidat akci</a></li>
             <li>
-                <a href="${URL.make("/EditMonitor/"+articles.id+"?action=toggle&amp;redirect="+RELATION.url+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
+                <a href="${URL.make("/EditMonitor/"+articles.id+"?action=toggle&amp;redirect="+RELATION.url+TOOL.ticket(USER!, false))}">${monitorState}</a>
                 <span title="Počet lidí, kteří sledují tuto sekci">(${TOOL.getMonitorCount(articles.child.data)})</span>
                 <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při vydání nového článku.</span></a>
             </li>
@@ -46,12 +46,12 @@
 
 <div>
 <h1>${ITEM.title}</h1>
-<div>${TOOL.render(desc,USER?if_exists)}</div>
+<div>${TOOL.render(desc,USER!)}</div>
 </div>
 
 <hr />
 
-<#assign ARTICLES=VARS.getFreshSubportalArticles(USER?if_exists, articles.id)>
+<#assign ARTICLES=VARS.getFreshSubportalArticles(USER!, articles.id)>
 <#global CITACE = TOOL.getRelationCountersValue(ARTICLES,"read")/>
 <#if (ARTICLES?size>0) >
     <#list ARTICLES as rel>
@@ -91,7 +91,7 @@ ${content}
 <#if TOOL.xpath(RELATION.child, "/data/forumHidden")?default("no")!="yes">
     <#assign forum_rid=TOOL.xpath(RELATION.child,"/data/forum")>
     <#assign single_mode=false>
-    <#if USER?exists>
+    <#if USER??>
         <#if TOOL.xpath(USER, "/data/profile/forum_mode")?default("")=="single">
             <#assign single_mode=true>
         </#if>
@@ -99,7 +99,7 @@ ${content}
     <@lib.showForum forum_rid?eval, VARS.defaultSizes.question, false, true, false, single_mode />
 </#if>
 
-<#assign FEEDS = VARS.getSubportalFeeds(USER?if_exists,RELATION.id)>
+<#assign FEEDS = VARS.getSubportalFeeds(USER!,RELATION.id)>
 <#if (FEEDS.size() > 0)>
   <h2>Rozcestník</h2>
   <div class="rozc">

@@ -17,7 +17,7 @@ e-mail, dokud si sami nezmění adresu.</p>
   <tr>
    <td width="120">Čísla uživatelů</td>
    <td>
-    <textarea name="users" cols="20" rows="6" tabindex="1">${PARAMS.users?if_exists}</textarea>
+    <textarea name="users" cols="20" rows="6" tabindex="1">${PARAMS.users!}</textarea>
    </td>
   </tr>
   <tr>

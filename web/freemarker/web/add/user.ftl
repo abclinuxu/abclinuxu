@@ -24,7 +24,7 @@
                 <@lib.showHelp>Jméno musí mít nejméně tři znaky.</@lib.showHelp>
             </td>
             <td>
-                <input type="text" name="name" value="${PARAMS.name?if_exists}" size="24" tabindex="1">
+                <input type="text" name="name" value="${PARAMS.name!}" size="24" tabindex="1">
                 <@lib.showError key="name" />
             </td>
             <td width="160">
@@ -32,9 +32,9 @@
                 <@lib.showHelp>Přezdívka musí být unikátní.</@lib.showHelp>
             </td>
             <td>
-                <input type="text" name="nick" id="nick" value="${PARAMS.nick?if_exists}" size="24" tabindex="6"
+                <input type="text" name="nick" id="nick" value="${PARAMS.nick!}" size="24" tabindex="6"
                 onChange="new Ajax.Updater('nickError', '/ajax/checkNick', {parameters: { value : $F('nick')}})">
-                <div class="error" id="nickError">${ERRORS.nick?if_exists}</div>
+                <div class="error" id="nickError">${ERRORS.nick!}</div>
             </td>
         </tr>
         <tr>
@@ -46,18 +46,18 @@
                 </@lib.showHelp>
             </td>
             <td>
-                <input type="text" name="login" id="login" value="${PARAMS.login?if_exists}" size="24" tabindex="2"
+                <input type="text" name="login" id="login" value="${PARAMS.login!}" size="24" tabindex="2"
                 onChange="new Ajax.Updater('loginError', '/ajax/checkLogin', {parameters: { value : $F('login')}})">
-                <div class="error" id="loginError">${ERRORS.login?if_exists}</div>
+                <div class="error" id="loginError">${ERRORS.login!}</div>
             </td>
             <td  width="160">
                 OpenId
                 <@lib.showHelp>Podpora přihlašování přes openid se připravuje.</@lib.showHelp>
             </td>
             <td>
-                <input type="text" name="openid" id="openid" value="${PARAMS.openid?if_exists}" size="24" tabindex="7">
+                <input type="text" name="openid" id="openid" value="${PARAMS.openid!}" size="24" tabindex="7">
                 <#-- onChange="new Ajax.Updater('openidError', '/ajax/checkOpenId', {parameters: { value : $F('openid')}})" -->
-                <div class="error" id="openidError">${ERRORS.openid?if_exists}</div>
+                <div class="error" id="openidError">${ERRORS.openid!}</div>
             </td>
         </tr>
         <tr>
@@ -75,7 +75,7 @@
                 </@lib.showHelp>
             </td>
             <td>
-                <input type="text" name="email" value="${PARAMS.email?if_exists}" size="24" tabindex="8">
+                <input type="text" name="email" value="${PARAMS.email!}" size="24" tabindex="8">
                 <@lib.showError key="email" />
             </td>
         </tr>
@@ -130,7 +130,7 @@
                 <@lib.showHelp>Vložte aktuální rok. Jedná se o ochranu před spamboty.</@lib.showHelp>
             </td>
             <td>
-                <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}">
+                <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}">
                 <@lib.showError key="antispam" />
             </td>
             <td  colspan="2">&nbsp;</td>

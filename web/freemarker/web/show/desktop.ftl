@@ -1,4 +1,4 @@
-<#if USER?exists>
+<#if USER??>
     <#if USER.id==ITEM.owner || TOOL.permissionsFor(USER, RELATION).canModify()>
     <#assign plovouci_sloupec>
 
@@ -36,7 +36,7 @@
     </a>
 </div>
 
-<#assign desc=TOOL.xpath(ITEM, "/data/description")?default("UNDEFINED")>
+<#assign desc=TOOL.xpath(ITEM, "/data/description")!"UNDEFINED">
 <#if desc != "UNDEFINED">
     <p class="popis">${desc}</p>
 </#if>
@@ -52,20 +52,20 @@
         <#else>
             Oblíbenost: 0
         </#if>
-        <#if USER?exists && usedBy.contains(""+USER.id)>
+        <#if USER?? && usedBy.contains(""+USER.id)>
             <input type="submit" value="Odebrat se" class="button">
         <#else>
             <input type="submit" value="Přidat se" class="button">
         </#if>
         <input type="hidden" name="action" value="favourite">
-        <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER?if_exists)}">
+        <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER!)}">
   </form>
 </p>
 
 </div>
 
 <h3>Komentáře</h3>
-<#if CHILDREN.discussion?exists>
+<#if CHILDREN.discussion??>
     <@lib.showDiscussion CHILDREN.discussion[0]/>
 <#else>
    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vložit první komentář</a>

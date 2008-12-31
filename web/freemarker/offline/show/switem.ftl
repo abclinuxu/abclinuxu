@@ -29,13 +29,13 @@
      </#if>
     </td>
   </tr>
-  <#if TOOL.xpath(RECORD,"data/url")?exists>
+  <#if TOOL.xpath(RECORD,"data/url")??>
    <tr>
     <td width="90">Adresa softwaru</td>
     <td><a href="${TOOL.xpath(RECORD,"data/url")}">${TOOL.limit(TOOL.xpath(RECORD,"data/url"),40,"..")}</a></td>
    </tr>
   </#if>
-  <#if TOOL.xpath(RECORD,"data/version")?exists>
+  <#if TOOL.xpath(RECORD,"data/version")??>
    <tr>
     <td width="90">Tento záznam se týká verze</td>
     <td>${TOOL.xpath(RECORD,"data/version")}</a></td>
@@ -43,7 +43,7 @@
   </#if>
   <tr>
    <td width="90">Návod či poznámka</td>
-   <td>${TOOL.render(TOOL.xpath(RECORD,"data/text"),USER?if_exists)}</a></td>
+   <td>${TOOL.render(TOOL.xpath(RECORD,"data/text"),USER!)}</a></td>
   </tr>
  </table>
  <br>

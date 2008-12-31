@@ -21,7 +21,7 @@ požádejte o pomoc v <a href="/poradna">poradně</a>.
 Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
 <u>smažeme</u> jakékoliv požadavky, které nesouvisí s chodem portálu.</p>
 
-<#if CHILDREN?exists && CHILDREN?size gt 0>
+<#if CHILDREN?? && CHILDREN?size gt 0>
 
 <h2>Nevyřízené požadavky</h2>
 
@@ -32,7 +32,7 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
             <span id="${relation.id}">${DATE.show(item.created,"SMART")}</span>
             ${TOOL.xpath(item,"/data/category")},
             ${TOOL.xpath(item,"data/author")}
-            <#if USER?exists && USER.hasRole("root")>${TOOL.xpath(item,"data/email")}</#if>
+            <#if USER?? && USER.hasRole("root")>${TOOL.xpath(item,"data/email")}</#if>
         </b>
         <br />
 
@@ -40,9 +40,9 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
         <#if url != "UNDEFINED">
             <a href="${url}">${url}</a>
         </#if>
-        ${TOOL.render(TOOL.element(item.data,"data/text"),USER?if_exists)}
+        ${TOOL.render(TOOL.element(item.data,"data/text"),USER!)}
 
-        <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+        <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
             <br />
             <a href="${URL.make("/EditRequest?action=email&requestId="+relation.id)}">Poslat email</a>,
             <a href="${URL.make("/EditRequest?action=deliver&requestId="+relation.id+TOOL.ticket(USER, false))}">Vyřízeno</a>,
@@ -54,7 +54,7 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
 
 </#if>
 
-<#if PARAMS.preview?exists>
+<#if PARAMS.preview??>
     <fieldset>
         <legend>Náhled</legend>
         <b>
@@ -62,7 +62,7 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
             ${PARAMS.author}
         </b>
         <br>
-        ${TOOL.render(PARAMS.text,USER?if_exists)}
+        ${TOOL.render(PARAMS.text,USER!)}
     </fieldset>
 </#if>
 
@@ -73,32 +73,32 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
  <table border=0 cellpadding=5 style="padding-top: 10px">
   <tr>
    <td class="required">Vaše jméno</td>
-   <#if PARAMS.author?exists>
+   <#if PARAMS.author??>
     <#assign author=PARAMS.author>
-   <#elseif USER?exists>
+   <#elseif USER??>
     <#assign author=USER.name>
    </#if>
    <td align="left">
-    <input type="text" name="author" value="${author?if_exists}" size="20" tabindex="1">
-    <span class="error">${ERRORS.author?if_exists}</span>
+    <input type="text" name="author" value="${author!}" size="20" tabindex="1">
+    <span class="error">${ERRORS.author!}</span>
    </td>
   </tr>
   <tr>
     <td class="required">Váš email</td>
-   <#if PARAMS.email?exists>
+   <#if PARAMS.email??>
     <#assign email=PARAMS.email>
-   <#elseif USER?exists>
+   <#elseif USER??>
     <#assign email=USER.email>
    </#if>
    <td align="left">
-    <input type="text" name="email" value="${email?if_exists}" size="20" tabindex="2">
-    <span class="error">${ERRORS.email?if_exists}</span>
+    <input type="text" name="email" value="${email!}" size="20" tabindex="2">
+    <span class="error">${ERRORS.email!}</span>
    </td>
   </tr>
   <tr>
     <td>Typ požadavku</td>
     <td>
-        <#if PARAMS.categoryPosition?exists>
+        <#if PARAMS.categoryPosition??>
             <#assign defaultCategory=CATEGORIES[PARAMS.categoryPosition?eval]>
         <#else>
             <#assign defaultCategory="Hlášení chyby">
@@ -110,22 +110,22 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
         </select>
     </td>
   </tr>
-    <#if ! (USER?exists || USER_VERIFIED?if_exists)>
+    <#if ! (USER?? || USER_VERIFIED!)>
         <tr>
             <td class="required">Aktuální rok</td>
             <td>
-                <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}">
+                <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}">
                 <a class="info" href="#">?<span class="tooltip">Vložte aktuální rok. Jedná se o ochranu před spamboty.
                 Po úspěšném ověření se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.</span></a>
-                <span class="error">${ERRORS.antispam?if_exists}</span>
+                <span class="error">${ERRORS.antispam!}</span>
             </td>
         </tr>
     </#if>
   <tr>
    <td colspan="2">
     <span class="required">Požadavek</span>
-    <div class="error">${ERRORS.text?if_exists}</div>
-    <textarea name="text" cols="60" rows="15">${PARAMS.text?if_exists?html}</textarea>
+    <div class="error">${ERRORS.text!}</div>
+    <textarea name="text" cols="60" rows="15">${PARAMS.text!?html}</textarea>
   </td>
   </tr>
   <tr>
@@ -136,7 +136,7 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
   </tr>
  </table>
  <input type="hidden" name="action" value="add">
- <#if PARAMS.url?exists>
+ <#if PARAMS.url??>
     <input type="hidden" name="url" value="${PARAMS.url}">
  </#if>
 </form>

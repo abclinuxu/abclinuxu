@@ -21,8 +21,8 @@ Ať už plánujete posezení v hospodě, installfest či nějakou velkou akci, z
         <tr>
             <td class="required">Název</td>
             <td>
-                <input type="text" name="title" value="${PARAMS.title?if_exists}" size="40">
-                <div class="error">${ERRORS.title?if_exists}</div>
+                <input type="text" name="title" value="${PARAMS.title!}" size="40">
+                <div class="error">${ERRORS.title!}</div>
             </td>
         </tr>
         <tr>
@@ -34,7 +34,7 @@ Ať už plánujete posezení v hospodě, installfest či nějakou velkou akci, z
                     <option value="educational" <#if subtype=="educational">SELECTED</#if>>Školní</option>
                     <option value="company" <#if subtype=="company">SELECTED</#if>>Firemní</option>
                 </select>
-                <div class="error">${ERRORS.subtype?if_exists}</div>
+                <div class="error">${ERRORS.subtype!}</div>
             </td>
         </tr>
         <tr>
@@ -69,29 +69,29 @@ Ať už plánujete posezení v hospodě, installfest či nějakou velkou akci, z
                         <option value="zilinsky" <#if region=="zilinsky">SELECTED</#if>>Žilinský</option>
                     </optgroup>
                 </select>
-                <div class="error">${ERRORS.region?if_exists}</div>
+                <div class="error">${ERRORS.region!}</div>
             </td>
         </tr>
         <tr>
             <td class="required">Začátek od</td>
             <td>
-                <input type="text" name="date" id="datetime_input" value="${PARAMS.date?if_exists}">
+                <input type="text" name="date" id="datetime_input" value="${PARAMS.date!}">
                 <input type="button" id="datetime_btn" value="...">
                     <script type="text/javascript">cal_setupDateTime();</script>
                 Formát 2005-01-25 07:12
-                <div class="error">${ERRORS.date?if_exists}</div>
+                <div class="error">${ERRORS.date!}</div>
             </td>
         </tr>
         <tr>
             <td>Konec v</td>
             <td>
-                <input type="text" name="dateTo" id="datetime_input2" value="${PARAMS.dateTo?if_exists}">
+                <input type="text" name="dateTo" id="datetime_input2" value="${PARAMS.dateTo!}">
                 <input type="button" id="datetime_btn2" value="...">
                     <script type="text/javascript">
                         Calendar.setup({inputField:"datetime_input2",ifFormat:"%Y-%m-%d %H:%M",showsTime:true,button:"datetime_btn2",singleClick:false,step:1,firstDay:1});
                     </script>
                 Formát 2005-01-25 07:12, volitelný údaj
-                <div class="error">${ERRORS.dateTo?if_exists}</div>
+                <div class="error">${ERRORS.dateTo!}</div>
             </td>
         </tr>
         <tr>
@@ -103,8 +103,8 @@ Ať už plánujete posezení v hospodě, installfest či nějakou velkou akci, z
                     <li>50°5'31.77"N, 14°26'47.789"E</li>
                     <li>u maxe, budějovice</li>
                 </ul>
-                <input type="text" name="location" value="${PARAMS.location?if_exists?html}" size="40">
-                <div class="error">${ERRORS.location?if_exists}</div>
+                <input type="text" name="location" value="${PARAMS.location!?html}" size="40">
+                <div class="error">${ERRORS.location!}</div>
             </td>
         </tr>
         <tr>
@@ -121,8 +121,8 @@ Ať už plánujete posezení v hospodě, installfest či nějakou velkou akci, z
                     <a href="javascript:insertAtCursor(document.eventForm.descriptionShort, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
                 </div>
 
-                <textarea name="descriptionShort" rows="11" class="siroka"><#if PARAMS.descriptionShort?exists>${PARAMS.descriptionShort?html}</#if></textarea>
-                <div class="error">${ERRORS.descriptionShort?if_exists}</div>
+                <textarea name="descriptionShort" rows="11" class="siroka"><#if PARAMS.descriptionShort??>${PARAMS.descriptionShort?html}</#if></textarea>
+                <div class="error">${ERRORS.descriptionShort!}</div>
             </td>
         </tr>
         <tr>
@@ -139,8 +139,8 @@ Ať už plánujete posezení v hospodě, installfest či nějakou velkou akci, z
                     <a href="javascript:insertAtCursor(document.eventForm.description, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
                 </div>
 
-                <textarea name="description" rows="11" class="siroka"><#if PARAMS.description?exists>${PARAMS.description?html}</#if></textarea>
-                <div class="error">${ERRORS.description?if_exists}</div>
+                <textarea name="description" rows="11" class="siroka"><#if PARAMS.description??>${PARAMS.description?html}</#if></textarea>
+                <div class="error">${ERRORS.description!}</div>
             </td>
         </tr>
         <tr>
@@ -150,7 +150,7 @@ Ať už plánujete posezení v hospodě, installfest či nějakou velkou akci, z
             </td>
             <td>
                 <input type="file" name="logo" size="20" tabindex="3"> Rozměry maximálně 100&times;100.
-                <div class="error">${ERRORS.logo?if_exists}</div>
+                <div class="error">${ERRORS.logo!}</div>
             </td>
         </tr>
         <#if USER.hasRole("root")>
@@ -160,7 +160,7 @@ Ať už plánujete posezení v hospodě, installfest či nějakou velkou akci, z
             </td>
             <td>
                 <input type="text" name="uid" size="10">
-                <div class="error">${ERRORS.uid?if_exists}</div>
+                <div class="error">${ERRORS.uid!}</div>
             </td>
         </tr>
         </#if>

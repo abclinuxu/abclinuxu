@@ -1,11 +1,11 @@
-<#if USER?exists && USER.hasRole("root")><!-- Sablona: ${TEMPLATE?default("neznama")} --></#if>
+<#if USER?? && USER.hasRole("root")><!-- Sablona: ${TEMPLATE?default("neznama")} --></#if>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd" >
 <#import "macros.ftl" as lib>
 <html lang="cs">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>${PARAMS.TITLE?default(TITLE?default('www.abclinuxu.cz'))}</title>
-    <link rel="stylesheet" type="text/css" href="${CSS_URI?if_exists}">
+    <link rel="stylesheet" type="text/css" href="${CSS_URI!}">
     <!--[if IE]>
        <link href="/msie.css" type="text/css" rel="stylesheet">
     <![endif]-->
@@ -16,7 +16,7 @@
        <link href="/msie6.css" type="text/css" rel="stylesheet">
     <![endif]-->
     <link rel="icon" href="/images/site2/favicon.png" type="image/png">
-    <#if IS_INDEX?exists>
+    <#if IS_INDEX??>
         <link rel="alternate" title="abclinuxu.cz: články" href="http://www.abclinuxu.cz/auto/abc.rss" type="application/rss+xml">
         <link rel="alternate" title="abclinuxu.cz: blogy" href="http://www.abclinuxu.cz/auto/blog.rss" type="application/rss+xml">
         <link rel="alternate" title="abclinuxu.cz: linuxové blogy" href="http://www.abclinuxu.cz/auto/blogDigest.rss" type="application/rss+xml">
@@ -28,17 +28,17 @@
         <link rel="alternate" title="abclinuxu.cz: ankety" href="http://www.abclinuxu.cz/auto/ankety.rss" type="application/rss+xml">
         <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
     </#if>
-    <#if RSS?exists>
+    <#if RSS??>
         <link rel="alternate" title="RSS zdroj aktuální sekce" href="http://www.abclinuxu.cz${RSS}" type="application/rss+xml">
     </#if>
     <meta name="keywords" lang="cs" content="linux,abclinuxu,hardware,software,ovladače,diskuse,nápověda,rada,pomoc">
     <meta name="keywords" lang="en" content="linux,hardware,software,drivers,forum,help,faq,advice">
     <script type="text/javascript">
     	Page = new Object();
-        <#if RELATION?exists>
+        <#if RELATION??>
         	Page.relationID = ${RELATION.id};
 	    </#if>
-        <#if USER?exists>
+        <#if USER??>
         	Page.userID = ${USER.id};
             Page.ticket = "${TOOL.ticketValue(USER)}";
 	    </#if>
@@ -46,7 +46,7 @@
     <script type="text/javascript" src="/data/site/impact.js"></script>
     <script type="text/javascript" src="/data/site/scripts.js"></script>
     <script src="/data/site/prototype.js" type="text/javascript"></script>
-    <#if html_header?exists>
+    <#if html_header??>
         ${html_header}
     </#if>
     <@lib.initRTE />
@@ -87,7 +87,7 @@
 
         <div class="hl">
             <div class="hl_vpravo">
-              <#if USER?exists>
+              <#if USER??>
                 <@lib.showUser USER/> |
                 <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")?default("UNDEF")>
                 <#if blogName!="UNDEF"><a href="/blog/${blogName}">Blog</a> |</#if>
@@ -107,7 +107,7 @@
                 <li><a href="/doc/napoveda/alternativni-design">Styl</a>
                   <ul class="menu-drop">
                   <#list TOOL.getOfferedCssStyles().entrySet() as style>
-                    <li><a href="/EditUser/<#if USER?exists>${USER.id}</#if>?action=changeStyle${TOOL.ticket(USER,false)}&amp;css=${style.key}">${style.value}</a></li>
+                    <li><a href="/EditUser/<#if USER??>${USER.id}</#if>?action=changeStyle${TOOL.ticket(USER,false)}&amp;css=${style.key}">${style.value}</a></li>
                   </#list>
                   </ul>
                 </li>
@@ -123,7 +123,7 @@
             <@lib.advertisement id="vip-text" />
 
             <!-- ANKETA -->
-            <#if VARS.currentPoll?exists>
+            <#if VARS.currentPoll??>
                 <#assign relAnketa = VARS.currentPoll, anketa = relAnketa.child, total = anketa.totalVoters,
                          url=relAnketa.url?default("/ankety/show/"+relAnketa.id)>
                 <#if anketa.multiChoice><#assign type = "checkbox"><#else><#assign type = "radio"></#if>
@@ -161,10 +161,10 @@
             </#if>
 
             <!-- ZPRÁVIČKY -->
-            <#assign news=VARS.getFreshNews(USER?if_exists)>
+            <#assign news=VARS.getFreshNews(USER!)>
             <div class="s_nadpis">
                 <a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/edit?action=add")}">napište &raquo;</a>
-                <#if USER?exists && USER.hasRole("news admin")>
+                <#if USER?? && USER.hasRole("news admin")>
                     <a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/dir/37672")}" title="Počet neschválených a čekajících zpráviček">(${VARS.counter.WAITING_NEWS},${VARS.counter.SLEEPING_NEWS})&nbsp;</a>
                 </#if>
                 <a href="/zpravicky" title="zprávičky">Zprávičky</a>
@@ -197,8 +197,8 @@
             <@lib.advertisement id="sl-jobscz" />
             <@lib.advertisement id="sl-abcprace" />
 
-            <#if ! IS_INDEX?exists>
-                <#assign FEEDS = VARS.getFeeds(USER?if_exists,false)>
+            <#if ! IS_INDEX??>
+                <#assign FEEDS = VARS.getFeeds(USER!,false)>
                 <#if (FEEDS.size() > 0)>
                     <!-- ROZCESTNÍK -->
                     <div class="s_nadpis">Rozcestník</div>
@@ -224,7 +224,7 @@
         </div> <!-- s -->
         </div> <!-- obal_ls -->
 
-    <#if plovouci_sloupec?exists>
+    <#if plovouci_sloupec??>
         <#if URL.prefix=='/hardware'>
              <div class="hw-sloupec">
         <#elseif URL.prefix=='/software'>
@@ -246,13 +246,13 @@
              <@lib.advertisement id="clanky-top" />
         </#if>
 
-        <#if PARENTS?exists>
+        <#if PARENTS??>
           <div class="pwd-box">
             <div class="do-zalozek">
-              <#if RSS?exists>
+              <#if RSS??>
                 <a href="${RSS}"><img src="/images/site2/feed16.png" width="16" height="16" border="0"></a>
               </#if>
-              <#if RELATION?exists && USER?exists>
+              <#if RELATION?? && USER??>
                 <form action="/EditBookmarks/${USER.id}" style="display: inline">
                     <input type="submit" class="button" value="do záložek">
                     <input type="hidden" name="action" value="add">
@@ -264,14 +264,14 @@
             </div>
             <div class="pwd">
               <a href="/">AbcLinuxu</a>:/
-              <#list TOOL.getParents(PARENTS,USER?if_exists,URL) as link>
+              <#list TOOL.getParents(PARENTS,USER!,URL) as link>
                 <a href="${link.url}">${link.title}</a>
                 <#if link_has_next> / </#if>
               </#list>
             </div>
           </div>
 
-          <#if ASSIGNED_TAGS?exists>
+          <#if ASSIGNED_TAGS??>
             <@lib.advertisement id="stitky" />
 
             <div class="tag-box">

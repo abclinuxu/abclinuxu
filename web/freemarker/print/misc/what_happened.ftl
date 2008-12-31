@@ -1,6 +1,6 @@
 <h2>Články</h2>
 
-<#list ARTICLES?if_exists as clanek>
+<#list ARTICLES! as clanek>
  <b class="st_nadpis"><a href="${clanek.url}">${clanek.title}</a></b>
  <p>${clanek.perex}</p>
  <p class="meta-vypis">
@@ -13,7 +13,7 @@
 
 <h2>Zprávičky</h2>
 
-<#list NEWS?if_exists as news>
+<#list NEWS! as news>
  <b class="st_nadpis"><a href="${news.url}">${news.title}</a></b>
  <p>${news.content}</p>
  <p class="meta-vypis">
@@ -34,7 +34,7 @@
   </tr>
 </thead>
 <tbody>
-<#list QUESTIONS?if_exists as question>
+<#list QUESTIONS! as question>
   <tr>
     <td><a href="${question.url?default("/forum/show/"+question.relationId)}">${question.title}</a></td>
     <td class="td-meta">${question.responseCount}</td>
@@ -48,7 +48,7 @@
 
 <p>Nové IT a linuxové nabídky zaměstnání ze serveru <a href="http://wwww.abcprace.cz">www.abcprace.cz</a>.</p>
 
-<#list JOBS?if_exists as job>
+<#list JOBS! as job>
 <p><a href="http://www.abcprace.cz/www/detail.php?id=${job.id}">${job.title}</a><br />
    Region: ${job.region}, Kategorie: ${job.category}<#if job.itJob>, IT</#if><#if job.linuxJob>, Linux</#if></p>
 </#list>

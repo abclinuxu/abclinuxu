@@ -1,6 +1,6 @@
 <#include "../header.ftl">
 
-<#if PARAMS.TITLE?exists><h1 class="st_nadpis">${PARAMS.TITLE}</h1></#if>
+<#if PARAMS.TITLE??><h1 class="st_nadpis">${PARAMS.TITLE}</h1></#if>
 
 <@lib.showMessages/>
 
@@ -16,14 +16,14 @@
   </#list>
  </ol>
  <input type="submit" value="Pokračuj">
- <#if USERS.prevPage?exists>
+ <#if USERS.prevPage??>
   <input type="submit" name="previous" value="Předchozích ${USERS.pageSize} uživatelů">
  </#if>
- <#if USERS.nextPage?exists>
+ <#if USERS.nextPage??>
   <input type="submit" name="next" value="Následujících ${USERS.pageSize} uživatelů">
  </#if>
- ${SAVED_PARAMS?if_exists}
-<#if USER?exists>
+ ${SAVED_PARAMS!}
+<#if USER??>
     <input type="hidden" NAME="ticket" VALUE="${USER.getSingleProperty('ticket')}">
 </#if>
  <input type="hidden" name="from" value="${USERS.currentPage.row}">

@@ -9,15 +9,15 @@
   <tr>
    <td width="120" class="required">Jméno skupiny</td>
    <td>
-    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="20" tabindex="1">
-    <div class="error">${ERRORS.name?if_exists}</div>
+    <input type="text" name="name" value="${PARAMS.name!}" size="20" tabindex="1">
+    <div class="error">${ERRORS.name!}</div>
    </td>
   </tr>
   <tr>
    <td width="120" class="required">Popis skupiny</td>
    <td>
-    <textarea name="desc" cols="60" rows="7" tabindex="2">${PARAMS.desc?if_exists?html}</textarea>
-    <div class="error">${ERRORS.desc?if_exists}</div>
+    <textarea name="desc" cols="60" rows="7" tabindex="2">${PARAMS.desc!?html}</textarea>
+    <div class="error">${ERRORS.desc!}</div>
    </td>
   </tr>
   <tr>
@@ -31,7 +31,7 @@
  <#else>
   <input type="hidden" name="action" value="edit2">
  </#if>
- <input type="hidden" name="gid" value="${PARAMS.gid?if_exists}">
+ <input type="hidden" name="gid" value="${PARAMS.gid!}">
 </form>
 
 

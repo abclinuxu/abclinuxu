@@ -32,14 +32,14 @@ možné odpovědět.
    <td class="required" width="60">Heslo</td>
    <td>
     <input type="password" name="PASSWORD" size="16" tabindex="1">
-    <div class="error">${ERRORS.PASSWORD?if_exists}</div>
+    <div class="error">${ERRORS.PASSWORD!}</div>
    </td>
   </tr>
   <tr>
    <td width="60">Týdenní souhrn</td>
    <td>
     <select name="weekly" tabindex="2">
-     <#assign weekly=PARAMS.weekly?if_exists>
+     <#assign weekly=PARAMS.weekly!>
      <option value="yes" <#if weekly=="yes">SELECTED</#if>>ano</option>
      <option value="no"<#if weekly=="no">SELECTED</#if>>ne</option>
     </select>
@@ -49,7 +49,7 @@ možné odpovědět.
    <td width="60">Měsíční zpravodaj</td>
    <td>
     <select name="monthly" tabindex="3">
-     <#assign monthly=PARAMS.monthly?if_exists>
+     <#assign monthly=PARAMS.monthly!>
      <option value="yes" <#if monthly=="yes">SELECTED</#if>>ano</option>
      <option value="no"<#if monthly=="no">SELECTED</#if>>ne</option>
     </select>

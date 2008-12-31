@@ -10,14 +10,14 @@
    <td class="required" width="100">Vaše heslo</td>
    <td>
     <input type="password" name="PASSWORD" size="16" tabindex="1">
-    <div class="error">${ERRORS.PASSWORD?if_exists}</div>
+    <div class="error">${ERRORS.PASSWORD!}</div>
    </td>
   </tr>
   <tr>
    <td class="required" width="100">Uživatel</td>
    <td>
     ${MANAGED.name}
-    <div class="error">${ERRORS.uid?if_exists}</div>
+    <div class="error">${ERRORS.uid!}</div>
    </td>
   </tr>
 

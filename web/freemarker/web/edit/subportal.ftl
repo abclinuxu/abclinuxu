@@ -13,8 +13,8 @@ Skupina má vlastní sekci pro články, vlastní wiki, poradnu a sekci pro akce
         <tr>
             <td class="required">Název</td>
             <td>
-                <input type="text" name="title" size="40" maxlength="50" tabindex="1" value="${PARAMS.title?if_exists?html}">
-                <div class="error">${ERRORS.title?if_exists}</div>
+                <input type="text" name="title" size="40" maxlength="50" tabindex="1" value="${PARAMS.title!?html}">
+                <div class="error">${ERRORS.title!}</div>
             </td>
         </tr>
         <tr>
@@ -31,8 +31,8 @@ Skupina má vlastní sekci pro články, vlastní wiki, poradnu a sekci pro akce
                     <a href="javascript:insertAtCursor(document.portalForm.descShort, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
                 </div>
 
-                <textarea name="descShort" cols="80" rows="15" tabindex="2">${PARAMS.descShort?if_exists?html}</textarea>
-                <div class="error">${ERRORS.descShort?if_exists}</div>
+                <textarea name="descShort" cols="80" rows="15" tabindex="2">${PARAMS.descShort!?html}</textarea>
+                <div class="error">${ERRORS.descShort!}</div>
             </td>
         </tr>
         <tr>
@@ -49,8 +49,8 @@ Skupina má vlastní sekci pro články, vlastní wiki, poradnu a sekci pro akce
                     <a href="javascript:insertAtCursor(document.portalForm.desc, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
                 </div>
 
-                <textarea name="desc" cols="80" rows="15" tabindex="2">${PARAMS.desc?if_exists?html}</textarea>
-                <div class="error">${ERRORS.desc?if_exists}</div>
+                <textarea name="desc" cols="80" rows="15" tabindex="2">${PARAMS.desc!?html}</textarea>
+                <div class="error">${ERRORS.desc!}</div>
             </td>
         </tr>
         <tr>
@@ -65,7 +65,7 @@ Skupina má vlastní sekci pro články, vlastní wiki, poradnu a sekci pro akce
                     <label><input type="checkbox" name="remove_icon" tabindex="3">Pouze odstraň současnou ikonku</label>
                 </#if>
                 <input type="file" name="icon" size="20" tabindex="4"> Rozměry maximálně 100&times;100.
-                <div class="error">${ERRORS.icon?if_exists}</div>
+                <div class="error">${ERRORS.icon!}</div>
             </td>
         </tr>
         <#if USER.hasRole("root")>
@@ -74,7 +74,7 @@ Skupina má vlastní sekci pro články, vlastní wiki, poradnu a sekci pro akce
                     &nbsp;
                 </td>
                 <td>
-                    <label><input type="checkbox" name="hideForum" value="yes" <#if PARAMS.hideForum?exists && PARAMS.hideForum=="yes">checked="checked"</#if>>Skrýt fórum</label>
+                    <label><input type="checkbox" name="hideForum" value="yes" <#if PARAMS.hideForum?? && PARAMS.hideForum=="yes">checked="checked"</#if>>Skrýt fórum</label>
                 </td>
             </tr>
         </#if>

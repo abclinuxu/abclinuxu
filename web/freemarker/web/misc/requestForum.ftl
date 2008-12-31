@@ -24,7 +24,7 @@ a případný vzkaz.</p>
   </#list>
  </table>
 
-<#if PARAMS.preview?exists>
+<#if PARAMS.preview??>
     <fieldset>
         <legend>Náhled</legend>
         <b>
@@ -32,7 +32,7 @@ a případný vzkaz.</p>
             ${PARAMS.author}
         </b>
         <br>
-        ${TOOL.render(PARAMS.text?if_exists,USER?if_exists)}
+        ${TOOL.render(PARAMS.text!,USER!)}
     </fieldset>
 </#if>
 
@@ -40,25 +40,25 @@ a případný vzkaz.</p>
  <table border=0 cellpadding=5>
   <tr>
    <td class="required">Vaše jméno</td>
-   <#if PARAMS.author?exists><#assign author=PARAMS.author><#elseif USER?exists><#assign author=USER.name></#if>
+   <#if PARAMS.author??><#assign author=PARAMS.author><#elseif USER??><#assign author=USER.name></#if>
    <td>
-    <input type="text" name="author" value="${author?if_exists}" size="20" tabindex="1">
-    <span class="error">${ERRORS.author?if_exists}</span>
+    <input type="text" name="author" value="${author!}" size="20" tabindex="1">
+    <span class="error">${ERRORS.author!}</span>
    </td>
   </tr>
   <tr>
     <td class="required">Váš email</td>
-   <#if PARAMS.email?exists><#assign email=PARAMS.email><#elseif USER?exists><#assign email=USER.email></#if>
+   <#if PARAMS.email??><#assign email=PARAMS.email><#elseif USER??><#assign email=USER.email></#if>
    <td>
-    <input type="text" name="email" value="${email?if_exists}" size="20" tabindex="2">
-    <span class="error">${ERRORS.email?if_exists}</span>
+    <input type="text" name="email" value="${email!}" size="20" tabindex="2">
+    <span class="error">${ERRORS.email!}</span>
    </td>
   </tr>
   <tr>
    <td>Vzkaz</td>
    <td>
-    <textarea name="text" cols="60" rows="5" tabindex="3">${PARAMS.text?if_exists?html}</textarea>
-    <span class="error">${ERRORS.text?if_exists}</span>
+    <textarea name="text" cols="60" rows="5" tabindex="3">${PARAMS.text!?html}</textarea>
+    <span class="error">${ERRORS.text!}</span>
    </td>
   </tr>
   <tr>

@@ -3,7 +3,7 @@
 
 <@lib.showMessages/>
 
-<#if NEWS?exists>
+<#if NEWS??>
  <#if NEWS.currentPage.size gt 0>
   <h1>Mé zprávičky</h1>
   <ol start="${NEWS.currentPage.row+1}">
@@ -12,11 +12,11 @@
   </#list>
   </ol>
   Celkem ${NEWS.total} zpráviček.
-  <#if NEWS.prevPage?exists>
+  <#if NEWS.prevPage??>
     <a href="${URL.make("/Profile?action=showContent&amp;news=yes&amp;uid="+PARAMS.uid+"&amp;from="+NEWS.prevPage.row)}">
     Předchozích ${NEWS.pageSize}</a>.
   </#if>
-  <#if NEWS.nextPage?exists>
+  <#if NEWS.nextPage??>
     <a href="${URL.make("/Profile?action=showContent&amp;news=yes&amp;uid="+PARAMS.uid+"&amp;from="+NEWS.nextPage.row)}">
     Následujících ${NEWS.pageSize}</a>.
   </#if>
@@ -25,7 +25,7 @@
  </#if>
 </#if>
 
-<#if DIZS?exists>
+<#if DIZS??>
  <#if DIZS.currentPage.size gt 0>
   <h1>Mé diskuse</h1>
   <ol start="${DIZS.currentPage.row+1}">
@@ -36,11 +36,11 @@
   </#list>
   </ol>
   Celkem ${DIZS.total} otázek.
-  <#if DIZS.prevPage?exists>
+  <#if DIZS.prevPage??>
     <a href="${URL.make("/Profile?action=showContent&amp;articles=yes&amp;uid="+PARAMS.uid+"&amp;from="+DIZS.prevPage.row)}">
     Předchozích ${DIZS.pageSize}</a>.
   </#if>
-  <#if DIZS.nextPage?exists>
+  <#if DIZS.nextPage??>
     <a href="${URL.make("/Profile?action=showContent&amp;articles=yes&amp;uid="+PARAMS.uid+"&amp;from="+DIZS.nextPage.row)}">
     Následujících ${DIZS.pageSize}</a>.
   </#if>

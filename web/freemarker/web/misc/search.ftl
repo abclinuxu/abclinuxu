@@ -12,12 +12,12 @@
     <table border="0" class="siroka">
         <tr>
             <td>
-              <input type="text" name="dotaz" value="${QUERY?if_exists?html}" class="text" size="50" tabindex="1">
+              <input type="text" name="dotaz" value="${QUERY!?html}" class="text" size="50" tabindex="1">
 
               <input type="submit" value="Hledej" tabindex="2">
               <input type="submit" name="google" value="Hledej Googlem" tabindex="3">
               <a href="/SelectUser?sAction=form&amp;url=/Profile">Hledat uživatele</a>
-              <#if ERRORS.dotaz?exists><div class="error">${ERRORS.dotaz}</div></#if>
+              <#if ERRORS.dotaz??><div class="error">${ERRORS.dotaz}</div></#if>
               <#if PARAMS.advancedMode?default("false")=="true">
                   <input type="hidden" name="advancedMode" value="true">
                   <table border="0" width="100%">
@@ -46,10 +46,10 @@
             </td>
         </tr>
     </table>
-  <#if PARAMS.parent?exists><input type="hidden" name="parent" value="${PARAMS.parent}"></#if>
+  <#if PARAMS.parent??><input type="hidden" name="parent" value="${PARAMS.parent}"></#if>
 </form>
 
-<#if RESULT?exists>
+<#if RESULT??>
     <p class="search_results">
         Nalezeno ${RESULT.total} objektů (milisekund: ${SEARCH_TIME})<#t><#if (RESULT.total > 0)>,
         zobrazuji ${RESULT.thisPage.row} - ${RESULT.thisPage.row+RESULT.thisPage.size}</#if>.
@@ -61,7 +61,7 @@
             <!--m-->
             <a href="${doc.url}" class="search_title">${doc.titulek?default(doc.url)}</a>
             <!--n-->
-            <#if doc.highlightedText?exists>
+            <#if doc.highlightedText??>
                 <p class="search_fragments">${doc.highlightedText}</p>
             </#if>
             <p class="meta-vypis">
@@ -158,7 +158,7 @@
         ${TOOL.saveParams(PARAMS, ["orderDir","orderBy","from","count"])}
     </form>
 
-    <#if RESULT.prevPage?exists>
+    <#if RESULT.prevPage??>
         <a href="${CURRENT_URL}&from=0">0</a>
         <a href="${CURRENT_URL}&from=${RESULT.prevPage.row}">&lt;&lt;</a>
     <#else>
@@ -167,7 +167,7 @@
 
     ${RESULT.thisPage.row} - ${RESULT.thisPage.row + RESULT.thisPage.size}
 
-    <#if RESULT.nextPage?exists>
+    <#if RESULT.nextPage??>
         <a href="${CURRENT_URL}&from=${RESULT.nextPage.row?string["#"]}">&gt;&gt;</a>
         <a href="${CURRENT_URL}&from=${(RESULT.total-RESULT.pageSize)?string["#"]}">${RESULT.total}</a>
     <#else>
@@ -175,7 +175,7 @@
     </#if>
 
 </#if>
-<#if EXTRA_QUERY?exists>
+<#if EXTRA_QUERY??>
 <iframe src="http://www.google.com/cse?cx=${GOOGLE_PARAMS.cx?html}&amp;cof=${GOOGLE_PARAMS.cof?html}&amp;q=${QUERY?html}+${EXTRA_QUERY?html}&amp;ie=UTF-8" width="100%" height="1300"></iframe>
 </#if>
 

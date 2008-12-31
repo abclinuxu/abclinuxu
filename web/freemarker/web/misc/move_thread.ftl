@@ -17,7 +17,7 @@ do některého jeho potomka, vznikne velký problém!</p>
   <tr>
    <td class="required">Předek</td>
    <td>
-     <input type="text" name="parentId" size="4" value="${PARAMS.parentId?if_exists}">
+     <input type="text" name="parentId" size="4" value="${PARAMS.parentId!}">
    </td>
   </tr>
   <tr>
@@ -42,15 +42,15 @@ do některého jeho potomka, vznikne velký problém!</p>
  <p class="diz_header">
   Číslo komentáře: ${comment.id}<br>
   ${DATE.show(comment.created,"CZ_FULL")}
-  <#if comment.author?exists>
+  <#if comment.author??>
    <#local who=TOOL.createUser(comment.author)>
    <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a><br>
   <#else>
-   ${comment.anonymName?if_exists}<br>
+   ${comment.anonymName!}<br>
   </#if>
-  ${comment.title?if_exists}<br>
+  ${comment.title!}<br>
  </p>
-  <div>${TOOL.render(TOOL.element(comment.data,"text"),USER?if_exists)}</div>
+  <div>${TOOL.render(TOOL.element(comment.data,"text"),USER!)}</div>
 </#macro>
 
 <#macro showThread(diz level)>
@@ -58,7 +58,7 @@ do některého jeho potomka, vznikne velký problém!</p>
  <div style="padding-left: ${space}pt">
   <@showComment diz />
  </div>
- <#if diz.children?exists>
+ <#if diz.children??>
   <#local level2=level+1>
   <#list diz.children as child>
    <@showThread child, level2 />

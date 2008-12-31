@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<#if PARAMS.registrace?exists>
+<#if PARAMS.registrace??>
     <h1>Přivítání</h1>
 
     <p>
@@ -10,7 +10,7 @@
         se službami našeho portálu. Doporučujeme vám projít si tuto
         stránku a nastavit si osobní údaje, přizpůsobit si vaši veřejnou
         osobní stránku podle svých představ a nakonfigurovat si účet.
-        <#if PROFILE.email?exists>
+        <#if PROFILE.email??>
             Přihlašovací údaje jsme vám zaslali na vaši emailovou adresu ${PROFILE.email}.
         </#if>
     </p>
@@ -32,7 +32,7 @@
         </td>
         <td>
             jméno, přezdívka, email
-            <#if PROFILE.email?exists && INVALID_EMAIL?if_exists>
+            <#if PROFILE.email?? && INVALID_EMAIL!>
                 <p class="error">
                     Administrátoři označili váš email za neplatný! Stane se tak tehdy, pokud se některý odeslaný
                     email vrátí jako trvale nedoručitelný. Dokud si nezměníte adresu, žádný další email vám
@@ -57,7 +57,7 @@
             domovská stránka, distribuce, doba používání linuxu, patička, text o vás
         </td>
     </tr>
-    <#if ! TOOL.xpath(PROFILE, "//settings/blog")?exists>
+    <#if ! TOOL.xpath(PROFILE, "//settings/blog")??>
         <tr>
             <td align="right" valign="top">
                 <a href="${URL.noPrefix("/blog/edit/"+PROFILE.id+"?action=addBlog")}">vytvořit blog</a>

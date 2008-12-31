@@ -73,14 +73,14 @@
 </#list>
 
 
-<#if JOBS.prevPage?exists>
+<#if JOBS.prevPage??>
     <a href="${URL_BEFORE_FROM}0${URL_AFTER_FROM}">0</a>
     &nbsp;<a href="${URL_BEFORE_FROM}${JOBS.prevPage.row}${URL_AFTER_FROM}">&lt;&lt;</a>
 <#else>
     0 &lt;&lt;
 </#if>
 ${JOBS.thisPage.row} - ${JOBS.thisPage.row+JOBS.thisPage.size}&nbsp;
-<#if JOBS.nextPage?exists>
+<#if JOBS.nextPage??>
     <a href="${URL_BEFORE_FROM}${JOBS.nextPage.row?string["#"]}${URL_AFTER_FROM}">&gt;&gt;</a>
     &nbsp;<a href="${URL_BEFORE_FROM}${(JOBS.total - JOBS.pageSize)?string["#"]}${URL_AFTER_FROM}">${JOBS.total}</a>
 <#else>

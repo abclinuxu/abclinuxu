@@ -1,4 +1,4 @@
-<#if USER?exists && TOOL.xpath(CATEGORY,"//monitor/id[text()='"+USER.id+"']")?exists>
+<#if USER?? && TOOL.xpath(CATEGORY,"//monitor/id[text()='"+USER.id+"']")??>
     <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj sekci">
 </#if>
 <#import "../macros.ftl" as lib>
@@ -15,11 +15,11 @@
             <li><a href="/software/alternativy">Alternativy k aplikacím z Windows</a></li>
             <li><a href="/software/zebricky">Žebříčky</a></li>
             <li>
-                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
+                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}">${monitorState}</a>
                 <span title="Počet lidí, kteří sledují tuto sekci">(${TOOL.getMonitorCount(CATEGORY.data)})</span>
                 <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při nové položce v této a v podřazených sekcích.</span></a>
             </li>
-            <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+            <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
                 <hr />
                 <li>
                     <a href="${URL.noPrefix("/EditCategory/"+RELATION.id+"?action=add")}">mkdir</a>,
@@ -29,7 +29,7 @@
                     </#if>
                 </li>
             </#if>
-            <#if USER?exists && TOOL.permissionsFor(USER, RELATION.upper).canModify()>
+            <#if USER?? && TOOL.permissionsFor(USER, RELATION.upper).canModify()>
                 <li>
                     <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Přesunout sekci</a>
                 </li>
@@ -116,11 +116,11 @@
 
 <@lib.showMessages/>
 
-<#if TOOL.xpath(CATEGORY,"data/note")?exists>
- ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
+<#if TOOL.xpath(CATEGORY,"data/note")??>
+ ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER!)}
 </#if>
 
-<#if (CATEGORIES?exists && CATEGORIES?size > 0)>
+<#if (CATEGORIES?? && CATEGORIES?size > 0)>
     <#if (DEPTH > 1)>
         <p>
             <a href="javascript:ddtreemenu.flatten('treemenu1', 'expand')">Vše rozbalit</a> |
@@ -138,7 +138,7 @@
     </script>
 </#if>
 
-<#if ITEMS?exists>
+<#if ITEMS??>
     <@lib.showSoftwareList ITEMS />
 </#if>
 

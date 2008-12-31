@@ -40,22 +40,22 @@
         <tr>
             <td class="required">Adresa</td>
             <td>
-                <input tabindex="1" type="text" name="url" size="60" value="${PARAMS.url?if_exists?html}">
-                <div class="error">${ERRORS.url?if_exists}</div>
+                <input tabindex="1" type="text" name="url" size="60" value="${PARAMS.url!?html}">
+                <div class="error">${ERRORS.url!}</div>
             </td>
         </tr>
         <tr>
             <td>Jméno</td>
             <td>
-                <input tabindex="2" type="text" name="title" size="40" value="${PARAMS.title?if_exists?html}">
-                <div class="error">${ERRORS.title?if_exists}</div>
+                <input tabindex="2" type="text" name="title" size="40" value="${PARAMS.title!?html}">
+                <div class="error">${ERRORS.title!}</div>
             </td>
         </tr>
         <tr>
             <td>Popis</td>
             <td>
-                <textarea tabindex="3" name="description" cols="40" rows="4">${PARAMS.description?if_exists?html}</textarea><br>
-                <div class="error">${ERRORS.description?if_exists}</div>
+                <textarea tabindex="3" name="description" cols="40" rows="4">${PARAMS.description!?html}</textarea><br>
+                <div class="error">${ERRORS.description!}</div>
             </td>
         </tr>
         <tr>

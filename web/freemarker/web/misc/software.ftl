@@ -1,8 +1,8 @@
 <#macro showSoftware(software, showGallery)>
-    <h1>${software.title?if_exists}</h1>
+    <h1>${software.title!}</h1>
 
     <div>
-        ${TOOL.render(TOOL.element(software.data,"data/description"),USER?if_exists)}
+        ${TOOL.render(TOOL.element(software.data,"data/description"),USER!)}
     </div>
 
     <table class="swdetail">
@@ -71,13 +71,13 @@
                 <td>
                    <form action="${"/software/edit/"+RELATION.id}">
                       <a href="?action=users" title="Seznam uživatelů abclinuxu, kteří se označili za uživatele softwaru">${usedBy?size}</a> &nbsp;
-                      <#if USER?exists && usedBy.contains(""+USER.id)>
+                      <#if USER?? && usedBy.contains(""+USER.id)>
                          <input type="submit" value="Odebrat se">
                       <#else>
                          <input type="submit" value="Přidat se">
                       </#if>
                       <input type="hidden" name="action" value="user_of">
-                      <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER?if_exists)}">
+                      <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER!)}">
                    </form>
                 </td>
             </tr>
@@ -100,10 +100,10 @@
 
             <p class="galerie">
                 <#list images as image>
-                    <#if image.thumbnailPath?exists>
-                        <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${software.title?if_exists}" border="0"></a>
+                    <#if image.thumbnailPath??>
+                        <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${software.title!}" border="0"></a>
                     <#else>
-                        <img src="${image.path}" alt="${software.title?if_exists}">
+                        <img src="${image.path}" alt="${software.title!}">
                     </#if>
                 </#list>
             </p>

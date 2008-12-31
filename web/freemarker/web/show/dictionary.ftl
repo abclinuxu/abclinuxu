@@ -1,26 +1,26 @@
 <#assign who=TOOL.createUser(ITEM.owner)>
-<#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
+<#if USER?? && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")??>
     <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj záznam">
 </#if>
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <#if PARAMS.revize?exists>
+            <#if PARAMS.revize??>
                 <li>
                     <a class="bez-slovniku" href="${RELATION.url}">Návrat na aktuální verzi</a>
                 </li>
             <#else>
-            <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+            <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
                 <li><a class="bez-slovniku" href="${URL.make("/edit/"+RELATION.id+"?action=edit")}" rel="nofollow">Upravit</a></li>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
             </#if>
                 <li><a class="bez-slovniku" href="${RELATION.url}?varianta=print" rel="nofollow">Tisk</a></li>
                 <li>
-                    <a class="bez-slovniku" href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
+                    <a class="bez-slovniku" href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}">${monitorState}</a>
                     <span title="Počet lidí, kteří sledují tento záznam">(${TOOL.getMonitorCount(ITEM.data)})</span>
                     <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při úpravě záznamu.</span></a>
                 </li>
-                <#if USER?exists>
+                <#if USER??>
                     <#if USER.hasRole("root")>
                         <li>
                             <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=setURL2")}">Url</a>
@@ -42,7 +42,7 @@
 <h1>${ITEM.title}</h1>
 
 <div class="dict-item">
-    ${TOOL.render(TOOL.xpath(ITEM,"/data/description"),USER?if_exists)}
+    ${TOOL.render(TOOL.xpath(ITEM,"/data/description"),USER!)}
 </div>
 
 <@lib.showRelated ITEM/>
@@ -55,7 +55,7 @@
         <a href="${relation.url}">${relation.child.title}</a> -
     </#list>
     ${ITEM.title} <#if (NEXT?size>0)>-</#if>
-    <#list NEXT?if_exists as relation>
+    <#list NEXT! as relation>
         <a href="${relation.url}">${relation.child.title}</a>
         <#if relation_has_next> - </#if>
     </#list>

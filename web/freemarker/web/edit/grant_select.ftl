@@ -9,8 +9,8 @@
   <tr>
    <td class="required" width="100">Číslo uživatele</td>
    <td>
-    <input type="text" name="uid" value="${PARAMS.uid?if_exists}" size="6" tabindex="1">
-    <div class="error">${ERRORS.uid?if_exists}</div>
+    <input type="text" name="uid" value="${PARAMS.uid!}" size="6" tabindex="1">
+    <div class="error">${ERRORS.uid!}</div>
    </td>
   </tr>
   <tr>

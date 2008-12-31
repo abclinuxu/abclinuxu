@@ -2,7 +2,7 @@
 
 <hr width="100%">
 
-<#if VARS.currentPoll?exists>
+<#if VARS.currentPoll??>
  <#assign relAnketa = VARS.currentPoll, anketa = relAnketa.child, total = anketa.totalVoters,
   url=relAnketa.url?default("/ankety/show/"+relAnketa.id)>
  <#if anketa.multiChoice>

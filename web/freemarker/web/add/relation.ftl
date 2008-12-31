@@ -17,8 +17,8 @@ původní jméno.</p>
   <tr>
    <td width="120">Nové jméno</td>
    <td>
-    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="40" tabindex="1">
-    <div class="error">${ERRORS.name?if_exists}</div>
+    <input type="text" name="name" value="${PARAMS.name!}" size="40" tabindex="1">
+    <div class="error">${ERRORS.name!}</div>
    </td>
   </tr>
   <tr>

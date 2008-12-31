@@ -2,7 +2,7 @@
  <#list MESSAGES as msg>
   <p class="message">${msg}</p>
  </#list>
- <#if ERRORS.generic?exists>
+ <#if ERRORS.generic??>
   <p class="error">${ERRORS.generic}</p>
  </#if>
 </#macro>
@@ -14,7 +14,7 @@
         tmp=TOOL.groupByType(clanek.children, "Item"),
         url=relation.url?default("/clanky/show/"+relation.id)
     >
-    <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
+    <#if tmp.discussion??><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
     <#if thumbnail!="UNDEF"><div class="cl_thumbnail">${thumbnail}</div></#if>
     <h1 class="st_nadpis"><a href="${url}">${clanek.title}</a></h1>
     <p>${TOOL.xpath(clanek,"/data/perex")}</p>
@@ -29,14 +29,14 @@
             <@lib.showUser TOOL.createUser(clanek.owner)/>
         </#if>
         |
-        Přečteno: <@showCounter clanek, .globals["CITACE"]?if_exists, "read" />&times;
-        <#if diz?exists>| <@showCommentsInListing diz, dateFormat[1]?default(dateFormat[0]), "/clanky" /></#if>
+        Přečteno: <@showCounter clanek, .globals["CITACE"]!, "read" />&times;
+        <#if diz??>| <@showCommentsInListing diz, dateFormat[1]?default(dateFormat[0]), "/clanky" /></#if>
         <@showShortRating relation, "| " />
     </p>
 </#macro>
 
 <#macro showCounter(item, map, type)><#rt>
-    <#if map.get?exists><#local value = map.get(item)?default("UNDEF")><#else><#local value = "UNDEF"></#if><#rt>
+    <#if map.get??><#local value = map.get(item)?default("UNDEF")><#else><#local value = "UNDEF"></#if><#rt>
     <#lt><#if value?string!="UNDEF">${value}<#else>${TOOL.getCounterValue(item, type)}</#if><#rt>
 </#macro>
 
@@ -109,7 +109,7 @@
     diz=TOOL.findComments(item),
     url=relation.url?default("/zpravicky/show/"+relation.id),
     showtitle="yes", multilinetitle="no">
-    <#if USER?exists>
+    <#if USER??>
         <#local showtitle=TOOL.xpath(USER,"/data/settings/news_titles")?default("yes"),
             multilinetitle=TOOL.xpath(USER,"/data/settings/news_multiline")?default("no")>
     </#if>
@@ -128,13 +128,13 @@
 </#macro>
 
 <#macro markNewComments(discussion)><#t>
-<#if TOOL.hasNewComments(USER?if_exists, discussion)><#t>
+<#if TOOL.hasNewComments(USER!, discussion)><#t>
     <span title="V diskusi jsou nové komentáře" class="new_comment_mark">*</span><#t>
 </#if><#t>
 </#macro>
 
 <#macro markNewCommentsQuestion(discussion)><#t>
-<#if TOOL.hasNewComments(USER?if_exists, discussion)><#t>
+<#if TOOL.hasNewComments(USER!, discussion)><#t>
     <span title="V diskusi jsou nové komentáře" class="new_comment_state">*</span><#t>
 </#if><#t>
 </#macro>
@@ -145,31 +145,31 @@
 </#macro>
 
 <#macro showThread(comment level diz showControls extra...)>
-    <#if comment.author?exists>
+    <#if comment.author??>
         <#local who=TOOL.createUser(comment.author)>
     </#if>
       <#local blacklisted = diz.isBlacklisted(comment), attachments = comment.attachments>
-      <div class="ds_hlavicka<#if diz.isUnread(comment)>_novy</#if><#if blacklisted> ds_hlavicka_blacklisted</#if><#if who?exists && USER?exists && who.id == USER.id> ds_hlavicka_me</#if>" id="${comment.id}">
-        <#if comment.author?exists && showControls>
-            <#assign avatar = TOOL.getUserAvatar(who?if_exists, USER?if_exists)?default("UNDEFINED")>
+      <div class="ds_hlavicka<#if diz.isUnread(comment)>_novy</#if><#if blacklisted> ds_hlavicka_blacklisted</#if><#if who?? && USER?? && who.id == USER.id> ds_hlavicka_me</#if>" id="${comment.id}">
+        <#if comment.author?? && showControls>
+            <#assign avatar = TOOL.getUserAvatar(who!, USER!)?default("UNDEFINED")>
             <#if avatar != "UNDEFINED">
                 <img src="${avatar}" id="comment${comment.id}_avatar" alt="avatar" class="ds_avatar <#if blacklisted>ds_controls_blacklisted</#if>">
             </#if>
         </#if>
         ${DATE.show(comment.created,"SMART")}
-        <#if comment.author?exists>
+        <#if comment.author??>
             <@showUser who/>
             <#local score=who.getIntProperty("score")?default(-1)><#if score != -1> | skóre: ${score}</#if>
             <#local blog=TOOL.getUserBlogAnchor(who, "blog")?default("UNDEF")><#if blog!="UNDEF"> | blog: ${blog}</#if>
             <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
         <#else>
-            ${comment.anonymName?if_exists}
+            ${comment.anonymName!}
         </#if><br>
         <span class="<#if blacklisted>ds_control_sbalit<#else>ds_control_sbalit2</#if>" id="comment${comment.id}_toggle2">
             <a onClick="schovej_vlakno(${comment.id})" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
             <a onClick="rozbal_vse(${comment.id})" title="Schová nebo rozbalí vše pod tímto komentářem">Rozbalit vše</a>
         </span>
-        ${comment.title?if_exists}
+        ${comment.title!}
         <#nested>
         <#if showControls>
             <div id="comment${comment.id}_controls"<#if blacklisted> class="ds_controls_blacklisted"</#if>>
@@ -178,17 +178,17 @@
                 <a href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=add&amp;dizId="+diz.id+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovědět</a> |
                 <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}" title="Žádost o přesun diskuse, stížnost na komentář">Admin</a> |
                 <a href="#${comment.id}" title="Přímá adresa na tento komentář">Link</a> |
-                <#if (comment.parent?exists)><a href="#${comment.parent}" title="Odkaz na komentář o jednu úroveň výše">Výše</a> |</#if>
-                <#if comment.author?exists><#local blockTarget="bUid=" + who.id><#else><#local blockTarget="bName=" + comment.anonymName?url></#if>
+                <#if (comment.parent??)><a href="#${comment.parent}" title="Odkaz na komentář o jednu úroveň výše">Výše</a> |</#if>
+                <#if comment.author??><#local blockTarget="bUid=" + who.id><#else><#local blockTarget="bName=" + comment.anonymName?url></#if>
                 <#if blacklisted>
                     <#local blockUrl="/EditUser?action=fromBlacklist&amp;"+blockTarget, title="Neblokovat", hint="Odstraní autora ze seznamu blokovaných uživatelů">
                 <#else>
                     <#local blockUrl="/EditUser?action=toBlacklist&amp;"+blockTarget, title="Blokovat", hint="Přidá autora na seznam blokovaných uživatelů">
                 </#if>
-                <a href="${URL.noPrefix(blockUrl+TOOL.ticket(USER?if_exists, false)+"&amp;url="+URL.prefix+"/show/"+diz.relationId+"#"+comment.id)}" title="${hint}">${title}</a> |
+                <a href="${URL.noPrefix(blockUrl+TOOL.ticket(USER!, false)+"&amp;url="+URL.prefix+"/show/"+diz.relationId+"#"+comment.id)}" title="${hint}">${title}</a> |
                 <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle1" title="Schová nebo rozbalí celé vlákno" class="ds_control_sbalit3"><#if ! blacklisted>Sbalit<#else>Rozbalit</#if></a>
             </div>
-        <#elseif USER?exists && USER.hasRole("discussion admin")>
+        <#elseif USER?? && USER.hasRole("discussion admin")>
             <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}">Admin</a>
         </#if>
         <#if (attachments?size > 0)>
@@ -203,20 +203,20 @@
            </div>
         </#if>
     </div>
-    <div id="comment${comment.id}" <#if who?exists>class="ds_text_user${who.id}"</#if><#if blacklisted?if_exists> style="display: none;"</#if>>
-        <#if TOOL.xpath(comment.data,"//censored")?exists>
+    <div id="comment${comment.id}" <#if who??>class="ds_text_user${who.id}"</#if><#if blacklisted!> style="display: none;"</#if>>
+        <#if TOOL.xpath(comment.data,"//censored")??>
             <@showCensored comment, diz.id, diz.relationId/>
         <#else>
             <div class="ds_text">
-                ${TOOL.render(TOOL.element(comment.data,"//text"),USER?if_exists)}
+                ${TOOL.render(TOOL.element(comment.data,"//text"),USER!)}
             </div>
-            <#assign signature = TOOL.getUserSignature(who?if_exists, USER?if_exists)?default("UNDEFINED")>
+            <#assign signature = TOOL.getUserSignature(who!, USER!)?default("UNDEFINED")>
             <#if signature!="UNDEFINED"><div class="signature">${signature}</div></#if>
         </#if>
         <#local level2=level+1>
         <div class="ds_odsazeni">
-            <#list comment.children?if_exists as child>
-                <@showThread child, level2, diz, showControls, extra[0]?if_exists />
+            <#list comment.children! as child>
+                <@showThread child, level2, diz, showControls, extra[0]! />
             </#list>
         </div>
     </div>
@@ -233,28 +233,28 @@
             <p class="cenzura_duvod">${message}</p>
         </#if>
         <a href="${URL.make("/show?action=censored&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Zobrazit komentář</a>
-        <#if USER?exists && USER.hasRole("discussion admin")>
-            <a href="${URL.make("/EditDiscussion?action=censore&amp;rid="+relId+"&amp;dizId="+dizId+"&amp;threadId="+comment.id+TOOL.ticket(USER?if_exists, false))}">Odvolat cenzuru</a>
+        <#if USER?? && USER.hasRole("discussion admin")>
+            <a href="${URL.make("/EditDiscussion?action=censore&amp;rid="+relId+"&amp;dizId="+dizId+"&amp;threadId="+comment.id+TOOL.ticket(USER!, false))}">Odvolat cenzuru</a>
         </#if>
     </div>
 </#macro>
 
 <#macro showDiscussion(relation)>
-    <#local DIZ = TOOL.createDiscussionTree(relation.child,USER?if_exists,relation.id,true)>
+    <#local DIZ = TOOL.createDiscussionTree(relation.child,USER!,relation.id,true)>
     <#if DIZ.monitored><#local monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj"></#if>
     <div class="ds_toolbox">
      <b>Nástroje:</b>
        <#if DIZ.hasUnreadComments>
          <a href="#${DIZ.firstUnread}" title="Skočit na první nepřečtený komentář" rel="nofollow">První nepřečtený komentář</a>,
        </#if>
-         <a href="${URL.make("/EditMonitor/"+DIZ.relationId+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}" rel="nofollow">${monitorState}</a>
+         <a href="${URL.make("/EditMonitor/"+DIZ.relationId+"?action=toggle"+TOOL.ticket(USER!, false))}" rel="nofollow">${monitorState}</a>
            <span title="Počet lidí, kteří sledují tuto diskusi">(${DIZ.monitorSize})</span>
            <a class="info" href="#">?<span class="tooltip">Zašle každý nový komentář emailem na vaši adresu</span></a>,
          <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print" rel="nofollow">Tisk</a>
-       <#if USER?exists && USER.hasRole("discussion admin")>
+       <#if USER?? && USER.hasRole("discussion admin")>
          <br />
          <b>Admin:</b>
-         <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+DIZ.relationId+"&amp;dizId="+DIZ.id+TOOL.ticket(USER?if_exists, false))}">
+         <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+DIZ.relationId+"&amp;dizId="+DIZ.id+TOOL.ticket(USER!, false))}">
             <#if DIZ.frozen>Rozmrazit<#else>Zmrazit</#if></a>
        </#if>
     </div>
@@ -300,14 +300,14 @@
       </#if>
 
         <div class="hlasy">
-        <#if USER?exists>
-           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0"+TOOL.ticket(USER?if_exists, false))}" target="rating" rel="nofollow">špatné</a>
+        <#if USER??>
+           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0"+TOOL.ticket(USER!, false))}" target="rating" rel="nofollow">špatné</a>
            &bull;
-           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3"+TOOL.ticket(USER?if_exists, false))}" target="rating" rel="nofollow">dobré</a>
+           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3"+TOOL.ticket(USER!, false))}" target="rating" rel="nofollow">dobré</a>
         <#else>
-           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0&amp;return=true"+TOOL.ticket(USER?if_exists, false))}" rel="nofollow">špatné</a>
+           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0&amp;return=true"+TOOL.ticket(USER!, false))}" rel="nofollow">špatné</a>
            &bull;
-           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3&amp;return=true"+TOOL.ticket(USER?if_exists, false))}" rel="nofollow">dobré</a>
+           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3&amp;return=true"+TOOL.ticket(USER!, false))}" rel="nofollow">dobré</a>
         </#if>
         </div>
         <iframe name="rating" frameborder="0" height="20" scrolling="no" class="rating_iframe"></iframe>
@@ -386,7 +386,7 @@
                     <#elseif link.type=='personality'>(osobnost)
                     </#if>
                 </dt>
-                <#if link.description?exists>
+                <#if link.description??>
                     <dd>${link.description}</dd>
                 </#if>
             </#list>
@@ -397,7 +397,7 @@
 
 <#macro showOption (param value caption type extra...)>
     <label>
-        <input type="${type}" name="${param}" value="${value}"<#if TOOL.isWithin(PARAMS[param], value)> checked</#if>${" "+extra[0]?if_exists}>
+        <input type="${type}" name="${param}" value="${value}"<#if TOOL.isWithin(PARAMS[param], value)> checked</#if>${" "+extra[0]!}>
         ${caption}
     </label>
 </#macro>
@@ -426,13 +426,13 @@
 
 <#macro showDiscussionState diz>
     <@markNewCommentsQuestion diz/>
-    <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
+    <#if TOOL.xpath(diz.discussion,"/data/frozen")??>
         <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamčena">
     </#if>
     <#if TOOL.isQuestionSolved(diz.discussion.data)>
         <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle čtenářů vyřešena">
     </#if>
-    <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")?exists>
+    <#if USER?? && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")??>
         <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
     </#if>
 </#macro>
@@ -462,7 +462,7 @@
 </#macro>
 
 <#macro showError key>
-    <#if ERRORS[key]?exists><div class="error">${ERRORS[key]}</div></#if>
+    <#if ERRORS[key]??><div class="error">${ERRORS[key]}</div></#if>
 </#macro>
 
 <#macro initRTE>
@@ -486,7 +486,7 @@
                         aFCKeditor.ToolbarSet = 'SafeHTMLGuard';
                     </#if>
                 </#if>
-                <#if editor.commentedContent?exists>
+                <#if editor.commentedContent??>
                     aFCKeditor.Config['AbcCitationContent'] = '${editor.commentedContent?js_string}';
                 </#if>
                 aFCKeditor.Config['ProcessHTMLEntities'] = false;
@@ -500,7 +500,7 @@
 
 <#macro showTagCloud list title cssStyle>
     <div id="tagcloud_container"<#if (cssStyle?length gte 1)> style="${cssStyle}"</#if>>
-    <#if title?exists ><div id="title">${title}</div></#if>
+    <#if title?? ><div id="title">${title}</div></#if>
 	<ul id="tagcloud">
 		<#list list as tag>
 			<li class="${tag.cssClass}">
@@ -523,13 +523,13 @@
         <#local forum = VARS.getFreshQuestions(numQuestions, rid),
                 feed = FEEDS.getForumFeedUrl(rid)?default("UNDEF")>
     <#else>
-        <#local forum = VARS.getFreshQuestions(USER?if_exists),
+        <#local forum = VARS.getFreshQuestions(USER!),
                 feed = FEEDS.getForumFeedUrl()?default("UNDEF")>
     </#if>
     <#local FORUM=TOOL.analyzeDiscussions(forum)>
 
       <table class="ds" id="forum_table_${rid}">
-       <#if USER?exists><form method="post" action="/EditUser/${USER.id}"></#if>
+       <#if USER??><form method="post" action="/EditUser/${USER.id}"></#if>
         <thead>
           <tr>
             <td class="td-nazev">
@@ -557,7 +557,7 @@
                 <#if feed!="UNDEF">
                    &nbsp;<a href="${feed}"><img src="/images/site2/feed12.png" width="12" height="12" border="0" alt="<#if rid!=0>${TOOL.childName(relation)}, </#if>RSS feed"></a>
                 </#if>
-                <#if USER?exists && rid!=0 && !singleMode>
+                <#if USER?? && rid!=0 && !singleMode>
                     <#if !onHP>
                         <#local uforums=TOOL.getUserForums(USER)>
                         <#list uforums.keySet() as key><#if key==rid><#local onHP=true></#if></#list>
@@ -575,7 +575,7 @@
             </td>
           </tr>
         </thead>
-       <#if USER?exists></form></#if>
+       <#if USER??></form></#if>
         <tbody id="forum_tbody_${rid}">
          <#list FORUM as diz>
           <tr>
@@ -642,7 +642,7 @@
     </#if>
 
     <#assign tmp=TOOL.groupByType(item.children, "Item")>
-    <#if tmp.discussion?exists><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz=null></#if>
+    <#if tmp.discussion??><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz=null></#if>
 
     <table class="events">
     <tr>
@@ -664,7 +664,7 @@
 
             <p class="meta-vypis">Aktualizováno: ${DATE.show(item.updated,"SMART")}
                 | správce:&nbsp;<@lib.showUser TOOL.createUser(item.owner) />
-                <#if diz?exists>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/akce" /></#if>
+                <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/akce" /></#if>
                 | Přečteno:&nbsp;${TOOL.getCounterValue(item,"read")}&times; |
                 <a href="${relation.url?default("/akce/"+relation.id)}?action=participants">Účastníků:&nbsp;${regs?eval}</a>
             </p>
@@ -694,7 +694,7 @@
         </#if>
         <#if showDesc>
             <h2 class="st_nadpis"><a href="${relation.url}">${item.title}</a></h2>
-            ${TOOL.render(TOOL.xpath(item,"/data/descriptionShort"), USER?if_exists)}
+            ${TOOL.render(TOOL.xpath(item,"/data/descriptionShort"), USER!)}
         </#if>
     </div>
 
@@ -711,13 +711,13 @@
         <#if score != -1><tr><td>Skóre:</td> <td>${score}</td></tr></#if>
       </table>
         <form action="/skupiny/edit/${relation.id}" method="post">
-            <#if USER?exists && members.contains(""+USER.id)>
+            <#if USER?? && members.contains(""+USER.id)>
              <input type="submit" value="Odregistrovat se">
             <#else>
              <input type="submit" value="Registrovat se">
             </#if>
             <input type="hidden" name="action" value="toggleMember">
-            <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER?if_exists)}">
+            <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER!)}">
         </form>
     </div>
 </#macro>
@@ -739,7 +739,7 @@
 <#macro showVideo relation>
     <#local item = relation.child, tmp = TOOL.groupByType(item.children, "Item"),
     icon = TOOL.xpath(item,"/data/thumbnail")?default("UNDEF"), title = "${TOOL.childName(relation)}">
-    <#if tmp.discussion?exists><#local diz = TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#local diz = null></#if>
+    <#if tmp.discussion??><#local diz = TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#local diz = null></#if>
     <div class="video">
         <p class="st_nadpis">
             <a href="${relation.url}" title="${title}">${TOOL.limit(title, 45, "..")}</a>
@@ -750,14 +750,14 @@
         <p class="meta-vypis" style="text-align: left">
             ${DATE.show(item.created, "SMART")} | <@lib.showUser TOOL.createUser(item.owner)/><br>
             Zhlédnuto: <#assign reads = TOOL.getCounterValue(item,"read")>${reads}&times;
-            <#if diz?exists>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
+            <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
         </p>
     </div>
 </#macro>
 
 <#macro showDesktop desktop>
     <#local item = desktop.item, tmp = TOOL.groupByType(item.children, "Item")>
-    <#if tmp.discussion?exists><#assign diz = TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#local diz = null></#if>
+    <#if tmp.discussion??><#assign diz = TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#local diz = null></#if>
     <div class="desktop">
         <p title="${desktop.title}">${TOOL.limit(desktop.title, 28, "..")}</p>
         <a href="${desktop.url}" class="thumb">
@@ -766,7 +766,7 @@
         <p class="meta-vypis" style="text-align: left">
             ${DATE.show(item.created, "SMART")} | <@lib.showUser TOOL.createUser(item.owner)/><br>
             Zhlédnuto: <#assign reads = TOOL.getCounterValue(item,"read")>${reads}&times;
-            <#if diz?exists>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
+            <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
         </p>
     </div>
 </#macro>

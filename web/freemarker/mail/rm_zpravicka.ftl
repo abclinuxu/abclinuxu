@@ -12,7 +12,7 @@ Datum:
 
 ${TOOL.xpath(RELATION.child,"data/content")}
 
-<#if MESSAGE?exists>
+<#if MESSAGE??>
 Vzkaz od administratora:
 
 ${MESSAGE}

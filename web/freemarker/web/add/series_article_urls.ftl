@@ -15,8 +15,8 @@
         <tr>
             <td class="required" width="60">Jméno</td>
             <td>
-                <textarea name="url" class="siroka" rows="20" tabindex="1">${PARAMS.url?if_exists?html}</textarea>
-                <div class="error">${ERRORS.url?if_exists}<div>
+                <textarea name="url" class="siroka" rows="20" tabindex="1">${PARAMS.url!?html}</textarea>
+                <div class="error">${ERRORS.url!}<div>
             </td>
         </tr>
 

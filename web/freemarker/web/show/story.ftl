@@ -21,7 +21,7 @@
         <div class="s_sekce">
             <ul>
                 <#list CATEGORIES as cat>
-                    <#if cat.url?exists>
+                    <#if cat.url??>
                         <li><a href="/blog/${BLOG.subType + "/" + cat.url}">${cat.name}</a></li>
                     </#if>
                 </#list>
@@ -53,7 +53,7 @@
         </div>
     </#if>
 
-    <#if USER?exists && (USER.id==BLOG.owner || USER.hasRole("root") || USER.hasRole("blog digest admin"))>
+    <#if USER?? && (USER.id==BLOG.owner || USER.hasRole("root") || USER.hasRole("blog digest admin"))>
         <div class="s_nadpis">Správa zápisku</div>
         <div class="s_sekce">
             <ul>
@@ -81,8 +81,8 @@
                 </#if>
                 <#if USER.id==BLOG.owner>
                     <li><a href="${URL.make("/inset/"+STORY.id+"?action=addScreenshot")}">Přidej obrázek</a></li>
-                    <li><a href="${URL.noPrefix("/videa/edit/"+STORY.id+"?action=add&amp;redirect="+STORY.url?if_exists)}">Přidej video</a></li>
-                    <#if !CHILDREN.poll?exists>
+                    <li><a href="${URL.noPrefix("/videa/edit/"+STORY.id+"?action=add&amp;redirect="+STORY.url!)}">Přidej video</a></li>
+                    <#if !CHILDREN.poll??>
                         <li><a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+STORY.id)}">Vlož anketu</a></li>
                     </#if>
                 </#if>
@@ -144,7 +144,7 @@
         </div>
     </#if>
 
-    <#if LAST_DESKTOP?exists>
+    <#if LAST_DESKTOP??>
         <div class="s_nadpis">
             <a class="info" href="#">?<span class="tooltip">Poslední screenshot mého desktopu.</span></a>
             Současný desktop
@@ -175,7 +175,7 @@
 
     <div class="s_nadpis"><a href="/nej">Nej blogů na AbcLinuxu</a></div>
     <div class="s_sekce">
-        <#if VARS.recentMostReadStories?exists>
+        <#if VARS.recentMostReadStories??>
             <b>Nejčtenější za poslední měsíc</b>
             <ul>
                 <#list VARS.recentMostReadStories.entrySet() as rel>
@@ -185,7 +185,7 @@
             </ul>
         </#if>
 
-        <#if VARS.recentMostCommentedStories?exists>
+        <#if VARS.recentMostCommentedStories??>
             <b>Nejkomentovanější za poslední měsíc</b>
             <ul>
                 <#list VARS.recentMostCommentedStories.entrySet() as rel>
@@ -209,8 +209,8 @@
 <p class="meta-vypis">
     <#if ITEM.type==15>Odloženo<#else>${DATE.show(ITEM.created, "SMART")}</#if> |
     Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;
-    <#if CATEGORY?exists>|
-        <#if CATEGORY.url?exists>
+    <#if CATEGORY??>|
+        <#if CATEGORY.url??>
             <a href="/blog/${BLOG.subType + "/" + CATEGORY.url}" title="Kategorie zápisu">${CATEGORY.name}</a>
         <#else>
             ${CATEGORY.name}
@@ -230,7 +230,7 @@ ${TOOL.xpath(ITEM, "/data/content")}
 
 <@lib.showRating STORY/>
 
-<#if CHILDREN.poll?exists>
+<#if CHILDREN.poll??>
 <br />
     <h3>Anketa</h3>
     <div class="anketa">
@@ -246,25 +246,25 @@ ${TOOL.xpath(ITEM, "/data/content")}
             <#if !image.hidden>
                 <#if !wrote_section><h3>Obrázky</h3><p class="galerie"><#assign wrote_section=true></#if>
 
-                <#if image.thumbnailPath?exists>
+                <#if image.thumbnailPath??>
                     <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${ITEM.title}, obrázek ${image_index}" border="0"></a>
                 <#else>
                     <img src="${image.path}" alt="${ITEM.title}, obrázek ${image_index}">
                 </#if>
-            <#elseif USER?exists && (USER.id==BLOG.owner || TOOL.permissionsFor(USER, RELATION).canModify())>
+            <#elseif USER?? && (USER.id==BLOG.owner || TOOL.permissionsFor(USER, RELATION).canModify())>
                 <#if !wrote_section><h3>Obrázky</h3><p class="galerie"><#assign wrote_section=true></#if>
-                <li><a href="${image.path}">${image.originalFilename}</a> <#if image.thumbnailPath?exists>(<a href="${image.thumbnailPath}">náhled</a>)</#if></li>
+                <li><a href="${image.path}">${image.originalFilename}</a> <#if image.thumbnailPath??>(<a href="${image.thumbnailPath}">náhled</a>)</#if></li>
             </#if>
         </#list>
     <#if wrote_section></p></#if>
 </#if>
 
-<#if CHILDREN.video?exists>
+<#if CHILDREN.video??>
     <h3>Videa</h3>
     <#list CHILDREN.video as video>
         <div>
         <#assign showVideoManagement=false>
-        <#if USER?exists>
+        <#if USER??>
             <#if TOOL.permissionsFor(USER,video).canModify() || video.child.owner == USER.id><#assign showVideoManagement=true></#if>
         </#if>
         <@lib.showVideoPlayer video, 300, 300, showVideoManagement />
@@ -276,7 +276,7 @@ ${TOOL.xpath(ITEM, "/data/content")}
 
 <#if (ITEM.type==12)>
     <h3>Komentáře</h3>
-    <#if CHILDREN.discussion?exists>
+    <#if CHILDREN.discussion??>
         <@lib.showDiscussion CHILDREN.discussion[0]/>
     <#else>
        <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+STORY.id)}">Vložit první komentář</a>

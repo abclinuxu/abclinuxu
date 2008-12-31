@@ -1,7 +1,7 @@
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify() >
+            <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify() >
             <#assign has_mrights=true>
                 <li>
                     <a href="${URL.make("/EditCategory/"+RELATION.id+"?action=add")}">mkdir</a>,
@@ -25,7 +25,7 @@
 
 <@lib.showMessages/>
 
-<#if has_mrights?exists>
+<#if has_mrights??>
     <table>
         <tr>
             <th align="left">Typ</th>
@@ -57,7 +57,7 @@
             <th align="left">Poslední změna</th>
             <td>${DATE.show(CATEGORY.created, "SMART")}</td>
         </tr>
-        <#if GROUP?exists>
+        <#if GROUP??>
         <tr>
             <th align="left">Skupina</th>
             <td>${GROUP.title}</td>
@@ -66,9 +66,9 @@
     </table>
 </#if>
 
-<#if TOOL.xpath(CATEGORY,"data/note")?exists>
+<#if TOOL.xpath(CATEGORY,"data/note")??>
     <div style="margin: 1em">
-        ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
+        ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER!)}
     </div>
 </#if>
 

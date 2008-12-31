@@ -1,6 +1,6 @@
 <#import "../macros.ftl" as lib>
 <#assign plovouci_sloupec>
-    <#if SUBPORTAL?exists>
+    <#if SUBPORTAL??>
         <@lib.showSubportal SUBPORTAL, true/>
         <#assign counter=VARS.getSubportalCounter(SUBPORTAL)>
     </#if>
@@ -8,11 +8,11 @@
     <div class="s_sekce">
         <ul>
         <li><a href="/akce/edit/${RELATION.id}?action=add">Přidat akci</a></li>
-        <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+        <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
             <li>
                 <a href="?mode=unpublished">Čekající akce</a>
                 <span>
-                    (<#if counter?exists>${counter.WAITING_EVENTS}<#else>${VARS.counter.WAITING_EVENTS}</#if>)
+                    (<#if counter??>${counter.WAITING_EVENTS}<#else>${VARS.counter.WAITING_EVENTS}</#if>)
                 </span>
             </li>
         </#if>
@@ -27,7 +27,7 @@
                 <td colspan="2">
                   <a rel="nofollow" href="?year=${CALENDAR.prevYear}&amp;month=${CALENDAR.prevMonth}&amp;subtype=${subtype}">&laquo; <@lib.month CALENDAR.prevMonth.toString()/></a></td>
                 <td colspan="3" class="month_year">
-                    <#if !PARAMS.day?exists && PARAMS.month?exists && ""+CALENDAR.month==PARAMS.month>
+                    <#if !PARAMS.day?? && PARAMS.month?? && ""+CALENDAR.month==PARAMS.month>
                       <span class="selected">
                     <#else>
                       <span>
@@ -35,7 +35,7 @@
                         <a rel="nofollow" href="?year=${CALENDAR.year}&amp;month=${CALENDAR.month}&amp;subtype=${subtype}"><@lib.month ""+CALENDAR.month/></a>
                       </span>
 
-                    <#if !PARAMS.month?exists && !PARAMS.day?exists && PARAMS.year?exists && ""+CALENDAR.year==PARAMS.year>
+                    <#if !PARAMS.month?? && !PARAMS.day?? && PARAMS.year?? && ""+CALENDAR.year==PARAMS.year>
                       <span class="selected">
                     <#else>
                       <span>
@@ -51,10 +51,10 @@
                 <#list 1..CALENDAR.days as curday>
                     <#if (CALENDAR.emptyDays+curday)%7==1></tr><tr></#if>
                     <#assign id="UNDEF", class="UNDEF">
-                    <#if CALENDAR.today?exists && curday==CALENDAR.today>
+                    <#if CALENDAR.today?? && curday==CALENDAR.today>
                         <#assign id="today">
                     </#if>
-                    <#if PARAMS.day?exists && ""+curday==PARAMS.day>
+                    <#if PARAMS.day?? && ""+curday==PARAMS.day>
                         <#assign class="selected">
                     </#if>
                     <#if CALENDAR.eventDays[curday-1]>
@@ -96,15 +96,15 @@
 
         <div class="s_nadpis">Druh akce</div>
         <div class="s_sekce">
-            <#if PARAMS.mode?exists>
+            <#if PARAMS.mode??>
                 <#assign url="mode="+PARAMS.mode>
             <#else>
                 <#assign url="">
-                <#if PARAMS.year?exists>
+                <#if PARAMS.year??>
                     <#assign url="year="+PARAMS.year>
-                    <#if PARAMS.month?exists>
+                    <#if PARAMS.month??>
                         <#assign url=url+"&amp;month="+PARAMS.month>
-                        <#if PARAMS.day?exists>
+                        <#if PARAMS.day??>
                             <#assign url=url+"&amp;day="+PARAMS.day>
                         </#if>
                     </#if>
@@ -140,13 +140,13 @@
 <#if (ITEMS.currentPage.row > 0) >
     <#assign start=ITEMS.currentPage.row-ITEMS.pageSize><#if (start<0)><#assign start=0></#if>
     <li>
-        <a href="/akce?from=${start}&amp;count=${ITEMS.pageSize}&amp;subtype=${PARAMS.subtype?if_exists}&amp;mode=${PARAMS.mode?if_exists}">Novější akce</a>
+        <a href="/akce?from=${start}&amp;count=${ITEMS.pageSize}&amp;subtype=${PARAMS.subtype!}&amp;mode=${PARAMS.mode!}">Novější akce</a>
     </li>
 </#if>
 <#assign start=ITEMS.currentPage.row + ITEMS.pageSize>
 <#if (start < ITEMS.total) >
     <li>
-        <a href="/akce?from=${start}&amp;count=${ITEMS.pageSize}&amp;subtype=${PARAMS.subtype?if_exists}&amp;mode=${PARAMS.mode?if_exists}">Starší akce</a>
+        <a href="/akce?from=${start}&amp;count=${ITEMS.pageSize}&amp;subtype=${PARAMS.subtype!}&amp;mode=${PARAMS.mode!}">Starší akce</a>
     </li>
 </#if>
 

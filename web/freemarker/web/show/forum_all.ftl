@@ -39,13 +39,13 @@ Teprve když neuspějete, položte nový dotaz.</p>
         <#assign forum=TOOL.createRelation(rid.key)>
         <h2 class="st_nadpis"><a href="${forum.url}">${TOOL.childName(forum)}</a></h2>
         <p>
-            ${TOOL.xpath(forum.child, "//note")?if_exists}
+            ${TOOL.xpath(forum.child, "//note")!}
         </p>
     </#if>
 </#list>
 
 <#assign questions=TOOL.analyzeDiscussions(VARS.getFreshQuestions(USER))>
-<#if questions?exists>
+<#if questions??>
 	<h2>Přehled aktuálních diskusí</h2>
 
 	<table class="ds">

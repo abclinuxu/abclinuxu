@@ -19,29 +19,29 @@
             <td class="required" width="60">Heslo</td>
             <td>
                 <input type="password" name="PASSWORD" size="16" tabindex="1">
-                <div class="error">${ERRORS.PASSWORD?if_exists}</div>
+                <div class="error">${ERRORS.PASSWORD!}</div>
             </td>
         </tr>
         <tr>
             <td class="required" width="60">Jméno</td>
             <td>
-                <input type="text" name="name" value="${PARAMS.name?if_exists}" size="24" tabindex="2">
-                <div class="error">${ERRORS.name?if_exists}</div>
+                <input type="text" name="name" value="${PARAMS.name!}" size="24" tabindex="2">
+                <div class="error">${ERRORS.name!}</div>
             </td>
         </tr>
         <tr>
             <td class="required" width="60">Přezdívka</td>
             <td>
-                <input type="text" name="nick" id="nick" value="${PARAMS.nick?if_exists}" size="24" tabindex="3"
+                <input type="text" name="nick" id="nick" value="${PARAMS.nick!}" size="24" tabindex="3"
                 onChange="new Ajax.Updater('nickError', '/ajax/checkNick', {parameters: { value : $F('nick')}})">
-                <div class="error" id="nickError">${ERRORS.nick?if_exists}</div>
+                <div class="error" id="nickError">${ERRORS.nick!}</div>
             </td>
         </tr>
         <tr>
             <td width="60">Email</td>
             <td>
-                <input type="text" name="email" value="${PARAMS.email?if_exists}" size="24" tabindex="4">
-                <div class="error">${ERRORS.email?if_exists}</div>
+                <input type="text" name="email" value="${PARAMS.email!}" size="24" tabindex="4">
+                <div class="error">${ERRORS.email!}</div>
             </td>
         </tr>
         <tr>

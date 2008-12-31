@@ -13,8 +13,8 @@
         <tr>
             <td class="required">Jméno ankety</td>
             <td>
-                <input type="text" name="title" value="${PARAMS.title?if_exists}" size="40" tabindex="1">
-                <div class="error">${ERRORS.title?if_exists}</div>
+                <input type="text" name="title" value="${PARAMS.title!}" size="40" tabindex="1">
+                <div class="error">${ERRORS.title!}</div>
             </td>
         </tr>
         <tr>
@@ -22,15 +22,15 @@
             <td>
                 <p>Zde napište jména všech radio buttonů a check boxů z formulářů.
                    Každé jméno dejte na samostatný řádek.</p>
-                <textarea name="choices" cols="40" rows="4" tabindex="2">${PARAMS.choices?if_exists}</textarea>
-                <div class="error">${ERRORS.choices?if_exists}</div>
+                <textarea name="choices" cols="40" rows="4" tabindex="2">${PARAMS.choices!}</textarea>
+                <div class="error">${ERRORS.choices!}</div>
             </td>
         </tr>
         <tr>
             <td class="required" align="middle">XML definice</td>
             <td>
-                <textarea name="definition" class="siroka" rows="20" tabindex="3">${PARAMS.definition?if_exists?html}</textarea>
-                <div class="error">${ERRORS.definition?if_exists}</div>
+                <textarea name="definition" class="siroka" rows="20" tabindex="3">${PARAMS.definition!?html}</textarea>
+                <div class="error">${ERRORS.definition!}</div>
             </td>
         </tr>
         <tr>
@@ -39,7 +39,7 @@
         </tr>
     </table>
 
-    <#if PARAMS.surveyId?exists>
+    <#if PARAMS.surveyId??>
         <input type="hidden" name="action" value="edit2">
         <input type="hidden" name="surveyId" value="${PARAMS.surveyId}">
     <#else>

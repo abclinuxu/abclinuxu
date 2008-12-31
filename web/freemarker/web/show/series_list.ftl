@@ -4,7 +4,7 @@
 
 <h1>Seznam seriálů</h1>
 
-<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canCreate()>
+<#if USER?? && TOOL.permissionsFor(USER, RELATION).canCreate()>
     <p><a href="${URL.make("/serialy/edit?action=add")}">Přidej seriál</a></p>
 </#if>
 

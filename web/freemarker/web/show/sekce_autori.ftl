@@ -3,7 +3,7 @@
 <@lib.showMessages/>
 
 <h1>Autoři</h1>
-<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+<#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
     <p><a href="${URL.noPrefix("/autori/edit?action=add")}">Přidat</a></p>
 </#if>
 

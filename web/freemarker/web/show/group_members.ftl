@@ -24,11 +24,11 @@
  <input type="hidden" name="action" value="removeMembers">
  </form>
 
- <#if MEMBERS.prevPage?exists>
+ <#if MEMBERS.prevPage??>
   <a href="${URL.make("/Group?action=members&gid="+GROUP.id+"&from="+MEMBERS.prevPage.row)}">
   Předchozích ${MEMBERS.pageSize}</a>.
  </#if>
- <#if MEMBERS.nextPage?exists>
+ <#if MEMBERS.nextPage??>
   <a href="${URL.make("/Group?action=members&gid="+GROUP.id+"&from="+MEMBERS.nextPage.row)}">
   Následujících ${MEMBERS.pageSize}</a>.
  </#if>

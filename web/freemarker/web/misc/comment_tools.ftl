@@ -13,7 +13,7 @@
     můžeme udržet vysokou kvalitu AbcLinuxu.cz.
 </p>
 
-<#if USER?exists && USER.hasRole("discussion admin")>
+<#if USER?? && USER.hasRole("discussion admin")>
     <fieldset>
         <legend>Nástroje pro adminy</legend>
         <#assign author_ip = TOOL.xpath(COMMENT.data, "//author_ip")?default("UNDEFINED")>
@@ -23,7 +23,7 @@
             <a href="${URL.make("/EditDiscussion/"+relId+"?action=rm&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Smazat</a>
             <a href="${URL.make("/EditDiscussion/"+relId+"?action=censore&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Cenzura</a>
             <a href="${URL.make("/EditDiscussion/"+relId+"?action=move&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Přesunout</a>
-            <#if (COMMENT.parent?exists)>
+            <#if (COMMENT.parent??)>
                 <a href="${URL.make("/EditDiscussion/"+relId+"?action=moveUp&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id+TOOL.ticket(USER, false))}">Přesunout výše</a>
             </#if>
             <a href="${URL.make("/EditDiscussion/"+relId+"?action=toQuestion&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Osamostatnit</a>
@@ -64,7 +64,7 @@
     bez odstavců nebo použije PRE pro celý komentář. Žádosti o změnu obsahu budou zamítnuty.</li>
 </ul>
 
-<#if PARAMS.preview?exists>
+<#if PARAMS.preview??>
     <fieldset>
         <legend>Náhled</legend>
         <b>
@@ -72,7 +72,7 @@
             ${PARAMS.author}
         </b>
         <br>
-        ${TOOL.render(PARAMS.text,USER?if_exists)}
+        ${TOOL.render(PARAMS.text,USER!)}
     </fieldset>
 </#if>
 
@@ -80,45 +80,45 @@
  <table border=0 cellpadding=5 style="padding-top: 10px">
   <tr>
    <td class="required">Vaše jméno</td>
-   <#if PARAMS.author?exists>
+   <#if PARAMS.author??>
     <#assign author=PARAMS.author>
-   <#elseif USER?exists>
+   <#elseif USER??>
     <#assign author=USER.name>
    </#if>
    <td align="left">
-    <input type="text" name="author" value="${author?if_exists}" size="20" tabindex="1">
-    <span class="error">${ERRORS.author?if_exists}</span>
+    <input type="text" name="author" value="${author!}" size="20" tabindex="1">
+    <span class="error">${ERRORS.author!}</span>
    </td>
   </tr>
   <tr>
     <td class="required">Váš email</td>
-   <#if PARAMS.email?exists>
+   <#if PARAMS.email??>
     <#assign email=PARAMS.email>
-   <#elseif USER?exists>
+   <#elseif USER??>
     <#assign email=USER.email>
    </#if>
    <td align="left">
-    <input type="text" name="email" value="${email?if_exists}" size="20" tabindex="2">
-    <span class="error">${ERRORS.email?if_exists}</span>
+    <input type="text" name="email" value="${email!}" size="20" tabindex="2">
+    <span class="error">${ERRORS.email!}</span>
    </td>
   </tr>
-    <#if ! (USER?exists || USER_VERIFIED?if_exists)>
+    <#if ! (USER?? || USER_VERIFIED!)>
         <tr>
             <td class="required">Aktuální rok</td>
             <td>
-                <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}">
+                <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}">
                 <a class="info" href="#">?<span class="tooltip">Vložte aktuální rok. Jedná se o ochranu před spamboty.
                 Po úspěšném ověření se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.</span></a>
-                <span class="error">${ERRORS.antispam?if_exists}</span>
+                <span class="error">${ERRORS.antispam!}</span>
             </td>
         </tr>
     </#if>
   <!--<tr>
     <td class="required">Jméno tohoto serveru</td>
     <td>
-        <input type="text" name="antispam" value="${antispam?if_exists}" size="20" tabindex="3">
+        <input type="text" name="antispam" value="${antispam!}" size="20" tabindex="3">
         (antispamová kontrola)
-        <div class="error">${ERRORS.antispam?if_exists}</div>
+        <div class="error">${ERRORS.antispam!}</div>
     </td>
   </tr>-->
   <tr>
@@ -126,7 +126,7 @@
     <td>
         <select name="category">
             <#list ["Offtopic diskuse","Duplicitní diskuse","Návrh na cenzuru","Návrh na smazání komentáře","Oprava formátování"] as choice>
-                <option<#if PARAMS.category?if_exists==choice> selected</#if>>${choice}</option>
+                <option<#if PARAMS.category! == choice> selected</#if>>${choice}</option>
             </#list>
         </select>
     </td>
@@ -134,8 +134,8 @@
   <tr>
    <td colspan="2">
     Slovní popis<br>
-    <textarea name="text" cols="60" rows="15" tabindex="4">${PARAMS.text?if_exists?html}</textarea>
-    <span class="error">${ERRORS.text?if_exists}</span>
+    <textarea name="text" cols="60" rows="15" tabindex="4">${PARAMS.text!?html}</textarea>
+    <span class="error">${ERRORS.text!}</span>
   </td>
   </tr>
   <tr>

@@ -18,7 +18,7 @@ a 200 pixelů na výšku. Maximální velikost souboru je
             <td class="required" width="120">Heslo</td>
             <td>
                 <input type="password" name="PASSWORD" size="20" tabindex="1">
-                <div class="error">${ERRORS.PASSWORD?if_exists}</div>
+                <div class="error">${ERRORS.PASSWORD!}</div>
             </td>
         </tr>
         <#assign photo = TOOL.xpath(MANAGED,"/data/profile/photo")?default("UNDEFINED")>
@@ -35,7 +35,7 @@ a 200 pixelů na výšku. Maximální velikost souboru je
             <td width="120">Fotografie</td>
             <td>
                 <input type="file" name="photo" size="20" tabindex="2">
-                <div class="error">${ERRORS.photo?if_exists}</div>
+                <div class="error">${ERRORS.photo!}</div>
             </td>
         </tr>
         <tr>

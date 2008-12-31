@@ -23,12 +23,12 @@
 </p>
 <br />
 
-<#if PARAMS.preview?exists>
+<#if PARAMS.preview??>
     <fieldset>
         <legend>Náhled</legend>
-        <h1 style="margin-bottom: 1em;">${PREVIEW.title?if_exists}</h1>
+        <h1 style="margin-bottom: 1em;">${PREVIEW.title!}</h1>
         <div>
-            ${TOOL.render(TOOL.xpath(PREVIEW.data,"data/text")?if_exists, USER?if_exists)}
+            ${TOOL.render(TOOL.xpath(PREVIEW.data,"data/text")!, USER!)}
         </div>
     </fieldset>
 </#if>
@@ -39,8 +39,8 @@
         <tr>
             <td class="required">Otázka</td>
             <td>
-                <input tabindex="1" type="text" name="title" size="80" value="${PARAMS.title?if_exists?html}">
-                <div class="error">${ERRORS.title?if_exists}</div>
+                <input tabindex="1" type="text" name="title" size="80" value="${PARAMS.title!?html}">
+                <div class="error">${ERRORS.title!}</div>
             </td>
         </tr>
         <tr>
@@ -48,7 +48,7 @@
             <td>
                 <@lib.showError key="text"/>
                 <@rte.showFallback "text"/>
-                <textarea tabindex="2" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
+                <textarea tabindex="2" name="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea><br>
             </td>
         </tr>
         <tr>

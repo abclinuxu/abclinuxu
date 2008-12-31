@@ -33,7 +33,7 @@
                 <#if contact != "UNDEFINED">
                     ${contact}
                 <#else>
-                    <#if TOOL.xpath(who,"/data/communication/email[@valid='yes']")?exists>
+                    <#if TOOL.xpath(who,"/data/communication/email[@valid='yes']")??>
                         <form action="${URL.noPrefix("/Profile")}">
                             <input type="hidden" name="action" value="sendEmail">
                             <input type="hidden" name="uid" value="${who.id}">
@@ -63,6 +63,6 @@
     </table>
 
     <div class="bazar-ad">
-        ${TOOL.render(TOOL.xpath(AD.data,"/data/text"), USER?if_exists)}
+        ${TOOL.render(TOOL.xpath(AD.data,"/data/text"), USER!)}
     </div>
 </#macro>

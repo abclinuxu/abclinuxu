@@ -17,7 +17,7 @@
 
     <div class="s_nadpis"><a href="/nej">Nej blogů na AbcLinuxu</a></div>
     <div class="s_sekce">
-        <#if VARS.recentMostReadStories?exists>
+        <#if VARS.recentMostReadStories??>
             <b>Nejčtenější za poslední měsíc</b>
             <ul>
                 <#list VARS.recentMostReadStories.entrySet() as rel>
@@ -27,7 +27,7 @@
             </ul>
         </#if>
 
-        <#if VARS.recentMostCommentedStories?exists>
+        <#if VARS.recentMostCommentedStories??>
             <b>Nejkomentovanější za poslední měsíc</b>
             <ul>
                 <#list VARS.recentMostCommentedStories.entrySet() as rel>

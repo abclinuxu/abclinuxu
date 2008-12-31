@@ -3,8 +3,8 @@
 <@lib.showMessages/>
 
 <#assign title=ITEM.title, autor=TOOL.createUser(ITEM.owner),
-         locked = TOOL.xpath(ITEM, "//locked_by")?exists,
-         approved = TOOL.xpath(ITEM, "//approved_by")?exists,
+         locked = TOOL.xpath(ITEM, "//locked_by")??,
+         approved = TOOL.xpath(ITEM, "//approved_by")??,
          forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF")>
 
 <@lib.advertisement id="arbo-sq" />
@@ -13,7 +13,7 @@
 
 <p>
     <b>Autor:</b> <@lib.showUser autor/><br>
-    <#if CATEGORY?exists>
+    <#if CATEGORY??>
         <b>Kategorie:</b> ${CATEGORY.name}<br>
     </#if>
     <b>Datum:</b> ${DATE.show(ITEM.created,"SMART")}<br>
@@ -24,12 +24,12 @@
         <#else>
             schválení
         </#if>
-        <#if USER?exists && USER.id=RELATION.child.owner>
+        <#if USER?? && USER.id=RELATION.child.owner>
         - <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
         </#if>
         <br>
     </#if>
-    <#if USER?exists && USER.hasRole("news admin")>
+    <#if USER?? && USER.hasRole("news admin")>
         <#assign shortened=TOOL.xpath(ITEM,"data/perex")?default("UNDEFINED")>
         <#if shortened != "UNDEFINED" && RELATION.upper=37672>
             <div style="padding-left: 30pt"><strong>Perex:</strong>${shortened}</div>
@@ -58,7 +58,7 @@
 <p><b>Nástroje</b>:
 <a href="${RELATION.url?default("/zpravicky/show/"+RELATION.id)}?varianta=print" rel="nofollow">Tisk</a></p>
 
-<#if CHILDREN.discussion?exists>
+<#if CHILDREN.discussion??>
     <h3>Komentáře</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>
 <#elseif forbidDiscussion!="yes">

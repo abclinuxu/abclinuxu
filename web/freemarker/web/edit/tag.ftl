@@ -17,7 +17,7 @@
         <tr>
             <td class="required">Titulek</td>
             <td>
-                <input tabindex="1" type="text" name="title" size="30" value="${PARAMS.title?if_exists?html}">
+                <input tabindex="1" type="text" name="title" size="30" value="${PARAMS.title!?html}">
                 <@lib.showError key="title" />
             </td>
         </tr>
@@ -27,7 +27,7 @@
                 <@lib.showHelp>Id štítku, například programovani z URL /stitky/programovani</@lib.showHelp>
             </td>
             <td>
-                <input type="text" name="parent" value="${PARAMS.parent?if_exists}" tabindex="2">
+                <input type="text" name="parent" value="${PARAMS.parent!}" tabindex="2">
                 <@lib.showError key="parent" />
             </td>
         </tr>

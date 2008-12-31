@@ -7,8 +7,8 @@
 
 <h1>${TOOL.xpath(CATEGORY,"data/name")} - často kladené otázky</h1>
 
-<#if TOOL.xpath(CATEGORY,"data/note")?exists>
-    ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
+<#if TOOL.xpath(CATEGORY,"data/note")??>
+    ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER!)}
 </#if>
 
 <#if RESULT.total==0>

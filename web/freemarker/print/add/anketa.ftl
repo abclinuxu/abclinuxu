@@ -7,7 +7,7 @@
 Jsou povoleny základní HTML značky (nový řádek, odkaz).
 Můžete také povolit současné vybrání více možností.</p>
 
-<#if POLL?exists>
+<#if POLL??>
     <fieldset>
     <legend>Náhled</legend>
         <@lib.showPoll POLL/>
@@ -15,12 +15,12 @@ Můžete také povolit současné vybrání více možností.</p>
 </#if>
 
 <form action="${URL.make("/EditPoll")}" method="POST">
-    <#assign choices=PARAMS.choices?if_exists>
+    <#assign choices=PARAMS.choices!>
     <table width="100%" border=0 cellpadding=5>
         <tr>
             <td width="90" class="required">Otázka</td>
             <td>
-                <textarea name="question" cols="80" rows="3" tabindex="1">${PARAMS.question?if_exists?html}</textarea>
+                <textarea name="question" cols="80" rows="3" tabindex="1">${PARAMS.question!?html}</textarea>
                 <@lib.showError key="question" />
             </td>
         </tr>
@@ -28,7 +28,7 @@ Můžete také povolit současné vybrání více možností.</p>
             <tr>
                 <td width="90">URL</td>
                 <td>
-                    /ankety/<input type="text" name="url" size="20" value="${PARAMS.url?if_exists}" tabindex="2">
+                    /ankety/<input type="text" name="url" size="20" value="${PARAMS.url!}" tabindex="2">
                     <@lib.showError key="url" />
                 </td>
             </tr>
@@ -37,7 +37,7 @@ Můžete také povolit současné vybrání více možností.</p>
             <td class="required">Více možností</td>
             <td>
                 <select name="multichoice" tabindex="3">
-                    <#assign multi=PARAMS.multichoice?if_exists>
+                    <#assign multi=PARAMS.multichoice!>
                     <option value="yes"<#if multi=="yes"> SELECTED</#if>>Ano</option>
                     <option value="no"<#if multi!="yes"> SELECTED</#if>>Ne</option>
                 </select>

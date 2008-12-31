@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h2>Potvrzení <#if USER2?exists>sloučení<#else>odstranění</#if> uživatelů</h2>
+<h2>Potvrzení <#if USER2??>sloučení<#else>odstranění</#if> uživatelů</h2>
 
 <#macro showUser(user)>
     <table border="1">
@@ -44,16 +44,16 @@
     <tr>
         <td><@showUser USER1 /></td>
         <td align="center">---&gt;</td>
-        <td><#if USER2?exists><@showUser USER2 /><#else>/dev/null</#if></td>
+        <td><#if USER2??><@showUser USER2 /><#else>/dev/null</#if></td>
     </tr>
     <tr>
         <td></td>
         <td>
             <form action="${URL.make("/EditUser")}" method="POST">
                 <input type="hidden" name="uid1" value="${PARAMS.uid1}">
-                <input type="hidden" name="uid2" value="${PARAMS.uid2?if_exists}">
+                <input type="hidden" name="uid2" value="${PARAMS.uid2!}">
                 <input type="hidden" name="action" value="removeMerge3">
-                <input type="submit" value="Dokonči <#if USER2?exists>sloučení<#else>odstranění</#if>">
+                <input type="submit" value="Dokonči <#if USER2??>sloučení<#else>odstranění</#if>">
             </form>
         </td>
         <td></td>

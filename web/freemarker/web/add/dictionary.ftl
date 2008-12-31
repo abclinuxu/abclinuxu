@@ -20,15 +20,15 @@
     nahradí prázdné řádky značkou pro nový odstavec.
 </p>
 
-<#if PARAMS.preview?exists>
+<#if PARAMS.preview??>
     <h2>Náhled</h2>
 
     <fieldset>
         <legend>Náhled</legend>
-        <h3>${PARAMS.name?if_exists}</h3>
-        <#if PARAMS.desc?exists>
+        <h3>${PARAMS.name!}</h3>
+        <#if PARAMS.desc??>
             <div class="dict-item">
-            ${TOOL.render(PARAMS.desc,USER?if_exists)}
+            ${TOOL.render(PARAMS.desc,USER!)}
             </div>
         </#if>
     </fieldset>
@@ -39,8 +39,8 @@
         <tr>
             <td class="required">Pojem</td>
             <td>
-                <input tabindex="1" type="text" name="name" value="${PARAMS.name?if_exists}" size="30" maxlength="30" tabindex="1">
-                <div class="error">${ERRORS.name?if_exists}</div>
+                <input tabindex="1" type="text" name="name" value="${PARAMS.name!}" size="30" maxlength="30" tabindex="1">
+                <div class="error">${ERRORS.name!}</div>
             </td>
         </tr>
         <tr>
@@ -48,14 +48,14 @@
             <td>
                 <@lib.showError key="desc"/>
                 <@rte.showFallback "desc"/>
-                <textarea tabindex="2" name="desc" class="siroka" rows="20" tabindex="2">${PARAMS.desc?if_exists?html}</textarea>
+                <textarea tabindex="2" name="desc" class="siroka" rows="20" tabindex="2">${PARAMS.desc!?html}</textarea>
             </td>
         </tr>
         <tr>
             <td></td>
             <td>
                 <input tabindex="3" type="submit" name="preview" value="Náhled">
-                <#if PARAMS.preview?exists><input tabindex="4" type="submit" name="submit" value="Dokonči"></#if>
+                <#if PARAMS.preview??><input tabindex="4" type="submit" name="submit" value="Dokonči"></#if>
             </td>
         </tr>
     </table>

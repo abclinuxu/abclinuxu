@@ -42,17 +42,17 @@ pravdu, nebo byl příliš úzkostlivý.
 
   Datum:</span> ${DATE.show(THREAD.created,"CZ_FULL")}<br>
   Od:
-  <#if THREAD.author?exists>
+  <#if THREAD.author??>
    <#assign who=TOOL.createUser(THREAD.author)>
    <@lib.showUser who/><br>
   <#else>
-   ${THREAD.anonymName?if_exists}<br>
+   ${THREAD.anonymName!}<br>
   </#if>
-  Titulek: ${THREAD.title?if_exists}
+  Titulek: ${THREAD.title!}
  </div>
 
   <div class="ds_text">
-${TOOL.render(TOOL.element(THREAD.data,"//text"),USER?if_exists)}
+${TOOL.render(TOOL.element(THREAD.data,"//text"),USER!)}
   </div>
 
 <#include "../footer.ftl">

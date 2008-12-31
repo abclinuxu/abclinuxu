@@ -24,23 +24,23 @@ varianta se stejnými parametry.
         <tr>
             <td width="90">Popis</td>
             <td>
-                <textarea name="desc" rows="3" class="siroka" tabindex="1">${PARAMS.desc?if_exists?html}</textarea>
-                <div class="error">${ERRORS.desc?if_exists}</div>
+                <textarea name="desc" rows="3" class="siroka" tabindex="1">${PARAMS.desc!?html}</textarea>
+                <div class="error">${ERRORS.desc!}</div>
             </td>
         </tr>
         <tr>
             <td width="90" class="required">Štítky</td>
             <td id="tagpicker">
-                <input type="text" name="tags" id="tags" value="${PARAMS.tags?if_exists?html}" size="60" tabindex="2">
-                <div class="error">${ERRORS.tags?if_exists}</div>
+                <input type="text" name="tags" id="tags" value="${PARAMS.tags!?html}" size="60" tabindex="2">
+                <div class="error">${ERRORS.tags!}</div>
             </td>
             <script type="text/javascript">new StitkyAdvertLink();</script>
         </tr>
         <tr>
             <td width="90" class="required">Kód</td>
             <td>
-                <textarea name="htmlCode" rows="20" class="siroka" tabindex="3">${PARAMS.htmlCode?if_exists?html}</textarea>
-                <div class="error">${ERRORS.htmlCode?if_exists}</div>
+                <textarea name="htmlCode" rows="20" class="siroka" tabindex="3">${PARAMS.htmlCode!?html}</textarea>
+                <div class="error">${ERRORS.htmlCode!}</div>
             </td>
         </tr>
         <tr>

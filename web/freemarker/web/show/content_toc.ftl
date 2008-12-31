@@ -1,4 +1,4 @@
-<#if SUBPORTAL?exists>
+<#if SUBPORTAL??>
     <#import "../macros.ftl" as lib>
     <#assign plovouci_sloupec>
       <@lib.showSubportal SUBPORTAL, true/>

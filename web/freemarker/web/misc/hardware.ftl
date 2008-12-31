@@ -1,8 +1,8 @@
 <#macro showHardware(hardware)>
-    <h1>${hardware.title?if_exists}</h1>
+    <h1>${hardware.title!}</h1>
 
     <table class="hwdetail">
-        <#if TOOL.xpath(hardware,"/data/support")?exists>
+        <#if TOOL.xpath(hardware,"/data/support")??>
             <tr>
                 <td><b>Podpora:</b></td>
                 <td>
@@ -15,7 +15,7 @@
             </tr>
         </#if>
 
-        <#if TOOL.xpath(hardware,"/data/driver")?exists>
+        <#if TOOL.xpath(hardware,"/data/driver")??>
             <tr>
                 <td><b>Ovladač:</b></td>
                 <td>
@@ -40,7 +40,7 @@
             <tr>
         </#if>
 
-        <#if TOOL.xpath(hardware,"data/outdated")?exists>
+        <#if TOOL.xpath(hardware,"data/outdated")??>
             <tr>
                 <td><b>Zastaralý:</b></td>
                 <td>ano</td>
@@ -48,31 +48,31 @@
         </#if>
     </table>
 
-    <#if TOOL.xpath(hardware,"data/params")?exists>
+    <#if TOOL.xpath(hardware,"data/params")??>
         <h2>Technické parametry</h2>
         <div>
-            ${TOOL.render(TOOL.element(hardware.data,"data/params"),USER?if_exists)}
+            ${TOOL.render(TOOL.element(hardware.data,"data/params"),USER!)}
         </div>
     </#if>
 
-    <#if TOOL.xpath(hardware,"data/identification")?exists>
+    <#if TOOL.xpath(hardware,"data/identification")??>
         <h2>Identifikace pod Linuxem</h2>
         <div>
-            ${TOOL.render(TOOL.element(hardware.data,"data/identification"),USER?if_exists)}
+            ${TOOL.render(TOOL.element(hardware.data,"data/identification"),USER!)}
         </div>
     </#if>
 
-    <#if TOOL.xpath(hardware,"data/setup")?exists>
+    <#if TOOL.xpath(hardware,"data/setup")??>
         <h2>Postup zprovoznění pod Linuxem</h2>
         <div>
-            ${TOOL.render(TOOL.element(hardware.data,"data/setup"),USER?if_exists)}
+            ${TOOL.render(TOOL.element(hardware.data,"data/setup"),USER!)}
         </div>
     </#if>
 
-    <#if TOOL.xpath(hardware,"data/note")?exists>
+    <#if TOOL.xpath(hardware,"data/note")??>
         <h2>Poznámka</h2>
         <div>
-            ${TOOL.render(TOOL.element(hardware.data,"data/note"),USER?if_exists)}
+            ${TOOL.render(TOOL.element(hardware.data,"data/note"),USER!)}
         </div>
     </#if>
 </#macro>

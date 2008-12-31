@@ -37,7 +37,7 @@ Správce může upravit váš text (například jej doplnit, opravit překlep, .
 nebo změnit kategorii. V případě zamítnutí vám bude poslán email
 s vysvětlením. Teprve po schválení bude zprávička zveřejněna.</p>
 
-<#if PARAMS.preview?exists>
+<#if PARAMS.preview??>
  <h2>Náhled</h2>
  <@lib.showNews RELATION />
 <#elseif WAITING_NEWS?size gt 0>
@@ -56,39 +56,39 @@ s vysvětlením. Teprve po schválení bude zprávička zveřejněna.</p>
 <form action="${URL.make("/edit")}" method="POST" name="newsForm">
     <p>
         <span class="required">Titulek</span><br>
-        <input tabindex="1" type="text" name="title" size="40" maxlength="50" value="${PARAMS.title?if_exists?html}">
-        <div class="error">${ERRORS.title?if_exists}</div>
+        <input tabindex="1" type="text" name="title" size="40" maxlength="50" value="${PARAMS.title!?html}">
+        <div class="error">${ERRORS.title!}</div>
 
         <span class="required">Obsah</span>
         <div class="form-edit">
             <a href="javascript:insertAtCursor(document.newsForm.content, '&lt;a href=&quot;&quot;&gt;', '</a>');" id="mono" title="Vložit značku odkazu">&lt;a&gt;</a>
         </div>
-        <textarea tabindex="2" name="content" cols="60" rows="10" tabindex="1">${PARAMS.content?if_exists?html}</textarea>
-        <div class="error">${ERRORS.content?if_exists}</div>
+        <textarea tabindex="2" name="content" cols="60" rows="10" tabindex="1">${PARAMS.content!?html}</textarea>
+        <div class="error">${ERRORS.content!}</div>
     </p>
 
-    <#if USER?exists && USER.hasRole("news admin")>
+    <#if USER?? && USER.hasRole("news admin")>
         <table>
         <tr>
             <td>Datum zveřejnění:</td>
             <td>
-                <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish?if_exists}">
+                <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish!}">
                 <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
                 Formát 2005-01-25 07:12
-                <div class="error">${ERRORS.publish?if_exists}</div>
+                <div class="error">${ERRORS.publish!}</div>
             </td>
         </tr>
         <tr>
             <td>Vydat pod UID</td>
             <td>
                 <input type="text" size="5" name="uid">
-                <div class="error">${ERRORS.uid?if_exists}</div>
+                <div class="error">${ERRORS.uid!}</div>
             </td>
         </tr>
         <tr>
             <td>&nbsp;</td>
             <td>
-                <label><input type="checkbox" name="forbidDiscussions" value="yes" <#if PARAMS.forbidDiscussions?exists>checked</#if>/>Zakázat diskuzi</label>
+                <label><input type="checkbox" name="forbidDiscussions" value="yes" <#if PARAMS.forbidDiscussions??>checked</#if>/>Zakázat diskuzi</label>
             </td>
         </tr>
         </table>

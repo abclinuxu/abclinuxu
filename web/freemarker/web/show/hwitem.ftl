@@ -1,30 +1,30 @@
 <#assign who=TOOL.createUser(ITEM.owner)>
-<#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
+<#if USER?? && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")??>
     <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj záznam">
 </#if>
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <#if PARAMS.revize?exists>
+            <#if PARAMS.revize??>
                 <li>
                     <a href="${RELATION.url?default("/hardware/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
                 </li>
             <#else>
-            <#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+            <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
                 <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Přidej obrázek</a></li>
             </#if>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
                 <li><a href="${RELATION.url?default("/hardware/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
-                    <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
+                    <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}">${monitorState}</a>
                     <span title="Počet lidí, kteří sledují tento záznam">(${TOOL.getMonitorCount(ITEM.data)})</span>
                     <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při úpravě záznamu.</span></a>
                 </li>
                 <form action="/hledani"><input type="text" class="text" name="dotaz" value="${ITEM.title}">
                     <input type="submit" class="button" value="Hledej">
                 </form>
-                <#if USER?exists>
+                <#if USER??>
                     <#if TOOL.permissionsFor(USER, RELATION.upper).canModify()>
                         <hr />
                         <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Přesunout položku</a></li>
@@ -58,7 +58,7 @@
 
     <p class="galerie">
         <#list images as image>
-            <#if image.thumbnailPath?exists>
+            <#if image.thumbnailPath??>
                 <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${ITEM.title}" border="0"></a>
             <#else>
                 <img src="${image.path}" alt="${ITEM.title}">

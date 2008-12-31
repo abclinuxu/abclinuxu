@@ -4,12 +4,12 @@
 
 <#assign regs=ITEM.data.selectNodes("/data/registrations/registration")>
 
-<#if regs?exists && regs?size gt 0>
+<#if regs?? && regs?size gt 0>
     <p>
     Následující uživatelé zaregistrovali svou účast na <a href="${RELATION.url?default("/akce/"+RELATION.id)}">této akci</a>:
     </p>
 
-    <#if USER?exists>
+    <#if USER??>
         <#assign myreg=ITEM.data.selectSingleNode("/data/registrations/registration[@uid="+USER.id+"]")?default("UNDEF")>
     <#else>
         <#assign myreg="UNDEF">

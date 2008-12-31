@@ -5,7 +5,7 @@
 
 <@lib.showMessages/>
 
-<#if PREVIEW?exists>
+<#if PREVIEW??>
  <h2>Náhled softwarového záznamu</h2>
  <p>
     Prohlédněte si vzhled vašeho záznamu. Opravte chyby a zvolte tlačítko <code>Náhled</code>.
@@ -22,7 +22,7 @@
 
 <p>
    Zadejte prosím co nejpodrobnější informace o tomto softwaru. Povinné položky jsou
-   jméno<#if EDIT_MODE?if_exists> (ze kterého se vygeneruje URL)</#if> a popis.
+   jméno<#if EDIT_MODE!> (ze kterého se vygeneruje URL)</#if> a popis.
    První věta popisu se zobrazí ve výpise této sekce, proto si na
    jejím textu dejte záležet. Adresa pro stažení by neměla záviset na konkrétní verzi.
    Adresa RSS s aktualitami umožní automatické stahování novinek.
@@ -41,8 +41,8 @@
         <tr>
             <td class="required">Jméno</td>
             <td>
-                <input type="text" name="name" value="${PARAMS.name?if_exists}" size="40" tabindex="1">
-                <div class="error">${ERRORS.name?if_exists}</div>
+                <input type="text" name="name" value="${PARAMS.name!}" size="40" tabindex="1">
+                <div class="error">${ERRORS.name!}</div>
             </td>
         </tr>
 
@@ -51,31 +51,31 @@
             <td>
                 <@lib.showError key="description"/>
                 <@rte.showFallback "description"/>
-                <textarea name="description" rows="20" tabindex="2" class="siroka">${PARAMS.description?if_exists?html}</textarea>
+                <textarea name="description" rows="20" tabindex="2" class="siroka">${PARAMS.description!?html}</textarea>
             </td>
         </tr>
 
         <tr>
             <td>Adresa domovské stránky</td>
             <td>
-                <input type="text" name="homeUrl" value="${PARAMS.homeUrl?if_exists}" size="60" tabindex="3">
-                <div class="error">${ERRORS.homeUrl?if_exists}</div>
+                <input type="text" name="homeUrl" value="${PARAMS.homeUrl!}" size="60" tabindex="3">
+                <div class="error">${ERRORS.homeUrl!}</div>
             </td>
         </tr>
 
         <tr>
             <td>Adresa stránky pro stažení</td>
             <td>
-                <input type="text" name="downloadUrl" value="${PARAMS.downloadUrl?if_exists}" size="60" tabindex="4">
-                <div class="error">${ERRORS.downloadUrl?if_exists}</div>
+                <input type="text" name="downloadUrl" value="${PARAMS.downloadUrl!}" size="60" tabindex="4">
+                <div class="error">${ERRORS.downloadUrl!}</div>
             </td>
         </tr>
 
         <tr>
             <td>Adresa RSS s novinkami</td>
             <td>
-                <input type="text" name="rssUrl" value="${PARAMS.rssUrl?if_exists}" size="60" tabindex="5">
-                <div class="error">${ERRORS.rssUrl?if_exists}</div>
+                <input type="text" name="rssUrl" value="${PARAMS.rssUrl!}" size="60" tabindex="5">
+                <div class="error">${ERRORS.rssUrl!}</div>
             </td>
         </tr>
 
@@ -84,7 +84,7 @@
                 Je alternativou pro<br> tyto programy z Windows
             </td>
             <td>
-                <#if PARAMS.alternative?exists>
+                <#if PARAMS.alternative??>
                     <#list TOOL.asList(PARAMS.alternative) as alternative>
                             <input type="text" name="alternative" value="${alternative}" size="40" tabindex="6"><br/>
                     </#list>
@@ -92,7 +92,7 @@
                 <input type="text" name="alternative" value="" size="40" tabindex="6"><br/>
                 <input type="text" name="alternative" value="" size="40" tabindex="6"><br/>
                 <input type="text" name="alternative" value="" size="40" tabindex="6">
-                <div class="error">${ERRORS.alternative?if_exists}</div>
+                <div class="error">${ERRORS.alternative!}</div>
             </td>
         </tr>
 
@@ -166,8 +166,8 @@
                     <a class="info" href="#">?<span class="tooltip">Text bude zobrazen v historii dokumentu</span></a>
                 </td>
                 <td>
-                    <input tabindex="7" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr?if_exists?html}">
-                    <div class="error">${ERRORS.rev_descr?if_exists}</div>
+                    <input tabindex="7" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr!?html}">
+                    <div class="error">${ERRORS.rev_descr!}</div>
                 </td>
             </tr>
         </#if>
@@ -175,12 +175,12 @@
         <tr>
             <td width="120">&nbsp;</td>
             <td>
-                <#if PREVIEW?exists>
+                <#if PREVIEW??>
                     <input type="submit" name="preview" value="Zopakuj náhled">
                     <input type="submit" name="finish" value="Dokonči">
                 <#else>
                     <input type="submit" name="preview" value="Náhled">
-                    <#if EDIT_MODE?if_exists>
+                    <#if EDIT_MODE!>
                         <input type="submit" name="finish" value="Dokonči">
                     </#if>
                 </#if>
@@ -189,7 +189,7 @@
     </table>
 
     <input type="hidden" name="rid" value="${RELATION.id}">
-    <#if EDIT_MODE?if_exists>
+    <#if EDIT_MODE!>
         <input type="hidden" name="action" value="edit2">
     <#else>
         <input type="hidden" name="action" value="add2">

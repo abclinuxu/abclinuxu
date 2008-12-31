@@ -7,7 +7,7 @@
     </script>
 </#assign>
 
-<#if USER?exists && USER.hasRole("tag admin")>
+<#if USER?? && USER.hasRole("tag admin")>
     <#assign plovouci_sloupec>
         <div class="s_sekce">
             <ul>
@@ -30,13 +30,13 @@
 
 <p>
     Autor štítku:
-    <#if CREATOR?exists>
-        <#if CREATOR.user?exists>
+    <#if CREATOR??>
+        <#if CREATOR.user??>
             <@lib.showUser CREATOR.user/>
         <#else>
             neregistrovaný uživatel
         </#if>
-        <#if USER?exists && USER.hasRole("tag admin")>
+        <#if USER?? && USER.hasRole("tag admin")>
             (${CREATOR.ip?default("Neznámá IP")})
         </#if>
     <#else>
@@ -89,15 +89,15 @@
             <td><input type="text" size="3" value="${DOCUMENTS.pageSize}" name="count" tabindex="2"></td>
             <td>
                 <select name="orderBy" tabindex="3">
-                    <@lib.showOption4 "title","titulku",PARAMS.orderBy?if_exists/>
-                    <@lib.showOption4 "update","data poslední změny",PARAMS.orderBy?if_exists/>
-                    <@lib.showOption4 "create","data vytvoření",PARAMS.orderBy?if_exists/>
+                    <@lib.showOption4 "title","titulku",PARAMS.orderBy!/>
+                    <@lib.showOption4 "update","data poslední změny",PARAMS.orderBy!/>
+                    <@lib.showOption4 "create","data vytvoření",PARAMS.orderBy!/>
                 </select>
             </td>
             <td>
                 <select name="orderDir" tabindex="4">
-                    <@lib.showOption4 "asc","vzestupně",PARAMS.orderDir?if_exists/>
-                    <@lib.showOption4 "desc","sestupně",PARAMS.orderDir?if_exists/>
+                    <@lib.showOption4 "asc","vzestupně",PARAMS.orderDir!/>
+                    <@lib.showOption4 "desc","sestupně",PARAMS.orderDir!/>
                 </select>
             </td>
             <td><input type="submit" value="Zobrazit"></td>
@@ -105,14 +105,14 @@
     </table>
 </form>
 
-<#if DOCUMENTS.prevPage?exists>
+<#if DOCUMENTS.prevPage??>
     <a href="${URL_BEFORE_FROM}0${URL_AFTER_FROM}">0</a>
     <a href="${URL_BEFORE_FROM}${DOCUMENTS.prevPage.row}${URL_AFTER_FROM}">&lt;&lt;</a>
 <#else>
     0 &lt;&lt;
 </#if>
 ${DOCUMENTS.thisPage.row}-${DOCUMENTS.thisPage.row+DOCUMENTS.thisPage.size}
-<#if DOCUMENTS.nextPage?exists>
+<#if DOCUMENTS.nextPage??>
     <a href="${URL_BEFORE_FROM}${DOCUMENTS.nextPage.row?string["#"]}${URL_AFTER_FROM}">&gt;&gt;</a>
     <a href="${URL_BEFORE_FROM}${(DOCUMENTS.total - DOCUMENTS.pageSize)?string["#"]}${URL_AFTER_FROM}">${DOCUMENTS.total}</a>
 <#else>

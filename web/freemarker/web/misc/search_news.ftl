@@ -13,12 +13,12 @@
 
 <form action="/zpravicky/hledani" method="GET">
   <p>
-      <input type="text" name="dotaz" value="${QUERY?if_exists?html}" size="50" tabindex="1">
+      <input type="text" name="dotaz" value="${QUERY!?html}" size="50" tabindex="1">
       <input type="submit" value="Hledej" tabindex="2">
   </p>
 
   <p><b>Klíčová slova:</b> AND + OR NOT - ( ) "fráze z více slov"</p>
-  <#if ERRORS.dotaz?exists><div class="error">${ERRORS.dotaz}</div></#if>
+  <#if ERRORS.dotaz??><div class="error">${ERRORS.dotaz}</div></#if>
 
   <table>
    <#list CATEGORIES as category>
@@ -34,7 +34,7 @@
  <input type="hidden" name="type" value="zpravicka">
 </form>
 
-<#if RESULT?exists>
+<#if RESULT??>
 
     <p align="right">
         Nalezeno ${RESULT.total} objektů, zobrazuji ${RESULT.thisPage.row} - ${RESULT.thisPage.row+RESULT.thisPage.size}.
@@ -45,7 +45,7 @@
             <!--m-->
             <a href="${doc.url}" class="search_title">${doc.titulek?default(doc.url)}</a>
             <!--n-->
-            <#if doc.highlightedText?exists>
+            <#if doc.highlightedText??>
                 <p class="search_fragments">${doc.highlightedText}</p>
             </#if>
             <p class="search_details">
@@ -93,7 +93,7 @@
         ${TOOL.saveParams(PARAMS, ["orderDir","orderBy","from","count"])}
     </from>
 
-    <#if RESULT.prevPage?exists>
+    <#if RESULT.prevPage??>
         <a href="${CURRENT_URL}&amp;from=0">0</a>
         <a href="${CURRENT_URL}&amp;from=${RESULT.prevPage.row}">&lt;&lt;</a>
     <#else>
@@ -102,7 +102,7 @@
 
     ${RESULT.thisPage.row} - ${RESULT.thisPage.row + RESULT.thisPage.size}
 
-    <#if RESULT.nextPage?exists>
+    <#if RESULT.nextPage??>
         <a href="${CURRENT_URL}&amp;from=${RESULT.nextPage.row?string["#"]}">&gt;&gt;</a>
         <a href="${CURRENT_URL}&amp;from=${(RESULT.total-RESULT.pageSize)?string["#"]}">${RESULT.total}</a>
     <#else>

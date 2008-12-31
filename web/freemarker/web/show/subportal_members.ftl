@@ -7,13 +7,13 @@
 
 <#assign members = cat.getProperty("member")>
 <form action="${"/skupiny/edit/"+RELATION.id}" method="post" style="float: right">
-    <#if USER?exists && members.contains(""+USER.id)>
+    <#if USER?? && members.contains(""+USER.id)>
      <input type="submit" value="Odebrat se">
     <#else>
      <input type="submit" value="Přidat se">
     </#if>
     <input type="hidden" name="action" value="toggleMember">
-    <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER?if_exists)}">
+    <input type="hidden" name="ticket" value="${TOOL.ticketValue(USER!)}">
 </form>
 
 <ul>

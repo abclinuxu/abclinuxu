@@ -1,19 +1,19 @@
-<#if USER?exists && USER.hasRole("root")><!-- Sablona: ${TEMPLATE?default("neznama")} --></#if>
+<#if USER?? && USER.hasRole("root")><!-- Sablona: ${TEMPLATE?default("neznama")} --></#if>
 <html>
 <head>
     <title>${TITLE}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex,nofollow">
-    <#if ! css?exists || css=="UNDEF"><#assign css="/styles.css"></#if>
+    <#if ! css?? || css=="UNDEF"><#assign css="/styles.css"></#if>
     <link rel="stylesheet" type="text/css" href="${css}">
     <script type="text/javascript" src="/data/site/scripts.js"></script>
-    <#if html_header?exists>
+    <#if html_header??>
         ${html_header}
     </#if>
 </head>
 <body style="background:#fff; margin:5px">
 <#import "macros.ftl" as lib>
-<p>Portál <a href="http://www.abclinuxu.cz">AbcLinuxu</a><#if USER?exists>,
+<p>Portál <a href="http://www.abclinuxu.cz">AbcLinuxu</a><#if USER??>,
 přihlášen ${USER.name}</#if>, ${DATE.show("CZ_FULL_TXT")}
 </p>
 <!-- obsah -->

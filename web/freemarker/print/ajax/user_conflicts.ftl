@@ -1,1 +1,1 @@
-${MESSAGE?if_exists}
+${MESSAGE!}

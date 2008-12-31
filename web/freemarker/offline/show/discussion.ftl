@@ -3,8 +3,8 @@
 
 <@lib.showParents />
 
-<#assign DIZ = TOOL.createDiscussionTree(ITEM,USER?if_exists,true)>
-<#assign is_question=TOOL.xpath(ITEM,"data/title")?exists>
+<#assign DIZ = TOOL.createDiscussionTree(ITEM,USER!,true)>
+<#assign is_question=TOOL.xpath(ITEM,"data/title")??>
 
 <#if is_question>
  <h1 class="st_nadpis">Otázka</h1>

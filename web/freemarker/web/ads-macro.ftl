@@ -2,7 +2,7 @@
 
 <#macro niceAdvertisementRegexp (regexp)>
     <#list TOOL.getStandardAdRegexps().entrySet() as entry><#if entry.key==regexp>${entry.value}<#local found=true><#break></#if></#list>
-    <#if !found?exists>${regexp}</#if>
+    <#if !found??>${regexp}</#if>
 </#macro>
 
 <#macro showTagAdvertisement text, image, trackerImage = {"src":"UNDEFINED"}, cssClass = {"name":"stitek-ad"}>

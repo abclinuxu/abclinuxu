@@ -16,7 +16,7 @@
 </#if>
 </div>
 
-<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+<#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
     <p>
         <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=edit")}">Uprav seriál</a>
         <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=addArticlesUrls")}">Přidej články</a>

@@ -27,15 +27,15 @@ může být aktivní. Varianty jsou kromě míření na štítky vhodné pro arc
 reklamních kódů, které mohou být v budoucnu opět aktivovány.
 </p>
 
-<h1>${CODE.name?if_exists}</h1>
+<h1>${CODE.name!}</h1>
 <table>
 <tr>
     <td>Popis:</td>
-    <td>${CODE.description?if_exists}</td>
+    <td>${CODE.description!}</td>
 </tr>
 <tr>
     <td>Regulární výraz:</td>
-    <td><@niceAdvertisementRegexp CODE.regexp?if_exists /></code></td>
+    <td><@niceAdvertisementRegexp CODE.regexp! /></code></td>
 </tr>
 </table>
 
@@ -46,7 +46,7 @@ reklamních kódů, které mohou být v budoucnu opět aktivovány.
     <table width="100%">
         <tr>
             <td>Popis:</td>
-            <td>${variant.description?if_exists}</td>
+            <td>${variant.description!}</td>
         </tr>
         <tr>
             <td width="20%">Stav:</td>
@@ -63,7 +63,7 @@ reklamních kódů, které mohou být v budoucnu opět aktivovány.
         <tr>
             <td>Štítky:</td>
             <td>
-                <#if !variant.tags?exists || variant.tags?size==0>
+                <#if !variant.tags?? || variant.tags?size==0>
                     (žádné)
                 <#else>
                     <#list variant.tags as tag><#if tag_index gt 0>, </#if><a href="/stitky/${tag}">${tag}</a></#list>

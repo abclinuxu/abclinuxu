@@ -27,22 +27,22 @@
         <tr>
             <td width="90" class="required">Jméno</td>
             <td>
-                <input type="text" name="name" value="${PARAMS.name?if_exists?html}" size="60" tabindex="1">
-                <div class="error">${ERRORS.name?if_exists}</div>
+                <input type="text" name="name" value="${PARAMS.name!?html}" size="60" tabindex="1">
+                <div class="error">${ERRORS.name!}</div>
             </td>
         </tr>
         <tr>
             <td width="90" class="required">Identifikátor</td>
             <td>
-                <input type="text" name="newIdentifier" value="${PARAMS.newIdentifier?if_exists?html}" size="60" tabindex="2">
-                <div class="error">${ERRORS.newIdentifier?if_exists}</div>
+                <input type="text" name="newIdentifier" value="${PARAMS.newIdentifier!?html}" size="60" tabindex="2">
+                <div class="error">${ERRORS.newIdentifier!}</div>
             </td>
         </tr>
         <tr>
             <td width="90">Popis</td>
             <td>
-                <textarea name="desc" rows="3" class="siroka" tabindex="3">${PARAMS.desc?if_exists?html}</textarea>
-                <div class="error">${ERRORS.desc?if_exists}</div>
+                <textarea name="desc" rows="3" class="siroka" tabindex="3">${PARAMS.desc!?html}</textarea>
+                <div class="error">${ERRORS.desc!}</div>
             </td>
         </tr>
         <tr>

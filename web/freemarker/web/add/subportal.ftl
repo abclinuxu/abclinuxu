@@ -13,8 +13,8 @@ Při vytváření skupiny dojde k vytvoření podportálu, který má vlastní s
         <tr>
             <td class="required">Název</td>
             <td>
-                <input type="text" name="title" size="40" maxlength="50" tabindex="1" value="${PARAMS.title?if_exists?html}">
-                <div class="error">${ERRORS.title?if_exists}</div>
+                <input type="text" name="title" size="40" maxlength="50" tabindex="1" value="${PARAMS.title!?html}">
+                <div class="error">${ERRORS.title!}</div>
             </td>
         </tr>
         <tr>
@@ -31,8 +31,8 @@ Při vytváření skupiny dojde k vytvoření podportálu, který má vlastní s
                     <a href="javascript:insertAtCursor(document.portalForm.descShort, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
                 </div>
 
-                <textarea name="descShort" cols="80" rows="15" tabindex="2">${PARAMS.descShort?if_exists?html}</textarea>
-                <div class="error">${ERRORS.descShort?if_exists}</div>
+                <textarea name="descShort" cols="80" rows="15" tabindex="2">${PARAMS.descShort!?html}</textarea>
+                <div class="error">${ERRORS.descShort!}</div>
             </td>
         </tr>
         <tr>
@@ -49,8 +49,8 @@ Při vytváření skupiny dojde k vytvoření podportálu, který má vlastní s
                     <a href="javascript:insertAtCursor(document.portalForm.desc, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
                 </div>
 
-                <textarea name="desc" cols="80" rows="15" tabindex="2">${PARAMS.desc?if_exists?html}</textarea>
-                <div class="error">${ERRORS.desc?if_exists}</div>
+                <textarea name="desc" cols="80" rows="15" tabindex="2">${PARAMS.desc!?html}</textarea>
+                <div class="error">${ERRORS.desc!}</div>
             </td>
         </tr>
         <tr>
@@ -60,7 +60,7 @@ Při vytváření skupiny dojde k vytvoření podportálu, který má vlastní s
             </td>
             <td>
                 <input type="file" name="icon" size="20" tabindex="3"> Rozměry maximálně 100&times;100.
-                <div class="error">${ERRORS.icon?if_exists}</div>
+                <div class="error">${ERRORS.icon!}</div>
             </td>
         </tr>
         <#if USER.hasRole("root")>
@@ -69,7 +69,7 @@ Při vytváření skupiny dojde k vytvoření podportálu, který má vlastní s
                     &nbsp;
                 </td>
                 <td>
-                    <label><input type="checkbox" name="hideForum" value="yes" <#if PARAMS.hideForum?exists && PARAMS.hideForum=="yes">checked="checked"</#if>>Skrýt fórum</label>
+                    <label><input type="checkbox" name="hideForum" value="yes" <#if PARAMS.hideForum?? && PARAMS.hideForum=="yes">checked="checked"</#if>>Skrýt fórum</label>
                 </td>
             </tr>
         </#if>
@@ -79,8 +79,8 @@ Při vytváření skupiny dojde k vytvoření podportálu, který má vlastní s
                 <a class="info" href="#">?<span class="tooltip">Počáteční člen administrátorské skupiny.</span></a>
             </td>
             <td>
-                <input type="text" name="admin" size="40" maxlength="50" tabindex="4" value="${PARAMS.admin?if_exists}">
-                <div class="error">${ERRORS.admin?if_exists}</div>
+                <input type="text" name="admin" size="40" maxlength="50" tabindex="4" value="${PARAMS.admin!}">
+                <div class="error">${ERRORS.admin!}</div>
             </td>
         </tr>
         <tr>
@@ -89,8 +89,8 @@ Při vytváření skupiny dojde k vytvoření podportálu, který má vlastní s
                 <a class="info" href="#">?<span class="tooltip">Například /gentoo.</span></a>
             </td>
             <td>
-                <input type="text" name="url" size="40" maxlength="50" tabindex="5" value="${PARAMS.url?if_exists}">
-                <div class="error">${ERRORS.url?if_exists}</div>
+                <input type="text" name="url" size="40" maxlength="50" tabindex="5" value="${PARAMS.url!}">
+                <div class="error">${ERRORS.url!}</div>
             </td>
         </tr>
         <tr>

@@ -38,16 +38,16 @@
 <td><input type="submit" value="Zobrazit"></td>
 </tr></table>
 <input type="hidden" name="type" value="${PARAMS.type}">
-<#if PARAMS.uid?exists><input type="hidden" name="uid" value="${PARAMS.uid}"></#if>
+<#if PARAMS.uid??><input type="hidden" name="uid" value="${PARAMS.uid}"></#if>
 </form>
 
-<#if FOUND.prevPage?exists>
+<#if FOUND.prevPage??>
  <a href="${URL_BEFORE_FROM}0${URL_AFTER_FROM}">0</a>
  <a href="${URL_BEFORE_FROM}${FOUND.prevPage.row}${URL_AFTER_FROM}">&lt;&lt;</a>
 <#else>0 &lt;&lt;
 </#if>
 ${FOUND.thisPage.row}-${FOUND.thisPage.row+FOUND.thisPage.size}
-<#if FOUND.nextPage?exists>
+<#if FOUND.nextPage??>
  <a href="${URL_BEFORE_FROM}${FOUND.nextPage.row?string["#"]}${URL_AFTER_FROM}">&gt;&gt;</a>
  <a href="${URL_BEFORE_FROM}${(FOUND.total - FOUND.pageSize)?string["#"]}${URL_AFTER_FROM}">${FOUND.total}</a>
 <#else>&gt;&gt; ${FOUND.total}

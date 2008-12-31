@@ -1,5 +1,5 @@
 <#import "../macros.ftl" as lib>
-<#if SUBPORTAL?exists>
+<#if SUBPORTAL??>
     <#assign plovouci_sloupec>
         <@lib.showSubportal SUBPORTAL, true/>
     </#assign>
@@ -12,7 +12,7 @@
          forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF"),
          inPool=RELATION.upper==8082>
 
-<#if PAGES?exists && PAGE?exists>
+<#if PAGES?? && PAGE??>
     <h1>${PAGES[PAGE]}</h1>
 <#else>
     <h1>${ITEM.title}</h1>
@@ -44,12 +44,12 @@
     </h2>
 </#if>
 
-<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
+<#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
     <p>
         <a href="${URL.noPrefix("/clanky/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
 
         <#if autors?size gt 0>
-            <#if SERIES?exists>
+            <#if SERIES??>
                 <#if ! inPool>
                     <a href="${URL.noPrefix("/serialy/edit/"+SERIES.series.id+"?action=rmArticle&amp;articleRid="+RELATION.id+TOOL.ticket(USER, false))}">Vyřadit ze seriálu</a>
                 </#if>
@@ -60,7 +60,7 @@
                     <a href="${URL.noPrefix("/serialy/edit?action=addArticle&amp;articleRid="+RELATION.id)}">Přiřadit k seriálu</a>
                 </#if>
             </#if>
-            <#if !CHILDREN.royalties?exists>
+            <#if !CHILDREN.royalties??>
                 <b><a class="error" href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vložit honorář</a></b>
             <#else>
                 <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vložit honorář</a>
@@ -102,28 +102,28 @@
 
 <@lib.advertisement id="arbo-sq" />
 
-<#assign items = TOOL.processArticle( TOOL.render(TEXT,USER?if_exists) )>
+<#assign items = TOOL.processArticle( TOOL.render(TEXT,USER!) )>
 <#list items as item>
     <#if item.type == "text">${item.value}
     <#elseif item.type == "poll">
         <#assign index = item.value?eval>
         <a id="inlinepoll-${index}"></a>
         <#assign url = RELATION.url?default("/clanky/show/"+RELATION.id)>
-        <#if PAGE?exists><#assign url=url+"?page="+PAGE></#if>
+        <#if PAGE??><#assign url=url+"?page="+PAGE></#if>
         <@lib.showPoll CHILDREN.poll[index], url+"#inlinepoll-"+index />
         <#assign dummy=CHILDREN.poll.set(index, "UNDEF")>
     <#elseif item.type=="video">
         <#assign index = item.value?eval>
         <div id="inlinevideo-${index}" style="text-align: center">
             <b>${TOOL.childName(CHILDREN.video[index])}</b>
-            <@lib.showVideoPlayer CHILDREN.video[index], 300, 300, (USER?exists && TOOL.permissionsFor(USER,RELATION).canModify()) />
+            <@lib.showVideoPlayer CHILDREN.video[index], 300, 300, (USER?? && TOOL.permissionsFor(USER,RELATION).canModify()) />
         </div>
         <#assign dummy=CHILDREN.video.set(index, "UNDEF")>
     </#if>
 </#list>
 
-<#if USER?exists && TOOL.permissionsFor(USER, RELATION).canModify()>
-    <#if CHILDREN.poll?exists>
+<#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
+    <#if CHILDREN.poll??>
         <#assign wrote_pollhdr=false>
         <#list CHILDREN.poll as poll>
             <#if poll!="UNDEF">
@@ -138,7 +138,7 @@
             </#if>
         </#list>
     </#if>
-    <#if CHILDREN.video?exists>
+    <#if CHILDREN.video??>
         <#assign wrote_hdr=false>
         <#list CHILDREN.video as video>
             <#if video!="UNDEF">
@@ -155,7 +155,7 @@
     </#if>
 </#if>
 
-<#if PAGES?exists>
+<#if PAGES??>
     <div class="cl_perex souvisejici">
         <h3>Jednotlivé podstránky článku</h3>
         <div class="s_sekce">
@@ -176,14 +176,14 @@
 
 <div class="cl_perex souvisejici">
     <div style="float: right">
-        <#if VARS.recentMostReadArticles?exists>
+        <#if VARS.recentMostReadArticles??>
             <h3>Nejčtenější články posledního měsíce</h3>
                 <#list VARS.recentMostReadArticles.entrySet() as rel>
                     <#if rel_index gt 2><#break></#if>
                     <a href="${rel.key.url}">${TOOL.childName(rel.key)}</a><br />
                 </#list>
         </#if>
-        <#if VARS.recentMostCommentedArticles?exists>
+        <#if VARS.recentMostCommentedArticles??>
             <h3>Nejkomentovanější články posledního měsíce</h3>
                 <#list VARS.recentMostCommentedArticles.entrySet() as rel>
                     <#if rel_index gt 2><#break></#if>
@@ -193,31 +193,31 @@
         </#if>
     </div>
 
-    <#if SERIES?exists>
+    <#if SERIES??>
         <h3>Seriál <a href="${SERIES.series.url}" title="${TOOL.childName(SERIES.series)}">${TOOL.childName(SERIES.series)}</a> (dílů: ${SERIES.total})</h3>
-        <#if SERIES.first?exists><a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a> (první díl)<br /></#if>
-        <#if SERIES.previous?exists>
+        <#if SERIES.first??><a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a> (první díl)<br /></#if>
+        <#if SERIES.previous??>
             &lt;&mdash;&laquo; <a href="${SERIES.previous.url}">${TOOL.childName(SERIES.previous)}</a><br />
         </#if>
-        <#if SERIES.next?exists>
+        <#if SERIES.next??>
             &raquo;&mdash;&gt; <a href="${SERIES.next.url}">${TOOL.childName(SERIES.next)}</a><br />
         </#if>
         <#if (SERIES.total > 1)><a href="${SERIES.last.url}">${TOOL.childName(SERIES.last)}</a> (poslední díl)<br /></#if>
     </#if>
 
-    <#if RELATED?exists>
+    <#if RELATED??>
         <h3>Související články</h3>
         <#list RELATED as link>
-            <a href="${link.url}">${link.title}</a> ${link.description?if_exists}<br />
+            <a href="${link.url}">${link.title}</a> ${link.description!}<br />
         </#list>
     </#if>
-    <#if RESOURCES?exists>
+    <#if RESOURCES??>
         <h3>Odkazy a zdroje</h3>
         <#list RESOURCES as link>
-            <a href="${link.url}" rel="nofollow">${link.title}</a> ${link.description?if_exists}<br />
+            <a href="${link.url}" rel="nofollow">${link.title}</a> ${link.description!}<br />
         </#list>
     </#if>
-    <#if SAME_SECTION_ARTICLES?exists>
+    <#if SAME_SECTION_ARTICLES??>
         <h3>Další články z této rubriky</h3>
         <#list SAME_SECTION_ARTICLES as relation>
             <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.childName(relation)}</a>
@@ -259,7 +259,7 @@
 
 <@lib.advertisement id="obsah-box" />
 
-<#if CHILDREN.discussion?exists>
+<#if CHILDREN.discussion??>
     <h3>Komentáře</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>
 <#elseif forbidDiscussion!="yes">

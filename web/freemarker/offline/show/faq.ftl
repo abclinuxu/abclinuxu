@@ -6,10 +6,10 @@
 <h1 style="margin-bottom:1em;">${TOOL.xpath(ITEM, "/data/title")}</h1>
 
 <div>
-    ${TOOL.render(TOOL.xpath(ITEM.data,"data/text"), USER?if_exists)}
+    ${TOOL.render(TOOL.xpath(ITEM.data,"data/text"), USER!)}
 </div>
 
-<#if XML.data.links[0]?exists>
+<#if XML.data.links[0]??>
 <div class="cl_perex">
   <h3>Související odkazy</h3>
     <div class="s_sekce">
