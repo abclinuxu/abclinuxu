@@ -32,7 +32,7 @@
                     nebo <a href="/Profile?action=login">se přihlašte</a>.
                 </td>
             </tr>
-            <#if ! USER_VERIFIED!>
+            <#if ! USER_VERIFIED!false>
                 <tr>
                     <td class="required">Aktuální rok</td>
                     <td>

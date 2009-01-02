@@ -22,7 +22,7 @@
 
 <p>
    Zadejte prosím co nejpodrobnější informace o tomto softwaru. Povinné položky jsou
-   jméno<#if EDIT_MODE!> (ze kterého se vygeneruje URL)</#if> a popis.
+   jméno<#if EDIT_MODE!false> (ze kterého se vygeneruje URL)</#if> a popis.
    První věta popisu se zobrazí ve výpise této sekce, proto si na
    jejím textu dejte záležet. Adresa pro stažení by neměla záviset na konkrétní verzi.
    Adresa RSS s aktualitami umožní automatické stahování novinek.
@@ -180,7 +180,7 @@
                     <input type="submit" name="finish" value="Dokonči">
                 <#else>
                     <input type="submit" name="preview" value="Náhled">
-                    <#if EDIT_MODE!>
+                    <#if EDIT_MODE!false>
                         <input type="submit" name="finish" value="Dokonči">
                     </#if>
                 </#if>
@@ -189,7 +189,7 @@
     </table>
 
     <input type="hidden" name="rid" value="${RELATION.id}">
-    <#if EDIT_MODE!>
+    <#if EDIT_MODE!false>
         <input type="hidden" name="action" value="edit2">
     <#else>
         <input type="hidden" name="action" value="add2">

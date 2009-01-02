@@ -174,7 +174,7 @@
 <div class="profile_list reverse_anchor">
     <h2>Ostatní</h2>
     <ul>
-      <#if TOOL.xpath(PROFILE,"/data/profile/gpg")!"UNDEF"!="UNDEF">
+      <#if (TOOL.xpath(PROFILE,"/data/profile/gpg")!"UNDEF") != "UNDEF">
         <li><a href="/lide/${PROFILE.login}/gpg">Můj veřejný GPG klíč</a></li>
       </#if>
         <li><a href="/lide/${PROFILE.login}/zalozky">Moje záložky</a></li>

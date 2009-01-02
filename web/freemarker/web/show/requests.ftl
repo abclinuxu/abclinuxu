@@ -110,7 +110,7 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
         </select>
     </td>
   </tr>
-    <#if ! (USER?? || USER_VERIFIED!)>
+    <#if ! (USER?? || USER_VERIFIED!false)>
         <tr>
             <td class="required">Aktuální rok</td>
             <td>
