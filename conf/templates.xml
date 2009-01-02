@@ -787,7 +787,7 @@
         </action>
     </servlet>
 
-    <servlet name="Screenshot">
+    <servlet name="Desktop">
         <action name="show" content="/show/desktop.ftl">
             <var name="TITLE" value='${ITEM.title} - desktop' type="Lazy"/>
         </action>

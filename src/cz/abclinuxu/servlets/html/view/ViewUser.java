@@ -26,7 +26,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.data.view.Screenshot;
+import cz.abclinuxu.data.view.Desktop;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.html.edit.EditBookmarks;
 import cz.abclinuxu.utils.InstanceUtils;
@@ -187,7 +187,7 @@ public class ViewUser implements AbcAction {
 
         // find user's favourite desktop screenshots
         filters = Collections.singletonMap(Constants.PROPERTY_FAVOURITED_BY, property);
-        List<Relation> desktops = sqlTool.findItemRelationsWithTypeWithFilters(Item.SCREENSHOT, null, filters);
+        List<Relation> desktops = sqlTool.findItemRelationsWithTypeWithFilters(Item.DESKTOP, null, filters);
         Tools.syncList(desktops);
         env.put(VAR_DESKTOPS, desktops);
 
@@ -323,11 +323,11 @@ public class ViewUser implements AbcAction {
         SQLTool sqlTool = SQLTool.getInstance();
         Qualifier[] qualifiers = new Qualifier[]{new CompareCondition(Field.OWNER, Operation.EQUAL, user),
                                                  Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 1)};
-        List<Relation> desktops = sqlTool.findItemRelationsWithType(Item.SCREENSHOT, qualifiers);
+        List<Relation> desktops = sqlTool.findItemRelationsWithType(Item.DESKTOP, qualifiers);
         if (! desktops.isEmpty()) {
             Relation desktopRelation = desktops.get(0);
             Tools.sync(desktopRelation.getChild());
-            env.put(VAR_LAST_DESKTOP, new Screenshot(desktopRelation));
+            env.put(VAR_LAST_DESKTOP, new Desktop(desktopRelation));
         }
 
     }

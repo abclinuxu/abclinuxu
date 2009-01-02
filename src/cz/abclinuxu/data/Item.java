@@ -72,7 +72,7 @@ public class Item extends GenericDataObject {
     /** personality */
     public static final int PERSONALITY = 23;
     /** screenshot */
-    public static final int SCREENSHOT = 24;
+    public static final int DESKTOP = 24;
     /** generic type for imported data, its content depends on data source */
     public static final int IMPORT = 25;
 	/** an event in the calendar of Linux events */
@@ -121,7 +121,7 @@ public class Item extends GenericDataObject {
             case TRIVIA: sb.append("Trivia");break;
             case SERIES: sb.append("Series");break;
             case PERSONALITY: sb.append("Personality");break;
-            case SCREENSHOT: sb.append("Screenshot");break;
+            case DESKTOP: sb.append("Desktop");break;
             case IMPORT: sb.append("Import");break;
             case UNPUBLISHED_EVENT:
             case EVENT: sb.append("Event"); break;
@@ -154,7 +154,7 @@ public class Item extends GenericDataObject {
             case PERSONALITY: return Constants.TYPE_PERSONALITY;
             case SERIES: return Constants.TYPE_SERIES;
             case SOFTWARE: return Constants.TYPE_SOFTWARE;
-            case SCREENSHOT: return Constants.TYPE_SCREENSHOT;
+            case DESKTOP: return Constants.TYPE_SCREENSHOT;
             case EVENT: return Constants.TYPE_EVENT;
             case VIDEO: return Constants.TYPE_VIDEO;
             default: return Constants.TYPE_OTHER;

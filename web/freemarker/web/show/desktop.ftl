@@ -36,6 +36,13 @@
     </a>
 </div>
 
+<#assign themeUrl=TOOL.xpath(ITEM, "/data/theme_url")!"UNDEFINED">
+<#if themeUrl != "UNDEFINED">
+    <p>
+        Adresa tématu či pozadí: <a href="${themeUrl}">${themeUrl}</a>
+    </p>
+</#if>
+
 <#assign desc=TOOL.xpath(ITEM, "/data/description")!"UNDEFINED">
 <#if desc != "UNDEFINED">
     <p class="popis">${desc}</p>

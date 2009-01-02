@@ -228,8 +228,8 @@ public class ShowObject implements AbcAction {
                 return ViewTOC.show(request, env);
             case Item.PERSONALITY:
                 return ViewPersonality.processPersonality(request, relation, env);
-            case Item.SCREENSHOT:
-                return ViewScreenshot.processItem(request, relation, env);
+            case Item.DESKTOP:
+                return ViewDesktop.processItem(request, relation, env);
 			case Item.EVENT:
             case Item.UNPUBLISHED_EVENT:
 				return ViewEvent.processItem(request, relation, env);

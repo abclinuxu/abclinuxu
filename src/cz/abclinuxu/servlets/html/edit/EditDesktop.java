@@ -31,7 +31,7 @@ import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.html.view.ViewScreenshot;
+import cz.abclinuxu.servlets.html.view.ViewDesktop;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.URLManager;
@@ -69,13 +69,14 @@ import java.awt.image.BufferedImage;
  * @author literakl
  * @since 17.11.2007
  */
-public class EditScreenshot implements AbcAction {
-    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditScreenshot.class);
+public class EditDesktop implements AbcAction {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditDesktop.class);
 
     public static final String PARAM_RELATION = "rid";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_SCREENSHOT = "screenshot";
     public static final String PARAM_DESCRIPTION = "desc";
+    public static final String PARAM_THEME_URL = "theme";
 
     public static final String VAR_RELATION = "RELATION";
 
@@ -90,7 +91,7 @@ public class EditScreenshot implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
-		Relation parent = new Relation(Constants.REL_SCREENSHOTS);
+		Relation parent = new Relation(Constants.REL_DESKTOPS);
 
         if (action == null)
             throw new MissingArgumentException("Chybí parametr action!");
@@ -108,14 +109,14 @@ public class EditScreenshot implements AbcAction {
 			if (!Tools.permissionsFor(user, parent).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-            return FMTemplateSelector.select("Screenshot", "add", env, request);
+            return FMTemplateSelector.select("Desktop", "add", env, request);
 		}
 
         if (action.equals(ACTION_ADD_STEP2)) {
 			if (!Tools.permissionsFor(user, parent).canCreate())
 				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-            ActionProtector.ensureContract(request, EditScreenshot.class, true, false, true, false);
+            ActionProtector.ensureContract(request, EditDesktop.class, true, false, true, false);
             return actionAddStep2(request, response, env, true);
         }
 
@@ -126,12 +127,11 @@ public class EditScreenshot implements AbcAction {
         env.put(VAR_RELATION, relation);
 
         if (ACTION_I_LIKE.equals(action)) {
-            ActionProtector.ensureContract(request, EditScreenshot.class, true, false, false, true);
-            return actionILike(request, response, env);
+            ActionProtector.ensureContract(request, EditDesktop.class, true, false, false, true);
+            return actionILike(response, env);
         }
 
-        boolean allowed = false;
-		allowed |= Tools.permissionsFor(user, relation).canModify();
+        boolean allowed = Tools.permissionsFor(user, relation).canModify();
         allowed |= ((Item)relation.getChild()).getOwner() == user.getId();
         if (! allowed)
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
@@ -140,7 +140,7 @@ public class EditScreenshot implements AbcAction {
             return actionEdit(request, env);
 
         if (action.equals(ACTION_EDIT_STEP2)) {
-            ActionProtector.ensureContract(request, EditScreenshot.class, true, true, true, false);
+            ActionProtector.ensureContract(request, EditDesktop.class, true, true, true, false);
             return actionEdit2(request, response, env);
         }
 
@@ -152,7 +152,7 @@ public class EditScreenshot implements AbcAction {
         }
 
         if (action.equals(ACTION_REMOVE_STEP2)) {
-            ActionProtector.ensureContract(request, ViewScreenshot.class, true, false, false, true);
+            ActionProtector.ensureContract(request, ViewDesktop.class, true, false, false, true);
             return actionRemoveStep2(response, env);
         }
 
@@ -163,13 +163,13 @@ public class EditScreenshot implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
-		Relation parent = new Relation(Constants.REL_SCREENSHOTS);
+		Relation parent = new Relation(Constants.REL_DESKTOPS);
 
 		Tools.sync(parent);
 
         Document documentItem = DocumentHelper.createDocument();
         Element root = documentItem.addElement("data");
-        Item item = new Item(0, Item.SCREENSHOT);
+        Item item = new Item(0, Item.DESKTOP);
         item.setData(documentItem);
         item.setOwner(user.getId());
 		item.setGroup( ((Category) parent.getChild()).getGroup() );
@@ -178,10 +178,11 @@ public class EditScreenshot implements AbcAction {
 
         boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root, env);
+        canContinue &= setThemeUrl(params, root, env);
         canContinue &= checkImage(params, env);
         canContinue &= setURL(relation, user);
         if (!canContinue)
-            return FMTemplateSelector.select("Screenshot", "add", env, request);
+            return FMTemplateSelector.select("Desktop", "add", env, request);
 
         persistence.create(item);
         persistence.create(relation);
@@ -200,7 +201,7 @@ public class EditScreenshot implements AbcAction {
         EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
         FeedGenerator.updateScreenshots();
-        VariableFetcher.getInstance().refreshScreenshots();
+        VariableFetcher.getInstance().refreshDesktops();
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -220,8 +221,11 @@ public class EditScreenshot implements AbcAction {
         Node desc = document.selectSingleNode("data/description");
         if (desc != null)
             params.put(PARAM_DESCRIPTION, desc.getText());
+        desc = document.selectSingleNode("data/theme_url");
+        if (desc != null)
+            params.put(PARAM_THEME_URL, desc.getText());
 
-        return FMTemplateSelector.select("Screenshot", "edit", env, request);
+        return FMTemplateSelector.select("Desktop", "edit", env, request);
     }
 
     protected String actionEdit2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -234,14 +238,15 @@ public class EditScreenshot implements AbcAction {
 
         boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root, env);
+        canContinue &= setThemeUrl(params, root, env);
 
         if (!canContinue)
-            return FMTemplateSelector.select("Screenshot", "edit", env, request);
+            return FMTemplateSelector.select("Desktop", "edit", env, request);
 
         persistence.update(item);
 
         FeedGenerator.updateScreenshots();
-        VariableFetcher.getInstance().refreshScreenshots();
+        VariableFetcher.getInstance().refreshDesktops();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -258,14 +263,14 @@ public class EditScreenshot implements AbcAction {
         AdminLogger.logEvent(user, "  remove | screenshot " + relation.getUrl());
 
         FeedGenerator.updateScreenshots();
-        VariableFetcher.getInstance().refreshScreenshots();
+        VariableFetcher.getInstance().refreshDesktops();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, UrlUtils.PREFIX_SCREENSHOTS);
         return null;
     }
 
-    public String actionILike(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String actionILike(HttpServletResponse response, Map env) throws Exception {
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
         User user = (User) env.get(Constants.VAR_USER);
@@ -314,9 +319,9 @@ public class EditScreenshot implements AbcAction {
     }
 
     /**
-     * Updates explaination from parameters. Changes are not synchronized with persistence.
+     * Updates explanation from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param root root element of record to be updated
+     * @param root root element of item to be updated
      * @return false, if there is a major error.
      */
     private boolean setDescription(Map params, Element root, Map env) {
@@ -342,6 +347,30 @@ public class EditScreenshot implements AbcAction {
             ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
             return false;
         }
+    }
+
+    /**
+     * Updates theme url from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param root root element of item to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setThemeUrl(Map params, Element root, Map env) {
+        String tmp = (String) params.get(PARAM_THEME_URL);
+        tmp = Misc.filterDangerousCharacters(tmp);
+        if (tmp != null && tmp.length() > 0) {
+            if (tmp.indexOf('<') != -1) {
+                ServletUtils.addError(PARAM_THEME_URL, "HTML značky nejsou povoleny v URL!", env, null);
+                return false;
+            }
+            Element element = DocumentHelper.makeElement(root, "theme_url");
+            element.setText(tmp);
+        } else {
+            Element element = root.element("theme_url");
+            if (element != null)
+                element.detach();
+        }
+        return true;
     }
 
     /**

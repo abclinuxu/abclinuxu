@@ -470,7 +470,7 @@ public class ViewBlog implements AbcAction, Configurable {
 
         int total = sqlTool.countCategoryRelationsWithType(Category.BLOG);
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-        int pageSize = Misc.getPageSize(40, 100, env, "/data/settings/forum_size");
+        int pageSize = Misc.getDefaultPageSize(env);
 
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, pageSize)};
         List blogs = sqlTool.findCategoryRelationsWithType(Category.BLOG, qualifiers);

@@ -1,8 +1,8 @@
-<#import "../ads-macro.ftl" as lib>
+<#import "../ads-macro.ftl" as adLib>
 
  <#assign plovouci_sloupec>
 
-    <@lib.advertisement id="ps-upoutavka" />
+    <@adLib.advertisement id="ps-upoutavka" />
 
     <#assign EVENTS=VARS.getFreshEvents(USER!)>
     <div class="s_nadpis">
@@ -21,28 +21,28 @@
                     <#assign toDate=DATE.show(rel.child.date1, "CZ_DM")>
                     <#if toDate!=date><#assign date=date+"-"+toDate></#if>
                  </#if>
-                <a href="${rel.url?default("/akce/show/"+rel.id)}">${rel.child.title}</a> <span>(${date})</span>
+                <a href="${rel.url!("/akce/show/"+rel.id)}">${rel.child.title}</a> <span>(${date})</span>
              </li>
         </#list>
         </ul>
     </div>
 
-    <@lib.advertisement id="arbo-sq" />
-    <@lib.advertisement id="oksystem" />
-    <@lib.advertisement id="ps-boxik1" />
-    <@lib.advertisement id="ps-boxik2" />
-    <@lib.advertisement id="ps-boxik3" />
-    <@lib.advertisement id="ps-boxik4" />
-    <@lib.advertisement id="ps-boxik5" />
-    <@lib.advertisement id="cvonline" />
+    <@adLib.advertisement id="arbo-sq" />
+    <@adLib.advertisement id="oksystem" />
+    <@adLib.advertisement id="ps-boxik1" />
+    <@adLib.advertisement id="ps-boxik2" />
+    <@adLib.advertisement id="ps-boxik3" />
+    <@adLib.advertisement id="ps-boxik4" />
+    <@adLib.advertisement id="ps-boxik5" />
+    <@adLib.advertisement id="cvonline" />
 
-    <#--<center><@lib.advertisement id="arbo-sq" /></center>-->
+    <#--<center><@adLib.advertisement id="arbo-sq" /></center>-->
 
 </#assign>
 
 <#include "../header.ftl">
 
-<@lib.advertisement id="zprava-hp" />
+<@adLib.advertisement id="zprava-hp" />
 
 <@lib.showMessages/>
 
@@ -53,12 +53,12 @@
         <@lib.showArticle rel, "CZ_DM", "CZ_SHORT"/>
         <hr />
         <#if rel_index==1>
-          <@lib.advertisement id="itbiz-box" />
+          <@adLib.advertisement id="itbiz-box" />
         </#if>
     </#list>
 
     <div class="st_vpravo">
-        <a href="/History?type=articles&amp;from=${ARTICLES?size}&amp;count=10">Starší články</a>
+        <a href="/History?type=articles&amp;from=${ARTICLES?size}&amp;count=${SYSTEM_CONFIG.getSectionArticleCount()}">Starší články</a>
     </div>
 </#if>
 
@@ -66,7 +66,7 @@
 
 <#assign single_mode=false>
 <#if USER??>
-    <#if TOOL.xpath(USER, "/data/profile/forum_mode")?default("")=="single">
+    <#if TOOL.xpath(USER, "/data/profile/forum_mode")!""=="single">
         <#assign single_mode=true>
     </#if>
     <small>
@@ -100,8 +100,7 @@
   <#if STORIES?size%2==1><#assign half=half+1></#if>
     <div class="ramec">
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Vlastní blog si po přihlášení
-            můžete založit v nastavení svého profilu</span></a>
+          <@lib.showHelp>Vlastní blog si po přihlášení můžete založit v nastavení svého profilu</@lib.showHelp>
         <a href="/blog">Blogy na abclinuxu.cz</a>,
         <a href="/blog/souhrn">stručnější souhrn</a>,
         <a href="/blog/vyber">výběr</a>
@@ -142,12 +141,12 @@
     <#if TOOL.screenshotsFor(story)?size gt 0><#if tooltip!=""><#local tooltip=tooltip+", "></#if><#local signs=signs+", O", tooltip=tooltip+"obrázek"></#if>
     <#if CHILDREN.video??><#if tooltip!=""><#local tooltip=tooltip+", "></#if><#local signs=signs+", V", tooltip=tooltip+"video"></#if>
 
-    <a href="${url}" title="${author.nick?default(author.name)?html}<#if title!="UNDEF">, ${title}</#if>">${story.title}</a>
+    <a href="${url}" title="${author.nick!author.name?html}<#if title!="UNDEF">, ${title}</#if>">${story.title}</a>
     <span title="Počet&nbsp;komentářů<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if><#if tooltip!=""> [${tooltip}]</#if>">
         (${diz.responseCount}<@lib.markNewComments diz/>${signs})
     </span>
     <#if (story.getProperty("digest")?size > 0)>
-        <img src="/ikony/digest.png" class="blog_digest" alt="Digest blog" title="Kvalitní zápisek vybraný do digestu">
+        <img src="/images/site2/digest.png" class="blog_digest" alt="Digest blog" title="Kvalitní zápisek vybraný do digestu">
     </#if>
 </#macro>
 
@@ -206,7 +205,7 @@
         <div class="s_sekce">
             <ul>
             <#list HARDWARE as rel>
-                 <li><a href="${rel.url?default("/hardware/show/"+rel.id)}">${rel.child.title}</a></li>
+                 <li><a href="${rel.url!"/hardware/show/"+rel.id}">${rel.child.title}</a></li>
             </#list>
             </ul>
             <span class="s_sekce_dalsi"><a href="/History?type=hardware">další&nbsp;&raquo;</a></span>
@@ -343,7 +342,7 @@
   </tr>
 </table>
 
-<#assign DESKTOPS = VARS.getFreshScreenshots(USER!)>
+<#assign DESKTOPS = VARS.getFreshDesktops(USER!)>
 <#if (DESKTOPS?size > 0)>
     <div class="ramec">
       <div class="s_nadpis">

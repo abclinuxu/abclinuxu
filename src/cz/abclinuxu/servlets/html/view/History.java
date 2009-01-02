@@ -32,7 +32,6 @@ import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.exceptions.*;
 import cz.abclinuxu.exceptions.SecurityException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -88,8 +87,7 @@ public class History implements AbcAction {
 
         String type = (String) params.get(PARAM_TYPE);
         int from = Misc.parseInt((String)params.get(Constants.PARAM_FROM),0);
-        int count = Misc.parseInt((String)params.get(Constants.PARAM_COUNT),20);
-        count = Misc.limit(count, 1, 50);
+        int count = Misc.getDefaultPageSize(env);
         int uid = Misc.parseInt((String)params.get(PARAM_USER_SHORT),0);
         String filter = (String) params.get(PARAM_FILTER);
 

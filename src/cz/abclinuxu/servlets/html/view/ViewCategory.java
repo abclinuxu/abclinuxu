@@ -203,8 +203,8 @@ public class ViewCategory implements AbcAction {
             return FMTemplateSelector.select("ViewCategory", "documents", env, request);
         else if (rid == Constants.REL_BAZAAR)
             return ViewBazaar.processSection(request, relation, env);
-        else if (rid == Constants.REL_SCREENSHOTS)
-            return ViewScreenshot.processSection(request, env);
+        else if (rid == Constants.REL_DESKTOPS)
+            return ViewDesktop.processSection(request, env);
 		else if (rid == Constants.REL_SUBPORTALS)
             return ViewSubportal.processSectionList(request, env);
 		else if (rid == Constants.REL_EVENTS)

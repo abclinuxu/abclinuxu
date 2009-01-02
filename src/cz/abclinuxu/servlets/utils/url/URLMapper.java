@@ -69,9 +69,8 @@ public final class URLMapper implements Configurable {
         reTrailingRid = Pattern.compile("/([0-9]+)$");
     }
 
-    List actionMapping;
-    List priorityMapping;
-    List deprecatedMapping;
+    List<PatternAction> actionMapping, priorityMapping;
+    List<PatternRegexpReplacement> deprecatedMapping;
     static AbcAction showObject;
 
     private URLMapper() {
@@ -192,7 +191,7 @@ public final class URLMapper implements Configurable {
         for (Iterator iter = priorityMapping.iterator(); iter.hasNext();) {
             patternAction = (PatternAction) iter.next();
             if (patternAction.getRe().match(relativeUrl)) {
-                setActionParams(patternAction, params);
+                setActionParams(patternAction, env, params);
                 return patternAction.getAction();
             }
         }
@@ -203,7 +202,7 @@ public final class URLMapper implements Configurable {
         for ( Iterator iter = actionMapping.iterator(); iter.hasNext(); ) {
             patternAction = (PatternAction) iter.next();
             if (patternAction.getRe().match(relativeUrl)) {
-                setActionParams(patternAction, params);
+                setActionParams(patternAction, env, params);
                 return patternAction.getAction();
             }
         }
@@ -254,15 +253,14 @@ public final class URLMapper implements Configurable {
      * @param patternAction
      * @param params map of HTTP params
      */
-    private void setActionParams(PatternAction patternAction, Map params) {
+    private void setActionParams(PatternAction patternAction, Map env, Map params) {
         Map actionParams = patternAction.getParams();
-        if (actionParams==null)
-            return;
-        String name;
-        for (Iterator iter = actionParams.keySet().iterator(); iter.hasNext();) {
-            name = (String) iter.next();
-            params.put(name, actionParams.get(name));
-        }
+        if (actionParams != null)
+            params.putAll(actionParams);
+
+        Map actionVariables = patternAction.getVariables();
+        if (actionVariables != null)
+            env.putAll(actionVariables);
     }
 
     /**
@@ -315,7 +313,7 @@ public final class URLMapper implements Configurable {
      * Reads format mappings.
      */
     private static void readFormat(List nodes, URLMapper instance) {
-        List actions = new ArrayList(60), priorActions = new ArrayList(10);
+        List<PatternAction> actions = new ArrayList<PatternAction>(100), priorActions = new ArrayList<PatternAction>(30);
         String pattern = null, action = null;
         Element element;
         REProgram regexp;
@@ -346,6 +344,13 @@ public final class URLMapper implements Configurable {
                         mapping.addParam(param.attributeValue("name"), param.attributeValue("value"));
                     }
 
+                List varList = element.elements("variable");
+                if (varList != null && ! varList.isEmpty())
+                    for (Iterator iterParams = varList.iterator(); iterParams.hasNext();) {
+                        Element param = (Element) iterParams.next();
+                        mapping.addParam(param.attributeValue("name"), param.attributeValue("value"));
+                    }
+
                 if ( ShowObject.class.isInstance(o) )
                     showObject = (AbcAction) o;
             } catch (RESyntaxException e) {
@@ -366,7 +371,7 @@ public final class URLMapper implements Configurable {
      * Reads deprecated mappings.
      */
     private static void readDeprecated(List nodes, URLMapper instance) {
-        List deprecated = new ArrayList(10);
+        List<PatternRegexpReplacement> deprecated = new ArrayList<PatternRegexpReplacement>(10);
         String pattern = null, replacement;
         Element element;
         RE regexp, regexp2;
@@ -402,7 +407,7 @@ public final class URLMapper implements Configurable {
     static class PatternAction {
         REProgram re;
         AbcAction action;
-        Map params;
+        Map<String, String> params, variables;
 
         public PatternAction(REProgram re, AbcAction action) {
             this.re = re;
@@ -417,14 +422,24 @@ public final class URLMapper implements Configurable {
             return action;
         }
 
-        public Map getParams() {
+        public Map<String, String> getParams() {
             return params;
+        }
+
+        public Map<String, String> getVariables() {
+            return variables;
         }
 
         public void addParam(String name, String value) {
             if (params==null)
-                params = new HashMap(3, 1.0f);
+                params = new HashMap<String, String>(2, 1.0f);
             params.put(name, value);
+        }
+
+        public void addVariable(String name, String value) {
+            if (variables==null)
+                variables = new HashMap<String, String>(2, 1.0f);
+            variables.put(name, value);
         }
     }
 

@@ -62,10 +62,10 @@
             <pattern>^/lide</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewUser</action>
         </mapping>
-	<mapping>
-	    <pattern>^/jobs</pattern>
-	    <action>cz.abclinuxu.servlets.html.view.ViewJobsCz</action>
-	</mapping>    
+        <mapping>
+            <pattern>^/jobs</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewJobsCz</action>
+        </mapping>
         <mapping>
             <pattern>^/Profile</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewUser</action>
@@ -128,7 +128,7 @@
         </mapping>
         <mapping>
             <pattern>^/desktopy</pattern>
-            <action>cz.abclinuxu.servlets.html.view.ViewScreenshot</action>
+            <action>cz.abclinuxu.servlets.html.view.ViewDesktop</action>
         </mapping>
         <mapping>
             <pattern>^/videa</pattern>
@@ -164,7 +164,7 @@
         </mapping>
         <mapping priority="true">
             <pattern>^/desktopy/edit</pattern>
-            <action>cz.abclinuxu.servlets.html.edit.EditScreenshot</action>
+            <action>cz.abclinuxu.servlets.html.edit.EditDesktop</action>
         </mapping>
         <mapping priority="true">
             <pattern>^/kdo-je/edit</pattern>
@@ -289,6 +289,12 @@
         <mapping>
             <pattern>^/Group</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditGroup</action>
+        </mapping>
+        <mapping>
+            <pattern>^/nej</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ShowPage</action>
+            <param name="template" value="/show/top.ftl"/>
+            <variable name="TITLE" value="Nej"/>
         </mapping>
         <mapping>
             <pattern>^/Admin/statistika</pattern>

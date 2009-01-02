@@ -457,7 +457,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findItemRelationsWithType(int type, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(ITEM_RELATIONS_BY_TYPE));
+        StringBuilder sb = new StringBuilder(sql.get(ITEM_RELATIONS_BY_TYPE));
         List params = new ArrayList();
         params.add(type);
         Map<Field, String> fieldMapping = new HashMap<Field, String>();
@@ -473,7 +473,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countItemRelationsWithType(int type, Qualifier[] qualifiers) {
-        StringBuilder sb = new StringBuilder((String) sql.get(ITEM_RELATIONS_BY_TYPE));
+        StringBuilder sb = new StringBuilder(sql.get(ITEM_RELATIONS_BY_TYPE));
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(type);
@@ -493,7 +493,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findRelationsWithTag(String tag, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(RELATIONS_WITH_TAGS));
+        StringBuilder sb = new StringBuilder(sql.get(RELATIONS_WITH_TAGS));
         List params = new ArrayList();
         params.add(tag);
         Map<Field,String> fieldMappings = new HashMap<Field,String>();
@@ -509,7 +509,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countRelationsWithTag(String tag, Qualifier[] qualifiers) {
-        StringBuilder sb = new StringBuilder((String) sql.get(RELATIONS_WITH_TAGS));
+        StringBuilder sb = new StringBuilder(sql.get(RELATIONS_WITH_TAGS));
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(tag);
@@ -524,7 +524,7 @@ public final class SQLTool implements Configurable {
      * @return Subportal relations where the user is a member.
      */
     public List<Relation> findSubportalMembership(int uid) {
-        StringBuilder sb = new StringBuilder((String) sql.get(FIND_SUBPORTAL_MEMBERSHIP));
+        StringBuilder sb = new StringBuilder(sql.get(FIND_SUBPORTAL_MEMBERSHIP));
         return loadRelations(sb.toString(), Collections.singletonList(uid));
     }
 
@@ -535,7 +535,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> getTopUsedRelations(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(TOP_USED_RELATIONS));
+        StringBuilder sb = new StringBuilder(sql.get(TOP_USED_RELATIONS));
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, "V", null);
         return loadRelations(sb.toString(), params);
@@ -550,7 +550,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> getTopCountedRelations(int itemType, String counterType, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(TOP_COUNTED_RELATIONS));
+        StringBuilder sb = new StringBuilder(sql.get(TOP_COUNTED_RELATIONS));
         List params = new ArrayList();
         params.add(counterType);
         params.add(itemType);
@@ -573,7 +573,7 @@ public final class SQLTool implements Configurable {
         if (filters.isEmpty())
             return findItemRelationsWithType(type, qualifiers);
 
-        StringBuilder sb = new StringBuilder((String) sql.get(ITEM_RELATIONS_BY_TYPE_WITH_FILTERS));
+        StringBuilder sb = new StringBuilder(sql.get(ITEM_RELATIONS_BY_TYPE_WITH_FILTERS));
         List params = new ArrayList();
         params.add(type);
         appendFilterConditions(filters, sb, params);
@@ -595,7 +595,7 @@ public final class SQLTool implements Configurable {
         if (filters.isEmpty())
             return countItemRelationsWithType(type, qualifiers);
 
-        StringBuilder sb = new StringBuilder((String) sql.get(ITEM_RELATIONS_BY_TYPE_WITH_FILTERS));
+        StringBuilder sb = new StringBuilder(sql.get(ITEM_RELATIONS_BY_TYPE_WITH_FILTERS));
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(type);
@@ -638,7 +638,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findCategoriesRelations(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(CATEGORY_RELATIONS));
+        StringBuilder sb = new StringBuilder(sql.get(CATEGORY_RELATIONS));
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
@@ -650,7 +650,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findSubportalsOrderedByScore(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(SUBPORTALS_ORDERED_BY_SCORE));
+        StringBuilder sb = new StringBuilder(sql.get(SUBPORTALS_ORDERED_BY_SCORE));
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
@@ -662,7 +662,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findSubportalsOrderedByMemberCount(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(SUBPORTALS_ORDERED_BY_MEMBER_COUNT));
+        StringBuilder sb = new StringBuilder(sql.get(SUBPORTALS_ORDERED_BY_MEMBER_COUNT));
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
@@ -676,7 +676,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findCategoryRelationsWithType(int type, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(SECTION_RELATIONS_BY_TYPE));
+        StringBuilder sb = new StringBuilder(sql.get(SECTION_RELATIONS_BY_TYPE));
         List params = new ArrayList();
         params.add(type);
         appendQualifiers(sb, qualifiers, params, null, null);
@@ -688,7 +688,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countCategoryRelationsWithType(int type) {
-        StringBuilder sb = new StringBuilder((String) sql.get(SECTION_RELATIONS_BY_TYPE));
+        StringBuilder sb = new StringBuilder(sql.get(SECTION_RELATIONS_BY_TYPE));
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(type);
@@ -703,7 +703,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findDiscussionRelations(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(DISCUSSION_RELATIONS));
+        StringBuilder sb = new StringBuilder(sql.get(DISCUSSION_RELATIONS));
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
@@ -714,7 +714,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countDiscussionRelations() {
-        StringBuilder sb = new StringBuilder((String) sql.get(DISCUSSION_RELATIONS));
+        StringBuilder sb = new StringBuilder(sql.get(DISCUSSION_RELATIONS));
         changeToCountStatement(sb);
         List params = new ArrayList();
         return loadNumber(sb.toString(), params);
@@ -765,7 +765,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findDiscussionRelationsWithParent(int parent, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(DISCUSSION_RELATIONS_IN_SECTION));
+        StringBuilder sb = new StringBuilder(sql.get(DISCUSSION_RELATIONS_IN_SECTION));
         List params = new ArrayList();
         params.add(parent);
         appendQualifiers(sb, qualifiers, params, null, null);
@@ -777,7 +777,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countDiscussionRelationsWithParent(int parent) {
-        StringBuilder sb = new StringBuilder((String) sql.get(DISCUSSION_RELATIONS_IN_SECTION));
+        StringBuilder sb = new StringBuilder(sql.get(DISCUSSION_RELATIONS_IN_SECTION));
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(parent);
@@ -792,7 +792,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findLastSeenDiscussionRelationsBy(int who, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(LAST_SEEN_DISCUSSION_RELATIONS_BY_USER));
+        StringBuilder sb = new StringBuilder(sql.get(LAST_SEEN_DISCUSSION_RELATIONS_BY_USER));
         List params = new ArrayList();
         params.add(who);
         Map<Field, String> fieldMapping = new HashMap<Field, String>();
@@ -806,7 +806,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countLastSeenDiscussionRelationsBy(int who) {
-        StringBuilder sb = new StringBuilder((String) sql.get(LAST_SEEN_DISCUSSION_RELATIONS_BY_USER));
+        StringBuilder sb = new StringBuilder(sql.get(LAST_SEEN_DISCUSSION_RELATIONS_BY_USER));
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(who);
@@ -822,7 +822,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findIndexArticlesRelations(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(ARTICLES_ON_INDEX_RELATIONS));
+        StringBuilder sb = new StringBuilder(sql.get(ARTICLES_ON_INDEX_RELATIONS));
         List params = new ArrayList();
         Map<Field, String> fieldMapping = new HashMap<Field, String>();
         fieldMapping.put(Field.UPPER, "R");
@@ -836,7 +836,7 @@ public final class SQLTool implements Configurable {
      * @return
      */
     public List<Relation> findHPSubportalArticles(Qualifier[] qualifiers) {
-        StringBuilder sb = new StringBuilder((String) sql.get(FIND_HP_SUBPORTAL_ARTICLES));
+        StringBuilder sb = new StringBuilder(sql.get(FIND_HP_SUBPORTAL_ARTICLES));
         List params = new ArrayList();
         return loadRelations(sb.toString(), params);
     }
@@ -851,7 +851,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findArticleRelations(Qualifier[] qualifiers, int section) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(ARTICLE_RELATIONS));
+        StringBuilder sb = new StringBuilder(sql.get(ARTICLE_RELATIONS));
         List params = new ArrayList();
         if (section>0) {
             params.add(section);
@@ -870,7 +870,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countArticleRelations(int section) {
-        StringBuilder sb = new StringBuilder((String) sql.get(ARTICLE_RELATIONS));
+        StringBuilder sb = new StringBuilder(sql.get(ARTICLE_RELATIONS));
         changeToCountStatement(sb);
         List params = new ArrayList();
         if (section > 0) {
@@ -888,7 +888,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findArticleRelationsWithinPeriod(Date from, Date until, Qualifier[] qualifiers) throws PersistenceException {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(ARTICLE_RELATIONS_WITHIN_PERIOD));
+        StringBuilder sb = new StringBuilder(sql.get(ARTICLE_RELATIONS_WITHIN_PERIOD));
         List params = new ArrayList();
         params.add(new java.sql.Date(from.getTime()));
         params.add(new java.sql.Date(until.getTime()));
@@ -903,7 +903,7 @@ public final class SQLTool implements Configurable {
      * that is inside given time period.
      */
     public int countArticleRelationsWithinPeriod(Date from, Date until) throws PersistenceException {
-        StringBuilder sb = new StringBuilder((String) sql.get(ARTICLE_RELATIONS_WITHIN_PERIOD));
+        StringBuilder sb = new StringBuilder(sql.get(ARTICLE_RELATIONS_WITHIN_PERIOD));
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new java.sql.Date(from.getTime()));
@@ -920,7 +920,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findNewsRelations(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(NEWS_RELATIONS));
+        StringBuilder sb = new StringBuilder(sql.get(NEWS_RELATIONS));
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
@@ -932,7 +932,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countNewsRelations() {
-        StringBuilder sb = new StringBuilder((String) sql.get(NEWS_RELATIONS));
+        StringBuilder sb = new StringBuilder(sql.get(NEWS_RELATIONS));
         changeToCountStatement(sb);
         List params = new ArrayList();
         return loadNumber(sb.toString(), params);
@@ -946,7 +946,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findNewsRelationsWithinPeriod(Date from, Date until, Qualifier[] qualifiers) throws PersistenceException {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(NEWS_RELATIONS_WITHIN_PERIOD));
+        StringBuilder sb = new StringBuilder(sql.get(NEWS_RELATIONS_WITHIN_PERIOD));
         List params = new ArrayList();
         params.add(new java.sql.Date(from.getTime()));
         params.add(new java.sql.Date(until.getTime()));
@@ -959,7 +959,7 @@ public final class SQLTool implements Configurable {
      * given time period.
      */
     public int countNewsRelationsWithinPeriod(Date from, Date until) throws PersistenceException {
-        StringBuilder sb = new StringBuilder((String) sql.get(NEWS_RELATIONS_WITHIN_PERIOD));
+        StringBuilder sb = new StringBuilder(sql.get(NEWS_RELATIONS_WITHIN_PERIOD));
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new java.sql.Date(from.getTime()));
@@ -977,7 +977,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findArticleRelationsByAuthor(int authorId, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(ARTICLE_RELATIONS_BY_AUTHOR));
+        StringBuilder sb = new StringBuilder(sql.get(ARTICLE_RELATIONS_BY_AUTHOR));
         List params = new ArrayList();
         params.add(authorId);
         Map<Field, String> fieldMapping = new HashMap<Field, String>();
@@ -1004,7 +1004,7 @@ public final class SQLTool implements Configurable {
      * @return list of integer arrays, first item is author's relation id, second item is count of his articles
      */
     public List<Object[]> countArticleRelationsByAuthors() {
-	    StringBuilder sb = new StringBuilder((String) sql.get(COUNT_ARTICLES_BY_AUTHORS));
+	    StringBuilder sb = new StringBuilder(sql.get(COUNT_ARTICLES_BY_AUTHORS));
         return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
 
@@ -1016,7 +1016,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findNewsRelationsByUser(int userId, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(NEWS_RELATIONS_BY_USER));
+        StringBuilder sb = new StringBuilder(sql.get(NEWS_RELATIONS_BY_USER));
         List params = new ArrayList();
         params.add(userId);
         appendQualifiers(sb, qualifiers, params, null, null);
@@ -1030,7 +1030,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countNewsRelationsByUser(int userId) {
-        StringBuilder sb = new StringBuilder((String) sql.get(NEWS_RELATIONS_BY_USER));
+        StringBuilder sb = new StringBuilder(sql.get(NEWS_RELATIONS_BY_USER));
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(userId);
@@ -1045,7 +1045,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findQuestionRelationsByUser(int userId, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(QUESTION_RELATIONS_BY_USER));
+        StringBuilder sb = new StringBuilder(sql.get(QUESTION_RELATIONS_BY_USER));
         List params = new ArrayList();
         params.add(userId);
         appendQualifiers(sb, qualifiers, params, null, null);
@@ -1057,7 +1057,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countQuestionRelationsByUser(int userId) {
-        StringBuilder sb = new StringBuilder((String) sql.get(QUESTION_RELATIONS_BY_USER));
+        StringBuilder sb = new StringBuilder(sql.get(QUESTION_RELATIONS_BY_USER));
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(userId);
@@ -1072,7 +1072,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findWikiRelationsByUser(int userId, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(WIKI_RELATIONS_BY_USER));
+        StringBuilder sb = new StringBuilder(sql.get(WIKI_RELATIONS_BY_USER));
         List params = new ArrayList();
         params.add(userId);
         appendQualifiers(sb, qualifiers, params, null, null);
@@ -1084,7 +1084,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countWikiRelationsByUser(int userId) {
-        StringBuilder sb = new StringBuilder((String) sql.get(COUNT_WIKI_RELATIONS_BY_USER));
+        StringBuilder sb = new StringBuilder(sql.get(COUNT_WIKI_RELATIONS_BY_USER));
         return loadNumber(sb.toString(), Collections.singletonList(userId));
     }
 
@@ -1096,7 +1096,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findCommentRelationsByUser(int userId, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(COMMENT_RELATIONS_BY_USER));
+        StringBuilder sb = new StringBuilder(sql.get(COMMENT_RELATIONS_BY_USER));
         List params = new ArrayList();
         params.add(userId);
         appendQualifiers(sb, qualifiers, params, null, null);
@@ -1108,7 +1108,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countCommentRelationsByUser(int userId) {
-        StringBuilder sb = new StringBuilder((String) sql.get(COUNT_DISCUSSIONS_BY_USER));
+        StringBuilder sb = new StringBuilder(sql.get(COUNT_DISCUSSIONS_BY_USER));
         List params = new ArrayList();
         params.add(userId);
         return loadNumber(sb.toString(), params);
@@ -1124,7 +1124,7 @@ public final class SQLTool implements Configurable {
             url = url.substring(0, url.length()-1);
         List params = new ArrayList();
         params.add(url);
-        List result = loadRelations((String) sql.get(RELATION_BY_URL), params);
+        List result = loadRelations(sql.get(RELATION_BY_URL), params);
         if (result.size()==0)
             return null;
         return (Relation) result.get(0);
@@ -1139,7 +1139,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findStandalonePollRelations(Qualifier[] qualifiers) {
         if (qualifiers == null) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(STANDALONE_POLL_RELATIONS));
+        StringBuilder sb = new StringBuilder(sql.get(STANDALONE_POLL_RELATIONS));
         List params = new ArrayList();
         Map<Field, String> fieldMapping = new HashMap<Field, String>();
         fieldMapping.put(Field.CREATED, "A");
@@ -1153,7 +1153,7 @@ public final class SQLTool implements Configurable {
      *          if there is an error with the underlying persistent storage.
      */
     public int countStandalonePollRelations() {
-        StringBuilder sb = new StringBuilder((String) sql.get(STANDALONE_POLL_RELATIONS));
+        StringBuilder sb = new StringBuilder(sql.get(STANDALONE_POLL_RELATIONS));
         changeToCountStatement(sb);
         List params = new ArrayList();
         return loadNumber(sb.toString(), params);
@@ -1179,7 +1179,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Integer> findUsersWithWeeklyEmail(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(USERS_WITH_WEEKLY_EMAIL));
+        StringBuilder sb = new StringBuilder(sql.get(USERS_WITH_WEEKLY_EMAIL));
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadUsers(sb.toString(), params);
@@ -1192,7 +1192,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Integer> findUsersWithForumByEmail(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(USERS_WITH_FORUM_BY_EMAIL));
+        StringBuilder sb = new StringBuilder(sql.get(USERS_WITH_FORUM_BY_EMAIL));
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadUsers(sb.toString(), params);
@@ -1206,7 +1206,7 @@ public final class SQLTool implements Configurable {
     public List<Integer> findUsersWithLogin(String login, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         // todo odstranit SQL ze systemPrefs, pouzit findUsers s qualifiery
-        StringBuilder sb = new StringBuilder((String) sql.get(USERS_WITH_LOGIN));
+        StringBuilder sb = new StringBuilder(sql.get(USERS_WITH_LOGIN));
         List params = new ArrayList();
         params.add(login);
         appendQualifiers(sb, qualifiers, params, null, null);
@@ -1236,7 +1236,7 @@ public final class SQLTool implements Configurable {
     public List<Integer> findUsersWithNick(String nick, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         // todo odstranit SQL ze systemPrefs, pouzit findUsers s qualifiery
-        StringBuilder sb = new StringBuilder((String) sql.get(USERS_WITH_NICK));
+        StringBuilder sb = new StringBuilder(sql.get(USERS_WITH_NICK));
         List params = new ArrayList();
         params.add(nick);
         appendQualifiers(sb, qualifiers, params, null, null);
@@ -1250,7 +1250,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Integer> findUsersWithRoles(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(USERS_WITH_ROLES));
+        StringBuilder sb = new StringBuilder(sql.get(USERS_WITH_ROLES));
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadUsers(sb.toString(), params);
@@ -1264,7 +1264,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Integer> findUsersInGroup(int group, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(USERS_IN_GROUP));
+        StringBuilder sb = new StringBuilder(sql.get(USERS_IN_GROUP));
         List params = new ArrayList();
         params.add(group);
         appendQualifiers(sb, qualifiers, params, null, null);
@@ -1276,7 +1276,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countUsersInGroup(int group) {
-        StringBuilder sb = new StringBuilder((String) sql.get(USERS_IN_GROUP));
+        StringBuilder sb = new StringBuilder(sql.get(USERS_IN_GROUP));
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(group);
@@ -1291,7 +1291,7 @@ public final class SQLTool implements Configurable {
      */
     public Integer getUserByLogin(String login) {
         // todo odstranit SQL ze systemPrefs, pouzit findUsers s qualifiery
-        StringBuilder sb = new StringBuilder((String) sql.get(USER_BY_LOGIN));
+        StringBuilder sb = new StringBuilder(sql.get(USER_BY_LOGIN));
         List params = new ArrayList();
         params.add(login);
         return loadNumber(sb.toString(), params);
@@ -1303,7 +1303,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public List<Object[]> countUsersCommentsInForum() {
-        StringBuilder sb = new StringBuilder((String) sql.get(USERS_COUNT_FORUM_COMMENTS));
+        StringBuilder sb = new StringBuilder(sql.get(USERS_COUNT_FORUM_COMMENTS));
         return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
 
@@ -1313,7 +1313,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public List<Object[]> countUsersArticles() {
-        StringBuilder sb = new StringBuilder((String) sql.get(USERS_COUNT_ARTICLES));
+        StringBuilder sb = new StringBuilder(sql.get(USERS_COUNT_ARTICLES));
         return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
 
@@ -1323,7 +1323,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public List<Object[]> countUsersModifiedWikiRecords() {
-        StringBuilder sb = new StringBuilder((String) sql.get(USERS_COUNT_WIKI_RECORDS));
+        StringBuilder sb = new StringBuilder(sql.get(USERS_COUNT_WIKI_RECORDS));
         return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
 
@@ -1333,7 +1333,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public List<Object[]> countUsersNews() {
-        StringBuilder sb = new StringBuilder((String) sql.get(USERS_COUNT_NEWS));
+        StringBuilder sb = new StringBuilder(sql.get(USERS_COUNT_NEWS));
         return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
 
@@ -1342,7 +1342,7 @@ public final class SQLTool implements Configurable {
      * @return a list of integer arrays with the first item being the user id and the second the number of articles
      */
     public List<Object[]> countSubportalArticles() {
-        StringBuilder sb = new StringBuilder((String) sql.get(SUBPORTALS_COUNT_ARTICLES));
+        StringBuilder sb = new StringBuilder(sql.get(SUBPORTALS_COUNT_ARTICLES));
         return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
 
@@ -1351,7 +1351,7 @@ public final class SQLTool implements Configurable {
      * @return a list of integer arrays with the first item being the user id and the second the number of events
      */
     public List<Object[]> countSubportalEvents() {
-        StringBuilder sb = new StringBuilder((String) sql.get(SUBPORTALS_COUNT_EVENTS));
+        StringBuilder sb = new StringBuilder(sql.get(SUBPORTALS_COUNT_EVENTS));
         return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
 
@@ -1360,7 +1360,7 @@ public final class SQLTool implements Configurable {
      * @return a list of integer arrays with the first item being the user id and the second the number of questions
      */
     public List<Object[]> countSubportalForumQuestions() {
-        StringBuilder sb = new StringBuilder((String) sql.get(SUBPORTALS_COUNT_FORUM_QUESTIONS));
+        StringBuilder sb = new StringBuilder(sql.get(SUBPORTALS_COUNT_FORUM_QUESTIONS));
         return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
 
@@ -1393,7 +1393,7 @@ public final class SQLTool implements Configurable {
         try {
             con = persistance.getSQLConnection();
             statement = con.createStatement();
-            resultSet = statement.executeQuery((String) sql.get(MAX_USER));
+            resultSet = statement.executeQuery(sql.get(MAX_USER));
             if ( !resultSet.next() )
                 return 0;
             Integer id = resultSet.getInt(1);
@@ -1446,7 +1446,7 @@ public final class SQLTool implements Configurable {
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            StringBuilder sb = new StringBuilder((String) sql.get(ITEMS_WITH_TYPE));
+            StringBuilder sb = new StringBuilder(sql.get(ITEMS_WITH_TYPE));
             sb.append(" order by cislo asc limit ?,?");
             statement = con.prepareStatement(sb.toString());
             statement.setInt(1, type);
@@ -1481,7 +1481,7 @@ public final class SQLTool implements Configurable {
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            StringBuilder sb = new StringBuilder((String) sql.get(RECORDS_WITH_TYPE));
+            StringBuilder sb = new StringBuilder(sql.get(RECORDS_WITH_TYPE));
             sb.append(" order by cislo asc limit ?,?");
             statement = con.prepareStatement(sb.toString());
             statement.setInt(1, type);
@@ -1515,7 +1515,7 @@ public final class SQLTool implements Configurable {
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            StringBuilder sb = new StringBuilder((String) sql.get(ITEMS_WITH_TYPE));
+            StringBuilder sb = new StringBuilder(sql.get(ITEMS_WITH_TYPE));
             sb.append(" order by cislo asc limit ?,?");
             statement = con.prepareStatement(sb.toString());
             statement.setInt(1, type);
@@ -1544,7 +1544,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public List<Relation> getNeighbourItemRelations(String urlName, int type, boolean smaller, int count) {
-        StringBuilder sb = new StringBuilder((String) sql.get(ITEM_RELATIONS_BY_TYPE));
+        StringBuilder sb = new StringBuilder(sql.get(ITEM_RELATIONS_BY_TYPE));
         if (smaller)
             sb.append("  and podtyp<? order by podtyp desc limit ?");
         else
@@ -1563,7 +1563,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countItemsWithType(int type) {
-        StringBuilder sb = new StringBuilder((String) sql.get(ITEMS_WITH_TYPE));
+        StringBuilder sb = new StringBuilder(sql.get(ITEMS_WITH_TYPE));
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(type);
@@ -1576,7 +1576,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countRecordsWithType(int type) {
-        StringBuilder sb = new StringBuilder((String) sql.get(RECORDS_WITH_TYPE));
+        StringBuilder sb = new StringBuilder(sql.get(RECORDS_WITH_TYPE));
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(type);
@@ -1594,7 +1594,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(userId);
         params.add(discussion);
-        return loadNumber((String) sql.get(GET_LAST_COMMENT), params);
+        return loadNumber(sql.get(GET_LAST_COMMENT), params);
     }
 
     /**
@@ -1608,7 +1608,7 @@ public final class SQLTool implements Configurable {
         params.add(userId);
         params.add(0);
         params.add(size);
-        return loadObjects((String) sql.get(GET_LAST_COMMENTS), params);
+        return loadObjects(sql.get(GET_LAST_COMMENTS), params);
     }
 
     /**
@@ -1625,7 +1625,7 @@ public final class SQLTool implements Configurable {
         PreparedStatement statement = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement((String) sql.get(INSERT_LAST_COMMENT));
+            statement = con.prepareStatement(sql.get(INSERT_LAST_COMMENT));
             statement.setInt(1, userId);
             statement.setInt(2, discussion);
             statement.setInt(3, lastComment);
@@ -1651,7 +1651,7 @@ public final class SQLTool implements Configurable {
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement((String) sql.get(GET_LAST_COMMENTS));
+            statement = con.prepareStatement(sql.get(GET_LAST_COMMENTS));
             statement.setInt(1, userId);
             statement.setInt(2, preserveCount);
             statement.setInt(3, 1);
@@ -1660,7 +1660,7 @@ public final class SQLTool implements Configurable {
                 return 0;
 
             Timestamp timestamp = resultSet.getTimestamp(3);
-            statement = con.prepareStatement((String) sql.get(DELETE_OLD_COMMENTS));
+            statement = con.prepareStatement(sql.get(DELETE_OLD_COMMENTS));
             statement.setInt(1, userId);
             statement.setTimestamp(2, timestamp);
             int affected = statement.executeUpdate();
@@ -1685,7 +1685,7 @@ public final class SQLTool implements Configurable {
         PreparedStatement statement = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement((String) sql.get(INSERT_USER_ACTION));
+            statement = con.prepareStatement(sql.get(INSERT_USER_ACTION));
             statement.setInt(1, userId);
             statement.setInt(2, rid);
             statement.setString(3, type);
@@ -1709,7 +1709,7 @@ public final class SQLTool implements Configurable {
         params.add(userId);
         params.add(rid);
         params.add(type);
-        return loadDate((String) sql.get(GET_USER_ACTION), params);
+        return loadDate(sql.get(GET_USER_ACTION), params);
     }
 
     /**
@@ -1724,7 +1724,7 @@ public final class SQLTool implements Configurable {
         PreparedStatement statement = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement((String) sql.get(REMOVE_USER_ACTION));
+            statement = con.prepareStatement(sql.get(REMOVE_USER_ACTION));
             statement.setInt(1, userId);
             statement.setInt(2, rid);
             statement.setString(3, type);
@@ -1753,7 +1753,7 @@ public final class SQLTool implements Configurable {
             int id, size;
             Map<Integer, Integer> result = new HashMap<Integer, Integer> (categories.size());
 
-            String query = (String) sql.get(ITEMS_COUNT_IN_SECTION);
+            String query = sql.get(ITEMS_COUNT_IN_SECTION);
             int position = query.indexOf('?');
             query = query.substring(0, position) + Misc.getInCondition(categories.size())
                     + query.substring(position + 1);
@@ -1800,7 +1800,7 @@ public final class SQLTool implements Configurable {
             int id, size, last;
             Map<Integer, Integer[]> result = new HashMap<Integer, Integer[]> (categories.size());
 
-            String query = (String) sql.get(LAST_ITEM_AND_COUNT_IN_SECTION);
+            String query = sql.get(LAST_ITEM_AND_COUNT_IN_SECTION);
             int position = query.indexOf('?');
             query = query.substring(0, position) + Misc.getInCondition(categories.size())
                     + query.substring(position + 1);
@@ -1840,7 +1840,7 @@ public final class SQLTool implements Configurable {
             Map<User, Integer> result = new LinkedHashMap<User, Integer>();
             con = persistance.getSQLConnection();
 
-            StringBuilder sb = new StringBuilder((String) sql.get(HIGHEST_SCORE_USERS));
+            StringBuilder sb = new StringBuilder(sql.get(HIGHEST_SCORE_USERS));
 
 			appendQualifiers(sb, qualifiers, params, null, null);
 			statement = con.prepareStatement(sb.toString());
@@ -1876,7 +1876,7 @@ public final class SQLTool implements Configurable {
             Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
             con = persistance.getSQLConnection();
 
-            StringBuilder sb = new StringBuilder((String) sql.get(MOST_COMMENTED_POLLS));
+            StringBuilder sb = new StringBuilder(sql.get(MOST_COMMENTED_POLLS));
             List params = new ArrayList();
 
             appendQualifiers(sb, qualifiers, params, null, null);
@@ -1914,7 +1914,7 @@ public final class SQLTool implements Configurable {
             Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
             con = persistance.getSQLConnection();
 
-            StringBuilder sb = new StringBuilder((String) sql.get(MOST_VOTED_POLLS));
+            StringBuilder sb = new StringBuilder(sql.get(MOST_VOTED_POLLS));
             List params = new ArrayList();
 
             appendQualifiers(sb, qualifiers, params, null, null);
@@ -1952,9 +1952,8 @@ public final class SQLTool implements Configurable {
             Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
             con = persistance.getSQLConnection();
 
-            StringBuilder sb = new StringBuilder((String) sql.get(MOST_READ_RELATIONS));
+            StringBuilder sb = new StringBuilder(sql.get(MOST_READ_RELATIONS));
             List params = new ArrayList();
-
             params.add(itemType);
             params.add(dateFrom);
 
@@ -1965,15 +1964,15 @@ public final class SQLTool implements Configurable {
             for ( Iterator iter = params.iterator(); iter.hasNext(); )
                 statement.setObject(i++, iter.next());
 
+            List<Relation> relations = new ArrayList<Relation>();
             rs = statement.executeQuery();
-
             while (rs.next()) {
                 Relation rel = new Relation(rs.getInt(1));
                 int reads = rs.getInt(2);
-
-                persistance.synchronize(rel);
                 result.put(rel, reads);
+                relations.add(rel);
             }
+            persistance.synchronizeList(relations);
 
             return result;
         } catch (SQLException e) {
@@ -1993,7 +1992,7 @@ public final class SQLTool implements Configurable {
             Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
             con = persistance.getSQLConnection();
 
-            StringBuilder sb = new StringBuilder((String) sql.get(MOST_COMMENTED_RELATIONS));
+            StringBuilder sb = new StringBuilder(sql.get(MOST_COMMENTED_RELATIONS));
             List params = new ArrayList();
 
             params.add(itemType);
@@ -2033,14 +2032,14 @@ public final class SQLTool implements Configurable {
         PreparedStatement statementUpdate = null, statementInsert = null;
         try {
             con = persistance.getSQLConnection();
-            statementUpdate = con.prepareStatement((String) sql.get(INCREMENT_STATISTICS));
+            statementUpdate = con.prepareStatement(sql.get(INCREMENT_STATISTICS));
             statementUpdate.setInt(1, count);
             statementUpdate.setString(2, pageType);
             int updated = statementUpdate.executeUpdate();
             if (updated != 0)
                 return;
 
-            statementInsert = con.prepareStatement((String) sql.get(INSERT_STATISTICS));
+            statementInsert = con.prepareStatement(sql.get(INSERT_STATISTICS));
             statementInsert.setString(1, pageType);
             statementInsert.setInt(2, count);
             statementInsert.executeUpdate();
@@ -2067,7 +2066,7 @@ public final class SQLTool implements Configurable {
      */
     public List getStatistics(Qualifier[] qualifiers) {
         if (qualifiers == null) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(GET_STATISTICS));
+        StringBuilder sb = new StringBuilder(sql.get(GET_STATISTICS));
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadObjects(sb.toString(), params);
@@ -2079,7 +2078,7 @@ public final class SQLTool implements Configurable {
      * @return list of Object arrays
      */
     public List getStatisticsByMonth() {
-        StringBuilder sb = new StringBuilder((String) sql.get(GET_STATISTICS_BY_MONTH));
+        StringBuilder sb = new StringBuilder(sql.get(GET_STATISTICS_BY_MONTH));
         return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
 
@@ -2094,13 +2093,13 @@ public final class SQLTool implements Configurable {
         PreparedStatement statementUpdate = null, statementInsert = null;
         try {
             con = persistance.getSQLConnection();
-            statementUpdate = con.prepareStatement((String) sql.get(INCREMENT_SEARCH_QUERY));
+            statementUpdate = con.prepareStatement(sql.get(INCREMENT_SEARCH_QUERY));
             statementUpdate.setString(1, query);
             int updated = statementUpdate.executeUpdate();
             if (updated != 0)
                 return;
 
-            statementInsert = con.prepareStatement((String) sql.get(INSERT_SEARCH_QUERY));
+            statementInsert = con.prepareStatement(sql.get(INSERT_SEARCH_QUERY));
             statementInsert.setString(1, query);
             statementInsert.executeUpdate();
         } catch (SQLException e) {
@@ -2127,7 +2126,7 @@ public final class SQLTool implements Configurable {
      */
     public List getSearchQueries(String query, Qualifier[] qualifiers) {
         if (qualifiers == null) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder((String) sql.get(GET_SEARCH_QUERY));
+        StringBuilder sb = new StringBuilder(sql.get(GET_SEARCH_QUERY));
         List params = new ArrayList();
         params.add(query);
         appendQualifiers(sb, qualifiers, params, null, null);
@@ -2146,7 +2145,7 @@ public final class SQLTool implements Configurable {
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement((String) sql.get(PROPERTY_VALUES));
+            statement = con.prepareStatement(sql.get(PROPERTY_VALUES));
             statement.setString(1, type);
             resultSet = statement.executeQuery();
 
@@ -2175,7 +2174,7 @@ public final class SQLTool implements Configurable {
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement((String) sql.get(DELETE_PROPERTY));
+            statement = con.prepareStatement(sql.get(DELETE_PROPERTY));
             statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
             statement.setString(3, type);
@@ -2203,7 +2202,7 @@ public final class SQLTool implements Configurable {
         PreparedStatement statement = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement((String) sql.get(TAG_LOG_ACTION));
+            statement = con.prepareStatement(sql.get(TAG_LOG_ACTION));
             statement.setString(1, action.toString());
             statement.setString(2, tag.getId());
 
@@ -2245,7 +2244,7 @@ public final class SQLTool implements Configurable {
 
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement((String) sql.get(TAG_GET_CREATOR));
+            statement = con.prepareStatement(sql.get(TAG_GET_CREATOR));
             statement.setString(1, tag);
 
             resultSet = statement.executeQuery();
@@ -2287,7 +2286,7 @@ public final class SQLTool implements Configurable {
         PreparedStatement statement = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement((String) sql.get(INSERT_OLD_ADDRESS));
+            statement = con.prepareStatement(sql.get(INSERT_OLD_ADDRESS));
             statement.setString(1, oldUrl);
             if (rid == null)
                 statement.setNull(2, Types.INTEGER);
@@ -2316,7 +2315,7 @@ public final class SQLTool implements Configurable {
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement((String) sql.get(OLD_ADDRESS));
+            statement = con.prepareStatement(sql.get(OLD_ADDRESS));
             statement.setString(1, oldUrl);
             resultSet = statement.executeQuery();
             if (!resultSet.next())
@@ -2347,7 +2346,7 @@ public final class SQLTool implements Configurable {
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement((String) sql.get(LAST_REVISIONS));
+            statement = con.prepareStatement(sql.get(LAST_REVISIONS));
             statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
             statement.setInt(3, count);
@@ -2380,7 +2379,7 @@ public final class SQLTool implements Configurable {
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement((String) sql.get(VALID_SERVERS));
+            statement = con.prepareStatement(sql.get(VALID_SERVERS));
             resultSet = statement.executeQuery();
 
             List<Server> result = new ArrayList();
@@ -2399,7 +2398,7 @@ public final class SQLTool implements Configurable {
     }
 
     public List<Relation> findServerRelationsInCategory(int cat) {
-        String query = (String) sql.get(SERVER_RELATIONS_IN_CATEGORY);
+        String query = sql.get(SERVER_RELATIONS_IN_CATEGORY);
         return loadRelations(query, Collections.singletonList(new Integer(cat)));
     }
 
@@ -2410,7 +2409,7 @@ public final class SQLTool implements Configurable {
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement((String) sql.get(FIND_ADVERTISEMENT_BY_STRING));
+            statement = con.prepareStatement(sql.get(FIND_ADVERTISEMENT_BY_STRING));
             statement.setString(1, str);
             resultSet = statement.executeQuery();
 

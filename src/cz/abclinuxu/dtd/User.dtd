@@ -39,7 +39,6 @@ verze 2.0
 <!ELEMENT signatures (#PCDATA)> <!-- yes or no, zda zobrazovat signatury -->
 <!ELEMENT guidepost (#PCDATA)> <!-- yes or no, zda zobrazovat rozcestnik -->
 <!ELEMENT feeds (#PCDATA)> <!-- comma separated list of server ids to be displayed in guidepost -->
-<!ELEMENT new_comments (#PCDATA)> <!-- yes or no, DEPRECATED zda povolit cookie pro nové komentáře -->
 <!ELEMENT cookie_valid (#PCDATA)> <!-- integer, doba platnosti prihlasovaci cookie -->
 <!ELEMENT index_discussions (#PCDATA)> <!-- integer, pocet diskusi na hlavni strance. -1 : vsechny -->
 <!ELEMENT index_news (#PCDATA)> <!-- integer, pocet zpravicek na hlavni strance -->
@@ -48,6 +47,7 @@ verze 2.0
 <!ELEMENT template_links (#PCDATA)> <!-- integer, pocet odkazu pro jeden server mimo hlavni stranku -->
 <!ELEMENT found_size (#PCDATA)> <!-- integer, pocet nalezenych objektu na strance -->
 <!ELEMENT forum_size (#PCDATA)> <!-- integer, pocet zobrazenych diskusi na strance -->
+<!ELEMENT page_size (#PCDATA)> <!-- integer, defaultni velikost stranky -->
 <!ELEMENT return_to_forum (#PCDATA)> <!-- yes or no, zda se po presunu diskuse vratit do diskusniho fora -->
 <!ELEMENT blog (#PCDATA)> <!-- integer, cislo blogu -->
 <!ATTLIST blog name (#PCDATA) #REQUIRED> <!-- name of blog, part of URL -->

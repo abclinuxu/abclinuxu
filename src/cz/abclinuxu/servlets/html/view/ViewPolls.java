@@ -87,8 +87,7 @@ public class ViewPolls implements AbcAction {
     public static String processPolls(Map env, HttpServletRequest request) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-        int count = Misc.parseInt((String) params.get(PARAM_COUNT), 15);
-        count = Misc.limit(count, 1, 50);
+        int count = Misc.getDefaultPageSize(env);
 
         SQLTool sqlTool = SQLTool.getInstance();
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};

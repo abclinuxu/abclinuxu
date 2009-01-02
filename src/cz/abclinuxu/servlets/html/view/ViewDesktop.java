@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  */
-public class ViewScreenshot implements AbcAction {
+public class ViewDesktop implements AbcAction {
     public static final String PARAM_RELATION = "rid";
     /** n-th oldest object, where display from */
     public static final String PARAM_FROM = "from";
@@ -50,7 +50,7 @@ public class ViewScreenshot implements AbcAction {
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
-        if (relation.getId() == Constants.REL_SCREENSHOTS)
+        if (relation.getId() == Constants.REL_DESKTOPS)
             return processSection(request, env);
         else
             return processItem(request, relation, env);
@@ -61,24 +61,24 @@ public class ViewScreenshot implements AbcAction {
         SQLTool sqlTool = SQLTool.getInstance();
 
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-        int count = Misc.getPageSize(10, 50, env, "/data/settings/forum_size"); // todo generic listing size setting
-        int total = sqlTool.countItemRelationsWithType(Item.SCREENSHOT, null);
+        int count = Misc.getPageSize(10, 50, env, null);
+        int total = sqlTool.countItemRelationsWithType(Item.DESKTOP, null);
 
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
-        List list = sqlTool.findItemRelationsWithType(Item.SCREENSHOT, qualifiers);
+        List list = sqlTool.findItemRelationsWithType(Item.DESKTOP, qualifiers);
         Tools.syncList(list);
 
         Paging paging = new Paging(list, from, count, total);
         env.put(VAR_ITEMS, paging);
 
         env.put(Constants.VAR_RSS, FeedGenerator.getScreenshotsFeedUrl());
-        return FMTemplateSelector.select("Screenshot", "showList", env, request);
+        return FMTemplateSelector.select("Desktop", "showList", env, request);
     }
 
     public static String processItem(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
-        if (ACTION_USERS.equals((String) params.get(PARAM_ACTION)))
+        if (ACTION_USERS.equals(params.get(PARAM_ACTION)))
             return processItemUsers(request, relation, env);
         else
             return processItemDisplay(request, relation, env);
@@ -96,7 +96,7 @@ public class ViewScreenshot implements AbcAction {
         env.put(ShowObject.VAR_CHILDREN_MAP, children);
 
         env.put(Constants.VAR_RSS, FeedGenerator.getScreenshotsFeedUrl());
-        return FMTemplateSelector.select("Screenshot", "show", env, request);
+        return FMTemplateSelector.select("Desktop", "show", env, request);
     }
 
     /**
@@ -107,6 +107,6 @@ public class ViewScreenshot implements AbcAction {
         env.put(VAR_ITEM, item);
 
         env.put(Constants.VAR_RSS, FeedGenerator.getScreenshotsFeedUrl());
-        return FMTemplateSelector.select("Screenshot", "users", env, request);
+        return FMTemplateSelector.select("Desktop", "users", env, request);
     }
 }

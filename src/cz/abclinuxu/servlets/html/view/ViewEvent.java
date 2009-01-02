@@ -131,7 +131,7 @@ public class ViewEvent implements AbcAction, Configurable {
     public static String processWaitingSection(HttpServletRequest request, HttpServletResponse response, Relation relation, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-        int count = Misc.getPageSize(10, 50, env, "/data/settings/forum_size"); // todo generic listing size setting
+        int count = Misc.getDefaultPageSize(env);
         SQLTool sqlTool = SQLTool.getInstance();
         
         List<Qualifier> qualifiers = new ArrayList(3);
@@ -218,7 +218,7 @@ public class ViewEvent implements AbcAction, Configurable {
         }
         
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-        int count = Misc.getPageSize(10, 50, env, "/data/settings/forum_size"); // todo generic listing size setting
+        int count = Misc.getDefaultPageSize(env);
         List<Qualifier> qualifiers = new ArrayList<Qualifier>(5);
         List<Qualifier> qualifiersCal = new ArrayList<Qualifier>(3);
         

@@ -18,7 +18,7 @@
             <td class="required" width="200px">Doba platnosti přihlašovací cookie</td>
             <td>
                 <select name="cookieValid" tabindex="2">
-                    <#assign cookieValid=PARAMS.cookieValid?default("16070400")>
+                    <#assign cookieValid=PARAMS.cookieValid!"16070400">
                     <option value="0"<#if cookieValid=="0">SELECTED</#if>>nevytvářet</option>
                     <option value="-1" <#if cookieValid=="-1">SELECTED</#if>>tato session</option>
                     <option value="3600"<#if cookieValid=="3600">SELECTED</#if>>hodina</option>
@@ -137,7 +137,7 @@
         <tr>
             <td class="required" width="200px">Počet dotazů na úvodní stránce</td>
             <td>
-                <#assign single_mode=TOOL.xpath(MANAGED, "/data/profile/forum_mode")?default("")=="single">
+                <#assign single_mode=TOOL.xpath(MANAGED, "/data/profile/forum_mode")!""=="single">
                 <#if !single_mode>
                     samostatné poradny
                     |
@@ -165,7 +165,7 @@
                     všechny dotazy v jednom výpisu
                     <br>
                     <select name="discussions" tabindex="8">
-                        <#assign discussions=PARAMS.discussions?default("20")>
+                        <#assign discussions=PARAMS.discussions!"20">
                         <option value="-2"<#if discussions=="-2">SELECTED</#if>>default</option>
                         <option value="0" <#if discussions=="0">SELECTED</#if>>žádné</option>
                         <option value="5"<#if discussions=="5">SELECTED</#if>>5</option>
@@ -235,7 +235,7 @@
         </tr>
     </table>
 
-    <h2 style="margin-bottom: 1em">Velikost zobrazených dat</h2>
+    <h2 style="margin-bottom: 1em">Titulní stránka</h2>
 
     <table class="siroka" cellspacing="10px">
         <tr>
@@ -281,21 +281,37 @@
         <tr>
             <td colspan="2">
                 Počet zobrazovaných uživatelských desktopů na titulní stránce. Tento počet
-                je standardně nastaven na ${DEFAULT_SCREENSHOTS}. Můžete jej přenastavit na hodnotu v rozmezí 0&nbsp;-&nbsp;3,
-                přičemž 0 odstraní boxík se screenshoty z hlavní stránky úplně.
+                je standardně nastaven na ${DEFAULT_SCREENSHOTS}. Můžete jej přenastavit na hodnotu
+                v rozmezí 0&nbsp;-&nbsp;3, přičemž 0 odstraní boxík se screenshoty desktopů z hlavní stránky úplně.
             </td>
+        </tr>
+    </table>
+
+    <h2 style="margin-bottom: 1em">Počet dokumentů jinde</h2>
+
+    <table class="siroka" cellspacing="10px">
+        <tr>
+            <td class="required" width="200px">Obecná velikost stránky</td>
+            <td>
+                <input type="text" name="defaultPageSize" value="${PARAMS.defaultPageSize!}" size="3" tabindex="16">
+                <@lib.showError key="defaultPageSize"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2">Počet zobrazených dokumentů na jedné stránce.</td>
         </tr>
 
         <tr>
             <td class="required" width="200px">Velikost stránky při hledání</td>
             <td>
-                <input type="text" name="search" value="${PARAMS.search!}" size="3" tabindex="16">
+                <input type="text" name="search" value="${PARAMS.search!}" size="3" tabindex="17">
                 <@lib.showError key="search"/>
             </td>
         </tr>
 
         <tr>
-            <td colspan="2">Počet nalezených dokumentů na jedné stránce.</td>
+            <td colspan="2">Počet nalezených dokumentů zobrazených na jedné stránce.</td>
         </tr>
     </table>
 
@@ -305,8 +321,8 @@
         <tr>
             <td class="required" width="200px">Zobrazovat rozcestník</td>
             <td>
-                <@lib.showOption "guidepost", "yes", "ano", "radio", "tabindex='17'" />
-                <@lib.showOption "guidepost", "no", "ne", "radio", "tabindex='17'" />
+                <@lib.showOption "guidepost", "yes", "ano", "radio", "tabindex='18'" />
+                <@lib.showOption "guidepost", "no", "ne", "radio", "tabindex='18'" />
             </td>
         </tr>
 

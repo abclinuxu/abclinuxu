@@ -85,7 +85,7 @@ public class DocumentParser {
                 return parseNews(item);
             case Item.PERSONALITY:
                 return parsePersonality(item);
-            case Item.SCREENSHOT:
+            case Item.DESKTOP:
                 return parseScreenshot(item);
             case Item.SERIES:
                 return parseSeries(item);

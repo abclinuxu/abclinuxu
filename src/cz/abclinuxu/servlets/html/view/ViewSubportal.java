@@ -116,7 +116,7 @@ public class ViewSubportal implements AbcAction {
         SQLTool sqlTool = SQLTool.getInstance();
 
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-        int count = Misc.getPageSize(10, 50, env, "/data/settings/forum_size"); // todo generic listing size setting
+        int count = Misc.getDefaultPageSize(env);
         int total;
         List list;
         String orderBy = (String) params.get(PARAM_ORDER_BY);

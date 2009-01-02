@@ -82,8 +82,7 @@ public class ViewVideo implements AbcAction {
         SQLTool sqlTool = SQLTool.getInstance();
 
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-        int count = Misc.getPageSize(10, 50, env, "/data/settings/forum_size"); // todo generic listing size setting
-        int total;
+        int count = Misc.getDefaultPageSize(env);
 
         List qualifiers = new ArrayList();
         Qualifier[] qa;
@@ -91,7 +90,7 @@ public class ViewVideo implements AbcAction {
         qualifiers.add(new CompareCondition(Field.UPPER, Operation.EQUAL, relation.getId()));
         
         qa = new Qualifier[qualifiers.size()];
-        total = sqlTool.countItemRelationsWithType(Item.VIDEO, (Qualifier[]) qualifiers.toArray(qa));
+        int total = sqlTool.countItemRelationsWithType(Item.VIDEO, (Qualifier[]) qualifiers.toArray(qa));
         
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(Qualifier.ORDER_DESCENDING);

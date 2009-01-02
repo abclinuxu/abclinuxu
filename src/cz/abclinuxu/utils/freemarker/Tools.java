@@ -1042,8 +1042,8 @@ public class Tools implements Configurable {
      * @param relation fully initialized relation containing Item of type Screenshot.
      * @return view object
      */
-    public static Screenshot createScreenshot(Relation relation) {
-        return new Screenshot(relation);
+    public static Desktop createScreenshot(Relation relation) {
+        return new Desktop(relation);
     }
 
     /**

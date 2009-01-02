@@ -221,9 +221,10 @@
 <!ELEMENT article (#PCDATA)> <!-- id of relation for article associated with this series, articles are sorted by published date in ascending order -->
 <!ATTLIST article published (#NMTOKEN)> <!-- date in ISO format (YYYY-MM-DD), when this article was published -->
 
-<!-- Item.SCREENSHOT -->
-<!ELEMENT data (description?, image)>
-<!ELEMENT description (#PCDATA)> <!-- description of the screenshot -->
+<!-- Item.DESKTOP -->
+<!ELEMENT data (description, theme_url?)>
+<!ELEMENT description (#PCDATA)> <!-- description of the desktop -->
+<!ELEMENT theme_url (#PCDATA)> <!-- URL for theme or backround image used in desktop -->
 
 <!-- Item.MESSAGE -->
 <!ELEMENT data (message, sender?, email?, uid?)>

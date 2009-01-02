@@ -42,7 +42,8 @@ public class AbcConfig implements Configurable {
     public static final String PREF_DEPLOY_PATH = "deploy.path";
     public static final String PREF_DOMAIN = "domain";
     public static final String PREF_HOSTNAME = "hostname";
-    public static final String PREF_VIEWUSER_PAGINGSIZE = "viewuser.page.size";
+    public static final String PREF_DEFAULT_PAGE_SIZE = "default.page.size";
+    public static final String PREF_VIEW_USER_PAGE_SIZE = "viewuser.page.size";
     public static final String PREF_SECTION_ARTICLES_COUNT = "section.article.count";
     public static final String PREF_SERIES_ARTICLES_COUNT = "series.article.count";
     public static final String PREF_ARTICLE_SECTION_ARTICLES_COUNT = "article.section.articles.count";
@@ -60,7 +61,7 @@ public class AbcConfig implements Configurable {
     public static final String PREF_LOGIN_USE_HTTPS = "login.use.https";
 
     static String deployPath, domain, hostname, blogWatchEmail, adminsEmail;
-    static int viewUserPageSize, sectionArticleCount, seriesArticleCount, bazaarPageSize;
+    static int defaultPageSize, viewUserPageSize, sectionArticleCount, seriesArticleCount, bazaarPageSize;
     static int articleSectionArticlesCount, authorArticlesPageSize, searchResultsCount, faqSectionCount;
     static int maxWatchedDiscussions, ticketLength, oldDiscussionAge, oldDiscussionSleep;
     static boolean maintainanceMode, loginUseHttps;
@@ -74,7 +75,8 @@ public class AbcConfig implements Configurable {
         deployPath = prefs.get(PREF_DEPLOY_PATH, null);
         if (! deployPath.endsWith(File.separator))
             deployPath = deployPath.concat(File.separator);
-        viewUserPageSize = prefs.getInt(PREF_VIEWUSER_PAGINGSIZE,20);
+        defaultPageSize = prefs.getInt(PREF_DEFAULT_PAGE_SIZE, 20);
+        viewUserPageSize = prefs.getInt(PREF_VIEW_USER_PAGE_SIZE,20);
         sectionArticleCount = prefs.getInt(PREF_SECTION_ARTICLES_COUNT, 25);
         seriesArticleCount = prefs.getInt(PREF_SECTION_ARTICLES_COUNT, 25);
         articleSectionArticlesCount = prefs.getInt(PREF_ARTICLE_SECTION_ARTICLES_COUNT, 5);
@@ -151,6 +153,13 @@ public class AbcConfig implements Configurable {
      */
     public static String getAdminsEmail() {
         return adminsEmail;
+    }
+
+    /**
+     * @return default page size.
+     */
+    public static int getDefaultPageSize() {
+        return defaultPageSize;
     }
 
     /**

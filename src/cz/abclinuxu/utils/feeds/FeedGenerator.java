@@ -41,7 +41,6 @@ import java.io.*;
 
 import com.sun.syndication.feed.synd.*;
 import com.sun.syndication.io.SyndFeedOutput;
-import cz.abclinuxu.AbcException;
 import org.apache.log4j.Logger;
 import org.dom4j.Node;
 import org.dom4j.Document;
@@ -505,7 +504,7 @@ public class FeedGenerator implements Configurable {
             SyndEntry entry;
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0,feedLength)};
-            List list = SQLTool.getInstance().findItemRelationsWithType(Item.SCREENSHOT, qualifiers);
+            List list = SQLTool.getInstance().findItemRelationsWithType(Item.DESKTOP, qualifiers);
             Tools.syncList(list);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();

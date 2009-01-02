@@ -35,7 +35,7 @@ import org.dom4j.Document;
  * @author literakl
  * @since 22.1.2008
  */
-public class Screenshot {
+public class Desktop {
     String url;
     String title;
     String imageUrl;
@@ -47,14 +47,14 @@ public class Screenshot {
      * Constructs object from fully initialized relation (including child).
      * @param relation
      */
-    public Screenshot(Relation relation) {
+    public Desktop(Relation relation) {
         url = relation.getUrl();
         item = (Item) relation.getChild();
         title = item.getTitle();
         Map children = Tools.groupByType(item.getChildren(), "Data");
         List list = (List) children.get(Constants.TYPE_DATA);
         if (list == null)
-            throw new InvalidDataException("Screenshot " + item.getId() + " neobsahuje objekt Data! (relace = " + relation.getId());
+            throw new InvalidDataException("Desktop " + item.getId() + " neobsahuje objekt Data! (relace = " + relation.getId());
 
         Relation dataRelation = (Relation) list.get(0);
         Data data = (Data) dataRelation.getChild();

@@ -120,12 +120,12 @@ public class MigrateAttachments {
 //        System.out.println();
 //
 //        System.out.print("Starting to search for Desktop items ..");
-//        size = sqlTool.countItemsWithType(Item.SCREENSHOT);
+//        size = sqlTool.countItemsWithType(Item.DESKTOP);
 //        System.out.println(" found " + size + " items");
 //
 //        for (int i = 0, j = 50; i < size; i += j) {
 //            if (i + j > size) j = size - i;
-//            List<Item> items = sqlTool.findItemsWithType(Item.SCREENSHOT, i, j);
+//            List<Item> items = sqlTool.findItemsWithType(Item.DESKTOP, i, j);
 //            for (Item item : items) {
 //                upgradeScreenshot(item);
 //            }

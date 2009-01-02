@@ -111,6 +111,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_SCREENSHOTS_COUNT = "screenshots";
     public static final String PARAM_NEWS_COUNT = "news";
     public static final String PARAM_STORIES_COUNT = "stories";
+    public static final String PARAM_DEFAULT_PAGE_SIZE = "defaultPageSize";
     public static final String PARAM_FOUND_PAGE_SIZE = "search";
     public static final String PARAM_FORUM_PAGE_SIZE = "forum";
     public static final String PARAM_BLACKLIST_USER = "bUid";
@@ -765,11 +766,11 @@ public class EditUser implements AbcAction {
         if ( node!=null )
             params.put(PARAM_AVATARS, node.getText());
         node = document.selectSingleNode("/data/settings/news_titles");
-        if ( node!=null )
-            params.put(PARAM_NEWS_TITLES, node.getText());
+        params.put(PARAM_NEWS_TITLES, (node != null) ? node.getText() : "yes");
+
         node = document.selectSingleNode("/data/settings/news_multiline");
-        if ( node!=null )
-            params.put(PARAM_NEWS_MULTILINE, node.getText());
+        params.put(PARAM_NEWS_MULTILINE, (node != null) ? node.getText() : "yes");
+
         node = document.selectSingleNode("/data/settings/hp_all_stories");
         if ( node!=null )
             params.put(PARAM_DISPLAY_BANNED_STORIES, node.getText());
@@ -801,6 +802,10 @@ public class EditUser implements AbcAction {
         node = document.selectSingleNode("/data/settings/index_stories");
         if ( node!=null )
             params.put(PARAM_STORIES_COUNT, node.getText());
+
+        node = document.selectSingleNode("/data/settings/page_size");
+        if ( node!=null )
+            params.put(PARAM_DEFAULT_PAGE_SIZE, node.getText());
 
         node = document.selectSingleNode("/data/settings/found_size");
         if ( node!=null )
@@ -852,14 +857,14 @@ public class EditUser implements AbcAction {
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
-            canContinue &= checkPassword(params, managed, env);
+            canContinue = checkPassword(params, managed, env);
 
         if (!canContinue) {
             setDefaultValuesForEditSettings(env);
             return FMTemplateSelector.select("EditUser", "editSettings", env, request);
         }
 
-        canContinue &= setCssUrl(params, managed);
+        canContinue = setCssUrl(params, managed);
         canContinue &= setCookieValidity(params, managed);
         canContinue &= setEmoticons(params, managed);
         canContinue &= setSignatures(params, managed);
@@ -872,6 +877,7 @@ public class EditUser implements AbcAction {
         canContinue &= setScreenshotsSizeLimit(params, managed, env);
         canContinue &= setNewsSizeLimit(params, managed, env);
         canContinue &= setStoriesSizeLimit(params, managed, env);
+        canContinue &= setDefaultPageSize(params, managed, env);
         canContinue &= setFoundPageSize(params, managed, env);
         canContinue &= setForumPageSize(params, managed, env);
         canContinue &= setReturnBackToForum(params, managed);
@@ -1014,12 +1020,12 @@ public class EditUser implements AbcAction {
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
-            canContinue &= checkPassword(params, managed, env);
+            canContinue = checkPassword(params, managed, env);
 
         if (!canContinue)
             return FMTemplateSelector.select("EditUser", "editSubscription", env, request);
 
-        canContinue &= setWeeklySummary(params, managed);
+        canContinue = setWeeklySummary(params, managed);
         canContinue &= setMonthlySummary(params, managed);
         canContinue &= setForumByEmail(params, managed);
 
@@ -1050,12 +1056,12 @@ public class EditUser implements AbcAction {
 
         boolean canContinue = true;
         if ( ! user.hasRole(Roles.USER_ADMIN) )
-            canContinue &= checkPassword(params, managed, env);
+            canContinue = checkPassword(params, managed, env);
 
         if (!canContinue)
             return FMTemplateSelector.select("EditUser", "uploadPhoto", env, request);
 
-        canContinue &= setPhoto(params, managed, env);
+        canContinue = setPhoto(params, managed, env);
 
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "uploadPhoto", env, request);
@@ -1134,12 +1140,12 @@ public class EditUser implements AbcAction {
 
         boolean canContinue = true;
         if ( ! user.hasRole(Roles.USER_ADMIN) )
-            canContinue &= checkPassword(params, managed, env);
+            canContinue = checkPassword(params, managed, env);
 
         if ( ! canContinue)
             return FMTemplateSelector.select("EditUser", "editGPG", env, request);
 
-        canContinue &= setGPG(params, managed, env);
+        canContinue = setGPG(params, managed, env);
 
         if ( ! canContinue )
             return FMTemplateSelector.select("EditUser", "editGPG", env, request);
@@ -1168,12 +1174,12 @@ public class EditUser implements AbcAction {
 
         boolean canContinue = true;
         if ( ! user.hasRole(Roles.USER_ADMIN) )
-            canContinue &= checkPassword(params, managed, env);
+            canContinue = checkPassword(params, managed, env);
 
         if ( ! canContinue)
             return FMTemplateSelector.select("EditUser", "uploadAvatar", env, request);
 
-        canContinue &= setAvatar(params, managed, env);
+        canContinue = setAvatar(params, managed, env);
 
         if ( ! canContinue )
             return FMTemplateSelector.select("EditUser", "uploadAvatar", env, request);
@@ -1322,7 +1328,7 @@ public class EditUser implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistence();
 
         boolean canContinue = true;
-        canContinue &= checkPassword(params, user, env);
+        canContinue = checkPassword(params, user, env);
         canContinue &= setUserRoles(params, managed);
 
         if ( !canContinue )
@@ -1482,12 +1488,12 @@ public class EditUser implements AbcAction {
         }
 
         Integer id = SQLTool.getInstance().getUserByLogin(login);
-        if (id == null || id.intValue() == 0) {
+        if (id == null || id == 0) {
             ServletUtils.addError(PARAM_LOGIN, "Uživatel nenalezen!", env, null);
             return FMTemplateSelector.select("EditUser", "forgottenPassword", env, request);
         }
 
-        User managed = Tools.createUser(id.intValue());
+        User managed = Tools.createUser(id);
 
         if (managed.getEmail() == null) {
             ServletUtils.addError(PARAM_LOGIN, "Uživatel nemá přiřazenou e-mailovou adresu!", env, null);
@@ -2220,6 +2226,17 @@ public class EditUser implements AbcAction {
         Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
         int max = (Integer) maxSizes.get(VariableFetcher.KEY_STORY);
         return setLimitedSize(params, PARAM_STORIES_COUNT, user.getData(), "/data/settings/index_stories", 0, max, env);
+    }
+
+    /**
+     * Updates default page size from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param user   user to be updated
+     * @param env    environment
+     * @return false, if there is a major error.
+     */
+    private boolean setDefaultPageSize(Map params, User user, Map env) {
+        return setLimitedSize(params, PARAM_DEFAULT_PAGE_SIZE, user.getData(), "/data/settings/page_size", 10, 100, env);
     }
 
     /**

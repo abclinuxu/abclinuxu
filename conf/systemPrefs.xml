@@ -26,13 +26,14 @@
                                     <entry key="deploy.path" value="@DEPLOY_ABCLINUXU@"/>
                                     <entry key="domain" value="@DOMAIN_NAME@"/>
                                     <entry key="hostname" value="@HOSTNAME@"/>
+                                    <entry key="default.page.size" value="30"/>
                                     <entry key="viewuser.page.size" value="20"/>
                                     <entry key="section.article.count" value="25"/>
                                     <entry key="series.article.count" value="25"/>
                                     <entry key="article.section.articles.count" value="5"/>
                                     <entry key="author.articles.page.size" value="30"/>
                                     <entry key="search.results.count" value="10"/>
-                                    <entry key="section.faq.count" value="20"/>
+                                    <entry key="section.faq.count" value="30"/>
                                     <entry key="bazaar.page.size" value="40"/>
                                     <entry key="watched.discussions.limit" value="75"/>
                                     <entry key="maintainance.mode" value="false"/>
@@ -705,7 +706,7 @@
                             <entry key="CAT_BAZAAR" value="1584"/>
                             <entry key="CAT_TRIVIA" value="1605"/>
                             <entry key="CAT_HANGMAN" value="1606"/>
-                            <entry key="CAT_SCREENSHOTS" value="1949"/>
+                            <entry key="CAT_DESKTOPS" value="1949"/>
                             <entry key="CAT_SERIES" value="1647"/>
                             <entry key="CAT_SURVEY" value="1679"/>
                             <entry key="CAT_PERSONALITIES" value="1863"/>
@@ -749,7 +750,7 @@
                             <entry key="REL_GAMES" value="156665"/>
                             <entry key="REL_TRIVIA" value="156666"/>
                             <entry key="REL_HANGMAN" value="156667"/>
-                            <entry key="REL_SCREENSHOTS" value="200506"/>
+                            <entry key="REL_DESKTOPS" value="200506"/>
                             <entry key="REL_SERIES" value="164193"/>
                             <entry key="REL_SURVEY" value="168884"/>
                             <entry key="REL_PERSONALITIES" value="190499"/>

@@ -63,7 +63,7 @@ public class Constants implements Configurable {
     public static int CAT_BAZAAR;
     public static int CAT_TRIVIA;
     public static int CAT_HANGMAN;
-    public static int CAT_SCREENSHOTS;
+    public static int CAT_DESKTOPS;
     public static int CAT_SERIES;
     public static int CAT_SURVEY;
     public static int CAT_PERSONALITIES;
@@ -113,7 +113,7 @@ public class Constants implements Configurable {
     public static int REL_GAMES;
     public static int REL_TRIVIA;
     public static int REL_HANGMAN;
-    public static int REL_SCREENSHOTS;
+    public static int REL_DESKTOPS;
     public static int REL_SERIES;
     public static int REL_SURVEY;
     public static int REL_PERSONALITIES;

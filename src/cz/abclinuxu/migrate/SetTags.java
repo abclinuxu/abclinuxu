@@ -81,7 +81,7 @@ public class SetTags {
         setOnItem(Item.PERSONALITY);
         System.out.println(" done");
         System.out.print("Tagging screenshots");
-        setOnItem(Item.SCREENSHOT);
+        setOnItem(Item.DESKTOP);
         System.out.println(" done");
         System.out.print("Tagging series");
         setOnItem(Item.SERIES);

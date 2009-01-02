@@ -335,6 +335,16 @@ public class Misc {
     }
 
     /**
+     * Gets default page size from parameters, user preferences or system settings.
+     * The paramaters take precendence over user settings.
+     * @param env environment
+     * @return page size to be used
+     */
+    public static int getDefaultPageSize(Map env) {
+        return getPageSize(AbcConfig.getDefaultPageSize(), 50, env, "/data/settings/page_size");
+    }
+
+    /**
      * Creates string in format "(?,?,?)"
      * @param size number of question marks
      * @return string for ids in IN condition

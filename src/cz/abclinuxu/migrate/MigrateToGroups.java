@@ -99,8 +99,8 @@ public class MigrateToGroups {
 		addUsers("bazaar admin", gid);
         
         gid = createGroup("desktop admins", null);
-		assignGID(Constants.CAT_SCREENSHOTS, gid, perms);
-		assignGIDToItems(Item.SCREENSHOT, gid, perms);
+		assignGID(Constants.CAT_DESKTOPS, gid, perms);
+		assignGIDToItems(Item.DESKTOP, gid, perms);
         
         perms |= Permissions.PERMISSION_MODIFY;
         
