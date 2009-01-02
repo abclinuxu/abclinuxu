@@ -47,7 +47,7 @@
     <span class="error">${ERRORS.author!}</span><br>
         nebo <a href="/Profile?action=login">se přihlašte</a>.
    </p>
-   <#if ! USER_VERIFIED!>
+   <#if ! USER_VERIFIED!false>
        <p>
            <span class="required">Zadejte aktuální rok</span>
            <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}">

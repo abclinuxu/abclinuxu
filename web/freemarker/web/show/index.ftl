@@ -66,7 +66,7 @@
 
 <#assign single_mode=false>
 <#if USER??>
-    <#if TOOL.xpath(USER, "/data/profile/forum_mode")!""=="single">
+    <#if (TOOL.xpath(USER, "/data/profile/forum_mode")!"") == "single">
         <#assign single_mode=true>
     </#if>
     <small>

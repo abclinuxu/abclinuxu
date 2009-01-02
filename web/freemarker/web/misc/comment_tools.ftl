@@ -102,7 +102,7 @@
     <span class="error">${ERRORS.email!}</span>
    </td>
   </tr>
-    <#if ! (USER?? || USER_VERIFIED!)>
+    <#if ! (USER?? || USER_VERIFIED!false)>
         <tr>
             <td class="required">Aktuální rok</td>
             <td>
