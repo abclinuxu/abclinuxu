@@ -28,24 +28,33 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
 <h3><a href="/ovladace">Ovladače</a></h3>
  <#assign DRIVERS = VARS.getFreshDrivers(USER!)>
 <ul>
- <#list DRIVERS as rel>
-  <li><a href="${rel.url?default("/ovladace/show/"+rel.id)}">
-  ${TOOL.xpath(rel.child.title)}</a></li>
- </#list>
+    <#list DRIVERS as rel>
+         <li>
+            <a href="${rel.url}">${rel.child.title}</a>
+         </li>
+    </#list>
  <li><a href="/ovladace">&gt;&gt;</a></li>
 </ul>
 
 <h3><a href="/hardware">Hardware</a></h3>
  <#assign HARDWARE = VARS.getFreshHardware(USER!)>
 <ul>
- <#list HARDWARE as rel>
-  <li><a href="/hardware/show/${rel.id}">
-  ${TOOL.xpath(rel.child.title)}</a></li>
- </#list>
+    <#list HARDWARE as rel>
+         <li><a href="${rel.url!"/hardware/show/"+rel.id}">${rel.child.title}</a></li>
+    </#list>
  <li><a href="/History?type=hardware&from=0&count=25">&gt;&gt;</a></li>
 </ul>
 
-<#assign FORUM = VARS.getFreshQuestions()>
+<h3><a href="/software">Software</a></h3>
+<#assign SOFTWARE = VARS.getFreshSoftware(USER!)>
+<ul>
+    <#list SOFTWARE as rel>
+         <li><a href="${rel.url}">${rel.child.title}</a></li>
+    </#list>
+ <li><a href="/History?type=software&from=0&count=25">&gt;&gt;</a></li>
+</ul>
+
+<#assign FORUM = VARS.getFreshQuestions(USER!)>
 <#if (FORUM?size > 0)>
     <#assign FORUM=TOOL.analyzeDiscussions(FORUM)>
     <a name="diskuse"><h1>Diskusní fórum</h1></a>
