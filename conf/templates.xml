@@ -695,9 +695,6 @@
         <action name="myProfile" content="/show/myprofile.ftl">
             <var name="TITLE" value="Můj profil" />
         </action>
-        <action name="content" content="/show/mycontent.ftl">
-            <var name="TITLE" value="Můj profil" />
-        </action>
         <action name="counter" content="/show/mycounter.ftl">
             <var name="TITLE" value="Co jsem publikoval" />
         </action>

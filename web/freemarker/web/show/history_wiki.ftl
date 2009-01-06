@@ -7,6 +7,8 @@
     <#assign sortByUpdated = "true">
 </#if>
 
+<h1>${PAGE_TITLE}</h1>
+
 <table class="siroka">
     <tr>
         <th>Název</th>

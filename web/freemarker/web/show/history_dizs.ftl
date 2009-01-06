@@ -2,6 +2,8 @@
 
 <#assign byCreated = FOUND.isQualifierSet("SORT_BY_CREATED")>
 
+<h1>${PAGE_TITLE}</h1>
+
 <table class="ds">
  <thead>
    <tr>

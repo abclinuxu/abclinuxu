@@ -1,5 +1,7 @@
 <#include "../header.ftl">
 
+<h1>${PAGE_TITLE}</h1>
+
 <#if TYPE=="articles">
  <#global CITACE = TOOL.getRelationCountersValue(FOUND.data,"read")/>
 

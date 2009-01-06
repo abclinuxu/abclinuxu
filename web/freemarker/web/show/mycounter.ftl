@@ -1,7 +1,7 @@
 <#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
-<h1>Přehled aktivit uživatele <@lib.showUser PROFILE/></h1>
+<h1><@lib.showUser PROFILE/> - přehled aktivit uživatele</h1>
 
 <@lib.showMessages/>
 

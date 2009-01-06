@@ -79,6 +79,8 @@ public class History implements AbcAction {
     public static final String VAR_URL_BEFORE_FROM = "URL_BEFORE_FROM";
     /** Final part of URL, after value of from parameter */
     public static final String VAR_URL_AFTER_FROM = "URL_AFTER_FROM";
+    /** user used as filter */
+    public static final String VAR_PAGE_TITLE = "PAGE_TITLE";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -90,6 +92,10 @@ public class History implements AbcAction {
         int count = Misc.getDefaultPageSize(env);
         int uid = Misc.parseInt((String)params.get(PARAM_USER_SHORT),0);
         String filter = (String) params.get(PARAM_FILTER);
+
+        User selectedUser = null;
+        if (uid > 0)
+            selectedUser = (User) persistence.findById(new User(uid));
 
         List<Relation> data;
         List parents = new ArrayList();
@@ -104,15 +110,18 @@ public class History implements AbcAction {
             found = new Paging(data,from,count,total,qualifiers);
             type = VALUE_TYPE_ARTICLES;
             parents.add(persistence.findById(new Relation(Constants.REL_ARTICLES)));
+            env.put(VAR_PAGE_TITLE, "Archiv článků");
 
         } else if ( VALUE_TYPE_NEWS.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
-            if ( uid > 0 ) {
+            if ( selectedUser != null ) {
                 total = sqlTool.countNewsRelationsByUser(uid);
                 data = sqlTool.findNewsRelationsByUser(uid, qualifiers);
+                env.put(VAR_PAGE_TITLE, selectedUser.getName() + " - archiv zpráviček");
             } else {
                 total = sqlTool.countNewsRelations();
                 data = sqlTool.findNewsRelations(qualifiers);
+                env.put(VAR_PAGE_TITLE, "Archiv zpráviček");
             }
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_NEWS;
@@ -125,6 +134,7 @@ public class History implements AbcAction {
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_FAQ;
             parents.add(persistence.findById(new Relation(Constants.REL_FAQ)));
+            env.put(VAR_PAGE_TITLE, "Archiv často kladených otázek");
 
         } else if ( VALUE_TYPE_HARDWARE.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
@@ -133,33 +143,27 @@ public class History implements AbcAction {
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_HARDWARE;
             parents.add(persistence.findById(new Relation(Constants.REL_HARDWARE)));
+            env.put(VAR_PAGE_TITLE, "Archiv hardwarových záznamů");
 
-        } else if ( VALUE_TYPE_WIKI.equalsIgnoreCase(type) ) {
+        } else if ( VALUE_TYPE_WIKI.equalsIgnoreCase(type) && selectedUser != null ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_WHEN, Qualifier.ORDER_DESCENDING, from, count);
             total = sqlTool.countWikiRelationsByUser(uid);
             data = sqlTool.findWikiRelationsByUser(uid, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_WIKI;
+            env.put(VAR_PAGE_TITLE, selectedUser.getName() + " - archiv wiki záznamů");
 
         } else if ( VALUE_TYPE_SOFTWARE.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
-            if (uid > 0) {
-                CompareCondition userEqualsCondition = new CompareCondition(Field.OWNER, Operation.EQUAL, uid);
-                total = sqlTool.countItemRelationsWithType(Item.SOFTWARE, new Qualifier[]{userEqualsCondition});
-                Qualifier[] tmp = new Qualifier[qualifiers.length + 1];
-                tmp[0] = userEqualsCondition;
-                System.arraycopy(qualifiers, 0, tmp, 1, qualifiers.length);
-                qualifiers = tmp;
-            } else
-                total = sqlTool.countItemRelationsWithType(Item.SOFTWARE, new Qualifier[]{});
-
+            total = sqlTool.countItemRelationsWithType(Item.SOFTWARE, new Qualifier[]{});
             data = sqlTool.findItemRelationsWithType(Item.SOFTWARE, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_SOFTWARE;
             parents.add(persistence.findById(new Relation(Constants.REL_SOFTWARE)));
+            env.put(VAR_PAGE_TITLE, "Archiv softwarových záznamů");
 
         } else if ( VALUE_TYPE_DISCUSSION.equalsIgnoreCase(type) ) {
-            if (uid > 0 && VALUE_FILTER_LAST.equals(filter)) {
+            if (selectedUser != null && VALUE_FILTER_LAST.equals(filter)) {
                 User user = (User) env.get(Constants.VAR_USER);
                 if (user == null)
                     return FMTemplateSelector.select("ViewUser", "login", env, request);
@@ -169,61 +173,49 @@ public class History implements AbcAction {
                 qualifiers = getQualifiers(params, Qualifier.SORT_BY_WHEN, Qualifier.ORDER_DESCENDING, from, count);
                 total = sqlTool.countLastSeenDiscussionRelationsBy(uid);
                 data = sqlTool.findLastSeenDiscussionRelationsBy(uid, qualifiers);
+                env.put(VAR_PAGE_TITLE, selectedUser.getName() + " - archiv navštívených diskusí");
             } else {
                 qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
                 total = sqlTool.countDiscussionRelations();
                 data = sqlTool.findDiscussionRelations(qualifiers);
+                env.put(VAR_PAGE_TITLE, "Archiv diskusí");
             }
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_DISCUSSION;
 
-        } else if ( VALUE_TYPE_QUESTIONS.equalsIgnoreCase(type) ) {
+        } else if ( VALUE_TYPE_QUESTIONS.equalsIgnoreCase(type) && selectedUser != null ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
             total = sqlTool.countQuestionRelationsByUser(uid);
             data = sqlTool.findQuestionRelationsByUser(uid, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_QUESTIONS;
+            env.put(VAR_PAGE_TITLE, selectedUser.getName() + " - archiv dotazů");
 
-        } else if ( VALUE_TYPE_COMMENTS.equalsIgnoreCase(type) ) {
+        } else if ( VALUE_TYPE_COMMENTS.equalsIgnoreCase(type) && selectedUser != null ) {
             qualifiers = getQualifiers(params, null, Qualifier.ORDER_DESCENDING, from, count);
             total = sqlTool.countCommentRelationsByUser(uid);
             data = sqlTool.findCommentRelationsByUser(uid, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_COMMENTS;
+            env.put(VAR_PAGE_TITLE, selectedUser.getName() + " - archiv komentovaných diskusí");
 
         } else if ( VALUE_TYPE_DICTIONARY.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
-            if ( uid > 0 ) {
-                CompareCondition userEqualsCondition = new CompareCondition(Field.OWNER, Operation.EQUAL, uid);
-                Qualifier[] tmp = new Qualifier[qualifiers.length + 1];
-                tmp[0] = userEqualsCondition;
-                System.arraycopy(qualifiers, 0, tmp, 1, qualifiers.length);
-                qualifiers = tmp;
-                total = sqlTool.countItemRelationsWithType(Item.DICTIONARY, new Qualifier[]{userEqualsCondition});
-            } else
-                total = sqlTool.countItemRelationsWithType(Item.DICTIONARY, null);
-
+            total = sqlTool.countItemRelationsWithType(Item.DICTIONARY, null);
             data = sqlTool.findItemRelationsWithType(Item.DICTIONARY, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_DICTIONARY;
             parents.add(persistence.findById(new Relation(Constants.REL_DICTIONARY)));
+            env.put(VAR_PAGE_TITLE, "Archiv záznamů ve slovníků");
 
         } else if ( VALUE_TYPE_PERSONALITIES.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
-            if ( uid > 0 ) {
-                CompareCondition userEqualsCondition = new CompareCondition(Field.OWNER, Operation.EQUAL, uid);
-                Qualifier[] tmp = new Qualifier[qualifiers.length + 1];
-                tmp[0] = userEqualsCondition;
-                System.arraycopy(qualifiers, 0, tmp, 1, qualifiers.length);
-                qualifiers = tmp;
-                total = sqlTool.countItemRelationsWithType(Item.PERSONALITY, new Qualifier[]{userEqualsCondition});
-            } else
-                total = sqlTool.countItemRelationsWithType(Item.PERSONALITY, null);
-
+            total = sqlTool.countItemRelationsWithType(Item.PERSONALITY, null);
             data = sqlTool.findItemRelationsWithType(Item.PERSONALITY, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_PERSONALITIES;
             parents.add(persistence.findById(new Relation(Constants.REL_PERSONALITIES)));
+            env.put(VAR_PAGE_TITLE, "Archiv záznamů v Kdo je");
 
         } else
             return ServletUtils.showErrorPage("Chybí parametr type!",env,request);
