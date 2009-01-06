@@ -42,7 +42,7 @@
 
   <p>Pokud znáte číslo relace, vložte jej zde:
    <input type="text" name="enteredId" size="6">
-   <span class="error">${ERRORS!.enteredId!}</span>
+   <@lib.showError key="enteredId"/>
    <input type="submit" name="continue" value="Načti relaci">
    <input type="submit" name="confirm" value="Pokračuj">
   </p>
