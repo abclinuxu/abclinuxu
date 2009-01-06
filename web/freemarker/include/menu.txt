@@ -16,6 +16,7 @@
 <li><a href="/faq">FAQ</a></li>
 <li><a href="/hardware">Hardware</a>
   <ul>
+    <li><a href="/ovladace">Ovladače</a></li>
     <li><a href="/hardware/procesory">Procesory</a></li>
     <li><a href="/hardware/pridavne-karty">Přídavné karty</a></li>
     <li><a href="/hardware/pripojeni-na-sit">Připojení na síť</a></li>
@@ -92,7 +93,6 @@
 <li><a href="/slovnik">Slovník</a></li>
 <li><a href="/kdo-je">Kdo je</a></li>
 <li><a href="/bazar">Bazar</a></li>
-<li><a href="/ovladace">Ovladače</a></li>
 <li><a href="/">Portál</a>
   <ul>
     <#if USER?? && USER.hasRole("root")>
