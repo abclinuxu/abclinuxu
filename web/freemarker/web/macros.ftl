@@ -92,7 +92,7 @@
    shortened=TOOL.xpath(ITEM,"data/perex")?default("UNDEFINED")
  >
     <h3 class="st_nadpis"><a href="${url}" title="${ITEM.title}">${ITEM.title}</a></h3>
-    <#if shortened!="UNDEFINED" && (RELATION.upper=37672 || RELATION.upper=0)>
+    <#if shortened!="UNDEFINED" && RELATION?? && (RELATION.upper=37672 || RELATION.upper=0)>
         <div style="padding-left: 30pt"><strong>Perex:</strong>${shortened}</div>
     </#if>
     <p>${TOOL.xpath(ITEM,"data/content")}</p>
