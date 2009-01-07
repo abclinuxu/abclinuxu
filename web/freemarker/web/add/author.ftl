@@ -81,7 +81,7 @@
             <td><input type="submit" value="Dokonči" tabindex="10"></td>
         </tr>
     </table>
-    <#if EDIT_MODE!>
+    <#if EDIT_MODE!false>
         <input type="hidden" name="action" value="edit2">
         <input type="hidden" name="rid" value="${RELATION.id}">
     <#else>
