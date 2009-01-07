@@ -71,7 +71,7 @@ public class HtmlToTextFormatter implements Configurable {
                 if (node instanceof TagNode) {
                     processTag((TagNode) node, sb, links);
                 } else if (node instanceof Text) {
-                    sb.append(((Text) node).getText());
+                    sb.append((node).getText());
                 }
             }
             while (sb.charAt(sb.length() - 1) == '\n')
@@ -99,13 +99,17 @@ public class HtmlToTextFormatter implements Configurable {
     }
 
     private static void processTag(TagNode tag, StringBuilder sb, List<String> links) {
-        if ("A".equals(tag.getTagName()) && tag.isEndTag()) {
+        if ("A".equals(tag.getTagName()) && ! tag.isEndTag()) {
             String url = tag.getAttribute("href");
             if (url.indexOf("://") == -1)
                 url = AbcConfig.getAbsoluteUrl() + url;
             links.add(url);
-            sb.append(" [" + links.size() + "] ");
-        } else if ("BR".equals(tag.getTagName())) {
+            sb.append(" [").append(links.size()).append("] ");
+            return;
+        }
+        if (sb.length() == 0) // ignore opening tags, it makes no sense to append new lines at start of string
+            return;
+        if ("BR".equals(tag.getTagName())) {
             sb.append('\n');
         } else if (tag.breaksFlow()) {
             sb.append('\n').append('\n');
