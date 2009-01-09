@@ -32,9 +32,9 @@ import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.data.view.NewsCategories;
-import cz.abclinuxu.scheduler.UpdateLinks;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -94,8 +94,8 @@ public class NewsCSV implements AbcAction, Configurable {
             writer.write("|");
             String text = Tools.xpath(item, "data/content");
             text = Tools.removeNewLines(text);
-            text = UpdateLinks.fixAmpersand(text);
-            text = UpdateLinks.prefixAbsoluteLinks(text, "http://www.abclinuxu.cz");
+            text = Tools.fixAmpersand(text);
+            text = Tools.prefixAbsoluteLinks(text, AbcConfig.getAbsoluteUrl());
             writer.write(text);
             writer.write("|");
             writer.write("http://www.abclinuxu.cz"+relation.getUrl());

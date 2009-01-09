@@ -7,7 +7,7 @@
         <ul>
             <#if PARAMS.revize??>
                 <li>
-                    <a href="${RELATION.url?default("/hardware/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
+                    <a href="${RELATION.url!("/hardware/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
                 </li>
             <#else>
             <#if TOOL.permissionsFor(USER, RELATION).canModify()>
@@ -15,7 +15,7 @@
                 <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Přidat obrázek</a></li>
             </#if>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
-                <li><a href="${RELATION.url?default("/software/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
+                <li><a href="${RELATION.url!("/software/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
                     <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}">${monitorState}</a>
                     <span title="Počet lidí, kteří sledují tento záznam">(${TOOL.getMonitorCount(ITEM.data)})</span>
@@ -45,29 +45,9 @@
 
     <@swlib.showSoftware ITEM, true />
 
-    <#assign feedUrl = TOOL.xpath(ITEM, "/data/url[@useType='rss']")?default("UNDEFINED")>
+    <#assign feedUrl = TOOL.xpath(ITEM, "/data/url[@useType='rss']")!"UNDEFINED">
     <#if feedUrl!="UNDEFINED">
-        <h3>
-            Aktuality
-            <a href="${feedUrl}" rel="nofollow"><img src="/images/site2/feed16.png" width="16" height="16" border="0" alt="RSS URL"></a>
-        </h3>
-        <#if FEED_LINKS??>
-            <ul>
-            <#list FEED_LINKS as link>
-                <li>
-                    <#if link.child.url??>
-                        <a href="${"/presmeruj?class=P&amp;id="+ITEM.id+"&amp;url="+link.child.url?url}"
-                            rel="nofollow">${link.child.text}</a>
-                    <#else>
-                        ${link.child.text}
-                    </#if>
-                    (${DATE.show(link.child.updated,"CZ_FULL")})
-                </li>
-            </#list>
-            </ul>
-        <#else>
-            <p>Zdroj zatím nebyl načten, je prázdný nebo obsahuje chybu.</p>
-        </#if>
+        <@lib.showNewsFromFeed feedUrl FEED_LINKS!"UNDEFINED" />
     </#if>
 
     <@lib.showRelated ITEM/>

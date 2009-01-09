@@ -770,3 +770,26 @@
         </p>
     </div>
 </#macro>
+
+<#macro showNewsFromFeed feedUrl feedLinks>
+    <h3>
+        Aktuality
+        <a href="${feedUrl}"><img src="/images/site2/feed16.png" width="16" height="16" border="0" alt="URL feedu"></a>
+    </h3>
+    <#if feedLinks?? && !(feedLinks?is_string && feedLinks == "UNDEFINED")>
+        <ul>
+        <#list feedLinks as link>
+            <li>
+                <#if link.child.url??>
+                    <a href="${"/presmeruj?class=P&amp;id="+ITEM.id+"&amp;url="+link.child.url?url}">${link.child.text}</a>
+                <#else>
+                    ${link.child.text}
+                </#if>
+                (${DATE.show(link.child.updated,"CZ_FULL")})
+            </li>
+        </#list>
+        </ul>
+    <#else>
+        <p>Zdroj zatím nebyl načten, je prázdný nebo obsahuje chybu.</p>
+    </#if>
+</#macro>

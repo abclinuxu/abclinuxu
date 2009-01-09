@@ -100,9 +100,11 @@ public class Tools implements Configurable {
     static {
         Tools tools = new Tools();
         ConfigurationManager.getConfigurator().configureAndRememberMe(tools);
+        Tools.ampersand = Pattern.compile("&");
     }
 
     private static final Integer MAX_SEEN_COMMENT_ID = Integer.MAX_VALUE;
+    public static Pattern ampersand;
 
 
     public void configure(Preferences prefs) throws ConfigurationException {
@@ -2366,5 +2368,16 @@ public class Tools implements Configurable {
 
     public static Map getStandardAdRegexps() {
         return Advertisement.standardRegexps;
+    }
+
+    public static String fixAmpersand(String url) {
+        if (url==null || url.length()==0)
+	        return url;
+        Matcher matcher = ampersand.matcher(url);
+	    return matcher.replaceAll("&amp;");
+    }
+
+    public static String prefixAbsoluteLinks(String text, String prefix) {
+        return text.replaceAll("<a href=\"/", "<a href=\""+prefix+"/");
     }
 }

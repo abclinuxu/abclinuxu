@@ -50,9 +50,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * Updates Links from other servers.
@@ -71,15 +68,10 @@ public class UpdateLinks extends TimerTask implements Configurable {
     /** id (integer) of server is key, value is ServerInfo instance */
     //static Map definitions;
     static UpdateLinks instance;
-    static Pattern ampersand;
+
     static {
         instance = new UpdateLinks();
         ConfigurationManager.getConfigurator().configureAndRememberMe(instance);
-        try {
-            ampersand = Pattern.compile("&");
-        } catch (PatternSyntaxException e) {
-                log.error("Regexp cannot be compiled!", e);
-        }
     }
 
     // todo: link will be independant object, no relations, parent Category object.
@@ -251,7 +243,8 @@ public class UpdateLinks extends TimerTask implements Configurable {
                 title = Tools.encodeSpecial(title);
                 if ( title.length() > maxTitleLength )
                     title = title.substring(0, maxTitleLength);
-                String url = fixAmpersand(entry.getLink());
+//                String url = Tools.fixAmpersand(entry.getLink()); // encodovani se bude delat per request v sablone
+                String url = entry.getLink();
 
                 Link link = new Link();
                 link.setUrl(url);
@@ -355,16 +348,5 @@ public class UpdateLinks extends TimerTask implements Configurable {
         org.apache.log4j.BasicConfigurator.configure();
         UpdateLinks updater = new UpdateLinks();
         updater.run();
-    }
-
-    public static String fixAmpersand(String url) {
-        if (url==null || url.length()==0)
-	        return url;
-        Matcher matcher = ampersand.matcher(url);
-	    return matcher.replaceAll("&amp;");
-    }
-    
-    public static String prefixAbsoluteLinks(String text, String prefix) {
-        return text.replaceAll("<a href=\"/", "<a href=\""+prefix+"/");
     }
 }

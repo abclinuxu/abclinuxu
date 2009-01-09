@@ -32,7 +32,7 @@
             <tr>
 	        	<td>Domovská stránka:</td>
                 <td>
-                    <a href="${"/presmeruj?class=P&amp;id="+software.id+"&amp;url="+url?url}" rel="nofollow">${TOOL.limit(url,45,"..")}</a>
+                    <a href="${"/presmeruj?class=P&amp;id="+software.id+"&amp;url="+url?url}">${TOOL.limit(url,45,"..")}</a>
                     <#local visits = TOOL.getCounterValue(software,"visit")>
                     <#if (visits > 0)>
                       <span title="Počet návštěv domovské stránky">(${visits}&times;)</span>
@@ -45,7 +45,7 @@
             <tr>
 	        	<td>Adresa ke stažení:</td>
                 <td>
-		    <a href="${"/presmeruj?class=P&amp;id="+software.id+"&amp;url="+url?url}" rel="nofollow">${TOOL.limit(url,45,"..")}</a>
+		    <a href="${"/presmeruj?class=P&amp;id="+software.id+"&amp;url="+url?url}">${TOOL.limit(url,45,"..")}</a>
                 </td>
             </tr>
         </#if>

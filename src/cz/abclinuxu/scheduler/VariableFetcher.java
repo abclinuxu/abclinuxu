@@ -467,7 +467,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * @param index true if home page is being displayed
      * @return Map where key is initialized server and value is list of Links
      */
-    public Map getFeeds(Object maybeUser, boolean index) {
+    public Map<Server, List<Link>> getFeeds(Object maybeUser, boolean index) {
         String defaultServers;
         int userLimit;
         if (index) {
@@ -487,7 +487,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         Document document = user.getData();
         Element element = (Element) document.selectSingleNode("/data/settings/guidepost");
         if (element != null && "no".equals(element.getText()))
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
 
         element = (Element) document.selectSingleNode("/data/settings/feeds");
         if (element == null || element.getText() == null)

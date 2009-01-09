@@ -51,27 +51,7 @@
 
     <#assign feedUrl = TOOL.xpath(ITEM, "/data/url[@useType='rss']")?default("UNDEFINED")>
     <#if feedUrl!="UNDEFINED">
-        <h3>
-            Aktuality
-            <a href="${feedUrl}" rel="nofollow"><img src="/images/site2/feed16.png" width="16" height="16" border="0" alt="RSS URL"></a>
-        </h3>
-        <#if FEED_LINKS??>
-            <ul>
-            <#list FEED_LINKS as link>
-                <li>
-                    <#if link.child.url??>
-                        <a href="${"/presmeruj?class=P&amp;id="+ITEM.id+"&amp;url="+link.child.url?url}"
-                            rel="nofollow">${link.child.text}</a>
-                    <#else>
-                        ${link.child.text}
-                    </#if>
-                    (${DATE.show(link.child.updated,"CZ_FULL")})
-                </li>
-            </#list>
-            </ul>
-        <#else>
-            <p>Zdroj zatím nebyl načten, je prázdný nebo obsahuje chybu.</p>
-        </#if>
+        <@lib.showNewsFromFeed feedUrl FEED_LINKS!"UNDEFINED" />
     </#if>
 </div>
 
