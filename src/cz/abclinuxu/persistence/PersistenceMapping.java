@@ -64,22 +64,23 @@ public class PersistenceMapping {
      * @return new instance of GenericObject subclass with preset id
      */
     public static GenericObject createGenericObject(char type, int id) {
-        if (type == 'K') {
-            return new Category(id);
-        } else if (type == 'P') {
-            return new Item(id);
-        } else if (type == 'Z') {
-            return new Record(id);
-        } else if (type == 'U') {
-            return new User(id);
-        } else if (type == 'A') {
-            return new Poll(id);
-        } else if (type == 'L') {
-            return new Link(id);
-        } else if (type == 'S') {
-            return new Server(id);
-        } else if (type == 'D') {
-            return new Data(id);
+        switch (type) {
+            case 'K':
+                return new Category(id);
+            case 'P':
+                return new Item(id);
+            case 'Z':
+                return new Record(id);
+            case 'U':
+                return new User(id);
+            case 'A':
+                return new Poll(id);
+            case 'L':
+                return new Link(id);
+            case 'S':
+                return new Server(id);
+            case 'D':
+                return new Data(id);
         }
         throw new InvalidDataException("Nepodporovany typ tridy "+type+"!");
     }
