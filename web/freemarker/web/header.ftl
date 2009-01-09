@@ -205,10 +205,12 @@
                     <div class="s_sekce">
                         <div class="rozc">
                             <#list FEEDS.keySet() as server>
-                                <a class="server" href="${server.url}" rel="nofollow">${server.name}</a><br>
+                                <a class="server" href="${"/presmeruj?class=S&amp;id="+server.id+"&amp;url="+server.url?url}">${server.name}</a><br>
                                 <ul>
                                 <#list FEEDS(server) as link>
-                                    <li><a href="${link.url}" rel="nofollow">${link.text}</a></li>
+                                    <li>
+                                        <a href="${"/presmeruj?class=S&amp;id="+server.id+"&amp;url="+link.url?url}">${link.text}</a>
+                                    </li>
                                 </#list>
                                 </ul>
                             </#list>

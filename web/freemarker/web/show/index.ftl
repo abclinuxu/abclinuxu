@@ -393,14 +393,16 @@
     <table>
       <#list FEEDS.keySet() as server>
       <#if server_index % 3 = 0><tr><#assign open=true></#if>
-       <td>
-         <a class="server" href="${server.url}" rel="nofollow">${server.name}</a>
-         <ul>
-           <#list FEEDS(server) as link>
-             <li><a href="${link.url}" rel="nofollow">${link.text}</a></li>
-           </#list>
-         </ul>
-       </td>
+        <td>
+            <a class="server" href="${"/presmeruj?class=S&amp;id="+server.id+"&amp;url="+server.url?url}">${server.name}</a>
+            <ul>
+            <#list FEEDS(server) as link>
+                <li>
+                    <a href="${"/presmeruj?class=S&amp;id="+server.id+"&amp;url="+link.url?url}">${link.text}</a>
+                </li>
+            </#list>
+            </ul>
+        </td>
      <#if server_index % 3 = 2></tr><#assign open=false></#if>
      </#list>
      <#if open></tr></#if>
