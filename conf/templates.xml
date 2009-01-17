@@ -550,9 +550,6 @@
         <action name="alternative" content="/show/sw_alternative.ftl">
             <var name="TITLE" value='Alternativy pro ${SOFTWARE}' type="Lazy"/>
         </action>
-        <action name="sw_stats" content="/show/sw_stats.ftl">
-            <var name="TITLE" value="Top 10 nejpoužívanějšího softwaru"/>
-        </action>
     </servlet>
 
     <servlet name="ViewEvent">

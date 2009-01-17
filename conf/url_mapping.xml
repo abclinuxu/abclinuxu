@@ -362,6 +362,11 @@
             <replacement>/zpravicky/</replacement>
         </mapping>
         <mapping>
+            <pattern input="path">^/software/zebricky</pattern>
+            <regexp>/software/zebricky</regexp>
+            <replacement>/nej</replacement>
+        </mapping>
+        <mapping>
             <pattern input="path">^/drivers</pattern>
             <regexp>/drivers</regexp>
             <replacement>/ovladace</replacement>

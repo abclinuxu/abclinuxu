@@ -45,7 +45,6 @@
     <li><a href="/software/system">Systém</a></li>
     <li><a href="/software/vzdelavani">Vzdělávání</a></li>
     <li><a href="/software/veda">Věda</a></li>
-    <li><a href="/software/zebricky">Žebříčky</a></li>
   </ul></li>
 <li><a href="/clanky">Články</a>
   <ul>
@@ -99,14 +98,14 @@
         <li><a href="/Admin">Administrace portálu</a></li>
         <li><a href="/system">Sekce Systém</a></li>
     </#if>
-    <li><a href="/nej">Nej</a></li>
+    <li><a href="/nej">Žebříčky a statistiky</a></li>
     <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Jak se stát autorem</a></li>
     <li><a href="/clanky/show/44049">Náš tým</a></li>
     <li><a href="/portal/propagace">Propagace</a></li>
     <li><a href="mailto:info@stickfish.com">Inzerce</a></li>
-    <li><a href="/napoveda/rss-a-jine-pristupy">RSS a PDA</a></li>
-    <li><a href="http://bugzilla.abclinuxu.cz" rel="nofollow">Hlášení chyb a námětů</a></li>
-    <li><a href="/pozadavky">Vzkazy správcům (${VARS.counter.REQUESTS})</a></li>
+    <li><a href="/napoveda/rss-a-jine-pristupy">RSS feedy a PDA</a></li>
+    <li><a href="http://bugzilla.abclinuxu.cz"  title="Požadavky týkající se funkčnosti portálu" rel="nofollow">Bugzilla - chyby a náměty</a></li>
+    <li><a href="/pozadavky" title="Požadavky týkající se obsahu portálu">Vzkazy správcům (${VARS.counter.REQUESTS})</a></li>
     <li><a href="/vyvoj">Zdrojové kódy</a></li>
     <li><a href="javascript:addSidebar();">Přidej sidebar</a></li>
     <li><a href="javascript:addBookmark();">Přidej mezi oblíbené</a></li>

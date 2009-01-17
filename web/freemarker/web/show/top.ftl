@@ -1,4 +1,5 @@
 <#include "../header.ftl">
+<#setting number_format="#,##0">
 
 <#macro displayTable data comment>
     <table border="1" style="border-collapse:collapse; font-size:small; width:100%;" class="reverse_anchor">
@@ -20,8 +21,9 @@
 <h1>Nej portálu</h1>
 
 <p>
-    Na této stránce najdete tabulky, které ukazují nejčtenější a nejkomentovanější obsah tohoto portálu.
-    Údaje jsou aktualizovány každou noc.
+    Na této stránce najdete tabulky a žebříčky, které ukazují ten nej obsah tohoto portálu. Většina údajů
+    je k dispozici buď za celou dobu nebo jen dokumenty vytvořené za poslední měsíc. Údaje jsou aktualizovány
+    každou noc.
 </p>
 
 <h2>Články</h2>
@@ -34,10 +36,10 @@
                 <@displayTable VARS.mostReadArticles, "&times;"/>
             </#if>
         </td>
-        <td style="width:45%; padding-left:1em;">
-            <#if VARS.mostCommentedArticles!?has_content>
-                <h3>Nejkomentovanější články</h3>
-                <@displayTable VARS.mostCommentedArticles, ""/>
+        <td style="width:45%; vertical-align:top; padding-left:1em;">
+            <#if VARS.recentMostReadArticles!?has_content>
+                <h3>Nejčtenější nové články</h3>
+                <@displayTable VARS.recentMostReadArticles, "&times;"/>
             </#if>
         </td>
     </tr>
@@ -46,14 +48,14 @@
 <table border="0" style="font-size:small; width:99%;">
     <tr>
         <td style="width:45%; vertical-align:top;">
-            <#if VARS.recentMostReadArticles!?has_content>
-                <h3>Nejčtenější články posledního měsíce</h3>
-                <@displayTable VARS.recentMostReadArticles, "&times;"/>
+            <#if VARS.mostCommentedArticles!?has_content>
+                <h3>Nejkomentovanější články</h3>
+                <@displayTable VARS.mostCommentedArticles, ""/>
             </#if>
         </td>
-        <td style="width:45%; padding-left:1em;">
+        <td style="width:45%; vertical-align:top; padding-left:1em;">
             <#if VARS.recentMostCommentedArticles!?has_content>
-                <h3>Nejkomentovanější články posledního měsíce</h3>
+                <h3>Nejkomentovanější nové články</h3>
                 <@displayTable VARS.recentMostCommentedArticles, ""/>
             </#if>
         </td>
@@ -68,14 +70,14 @@
     <tr>
         <td style="width:45%; vertical-align:top;">
             <#if VARS.mostReadStories!?has_content>
-                <h3>Nejčtenější blogové zápisky</h3>
+                <h3>Nejčtenější zápisky</h3>
                 <@displayTable VARS.mostReadStories, "&times;"/>
             </#if>
         </td>
-        <td style="width:45%; padding-left:1em;">
-            <#if VARS.mostCommentedStories!?has_content>
-                <h3>Nejkomentovanější blogové zápisky</h3>
-                <@displayTable VARS.mostCommentedStories, ""/>
+        <td style="width:45%; vertical-align:top; padding-left:1em;">
+            <#if VARS.recentMostReadStories!?has_content>
+                <h3>Nejčtenější nové zápisky</h3>
+                <@displayTable VARS.recentMostReadStories, "&times;"/>
             </#if>
         </td>
     </tr>
@@ -84,15 +86,108 @@
 <table border="0" style="font-size:small; width:99%;">
     <tr>
         <td style="width:45%; vertical-align:top;">
-            <#if VARS.recentMostReadStories!?has_content>
-                <h3>Nejčtenější blogové zápisky posledního měsíce</h3>
-                <@displayTable VARS.recentMostReadStories, "&times;"/>
+            <#if VARS.mostCommentedStories!?has_content>
+                <h3>Nejkomentovanější zápisky</h3>
+                <@displayTable VARS.mostCommentedStories, ""/>
             </#if>
         </td>
-        <td style="width:45%; padding-left:1em;">
+        <td style="width:45%; vertical-align:top; padding-left:1em;">
             <#if VARS.recentMostCommentedStories!?has_content>
-                <h3>Nejkomentovanější blogové zápisky posledního měsíce</h3>
+                <h3>Nejkomentovanější nové zápisky</h3>
                 <@displayTable VARS.recentMostCommentedStories, ""/>
+            </#if>
+        </td>
+    </tr>
+</table>
+
+<br /><hr />
+
+<h2>Desktopy</h2>
+
+<table border="0" style="font-size:small; width:99%;">
+    <tr>
+        <td style="width:45%; vertical-align:top;">
+            <#if VARS.mostSeenDesktops!?has_content>
+                <h3>Nejpopulárnější desktopy</h3>
+                <@displayTable VARS.mostPopularDesktops, "&times;"/>
+            </#if>
+        </td>
+        <td style="width:45%; vertical-align:top; padding-left:1em;">
+            <#if VARS.recentMostSeenDesktops!?has_content>
+                <h3>Nejpopulárnější nové desktopy</h3>
+                <@displayTable VARS.recentMostPopularDesktops, "&times;"/>
+            </#if>
+        </td>
+    </tr>
+</table>
+
+<table border="0" style="font-size:small; width:99%;">
+    <tr>
+        <td style="width:45%; vertical-align:top;">
+            <#if VARS.mostSeenDesktops!?has_content>
+                <h3>Nejprohlíženější desktopy</h3>
+                <@displayTable VARS.mostSeenDesktops, "&times;"/>
+            </#if>
+        </td>
+        <td style="width:45%; vertical-align:top; padding-left:1em;">
+            <#if VARS.recentMostSeenDesktops!?has_content>
+                <h3>Nejprohlíženější nové desktopy</h3>
+                <@displayTable VARS.recentMostSeenDesktops, "&times;"/>
+            </#if>
+        </td>
+    </tr>
+</table>
+
+<table border="0" style="font-size:small; width:99%;">
+    <tr>
+        <td style="width:45%; vertical-align:top;">
+            <#if VARS.mostCommentedDesktops!?has_content>
+                <h3>Nejkomentovanější desktopy</h3>
+                <@displayTable VARS.mostCommentedDesktops, ""/>
+            </#if>
+        </td>
+        <td style="width:45%; vertical-align:top; padding-left:1em;">
+            <#if VARS.recentMostCommentedDesktops!?has_content>
+                <h3>Nejkomentovanější nové desktopy</h3>
+                <@displayTable VARS.recentMostCommentedDesktops, ""/>
+            </#if>
+        </td>
+    </tr>
+</table>
+
+<br /><hr />
+
+<h2>Software</h2>
+
+<table border="0" style="font-size:small; width:99%;">
+    <tr>
+        <td style="width:45%; vertical-align:top;">
+            <#if VARS.mostPopularSoftware!?has_content>
+                <h3>Nejpopulárnější aplikace</h3>
+                <@displayTable VARS.mostPopularSoftware, "&times;"/>
+            </#if>
+        </td>
+        <td style="width:45%; vertical-align:top; padding-left:1em;">
+            <#if VARS.recentMostPopularSoftware!?has_content>
+                <h3>Nejpopulárnější nové aplikace</h3>
+                <@displayTable VARS.recentMostPopularSoftware, "&times;"/>
+            </#if>
+        </td>
+    </tr>
+</table>
+
+<table border="0" style="font-size:small; width:99%;">
+    <tr>
+        <td style="width:45%; vertical-align:top;">
+            <#if VARS.mostVisitedSoftware!?has_content>
+                <h3>Nejnavštěvovanější aplikace</h3>
+                <@displayTable VARS.mostVisitedSoftware, "&times;"/>
+            </#if>
+        </td>
+        <td style="width:45%; vertical-align:top; padding-left:1em;">
+            <#if VARS.recentMostVisitedSoftware!?has_content>
+                <h3>Nejnavštěvovanější nové aplikace</h3>
+                <@displayTable VARS.recentMostVisitedSoftware, "&times;"/>
             </#if>
         </td>
     </tr>
@@ -110,9 +205,9 @@
                 <@displayTable VARS.mostCommentedNews, ""/>
             </#if>
         </td>
-        <td style="width:45%; padding-left:1em;">
+        <td style="width:45%; vertical-align:top; padding-left:1em;">
             <#if VARS.recentMostCommentedNews!?has_content>
-                <h3>Nejkomentovanější zprávičky posledního měsíce</h3>
+                <h3>Nejkomentovanější nové zprávičky</h3>
                 <@displayTable VARS.recentMostCommentedNews, ""/>
             </#if>
         </td>
@@ -131,7 +226,7 @@
                 <@displayTable VARS.mostVotedOnPolls, ""/>
             </#if>
         </td>
-        <td style="width:45%; padding-left:1em;">
+        <td style="width:45%; vertical-align:top; padding-left:1em;">
             <#if VARS.mostCommentedPolls!?has_content>
                 <h3>Nejkomentovanější ankety</h3>
                 <@displayTable VARS.mostCommentedPolls, ""/>

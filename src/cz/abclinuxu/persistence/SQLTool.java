@@ -126,8 +126,6 @@ public final class SQLTool implements Configurable {
     public static final String USERS_COUNT_ARTICLES = "users.count.articles";
     public static final String USERS_COUNT_WIKI_RECORDS = "users.count.wiki.records";
     public static final String USERS_COUNT_NEWS = "users.count.news";
-    public static final String TOP_USED_RELATIONS = "top.used.relations";
-    public static final String TOP_COUNTED_RELATIONS = "top.counted.relations";
     public static final String LAST_REVISIONS = "last.versions";
     public static final String TAG_LOG_ACTION = "tag.log.action";
     public static final String TAG_GET_CREATOR = "tag.get.creator";
@@ -144,7 +142,11 @@ public final class SQLTool implements Configurable {
     public static final String COUNT_PROPERTIES_BY_USER = "count.properties.by.user";
 
     public static final String MOST_COMMENTED_RELATIONS = "most.commented.relations";
-    public static final String MOST_READ_RELATIONS = "most.read.relations";
+    public static final String MOST_COMMENTED_RECENT_RELATIONS = "most.commented.recent.relations";
+    public static final String MOST_HAVING_PROPERTY_RELATIONS = "most.having.property.relations";
+    public static final String MOST_HAVING_PROPERTY_RECENT_RELATIONS = "most.having.property.recent.relations";
+    public static final String MOST_COUNTED_RELATIONS = "most.counted.relations";
+    public static final String MOST_COUNTED_RECENT_RELATIONS = "most.counted.recent.relations";
     public static final String MOST_COMMENTED_POLLS = "most.commented.polls";
     public static final String MOST_VOTED_POLLS = "most.voted.polls";
 	public static final String HIGHEST_SCORE_USERS = "highest.score.users";
@@ -179,14 +181,13 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Loads relations from database using given SQL command. If list params is not
-     * empty, PreparedStatement is created and fed up from params.
+     * Loads relations from database using given SQL command.
      * @param sql Command to execute.
      * @param params List of parameters. It must not be null.
      * @return List of initialized relations.
      * @throws PersistenceException if something goes wrong.
      */
-    private List<Relation>  loadRelations(String sql, List params) throws PersistenceException {
+    private List<Relation> loadRelations(String sql, List params) throws PersistenceException {
         if (log.isDebugEnabled())
             log.debug(sql);
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
@@ -211,6 +212,48 @@ public final class SQLTool implements Configurable {
             return result;
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu vykonat SQL příkaz "+sql, e);
+        } finally {
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Loads relations and associated number from database using given SQL command. The query is expected to return
+     * two values per row, the first must be id of relation, the second some number.
+     * @param sql Command to execute.
+     * @param params List of parameters. It must not be null.
+     * @return LinkedMap, where keys are initialized relations and values are their numbers.
+     * @throws PersistenceException if something goes wrong.
+     */
+    private Map<Relation, Integer> loadRelationWithNumber(String sql, List params) throws PersistenceException {
+        if (log.isDebugEnabled())
+            log.debug(sql);
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        List<Relation> relations = new ArrayList<Relation>();
+        Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(sql);
+            int i = 1;
+            for (Iterator iter = params.iterator(); iter.hasNext();)
+                statement.setObject(i++, iter.next());
+
+            resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Relation relation = new Relation(resultSet.getInt(1));
+                int score = resultSet.getInt(2);
+                result.put(relation, score);
+                relations.add(relation);
+            }
+
+            PersistenceFactory.getPersistence().synchronizeList(relations);
+            return result;
+        } catch (SQLException e) {
+            throw new PersistenceException("Nemohu vykonat SQL příkaz " + sql, e);
         } finally {
             PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
@@ -432,7 +475,6 @@ public final class SQLTool implements Configurable {
             statement.setInt(2, from);
             statement.executeUpdate();
         } finally {
-            MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
             PersistenceFactory.releaseSQLResources(null, statement, null);
         }
     }
@@ -526,36 +568,6 @@ public final class SQLTool implements Configurable {
     public List<Relation> findSubportalMembership(int uid) {
         StringBuilder sb = new StringBuilder(sql.get(FIND_SUBPORTAL_MEMBERSHIP));
         return loadRelations(sb.toString(), Collections.singletonList(uid));
-    }
-
-    /**
-     * Finds relations to objects that have most often the property Constants.PROPERTY_USED_BY set.
-     * @param qualifiers additional qualifiers
-     * @return List of initialized relations
-     */
-    public List<Relation> getTopUsedRelations(Qualifier[] qualifiers) {
-        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder(sql.get(TOP_USED_RELATIONS));
-        List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params, "V", null);
-        return loadRelations(sb.toString(), params);
-    }
-
-    /**
-     * Finds relations to items that have biggest value of specified counter.
-     * @param itemType type of item
-     * @param counterType type of counter
-     * @param qualifiers additional qualifiers
-     * @return List of initialized relations
-     */
-    public List<Relation> getTopCountedRelations(int itemType, String counterType, Qualifier[] qualifiers) {
-        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder(sql.get(TOP_COUNTED_RELATIONS));
-        List params = new ArrayList();
-        params.add(counterType);
-        params.add(itemType);
-        appendQualifiers(sb, qualifiers, params, "P", null);
-        return loadRelations(sb.toString(), params);
     }
 
     /**
@@ -1837,7 +1849,6 @@ public final class SQLTool implements Configurable {
 
 		try {
 			List params = new ArrayList();
-            Map<User, Integer> result = new LinkedHashMap<User, Integer>();
             con = persistance.getSQLConnection();
 
             StringBuilder sb = new StringBuilder(sql.get(HIGHEST_SCORE_USERS));
@@ -1849,16 +1860,18 @@ public final class SQLTool implements Configurable {
             for ( Iterator iter = params.iterator(); iter.hasNext(); )
                 statement.setObject(i++, iter.next());
 
+            List<User> users = new ArrayList<User>();
+            Map<User, Integer> result = new LinkedHashMap<User, Integer>();
             rs = statement.executeQuery();
-
 			while (rs.next()) {
 				User user = new User(rs.getInt(1));
 				int score = rs.getInt(2);
-				persistance.synchronize(user);
 				result.put(user, score);
+                users.add(user);
 			}
 
-			return result;
+            persistance.synchronizeList(users);
+            return result;
 		} catch (SQLException e) {
             throw new PersistenceException("Chyba v SQL!", e);
         } finally {
@@ -1867,160 +1880,100 @@ public final class SQLTool implements Configurable {
 	}
 
     public Map<Relation, Integer> getMostCommentedPolls(Qualifier[] qualifiers) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
-        Connection con = null;
-        PreparedStatement statement = null;
-        ResultSet rs = null;
-
-        try {
-            Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
-            con = persistance.getSQLConnection();
-
-            StringBuilder sb = new StringBuilder(sql.get(MOST_COMMENTED_POLLS));
-            List params = new ArrayList();
-
-            appendQualifiers(sb, qualifiers, params, null, null);
-            statement = con.prepareStatement(sb.toString());
-
-            int i = 1;
-            for ( Iterator iter = params.iterator(); iter.hasNext(); )
-                statement.setObject(i++, iter.next());
-
-            rs = statement.executeQuery();
-
-            while (rs.next()) {
-                Relation rel = new Relation(rs.getInt(1));
-                int reads = rs.getInt(2);
-
-                persistance.synchronize(rel);
-                result.put(rel, reads);
-            }
-
-            return result;
-        } catch (SQLException e) {
-            throw new PersistenceException("Chyba v SQL!", e);
-        } finally {
-            PersistenceFactory.releaseSQLResources(con, statement, rs);
-        }
+        if (qualifiers == null)
+            qualifiers = new Qualifier[]{};
+        StringBuilder sb = new StringBuilder(sql.get(MOST_COMMENTED_POLLS));
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadRelationWithNumber(sb.toString(), params);
     }
 
     public Map<Relation, Integer> getMostVotedPolls(Qualifier[] qualifiers) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
-        Connection con = null;
-        PreparedStatement statement = null;
-        ResultSet rs = null;
-
-        try {
-            Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
-            con = persistance.getSQLConnection();
-
-            StringBuilder sb = new StringBuilder(sql.get(MOST_VOTED_POLLS));
-            List params = new ArrayList();
-
-            appendQualifiers(sb, qualifiers, params, null, null);
-            statement = con.prepareStatement(sb.toString());
-
-            int i = 1;
-            for ( Iterator iter = params.iterator(); iter.hasNext(); )
-                statement.setObject(i++, iter.next());
-
-            rs = statement.executeQuery();
-
-            while (rs.next()) {
-                Relation rel = new Relation(rs.getInt(1));
-                int reads = rs.getInt(2);
-
-                persistance.synchronize(rel);
-                result.put(rel, reads);
-            }
-
-            return result;
-        } catch (SQLException e) {
-            throw new PersistenceException("Chyba v SQL!", e);
-        } finally {
-            PersistenceFactory.releaseSQLResources(con, statement, rs);
-        }
+        if (qualifiers == null)
+            qualifiers = new Qualifier[]{};
+        StringBuilder sb = new StringBuilder(sql.get(MOST_VOTED_POLLS));
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadRelationWithNumber(sb.toString(), params);
     }
 
-    public Map<Relation, Integer> getMostReadRelations(int itemType, String dateFrom, Qualifier[] qualifiers) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
-        Connection con = null;
-        PreparedStatement statement = null;
-        ResultSet rs = null;
+    /**
+     * Finds relations for specified item that have biggest value of given counter. If dateFrom is specified, only
+     * items created since this time are considered.
+     * @param itemType type of Item
+     * @param counter counter type, see Constants.
+     * @param dateFrom optional date
+     * @param qualifiers optional qualifiers
+     * @return map, where key is initialized relation and value is value of its counter
+     */
+    public Map<Relation, Integer> getMostCountedRelations(int itemType, String counter, Date dateFrom, Qualifier[] qualifiers) {
+        if (qualifiers == null)
+            qualifiers = new Qualifier[]{};
+        StringBuilder sb;
+        List params = new ArrayList();
+        params.add(counter);
+        params.add(itemType);
 
-        try {
-            Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
-            con = persistance.getSQLConnection();
-
-            StringBuilder sb = new StringBuilder(sql.get(MOST_READ_RELATIONS));
-            List params = new ArrayList();
-            params.add(itemType);
+        if (dateFrom != null) {
+            sb = new StringBuilder(sql.get(MOST_COUNTED_RECENT_RELATIONS));
             params.add(dateFrom);
+        } else
+            sb = new StringBuilder(sql.get(MOST_COUNTED_RELATIONS));
 
-            appendQualifiers(sb, qualifiers, params, null, null);
-            statement = con.prepareStatement(sb.toString());
-
-            int i = 1;
-            for ( Iterator iter = params.iterator(); iter.hasNext(); )
-                statement.setObject(i++, iter.next());
-
-            List<Relation> relations = new ArrayList<Relation>();
-            rs = statement.executeQuery();
-            while (rs.next()) {
-                Relation rel = new Relation(rs.getInt(1));
-                int reads = rs.getInt(2);
-                result.put(rel, reads);
-                relations.add(rel);
-            }
-            persistance.synchronizeList(relations);
-
-            return result;
-        } catch (SQLException e) {
-            throw new PersistenceException("Chyba v SQL!", e);
-        } finally {
-            PersistenceFactory.releaseSQLResources(con, statement, rs);
-        }
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadRelationWithNumber(sb.toString(), params);
     }
 
-    public Map<Relation, Integer> getMostCommentedRelations(int itemType, String dateFrom, Qualifier[] qualifiers) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
-        Connection con = null;
-        PreparedStatement statement = null;
-        ResultSet rs = null;
+    /**
+     * Finds relations for specified item that have biggest value of given counter. If dateFrom is specified, only
+     * items created since this time are considered.
+     * @param itemType type of Item
+     * @param property property, see Constants or properties.txt
+     * @param dateFrom optional date
+     * @param qualifiers optional qualifiers
+     * @return map, where key is initialized relation and value is count of this property
+     */
+    public Map<Relation, Integer> getMostHavingPropertyRelations(int itemType, String property, Date dateFrom, Qualifier[] qualifiers) {
+        if (qualifiers == null)
+            qualifiers = new Qualifier[]{};
+        StringBuilder sb;
+        List params = new ArrayList();
+        params.add(property);
+        params.add(itemType);
 
-        try {
-            Map<Relation, Integer> result = new LinkedHashMap<Relation, Integer>();
-            con = persistance.getSQLConnection();
-
-            StringBuilder sb = new StringBuilder(sql.get(MOST_COMMENTED_RELATIONS));
-            List params = new ArrayList();
-
-            params.add(itemType);
+        if (dateFrom != null) {
+            sb = new StringBuilder(sql.get(MOST_HAVING_PROPERTY_RECENT_RELATIONS));
             params.add(dateFrom);
+        } else
+            sb = new StringBuilder(sql.get(MOST_HAVING_PROPERTY_RELATIONS));
 
-            appendQualifiers(sb, qualifiers, params, null, null);
-            statement = con.prepareStatement(sb.toString());
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadRelationWithNumber(sb.toString(), params);
+    }
 
-            int i = 1;
-            for ( Iterator iter = params.iterator(); iter.hasNext(); )
-                statement.setObject(i++, iter.next());
+    /**
+     * Finds relations for specified item that have biggest number of comments. If dateFrom is specified, only
+     * items created since this time are considered.
+     * @param itemType type of Item
+     * @param dateFrom optional date
+     * @param qualifiers optional qualifiers
+     * @return map, where key is initialized relation and value is number of comments
+     */
+    public Map<Relation, Integer> getMostCommentedRelations(int itemType, Date dateFrom, Qualifier[] qualifiers) {
+        if (qualifiers == null)
+            qualifiers = new Qualifier[]{};
+        StringBuilder sb;
+        List params = new ArrayList();
+        params.add(itemType);
 
-            rs = statement.executeQuery();
+        if (dateFrom != null) {
+            sb = new StringBuilder(sql.get(MOST_COMMENTED_RECENT_RELATIONS));
+            params.add(dateFrom);
+        } else
+            sb = new StringBuilder(sql.get(MOST_COMMENTED_RELATIONS));
 
-            while (rs.next()) {
-                Relation rel = new Relation(rs.getInt(1));
-                int reads = rs.getInt(2);
-
-                persistance.synchronize(rel);
-                result.put(rel, reads);
-            }
-
-            return result;
-        } catch (SQLException e) {
-            throw new PersistenceException("Chyba v SQL!", e);
-        } finally {
-            PersistenceFactory.releaseSQLResources(con, statement, rs);
-        }
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadRelationWithNumber(sb.toString(), params);
     }
 
     /**
@@ -2259,7 +2212,7 @@ public final class SQLTool implements Configurable {
             info.put("ip", ip);
 
             if (uid != null && uid != 0) {
-                User user = new User(uid.intValue());
+                User user = new User(uid);
                 persistance.synchronize(user);
 
                 info.put("user", user);
@@ -2399,7 +2352,7 @@ public final class SQLTool implements Configurable {
 
     public List<Relation> findServerRelationsInCategory(int cat) {
         String query = sql.get(SERVER_RELATIONS_IN_CATEGORY);
-        return loadRelations(query, Collections.singletonList(new Integer(cat)));
+        return loadRelations(query, Collections.singletonList(cat));
     }
 
     public Item findAdvertisementByString(String str) {
@@ -2502,8 +2455,6 @@ public final class SQLTool implements Configurable {
         store(USERS_COUNT_ARTICLES, prefs);
         store(USERS_COUNT_WIKI_RECORDS, prefs);
         store(USERS_COUNT_NEWS, prefs);
-        store(TOP_USED_RELATIONS, prefs);
-        store(TOP_COUNTED_RELATIONS, prefs);
         store(LAST_REVISIONS, prefs);
         store(DELETE_USER, prefs);
         store(DELETE_USER_TICKET, prefs);
@@ -2516,8 +2467,12 @@ public final class SQLTool implements Configurable {
         store(COUNT_PROPERTIES_BY_USER, prefs);
         store(TAG_LOG_ACTION, prefs);
         store(TAG_GET_CREATOR, prefs);
-        store(MOST_READ_RELATIONS, prefs);
+        store(MOST_COUNTED_RELATIONS, prefs);
+        store(MOST_COUNTED_RECENT_RELATIONS, prefs);
         store(MOST_COMMENTED_RELATIONS, prefs);
+        store(MOST_COMMENTED_RECENT_RELATIONS, prefs);
+        store(MOST_HAVING_PROPERTY_RELATIONS, prefs);
+        store(MOST_HAVING_PROPERTY_RECENT_RELATIONS, prefs);
         store(SUBPORTALS_COUNT_ARTICLES, prefs);
         store(SUBPORTALS_COUNT_EVENTS, prefs);
         store(SUBPORTALS_COUNT_FORUM_QUESTIONS, prefs);

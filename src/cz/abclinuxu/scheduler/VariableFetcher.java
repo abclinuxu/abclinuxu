@@ -105,6 +105,10 @@ public class VariableFetcher extends TimerTask implements Configurable {
     Map<Relation, Integer> mostCommentedArticles, mostCommentedStories;
     Map<Relation, Integer> recentMostReadArticles, recentMostCommentedArticles;
     Map<Relation, Integer> recentMostCommentedStories, recentMostReadStories;
+    Map<Relation, Integer> mostSeenDesktops, mostCommentedDesktops, mostPopularDesktops;
+    Map<Relation, Integer> recentMostSeenDesktops, recentMostCommentedDesktops, recentMostPopularDesktops;
+    Map<Relation, Integer> recentMostVisitedSoftware, recentMostPopularSoftware;
+    Map<Relation, Integer> mostVisitedSoftware, mostPopularSoftware;
     Map<Relation, Integer> mostCommentedNews, recentMostCommentedNews;
     Map<Relation, Integer> mostVotedOnPolls, mostCommentedPolls, recentMostVotedOnPolls, recentMostCommentedPolls;
 	Map<User, Integer> highestScoreUsers;
@@ -459,6 +463,46 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public Map<Relation,Integer> getMostVotedOnPolls() {
 		return mostVotedOnPolls;
 	}
+
+    public Map<Relation, Integer> getMostSeenDesktops() {
+        return mostSeenDesktops;
+    }
+
+    public Map<Relation, Integer> getMostCommentedDesktops() {
+        return mostCommentedDesktops;
+    }
+
+    public Map<Relation, Integer> getMostPopularDesktops() {
+        return mostPopularDesktops;
+    }
+
+    public Map<Relation, Integer> getRecentMostSeenDesktops() {
+        return recentMostSeenDesktops;
+    }
+
+    public Map<Relation, Integer> getRecentMostCommentedDesktops() {
+        return recentMostCommentedDesktops;
+    }
+
+    public Map<Relation, Integer> getRecentMostPopularDesktops() {
+        return recentMostPopularDesktops;
+    }
+
+    public Map<Relation, Integer> getRecentMostVisitedSoftware() {
+        return recentMostVisitedSoftware;
+    }
+
+    public Map<Relation, Integer> getRecentMostPopularSoftware() {
+        return recentMostPopularSoftware;
+    }
+
+    public Map<Relation, Integer> getMostVisitedSoftware() {
+        return mostVisitedSoftware;
+    }
+
+    public Map<Relation, Integer> getMostPopularSoftware() {
+        return mostPopularSoftware;
+    }
 
     /**
      * Finds list of servers and their links to be displayed for this user. If user does not want
@@ -1290,23 +1334,33 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public void refreshTopStatistics() {
         try {
             Qualifier[] qualifiers = new Qualifier[]{ new LimitQualifier(0, 10) };
-            mostReadArticles = sqlTool.getMostReadRelations(Item.ARTICLE, "", qualifiers);
-            mostReadStories = sqlTool.getMostReadRelations(Item.BLOG, "", qualifiers);
-            mostCommentedArticles = sqlTool.getMostCommentedRelations(Item.ARTICLE, "", qualifiers);
-            mostCommentedStories = sqlTool.getMostCommentedRelations(Item.BLOG, "", qualifiers);
-            mostCommentedNews = sqlTool.getMostCommentedRelations(Item.NEWS, "", qualifiers);
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.MONTH, -1);
+            Date monthAgo = cal.getTime();
+
+            mostReadArticles = sqlTool.getMostCountedRelations(Item.ARTICLE, Constants.COUNTER_READ, null, qualifiers);
+            mostCommentedArticles = sqlTool.getMostCommentedRelations(Item.ARTICLE, null, qualifiers);
+            mostReadStories = sqlTool.getMostCountedRelations(Item.BLOG, Constants.COUNTER_READ, null, qualifiers);
+            mostCommentedStories = sqlTool.getMostCommentedRelations(Item.BLOG, null, qualifiers);
+            mostSeenDesktops = sqlTool.getMostCountedRelations(Item.DESKTOP, Constants.COUNTER_READ, null, qualifiers);
+            mostCommentedDesktops = sqlTool.getMostCommentedRelations(Item.DESKTOP, null, qualifiers);
+            mostPopularDesktops = sqlTool.getMostHavingPropertyRelations(Item.DESKTOP, Constants.PROPERTY_FAVOURITED_BY, null, qualifiers);
+            mostVisitedSoftware = sqlTool.getMostCountedRelations(Item.SOFTWARE, Constants.COUNTER_VISIT, null, qualifiers);
+            mostPopularSoftware = sqlTool.getMostHavingPropertyRelations(Item.SOFTWARE, Constants.PROPERTY_USED_BY, null, qualifiers);
+            mostCommentedNews = sqlTool.getMostCommentedRelations(Item.NEWS, null, qualifiers);
             mostCommentedPolls = sqlTool.getMostCommentedPolls(qualifiers);
             mostVotedOnPolls = sqlTool.getMostVotedPolls(qualifiers);
 			highestScoreUsers = sqlTool.getHighestScoreUsers(qualifiers);
 
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.MONTH, -1);
-            String monthAgo = Constants.isoFormat.format(cal.getTime());
-
+            recentMostReadArticles = sqlTool.getMostCountedRelations(Item.ARTICLE, Constants.COUNTER_READ, monthAgo, qualifiers);
             recentMostCommentedArticles = sqlTool.getMostCommentedRelations(Item.ARTICLE, monthAgo, qualifiers);
+            recentMostReadStories = sqlTool.getMostCountedRelations(Item.BLOG, Constants.COUNTER_READ, monthAgo, qualifiers);
             recentMostCommentedStories = sqlTool.getMostCommentedRelations(Item.BLOG, monthAgo, qualifiers);
-            recentMostReadArticles = sqlTool.getMostReadRelations(Item.ARTICLE, monthAgo, qualifiers);
-            recentMostReadStories = sqlTool.getMostReadRelations(Item.BLOG, monthAgo, qualifiers);
+            recentMostSeenDesktops = sqlTool.getMostCountedRelations(Item.DESKTOP, Constants.COUNTER_READ, monthAgo, qualifiers);
+            recentMostCommentedDesktops = sqlTool.getMostCommentedRelations(Item.DESKTOP, monthAgo, qualifiers);
+            recentMostPopularDesktops = sqlTool.getMostHavingPropertyRelations(Item.DESKTOP, Constants.PROPERTY_FAVOURITED_BY, monthAgo, qualifiers);
+            recentMostVisitedSoftware = sqlTool.getMostCountedRelations(Item.SOFTWARE, Constants.COUNTER_VISIT, monthAgo, qualifiers);
+            recentMostPopularSoftware = sqlTool.getMostHavingPropertyRelations(Item.SOFTWARE, Constants.PROPERTY_USED_BY, monthAgo, qualifiers);
             recentMostCommentedNews = sqlTool.getMostCommentedRelations(Item.NEWS, monthAgo, qualifiers);
         } catch (Exception e) {
             log.error("Selhalo obnoveni top statistik portalu", e);

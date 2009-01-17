@@ -219,6 +219,8 @@ CREATE TABLE citac (
  druh VARCHAR(15) NOT NULL DEFAULT 'read'        -- druh citace
 );
 ALTER TABLE citac ADD INDEX in_citac (typ,cislo);
+ALTER TABLE citac ADD INDEX in_druh (druh);
+ALTER TABLE citac ADD INDEX in_cislo (cislo);
 
 -- statistiky pouzivani sluzeb
 CREATE TABLE statistika (
