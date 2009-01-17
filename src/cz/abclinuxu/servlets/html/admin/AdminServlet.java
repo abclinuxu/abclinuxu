@@ -38,6 +38,7 @@ import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.scheduler.VariableFetcher;
+import cz.abclinuxu.scheduler.UpdateTopStatistics;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
@@ -129,6 +130,7 @@ public class AdminServlet implements AbcAction {
         AbcInit.getInstance().configureFreeMarker();
 	    DateTool.calculateTodayTimes();
         VariableFetcher.getInstance().run(); // refresh variables
+        new UpdateTopStatistics().run();
         TagTool.init();
         Advertisement.clearCache();
 
