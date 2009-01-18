@@ -225,6 +225,8 @@ public class Constants implements Configurable {
     public static final String VAR_REVISIONS = "REVISIONS";
     /** list containing Relations or Links */
     public static final String VAR_PARENTS = "PARENTS";
+    /** list containing Users */
+    public static final String VAR_USERS = "USERS";
 
     /** parameter holding description of changes */
     public static final String PARAM_REVISION_DESCRIPTION = "rev_descr";

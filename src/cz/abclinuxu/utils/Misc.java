@@ -32,6 +32,7 @@ import cz.abclinuxu.servlets.html.view.ShowForum;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.utils.comparator.UserNameComparator;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import org.dom4j.Node;
@@ -44,11 +45,7 @@ import org.htmlparser.util.ParserException;
 
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.LinkedList;
+import java.util.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -491,5 +488,23 @@ public class Misc {
             attribute = DocumentHelper.createAttribute(element, name, value);
             element.add(attribute);
         }
+    }
+
+    /**
+     * Loads list of users for given item whose keys are stored under specified property. Deleted users are skipped.
+     * @param item initialized item
+     * @param property property to be searched
+     * @return list of initialized users
+     */
+    public static List<User> loadUsersByProperty(Item item, String property) {
+        Set<String> strUsers = item.getProperty(property);
+        List<User> users = new ArrayList(strUsers.size());
+        for (String sId : strUsers) {
+            users.add(new User(parseInt(sId, -2)));
+        }
+
+        PersistenceFactory.getPersistence().synchronizeList(users, true);
+        Collections.sort(users, new UserNameComparator());
+        return users;
     }
 }

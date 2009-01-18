@@ -22,6 +22,7 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.SectionTreeCache;
 import cz.abclinuxu.data.view.SectionNode;
 import cz.abclinuxu.data.view.RevisionInfo;
@@ -147,8 +148,10 @@ public class ViewSoftware implements AbcAction {
 
         if (relation.getChild() instanceof Category)
             return processSection(request, relation, env);
+
         if (ACTION_USERS.equals(action))
             return processItemUsers(request, relation, env);
+
         return processItem(request, relation, env);
     }
 
@@ -259,6 +262,9 @@ public class ViewSoftware implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistence();
         Item item = (Item) relation.getChild();
         env.put(VAR_ITEM, item);
+
+        List<User> users = Misc.loadUsersByProperty(item, Constants.PROPERTY_USED_BY);
+        env.put(Constants.VAR_USERS, users);
 
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);

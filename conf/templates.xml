@@ -23,8 +23,9 @@
         <action name="showList" content="/show/desktops.ftl">
             <var name="TITLE" value="Snímky desktopů"/>
         </action>
-        <action name="users" content="/show/desktop_users.ftl">
+        <action name="users" content="/show/document_users.ftl">
             <var name="TITLE" value='Seznam fanoušků desktopu ${ITEM.title}' type="Lazy"/>
+            <var name="PAGE_TITLE" value='Seznam fanoušků'/>
         </action>
         <action name="add" content="/add/desktop.ftl">
             <var name="TITLE" value="Vložit nový desktop"/>
@@ -823,8 +824,9 @@
         <action name="software" content="/show/switem.ftl">
             <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
         </action>
-        <action name="sw_users" content="/show/sw_users.ftl">
+        <action name="sw_users" content="/show/document_users.ftl">
             <var name="TITLE" value='Seznam uživatelů ${ITEM.title}' type="Lazy"/>
+            <var name="PAGE_TITLE" value='Seznam uživatelů'/>
         </action>
         <action name="alternatives" content="/show/sw_alternatives.ftl">
             <var name="TITLE" value="Seznam alternativ pro aplikace z MS Windows"/>
@@ -874,8 +876,9 @@
         <action name="item" content="/show/video.ftl">
             <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
         </action>
-        <action name="users" content="/show/video_users.ftl">
+        <action name="users" content="/show/document_users.ftl">
             <var name="TITLE" value='Seznam fanoušků videa ${ITEM.title}' type="Lazy"/>
+            <var name="PAGE_TITLE" value='Seznam fanoušků'/>
         </action>
         <action name="list" content="/show/videos.ftl">
             <var name="TITLE" value='Videa'/>

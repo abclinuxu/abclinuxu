@@ -160,9 +160,9 @@
         ${DATE.show(comment.created,"SMART")}
         <#if comment.author??>
             <@showUser who/>
-            <#local score=who.getIntProperty("score")?default(-1)><#if score != -1> | skóre: ${score}</#if>
-            <#local blog=TOOL.getUserBlogAnchor(who, "blog")?default("UNDEF")><#if blog!="UNDEF"> | blog: ${blog}</#if>
-            <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
+            <#local score=who.getIntProperty("score")!(-1)><#if score != -1> | skóre: ${score}</#if>
+            <#local blog=TOOL.getUserBlogAnchor(who, "blog")!"UNDEF"><#if blog!="UNDEF"> | blog: ${blog}</#if>
+            <#local city=TOOL.xpath(who,"//personal/city")!"UNDEF"><#if city!="UNDEF"> | ${city}</#if>
         <#else>
             ${comment.anonymName!}
         </#if><br>
@@ -438,7 +438,7 @@
     </#if>
 </#macro>
 
-<#macro showUser user><a href="/lide/${user.login}">${user.nick?default(user.name)}</a></#macro>
+<#macro showUser user><a href="/lide/${user.login}">${user.nick!(user.name)}</a></#macro>
 
 <#macro showRevisions relation info = TOOL.getRevisionInfo(relation.child)>
     <p class="documentHistory">

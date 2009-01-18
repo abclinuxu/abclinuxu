@@ -114,6 +114,8 @@ public class ViewVideo implements AbcAction {
         env.put(VAR_ITEM, item);
         
         if (ACTION_USERS.equals(action)) {
+            List<User> users = Misc.loadUsersByProperty(item, Constants.PROPERTY_FAVOURITED_BY);
+            env.put(Constants.VAR_USERS, users);
             return FMTemplateSelector.select("ViewVideo", "users", env, request);
         } else {
             User user = (User) env.get(Constants.VAR_USER);

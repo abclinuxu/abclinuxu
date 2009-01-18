@@ -9,7 +9,6 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -106,6 +105,9 @@ public class ViewDesktop implements AbcAction {
     public static String processItemUsers(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Item item = (Item) relation.getChild();
         env.put(VAR_ITEM, item);
+
+        List<User> users = Misc.loadUsersByProperty(item, Constants.PROPERTY_FAVOURITED_BY);
+        env.put(Constants.VAR_USERS, users);
 
         env.put(Constants.VAR_RSS, FeedGenerator.getScreenshotsFeedUrl());
         return FMTemplateSelector.select("Desktop", "users", env, request);
