@@ -22,6 +22,26 @@
 
 <h1>Desktopy</h1>
 
+<div style="float: right">
+    <h3 class="st_nadpis">Nejpopulárnější nové desktopy</h3>
+    <#list TOOL.sublist(VARS.recentMostPopularDesktops.keySet(), 0, 3) as rel>
+        <@lib.showTopDesktop rel />
+    </#list>
+
+    <h3 class="st_nadpis">Nejprohlíženější nové desktopy</h3>
+    <#list TOOL.sublist(VARS.recentMostSeenDesktops.keySet(), 0, 3) as rel>
+        <@lib.showTopDesktop rel />
+    </#list>
+
+    <h3 class="st_nadpis">Nejkomentovanější nové desktopy</h3>
+    <#list TOOL.sublist(VARS.recentMostCommentedDesktops.keySet(), 0, 3) as rel>
+        <@lib.showTopDesktop rel />
+    </#list>
+    <p>
+        <a href="/nej">další&nbsp;&raquo;</a>
+    </p>
+</div>
+
 <#global CITACE = TOOL.getRelationCountersValue(ITEMS.data,"read")/>
 <#list ITEMS.data as relation>
     <#assign desktop = TOOL.createScreenshot(relation), item = relation.child, autor=TOOL.createUser(item.owner)>

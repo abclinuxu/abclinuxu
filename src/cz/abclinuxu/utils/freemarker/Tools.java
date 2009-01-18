@@ -879,6 +879,20 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Extracts selected part of given set. Implementation
+     * is aware of list's limits, so IndexOutOfBounds is never
+     * thrown.
+     */
+    public static List<?> sublist(Set<?> list, int start, int count) {
+        if (list == null)
+            return null;
+        if (start >= list.size())
+            return null;
+
+        return sublist(new LinkedList(list), start, count);
+    }
+
+    /**
      * Creates list in order split to columns. For example if original list contained
      * elements 1,2,3,4,5,6 and number of columns is 2, output will hold 1,4,2,5,3,6.
      * You can the sequentially iterate the list and easily create two columns (1,2,3)
@@ -1041,10 +1055,11 @@ public class Tools implements Configurable {
 
     /**
      * Wraps relation into Screenshot object.
-     * @param relation fully initialized relation containing Item of type Screenshot.
+     * @param relation relation containing Item of type Screenshot.
      * @return view object
      */
     public static Desktop createScreenshot(Relation relation) {
+        sync(relation);
         return new Desktop(relation);
     }
 

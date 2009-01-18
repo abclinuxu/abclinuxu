@@ -1388,7 +1388,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     		Collections.sort(result);
     		freshCloudTags = result;
     	} catch(Exception e) {
-    		log.error("Selhalo nacitani tag cloud");
+    		log.error("Selhalo nacitani tag cloud", e);
     	}
     }
 

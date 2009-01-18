@@ -30,6 +30,16 @@
 
 <h1>${desktop.title?html}</h1>
 
+<div style="float: right">
+    <h3 class="st_nadpis">Nejpopulárnější desktopy</h3>
+    <#list TOOL.sublist(VARS.mostPopularDesktops.keySet(), 0, 5) as rel>
+        <@lib.showTopDesktop rel />
+    </#list>
+    <p>
+        <a href="/nej">další&nbsp;&raquo;</a>
+    </p>
+</div>
+
 <div>
     <a href="${desktop.imageUrl}" title="${desktop.title?html}" class="thumb">
         <img src="${desktop.thumbnailDetailUrl}" alt="${desktop.title?html}" border="0">

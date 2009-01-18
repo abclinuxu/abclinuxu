@@ -475,13 +475,13 @@ public class AbcInit extends HttpServlet implements Configurable {
     }
 
     private void startUpdateTopStatistics() {
+        int delay = getDelay(PREF_UPDATE_TOP_STATISTICS);
+        scheduler.schedule(new UpdateTopStatistics(), delay);
+
         if ( !isSet(PREF_UPDATE_TOP_STATISTICS) ) {
             log.info("Top statistics updater configured not to run");
             return;
         }
-        log.info("Scheduling Top statistics updater");
-        int delay = getDelay(PREF_UPDATE_TOP_STATISTICS);
-        TimerTask task = new UpdateTopStatistics();
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 3);
@@ -489,8 +489,9 @@ public class AbcInit extends HttpServlet implements Configurable {
         calendar.set(Calendar.SECOND, 0);
         calendar.add(Calendar.DAY_OF_YEAR, 1);
 
+        log.info("Scheduling Top statistics updater");
+        TimerTask task = new UpdateTopStatistics();
         scheduler.scheduleAtFixedRate(task, calendar.getTime(), 24*60*60*1000);
-        scheduler.schedule(new UpdateTopStatistics(), delay);
     }
 
     /**

@@ -9,6 +9,7 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -61,7 +62,7 @@ public class ViewDesktop implements AbcAction {
         SQLTool sqlTool = SQLTool.getInstance();
 
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-        int count = Misc.getPageSize(10, 50, env, null);
+        int count = Misc.getPageSize(20, 50, env, null);
         int total = sqlTool.countItemRelationsWithType(Item.DESKTOP, null);
 
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
