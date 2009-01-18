@@ -104,27 +104,28 @@
 </#macro>
 
 <#macro showTemplateNews(relation)>
-  <#local item=TOOL.sync(relation.child),
-    autor=TOOL.createUser(item.owner),
-    diz=TOOL.findComments(item),
-    url=relation.url?default("/zpravicky/show/"+relation.id),
-    showtitle="yes", multilinetitle="no">
+  <#local item=TOOL.sync(relation.child), autor=TOOL.createUser(item.owner), diz=TOOL.findComments(item),
+          text=TOOL.xpath(item,"data/content"), shortened=TOOL.xpath(item,"data/perex")!"UNDEFINED",
+          url=relation.url!("/zpravicky/show/"+relation.id), showTitle="yes", longTitle="yes">
     <#if USER??>
-        <#local showtitle=TOOL.xpath(USER,"/data/settings/news_titles")?default("yes"),
-            multilinetitle=TOOL.xpath(USER,"/data/settings/news_multiline")?default("no")>
+        <#local showTitle=TOOL.xpath(USER,"/data/settings/news_titles")!"yes",
+            longTitle=TOOL.xpath(USER,"/data/settings/news_multiline")!"no">
     </#if>
 
-    <#if showtitle=="yes"><div class="st_nadpis<#if multilinetitle=="yes"> no_overflow</#if>"><a href="${url}" title="${item.title?html}">${item.title?html}</a></div></#if>
+    <#if showTitle=="yes">
+        <div class="st_nadpis<#if longTitle=="yes"> no_overflow</#if>">
+            <a href="${url}" title="${item.title?html}">${item.title?html}</a>
+        </div>
+    </#if>
     <span>${DATE.show(item.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[item.subType].name}</span>
-    <#local text=TOOL.xpath(item,"data/content"), shortened=TOOL.xpath(item,"data/perex")?default("UNDEFINED")>
     <#if shortened=="UNDEFINED">
         <div class="zpr_telo">${text}</div>
     <#else>
         <div class="zpr_telo">${shortened}...&nbsp;<i><a href="${url}">více&nbsp;&raquo;</a></i></div>
     </#if>
     <span><@showUser autor/>
-    | <a href="<#if showtitle=="yes">${diz.url}<#else>${url}</#if>" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"
-    >Komentářů: ${diz.responseCount}<@lib.markNewComments diz/></a></span>
+    | <a href="${url}" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"><#rt>
+      <#lt>Komentářů: ${diz.responseCount}<@lib.markNewComments diz/></a></span>
 </#macro>
 
 <#macro markNewComments(discussion)><#t>
