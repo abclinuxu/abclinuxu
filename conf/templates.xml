@@ -1,783 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config>
 
-    <servlet name="ViewAuthor">
-        <action name="author" content="/show/author.ftl">
-            <var name="TITLE" value='Autor ${TOOL.childName(AUTHOR)}'  type="Lazy"/>
-        </action>
-        <action name="authors_list" content="/show/sekce_autori.ftl">
-            <var name="TITLE" value="Seznam autorů" />
-        </action>
-    </servlet>
-
-    <servlet name="EditAuthor">
-        <action name="add" content="/add/author.ftl">
-            <var name="TITLE" value="Vložit autora" />
-        </action>
-        <action name="edit" content="/add/author.ftl">
-            <var name="TITLE" value="Upravit autora" />
-        </action>
-    </servlet>
-
-    <servlet name="EditSoftware">
-        <action name="add" content="/add/switem.ftl">
-            <var name="TITLE" value="Vložit software" />
-        </action>
-        <action name="edit" content="/add/switem.ftl">
-            <var name="TITLE" value="Upravit software" />
-        </action>
-    </servlet>
-
-    <servlet name="EditServers">
-        <action name="list" content="/edit/servers.ftl">
-            <var name="TITLE" value="Servery rozcestníku" />
-        </action>
-        <action name="edit" content="/edit/server.ftl">
-            <var name="TITLE" value="Úprava serveru rozcestníku" />
-        </action>
-        <action name="add" content="/edit/server.ftl">
-            <var name="TITLE" value="Přidání serveru rozcestníku" />
-        </action>
-    </servlet>
-
-    <servlet name="EditArticle">
-        <action name="add" content="/add/article.ftl">
-            <var name="TITLE" value="Vložení článku"/>
-        </action>
-        <action name="edit" content="/add/article.ftl">
-            <var name="TITLE" value="Úprava článku"/>
-        </action>
-        <action name="talk" content="/edit/article_talk.ftl">
-            <var name="TITLE" value="Rozhovor"/>
-        </action>
-        <action name="talkAddresses" content="/edit/talk_addresses.ftl">
-            <var name="TITLE" value="Adresy rozhovoru"/>
-        </action>
-        <action name="talkQuestion" content="/edit/talk_question.ftl">
-            <var name="TITLE" value="Vložení odpovědi k otázce"/>
-        </action>
-        <action name="addSeries" content="/add/article_series.ftl">
-            <var name="TITLE" value="Vyber seriál"/>
-        </action>
-    </servlet>
-
-    <servlet name="EditContent">
-        <action name="add" content="/add/content.ftl">
-            <var name="TITLE" value="Vložení stránky"/>
-        </action>
-        <action name="edit" content="/add/content.ftl">
-            <var name="TITLE" value='Úprava stránky - ${RELATION.child.title}' type="Lazy"/>
-        </action>
-        <action name="addDerived" content="/add/derivedContent.ftl">
-            <var name="TITLE" value="Vložení stránky"/>
-        </action>
-        <action name="editPublic" content="/edit/publicContent.ftl">
-            <var name="TITLE" value='Úprava stránky - ${RELATION.child.title}' type="Lazy"/>
-        </action>
-    </servlet>
-
-    <servlet name="Royalties">
-        <action name="add" content="/add/honorar.ftl">
-            <var name="TITLE" value="Vložení honoráře"/>
-        </action>
-        <action name="form" content="/show/royalties_form.ftl">
-            <var name="TITLE" value="Hledání honorářů"/>
-        </action>
-        <action name="report" content="/show/royalties_report.ftl">
-            <var name="TITLE" value="Nalezené honoráře"/>
-        </action>
-    </servlet>
-
-    <servlet name="EditCategory">
-        <action name="add" content="/add/category.ftl">
-            <var name="TITLE" value="Vložení kategorie" />
-        </action>
-        <action name="edit" content="/edit/category.ftl">
-            <var name="TITLE" value="Úprava kategorie" />
-        </action>
-    </servlet>
-
-    <servlet name="EditForum">
-        <action name="edit" content="/edit/forum.ftl">
-            <var name="TITLE" value="Úprava poradny" />
-        </action>
-    </servlet>
-
-    <servlet name="EditSurvey">
-        <action name="add" content="/add/survey.ftl">
-            <var name="TITLE" value="Vytvoření ankety" />
-        </action>
-        <action name="edit" content="/add/survey.ftl">
-            <var name="TITLE" value="Úprava ankety" />
-        </action>
-        <action name="list" content="/show/surveys.ftl">
-            <var name="TITLE" value="Seznam anket" />
-        </action>
-    </servlet>
-
-    <servlet name="EditDiscussion">
-        <action name="reply" content="/add/reply.ftl">
-            <var name="TITLE" value="Vlož reakci do diskuse" />
-        </action>
-        <action name="ask" content="/add/question.ftl">
-            <var name="TITLE" value="Položit nový dotaz" />
-        </action>
-        <action name="ask_confirm" content="/add/question_preview.ftl">
-            <var name="TITLE" value="Náhled vašeho dotazu" />
-        </action>
-        <action name="edit" content="/edit/comment.ftl">
-            <var name="TITLE" value="Úprava příspěvku" />
-        </action>
-        <action name="remove" content="/remove/comment.ftl">
-            <var name="TITLE" value="Smazání příspěvku" />
-        </action>
-        <action name="move" content="/misc/move_thread.ftl">
-            <var name="TITLE" value="Přesun vlákna" />
-        </action>
-        <action name="censore" content="/edit/censore.ftl">
-            <var name="TITLE" value="Cenzura příspěvku"/>
-        </action>
-        <action name="toQuestion" content="/add/threaddiz.ftl">
-            <var name="TITLE" value="Vlákno na otázku"/>
-        </action>
-    </servlet>
-
-    <servlet name="EditDriver">
-        <action name="add" content="/add/driver.ftl">
-            <var name="TITLE" value="Vlož nový ovladač" />
-        </action>
-        <action name="edit" content="/edit/driver.ftl">
-            <var name="TITLE" value="Uprav existující ovladač" />
-        </action>
-    </servlet>
-
-    <servlet name="EditPersonality">
-        <action name="add" content="/add/personality.ftl">
-            <var name="TITLE" value="Vložit osobnost"/>
-        </action>
-        <action name="edit" content="/add/personality.ftl">
-            <var name="TITLE" value="Upravit osobnost"/>
-        </action>
-    </servlet>
-
-    <servlet name="EditHardware">
-        <action name="add" content="/add/hwitem.ftl">
-            <var name="TITLE" value="Vlož záznam" />
-        </action>
-        <action name="edit" content="/edit/hwitem.ftl">
-            <var name="TITLE" value="Uprav záznam" />
-        </action>
-    </servlet>
-
-    <servlet name="EditRelated">
-        <action name="manage" content="/misc/manage_related.ftl">
-            <var name="TITLE" value="Správa souvisejících dokumentu" />
-        </action>
-        <action name="edit" content="/edit/related.ftl">
-            <var name="TITLE" value="Úprava souvisejícíco dokumentu" />
-        </action>
-        <action name="remove" content="/remove/related.ftl">
-            <var name="TITLE" value="Smazání souvisejících dokumentů"/>
-        </action>
-    </servlet>
-
-    <servlet name="EditFaq">
-        <action name="add" content="/add/faq.ftl">
-            <var name="TITLE" value="Vlož často kladenou otázku s odpovědí" />
-        </action>
-        <action name="edit" content="/edit/faq.ftl">
-            <var name="TITLE" value="Uprav často kladenou otázku" />
-        </action>
-    </servlet>
-
-    <servlet name="WhatHappened">
-        <action name="content" template="print" content="/misc/what_happened.ftl">
-        </action>
-    </servlet>
-
-    <servlet name="EditPoll">
-        <action name="add" template="print" content="/add/anketa.ftl">
-            <var name="TITLE" value="Vytvoř anketu" />
-        </action>
-        <action name="edit" content="/edit/anketa.ftl">
-            <var name="TITLE" value="Uprav anketu" />
-        </action>
-    </servlet>
-
-    <servlet name="EditNews">
-        <action name="add" content="/add/zpravicka.ftl">
-            <var name="TITLE" value="Vytvoř zprávičku" />
-        </action>
-        <action name="edit" content="/edit/zpravicka.ftl">
-            <var name="TITLE" value="Uprav zprávičku" />
-        </action>
-        <action name="remove" content="/remove/zpravicka.ftl">
-            <var name="TITLE" value="Smaž zprávičku" />
-        </action>
-    </servlet>
-
-    <servlet name="ViewBazaar">
-        <action name="ad" content="/show/bazar_ad.ftl">
-            <var name="TITLE" value='${ITEM.title} - Bazar' type="Lazy"/>
-        </action>
-        <action name="bazaar" content="/show/bazar.ftl">
-            <var name="TITLE" value='Bazar'/>
-        </action>
-    </servlet>
-
-    <servlet name="EditBazaar">
-        <action name="add" content="/add/bazar_ad.ftl">
-            <var name="TITLE" value="Vlož inzerát" />
-        </action>
-        <action name="edit" content="/add/bazar_ad.ftl">
-            <var name="TITLE" value="Uprav inzerát" />
-        </action>
-        <action name="remove" content="/remove/bazar_ad.ftl">
-            <var name="TITLE" value="Smaž inzerát" />
-        </action>
-    </servlet>
-
-    <servlet name="ViewSeries">
-        <action name="main" content="/show/series_list.ftl">
-            <var name="TITLE" value='Seriály'/>
-        </action>
-        <action name="series" content="/show/series.ftl">
-            <var name="TITLE" value='Seriál ${ITEM.title}' type="Lazy"/>
-        </action>
-    </servlet>
-
-    <servlet name="EditSeries">
-        <action name="add" content="/add/series.ftl">
-            <var name="TITLE" value="Vlož seriál" />
-        </action>
-        <action name="edit" content="/add/series.ftl">
-            <var name="TITLE" value="Vlož seriál" />
-        </action>
-        <action name="addArticle" content="/add/series_article.ftl">
-            <var name="TITLE" value="Vyber seriál" />
-        </action>
-        <action name="addArticlesUrls" content="/add/series_article_urls.ftl">
-            <var name="TITLE" value="Vlož články do seriálu" />
-        </action>
-    </servlet>
-
-    <servlet name="EditTrivia">
-        <action name="add" content="/add/trivia.ftl">
-            <var name="TITLE" value="Vlož kvíz" />
-        </action>
-        <action name="edit" content="/add/trivia.ftl">
-            <var name="TITLE" value="Uprav kvíz" />
-        </action>
-    </servlet>
-
-    <servlet name="ViewGames">
-        <action name="list" content="/show/games.ftl">
-            <var name="TITLE" value="Hry" />
-        </action>
-        <action name="trivia_play" content="/show/play_trivia.ftl">
-            <var name="TITLE" value="Kvíz" />
-        </action>
-        <action name="trivia_results" content="/show/trivia_result.ftl">
-            <var name="TITLE" value="Výsledek kvízu" />
-        </action>
-    </servlet>
-
-    <servlet name="EditRelation">
-        <action name="add" content="/add/relation.ftl">
-            <var name="TITLE" value="Vytvoř link" />
-        </action>
-        <action name="remove" content="/remove/relation.ftl">
-            <var name="TITLE" value="Smazání relace" />
-        </action>
-        <action name="moveAll" content="/edit/move_content.ftl">
-            <var name="TITLE" value="Přesun obsahu" />
-        </action>
-        <action name="setUrl" content="/misc/set_url.ftl">
-            <var name="TITLE" value="Nastav URL" />
-        </action>
-        <action name="setUrl2" content="/misc/set_url2.ftl">
-            <var name="TITLE" value="Nastav URL" />
-        </action>
-    </servlet>
-
-    <servlet name="EditRequest">
-        <action name="view" content="/show/requests.ftl">
-            <var name="TITLE" value="Administrativní požadavky" />
-        </action>
-        <action name="chooseRightForum" content="/misc/requestForum.ftl">
-            <var name="TITLE" value="Volba správného fóra" />
-        </action>
-        <action name="comment" content="/misc/comment_tools.ftl">
-            <var name="TITLE" value="Nástroje pro správu komentáře" />
-        </action>
-    </servlet>
-
-    <servlet name="EditUser">
-        <action name="register" content="/add/user.ftl">
-            <var name="TITLE" value="Registrace" />
-        </action>
-        <action name="editBasic" content="/edit/user_basic.ftl">
-            <var name="TITLE" value="Úprava účtu" />
-        </action>
-        <action name="changePassword" content="/edit/user_password.ftl">
-            <var name="TITLE" value="Změna hesla" />
-        </action>
-        <action name="editPersonal" content="/edit/user_personal.ftl">
-            <var name="TITLE" value="Úprava osobních dat" />
-        </action>
-        <action name="editProfile" content="/edit/user_profile.ftl">
-            <var name="TITLE" value="Úprava profilu" />
-        </action>
-        <action name="uploadPhoto" content="/edit/user_photo.ftl">
-            <var name="TITLE" value="Nahrání fotografie" />
-        </action>
-        <action name="uploadAvatar" content="/edit/user_avatar.ftl">
-            <var name="TITLE" value="Nahrání avataru" />
-        </action>
-        <action name="editGPG" content="/edit/user_gpg.ftl">
-            <var name="TITLE" value="Nahrání GPG klíče" />
-        </action>
-        <action name="editSubscription" content="/edit/user_subscribe.ftl">
-            <var name="TITLE" value="Objednávka zasílání informací" />
-        </action>
-        <action name="editSettings" content="/edit/user_settings.ftl">
-            <var name="TITLE" value="Změna nastavení" />
-        </action>
-        <action name="editBlacklist" content="/edit/user_blacklist.ftl">
-            <var name="TITLE" value="Seznam blokovaných uživatelů" />
-        </action>
-        <action name="grantSelect" content="/edit/grant_select.ftl">
-            <var name="TITLE" value="Změna rolí uživatele - výběr"/>
-        </action>
-        <action name="grantRoles" content="/edit/grant_roles.ftl">
-            <var name="TITLE" value="Změna rolí uživatele"/>
-        </action>
-        <action name="invalidateEmail" content="/edit/invalidate_emails.ftl">
-            <var name="TITLE" value="Zneplatnění emailu uživatelům"/>
-        </action>
-        <action name="forgottenPassword" content="/edit/forgotten_password.ftl">
-            <var name="TITLE" value="Zapomenuté heslo"/>
-        </action>
-        <action name="changeForgottenPassword" content="/edit/user_password_forgotten.ftl">
-            <var name="TITLE" value="Změna hesla" />
-        </action>
-        <action name="removeMerge" content="/remove/user.ftl">
-            <var name="TITLE" value="Odstranění či sloučení uživatele"/>
-        </action>
-        <action name="removeMerge2" content="/remove/user2.ftl">
-            <var name="TITLE" value="Odstranění či sloučení uživatele"/>
-        </action>
-    </servlet>
-
-    <servlet name="EditBookmarks">
-        <action name="editAll" content="/edit/user_bookmarks.ftl">
-            <var name="TITLE" value="Seznam záložek" />
-        </action>
-        <action name="add" content="/add/bookmark.ftl">
-            <var name="TITLE" value="Přidání záložky" />
-        </action>
-    </servlet>
-
-    <servlet name="EditBlog">
-        <action name="addBlog" content="/add/user_blog.ftl">
-            <var name="TITLE" value="Nastavení osobního blogu" />
-        </action>
-        <action name="custom" content="/edit/blog_custom.ftl">
-            <var name="TITLE" value="Nastavení vzhledu blogu" />
-        </action>
-        <action name="add" content="/add/blog_story.ftl">
-            <var name="TITLE" value="Vložení zápisu" />
-        </action>
-        <action name="edit" content="/edit/blog_story.ftl">
-            <var name="TITLE" value="Úprava zápisu" />
-        </action>
-        <action name="remove" content="/remove/story.ftl">
-            <var name="TITLE" value="Smazání zápisu"/>
-        </action>
-        <action name="rename" content="/edit/blog_name.ftl">
-            <var name="TITLE" value="Změna jména blogu" />
-        </action>
-        <action name="categories" content="/edit/blog_categories.ftl">
-            <var name="TITLE" value="Seznam kategorií" />
-        </action>
-        <action name="add_category" content="/add/blog_category.ftl">
-            <var name="TITLE" value="Přidání kategorie" />
-        </action>
-        <action name="edit_category" content="/edit/blog_category.ftl">
-            <var name="TITLE" value="Přejmenování kategorie" />
-        </action>
-        <action name="links" content="/edit/blog_links.ftl">
-            <var name="TITLE" value="Seznam doporučených odkazů"/>
-        </action>
-        <action name="edit_link" content="/edit/blog_link.ftl">
-            <var name="TITLE" value="Úprava odkazu"/>
-        </action>
-        <action name="remove_link" content="/remove/blog_link.ftl">
-            <var name="TITLE" value="Smazání odkazu"/>
-        </action>
-    </servlet>
-
-    <servlet name="EditAttachment" >
-        <action name="addScreenshot" content="/add/screenshot.ftl">
-            <var name="TITLE" value="Vložit obrázek"/>
-        </action>
-        <action name="addFile" content="/add/attachments.ftl">
-            <var name="TITLE" value="Přidat přílohy"/>
-        </action>
-        <action name="manage" content="/misc/manage_attachments.ftl">
-            <var name="TITLE" value="Správa příloh"/>
-        </action>
-        <action name="remove" content="/remove/attachment.ftl">
-            <var name="TITLE" value="Smazání příloh(y)"/>
-        </action>
-    </servlet>
-
-    <servlet name="EditGroup">
-        <action name="create" content="/add/group.ftl">
-            <var name="TITLE" value="Skupina"/>
-        </action>
-        <action name="showGroups" content="/show/groups.ftl">
-            <var name="TITLE" value="Seznam skupin"/>
-        </action>
-        <action name="showMembers" content="/show/group_members.ftl">
-            <var name="TITLE" value='Skupina ${GROUP.title}' type="Lazy"/>
-        </action>
-    </servlet>
-
-    <servlet name="ForgottenPassword">
-        <action name="step1" content="/misc/forgotten.ftl">
-            <var name="TITLE" value="Zaslání zapomenutého hesla" />
-        </action>
-        <action name="step2" content="/misc/forgotten2.ftl">
-            <var name="TITLE" value="Zaslání zapomenutého hesla" />
-        </action>
-    </servlet>
-
-    <servlet name="Search">
-        <action name="show" content="/misc/search.ftl">
-            <var name="TITLE" value="Hledání" />
-        </action>
-        <action name="news" content="/misc/search_news.ftl">
-            <var name="TITLE" value="Hledání" />
-        </action>
-    </servlet>
-
     <servlet name="Admin">
         <action name="show" content="/misc/admin.ftl">
-            <var name="TITLE" value="Administrace portálu" />
+            <var name="TITLE" value="Administrace portálu"/>
         </action>
         <action name="check" template="print" content="/misc/admin_check.ftl">
-            <var name="TITLE" value="Kontrola portálu" />
-        </action>
-    </servlet>
-
-    <servlet name="PageStatistics">
-        <action name="show" content="/misc/statistiky.ftl">
-            <var name="TITLE" value="Statistika návštěvnosti" />
-        </action>
-    </servlet>
-
-    <servlet name="SelectIcon">
-        <action name="show" content="/misc/selectIcon.ftl">
-            <var name="TITLE" value="Vyběr ikony" />
-        </action>
-    </servlet>
-
-    <servlet name="SelectUser">
-        <action name="form" content="/misc/selectUser1.ftl">
-            <var name="TITLE" value="Popis uživatele"/>
-        </action>
-        <action name="result" content="/misc/selectUser2.ftl">
-            <var name="TITLE" value="Volba uživatele"/>
-        </action>
-    </servlet>
-
-    <servlet name="SelectRelation">
-        <action name="step1" content="/misc/selectRelation.ftl">
-            <var name="TITLE" value="Výběr relace" />
-        </action>
-        <action name="step2" content="/misc/selectRelation2.ftl">
-            <var name="TITLE" value="Potvrzení výběru" />
-        </action>
-    </servlet>
-
-    <servlet name="ViewCategory">
-        <action name="sekce" content="/show/sekce.ftl">
-            <var name="TITLE" value='${CATEGORY.title}' type="Lazy" />
-        </action>
-        <action name="hwsekce" content="/show/hwsekce.ftl">
-            <var name="TITLE" value='${CATEGORY.title}' type="Lazy" />
-        </action>
-        <action name="rubrika" content="/show/rubrika.ftl">
-            <var name="TITLE" value='${CATEGORY.title}' type="Lazy" />
-        </action>
-        <action name="ankety" content="/show/ankety.ftl">
-            <var name="TITLE" value="Archiv anket" />
-        </action>
-        <action name="drivers" content="/show/drivers.ftl">
-            <var name="TITLE" value="Seznam ovladačů" />
-        </action>
-        <action name="rubriky" content="/show/rubriky.ftl">
-            <var name="TITLE" value='${CATEGORY.title}' type="Lazy" />
-        </action>
-        <action name="waiting_news" content="/show/sekce_zpravicky.ftl">
-            <var name="TITLE" value='Čekající zprávičky' />
-        </action>
-        <action name="news" content="/show/zpravicky.ftl">
-            <var name="TITLE" value='Zprávičky' />
-        </action>
-        <action name="documents" content="/show/dokumenty.ftl">
-            <var name="TITLE" value='Seznam dokumentů' />
-        </action>
-    </servlet>
-
-    <servlet name="ViewSoftware">
-        <action name="swsekce" content="/show/swsekce.ftl">
-            <var name="TITLE" value='${CATEGORY.title}' type="Lazy"/>
-        </action>
-        <action name="software" content="/show/switem.ftl">
-            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
-        </action>
-        <action name="sw_users" content="/show/sw_users.ftl">
-            <var name="TITLE" value='Seznam uživatelů ${ITEM.title}' type="Lazy"/>
-        </action>
-        <action name="alternatives" content="/show/sw_alternatives.ftl">
-            <var name="TITLE" value="Seznam alternativ pro aplikace z MS Windows"/>
-        </action>
-        <action name="sw_stats" content="/show/sw_stats.ftl">
-            <var name="TITLE" value="Žebříčky katalogu softwaru"/>
-        </action>
-        <action name="alternative" content="/show/sw_alternative.ftl">
-            <var name="TITLE" value='Alternativy pro ${SOFTWARE}' type="Lazy"/>
-        </action>
-    </servlet>
-
-    <servlet name="ViewEvent">
-        <action name="list" content="/show/akce_seznam.ftl">
-            <var name="TITLE" value="Kalendář linuxových akcí"/>
-        </action>
-        <action name="view" content="/show/akce.ftl">
-            <var name="TITLE" value='Akce: ${ITEM.title}' type="Lazy"/>
-        </action>
-        <action name="participants" content="/show/akce_ucastnici.ftl">
-            <var name="TITLE" value='Účastníci akce ${ITEM.title}' type="Lazy"/>
-        </action>
-    </servlet>
-
-    <servlet name="EditEvent">
-        <action name="add" content="/add/akce.ftl">
-            <var name="TITLE" value="Přidání nové akce"/>
-        </action>
-        <action name="edit" content="/edit/akce.ftl">
-            <var name="TITLE" value="Úprava akce"/>
-        </action>
-        <action name="register" content="/edit/akce_registrace.ftl">
-            <var name="TITLE" value="Registrace na akci"/>
-        </action>
-    </servlet>
-
-    <servlet name="EditVideo">
-        <action name="add" content="/add/video.ftl">
-            <var name="TITLE" value="Přidat video"/>
-        </action>
-        <action name="edit" content="/edit/video.ftl">
-            <var name="TITLE" value="Upravit video"/>
-        </action>
-        <action name="remove" content="/remove/video.ftl">
-            <var name="TITLE" value="Smazání videa" />
-        </action>
-    </servlet>
-
-    <servlet name="ViewVideo">
-        <action name="item" content="/show/video.ftl">
-            <var name="TITLE" value='${ITEM.title}' type="Lazy" />
-        </action>
-        <action name="users" content="/show/video_users.ftl">
-            <var name="TITLE" value='Seznam fanoušků videa ${ITEM.title}' type="Lazy"/>
-        </action>
-        <action name="list" content="/show/videos.ftl">
-            <var name="TITLE" value='Videa' />
-        </action>
-    </servlet>
-
-    <servlet name="ViewContent">
-        <action name="view" content="/show/content.ftl">
-            <var name="TITLE" value='${ITEM.title}' type="Lazy" />
-        </action>
-        <action name="toc" content="/show/content_toc.ftl">
-            <var name="TITLE" value="Obsah" />
+            <var name="TITLE" value="Kontrola portálu"/>
         </action>
     </servlet>
 
     <servlet name="ContentChanges">
         <action name="show" content="/show/content_changes.ftl">
-            <var name="TITLE" value='Přehled stránek a změn' />
-        </action>
-    </servlet>
-
-    <servlet name="ViewFaq">
-        <action name="view" content="/show/faq.ftl">
-            <var name="TITLE" value='${ITEM.title}' type="Lazy" />
-        </action>
-        <action name="list" content="/show/faq_section.ftl">
-            <var name="TITLE" value='${RELATION.child.title}' type="Lazy" />
-        </action>
-        <action name="start" content="/show/faq_all.ftl">
-            <var name="TITLE" value="Často kladené otázky" />
-        </action>
-    </servlet>
-
-    <servlet name="ShowRevisions">
-        <action name="view" content="/show/revisions.ftl">
-            <var name="TITLE" value='${TOOL.childName(RELATION)} - historie' type="Lazy" />
-        </action>
-    </servlet>
-
-    <servlet name="ShowObject">
-        <action name="hardware" content="/show/hwitem.ftl">
-            <var name="TITLE" value='${ITEM.title}' type="Lazy" />
-        </action>
-        <action name="discussion" content="/show/discussion.ftl">
-            <var name="TITLE" value='${ITEM.title}' type="Lazy" />
-        </action>
-        <action name="article" content="/show/article.ftl">
-        </action>
-        <action name="driver" content="/show/driver.ftl">
-            <var name="TITLE" value='${ITEM.title} - ${TOOL.xpath(ITEM,"data/version")}' type="Lazy" />
-        </action>
-        <action name="news" content="/show/zpravicka.ftl">
-            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
-        </action>
-        <action name="poll" content="/show/anketa.ftl">
-            <var name="TITLE" value="Anketa"/>
-        </action>
-        <action name="censored" content="/show/cenzura.ftl">
-            <var name="TITLE" value="Nevhodný příspěvek"/>
-        </action>
-        <action name="notfound" content="/show/notfound.ftl">
-            <var name="TITLE" value="Stránka nebyla nalezena"/>
-        </action>
-    </servlet>
-
-    <servlet name="ViewIndex">
-        <action name="show" content="/show/index.ftl">
-            <var name="TITLE" value="abclinuxu.cz - Linux na stříbrném podnose" />
-            <var name="IS_INDEX" value="true" type="boolean" />
-        </action>
-    </servlet>
-
-    <servlet name="ViewBlog">
-        <action name="story" content="/show/story.ftl">
-            <var name="TITLE" value='${STORY.child.title}' type="Lazy"/>
-        </action>
-        <action name="blog" content="/show/blog.ftl">
-            <var name="TITLE" value='${TOOL.xpath(BLOG,"/data/custom/page_title")}' type="Lazy"/>
-        </action>
-        <action name="blogspace" content="/show/blogs_all.ftl">
-            <var name="TITLE" value="Blogy na abclinuxu" />
-        </action>
-        <action name="blogs" content="/show/blogs.ftl">
-            <var name="TITLE" value="Blogy na abclinuxu" />
-        </action>
-        <action name="archive" content="/show/blog_archive.ftl">
-            <var name="TITLE" value="Archiv blogu" />
-        </action>
-        <action name="export" template="print" content="/misc/blog_export.ftl"/>
-    </servlet>
-
-    <servlet name="ViewUser">
-        <action name="profile" content="/show/profile.ftl">
-            <var name="TITLE" value="Profil - ${PROFILE.name}" type="Lazy" />
-        </action>
-        <action name="myProfile" content="/show/myprofile.ftl">
-            <var name="TITLE" value="Můj profil" />
-        </action>
-        <action name="counter" content="/show/mycounter.ftl">
-            <var name="TITLE" value="Co jsem publikoval" />
-        </action>
-        <action name="login" content="/show/login.ftl">
-            <var name="TITLE" value="Přihlášení do systému" />
-        </action>
-        <action name="forbidden" content="/misc/forbidden.ftl">
-            <var name="TITLE" value="Přístup odepřen" />
-        </action>
-    </servlet>
-
-    <servlet name="ViewJobsCz">
-	<action name="show" content="/show/jobscz.ftl">
-	    <var name="TITLE" value="Výpis volných pracovních pozic jobs.cz" />
-	</action>
-    </servlet>
-
-    <servlet name="SendEmail">
-        <action name="show" content="/misc/sendEmail.ftl">
-            <var name="TITLE" value="Zaslání zprávy emailem" />
-        </action>
-    </servlet>
-
-    <servlet name="History">
-        <action name="articles" content="/show/history_articles.ftl">
-            <var name="TITLE" value="Výpis článků" />
-        </action>
-        <action name="news" content="/show/history_articles.ftl">
-            <var name="TITLE" value="Výpis zpráviček" />
-        </action>
-        <action name="discussions" content="/show/history_dizs.ftl">
-            <var name="TITLE" value="Výpis diskusí" />
-        </action>
-        <action name="questions" content="/show/history_dizs.ftl">
-            <var name="TITLE" value="Výpis otázek" />
-        </action>
-        <action name="comments" content="/show/history_dizs.ftl">
-            <var name="TITLE" value="Výpis komentářů" />
-        </action>
-        <action name="hardware" content="/show/history_wiki.ftl">
-            <var name="TITLE" value="Výpis hardwaru" />
-        </action>
-        <action name="software" content="/show/history_wiki.ftl">
-            <var name="TITLE" value="Výpis softwaru" />
-        </action>
-        <action name="dictionary" content="/show/history_wiki.ftl">
-            <var name="TITLE" value="Výpis pojmů" />
-        </action>
-        <action name="personalities" content="/show/history_wiki.ftl">
-            <var name="TITLE" value="Výpis osobností" />
-        </action>
-        <action name="faq" content="/show/history_wiki.ftl">
-            <var name="TITLE" value="Výpis často kladených otázek" />
-        </action>
-        <action name="wiki" content="/show/history_wiki.ftl">
-            <var name="TITLE" value="Výpis wiki záznamů" />
-        </action>
-    </servlet>
-
-    <servlet name="ServletUtils">
-        <action name="errorPage" content="/misc/error.ftl">
-            <var name="TITLE" value="Chyba!" />
-        </action>
-    </servlet>
-
-    <servlet name="ShowForum">
-        <action name="main" content="/show/forum_all.ftl">
-            <var name="TITLE" value="Poradna" />
-        </action>
-        <action name="show" content="/show/forum.ftl">
-            <var name="TITLE" value='Poradna: ${CATEGORY.title}' type="Lazy"/>
-        </action>
-    </servlet>
-
-    <servlet name="Dictionary">
-        <action name="show" content="/show/dictionary.ftl">
-            <var name="TITLE" value='${ITEM.subType} - výkladový slovník' type="Lazy"/>
-        </action>
-        <action name="showList" content="/show/dictionary_all.ftl">
-            <var name="TITLE" value="Výkladový slovník"/>
-        </action>
-        <action name="add" content="/add/dictionary.ftl">
-            <var name="TITLE" value="Vysvětlit nový pojem"/>
-        </action>
-        <action name="edit" content="/edit/dictionary.ftl">
-            <var name="TITLE" value="Upravit pojem"/>
+            <var name="TITLE" value='Přehled stránek a změn'/>
         </action>
     </servlet>
 
@@ -799,27 +34,18 @@
         </action>
     </servlet>
 
-    <servlet name="Tags">
-        <action name="add" content="/add/tag.ftl">
-            <var name="TITLE" value="Vložit nový štítek"/>
+    <servlet name="Dictionary">
+        <action name="show" content="/show/dictionary.ftl">
+            <var name="TITLE" value='${ITEM.subType} - výkladový slovník' type="Lazy"/>
         </action>
-        <action name="edit" content="/edit/tag.ftl">
-            <var name="TITLE" value="Upravit štítek"/>
+        <action name="showList" content="/show/dictionary_all.ftl">
+            <var name="TITLE" value="Výkladový slovník"/>
         </action>
-        <action name="detail" content="/show/tag_detail.ftl">
-            <var name="TITLE" value='Štítek ${TAG.title}' type="Lazy"/>
+        <action name="add" content="/add/dictionary.ftl">
+            <var name="TITLE" value="Vysvětlit nový pojem"/>
         </action>
-        <action name="list" content="/show/tag_list.ftl">
-            <var name="TITLE" value="Seznam štítků"/>
-        </action>
-    </servlet>
-
-    <servlet name="ViewPersonality">
-        <action name="view" content="/show/personality.ftl">
-            <var name="TITLE" value='${TOOL.childName(ITEM)}' type="Lazy"/>
-        </action>
-        <action name="viewList" content="/show/personality_all.ftl">
-            <var name="TITLE" value="Kdo je"/>
+        <action name="edit" content="/edit/dictionary.ftl">
+            <var name="TITLE" value="Upravit pojem"/>
         </action>
     </servlet>
 
@@ -859,6 +85,327 @@
         </action>
     </servlet>
 
+    <servlet name="EditArticle">
+        <action name="add" content="/add/article.ftl">
+            <var name="TITLE" value="Vložení článku"/>
+        </action>
+        <action name="edit" content="/add/article.ftl">
+            <var name="TITLE" value="Úprava článku"/>
+        </action>
+        <action name="talk" content="/edit/article_talk.ftl">
+            <var name="TITLE" value="Rozhovor"/>
+        </action>
+        <action name="talkAddresses" content="/edit/talk_addresses.ftl">
+            <var name="TITLE" value="Adresy rozhovoru"/>
+        </action>
+        <action name="talkQuestion" content="/edit/talk_question.ftl">
+            <var name="TITLE" value="Vložení odpovědi k otázce"/>
+        </action>
+        <action name="addSeries" content="/add/article_series.ftl">
+            <var name="TITLE" value="Vyber seriál"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditAttachment">
+        <action name="addScreenshot" content="/add/screenshot.ftl">
+            <var name="TITLE" value="Vložit obrázek"/>
+        </action>
+        <action name="addFile" content="/add/attachments.ftl">
+            <var name="TITLE" value="Přidat přílohy"/>
+        </action>
+        <action name="manage" content="/misc/manage_attachments.ftl">
+            <var name="TITLE" value="Správa příloh"/>
+        </action>
+        <action name="remove" content="/remove/attachment.ftl">
+            <var name="TITLE" value="Smazání příloh(y)"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditAuthor">
+        <action name="add" content="/add/author.ftl">
+            <var name="TITLE" value="Vložit autora" />
+        </action>
+        <action name="edit" content="/add/author.ftl">
+            <var name="TITLE" value="Upravit autora" />
+        </action>
+    </servlet>
+
+    <servlet name="EditBazaar">
+        <action name="add" content="/add/bazar_ad.ftl">
+            <var name="TITLE" value="Vlož inzerát"/>
+        </action>
+        <action name="edit" content="/add/bazar_ad.ftl">
+            <var name="TITLE" value="Uprav inzerát"/>
+        </action>
+        <action name="remove" content="/remove/bazar_ad.ftl">
+            <var name="TITLE" value="Smaž inzerát"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditBookmarks">
+        <action name="editAll" content="/edit/user_bookmarks.ftl">
+            <var name="TITLE" value="Seznam záložek"/>
+        </action>
+        <action name="add" content="/add/bookmark.ftl">
+            <var name="TITLE" value="Přidání záložky"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditBlog">
+        <action name="addBlog" content="/add/user_blog.ftl">
+            <var name="TITLE" value="Nastavení osobního blogu"/>
+        </action>
+        <action name="custom" content="/edit/blog_custom.ftl">
+            <var name="TITLE" value="Nastavení vzhledu blogu"/>
+        </action>
+        <action name="add" content="/add/blog_story.ftl">
+            <var name="TITLE" value="Vložení zápisu"/>
+        </action>
+        <action name="edit" content="/edit/blog_story.ftl">
+            <var name="TITLE" value="Úprava zápisu"/>
+        </action>
+        <action name="remove" content="/remove/story.ftl">
+            <var name="TITLE" value="Smazání zápisu"/>
+        </action>
+        <action name="rename" content="/edit/blog_name.ftl">
+            <var name="TITLE" value="Změna jména blogu"/>
+        </action>
+        <action name="categories" content="/edit/blog_categories.ftl">
+            <var name="TITLE" value="Seznam kategorií"/>
+        </action>
+        <action name="add_category" content="/add/blog_category.ftl">
+            <var name="TITLE" value="Přidání kategorie"/>
+        </action>
+        <action name="edit_category" content="/edit/blog_category.ftl">
+            <var name="TITLE" value="Přejmenování kategorie"/>
+        </action>
+        <action name="links" content="/edit/blog_links.ftl">
+            <var name="TITLE" value="Seznam doporučených odkazů"/>
+        </action>
+        <action name="edit_link" content="/edit/blog_link.ftl">
+            <var name="TITLE" value="Úprava odkazu"/>
+        </action>
+        <action name="remove_link" content="/remove/blog_link.ftl">
+            <var name="TITLE" value="Smazání odkazu"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditCategory">
+        <action name="add" content="/add/category.ftl">
+            <var name="TITLE" value="Vložení kategorie"/>
+        </action>
+        <action name="edit" content="/edit/category.ftl">
+            <var name="TITLE" value="Úprava kategorie"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditContent">
+        <action name="add" content="/add/content.ftl">
+            <var name="TITLE" value="Vložení stránky"/>
+        </action>
+        <action name="edit" content="/add/content.ftl">
+            <var name="TITLE" value='Úprava stránky - ${RELATION.child.title}' type="Lazy"/>
+        </action>
+        <action name="addDerived" content="/add/derivedContent.ftl">
+            <var name="TITLE" value="Vložení stránky"/>
+        </action>
+        <action name="editPublic" content="/edit/publicContent.ftl">
+            <var name="TITLE" value='Úprava stránky - ${RELATION.child.title}' type="Lazy"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditDiscussion">
+        <action name="reply" content="/add/reply.ftl">
+            <var name="TITLE" value="Vlož reakci do diskuse"/>
+        </action>
+        <action name="ask" content="/add/question.ftl">
+            <var name="TITLE" value="Položit nový dotaz"/>
+        </action>
+        <action name="ask_confirm" content="/add/question_preview.ftl">
+            <var name="TITLE" value="Náhled vašeho dotazu"/>
+        </action>
+        <action name="edit" content="/edit/comment.ftl">
+            <var name="TITLE" value="Úprava příspěvku"/>
+        </action>
+        <action name="remove" content="/remove/comment.ftl">
+            <var name="TITLE" value="Smazání příspěvku"/>
+        </action>
+        <action name="move" content="/misc/move_thread.ftl">
+            <var name="TITLE" value="Přesun vlákna"/>
+        </action>
+        <action name="censore" content="/edit/censore.ftl">
+            <var name="TITLE" value="Cenzura příspěvku"/>
+        </action>
+        <action name="toQuestion" content="/add/threaddiz.ftl">
+            <var name="TITLE" value="Vlákno na otázku"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditDriver">
+        <action name="add" content="/add/driver.ftl">
+            <var name="TITLE" value="Vlož nový ovladač"/>
+        </action>
+        <action name="edit" content="/edit/driver.ftl">
+            <var name="TITLE" value="Uprav existující ovladač"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditEvent">
+        <action name="add" content="/add/akce.ftl">
+            <var name="TITLE" value="Přidání nové akce"/>
+        </action>
+        <action name="edit" content="/edit/akce.ftl">
+            <var name="TITLE" value="Úprava akce"/>
+        </action>
+        <action name="register" content="/edit/akce_registrace.ftl">
+            <var name="TITLE" value="Registrace na akci"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditFaq">
+        <action name="add" content="/add/faq.ftl">
+            <var name="TITLE" value="Vlož často kladenou otázku s odpovědí"/>
+        </action>
+        <action name="edit" content="/edit/faq.ftl">
+            <var name="TITLE" value="Uprav často kladenou otázku"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditForum">
+        <action name="edit" content="/edit/forum.ftl">
+            <var name="TITLE" value="Úprava poradny"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditGroup">
+        <action name="create" content="/add/group.ftl">
+            <var name="TITLE" value="Skupina"/>
+        </action>
+        <action name="showGroups" content="/show/groups.ftl">
+            <var name="TITLE" value="Seznam skupin"/>
+        </action>
+        <action name="showMembers" content="/show/group_members.ftl">
+            <var name="TITLE" value='Skupina ${GROUP.title}' type="Lazy"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditHardware">
+        <action name="add" content="/add/hwitem.ftl">
+            <var name="TITLE" value="Vlož záznam"/>
+        </action>
+        <action name="edit" content="/edit/hwitem.ftl">
+            <var name="TITLE" value="Uprav záznam"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditNews">
+        <action name="add" content="/add/zpravicka.ftl">
+            <var name="TITLE" value="Vytvoř zprávičku"/>
+        </action>
+        <action name="edit" content="/edit/zpravicka.ftl">
+            <var name="TITLE" value="Uprav zprávičku"/>
+        </action>
+        <action name="remove" content="/remove/zpravicka.ftl">
+            <var name="TITLE" value="Smaž zprávičku"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditPersonality">
+        <action name="add" content="/add/personality.ftl">
+            <var name="TITLE" value="Vložit osobnost"/>
+        </action>
+        <action name="edit" content="/add/personality.ftl">
+            <var name="TITLE" value="Upravit osobnost"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditPoll">
+        <action name="add" template="print" content="/add/anketa.ftl">
+            <var name="TITLE" value="Vytvoř anketu"/>
+        </action>
+        <action name="edit" content="/edit/anketa.ftl">
+            <var name="TITLE" value="Uprav anketu"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditRelated">
+        <action name="manage" content="/misc/manage_related.ftl">
+            <var name="TITLE" value="Správa souvisejících dokumentu"/>
+        </action>
+        <action name="edit" content="/edit/related.ftl">
+            <var name="TITLE" value="Úprava souvisejícíco dokumentu"/>
+        </action>
+        <action name="remove" content="/remove/related.ftl">
+            <var name="TITLE" value="Smazání souvisejících dokumentů"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditRelation">
+        <action name="add" content="/add/relation.ftl">
+            <var name="TITLE" value="Vytvoř link"/>
+        </action>
+        <action name="remove" content="/remove/relation.ftl">
+            <var name="TITLE" value="Smazání relace"/>
+        </action>
+        <action name="moveAll" content="/edit/move_content.ftl">
+            <var name="TITLE" value="Přesun obsahu"/>
+        </action>
+        <action name="setUrl" content="/misc/set_url.ftl">
+            <var name="TITLE" value="Nastav URL"/>
+        </action>
+        <action name="setUrl2" content="/misc/set_url2.ftl">
+            <var name="TITLE" value="Nastav URL"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditRequest">
+        <action name="view" content="/show/requests.ftl">
+            <var name="TITLE" value="Administrativní požadavky"/>
+        </action>
+        <action name="chooseRightForum" content="/misc/requestForum.ftl">
+            <var name="TITLE" value="Volba správného fóra"/>
+        </action>
+        <action name="comment" content="/misc/comment_tools.ftl">
+            <var name="TITLE" value="Nástroje pro správu komentáře"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditSeries">
+        <action name="add" content="/add/series.ftl">
+            <var name="TITLE" value="Vlož seriál"/>
+        </action>
+        <action name="edit" content="/add/series.ftl">
+            <var name="TITLE" value="Vlož seriál"/>
+        </action>
+        <action name="addArticle" content="/add/series_article.ftl">
+            <var name="TITLE" value="Vyber seriál"/>
+        </action>
+        <action name="addArticlesUrls" content="/add/series_article_urls.ftl">
+            <var name="TITLE" value="Vlož články do seriálu"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditServers">
+        <action name="list" content="/edit/servers.ftl">
+            <var name="TITLE" value="Servery rozcestníku" />
+        </action>
+        <action name="edit" content="/edit/server.ftl">
+            <var name="TITLE" value="Úprava serveru rozcestníku" />
+        </action>
+        <action name="add" content="/edit/server.ftl">
+            <var name="TITLE" value="Přidání serveru rozcestníku" />
+        </action>
+    </servlet>
+
+    <servlet name="EditSoftware">
+        <action name="add" content="/add/switem.ftl">
+            <var name="TITLE" value="Vložit software"/>
+        </action>
+        <action name="edit" content="/add/switem.ftl">
+            <var name="TITLE" value="Upravit software"/>
+        </action>
+    </servlet>
+
     <servlet name="EditSubportal">
         <action name="add" content="/add/subportal.ftl">
             <var name="TITLE" value="Vytvořit skupinu"/>
@@ -867,9 +414,432 @@
             <var name="TITLE" value="Upravit skupinu"/>
         </action>
     </servlet>
+
+    <servlet name="EditSurvey">
+        <action name="add" content="/add/survey.ftl">
+            <var name="TITLE" value="Vytvoření ankety" />
+        </action>
+        <action name="edit" content="/add/survey.ftl">
+            <var name="TITLE" value="Úprava ankety" />
+        </action>
+        <action name="list" content="/show/surveys.ftl">
+            <var name="TITLE" value="Seznam anket" />
+        </action>
+    </servlet>
+
+    <servlet name="EditTrivia">
+        <action name="add" content="/add/trivia.ftl">
+            <var name="TITLE" value="Vlož kvíz"/>
+        </action>
+        <action name="edit" content="/add/trivia.ftl">
+            <var name="TITLE" value="Uprav kvíz"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditUser">
+        <action name="register" content="/add/user.ftl">
+            <var name="TITLE" value="Registrace"/>
+        </action>
+        <action name="editBasic" content="/edit/user_basic.ftl">
+            <var name="TITLE" value="Úprava účtu"/>
+        </action>
+        <action name="changePassword" content="/edit/user_password.ftl">
+            <var name="TITLE" value="Změna hesla"/>
+        </action>
+        <action name="editPersonal" content="/edit/user_personal.ftl">
+            <var name="TITLE" value="Úprava osobních dat"/>
+        </action>
+        <action name="editProfile" content="/edit/user_profile.ftl">
+            <var name="TITLE" value="Úprava profilu"/>
+        </action>
+        <action name="uploadPhoto" content="/edit/user_photo.ftl">
+            <var name="TITLE" value="Nahrání fotografie"/>
+        </action>
+        <action name="uploadAvatar" content="/edit/user_avatar.ftl">
+            <var name="TITLE" value="Nahrání avataru"/>
+        </action>
+        <action name="editGPG" content="/edit/user_gpg.ftl">
+            <var name="TITLE" value="Nahrání GPG klíče"/>
+        </action>
+        <action name="editSubscription" content="/edit/user_subscribe.ftl">
+            <var name="TITLE" value="Objednávka zasílání informací"/>
+        </action>
+        <action name="editSettings" content="/edit/user_settings.ftl">
+            <var name="TITLE" value="Změna nastavení"/>
+        </action>
+        <action name="editBlacklist" content="/edit/user_blacklist.ftl">
+            <var name="TITLE" value="Seznam blokovaných uživatelů"/>
+        </action>
+        <action name="grantSelect" content="/edit/grant_select.ftl">
+            <var name="TITLE" value="Změna rolí uživatele - výběr"/>
+        </action>
+        <action name="grantRoles" content="/edit/grant_roles.ftl">
+            <var name="TITLE" value="Změna rolí uživatele"/>
+        </action>
+        <action name="invalidateEmail" content="/edit/invalidate_emails.ftl">
+            <var name="TITLE" value="Zneplatnění emailu uživatelům"/>
+        </action>
+        <action name="forgottenPassword" content="/edit/forgotten_password.ftl">
+            <var name="TITLE" value="Zapomenuté heslo"/>
+        </action>
+        <action name="changeForgottenPassword" content="/edit/user_password_forgotten.ftl">
+            <var name="TITLE" value="Změna hesla"/>
+        </action>
+        <action name="removeMerge" content="/remove/user.ftl">
+            <var name="TITLE" value="Odstranění či sloučení uživatele"/>
+        </action>
+        <action name="removeMerge2" content="/remove/user2.ftl">
+            <var name="TITLE" value="Odstranění či sloučení uživatele"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditVideo">
+        <action name="add" content="/add/video.ftl">
+            <var name="TITLE" value="Přidat video"/>
+        </action>
+        <action name="edit" content="/edit/video.ftl">
+            <var name="TITLE" value="Upravit video"/>
+        </action>
+        <action name="remove" content="/remove/video.ftl">
+            <var name="TITLE" value="Smazání videa"/>
+        </action>
+    </servlet>
+
+    <servlet name="ForgottenPassword">
+        <action name="step1" content="/misc/forgotten.ftl">
+            <var name="TITLE" value="Zaslání zapomenutého hesla"/>
+        </action>
+        <action name="step2" content="/misc/forgotten2.ftl">
+            <var name="TITLE" value="Zaslání zapomenutého hesla"/>
+        </action>
+    </servlet>
+
+    <servlet name="Forum">
+        <action name="questions" content="/show/questions.ftl"/>
+    </servlet>
+
+    <servlet name="History">
+        <action name="articles" content="/show/history_articles.ftl">
+            <var name="TITLE" value="Výpis článků"/>
+        </action>
+        <action name="news" content="/show/history_articles.ftl">
+            <var name="TITLE" value="Výpis zpráviček"/>
+        </action>
+        <action name="discussions" content="/show/history_dizs.ftl">
+            <var name="TITLE" value="Výpis diskusí"/>
+        </action>
+        <action name="questions" content="/show/history_dizs.ftl">
+            <var name="TITLE" value="Výpis otázek"/>
+        </action>
+        <action name="comments" content="/show/history_dizs.ftl">
+            <var name="TITLE" value="Výpis komentářů"/>
+        </action>
+        <action name="hardware" content="/show/history_wiki.ftl">
+            <var name="TITLE" value="Výpis hardwaru"/>
+        </action>
+        <action name="software" content="/show/history_wiki.ftl">
+            <var name="TITLE" value="Výpis softwaru"/>
+        </action>
+        <action name="dictionary" content="/show/history_wiki.ftl">
+            <var name="TITLE" value="Výpis pojmů"/>
+        </action>
+        <action name="personalities" content="/show/history_wiki.ftl">
+            <var name="TITLE" value="Výpis osobností"/>
+        </action>
+        <action name="faq" content="/show/history_wiki.ftl">
+            <var name="TITLE" value="Výpis často kladených otázek"/>
+        </action>
+        <action name="wiki" content="/show/history_wiki.ftl">
+            <var name="TITLE" value="Výpis wiki záznamů"/>
+        </action>
+    </servlet>
+
+    <servlet name="PageStatistics">
+        <action name="show" content="/misc/statistiky.ftl">
+            <var name="TITLE" value="Statistika návštěvnosti"/>
+        </action>
+    </servlet>
+
+    <servlet name="Royalties">
+        <action name="add" content="/add/honorar.ftl">
+            <var name="TITLE" value="Vložení honoráře"/>
+        </action>
+        <action name="form" content="/show/royalties_form.ftl">
+            <var name="TITLE" value="Hledání honorářů"/>
+        </action>
+        <action name="report" content="/show/royalties_report.ftl">
+            <var name="TITLE" value="Nalezené honoráře"/>
+        </action>
+    </servlet>
+
+    <servlet name="Search">
+        <action name="show" content="/misc/search.ftl">
+            <var name="TITLE" value="Hledání"/>
+        </action>
+        <action name="news" content="/misc/search_news.ftl">
+            <var name="TITLE" value="Hledání"/>
+        </action>
+    </servlet>
+
+    <servlet name="ViewBazaar">
+        <action name="ad" content="/show/bazar_ad.ftl">
+            <var name="TITLE" value='${ITEM.title} - Bazar' type="Lazy"/>
+        </action>
+        <action name="bazaar" content="/show/bazar.ftl">
+            <var name="TITLE" value='Bazar'/>
+        </action>
+    </servlet>
+
+    <servlet name="ViewGames">
+        <action name="list" content="/show/games.ftl">
+            <var name="TITLE" value="Hry"/>
+        </action>
+        <action name="trivia_play" content="/show/play_trivia.ftl">
+            <var name="TITLE" value="Kvíz"/>
+        </action>
+        <action name="trivia_results" content="/show/trivia_result.ftl">
+            <var name="TITLE" value="Výsledek kvízu"/>
+        </action>
+    </servlet>
+
+    <servlet name="ViewSeries">
+        <action name="main" content="/show/series_list.ftl">
+            <var name="TITLE" value='Seriály'/>
+        </action>
+        <action name="series" content="/show/series.ftl">
+            <var name="TITLE" value='Seriál ${ITEM.title}' type="Lazy"/>
+        </action>
+    </servlet>
+
+    <servlet name="SelectIcon">
+        <action name="show" content="/misc/selectIcon.ftl">
+            <var name="TITLE" value="Vyběr ikony" />
+        </action>
+    </servlet>
+
+    <servlet name="SelectRelation">
+        <action name="step1" content="/misc/selectRelation.ftl">
+            <var name="TITLE" value="Výběr relace" />
+        </action>
+        <action name="step2" content="/misc/selectRelation2.ftl">
+            <var name="TITLE" value="Potvrzení výběru" />
+        </action>
+    </servlet>
+
+    <servlet name="SelectUser">
+        <action name="form" content="/misc/selectUser1.ftl">
+            <var name="TITLE" value="Popis uživatele"/>
+        </action>
+        <action name="result" content="/misc/selectUser2.ftl">
+            <var name="TITLE" value="Volba uživatele"/>
+        </action>
+    </servlet>
+
+    <servlet name="SendEmail">
+        <action name="show" content="/misc/sendEmail.ftl">
+            <var name="TITLE" value="Zaslání zprávy emailem"/>
+        </action>
+    </servlet>
+
+    <servlet name="ServletUtils">
+        <action name="errorPage" content="/misc/error.ftl">
+            <var name="TITLE" value="Chyba!"/>
+        </action>
+    </servlet>
+
+    <servlet name="ShowForum">
+        <action name="main" content="/show/forum_all.ftl">
+            <var name="TITLE" value="Poradna"/>
+        </action>
+        <action name="show" content="/show/forum.ftl">
+            <var name="TITLE" value='Poradna: ${CATEGORY.title}' type="Lazy"/>
+        </action>
+    </servlet>
+
+    <servlet name="ShowObject">
+        <action name="hardware" content="/show/hwitem.ftl">
+            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
+        </action>
+        <action name="discussion" content="/show/discussion.ftl">
+            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
+        </action>
+        <action name="article" content="/show/article.ftl">
+        </action>
+        <action name="driver" content="/show/driver.ftl">
+            <var name="TITLE" value='${ITEM.title} - ${TOOL.xpath(ITEM,"data/version")}' type="Lazy"/>
+        </action>
+        <action name="news" content="/show/zpravicka.ftl">
+            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
+        </action>
+        <action name="poll" content="/show/anketa.ftl">
+            <var name="TITLE" value="Anketa"/>
+        </action>
+        <action name="censored" content="/show/cenzura.ftl">
+            <var name="TITLE" value="Nevhodný příspěvek"/>
+        </action>
+        <action name="notfound" content="/show/notfound.ftl">
+            <var name="TITLE" value="Stránka nebyla nalezena"/>
+        </action>
+    </servlet>
+
+    <servlet name="ShowRevisions">
+        <action name="view" content="/show/revisions.ftl">
+            <var name="TITLE" value='${TOOL.childName(RELATION)} - historie' type="Lazy"/>
+        </action>
+    </servlet>
+
+    <servlet name="Tags">
+        <action name="add" content="/add/tag.ftl">
+            <var name="TITLE" value="Vložit nový štítek"/>
+        </action>
+        <action name="edit" content="/edit/tag.ftl">
+            <var name="TITLE" value="Upravit štítek"/>
+        </action>
+        <action name="detail" content="/show/tag_detail.ftl">
+            <var name="TITLE" value='Štítek ${TAG.title}' type="Lazy"/>
+        </action>
+        <action name="list" content="/show/tag_list.ftl">
+            <var name="TITLE" value="Seznam štítků"/>
+        </action>
+    </servlet>
+
+    <servlet name="ViewAuthor">
+        <action name="author" content="/show/author.ftl">
+            <var name="TITLE" value='Autor ${TOOL.childName(AUTHOR)}' type="Lazy"/>
+        </action>
+        <action name="authors_list" content="/show/sekce_autori.ftl">
+            <var name="TITLE" value="Seznam autorů"/>
+        </action>
+    </servlet>
+
+    <servlet name="ViewBlog">
+        <action name="story" content="/show/story.ftl">
+            <var name="TITLE" value='${STORY.child.title}' type="Lazy"/>
+        </action>
+        <action name="blog" content="/show/blog.ftl">
+            <var name="TITLE" value='${TOOL.xpath(BLOG,"/data/custom/page_title")}' type="Lazy"/>
+        </action>
+        <action name="blogspace" content="/show/blogs_all.ftl">
+            <var name="TITLE" value="Blogy na abclinuxu"/>
+        </action>
+        <action name="blogs" content="/show/blogs.ftl">
+            <var name="TITLE" value="Blogy na abclinuxu"/>
+        </action>
+        <action name="archive" content="/show/blog_archive.ftl">
+            <var name="TITLE" value="Archiv blogu"/>
+        </action>
+        <action name="export" template="print" content="/misc/blog_export.ftl"/>
+    </servlet>
+
+    <servlet name="ViewCategory">
+        <action name="sekce" content="/show/sekce.ftl">
+            <var name="TITLE" value='${CATEGORY.title}' type="Lazy" />
+        </action>
+        <action name="hwsekce" content="/show/hwsekce.ftl">
+            <var name="TITLE" value='${CATEGORY.title}' type="Lazy" />
+        </action>
+        <action name="rubrika" content="/show/rubrika.ftl">
+            <var name="TITLE" value='${CATEGORY.title}' type="Lazy" />
+        </action>
+        <action name="ankety" content="/show/ankety.ftl">
+            <var name="TITLE" value="Archiv anket" />
+        </action>
+        <action name="drivers" content="/show/drivers.ftl">
+            <var name="TITLE" value="Seznam ovladačů" />
+        </action>
+        <action name="rubriky" content="/show/rubriky.ftl">
+            <var name="TITLE" value='${CATEGORY.title}' type="Lazy" />
+        </action>
+        <action name="waiting_news" content="/show/sekce_zpravicky.ftl">
+            <var name="TITLE" value='Čekající zprávičky' />
+        </action>
+        <action name="news" content="/show/zpravicky.ftl">
+            <var name="TITLE" value='Zprávičky' />
+        </action>
+        <action name="documents" content="/show/dokumenty.ftl">
+            <var name="TITLE" value='Seznam dokumentů' />
+        </action>
+    </servlet>
+
+    <servlet name="ViewContent">
+        <action name="view" content="/show/content.ftl">
+            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
+        </action>
+        <action name="toc" content="/show/content_toc.ftl">
+            <var name="TITLE" value="Obsah"/>
+        </action>
+    </servlet>
+
+    <servlet name="ViewEvent">
+        <action name="list" content="/show/akce_seznam.ftl">
+            <var name="TITLE" value="Kalendář linuxových akcí"/>
+        </action>
+        <action name="view" content="/show/akce.ftl">
+            <var name="TITLE" value='Akce: ${ITEM.title}' type="Lazy"/>
+        </action>
+        <action name="participants" content="/show/akce_ucastnici.ftl">
+            <var name="TITLE" value='Účastníci akce ${ITEM.title}' type="Lazy"/>
+        </action>
+    </servlet>
+
+    <servlet name="ViewFaq">
+        <action name="view" content="/show/faq.ftl">
+            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
+        </action>
+        <action name="list" content="/show/faq_section.ftl">
+            <var name="TITLE" value='${RELATION.child.title}' type="Lazy"/>
+        </action>
+        <action name="start" content="/show/faq_all.ftl">
+            <var name="TITLE" value="Často kladené otázky"/>
+        </action>
+    </servlet>
+
+    <servlet name="ViewIndex">
+        <action name="show" content="/show/index.ftl">
+            <var name="TITLE" value="abclinuxu.cz - Linux na stříbrném podnose"/>
+            <var name="IS_INDEX" value="true" type="boolean"/>
+        </action>
+    </servlet>
+
+    <servlet name="ViewJobsCz">
+        <action name="show" content="/show/jobscz.ftl">
+            <var name="TITLE" value="Výpis volných pracovních pozic jobs.cz"/>
+        </action>
+    </servlet>
+
+    <servlet name="ViewPersonality">
+        <action name="view" content="/show/personality.ftl">
+            <var name="TITLE" value='${TOOL.childName(ITEM)}' type="Lazy"/>
+        </action>
+        <action name="viewList" content="/show/personality_all.ftl">
+            <var name="TITLE" value="Kdo je"/>
+        </action>
+    </servlet>
+
+    <servlet name="ViewSoftware">
+        <action name="swsekce" content="/show/swsekce.ftl">
+            <var name="TITLE" value='${CATEGORY.title}' type="Lazy"/>
+        </action>
+        <action name="software" content="/show/switem.ftl">
+            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
+        </action>
+        <action name="sw_users" content="/show/sw_users.ftl">
+            <var name="TITLE" value='Seznam uživatelů ${ITEM.title}' type="Lazy"/>
+        </action>
+        <action name="alternatives" content="/show/sw_alternatives.ftl">
+            <var name="TITLE" value="Seznam alternativ pro aplikace z MS Windows"/>
+        </action>
+        <action name="sw_stats" content="/show/sw_stats.ftl">
+            <var name="TITLE" value="Žebříčky katalogu softwaru"/>
+        </action>
+        <action name="alternative" content="/show/sw_alternative.ftl">
+            <var name="TITLE" value='Alternativy pro ${SOFTWARE}' type="Lazy"/>
+        </action>
+    </servlet>
+
     <servlet name="ViewSubportal">
         <action name="list" content="/show/subportals.ftl">
-            <var name="TITLE" value="Seznam skupin" />
+            <var name="TITLE" value="Seznam skupin"/>
         </action>
         <action name="view" content="/show/subportal.ftl">
             <var name="TITLE" value='${TOOL.childName(RELATION)}' type="Lazy"/>
@@ -882,7 +852,38 @@
         </action>
     </servlet>
 
-    <servlet name="Forum">
-        <action name="questions" content="/show/questions.ftl" />
+    <servlet name="ViewUser">
+        <action name="profile" content="/show/profile.ftl">
+            <var name="TITLE" value="Profil - ${PROFILE.name}" type="Lazy" />
+        </action>
+        <action name="myProfile" content="/show/myprofile.ftl">
+            <var name="TITLE" value="Můj profil" />
+        </action>
+        <action name="counter" content="/show/mycounter.ftl">
+            <var name="TITLE" value="Co jsem publikoval" />
+        </action>
+        <action name="login" content="/show/login.ftl">
+            <var name="TITLE" value="Přihlášení do systému" />
+        </action>
+        <action name="forbidden" content="/misc/forbidden.ftl">
+            <var name="TITLE" value="Přístup odepřen" />
+        </action>
+    </servlet>
+
+    <servlet name="ViewVideo">
+        <action name="item" content="/show/video.ftl">
+            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
+        </action>
+        <action name="users" content="/show/video_users.ftl">
+            <var name="TITLE" value='Seznam fanoušků videa ${ITEM.title}' type="Lazy"/>
+        </action>
+        <action name="list" content="/show/videos.ftl">
+            <var name="TITLE" value='Videa'/>
+        </action>
+    </servlet>
+
+    <servlet name="WhatHappened">
+        <action name="content" template="print" content="/misc/what_happened.ftl">
+        </action>
     </servlet>
 </config>
