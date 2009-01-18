@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Date;
+import java.sql.Timestamp;
 
 /**
  * Helper class to translate Qualifiers to SQL query.
@@ -186,7 +187,7 @@ public class QualifierTool {
         else if (operation == Operation.LIKE)
             sb.append(" LIKE ");
         else if (operation instanceof OperationIn)
-            sb.append(" IN " + Misc.getInCondition(((OperationIn) operation).getCount()));
+            sb.append(" IN ").append(Misc.getInCondition(((OperationIn) operation).getCount()));
         else if (operation == Operation.IS_NULL) {
             sb.append(" IS NULL");
             return;
@@ -215,7 +216,7 @@ public class QualifierTool {
 
     private static void addObjectToParams(Object o, List params) {
         if (o instanceof Date)
-            o = new java.sql.Date(((Date) o).getTime());
+            o = new Timestamp(((Date) o).getTime());
         params.add(o);
     }
 

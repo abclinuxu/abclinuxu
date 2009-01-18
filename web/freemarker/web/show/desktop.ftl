@@ -30,10 +30,18 @@
 <h1>${desktop.title?html}</h1>
 
 <div style="float: right">
+    <#if MY_OLDER_DESKTOPS!?has_content>
+        <h3 class="st_nadpis">Mé další desktopy</h3>
+        <#list MY_OLDER_DESKTOPS as rel>
+            <@lib.showTopDesktop rel />
+        </#list>
+    </#if>
+
     <h3 class="st_nadpis">Nejpopulárnější desktopy</h3>
     <#list TOOL.sublist(VARS.mostPopularDesktops.keySet(), 0, 5) as rel>
         <@lib.showTopDesktop rel />
     </#list>
+
     <p>
         <a href="/nej">další&nbsp;&raquo;</a>
     </p>

@@ -16,8 +16,7 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
-import cz.abclinuxu.persistence.extra.Qualifier;
-import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +35,8 @@ public class ViewDesktop implements AbcAction {
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_ITEM = "ITEM";
     public static final String VAR_ITEMS = "ITEMS";
+    public static final String VAR_MY_OLDER_DESKTOPS = "MY_OLDER_DESKTOPS";
+
     public static final String ACTION_USERS = "users";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -65,7 +66,7 @@ public class ViewDesktop implements AbcAction {
         int total = sqlTool.countItemRelationsWithType(Item.DESKTOP, null);
 
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
-        List list = sqlTool.findItemRelationsWithType(Item.DESKTOP, qualifiers);
+        List<Relation> list = sqlTool.findItemRelationsWithType(Item.DESKTOP, qualifiers);
         Tools.syncList(list);
 
         Paging paging = new Paging(list, from, count, total);
@@ -85,6 +86,7 @@ public class ViewDesktop implements AbcAction {
     }
 
     public static String processItemDisplay(HttpServletRequest request, Relation relation, Map env) throws Exception {
+        SQLTool sqlTool = SQLTool.getInstance();
         Item item = (Item) relation.getChild();
         env.put(VAR_ITEM, item);
 
@@ -94,6 +96,12 @@ public class ViewDesktop implements AbcAction {
 
         Map children = Tools.groupByType(item.getChildren(), "Item");
         env.put(ShowObject.VAR_CHILDREN_MAP, children);
+
+        Qualifier olderQualifier = new CompareCondition(Field.CREATED, Operation.SMALLER, item.getCreated());
+        Qualifier myQualifier = new CompareCondition(Field.OWNER, Operation.EQUAL, item.getOwner());
+        Qualifier[] qualifiers = new Qualifier[]{myQualifier, olderQualifier, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 3)};
+        List<Relation> olderDesktops = sqlTool.findItemRelationsWithType(Item.DESKTOP, qualifiers);
+        env.put(VAR_MY_OLDER_DESKTOPS, olderDesktops);
 
         env.put(Constants.VAR_RSS, FeedGenerator.getScreenshotsFeedUrl());
         return FMTemplateSelector.select("Desktop", "show", env, request);
