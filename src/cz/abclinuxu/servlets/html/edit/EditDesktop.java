@@ -420,12 +420,12 @@ public class EditDesktop implements AbcAction {
                 ServletUtils.addError(PARAM_SCREENSHOT, "Obrázek nelze načíst, nepodporovaný formát.", env, null);
                 return false;
             }
-            if (img.getWidth() < 800) {
-                ServletUtils.addError(PARAM_SCREENSHOT, "Obrázek musí mít rozměry nejméně 800x600 pixelů.", env, null);
+            if (img.getWidth() < 640) {
+                ServletUtils.addError(PARAM_SCREENSHOT, "Obrázek musí mít rozměry nejméně 640x480 pixelů.", env, null);
                 return false;
             }
-            if (img.getHeight() < 600) {
-                ServletUtils.addError(PARAM_SCREENSHOT, "Obrázek musí mít rozměry nejméně 800x600 pixelů.", env, null);
+            if (img.getHeight() < 480) {
+                ServletUtils.addError(PARAM_SCREENSHOT, "Obrázek musí mít rozměry nejméně 640x480 pixelů.", env, null);
                 return false;
             }
         } catch (IOException e) {

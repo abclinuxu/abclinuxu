@@ -7,7 +7,7 @@
 <@lib.showMessages/>
 
 <p>
-    Tato stránka slouží k nahrání snímku vašeho desktopu, tedy screenshot pracovního
+    Tato stránka slouží k nahrání snímku vašeho desktopu, tedy screenshotu pracovního
     prostředí vašeho počítače (KDE, GNOME apod.). Sekce není určena ke vkládání různých
     fotek, ať už vašeho stolu, nebo něčeho jiného. Jméno distribuce do titulku obvykle nepatří,
     důležitější je <a href="/slovnik/wm">správce oken</a> a téma. Nahraný obrázek již nepůjde změnit,
@@ -27,8 +27,8 @@
         <tr>
             <td class="required">
                 Obrázek
-                <@lib.showHelp>Maximální velikost obrázku je omezena na 1&nbsp;megabajt, podporovány jsou formáty JPG,
-                PNG a GIF. Nejvhodnější formát je obvykle PNG.</@lib.showHelp>
+                <@lib.showHelp>Maximální velikost obrázku je omezena na 1&nbsp;megabajt, minimální rozměry jsou 640x480.
+                Nejvhodnější formát je obvykle PNG, můžete použít i JPG či GIF.</@lib.showHelp>
             </td>
             <td>
                 <input type="file" name="screenshot" size="40" tabindex="2">
