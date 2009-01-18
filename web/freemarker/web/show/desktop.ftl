@@ -1,23 +1,22 @@
 <#if USER??>
-    <#if USER.id==ITEM.owner || TOOL.permissionsFor(USER, RELATION).canModify()>
-    <#assign plovouci_sloupec>
-
-        <div class="s_nadpis">Nástroje</div>
-
-        <div class="s_sekce">
-            <ul>
-                <li>
-                    <a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}" rel="nofollow">Upravit</a>
-                </li>
-                <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
+    <#assign permissions = TOOL.permissionsFor(USER, RELATION)>
+    <#if USER.id==ITEM.owner || permissions.canModify()>
+        <#assign plovouci_sloupec>
+            <div class="s_nadpis">Nástroje</div>
+            <div class="s_sekce">
+                <ul>
                     <li>
-                        <a href="${URL.make("/edit/"+RELATION.id+"?action=rm2"+TOOL.ticket(USER, false))}" title="Smaž"
-                        onClick="javascript:return confirm('Opravdu chcete smazat tento desktop?');">Smazat</a>
+                        <a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a>
                     </li>
-                </#if>
-            </ul>
-        </div>
-    </#assign>
+                    <#if USER.id==ITEM.owner || permissions.canDelete()>
+                        <li>
+                            <a href="${URL.make("/edit/"+RELATION.id+"?action=rm2"+TOOL.ticket(USER, false))}" title="Smaž"
+                            onClick="javascript:return confirm('Opravdu chcete smazat tento desktop?');">Smazat</a>
+                        </li>
+                    </#if>
+                </ul>
+            </div>
+        </#assign>
     </#if>
 </#if>
 
