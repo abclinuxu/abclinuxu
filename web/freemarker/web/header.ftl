@@ -1,8 +1,8 @@
-<#if USER?? && USER.hasRole("root")><!-- Sablona: ${TEMPLATE?default("neznama")} --></#if>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd" >
 <#import "macros.ftl" as lib>
 <html lang="cs">
 <head>
+    <#if USER?? && USER.hasRole("root")><!-- Sablona: ${TEMPLATE!"neznama"} --></#if>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>${PARAMS.TITLE?default(TITLE?default('www.abclinuxu.cz'))}</title>
     <link rel="stylesheet" type="text/css" href="${CSS_URI!}">
@@ -17,6 +17,7 @@
     <![endif]-->
     <link rel="icon" href="/images/site2/favicon.png" type="image/png">
     <#if IS_INDEX??>
+        <meta name="description" content="Komunitní portál: Linux, Open Source, BSD a jiné unixy. Nejvíce funkcí, nejaktivnější poradna, nejživější blogy. Pozor - návykové.">
         <link rel="alternate" title="abclinuxu.cz: články" href="http://www.abclinuxu.cz/auto/abc.rss" type="application/rss+xml">
         <link rel="alternate" title="abclinuxu.cz: blogy" href="http://www.abclinuxu.cz/auto/blog.rss" type="application/rss+xml">
         <link rel="alternate" title="abclinuxu.cz: linuxové blogy" href="http://www.abclinuxu.cz/auto/blogDigest.rss" type="application/rss+xml">
@@ -31,8 +32,7 @@
     <#if RSS??>
         <link rel="alternate" title="RSS zdroj aktuální sekce" href="http://www.abclinuxu.cz${RSS}" type="application/rss+xml">
     </#if>
-    <meta name="keywords" lang="cs" content="linux,abclinuxu,hardware,software,ovladače,diskuse,nápověda,rada,pomoc">
-    <meta name="keywords" lang="en" content="linux,hardware,software,drivers,forum,help,faq,advice">
+    <meta name="keywords" lang="cs" content="linux,abclinuxu,open source,komunita,hardware,software,ovladače,diskuse,nápověda,rada,pomoc">
     <script type="text/javascript">
     	Page = new Object();
         <#if RELATION??>
