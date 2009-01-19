@@ -39,8 +39,10 @@ public class GoogleVideoThumbnailer extends Thumbnailer {
         VideoServer server = EditVideo.videoServers.get("googlevideo");
         RE regexp = new RE(server.getUrlMatcher(), RE.MATCH_SINGLELINE);
             
-        if (!regexp.match(url))
+        if (!regexp.match(url)) {
+            log.error("Unsupported URL passed: "+url);
             return null;
+        }
         
         try {
             String urlFeed = "http://video.google.com/videofeed?docid="+regexp.getParen(1);
@@ -51,12 +53,14 @@ public class GoogleVideoThumbnailer extends Thumbnailer {
             
             Element elem = (Element) document.selectSingleNode("//media:thumbnail[@url]");
             
-            if (elem == null)
+            if (elem == null) {
+                log.error("Failed to find the XML attribute for "+url);
                 return null;
+            }
             
             return elem.attributeValue("url");
         } catch (Exception e) {
-            log.error(e);
+            log.error(url + ": " + e);
             return null;
         }
         
