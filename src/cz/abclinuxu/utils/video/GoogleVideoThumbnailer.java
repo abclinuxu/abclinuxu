@@ -42,6 +42,7 @@ public class GoogleVideoThumbnailer extends Thumbnailer {
             String urlFeed = "http://video.google.com/videofeed?docid="+regexp.getParen(1);
             
             SAXReader reader = new SAXReader();
+            reader.setEncoding("iso-8859-1");
             Document document = reader.read(urlFeed);
             
             Element elem = (Element) document.selectSingleNode("//media:thumbnail[@url]");
