@@ -26,11 +26,15 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import org.apache.log4j.Logger;
+
 /**
  *
  * @author lubos
  */
 public class GoogleVideoThumbnailer extends Thumbnailer {
+    static Logger log = Logger.getLogger(GoogleVideoThumbnailer.class);
+    
     public String getThumbnailUrl(String url) {
         VideoServer server = EditVideo.videoServers.get("googlevideo");
         RE regexp = new RE(server.getUrlMatcher(), RE.MATCH_SINGLELINE);
@@ -52,6 +56,7 @@ public class GoogleVideoThumbnailer extends Thumbnailer {
             
             return elem.attributeValue("url");
         } catch (Exception e) {
+            log.error(e);
             return null;
         }
         
