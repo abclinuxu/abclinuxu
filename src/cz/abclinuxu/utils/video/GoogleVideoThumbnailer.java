@@ -44,7 +44,7 @@ public class GoogleVideoThumbnailer extends Thumbnailer {
             SAXReader reader = new SAXReader();
             Document document = reader.read(urlFeed);
             
-            Element elem = (Element) document.selectSingleNode("//media:thumbnail@url");
+            Element elem = (Element) document.selectSingleNode("//media:thumbnail[@url]");
             
             if (elem == null)
                 return null;
