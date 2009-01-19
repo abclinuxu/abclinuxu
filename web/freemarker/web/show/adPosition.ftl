@@ -5,7 +5,7 @@
 
 <h1>Reklamní pozice: ${POSITION.title}</h1>
 
-<#assign desc = TOOL.xpath(POSITION, "/data/description")?default("UNDEF"), id = POSITION.string1>
+<#assign desc = TOOL.xpath(POSITION, "/data/description")!"UNDEF", id = POSITION.string1>
 
 <form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
     <table class="siroka" border="0">

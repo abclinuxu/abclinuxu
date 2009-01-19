@@ -48,7 +48,7 @@
   <#if comment.author??>
    <#local who=TOOL.sync(comment.author)>
    <a href="http://www.abclinuxu.cz/Profile//Profile/${who.id}">${who.nick?default(who.name)}</a>
-   <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
+   <#local city=TOOL.xpath(who,"//personal/city")!"UNDEF"><#if city!="UNDEF"> | ${city}</#if>
   <#else>
    ${TOOL.xpath(comment.data,"author")!}
   </#if><br>

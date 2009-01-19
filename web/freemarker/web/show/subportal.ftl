@@ -77,7 +77,7 @@ ${content}
 
 <hr />
 
-<#assign event=VARS.getFreshSubportalEvent(events.id)?default("UNDEF")>
+<#assign event=VARS.getFreshSubportalEvent(events.id)!"UNDEF">
 <#if event!="UNDEF">
     <h1 class="st_nadpis">Nadcházející akce</h1>
     <@lib.showEvent event, false, false/>

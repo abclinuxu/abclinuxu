@@ -1,11 +1,10 @@
 <#assign html_header>
-    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=${GOOGLE_MAPS_KEY}"
-      type="text/javascript"></script>
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=${GOOGLE_MAPS_KEY}" type="text/javascript"></script>
 </#assign>
 
 <#import "../macros.ftl" as lib>
 
-<#assign region=ITEM.string1?default("UNDEF"), subtype=ITEM.subType>
+<#assign region=ITEM.string1!"UNDEF", subtype=ITEM.subType>
 
 <#if subtype=="community"><#assign subtype="Komunitní">
 <#elseif subtype=="educational"><#assign subtype="Školní">
@@ -17,7 +16,7 @@
         <@lib.showSubportal SUBPORTAL, true/>
         <#assign counter=VARS.getSubportalCounter(SUBPORTAL)>
     </#if>
-    <#assign icon=TOOL.xpath(ITEM,"/data/icon")?default("UNDEF")>
+    <#assign icon=TOOL.xpath(ITEM,"/data/icon")!"UNDEF">
     <#if icon!="UNDEF">
         <div class="s_nadpis">${TOOL.childName(ITEM)}</div>
         <div class="s_sekce">
@@ -27,7 +26,7 @@
         </div>
     </#if>
 
-    <#assign location=TOOL.xpath(ITEM,"//location")?default("UNDEF")>
+    <#assign location=TOOL.xpath(ITEM,"//location")!"UNDEF">
     <div class="s_nadpis">Informace o akci</div>
     <div class="s_sekce">
       <table cellspacing="0" class="s_table">
@@ -62,7 +61,7 @@
     |  Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;</p>
 
 <#assign descShort=TOOL.xpath(ITEM,"/data/descriptionShort"),
-         desc=TOOL.xpath(ITEM,"/data/description")?default("UNDEF")>
+         desc=TOOL.xpath(ITEM,"/data/description")!"UNDEF">
 <#if ITEM.type==27>
 <p>Stav: čeká na schválení
     <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
@@ -116,7 +115,7 @@
 <#if (attachments?size > 0)>
   <#assign wrote_div=false>
   <#list attachments as attachment>
-  <#assign hidden=TOOL.xpath(attachment.child, "/data/object/@hidden")?default("false")>
+  <#assign hidden=TOOL.xpath(attachment.child, "/data/object/@hidden")!"false">
     <#if hidden=="false" || TOOL.permissionsFor(USER, RELATION).canModify()>
       <#if !wrote_div>
         <div class="ds_attachments">
@@ -146,7 +145,7 @@
     <br />
 
     <#if USER??>
-        <#assign myreg=TOOL.xpath(ITEM.data, "/data/registrations/registration[@uid="+USER.id+"]")?default("UNDEF")>
+        <#assign myreg=TOOL.xpath(ITEM.data, "/data/registrations/registration[@uid="+USER.id+"]")!"UNDEF">
     <#else>
         <#assign myreg="UNDEF">
     </#if>

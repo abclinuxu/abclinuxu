@@ -1,6 +1,6 @@
 <#import "../macros.ftl" as lib>
-<#assign intro=TOOL.xpath(BLOG,"//custom/intro")?default("UNDEF")>
-<#assign title=BLOG.title?default("UNDEF")>
+<#assign intro=TOOL.xpath(BLOG,"//custom/intro")!"UNDEF">
+<#assign title=BLOG.title!"UNDEF">
 <#assign owner=TOOL.createUser(BLOG.owner)>
 <#if USER?? && TOOL.xpath(BLOG,"//monitor/id[text()='"+USER.id+"']")??>
     <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj blog">
@@ -199,10 +199,10 @@
 
 <#list STORIES.data as relation>
     <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation),
-             category = story.subType?default("UNDEF"), tmp=TOOL.groupByType(story.children)>
+             category = story.subType!"UNDEF", tmp=TOOL.groupByType(story.children)>
     <#if category!="UNDEF">
-        <#assign category_url=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@url")?default("UNDEF"),
-            category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")>
+        <#assign category_url=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@url")!"UNDEF",
+            category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")!"UNDEF">
     </#if>
     <div class="cl">
         <#if SUMMARY??>
@@ -228,7 +228,7 @@
             <@lib.showShortRating relation, "| " />
         </p>
         <#if ! SUMMARY??>
-            <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF"), showmore=false>
+            <#assign text = TOOL.xpath(story, "/data/perex")!"UNDEF", showmore=false>
             <#if text!="UNDEF">
                 ${text}
                 <#assign showmore=true>

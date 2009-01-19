@@ -35,7 +35,7 @@
 <ul class="ankety">
 <#list POLLS.data as relation>
     <li>
-        <#assign poll=relation.child, diz=TOOL.findComments(poll)?default("UNDEF")>
+        <#assign poll=relation.child, diz=TOOL.findComments(poll)!"UNDEF">
         ${relation.child.text}<br />
         <div class="meta-vypis">
 	    <a href="${relation.url?default("/ankety/show/"+relation.id)}">${DATE.show(poll.created, "CZ_DMY")}</a>

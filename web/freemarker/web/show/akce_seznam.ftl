@@ -18,7 +18,7 @@
         </#if>
         </ul>
     </div>
-    <#if "unpublished"!=PARAMS.mode?default("UNDEF")>
+    <#if "unpublished"!=PARAMS.mode!"UNDEF">
         <#assign subtype=PARAMS.subtype?default("")?html>
         <div class="s_nadpis">Kalendář</div>
         <div class="s_sekce">
@@ -82,13 +82,13 @@
         <div class="s_nadpis">Časová osa</div>
         <div class="s_sekce">
         <ul class="event_time">
-            <li <#if "everything"==PARAMS.mode?default("UNDEF")>class="selected"</#if>>
+            <li <#if "everything"==PARAMS.mode!"UNDEF">class="selected"</#if>>
                     <a href="?mode=everything&amp;subtype=${subtype}">Všechny akce</a>
             </li>
-            <li <#if "upcoming"==PARAMS.mode?default("UNDEF")>class="selected"</#if>>
+            <li <#if "upcoming"==PARAMS.mode!"UNDEF">class="selected"</#if>>
                     <a href="?mode=upcoming&amp;subtype=${subtype}">Nadcházející akce</a>
             </li>
-            <li <#if "old"==PARAMS.mode?default("UNDEF")>class="selected"</#if>>
+            <li <#if "old"==PARAMS.mode!"UNDEF">class="selected"</#if>>
                     <a href="?mode=old&amp;subtype=${subtype}">Proběhlé akce</a>
             </li>
         </ul>
@@ -129,7 +129,7 @@
 <#global CITACE = TOOL.getRelationCountersValue(ITEMS.data,"read")/>
 
 <#list ITEMS.data as event>
-    <@lib.showEvent event, true, "unpublished"==PARAMS.mode?default("UNDEF")/>
+    <@lib.showEvent event, true, "unpublished"==PARAMS.mode!"UNDEF"/>
     <hr />
 </#list>
 

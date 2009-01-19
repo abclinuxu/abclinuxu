@@ -1,6 +1,6 @@
 <#import "../macros.ftl" as lib>
-<#assign intro=TOOL.xpath(BLOG,"//custom/intro")?default("UNDEF")>
-<#assign title=BLOG.title?default("UNDEF")>
+<#assign intro=TOOL.xpath(BLOG,"//custom/intro")!"UNDEF">
+<#assign title=BLOG.title!"UNDEF">
 <#assign owner=TOOL.createUser(BLOG.owner)>
 
 <#assign plovouci_sloupec>

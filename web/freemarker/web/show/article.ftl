@@ -8,8 +8,8 @@
 <#include "../header.ftl">
 
 <#assign autors=TOOL.createAuthorsForArticle(RELATION.getChild()),
-         forbidRating=TOOL.xpath(ITEM, "//forbid_rating")?default("UNDEF"),
-         forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF"),
+         forbidRating=TOOL.xpath(ITEM, "//forbid_rating")!"UNDEF",
+         forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")!"UNDEF",
          inPool=RELATION.upper==8082>
 
 <#if PAGES?? && PAGE??>

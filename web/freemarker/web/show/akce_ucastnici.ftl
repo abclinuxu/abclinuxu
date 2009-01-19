@@ -10,7 +10,7 @@
     </p>
 
     <#if USER??>
-        <#assign myreg=ITEM.data.selectSingleNode("/data/registrations/registration[@uid="+USER.id+"]")?default("UNDEF")>
+        <#assign myreg=ITEM.data.selectSingleNode("/data/registrations/registration[@uid="+USER.id+"]")!"UNDEF">
     <#else>
         <#assign myreg="UNDEF">
     </#if>
@@ -30,7 +30,7 @@
 
     <ul>
         <#list regs as reg>
-            <#assign user=reg.attributeValue("uid")?default("UNDEF"), name=reg.attributeValue("name")>
+            <#assign user=reg.attributeValue("uid")!"UNDEF", name=reg.attributeValue("name")>
             <#if user!="UNDEF"><#assign user=TOOL.createUser(user)></#if>
 
             <li>

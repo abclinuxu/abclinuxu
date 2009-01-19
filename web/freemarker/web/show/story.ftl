@@ -1,6 +1,6 @@
 <#import "../macros.ftl" as lib>
-<#assign intro=TOOL.xpath(BLOG,"//custom/intro")?default("UNDEF"),
-        title=BLOG.title?default("UNDEF"),
+<#assign intro=TOOL.xpath(BLOG,"//custom/intro")!"UNDEF",
+        title=BLOG.title!"UNDEF",
         owner=TOOL.createUser(BLOG.owner),
         ITEM=STORY.child,
         CHILDREN=TOOL.groupByType(ITEM.children),
@@ -224,7 +224,7 @@
     </#if>
 </p>
 
-<#assign text = TOOL.xpath(ITEM, "/data/perex")?default("UNDEF")>
+<#assign text = TOOL.xpath(ITEM, "/data/perex")!"UNDEF">
 <#if text!="UNDEF">${text}</#if>
 ${TOOL.xpath(ITEM, "/data/content")}
 

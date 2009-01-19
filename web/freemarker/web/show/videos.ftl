@@ -15,7 +15,7 @@
 <#global READS = TOOL.getRelationCountersValue(ITEMS.data,"read")/>
 <#list ITEMS.data as video>
     <#assign item=video.child, tmp=TOOL.groupByType(item.children, "Item"),
-        icon=TOOL.xpath(item,"/data/thumbnail")?default("UNDEF")>
+        icon=TOOL.xpath(item,"/data/thumbnail")!"UNDEF">
     <#if tmp.discussion??><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz=null></#if>
 
     <h1 class="st_nadpis"><a href="${video.url?default("/videa/show/"+video.id)}">${TOOL.childName(video)}</a></h1>

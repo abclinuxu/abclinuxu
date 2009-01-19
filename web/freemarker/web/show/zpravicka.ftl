@@ -5,7 +5,7 @@
 <#assign title=ITEM.title, autor=TOOL.createUser(ITEM.owner),
          locked = TOOL.xpath(ITEM, "//locked_by")??,
          approved = TOOL.xpath(ITEM, "//approved_by")??,
-         forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF")>
+         forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")!"UNDEF">
 
 <@lib.advertisement id="arbo-sq" />
 

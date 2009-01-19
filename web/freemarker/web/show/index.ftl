@@ -128,7 +128,7 @@
 
 <#macro printStory relation>
     <!-- UID: ${relation.parent.owner} -->
-    <#assign story=relation.child, blog=relation.parent, title=blog.title?default("UNDEF"),
+    <#assign story=relation.child, blog=relation.parent, title=blog.title!"UNDEF",
              url=TOOL.getUrlForBlogStory(relation), CHILDREN=TOOL.groupByType(story.children),
              author=TOOL.createUser(blog.owner)>
     <#if CHILDREN.discussion??>

@@ -79,8 +79,8 @@
     <#assign story=relation.child, blog=relation.parent, author=TOOL.createUser(blog.owner),
              url=TOOL.getUrlForBlogStory(relation),
              title=blog.title?default("blog"),
-             category = story.subType?default("UNDEF"), tmp=TOOL.groupByType(story.children)>
-    <#if category!="UNDEF"><#assign category=TOOL.xpath(blog, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
+             category = story.subType!"UNDEF", tmp=TOOL.groupByType(story.children)>
+    <#if category!="UNDEF"><#assign category=TOOL.xpath(blog, "//category[@id='"+category+"']/@name")!"UNDEF"></#if>
     <div class="cl">
         <#if SUMMARY??>
             <h3 class="st_nadpis">
@@ -102,7 +102,7 @@
             <@lib.showShortRating relation, "| " />
         </p>
         <#if ! SUMMARY??>
-            <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF"), showmore=false>
+            <#assign text = TOOL.xpath(story, "/data/perex")!"UNDEF", showmore=false>
             <#if text!="UNDEF">
                 ${text}
                 <#assign showmore=true>

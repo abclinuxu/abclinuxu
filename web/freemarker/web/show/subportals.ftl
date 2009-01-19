@@ -20,9 +20,9 @@ ${TOOL.xpath(RELATION.child,"/data/note")}
 
 <#list SUBPORTALS.data as relation>
     <#assign cat=relation.child,
-        icon=TOOL.xpath(cat,"/data/icon")?default("UNDEF"),
+        icon=TOOL.xpath(cat,"/data/icon")!"UNDEF",
         url=relation.url,
-        desc=TOOL.xpath(cat,"/data/descriptionShort")?default("UNDEF"),
+        desc=TOOL.xpath(cat,"/data/descriptionShort")!"UNDEF",
         members = cat.getProperty("member"),
         score=cat.getIntProperty("score")?default(-1)>
     <#if icon!="UNDEF"><div style="float:right; padding: 5px"><img src="${icon}" alt="${cat.title}" /></div></#if>
