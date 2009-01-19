@@ -6,7 +6,7 @@
 
 <h1>Pokládání dotazu</h1>
 
-<#assign rules=TOOL.xpath(RELATION.child, "data/rules")?default("UNDEF")>
+<#assign rules=TOOL.xpath(RELATION.child, "data/rules")!"UNDEF">
 <#if rules!="UNDEF">
     ${TOOL.render(rules,USER!)}
 </#if>

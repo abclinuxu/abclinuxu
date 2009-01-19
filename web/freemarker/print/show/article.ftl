@@ -1,7 +1,7 @@
 <#include "../header.ftl">
 
 <#assign autors=TOOL.createAuthorsForArticle(RELATION.getChild())>
-<#assign forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF")>
+<#assign forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")!"UNDEF">
 
 <h1>${ITEM.title}</h1>
 

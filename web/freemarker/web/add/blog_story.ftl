@@ -65,7 +65,7 @@ v pravém sloupci v části nadepsané <b>Správa zápisku</b>.</p>
             <#if (CATEGORIES?size>0)>
                 <select name="cid">
                     <#list CATEGORIES as category>
-                        <option value="${category.id}"<#if category.id==PARAMS.cid?default("UNDEF")> selected</#if>>${category.name}</option>
+                        <option value="${category.id}"<#if category.id==PARAMS.cid!"UNDEF"> selected</#if>>${category.name}</option>
                     </#list>
                 </select>&nbsp;
             <#else>

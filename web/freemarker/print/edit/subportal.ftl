@@ -20,7 +20,7 @@
                 <div class="error">${ERRORS.desc!}</div>
             </td>
         </tr>
-        <#assign icon=TOOL.xpath(RELATION.child,"/data/icon")?default("UNDEF")>
+        <#assign icon=TOOL.xpath(RELATION.child,"/data/icon")!"UNDEF">
         <#if icon != "UNDEF">
             <tr>
                 <td>Současná ikonka</td>

@@ -29,12 +29,26 @@
     <#assign location=TOOL.xpath(ITEM,"//location")!"UNDEF">
     <div class="s_nadpis">Informace o akci</div>
     <div class="s_sekce">
-      <table cellspacing="0" class="s_table">
-        <tr><td>Datum:</td>    <td>${DATE.show(ITEM.created,"CZ_DMY")}, od: ${DATE.show(ITEM.created,"TIME")}</td></tr>
-        <#if ITEM.date1??><tr><td>Konec:</td> <td>${DATE.show(ITEM.date1,"CZ_FULL")}</td></tr></#if>
-        <tr><td>Kraj:</td>     <td><@lib.showRegion region/></td></tr>
-        <tr><td>Typ akce:</td> <td>${subtype}</td></tr>
-      </table>
+        <table cellspacing="0" class="s_table">
+            <tr>
+                <td>Datum:</td>
+                <td>${DATE.show(ITEM.created,"CZ_DMY")}, od: ${DATE.show(ITEM.created,"TIME")}</td>
+            </tr>
+            <#if ITEM.date1??>
+              <tr>
+                  <td>Konec:</td>
+                  <td>${DATE.show(ITEM.date1,"CZ_DMY")}, do: ${DATE.show(ITEM.date1,"TIME")}</td>
+              </tr>
+            </#if>
+            <tr>
+                <td>Kraj:</td>
+                <td><@lib.showRegion region/></td>
+            </tr>
+            <tr>
+                <td>Typ akce:</td>
+                <td>${subtype}</td>
+            </tr>
+        </table>
     </div>
 
     <#if USER?? && (USER.id == ITEM.owner || TOOL.permissionsFor(USER, RELATION).canModify())>
@@ -56,19 +70,20 @@
 
 <h1>${TOOL.childName(ITEM)}</h1>
 
-<p class="meta-vypis">Aktualizováno: ${DATE.show(ITEM.updated,"SMART")}
-    | <@lib.showUser TOOL.createUser(ITEM.owner) />
-    |  Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;</p>
-
-<#assign descShort=TOOL.xpath(ITEM,"/data/descriptionShort"),
-         desc=TOOL.xpath(ITEM,"/data/description")!"UNDEF">
-<#if ITEM.type==27>
-<p>Stav: čeká na schválení
-    <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
-        (<a href="${URL.noPrefix("/akce/edit/"+RELATION.id+"?action=approve"+TOOL.ticket(USER,false))}">Schválit</a>
-        | <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/akce")}">Smazat</a>)
-    </#if>
+<p class="meta-vypis">
+    Aktualizováno: ${DATE.show(ITEM.updated,"SMART")} | <@lib.showUser TOOL.createUser(ITEM.owner) />
+    |  Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;
 </p>
+
+<#assign descShort=TOOL.xpath(ITEM,"/data/descriptionShort"), desc=TOOL.xpath(ITEM,"/data/description")!"UNDEF">
+<#if ITEM.type==27>
+    <p>
+        Stav: čeká na schválení
+        <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
+            (<a href="${URL.noPrefix("/akce/edit/"+RELATION.id+"?action=approve"+TOOL.ticket(USER,false))}">Schválit</a>
+            | <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/akce")}">Smazat</a>)
+        </#if>
+    </p>
 </#if>
 
 <#if desc!="UNDEF">
@@ -85,56 +100,7 @@
     </div>
 </#if>
 
-<#if location!="UNDEF">
-<h2>Mapa</h2>
-    <div id="gg_map" style="width: 500px; height: 300px"></div>
-    <script type="text/javascript">
-        var map = new GMap2(document.getElementById("gg_map"));
-        geocoder = new GClientGeocoder();
-
-        map.addControl(new GSmallMapControl());
-        map.addControl(new GMapTypeControl());
-
-        geocoder.getLatLng(
-          "${location.replace("\"","\\\"")}",
-          function(point) {
-            if (!point) {
-              alert(address + " nebylo na Google Maps nalezeno!");
-            } else {
-              map.setCenter(point, 13);
-              var marker = new GMarker(point);
-              map.addOverlay(marker);
-              marker.bindInfoWindowHtml("<font color=\"black\"><b>${TOOL.childName(ITEM)}</b><br />${location?html}");
-            }
-          }
-        );
-    </script>
-</#if>
-
-<#assign attachments=TOOL.attachmentsFor(ITEM)>
-<#if (attachments?size > 0)>
-  <#assign wrote_div=false>
-  <#list attachments as attachment>
-  <#assign hidden=TOOL.xpath(attachment.child, "/data/object/@hidden")!"false">
-    <#if hidden=="false" || TOOL.permissionsFor(USER, RELATION).canModify()>
-      <#if !wrote_div>
-        <div class="ds_attachments">
-          <h3>Přílohy:</h3>
-          <ul>
-          <#assign wrote_div=true>
-      </#if>
-            <li><a href="${TOOL.xpath(attachment.child, "/data/object/@path")}">${TOOL.xpath(attachment.child, "/data/object/originalFilename")}</a> (${TOOL.xpath(attachment.child, "/data/object/size")} bytů) <#if hidden=="true"><i>skrytá</i></#if></li>
-      </#if>
-    </#list>
-    <#if wrote_div>
-          </ul>
-        </div>
-    </#if>
-</#if>
-
-<hr />
 <#assign regs=TOOL.xpathValue(ITEM.data, "count(//registrations/registration)")>
-
 <p>
     <b>Účast potvrdilo:</b>
         <#if regs?eval gt 0>
@@ -163,6 +129,57 @@
         </form>
     </#if>
 </p>
+
+<#if location!="UNDEF">
+    <h2>Mapa</h2>
+    <div id="gg_map" style="width: 500px; height: 300px"></div>
+    <script type="text/javascript">
+        var map = new GMap2(document.getElementById("gg_map"));
+        geocoder = new GClientGeocoder();
+
+        map.addControl(new GSmallMapControl());
+        map.addControl(new GMapTypeControl());
+
+        geocoder.getLatLng(
+          "${location.replace("\"","\\\"")}",
+          function(point) {
+            if (!point) {
+              alert(address + " nebylo na Google Maps nalezeno!");
+            } else {
+              map.setCenter(point, 13);
+              var marker = new GMarker(point);
+              map.addOverlay(marker);
+              marker.bindInfoWindowHtml("<font color=\"black\"><b>${TOOL.childName(ITEM)}</b><br />${location?html}");
+            }
+          }
+        );
+    </script>
+</#if>
+
+<#assign attachments=TOOL.attachmentsFor(ITEM)>
+<#if (attachments?size > 0)>
+    <#assign wrote_div=false>
+    <#list attachments as attachment>
+        <#assign hidden=TOOL.xpath(attachment.child, "/data/object/@hidden")!"false">
+        <#if hidden=="false" || TOOL.permissionsFor(USER, RELATION).canModify()>
+            <#if !wrote_div>
+                <div class="ds_attachments">
+                    <h3>Přílohy:</h3>
+                    <ul>
+                <#assign wrote_div=true>
+            </#if>
+            <li>
+                <a href="${TOOL.xpath(attachment.child, "/data/object/@path")}">${TOOL.xpath(attachment.child, "/data/object/originalFilename")}</a>
+                (${TOOL.xpath(attachment.child, "/data/object/size")} bytů)
+                <#if hidden=="true"><i>skrytá</i></#if>
+            </li>
+        </#if>
+    </#list>
+    <#if wrote_div>
+            </ul>
+        </div>
+    </#if>
+</#if>
 
 <#if CHILDREN.discussion??>
     <h3>Komentáře</h3>

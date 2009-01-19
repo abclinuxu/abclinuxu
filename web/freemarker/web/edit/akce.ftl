@@ -139,7 +139,7 @@
                 <div class="error">${ERRORS.description!}</div>
             </td>
         </tr>
-        <#assign logo=TOOL.xpath(RELATION.child,"/data/icon")?default("UNDEF")>
+        <#assign logo=TOOL.xpath(RELATION.child,"/data/icon")!"UNDEF">
         <#if logo != "UNDEF">
             <tr>
                 <td>Současné logo</td>

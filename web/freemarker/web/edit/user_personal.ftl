@@ -21,8 +21,8 @@
             <td>
                 <select name="sex" tabindex="2">
                     <option value="undef">nezadávat</option>
-                    <option value="man" <#if PARAMS.sex?default("UNDEF")=="man">SELECTED</#if>>muž</option>
-                    <option value="woman"<#if PARAMS.sex?default("UNDEF")=="woman">SELECTED</#if>>žena</option>
+                    <option value="man" <#if PARAMS.sex!"UNDEF"=="man">SELECTED</#if>>muž</option>
+                    <option value="woman"<#if PARAMS.sex!"UNDEF"=="woman">SELECTED</#if>>žena</option>
                 </select>
                 <div class="error">${ERRORS.sex!}</div>
             </td>

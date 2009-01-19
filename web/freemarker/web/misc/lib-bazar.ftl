@@ -23,7 +23,7 @@
             <td><b>Autor:</b></td>
             <td>
                 <@lib.showUser who/>
-                <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
+                <#local city=TOOL.xpath(who,"//personal/city")!"UNDEF"><#if city!="UNDEF"> | ${city}</#if>
             </td>
         </tr>
         <tr>

@@ -89,7 +89,7 @@
             <div class="hl_vpravo">
               <#if USER??>
                 <@lib.showUser USER/> |
-                <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")?default("UNDEF")>
+                <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")!"UNDEF">
                 <#if blogName!="UNDEF"><a href="/blog/${blogName}">Blog</a> |</#if>
                 <a href="/History?type=comments&amp;uid=${USER.id}">Mé komentáře</a> |
                 <a href="/History?type=discussions&amp;uid=${USER.id}&amp;filter=last">Navštívené diskuse</a> |

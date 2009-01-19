@@ -10,7 +10,7 @@
 <#macro showArticle(relation dateFormat...)>
     <#local clanek=relation.child,
         autors=TOOL.createAuthorsForArticle(clanek),
-        thumbnail=TOOL.xpath(clanek,"/data/thumbnail")?default("UNDEF"),
+        thumbnail=TOOL.xpath(clanek,"/data/thumbnail")!"UNDEF",
         tmp=TOOL.groupByType(clanek.children, "Item"),
         url=relation.url?default("/clanky/show/"+relation.id)
     >
@@ -36,7 +36,7 @@
 </#macro>
 
 <#macro showCounter(item, map, type)><#rt>
-    <#if map.get??><#local value = map.get(item)?default("UNDEF")><#else><#local value = "UNDEF"></#if><#rt>
+    <#if map.get??><#local value = map.get(item)!"UNDEF"><#else><#local value = "UNDEF"></#if><#rt>
     <#lt><#if value?string!="UNDEF">${value}<#else>${TOOL.getCounterValue(item, type)}</#if><#rt>
 </#macro>
 
@@ -174,7 +174,7 @@
         <#nested>
         <#if showControls>
             <div id="comment${comment.id}_controls"<#if blacklisted> class="ds_controls_blacklisted"</#if>>
-                <#local nextUnread = diz.getNextUnread(comment)?default("UNDEF")>
+                <#local nextUnread = diz.getNextUnread(comment)!"UNDEF">
                 <#if ! nextUnread?is_string><a href="#${nextUnread}" title="Skočit na další nepřečtený komentář">Další</a> |</#if>
                 <a href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=add&amp;dizId="+diz.id+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovědět</a> |
                 <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}" title="Žádost o přesun diskuse, stížnost na komentář">Admin</a> |
@@ -284,7 +284,7 @@
 </#macro>
 
 <#macro showRating (relation heading=true boxCssClass="rating")>
-    <#local rating=TOOL.ratingFor(relation.child.data)?default("UNDEF")>
+    <#local rating=TOOL.ratingFor(relation.child.data)!"UNDEF">
     <div class="${boxCssClass}">
       <#if heading><h3>Hodnocení:
         <#if rating!="UNDEF">
@@ -316,7 +316,7 @@
 </#macro>
 
 <#macro showShortRating (relation, separator, heading=true)>
-    <#local rating=TOOL.ratingFor(relation.child.data)?default("UNDEF")>
+    <#local rating=TOOL.ratingFor(relation.child.data)!"UNDEF">
     <#if rating!="UNDEF"><#if heading>${separator}Hodnocení:&nbsp;</#if>${rating.percent}&nbsp;%&nbsp;(${rating.count}&nbsp;hlasů)</#if>
 </#macro>
 
@@ -522,10 +522,10 @@
 <#macro showForum rid numQuestions onHP showAdvertisement showAJAXControls singleMode>
     <#if rid!=0>
         <#local forum = VARS.getFreshQuestions(numQuestions, rid),
-                feed = FEEDS.getForumFeedUrl(rid)?default("UNDEF")>
+                feed = FEEDS.getForumFeedUrl(rid)!"UNDEF">
     <#else>
         <#local forum = VARS.getFreshQuestions(USER!),
-                feed = FEEDS.getForumFeedUrl()?default("UNDEF")>
+                feed = FEEDS.getForumFeedUrl()!"UNDEF">
     </#if>
     <#local FORUM=TOOL.analyzeDiscussions(forum)>
 
@@ -634,7 +634,7 @@
 
 <#macro showEvent relation showLogo showManagement>
     <#local item=relation.child, subtype=item.subType,
-            region=item.string1?default("UNDEF"),
+            region=item.string1!"UNDEF",
             regs=TOOL.xpathValue(item.data, "count(//registrations/registration)")>
 
     <#if subtype=="community"><#local subtype="Komunitní">
@@ -682,7 +682,7 @@
 </#macro>
 
 <#macro showSubportal relation showDesc>
-    <#local item=relation.child, icon=TOOL.xpath(item,"/data/icon")?default("UNDEF"),
+    <#local item=relation.child, icon=TOOL.xpath(item,"/data/icon")!"UNDEF",
         counter=VARS.getSubportalCounter(relation), members=item.getProperty("member"),
         score=item.getIntProperty("score")?default(-1)>
 
@@ -739,7 +739,7 @@
 
 <#macro showVideo relation>
     <#local item = relation.child, tmp = TOOL.groupByType(item.children, "Item"),
-    icon = TOOL.xpath(item,"/data/thumbnail")?default("UNDEF"), title = "${TOOL.childName(relation)}">
+    icon = TOOL.xpath(item,"/data/thumbnail")!"UNDEF", title = "${TOOL.childName(relation)}">
     <#if tmp.discussion??><#local diz = TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#local diz = null></#if>
     <div class="video">
         <p class="st_nadpis">

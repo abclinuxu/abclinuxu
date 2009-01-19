@@ -19,8 +19,8 @@ všechny případné komentáře zápisu.
     <h2>${STORY.child.title}</h2>
     <p class="cl_inforadek">${DATE.show(STORY.child.created, "CZ_SHORT")} |
         Přečteno: ${TOOL.getCounterValue(STORY.child,"read")}x
-        <#assign category = STORY.child.subType?default("UNDEF")>
-        <#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
+        <#assign category = STORY.child.subType!"UNDEF">
+        <#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")!"UNDEF"></#if>
         <#if category!="UNDEF">| ${category}</#if>
     </p>
     ${TOOL.xpath(STORY.child, "/data/content")}

@@ -59,7 +59,7 @@ Skupina má vlastní sekci pro články, vlastní wiki, poradnu a sekci pro akce
                 <a class="info" href="#">?<span class="tooltip">Ikonka zobrazovaná ve výpisu skupin a v pravém sloupci ve skupině.</span></a>
             </td>
             <td>
-                <#assign icon=TOOL.xpath(RELATION.child,"/data/icon")?default("UNDEF")>
+                <#assign icon=TOOL.xpath(RELATION.child,"/data/icon")!"UNDEF">
                 <#if icon != "UNDEF">
                     <img src="${icon}" alt="logo">
                     <label><input type="checkbox" name="remove_icon" tabindex="3">Pouze odstraň současnou ikonku</label>
