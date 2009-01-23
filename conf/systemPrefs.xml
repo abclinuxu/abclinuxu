@@ -239,7 +239,7 @@
                                 <entry key="hardware" value="auto/hardware.rss"/>
                                 <entry key="software" value="auto/software.rss"/>
                                 <entry key="diskuse" value="auto/diskuse.rss"/>
-                                <entry key="" value="auto/desktopy.rss"/>
+                                <entry key="desktops" value="auto/desktopy.rss"/>
                                 <entry key="zpravicky" value="auto/zpravicky.rss"/>
                                 <entry key="screenshots" value="auto/desktopy.rss"/>
                                 <entry key="faq" value="auto/faq.rss"/>
