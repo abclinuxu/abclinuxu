@@ -107,7 +107,7 @@
                     <input type="submit" name="finish" value="Dokonči">
                 <#else>
                     <input type="submit" name="preview" value="Náhled">
-                    <#if EDIT_MODE!>
+                    <#if EDIT_MODE!false>
                         <input type="submit" name="finish" value="Dokonči">
                     </#if>
                 </#if>
@@ -117,7 +117,7 @@
     <#if RELATION??>
         <input type="hidden" name="rid" value="${RELATION.id}">
     </#if>
-    <#if EDIT_MODE!>
+    <#if EDIT_MODE!false>
         <input type="hidden" name="action" value="edit2">
     <#else>
         <input type="hidden" name="action" value="add2">

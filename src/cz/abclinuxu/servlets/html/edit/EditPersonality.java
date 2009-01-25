@@ -20,6 +20,7 @@ package cz.abclinuxu.servlets.html.edit;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
@@ -171,7 +172,12 @@ public class EditPersonality implements AbcAction {
 
         Versioning versioning = VersioningFactory.getVersioning();
         versioning.prepareObjectBeforeCommit(item, user.getId());
-        persistence.create(item);
+        try {
+            persistence.create(item);
+        } catch (DuplicateKeyException e) {
+            ServletUtils.addError(PARAM_SURNAME, "Takový uživatel již existuje", env, null);
+            return FMTemplateSelector.select("EditPersonality", "add", env, request);
+        }
         versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
 
         persistence.create(relation);
