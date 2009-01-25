@@ -200,7 +200,7 @@ public class EditDesktop implements AbcAction {
 
         EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
-        FeedGenerator.updateScreenshots();
+        FeedGenerator.updateDesktops();
         VariableFetcher.getInstance().refreshDesktops();
 
         if (redirect) {
@@ -245,7 +245,7 @@ public class EditDesktop implements AbcAction {
 
         persistence.update(item);
 
-        FeedGenerator.updateScreenshots();
+        FeedGenerator.updateDesktops();
         VariableFetcher.getInstance().refreshDesktops();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -262,7 +262,7 @@ public class EditDesktop implements AbcAction {
         relation.getParent().removeChildRelation(relation);
         AdminLogger.logEvent(user, "  remove | screenshot " + relation.getUrl());
 
-        FeedGenerator.updateScreenshots();
+        FeedGenerator.updateDesktops();
         VariableFetcher.getInstance().refreshDesktops();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);

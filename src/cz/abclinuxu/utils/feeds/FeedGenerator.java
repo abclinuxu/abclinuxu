@@ -61,7 +61,7 @@ public class FeedGenerator implements Configurable {
     static final String PREF_DRIVERS = "ovladace";
     static final String PREF_HARDWARE = "hardware";
     static final String PREF_SOFTWARE = "software";
-    static final String PREF_SCREENSHOTS = "screenshots";
+    static final String PREF_DESKTOPS = "desktops";
     static final String PREF_BLOG = "blog";
     static final String PREF_BLOGS = "blogs";
     static final String PREF_BLOG_DIGEST = "blog.digest";
@@ -78,10 +78,11 @@ public class FeedGenerator implements Configurable {
 
     static String fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileBlogDigest;
     static String fileNews, fileFaq, filePolls, fileTrafika, fileSoftware, fileBazaar, fileDictionary;
-    static String fileScreenshots, filePersonalities, fileDiscussions;
+    static String fileDesktops, filePersonalities, fileDiscussions;
     static Map<Integer, String> filesArticleSeries;
     static Map<Integer, String> filesForums;
     static int feedLength = 10, highFrequencyFeedLength = 25, newsWordLimit;
+
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new FeedGenerator());
     }
@@ -486,9 +487,9 @@ public class FeedGenerator implements Configurable {
     }
 
     /**
-     * Generates RSS feed for screenshots
+     * Generates RSS feed for desktops
      */
-    public static void updateScreenshots() {
+    public static void updateDesktops() {
         try {
             Persistence persistence = PersistenceFactory.getPersistence();
 
@@ -521,7 +522,7 @@ public class FeedGenerator implements Configurable {
                 entries.add(entry);
             }
 
-            String path = AbcConfig.calculateDeployedPath(fileScreenshots);
+            String path = AbcConfig.calculateDeployedPath(fileDesktops);
             Writer writer = getWriter(path);
             SyndFeedOutput output = new SyndFeedOutput();
             output.output(feed, writer);
@@ -1098,7 +1099,7 @@ public class FeedGenerator implements Configurable {
         fileNews = prefs.get(PREF_NEWS, null);
         filePersonalities = prefs.get(PREF_PERSONALITIES, null);
         filePolls = prefs.get(PREF_POLLS, null);
-        fileScreenshots = prefs.get(PREF_SCREENSHOTS, null);
+        fileDesktops = prefs.get(PREF_DESKTOPS, null);
         fileSoftware = prefs.get(PREF_SOFTWARE, null);
         dirBlogs = prefs.get(PREF_BLOGS, null);
         fileTrafika = prefs.get(PREF_TRAFIKA, null);
@@ -1249,13 +1250,13 @@ public class FeedGenerator implements Configurable {
      * @return url for fresh screenshots feed
      */
     public static String getScreenshotsFeedUrl() {
-        return "/" + fileScreenshots;
+        return "/" + fileDesktops;
     }
 
     public static void main(String[] args) {
         if (args==null || args.length==0) {
             System.out.println("Enter one of hardware, software, articles, blog, blogs, drivers, news, faq, " +
-                               "polls, bazaar, dictionary, screenshots or forum as an argument!");
+                               "polls, bazaar, dictionary, desktops or forum as an argument!");
             System.exit(1);
         }
         Arrays.sort(args);
@@ -1291,7 +1292,7 @@ public class FeedGenerator implements Configurable {
             updatePolls();
         if (Arrays.binarySearch(args, "software") >= 0)
             updateSoftware();
-        if (Arrays.binarySearch(args, "screenshots") >= 0)
-            updateScreenshots();
+        if (Arrays.binarySearch(args, "desktops") >= 0)
+            updateDesktops();
     }
 }

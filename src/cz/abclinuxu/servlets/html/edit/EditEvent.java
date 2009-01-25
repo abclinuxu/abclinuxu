@@ -147,20 +147,6 @@ public class EditEvent implements AbcAction {
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
             ActionProtector.ensureContract(request, EditEvent.class, true, false, true, false);
-
-            /*
-            boolean badCat = false;
-            if (! (relation.getChild() instanceof Category) )
-                badCat = true;
-            else {
-                Category cat = (Category) relation.getChild();
-                if (cat.getType() != Category.EVENT)
-                    badCat = true;
-            }
-            if (badCat)
-                throw new InvalidInputException("Toto není sekce pro akce!");
-             */
-
             return actionAddStep2(request, response, env, true);
         }
 
