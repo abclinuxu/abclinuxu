@@ -43,11 +43,12 @@ public class GoogleVideoThumbnailer extends Thumbnailer {
             log.error("Unsupported URL passed: "+url);
             return null;
         }
-        
+
+        SAXReader reader = null;
         try {
             String urlFeed = "http://video.google.com/videofeed?docid="+regexp.getParen(1);
             
-            SAXReader reader = new SAXReader();
+            reader = new SAXReader();
             reader.setEncoding("iso-8859-1");
             Document document = reader.read(urlFeed);
             
@@ -60,7 +61,7 @@ public class GoogleVideoThumbnailer extends Thumbnailer {
             
             return elem.attributeValue("url");
         } catch (Exception e) {
-            log.error(url + ": " + e);
+            log.error(url + ": " + e + "; encoding: " + reader.getEncoding());
             return null;
         }
         
