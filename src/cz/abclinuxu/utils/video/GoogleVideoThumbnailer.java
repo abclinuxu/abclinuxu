@@ -21,6 +21,11 @@ package cz.abclinuxu.utils.video;
 
 import cz.abclinuxu.data.view.VideoServer;
 import cz.abclinuxu.servlets.html.edit.EditVideo;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.net.URL;
 import org.apache.regexp.RE;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -44,13 +49,14 @@ public class GoogleVideoThumbnailer extends Thumbnailer {
             return null;
         }
 
-        SAXReader reader = null;
         try {
             String urlFeed = "http://video.google.com/videofeed?docid="+regexp.getParen(1);
+
+            InputStream is = new URL(urlFeed).openStream();
             
-            reader = new SAXReader();
-            reader.setEncoding("iso-8859-1");
-            Document document = reader.read(urlFeed);
+            SAXReader reader = new SAXReader();
+            //reader.setEncoding("iso-8859-1"); // former hack that works on certain configurations
+            Document document = reader.read(changeEncoding(is));
             
             Element elem = (Element) document.selectSingleNode("//media:thumbnail[@url]");
             
@@ -61,9 +67,27 @@ public class GoogleVideoThumbnailer extends Thumbnailer {
             
             return elem.attributeValue("url");
         } catch (Exception e) {
-            log.error(url + ": " + e + "; encoding: " + reader.getEncoding());
+            log.error(url + ": " + e);
             return null;
         }
         
+    }
+
+    public static String streamToString(InputStream in) throws IOException {
+        StringBuffer out = new StringBuffer();
+        byte[] b = new byte[4096];
+        for (int n; (n = in.read(b)) != -1;)
+            out.append(new String(b, 0, n));
+
+        return out.toString();
+    }
+
+    /**
+     * This is an ugly hack to workaround a problem in Google's feed.
+     */
+    private static Reader changeEncoding(InputStream is) throws IOException {
+        String ss = streamToString(is);
+        ss = ss.replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
+        return new StringReader(ss);
     }
 }
