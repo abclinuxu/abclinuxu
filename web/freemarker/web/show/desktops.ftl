@@ -1,3 +1,5 @@
+<#import "macros.ftl" as lib>
+
 <#assign plovouci_sloupec>
 
     <div class="s_nadpis">
@@ -32,7 +34,7 @@
         </#list>
     </div>
 
-    <p><a href="/nej">další&nbsp;&raquo;</a></p>
+    &nbsp;<a href="/nej">další&nbsp;&raquo;</a>
 </#assign>
 
 <#include "../header.ftl">

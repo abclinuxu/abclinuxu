@@ -1,3 +1,5 @@
+<#import "macros.ftl" as lib>
+
 <#assign plovouci_sloupec>
   <#if USER??>
     <#assign permissions = TOOL.permissionsFor(USER, RELATION)>
@@ -31,7 +33,7 @@
         <@lib.showTopDesktop rel />
     </#list>
   </div>
-  <p><a href="/nej">další&nbsp;&raquo;</a></p>
+  &nbsp;<a href="/nej">další&nbsp;&raquo;</a>
 </#assign>
 
 <#include "../header.ftl">
