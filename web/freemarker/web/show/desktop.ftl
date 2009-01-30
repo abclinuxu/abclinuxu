@@ -1,4 +1,4 @@
-<#import "macros.ftl" as lib>
+<#import "../macros.ftl" as lib>
 
 <#assign plovouci_sloupec>
   <#if USER??>
