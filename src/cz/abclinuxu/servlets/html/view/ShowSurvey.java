@@ -40,6 +40,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.apache.commons.fileupload.FileItem;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -112,12 +113,13 @@ public class ShowSurvey implements AbcAction {
         boolean mustBeLogged = Boolean.valueOf(screen.attributeValue("onlyUsers"));
         boolean forbidDuplicates = Boolean.valueOf(screen.attributeValue("check"));
         boolean recordTime = screen.attributeValue("recordTime") != null;
+        List<FileItem> files = new ArrayList<FileItem>();
 
         if (mustBeLogged && user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
         if (!Misc.empty(currentScreen))
-            saveParameters(session, params, currentScreen);
+            saveParameters(session, params, currentScreen, files);
         if (recordTime)
             session.setAttribute(ATTRIB_STARTED, new Date());
 
@@ -136,7 +138,7 @@ public class ShowSurvey implements AbcAction {
         Element dump = screen.element("dump");
         if (dump != null) {
             try {
-                dump(session, dump);
+                dump(session, dump, files);
             } catch (Exception e) {
                 log.error("Error in survey " + survey.getId(), e);
                 ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale v anketě nastala chyba.", env, session);
@@ -162,7 +164,7 @@ public class ShowSurvey implements AbcAction {
      * This method adds all parameters, that shall be saved, to Document data bound to
      * atrribute in session.
      */
-    void saveParameters(HttpSession session, Map params, String currentScreen) {
+    void saveParameters(HttpSession session, Map params, String currentScreen, List<FileItem> files) {
         Document data = (Document) session.getAttribute(ATTRIB_DATA);
         if (data == null) {
             data = DocumentHelper.createDocument();
@@ -187,6 +189,8 @@ public class ShowSurvey implements AbcAction {
                 String s = (String) value;
                 if (!Misc.empty(s))
                     screen.addElement(var).addText(s);
+            } else if (value instanceof FileItem) {
+                files.add((FileItem) value);
             } else {
                 List list = (List) value;
                 if (Misc.empty(list))
@@ -203,7 +207,7 @@ public class ShowSurvey implements AbcAction {
     /**
      * Dumps data to file specified in element dump.
      */
-    void dump(HttpSession session, Element dump) throws Exception {
+    void dump(HttpSession session, Element dump, List<FileItem> files) throws Exception {
         Document data = (Document) session.getAttribute(ATTRIB_DATA);
         session.removeAttribute(ATTRIB_DATA);
         Date started = (Date) session.getAttribute(ATTRIB_STARTED);
@@ -238,7 +242,7 @@ public class ShowSurvey implements AbcAction {
 
         Element element = dump.element("dir");
         if (element != null) {
-            if (element == null || element.getTextTrim().length() == 0)
+            if (element.getTextTrim().length() == 0)
                 throw new InvalidDataException("No dir in survey!");
             String dir = element.getTextTrim();
 
@@ -247,10 +251,12 @@ public class ShowSurvey implements AbcAction {
                 throw new InvalidDataException("No prefix in survey!");
             String prefix = element.getTextTrim();
 
-            String suffix = null;
+            String suffix;
             element = dump.element("suffix");
             if (element != null)
                 suffix = element.getTextTrim();
+            else
+                suffix = ".xml";
 
             File directory = new File(FMUtils.getTemplatesDir(), "web/ankety/" + dir);
             if (!directory.exists())
@@ -260,6 +266,13 @@ public class ShowSurvey implements AbcAction {
             Writer writer = new BufferedWriter(new FileWriter(file));
             writer.write(xmlString);
             writer.close();
+
+            for (FileItem fileItem : files) {
+                int position = file.getName().indexOf(suffix);
+                String name = file.getName().substring(0, position) + fileItem.getName();
+                File attachedFile = new File(directory, name);
+                fileItem.write(attachedFile);
+            }
         }
     }
 }
