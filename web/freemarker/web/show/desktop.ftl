@@ -1,24 +1,38 @@
-<#if USER??>
+<#assign plovouci_sloupec>
+  <#if USER??>
     <#assign permissions = TOOL.permissionsFor(USER, RELATION)>
     <#if USER.id==ITEM.owner || permissions.canModify()>
-        <#assign plovouci_sloupec>
-            <div class="s_nadpis">Nástroje</div>
-            <div class="s_sekce">
-                <ul>
+        <div class="s_nadpis">Nástroje</div>
+        <div class="s_sekce">
+            <ul>
+                <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
+                <#if USER.id==ITEM.owner || permissions.canDelete()>
                     <li>
-                        <a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a>
+                        <a href="${URL.make("/edit/"+RELATION.id+"?action=rm2"+TOOL.ticket(USER, false))}" title="Smaž"
+                        onClick="javascript:return confirm('Opravdu chcete smazat tento desktop?');">Smazat</a>
                     </li>
-                    <#if USER.id==ITEM.owner || permissions.canDelete()>
-                        <li>
-                            <a href="${URL.make("/edit/"+RELATION.id+"?action=rm2"+TOOL.ticket(USER, false))}" title="Smaž"
-                            onClick="javascript:return confirm('Opravdu chcete smazat tento desktop?');">Smazat</a>
-                        </li>
-                    </#if>
-                </ul>
-            </div>
-        </#assign>
+                </#if>
+            </ul>
+        </div>
     </#if>
-</#if>
+  </#if>
+
+  <#if MY_OLDER_DESKTOPS!?has_content>
+     <div class="s_nadpis">Mé další desktopy</div>
+     <div class="s_sekce" align="center">
+         <#list MY_OLDER_DESKTOPS as rel>
+             <@lib.showTopDesktop rel />
+         </#list>
+     </div>
+  </#if>
+  <div class="s_nadpis">Nejoblíbenější desktopy</div>
+  <div class="s_sekce" align="center">
+    <#list TOOL.sublist(VARS.mostPopularDesktops.keySet(), 0, 5) as rel>
+        <@lib.showTopDesktop rel />
+    </#list>
+  </div>
+  <p><a href="/nej">další&nbsp;&raquo;</a></p>
+</#assign>
 
 <#include "../header.ftl">
 
@@ -29,24 +43,6 @@
 
 <h1>${desktop.title?html}</h1>
 
-<div style="float: right">
-    <#if MY_OLDER_DESKTOPS!?has_content>
-        <h3 class="st_nadpis">Mé další desktopy</h3>
-        <#list MY_OLDER_DESKTOPS as rel>
-            <@lib.showTopDesktop rel />
-        </#list>
-    </#if>
-
-    <h3 class="st_nadpis">Nejpopulárnější desktopy</h3>
-    <#list TOOL.sublist(VARS.mostPopularDesktops.keySet(), 0, 5) as rel>
-        <@lib.showTopDesktop rel />
-    </#list>
-
-    <p>
-        <a href="/nej">další&nbsp;&raquo;</a>
-    </p>
-</div>
-
 <div>
     <a href="${desktop.imageUrl}" title="${desktop.title?html}" class="thumb">
         <img src="${desktop.thumbnailDetailUrl}" alt="${desktop.title?html}" border="0">
@@ -55,9 +51,7 @@
 
 <#assign themeUrl=TOOL.xpath(ITEM, "/data/theme_url")!"UNDEFINED">
 <#if themeUrl != "UNDEFINED">
-    <p>
-        Adresa tématu či pozadí: <a href="${themeUrl}">${themeUrl}</a>
-    </p>
+    <p>Adresa tématu či pozadí: <a href="${themeUrl}">${themeUrl}</a></p>
 </#if>
 
 <#assign desc=TOOL.xpath(ITEM, "/data/description")!"UNDEFINED">

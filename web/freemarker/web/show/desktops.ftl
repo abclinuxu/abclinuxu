@@ -12,6 +12,27 @@
             </li>
         </ul>
     </div>
+
+    <div class="s_nadpis">Nejoblíbenější nové desktopy</div>
+    <div class="s_sekce" align="center">
+        <#list TOOL.sublist(VARS.recentMostPopularDesktops.keySet(), 0, 3) as rel>
+            <@lib.showTopDesktop rel />
+        </#list>
+    </div>
+    <div class="s_nadpis">Nejprohlíženější nové desktopy</div>
+    <div class="s_sekce" align="center">
+        <#list TOOL.sublist(VARS.recentMostSeenDesktops.keySet(), 0, 3) as rel>
+            <@lib.showTopDesktop rel />
+        </#list>
+    </div>
+    <div class="s_nadpis">Nejkomentovanější nové desktopy</div>
+    <div class="s_sekce" align="center">
+        <#list TOOL.sublist(VARS.recentMostCommentedDesktops.keySet(), 0, 3) as rel>
+            <@lib.showTopDesktop rel />
+        </#list>
+    </div>
+
+    <p><a href="/nej">další&nbsp;&raquo;</a></p>
 </#assign>
 
 <#include "../header.ftl">
@@ -22,35 +43,13 @@
 
 <h1>Desktopy</h1>
 
-<div style="float: right">
-    <h3 class="st_nadpis">Nejpopulárnější nové desktopy</h3>
-    <#list TOOL.sublist(VARS.recentMostPopularDesktops.keySet(), 0, 3) as rel>
-        <@lib.showTopDesktop rel />
-    </#list>
-
-    <h3 class="st_nadpis">Nejprohlíženější nové desktopy</h3>
-    <#list TOOL.sublist(VARS.recentMostSeenDesktops.keySet(), 0, 3) as rel>
-        <@lib.showTopDesktop rel />
-    </#list>
-
-    <h3 class="st_nadpis">Nejkomentovanější nové desktopy</h3>
-    <#list TOOL.sublist(VARS.recentMostCommentedDesktops.keySet(), 0, 3) as rel>
-        <@lib.showTopDesktop rel />
-    </#list>
-    <p>
-        <a href="/nej">další&nbsp;&raquo;</a>
-    </p>
-</div>
-
 <#global CITACE = TOOL.getRelationCountersValue(ITEMS.data,"read")/>
 <#list ITEMS.data as relation>
     <#assign desktop = TOOL.createScreenshot(relation), item = relation.child, autor=TOOL.createUser(item.owner)>
     <#assign reads = TOOL.getCounterValue(item,"read"), usedBy = item.getProperty("favourited_by")>
     <#assign tmp = TOOL.groupByType(item.children, "Item"), diz=TOOL.analyzeDiscussion(tmp.discussion[0])>
 
-    <h2 class="st_nadpis">
-        <a href="${desktop.url}" title="${desktop.title}">${desktop.title}</a>
-    </h2>
+    <h2 class="st_nadpis"><a href="${desktop.url}" title="${desktop.title}">${desktop.title}</a></h2>
 
     <div>
         <a href="${desktop.url}" title="${desktop.title}" class="thumb">

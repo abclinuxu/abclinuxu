@@ -774,12 +774,10 @@
 
 <#macro showTopDesktop relation>
     <#assign topDesktop = TOOL.createScreenshot(relation)>
-    <p>
-        <b><a href="${topDesktop.url}">${topDesktop.title}</a></b><br>
+    <p>${topDesktop.title}<br />
         <a href="${topDesktop.url}" title="${topDesktop.title}" class="thumb">
             <img src="${topDesktop.thumbnailListingUrl}" alt="${topDesktop.title}" border="0">
-        </a>
-    </p>
+        </a></p>
 </#macro>
 
 <#macro showNewsFromFeed feedUrl feedLinks>
