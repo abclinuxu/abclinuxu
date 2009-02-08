@@ -50,7 +50,11 @@
 <#global CITACE = TOOL.getRelationCountersValue(ARTICLES,"read")/>
 <#if (ARTICLES?size>0) >
     <#list ARTICLES as rel>
-        <@lib.showArticle rel, "CZ_DM", "CZ_SHORT"/>
+        <#if (rel_index < 4)>
+            <@lib.showArticle rel, "CZ_DM", "CZ_SHORT", true/>
+        <#else>
+            <@lib.showArticle rel, "CZ_DM", "CZ_SHORT", false/>
+        </#if>
         <hr />
         <#if rel_index==1>
           <@adLib.advertisement id="itbiz-box" />

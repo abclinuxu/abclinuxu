@@ -6,21 +6,20 @@
   <p class="error">${ERRORS.generic}</p>
  </#if>
 </#macro>
-
-<#macro showArticle(relation dateFormat...)>
+<#-- settings[0] - date format pro diskuse, setting[1] - zda zobrazovat perex, settings[2] - CSS trida pro titulek -->
+<#macro showArticle(relation dateFormat settings...)>
     <#local clanek=relation.child,
         autors=TOOL.createAuthorsForArticle(clanek),
         thumbnail=TOOL.xpath(clanek,"/data/thumbnail")!"UNDEF",
         tmp=TOOL.groupByType(clanek.children, "Item"),
-        url=relation.url?default("/clanky/show/"+relation.id)
+        url=relation.url!("/clanky/show/"+relation.id), displayWithPerex = settings[1]!true
     >
     <#if tmp.discussion??><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
-    <#if thumbnail!="UNDEF"><div class="cl_thumbnail">${thumbnail}</div></#if>
-    <h1 class="st_nadpis"><a href="${url}">${clanek.title}</a></h1>
-    <p>${TOOL.xpath(clanek,"/data/perex")}</p>
+    <#if displayWithPerex && thumbnail!="UNDEF"><div class="cl_thumbnail">${thumbnail}</div></#if>
+    <h2 class="${settings[2]!"st_nadpis"}"><a href="${url}">${clanek.title}</a></h2>
+    <#if displayWithPerex><p>${TOOL.xpath(clanek,"/data/perex")}</p></#if>
     <p class="meta-vypis">
-        ${DATE.show(clanek.created, dateFormat[0])} |
-
+        ${DATE.show(clanek.created, dateFormat)} |
         <#if autors?size gt 0>
             <#list autors as autor>
                 <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
@@ -30,7 +29,7 @@
         </#if>
         |
         Přečteno: <@showCounter clanek, .globals["CITACE"]!, "read" />&times;
-        <#if diz??>| <@showCommentsInListing diz, dateFormat[1]?default(dateFormat[0]), "/clanky" /></#if>
+        <#if diz??>| <@showCommentsInListing diz, settings[0]!dateFormat, "/clanky" /></#if>
         <@showShortRating relation, "| " />
     </p>
 </#macro>
@@ -438,7 +437,7 @@
     </#if>
 </#macro>
 
-<#macro showUser user><a href="/lide/${user.login}">${user.nick!(user.name)}</a></#macro>
+<#macro showUser user><#if (user.id > 0)><a href="/lide/${user.login}">${user.nick!(user.name)}</a><#else>${user.name}</#if></#macro>
 
 <#macro showRevisions relation info = TOOL.getRevisionInfo(relation.child)>
     <p class="documentHistory">
