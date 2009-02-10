@@ -661,6 +661,7 @@
                             <entry key="ratio.comment" value="1.0"/>
                             <entry key="ratio.wiki" value="3.0"/>
                             <entry key="ratio.news" value="3.0"/>
+                            <entry key="ignored.users" value="1429,4413"/>
                         </map>
                     </node>
                     <node name="UpdateSubportalScore">
