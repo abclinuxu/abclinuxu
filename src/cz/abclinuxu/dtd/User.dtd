@@ -11,11 +11,12 @@ verze 2.0
 <!ELEMENT signature (#PCDATA)> <!-- podpis nebo citat vlozeny pro jeho prispevky do diskuse -->
 
 <!ELEMENT communication (email)>
-<!ELEMENT email (newsletter?,weekly_summary?,forum?)>
+<!ELEMENT email (newsletter?,weekly_summary?,forum?,ad?)>
 <!ATTLIST email valid (yes|no) #REQUIRED>
 <!ATTLIST email verified (yes|no) #OPTIONAL>
 <!ELEMENT newsletter (#PCDATA)> <!-- yes or no, pravidelny mesicnik -->
 <!ELEMENT weekly_summary (#PCDATA)> <!-- yes or no, tydenni sumar clanku a zajimavosti -->
+<!ELEMENT ad (#PCDATA)> <!-- yes or no, pure advertisement email -->
 <!ELEMENT forum (#PCDATA)> <!-- yes or no, emailove rozhrani k diskusnimu foru -->
 
 <!ELEMENT profile (about_myself?,home_page?,photo?,distributions?,linux_user_from_year?)>

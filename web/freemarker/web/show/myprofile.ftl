@@ -132,7 +132,7 @@
             <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=subscribe")}">upravit</a>
         </td>
         <td>
-            zasílání informací
+            zasílání vyžádaných informací a reklamních emailů
         </td>
     </tr>
 </table>

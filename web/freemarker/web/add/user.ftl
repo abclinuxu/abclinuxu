@@ -27,14 +27,12 @@
                 <input type="text" name="name" value="${PARAMS.name!}" size="24" tabindex="1">
                 <@lib.showError key="name" />
             </td>
-            <td width="160">
-                Přezdívka
-                <@lib.showHelp>Přezdívka musí být unikátní.</@lib.showHelp>
+            <td class="required" width="160">
+                Heslo
+                <@lib.showHelp>Heslo musí mít nejméně čtyři znaky.</@lib.showHelp>
             </td>
             <td>
-                <input type="text" name="nick" id="nick" value="${PARAMS.nick!}" size="24" tabindex="6"
-                onChange="new Ajax.Updater('nickError', '/ajax/checkNick', {parameters: { value : $F('nick')}})">
-                <div class="error" id="nickError">${ERRORS.nick!}</div>
+                <input type="password" name="password" size="24" tabindex="4">
             </td>
         </tr>
         <tr>
@@ -50,94 +48,36 @@
                 onChange="new Ajax.Updater('loginError', '/ajax/checkLogin', {parameters: { value : $F('login')}})">
                 <div class="error" id="loginError">${ERRORS.login!}</div>
             </td>
-            <td  width="160">
-                OpenId
-                <@lib.showHelp>Podpora přihlašování přes openid se připravuje.</@lib.showHelp>
-            </td>
-            <td>
-                <input type="text" name="openid" id="openid" value="${PARAMS.openid!}" size="24" tabindex="7">
-                <#-- onChange="new Ajax.Updater('openidError', '/ajax/checkOpenId', {parameters: { value : $F('openid')}})" -->
-                <div class="error" id="openidError">${ERRORS.openid!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td class="required" width="160">
-                Heslo
-                <@lib.showHelp>Heslo musí mít nejméně čtyři znaky.</@lib.showHelp>
-            </td>
-            <td>
-                <input type="password" name="password" size="24" tabindex="3">
-            </td>
-            <td width="160">
-                Email
-                <@lib.showHelp>Email chráníme před spammery a zasíláme vám pouze vámi vyžádané informace.
-                Po registraci vám přijde aktivační email pro ověření, zda jste skutečně vlastníkem emailové schránky.
-                </@lib.showHelp>
-            </td>
-            <td>
-                <input type="text" name="email" value="${PARAMS.email!}" size="24" tabindex="8">
-                <@lib.showError key="email" />
-            </td>
-        </tr>
-        <tr>
             <td class="required" width="160">
                 Zopakujte heslo:
-                <@lib.showHelp>Kontrola hesla.</@lib.showHelp>
             </td>
             <td>
-                <input type="password" name="password2" size="24" tabindex="4">
+                <input type="password" name="password2" size="24" tabindex="5">
                 <@lib.showError key="password" />
             </td>
-            <td width="160">
-                Týdenní souhrn
-                <@lib.showHelp>Každou sobotu rozesílaný automatický email se seznamem článků, zpráviček, diskusí
-                a dalších informací, které byly vytvořeny během uplynulého týdne.</@lib.showHelp>
-            </td>
-            <td>
-                <select name="weekly" tabindex="9">
-                    <#assign weekly=PARAMS.weekly?default("no")>
-                    <option value="yes" <#if weekly=="yes">SELECTED</#if>>ano</option>
-                    <option value="no"<#if weekly=="no">SELECTED</#if>>ne</option>
-                </select>
-            </td>
         </tr>
         <tr>
-            <td width="160">Vaše pohlaví</td>
-            <td>
-                <select name="sex" tabindex="5">
-                    <#assign sex=PARAMS.sex!"UNDEF">
-                    <option value="undef">nezadávat</option>
-                    <option value="man" <#if sex=="man">SELECTED</#if>>muž</option>
-                    <option value="woman"<#if sex=="woman">SELECTED</#if>>žena</option>
-                </select>
-                <@lib.showError key="sex" />
-            </td>
             <td width="160">
-                Zpravodaj
-                <@lib.showHelp>Nepravidelný ručně psaný email s novinkami na portále.</@lib.showHelp>
+                Přezdívka
+                <@lib.showHelp>Přezdívka musí být unikátní.</@lib.showHelp>
             </td>
             <td>
-                <select name="monthly" tabindex="10">
-                    <#assign monthly=PARAMS.monthly?default("no")>
-                    <option value="yes" <#if monthly=="yes">SELECTED</#if>>ano</option>
-                    <option value="no"<#if monthly=="no">SELECTED</#if>>ne</option>
-                </select>
+                <input type="text" name="nick" id="nick" value="${PARAMS.nick!}" size="24" tabindex="3"
+                onChange="new Ajax.Updater('nickError', '/ajax/checkNick', {parameters: { value : $F('nick')}})">
+                <div class="error" id="nickError">${ERRORS.nick!}</div>
             </td>
-        </tr>
-        <tr>
             <td class="required" width="160">
                 Aktuální rok
                 <@lib.showHelp>Vložte aktuální rok. Jedná se o ochranu před spamboty.</@lib.showHelp>
             </td>
             <td>
-                <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}">
+                <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}" tabindex="6">
                 <@lib.showError key="antispam" />
             </td>
-            <td  colspan="2">&nbsp;</td>
         </tr>
         <tr>
             <td width="160">&nbsp;</td>
-            <td align="right"><input type="submit" value="Dokonči" tabindex="11"></td>
+            <td align="right"><input type="submit" value="Dokonči" tabindex="7"></td>
             <td colspan="2">&nbsp;</td>
         </tr>
     </table>

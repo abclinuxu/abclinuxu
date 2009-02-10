@@ -119,6 +119,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_SUBSCRIBE_MONTHLY = "monthly";
     public static final String PARAM_SUBSCRIBE_WEEKLY = "weekly";
     public static final String PARAM_SUBSCRIBE_FORUM = "forum";
+    public static final String PARAM_SUBSCRIBE_AD = "ad";
     public static final String PARAM_PHOTO = "photo";
     public static final String PARAM_AVATAR = "avatar";
     public static final String PARAM_REMOVE_AVATAR = "remove_avatar";
@@ -159,6 +160,7 @@ public class EditUser implements AbcAction {
 
     public static final String ACTION_REGISTER = "register";
     public static final String ACTION_REGISTER_STEP2 = "register2";
+    public static final String ACTION_REGISTER_STEP3 = "register3";
     public static final String ACTION_EDIT_BASIC = "editBasic";
     public static final String ACTION_EDIT_BASIC_STEP2 = "editBasic2";
     public static final String ACTION_CHANGE_PASSWORD = "changePassword";
@@ -222,8 +224,9 @@ public class EditUser implements AbcAction {
             return FMTemplateSelector.select("EditUser","register",env,request);
         else if ( action.equals(ACTION_REGISTER_STEP2) ) {
             ActionProtector.ensureContract(request, EditUser.class, false, true, true, false);
-            return actionAddStep2(request,response,env);
+            return actionAddStep2(request, env);
         }
+
         if (ACTION_FORGOTTEN_PASSWORD.equals(action))
             return FMTemplateSelector.select("EditUser","forgottenPassword",env,request);
         if (ACTION_FORGOTTEN_PASSWORD_STEP2.equals(action)) {
@@ -239,7 +242,7 @@ public class EditUser implements AbcAction {
         }
 
         // all other actions require user to be logged in and to have rights for this action
-        if ( user==null ) {
+        if (user == null) {
             if (action.equals(ACTION_CHANGE_STYLE)) {
                 env.put(VAR_EXTRA_TEMPLATE, "../misc/style_register_user.ftl");
             }
@@ -247,10 +250,15 @@ public class EditUser implements AbcAction {
             return FMTemplateSelector.select("ViewUser", "login", env, request);
         }
 
+        if (action.equals(ACTION_REGISTER_STEP3)) {
+            ActionProtector.ensureContract(request, EditUser.class, false, true, true, false);
+            return actionAddStep3(request, response, env);
+        }
+
 		if ( action.equals(ACTION_ADD_GROUP_MEMBER) ) {
             ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
 
-			// permission verifiaction is performed in the function
+			// permission is verified in the function
             return actionAddToGroup(request, response, env);
         }
 
@@ -402,7 +410,7 @@ public class EditUser implements AbcAction {
     /**
      * Creates new user.
      */
-    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String actionAddStep2(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = new User();
         Persistence persistence = PersistenceFactory.getPersistence();
@@ -417,16 +425,10 @@ public class EditUser implements AbcAction {
         system.addElement("registration_date").setText(date);
         managed.setData(document);
 
-        boolean canContinue = true;
-        canContinue &= setLogin(params, managed, env);
-        canContinue &= setOpenId(params, managed, env);
+        boolean canContinue = setLogin(params, managed, env);
         canContinue &= setPassword(params, managed, env);
         canContinue &= setName(params, managed, env);
         canContinue &= setNick(params, managed, env);
-        canContinue &= setEmail(params, managed, env);
-        canContinue &= setSex(params, managed);
-        canContinue &= setWeeklySummary(params, managed);
-        canContinue &= setMonthlySummary(params, managed);
         canContinue &= checkSpambot(params, env, managed);
         managed.addProperty(Constants.PROPERTY_TICKET, generateTicket(managed.getId()));
 
@@ -435,7 +437,7 @@ public class EditUser implements AbcAction {
 
         try {
             ldapManager.registerUser(managed.getLogin(), managed.getPassword(), null,
-                                                       managed.getName(), LdapUserManager.SERVER_ABCLINUXU);
+                                     managed.getName(), LdapUserManager.SERVER_ABCLINUXU);
             persistence.create(managed);
         } catch (DuplicateKeyException e) {
             ServletUtils.addError(PARAM_LOGIN, "Přihlašovací jméno nebo přezdívka jsou již používány.", env, null);
@@ -444,6 +446,30 @@ public class EditUser implements AbcAction {
 
         HttpSession session = request.getSession();
         session.setAttribute(Constants.VAR_USER, managed);
+        env.put(Constants.VAR_USER, managed);
+
+        return FMTemplateSelector.select("EditUser", "registered", env, request);
+    }
+
+    /**
+     * Updates new user.
+     */
+    protected String actionAddStep3(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User managed = (User) env.get(VAR_MANAGED);
+        Persistence persistence = PersistenceFactory.getPersistence();
+
+        boolean canContinue = setOpenId(params, managed, env);
+        canContinue &= setEmail(params, managed, env);
+        canContinue &= setSex(params, managed);
+        canContinue &= setWeeklySummary(params, managed);
+        canContinue &= setMonthlySummary(params, managed);
+        canContinue &= setAdvertismentEmail(params, managed);
+
+        if ( !canContinue )
+            return FMTemplateSelector.select("EditUser", "register", env, request);
+
+        persistence.update(managed);
 
         if (managed.getEmail() != null) {
             Map<String, String> changes = new HashMap<String, String>();
@@ -1002,6 +1028,9 @@ public class EditUser implements AbcAction {
         node = document.selectSingleNode("/data/communication/email/newsletter");
         if ( node!=null )
             params.put(PARAM_SUBSCRIBE_MONTHLY, node.getText());
+        node = document.selectSingleNode("/data/communication/email/ad");
+        if ( node!=null )
+            params.put(PARAM_SUBSCRIBE_AD, node.getText());
         node = document.selectSingleNode("/data/communication/email/forum");
         if ( node!=null )
             params.put(PARAM_SUBSCRIBE_FORUM, node.getText());
@@ -1027,6 +1056,7 @@ public class EditUser implements AbcAction {
 
         canContinue = setWeeklySummary(params, managed);
         canContinue &= setMonthlySummary(params, managed);
+        canContinue &= setAdvertismentEmail(params, managed);
         canContinue &= setForumByEmail(params, managed);
 
         if ( !canContinue )
@@ -2350,6 +2380,20 @@ public class EditUser implements AbcAction {
     private boolean setMonthlySummary(Map params, User user) {
         String subscription = (String) params.get(PARAM_SUBSCRIBE_MONTHLY);
         Element element = DocumentHelper.makeElement(user.getData(), "/data/communication/email/newsletter");
+        String value = ("yes".equals(subscription))? "yes":"no";
+        element.setText(value);
+        return true;
+    }
+
+    /**
+     * Subscribes user to advertisement email from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setAdvertismentEmail(Map params, User user) {
+        String subscription = (String) params.get(PARAM_SUBSCRIBE_AD);
+        Element element = DocumentHelper.makeElement(user.getData(), "/data/communication/email/ad");
         String value = ("yes".equals(subscription))? "yes":"no";
         element.setText(value);
         return true;

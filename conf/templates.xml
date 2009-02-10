@@ -441,6 +441,9 @@
         <action name="register" content="/add/user.ftl">
             <var name="TITLE" value="Registrace"/>
         </action>
+        <action name="registered" content="/add/user2.ftl">
+            <var name="TITLE" value="Registrace - pokračování"/>
+        </action>
         <action name="editBasic" content="/edit/user_basic.ftl">
             <var name="TITLE" value="Úprava účtu"/>
         </action>
