@@ -50,7 +50,7 @@
 <#global CITACE = TOOL.getRelationCountersValue(ARTICLES,"read")/>
 <#if (ARTICLES?size>0) >
     <#list ARTICLES as rel>
-        <#if (rel_index < 4)>
+        <#if (rel_index < COMPLETE_ARTICLES)>
             <@lib.showArticle rel, "CZ_DM", "CZ_SHORT", true/>
         <#else>
             <@lib.showArticle rel, "CZ_DM", "CZ_SHORT", false/>

@@ -235,7 +235,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * List of the most fresh article relations according to user preference or system setting.
      */
     public List<Relation> getFreshArticles(Object user) {
-        int userLimit = getObjectCountForUser(user, KEY_ARTICLE, null);
+        int userLimit = getObjectCountForUser(user, KEY_ARTICLE, "/data/settings/index_articles");
         return getSubList(freshArticles, userLimit);
     }
 

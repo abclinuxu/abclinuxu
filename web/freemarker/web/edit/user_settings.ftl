@@ -239,9 +239,39 @@
 
     <table class="siroka" cellspacing="10px">
         <tr>
+            <td class="required" width="200px">Počet článků</td>
+            <td>
+                <input type="text" name="articles" value="${PARAMS.articles!}" size="3" tabindex="13">
+                <@lib.showError key="articles"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                Celkový počet článků, které se mají zobrazovat na titulní stránce. Nastavením na nulu
+                zrušíte jejich zobrazování.
+            </td>
+        </tr>
+
+        <tr>
+            <td class="required" width="200px">Počet nezkrácených článků</td>
+            <td>
+                <input type="text" name="complete_articles" value="${PARAMS.complete_articles!}" size="3" tabindex="14">
+                <@lib.showError key="complete_articles"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                Počet článků, které se mají zobrazovat celé, tedy včetně perexu a ikony. Ostatní články do celkového
+                počtu budou zobrazeny zkráceně.
+            </td>
+        </tr>
+
+        <tr>
             <td class="required" width="200px">Počet zápisků</td>
             <td>
-                <input type="text" name="stories" value="${PARAMS.stories!}" size="3" tabindex="13">
+                <input type="text" name="stories" value="${PARAMS.stories!}" size="3" tabindex="15">
                 <@lib.showError key="stories"/>
             </td>
         </tr>
@@ -257,8 +287,8 @@
         <tr>
             <td class="required" width="200px">Zobrazovat všechny zápisky</td>
             <td>
-                <@lib.showOption "bannedStories", "yes", "ano", "radio", "tabindex='14'" />
-                <@lib.showOption "bannedStories", "no", "ne", "radio", "tabindex='14'" />
+                <@lib.showOption "bannedStories", "yes", "ano", "radio", "tabindex='16'" />
+                <@lib.showOption "bannedStories", "no", "ne", "radio", "tabindex='16'" />
             </td>
         </tr>
 
@@ -273,7 +303,7 @@
         <tr>
             <td class="required" width="200px">Počet desktopů</td>
             <td>
-                <input type="text" name="screenshots" value="${PARAMS.screenshots!}" size="3" tabindex="15">
+                <input type="text" name="screenshots" value="${PARAMS.screenshots!}" size="3" tabindex="17">
                 <@lib.showError key="screenshots"/>
             </td>
         </tr>
@@ -293,7 +323,7 @@
         <tr>
             <td class="required" width="200px">Obecná velikost stránky</td>
             <td>
-                <input type="text" name="defaultPageSize" value="${PARAMS.defaultPageSize!}" size="3" tabindex="16">
+                <input type="text" name="defaultPageSize" value="${PARAMS.defaultPageSize!}" size="3" tabindex="18">
                 <@lib.showError key="defaultPageSize"/>
             </td>
         </tr>
@@ -305,7 +335,7 @@
         <tr>
             <td class="required" width="200px">Velikost stránky při hledání</td>
             <td>
-                <input type="text" name="search" value="${PARAMS.search!}" size="3" tabindex="17">
+                <input type="text" name="search" value="${PARAMS.search!}" size="3" tabindex="19">
                 <@lib.showError key="search"/>
             </td>
         </tr>
@@ -321,8 +351,8 @@
         <tr>
             <td class="required" width="200px">Zobrazovat rozcestník</td>
             <td>
-                <@lib.showOption "guidepost", "yes", "ano", "radio", "tabindex='18'" />
-                <@lib.showOption "guidepost", "no", "ne", "radio", "tabindex='18'" />
+                <@lib.showOption "guidepost", "yes", "ano", "radio", "tabindex='20'" />
+                <@lib.showOption "guidepost", "no", "ne", "radio", "tabindex='20'" />
             </td>
         </tr>
 

@@ -111,6 +111,8 @@ public class EditUser implements AbcAction {
     public static final String PARAM_SCREENSHOTS_COUNT = "screenshots";
     public static final String PARAM_NEWS_COUNT = "news";
     public static final String PARAM_STORIES_COUNT = "stories";
+    public static final String PARAM_ARTICLES_COUNT = "articles";
+    public static final String PARAM_COMPLETE_ARTICLES_COUNT = "complete_articles";
     public static final String PARAM_DEFAULT_PAGE_SIZE = "defaultPageSize";
     public static final String PARAM_FOUND_PAGE_SIZE = "search";
     public static final String PARAM_FORUM_PAGE_SIZE = "forum";
@@ -817,8 +819,16 @@ public class EditUser implements AbcAction {
         if ( node!=null )
             params.put(PARAM_DISCUSSIONS_COUNT, node.getText());
 
+        node = document.selectSingleNode("/data/settings/index_articles");
+        if (node != null)
+            params.put(PARAM_ARTICLES_COUNT, node.getText());
+
+        node = document.selectSingleNode("/data/settings/index_complete_articles");
+        if (node != null)
+            params.put(PARAM_COMPLETE_ARTICLES_COUNT, node.getText());
+
         node = document.selectSingleNode("/data/settings/index_screenshots");
-        if ( node!=null )
+        if (node != null)
             params.put(PARAM_SCREENSHOTS_COUNT, node.getText());
 
         node = document.selectSingleNode("/data/settings/index_news");
@@ -899,6 +909,7 @@ public class EditUser implements AbcAction {
         canContinue &= setNewsTitles(params, managed);
         canContinue &= setNewsMultiline(params, managed);
         canContinue &= setGuidepost(params, managed);
+        canContinue &= setIndexArticlesSizeLimit(params, managed, env);
         canContinue &= setDiscussionsSizeLimit(params, managed, env);
         canContinue &= setScreenshotsSizeLimit(params, managed, env);
         canContinue &= setNewsSizeLimit(params, managed, env);
@@ -2230,6 +2241,31 @@ public class EditUser implements AbcAction {
         Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
         int max = (Integer) maxSizes.get(VariableFetcher.KEY_SCREENSHOT);
         return setLimitedSize(params, PARAM_SCREENSHOTS_COUNT, user.getData(), "/data/settings/index_screenshots", 0, max, env);
+    }
+
+    /**
+     * Updates size limit for articles on main page from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setIndexArticlesSizeLimit(Map params, User user, Map env) {
+        Document document = user.getData();
+        Map<String, Integer> maxSizes = VariableFetcher.getInstance().getMaxSizes();
+        int max = maxSizes.get(VariableFetcher.KEY_ARTICLE);
+
+        boolean canContinue = setLimitedSize(params, PARAM_ARTICLES_COUNT, document, "/data/settings/index_articles", 0, max, env);
+        if (! canContinue)
+            return false;
+
+        Node node = document.selectSingleNode("/data/settings/index_articles");
+        if (node == null)
+            return true;
+
+        int total = Misc.parseInt(node.getText(), -1);
+        if (total <= 0)
+            return true;
+        return setLimitedSize(params, PARAM_COMPLETE_ARTICLES_COUNT, document, "/data/settings/index_complete_articles", 0, total, env);
     }
 
     /**

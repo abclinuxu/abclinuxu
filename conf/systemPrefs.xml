@@ -42,6 +42,7 @@
                                     <entry key="warn.old.diz.created.days" value="30" />
                                     <entry key="warn.old.diz.commented.days" value="3" />
                                     <entry key="login.use.https" value="@LOGIN.USE.HTTPS@"/>
+                                    <entry key="index.complete.articles" value="6"/>
                                 </map>
                             </node>
                         </node>
