@@ -13,5 +13,5 @@ JARS=$JARS:$LIBS/commons-httpclient.jar:$LIBS/commons-codec.jar:$LIBS/commons-lo
 JARS=$JARS:$LIBS/freemarker.jar:$LIBS/htmlcleaner.jar:$LIBS/htmlparser.jar
 export CLASSPATH=$CLASSPATH:$BUILD:$JARS
 
-java $ARGS -cp $CLASSPATH $1 $2 $3 $4 $5
+java $ARGS -cp $CLASSPATH "$1" "$2" "$3" "$4" "$5"
 
