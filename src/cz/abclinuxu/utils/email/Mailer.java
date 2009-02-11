@@ -64,21 +64,25 @@ public class Mailer implements Configurable {
         if (error) {
             System.out.println("Invalid parameters! They cannot be empty!\n");
             System.exit(1);
+        } else {
+            System.out.println("Parameters:");
+            System.out.println("template = " + template);
+            System.out.println("subject = " + subject);
+            System.out.println("sender = " + sender);
+            System.out.println("recepients = " + users);
         }
 
-        System.out.println("Press enter to continue with sending "+users.size()+" emails.");
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String tmp = reader.readLine();
-        System.out.println("This utility can be used only by administrators! Select users carefully!");
+        System.out.println("This utility can be used only by administrators.");
         System.out.println("Send emails only to users, who subscribed them!");
         System.out.println("\n\n");
 
         System.out.println("Press enter to continue");
-        tmp = reader.readLine();
+        reader.readLine();
         System.out.println("OK, about to send emails. If you are not sure, quit application now.");
-        int random = new Random().nextInt();
+        int random = new Random().nextInt(9999);
         System.out.println("To prevent random usage, enter following number: "+random);
-        tmp = reader.readLine();
+        String tmp = reader.readLine();
         int answear = Misc.parseInt(tmp,Integer.MAX_VALUE);
         if ( random!=answear ) {
             System.out.println("Your answear differs, quitting now.");
