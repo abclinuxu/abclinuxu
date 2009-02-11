@@ -436,7 +436,7 @@
                             <entry key="users.count.articles" value="select P2.numeric1, count(P.cislo) from polozka P, vlastnost V1, relace R, polozka P2 where P.typ=2 and V1.predek=P.cislo and V1.typ='author' and V1.hodnota=R.cislo and P2.cislo = R.potomek group by P2.numeric1" />
                             <entry key="users.count.wiki.records" value="select kdo,count(distinct cislo,typ) from verze group by kdo" />
                             <entry key="users.count.news" value="select pridal,count(*) from polozka P, spolecne S where P.typ=7 and S.typ='P' and S.cislo=P.cislo group by S.pridal" />
-                            <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
+                            <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;%&lt;weekly_summary>yes%'"/>
                             <entry key="users.with.forum.by.email" value="select cislo from uzivatel where data like '%&lt;email valid=&quot;yes&quot;%&lt;forum&gt;yes%&lt;/email%'"/>
                             <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'"/>
                             <entry key="users.with.login" value="select cislo from uzivatel where login = ?"/>
