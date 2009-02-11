@@ -69,7 +69,7 @@ public class Mailer implements Configurable {
             System.out.println("template = " + template);
             System.out.println("subject = " + subject);
             System.out.println("sender = " + sender);
-            System.out.println("recepients = " + users);
+            System.out.println("recepients = " + users.size());
         }
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
