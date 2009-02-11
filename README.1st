@@ -70,7 +70,7 @@ Nastavte spravne promennou $JETTY_HOME v bin/jetty.sh.
 cd jetty/bin
 ./jetty.sh run
 
-8) otevrete prohlizec
+8) otevrete prohlizec a napiste adresu
 
 http://localhost:8080
 
