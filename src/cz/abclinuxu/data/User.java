@@ -49,6 +49,7 @@ public class User extends CommonObject {
     private String password;
     /** time of last synchronization with LDAP (optional) */
     private Date lastSynced;
+    private boolean virtual; // brainstorming
 
     /** cache of granted user roles */
     private Map roles;

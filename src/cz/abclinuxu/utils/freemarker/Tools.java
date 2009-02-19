@@ -22,6 +22,7 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.Link;
 import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.exceptions.InvalidDataException;
+import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.SQLTool;
@@ -88,6 +89,7 @@ public class Tools implements Configurable {
     public static final String PREF_NEWS_LETTER_LIMIT_SOFT = "news.letter.limit.soft";
     public static final String PREF_NEWS_LETTER_LIMIT_HARD = "news.letter.limit.hard";
     public static final String PREF_CSS_STYLES = "css.styles";
+    public static final String PREF_MISSING_USER_NAME = "missing.user.name";
 
     static Persistence persistence = PersistenceFactory.getPersistence();
     // TODO replace with java regexp
@@ -97,8 +99,11 @@ public class Tools implements Configurable {
     static int storyReservePercents;
     static int newsLetterSoftLimit, newsLetterHardLimit;
     static Map<String,String> offeredCssStyles;
+    private static final User MISSING_USER;
 
     static {
+        MISSING_USER = new User(-1);
+        MISSING_USER.setInitialized(true);
         Tools tools = new Tools();
         ConfigurationManager.getConfigurator().configureAndRememberMe(tools);
         Tools.ampersand = Pattern.compile("&");
@@ -127,6 +132,7 @@ public class Tools implements Configurable {
             storyReservePercents = prefs.getInt(PREF_STORY_RESERVE_PERCENTS, 50);
             newsLetterSoftLimit = prefs.getInt(PREF_NEWS_LETTER_LIMIT_SOFT, 400);
             newsLetterHardLimit = prefs.getInt(PREF_NEWS_LETTER_LIMIT_HARD, 500);
+            MISSING_USER.setName(prefs.get(PREF_MISSING_USER_NAME, "Nobody"));
 
             try {
                 Preferences subprefs = prefs.node(PREF_CSS_STYLES);
@@ -980,18 +986,22 @@ public class Tools implements Configurable {
      * @return synchronized User.
      */
     public static User createUser(String id) {
-        int i = Integer.parseInt(id);
-        User user = new User(i);
-        return (User) persistence.findById(user);
+        int uid = Integer.parseInt(id);
+        return createUser(uid);
     }
 
     /**
-     * This method instantiates user and synchronizes it.
+     * This method instantiates user and synchronizes it. If the user is not found, virtual user with negative id
+     * is returned instead.
      * @return synchronized User.
      */
     public static User createUser(int id) {
-        User user = new User(id);
-        return (User) persistence.findById(user);
+        try {
+            User user = new User(id);
+            return (User) persistence.findById(user);
+        } catch (NotFoundException e) {
+            return MISSING_USER;
+        }
     }
 
     /**

@@ -115,6 +115,7 @@
                                 <entry key="story.reserve.percents" value="25" />
                                 <entry key="news.letter.limit.soft" value="375" />
                                 <entry key="news.letter.limit.hard" value="475" />
+                                <entry key="missing.user.name" value="Neexistující uživatel"/>
                             </map>
                             <node name="css.styles">
                                 <map>

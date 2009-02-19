@@ -26,7 +26,7 @@
       </#list>
       <#assign subportal_article=false>
     <#else>
-        <@lib.showUser TOOL.createUser(ITEM.owner)/>
+        <@lib.showUserFromId ITEM.owner/>
         <#assign subportal_article=true>
     </#if>
     | <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times;
@@ -34,7 +34,7 @@
 
 <#if inPool>
     <h2>Rubrika:
-        <#assign section=TOOL.xpath(ITEM, "/data/section_rid")?default("UNDEFINED")>
+        <#assign section=TOOL.xpath(ITEM, "/data/section_rid")!"UNDEFINED">
         <#if section=="UNDEFINED">
             nezadána
         <#else>

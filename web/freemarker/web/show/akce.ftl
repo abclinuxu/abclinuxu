@@ -71,7 +71,7 @@
 <h1>${TOOL.childName(ITEM)}</h1>
 
 <p class="meta-vypis">
-    Aktualizováno: ${DATE.show(ITEM.updated,"SMART")} | <@lib.showUser TOOL.createUser(ITEM.owner) />
+    Aktualizováno: ${DATE.show(ITEM.updated,"SMART")} | <@lib.showUserFromId ITEM.owner />
     |  Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;
 </p>
 

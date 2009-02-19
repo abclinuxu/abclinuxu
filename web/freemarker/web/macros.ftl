@@ -26,7 +26,7 @@
                 <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
             </#list>
         <#else>
-            <@lib.showUser TOOL.createUser(clanek.owner)/>
+            <@showUserFromId clanek.owner/>
         </#if>
         |
         Přečteno: <@showCounter clanek, .globals["CITACE"]!, "read" />&times;
@@ -448,12 +448,8 @@
 <#macro showUser user><#if (user.id > 0)><a href="/lide/${user.login}">${user.nick!(user.name)}</a><#else>${user.name}</#if></#macro>
 
 <#macro showUserFromId uid><#rt>
-    <#attempt><#t>
-        <#local user = TOOL.createUser(uid)><#t>
-        <@showUser user /><#t>
-    <#recover><#t>
-        uživatel nebyl nalezen<#t>
-    </#attempt><#t>
+    <#local user = TOOL.createUser(uid)><#t>
+    <@showUser user /><#t>
 </#macro>
 
 <#macro showRevisions relation info = TOOL.getRevisionInfo(relation.child)>
@@ -671,19 +667,19 @@
         </td>
         <td>
             <#if showLogo>
-                <#assign logo=TOOL.xpath(item, "/data/icon")?default("NOLOGO")>
+                <#assign logo=TOOL.xpath(item, "/data/icon")!"NOLOGO">
                 <#if logo!="NOLOGO">
                     <div class="cl_thumbnail"><img src="${logo}" alt="Logo akce ${TOOL.childName(item)}"></div>
                 </#if>
             </#if>
-            <h2 class="st_nadpis"><a href="${relation.url?default("/akce/show/"+relation.id)}">${TOOL.childName(item)}</a></h2>
+            <h2 class="st_nadpis"><a href="${relation.url!("/akce/show/"+relation.id)}">${TOOL.childName(item)}</a></h2>
             <p>${TOOL.xpath(item, "/data/descriptionShort")}</p>
 
             <p class="meta-vypis">Aktualizováno: ${DATE.show(item.updated,"SMART")}
-                | správce:&nbsp;<@lib.showUser TOOL.createUser(item.owner) />
+                | správce:&nbsp;<@showUserFromId item.owner />
                 <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/akce" /></#if>
                 | Přečteno:&nbsp;${TOOL.getCounterValue(item,"read")}&times; |
-                <a href="${relation.url?default("/akce/"+relation.id)}?action=participants">Účastníků:&nbsp;${regs?eval}</a>
+                <a href="${relation.url!("/akce/"+relation.id)}?action=participants">Účastníků:&nbsp;${regs?eval}</a>
             </p>
             <#if showManagement>
                 <div>
@@ -765,7 +761,7 @@
             <img src="${icon}" alt="${title}" border="0">
         </a>
         <p class="meta-vypis" style="text-align: left">
-            ${DATE.show(item.created, "SMART")} | <@lib.showUser TOOL.createUser(item.owner)/><br>
+            ${DATE.show(item.created, "SMART")} | <@showUserFromId item.owner/><br>
             Zhlédnuto: <#assign reads = TOOL.getCounterValue(item,"read")>${reads}&times;
             <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
         </p>
@@ -781,7 +777,7 @@
             <img width="200" src="${desktop.thumbnailListingUrl}" alt="${desktop.title}" border="0">
         </a>
         <p class="meta-vypis" style="text-align: left">
-            ${DATE.show(item.created, "SMART")} | <@lib.showUser TOOL.createUser(item.owner)/><br>
+            ${DATE.show(item.created, "SMART")} | <@showUserFromId item.owner/><br>
             Zhlédnuto: <#assign reads = TOOL.getCounterValue(item,"read")>${reads}&times;
             <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
         </p>

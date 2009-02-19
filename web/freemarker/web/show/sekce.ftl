@@ -47,7 +47,7 @@
         </tr>
         <tr>
             <th align="left">Upravil</th>
-            <td><@lib.showUser TOOL.createUser(CATEGORY.owner?default(1)) /></td>
+            <td><@lib.showUserFromId CATEGORY.owner!1 /></td>
         </tr>
         <tr>
             <th align="left">Vytvořeno</th>
