@@ -3,9 +3,6 @@
 <#assign desc=TOOL.xpath(ITEM,"/data/description")?default(TOOL.xpath(ITEM,"/data/descriptionShort")),
         articles=TOOL.createRelation(TOOL.xpath(ITEM,"/data/articles")),
         events=TOOL.createRelation(TOOL.xpath(ITEM,"/data/events"))>
-<#if USER?? && TOOL.xpath(articles.child,"//monitor/id[text()='"+USER.id+"']")??>
-    <#assign monitorState="Přestaň sledovat články"><#else><#assign monitorState="Sleduj články">
-</#if>
 
 <#assign plovouci_sloupec>
     <@lib.showSubportal RELATION, true />
@@ -33,9 +30,7 @@
             <li><a href="?action=admins">Seznam administrátorů</a></li>
             <li><a href="/akce/edit/${events.id}?action=add">Přidat akci</a></li>
             <li>
-                <a href="${URL.make("/EditMonitor/"+articles.id+"?action=toggle&amp;redirect="+RELATION.url+TOOL.ticket(USER!, false))}">${monitorState}</a>
-                <span title="Počet lidí, kteří sledují tuto sekci">(${TOOL.getMonitorCount(articles.child.data)})</span>
-                <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při vydání nového článku.</span></a>
+                <@lib.showMonitor RELATION "Zašle upozornění na váš email při vydání nového článku."/>
             </li>
          </ul>
     </div>

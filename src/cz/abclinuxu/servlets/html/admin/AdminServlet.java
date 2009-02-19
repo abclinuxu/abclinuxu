@@ -44,6 +44,8 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
 
 import cz.abclinuxu.utils.Advertisement;
+import cz.abclinuxu.utils.email.monitor.MonitorTool;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -132,6 +134,7 @@ public class AdminServlet implements AbcAction {
         VariableFetcher.getInstance().run(); // refresh variables
         new UpdateTopStatistics().run();
         TagTool.init();
+        MonitorTool.clearCache();
         Advertisement.clearCache();
 
         User user = (User) env.get(Constants.VAR_USER);

@@ -425,7 +425,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         String watchDiscussion = (String) params.get(PARAM_WATCH_DISCUSSION);
         if ("yes".equals(watchDiscussion))
-            EditDiscussion.alterDiscussionMonitor((Item) dizRelation.getChild(), user, persistence);
+            MonitorTool.startMonitor((GenericDataObject) dizRelation.getChild(), user);
 
         String storyUrl = null;
         if (!delayed) {
@@ -445,7 +445,7 @@ public class EditBlog implements AbcAction, Configurable {
             sendDigestMessage(relation);
 
             // run monitor
-            MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.BLOG, relation, "http://www.abclinuxu.cz"+storyUrl);
+            MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.BLOG, relation, AbcConfig.getAbsoluteUrl() + storyUrl);
             MonitorPool.scheduleMonitorAction(action);
         } else {
             Element unpublished = DocumentHelper.makeElement(blog.getData(), "/data/unpublished");
@@ -493,7 +493,7 @@ public class EditBlog implements AbcAction, Configurable {
             params.put(PARAM_PUBLISH, date);
         }
 
-        env.put(VAR_IS_DELAYED, Boolean.valueOf(story.getType() == Item.UNPUBLISHED_BLOG));
+        env.put(VAR_IS_DELAYED, story.getType() == Item.UNPUBLISHED_BLOG);
 
         storeCategories(blog, env);
         return FMTemplateSelector.select("EditBlog", "edit", env, request);
@@ -524,7 +524,7 @@ public class EditBlog implements AbcAction, Configurable {
             if ( canContinue )
                 env.put(VAR_PREVIEW, story);
 
-            env.put(VAR_IS_DELAYED, Boolean.valueOf(story.getType() == Item.UNPUBLISHED_BLOG));
+            env.put(VAR_IS_DELAYED, story.getType() == Item.UNPUBLISHED_BLOG);
             storeCategories(blog, env);
             return FMTemplateSelector.select("EditBlog", "edit", env, request);
         }
@@ -569,7 +569,7 @@ public class EditBlog implements AbcAction, Configurable {
         story.setType(Item.BLOG);
 
         if (timeNow.after(story.getCreated()))
-            story.setCreated(timeNow);
+            story.setCreated(timeNow); // todo totez pro diskusi, pokud existuje
 
         story.setUpdated(timeNow);
         persistence.update(story);

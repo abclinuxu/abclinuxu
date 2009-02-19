@@ -850,16 +850,6 @@ public class EditDiscussion implements AbcAction {
     }
 
     /**
-     * Reverts the current state of monitor on specified discussion.
-     */
-    public static void alterDiscussionMonitor(Item discussion, User user, Persistence persistence) {
-        Date originalUpdated = discussion.getUpdated();
-        MonitorTools.alterMonitor(discussion.getData().getRootElement(), user);
-        persistence.update(discussion);
-        SQLTool.getInstance().setUpdatedTimestamp(discussion, originalUpdated);
-    }
-
-    /**
      * Reverts current state of frozen attribute.
      */
     protected synchronized String actionAlterFreeze(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {

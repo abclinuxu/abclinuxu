@@ -40,6 +40,8 @@ public abstract class GenericDataObject extends CommonObject {
 	protected int permissions;
     /** Type of the object. You must set it before storing with Persistance! */
     protected int type = 0;
+    /** number of users monitoring this object */
+    protected int monitorCount;
     /** subtype of this object. String, max. length is 30 */
     protected String subType;
     /** title for this object, it may be null */
@@ -122,6 +124,22 @@ public abstract class GenericDataObject extends CommonObject {
      */
     public void setType(int type) {
         this.type = type;
+    }
+
+    /**
+     * Number of users monitoring this document
+     * @return number of users
+     */
+    public int getMonitorCount() {
+        return monitorCount;
+    }
+
+    /**
+     * Sets number of users monitoring this document
+     * @param monitorCount number of users
+     */
+    public void setMonitorCount(int monitorCount) {
+        this.monitorCount = monitorCount;
     }
 
     /**
@@ -285,6 +303,7 @@ public abstract class GenericDataObject extends CommonObject {
         created = b.created;
         updated = b.updated;
         custom = b.custom;
+        monitorCount = b.monitorCount;
         date1 = b.date1;
         date2 = b.date2;
         numeric1 = b.numeric1;

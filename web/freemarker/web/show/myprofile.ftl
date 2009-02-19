@@ -129,6 +129,14 @@
     </tr>
     <tr>
         <td align="right" valign="top">
+            <a href="${URL.noPrefix("/lide/"+PROFILE.login+"?action=monitors")}">zobrazit</a>
+        </td>
+        <td>
+            seznam sledovaných dokumentů
+        </td>
+    </tr>
+    <tr>
+        <td align="right" valign="top">
             <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=subscribe")}">upravit</a>
         </td>
         <td>

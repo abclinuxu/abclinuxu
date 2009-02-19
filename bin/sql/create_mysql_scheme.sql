@@ -1,10 +1,10 @@
---CREATE DATABASE abc default character set utf8 collate utf8_czech_ci;
+-- CREATE DATABASE abc default character set utf8 collate utf8_czech_ci;
 -- utf8_czech_ci mozna nerozlisuje se mezi normalnimi a akcentovanymi znaky
 
---USE abc;
+-- USE abc;
 
---GRANT ALL ON *.* TO 'literakl'@'localhost' IDENTIFIED BY 'password' WITH GRANT OPTION;
---FLUSH PRIVILEGES;
+-- GRANT ALL ON *.* TO 'literakl'@'localhost' IDENTIFIED BY 'password' WITH GRANT OPTION;
+-- FLUSH PRIVILEGES;
 
 
 -- tabulka obsahujici definici vsech uzivatelu
@@ -221,6 +221,15 @@ CREATE TABLE citac (
 ALTER TABLE citac ADD INDEX in_citac (typ,cislo);
 ALTER TABLE citac ADD INDEX in_druh (druh);
 ALTER TABLE citac ADD INDEX in_cislo (cislo);
+
+-- seznam monitoru daneho objektu
+CREATE TABLE monitor (
+ typ CHAR(1) NOT NULL,                           -- id tabulky dokumentu
+ cislo INT NOT NULL,                             -- id dokumentu
+ uzivatel INT NOT NULL                           -- uid uzivatele
+);
+ALTER TABLE monitor ADD INDEX in_citac (typ,cislo);
+ALTER TABLE monitor ADD INDEX in_uzivatel (uzivatel);
 
 -- statistiky pouzivani sluzeb
 CREATE TABLE statistika (

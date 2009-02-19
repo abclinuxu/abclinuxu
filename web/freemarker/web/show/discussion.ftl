@@ -1,8 +1,5 @@
 <#assign DIZ = TOOL.createDiscussionTree(ITEM,USER!,RELATION.id,true)>
 <#assign is_question=TOOL.isQuestion(RELATION)>
-<#if DIZ.monitored>
-    <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj">
-</#if>
 <#if SUBPORTAL??>
     <#import "../macros.ftl" as lib>
     <#assign plovouci_sloupec>
@@ -26,9 +23,7 @@
    <#if DIZ.hasUnreadComments && DIZ.firstUnread??>
      <a href="#${DIZ.firstUnread}" title="Skočit na první nepřečtený komentář" rel="nofollow">První nepřečtený komentář</a>,
    </#if>
-   <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}" rel="nofollow">${monitorState}</a>
-      <span title="Počet lidí, kteří sledují tuto diskusi">(${DIZ.monitorSize})</span>
-      <a class="info" href="#">?<span class="tooltip">Zašle každý nový komentář emailem na vaši adresu</span></a>,
+    <@lib.showMonitor RELATION "Zašle upozornění na váš email při vložení nového komentáře."/>,
    <#if is_question>
      Otázka <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=true"+TOOL.ticket(USER!, false))}" rel="nofollow">byla</a>
         (${TOOL.xpath(ITEM,"//solved/@yes")?default("0")}) /

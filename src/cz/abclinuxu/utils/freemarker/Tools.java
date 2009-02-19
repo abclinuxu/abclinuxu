@@ -38,6 +38,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Advertisement;
 import cz.abclinuxu.utils.TagTool;
+import cz.abclinuxu.utils.email.monitor.MonitorTool;
 import cz.abclinuxu.utils.forms.RichTextEditor;
 import cz.abclinuxu.scheduler.EnsureWatchedDiscussionsLimit;
 import cz.abclinuxu.scheduler.VariableFetcher;
@@ -556,16 +557,6 @@ public class Tools implements Configurable {
         if ( base<=0 ) return 0;
         double percent = 100*count/(double)base;
         return (int)(percent+0.5);
-    }
-
-    /**
-     * Gets number of activated monitors in given document.
-     *
-     * @return integer
-     */
-    public static Integer getMonitorCount(Document document) {
-        Object value = document.selectObject("count(//monitor/id)");
-        return ((Double) value).intValue();
     }
 
     /**
@@ -1560,12 +1551,9 @@ public class Tools implements Configurable {
         discussion.setId(obj.getId());
         discussion.setRelationId(rid);
         discussion.setFrozen(document.selectSingleNode("/data/frozen") != null);
-        Integer monitorCount = getMonitorCount(document);
-        discussion.setMonitorSize(monitorCount);
-        if (user != null) {
-            String xpath = "//monitor/id[text()='"+user.getId()+"']";
-            discussion.setMonitored(document.selectSingleNode(xpath) != null);
-        }
+        discussion.setMonitorSize(item.getMonitorCount());
+        if (user != null)
+            discussion.setMonitored(isMonitored(item, user));
 
         if (item.getChildren().isEmpty())
             return discussion;
@@ -2146,6 +2134,29 @@ public class Tools implements Configurable {
         if (item.getType() != Item.DISCUSSION)
             return false;
         return item.getSubType() != null;
+    }
+
+    /**
+     * Tests, whether speficied user is watching given document. If maybeUser is not User instance, false is returned.
+     * @param obj Item or Category, it must be initialized
+     * @param maybeUser this may be instance of User
+     * @return true if current user is monitoring this object
+     */
+    public static boolean isMonitored(GenericDataObject obj, Object maybeUser) {
+        if (obj.getMonitorCount() == 0)
+            return false;
+
+        User user = null;
+        if (maybeUser instanceof User)
+            user = (User) maybeUser;
+        if (user == null)
+            return false;
+
+        Set<Integer> users = MonitorTool.get(obj);
+        if (users == null || users.isEmpty())
+            return false;
+
+        return users.contains(new Integer(user.getId()));
     }
 
 	public static Permissions permissionsFor(Object anUser, Relation rel) {

@@ -1,6 +1,4 @@
-<#if USER?? && TOOL.xpath(CATEGORY,"//monitor/id[text()='"+USER.id+"']")??>
-    <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj sekci">
-</#if>
+<#import "../macros.ftl" as lib>
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
@@ -8,9 +6,7 @@
                 <a href="${URL.make("/edit?action=add")}">Vložit nový ovladač</a>
             </li>
             <li>
-                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}">${monitorState}</a>
-                <span title="Počet lidí, kteří sledují tuto sekci">(${TOOL.getMonitorCount(CATEGORY.data)})</span>
-                <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při nové položce v této a v podřazených sekcích.</span></a>
+                <@lib.showMonitor RELATION />
             </li>
         </ul>
     </div>

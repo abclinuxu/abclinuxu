@@ -523,6 +523,7 @@ public class TestMySqlPersistance extends TestCase {
         server.setContact("email@server.com");
         server.setName("abicko");
         server.setUrl("http://www.abclinuxu.cz");
+        server.setRssUrl("http://www.abclinuxu.cz/auto/abicko.rss");
         persistence.create(server);
 
         Link link = new Link();

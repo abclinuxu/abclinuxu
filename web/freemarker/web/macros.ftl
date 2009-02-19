@@ -1,11 +1,12 @@
 <#macro showMessages>
- <#list MESSAGES as msg>
-  <p class="message">${msg}</p>
- </#list>
- <#if ERRORS.generic??>
-  <p class="error">${ERRORS.generic}</p>
- </#if>
+    <#list MESSAGES as msg>
+        <p class="message">${msg}</p>
+    </#list>
+    <#if ERRORS.generic??>
+        <p class="error">${ERRORS.generic}</p>
+    </#if>
 </#macro>
+
 <#-- settings[0] - date format pro diskuse, setting[1] - zda zobrazovat perex, settings[2] - CSS trida pro titulek -->
 <#macro showArticle(relation dateFormat settings...)>
     <#local clanek=relation.child,
@@ -40,7 +41,7 @@
 </#macro>
 
 <#macro showCommentsInListing(diz dateFormat urlPrefix)>
-    <a href="${diz.url?default(urlPrefix+"/show/"+diz.relationId)}">Komentářů:&nbsp;${diz.responseCount}<@markNewComments diz/></a><#rt>
+    <a href="${diz.url!(urlPrefix+"/show/"+diz.relationId)}">Komentářů:&nbsp;${diz.responseCount}<@markNewComments diz/></a><#rt>
     <#lt><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat)}</#if>
 </#macro>
 
@@ -210,7 +211,7 @@
             <div class="ds_text">
                 ${TOOL.render(TOOL.element(comment.data,"//text"),USER!)}
             </div>
-            <#assign signature = TOOL.getUserSignature(who!, USER!)?default("UNDEFINED")>
+            <#assign signature = TOOL.getUserSignature(who!, USER!)!"UNDEFINED">
             <#if signature!="UNDEFINED"><div class="signature">${signature}</div></#if>
         </#if>
         <#local level2=level+1>
@@ -225,10 +226,10 @@
 <#macro showCensored(comment dizId relId)>
     <div class="cenzura">
         <a href="/faq/abclinuxu.cz/co-znamena-symbol-u-cenzurovanych-prispevku"><img src="/images/site2/skryty-komentar-krizek.png" width="40" height="40" alt="skrytý komentář" style="float:right;"></a>
-        <#assign admin = TOOL.xpath(comment.data,"//censored/@admin")?default("5473")>
+        <#assign admin = TOOL.xpath(comment.data,"//censored/@admin")!"5473">
         Náš <a href="/Profile/${admin}">administrátor</a> shledal tento komentář
         <a href="/faq/abclinuxu.cz/proc-je-komentar-oznacen-jako-zavadny">závadným</a>.
-        <#assign message = TOOL.xpath(comment.data,"//censored")?default("")>
+        <#assign message = TOOL.xpath(comment.data,"//censored")!"">
         <#if message?has_content>
             <p class="cenzura_duvod">${message}</p>
         </#if>
@@ -241,15 +242,12 @@
 
 <#macro showDiscussion(relation)>
     <#local DIZ = TOOL.createDiscussionTree(relation.child,USER!,relation.id,true)>
-    <#if DIZ.monitored><#local monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj"></#if>
     <div class="ds_toolbox">
      <b>Nástroje:</b>
        <#if DIZ.hasUnreadComments>
          <a href="#${DIZ.firstUnread}" title="Skočit na první nepřečtený komentář" rel="nofollow">První nepřečtený komentář</a>,
        </#if>
-         <a href="${URL.make("/EditMonitor/"+DIZ.relationId+"?action=toggle"+TOOL.ticket(USER!, false))}" rel="nofollow">${monitorState}</a>
-           <span title="Počet lidí, kteří sledují tuto diskusi">(${DIZ.monitorSize})</span>
-           <a class="info" href="#">?<span class="tooltip">Zašle každý nový komentář emailem na vaši adresu</span></a>,
+        <@showMonitor relation "Zašle upozornění na váš email při vložení nového komentáře."/>,
          <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print" rel="nofollow">Tisk</a>
        <#if USER?? && USER.hasRole("discussion admin")>
          <br />
@@ -317,6 +315,16 @@
 <#macro showShortRating (relation, separator, heading=true)>
     <#local rating=TOOL.ratingFor(relation.child.data)!"UNDEF">
     <#if rating!="UNDEF"><#if heading>${separator}Hodnocení:&nbsp;</#if>${rating.percent}&nbsp;%&nbsp;(${rating.count}&nbsp;hlasů)</#if>
+</#macro>
+
+<#macro showMonitor relation help="Zašle upozornění na váš email při úpravě záznamu.">
+    <#if TOOL.isMonitored(relation.child, USER!)>
+        <a href="${URL.make("/EditMonitor/"+relation.id+"?action=stop"+TOOL.ticket(USER!, false))}">Přestaň sledovat</a>
+    <#else>
+        <a href="${URL.make("/EditMonitor/"+relation.id+"?action=start"+TOOL.ticket(USER!, false))}">Začni sledovat</a>
+    </#if>
+    <span title="Počet lidí, kteří sledují tento dokument nebo sekci">(${relation.child.monitorCount})</span>
+    <a class="info" href="#">?<span class="tooltip">${help}</span></a>
 </#macro>
 
 <#macro star value><#if (value>0.60)><img src="/images/site/star1.gif" alt="*"><#elseif (value<0.2)><img src="/images/site/star0.gif" alt="-"><#else><img src="/images/site/star5.gif" alt="+"></#if></#macro>
@@ -438,6 +446,15 @@
 </#macro>
 
 <#macro showUser user><#if (user.id > 0)><a href="/lide/${user.login}">${user.nick!(user.name)}</a><#else>${user.name}</#if></#macro>
+
+<#macro showUserFromId uid><#rt>
+    <#attempt><#t>
+        <#local user = TOOL.createUser(uid)><#t>
+        <@showUser user /><#t>
+    <#recover><#t>
+        uživatel nebyl nalezen<#t>
+    </#attempt><#t>
+</#macro>
 
 <#macro showRevisions relation info = TOOL.getRevisionInfo(relation.child)>
     <p class="documentHistory">

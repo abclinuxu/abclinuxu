@@ -25,5 +25,11 @@
         <policy>com.whirlycott.cache.policy.LFUMaintenancePolicy</policy>
         <maxsize>5000</maxsize>
     </cache>
-
+    <cache name="monitors">
+        <backend>com.whirlycott.cache.impl.ConcurrentHashMapImpl</backend>
+        <tuner-sleeptime>180</tuner-sleeptime>
+        <!-- evicts least frequently used items when pruning -->
+        <policy>com.whirlycott.cache.policy.LFUMaintenancePolicy</policy>
+        <maxsize>1000</maxsize>
+    </cache>
 </whirlycache>

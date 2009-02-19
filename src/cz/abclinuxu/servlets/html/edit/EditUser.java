@@ -47,6 +47,7 @@ import cz.abclinuxu.utils.parser.clean.HtmlChecker;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.utils.email.monitor.MonitorTool;
 import cz.abclinuxu.utils.email.forum.SubscribedUsers;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
@@ -1314,6 +1315,7 @@ public class EditUser implements AbcAction {
         if (uid2 != 0)
             sqlTool.mergeUsers(uid1, uid2);
         sqlTool.deleteUser(uid1);
+        MonitorTool.removeAllMonitors(new User(uid1));
         PersistenceFactory.getPersistence().clearCache();
 
         if (uid2 != 0) {

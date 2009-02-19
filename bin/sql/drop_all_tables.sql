@@ -6,6 +6,7 @@ drop table if exists hledano;
 drop table if exists kategorie;
 drop table if exists komentar;
 drop table if exists konstanty;
+drop table if exists monitor;
 drop table if exists odkaz;
 drop table if exists polozka;
 drop table if exists posledni_komentar;

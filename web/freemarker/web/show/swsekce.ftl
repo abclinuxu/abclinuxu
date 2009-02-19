@@ -1,6 +1,3 @@
-<#if USER?? && TOOL.xpath(CATEGORY,"//monitor/id[text()='"+USER.id+"']")??>
-    <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj sekci">
-</#if>
 <#import "../macros.ftl" as lib>
 <#assign html_header>
     <script type="text/javascript" src="/data/site/treemenu.js"></script>
@@ -13,11 +10,8 @@
             </#if>
             <li><a href="/pozadavky?url=${URL.getRelationUrl(RELATION)?url}&categoryPosition=4#form">Požádat o vytvoření podsekce</a></li>
             <li><a href="/software/alternativy">Alternativy k aplikacím z Windows</a></li>
-            <li><a href="/software/zebricky">Žebříčky</a></li>
             <li>
-                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}">${monitorState}</a>
-                <span title="Počet lidí, kteří sledují tuto sekci">(${TOOL.getMonitorCount(CATEGORY.data)})</span>
-                <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při nové položce v této a v podřazených sekcích.</span></a>
+                <@lib.showMonitor RELATION "Zašle upozornění na váš email při nové položce v této a v podřazených sekcích."/>
             </li>
             <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
                 <hr />

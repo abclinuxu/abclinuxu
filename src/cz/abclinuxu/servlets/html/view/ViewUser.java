@@ -31,6 +31,7 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.html.edit.EditBookmarks;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -59,6 +60,7 @@ public class ViewUser implements AbcAction {
     public static final String VAR_VIDEOS = "VIDEOS";
     public static final String VAR_INVALID_EMAIL = "INVALID_EMAIL";
     public static final String VAR_SUBPORTALS = "SUBPORTALS";
+    public static final String VAR_MONITORED_OBJECTS = "MONITORED";
 
     public static final String PARAM_USER = "userId";
     public static final String PARAM_USER_SHORT = "uid";
@@ -71,6 +73,7 @@ public class ViewUser implements AbcAction {
     public static final String ACTION_SHOW_MY_OBJECTS = "objekty";
     public static final String ACTION_BOOKMARKS = "zalozky";
     public static final String ACTION_GPG = "gpg";
+    public static final String ACTION_MY_MONITORS = "monitors";
 
     private Pattern reTagId = Pattern.compile(UrlUtils.PREFIX_PEOPLE + "/" + "([^/?]+)/?(\\w+)?");
 
@@ -84,6 +87,7 @@ public class ViewUser implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
+        User user = (User) env.get(Constants.VAR_USER);
 
         if ( ACTION_LOGIN.equals(action) )
             return handleLogin(request,env);
@@ -102,22 +106,20 @@ public class ViewUser implements AbcAction {
 
             if (action == null && matcher.group(2) != null)
                 action = matcher.group(2);
-        } else {
+        } else
             profile = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
-        }
+
+        if (profile != null)
+            profile = (User) persistence.findById(profile);
+        else
+            profile = user;
 
         if ( ACTION_SHOW_MY_PROFILE.equals(action) ) {
-            User user = (User) env.get(Constants.VAR_USER);
-            if (profile==null) {
-                if (user==null)
-                    return FMTemplateSelector.select("ViewUser", "login", env, request);
-                else
-                    profile = user;
-            } else
-                profile = (User) persistence.findById(profile);
+            if (profile == null)
+                return FMTemplateSelector.select("ViewUser", "login", env, request);
 
             env.put(VAR_PROFILE, profile);
-            if (user==null || (user.getId()!=profile.getId() && !user.hasRole(Roles.USER_ADMIN)))
+            if (user == null || (user.getId() != profile.getId() && ! user.hasRole(Roles.USER_ADMIN)))
                 return handleProfile(request, env);
             else
                 return handleMyProfile(request,env);
@@ -125,14 +127,20 @@ public class ViewUser implements AbcAction {
 
         if (profile == null)
             return ServletUtils.showErrorPage("Uživatel nebyl nalezen nebo byl zadán nesprávný parametr!", env, request);
+        else
+            env.put(VAR_PROFILE, profile);
 
-        profile = (User) persistence.findById(profile);
+        if (ACTION_MY_MONITORS.equals(action)) {
+            if (user == null || (user.getId() != profile.getId() && !user.hasRole(Roles.USER_ADMIN)))
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+            return handleMyMonitors(request, env);
+        }
 
         if (ACTION_BOOKMARKS.equals(action))
             return EditBookmarks.processList(request, env, profile);
 
-        env.put(VAR_PROFILE, profile);
-        env.put(VAR_INVALID_EMAIL, ! Misc.hasValidEmail(profile));
+        env.put(VAR_INVALID_EMAIL, !Misc.hasValidEmail(profile));
 
         if (ACTION_SHOW_MY_OBJECTS.equals(action))
             return handleMyObjects(request, env);
@@ -204,10 +212,35 @@ public class ViewUser implements AbcAction {
     }
 
     /**
-     * shows profile of logged in user
+     * Shows my page of logged in (or given) user
      */
     protected String handleMyProfile(HttpServletRequest request, Map env) throws Exception {
         return FMTemplateSelector.select("ViewUser","myProfile",env,request);
+    }
+
+    /**
+     * Shows list of monitors of given user.
+     */
+    protected String handleMyMonitors(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        SQLTool sqlTool = SQLTool.getInstance();
+        User user = (User) env.get(VAR_PROFILE);
+
+        int from = Misc.parseInt((String) params.get(Constants.PARAM_FROM), 0);
+        int count = Misc.getDefaultPageSize(env);
+        int total = sqlTool.countMonitoredRelations(user.getId());
+
+        Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_TITLE, Qualifier.ORDER_ASCENDING, new LimitQualifier(from, count)};
+        List<Relation> data = sqlTool.findMonitoredRelations(user.getId(), qualifiers);
+        Tools.syncList(data);
+
+        Paging paging = new Paging(data, from, count, total);
+        env.put(VAR_MONITORED_OBJECTS, paging);
+        env.put(History.VAR_URL_BEFORE_FROM, "/lide/" + user.getLogin() + "/?action=monitors&amp;from=");
+        StringBuffer sb = new StringBuffer("&amp;count=").append(paging.getPageSize());
+        env.put(History.VAR_URL_AFTER_FROM, sb.toString());
+
+        return FMTemplateSelector.select("ViewUser","myMonitors",env,request);
     }
 
     /**

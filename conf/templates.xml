@@ -864,6 +864,9 @@
         <action name="myProfile" content="/show/myprofile.ftl">
             <var name="TITLE" value="Můj profil" />
         </action>
+        <action name="myMonitors" content="/show/my_monitors.ftl">
+            <var name="TITLE" value="Mé sledované dokumenty" />
+        </action>
         <action name="counter" content="/show/mycounter.ftl">
             <var name="TITLE" value="Co jsem publikoval" />
         </action>

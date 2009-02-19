@@ -26,7 +26,6 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.versioning.Versioning;
 import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.scheduler.VariableFetcher;
@@ -42,7 +41,6 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
-import cz.abclinuxu.utils.email.monitor.MonitorTools;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
@@ -286,27 +284,12 @@ public class EditSubportal implements AbcAction {
 
         // see whether user wants to remove or add himself
         String userid = Integer.toString(user.getId());
-        if (! users.contains(userid)) {
+        if (! users.contains(userid))
             cat.addProperty(Constants.PROPERTY_MEMBER, userid);
-
-            // Automatically activate the article monitor
-            if (Misc.hasValidEmail(user)) {
-                Relation relArticles = Tools.createRelation(Tools.xpath(cat, "/data/articles"));
-                Category articles = (Category) relArticles.getChild();
-
-                Date originalUpdated = articles.getUpdated();
-                if (MonitorTools.addMonitor(articles.getData().getRootElement(), user)) {
-                    persistence.update(articles);
-                    SQLTool.getInstance().setUpdatedTimestamp(articles, originalUpdated);
-                }
-            }
-
-        } else
+        else
             cat.removePropertyValue(Constants.PROPERTY_MEMBER, userid);
 
-        Date originalUpdated = cat.getUpdated();
         persistence.update(cat);
-        SQLTool.getInstance().setUpdatedTimestamp(cat, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));

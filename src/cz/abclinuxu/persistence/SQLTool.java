@@ -57,6 +57,7 @@ import java.util.HashMap;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Thread-safe singleton, that encapsulates SQL commands
@@ -164,6 +165,12 @@ public final class SQLTool implements Configurable {
 
     public static final String MAX_SUBPORTAL_READS = "max.subportal.reads";
     public static final String FIND_ADVERTISEMENT_BY_STRING = "find.advertisement.by.string";
+
+    public static final String MONITOR_INSERT_USER = "insert.monitor";
+    public static final String MONITOR_REMOVE_USER = "remove.monitor";
+    public static final String MONITOR_REMOVE_ALL = "remove.users.monitors";
+    public static final String MONITOR_GET = "get.monitors";
+    public static final String MONITOR_FIND_BY_USER = "find.users.monitors";
 
     private static SQLTool singleton;
     static {
@@ -1408,8 +1415,7 @@ public final class SQLTool implements Configurable {
             resultSet = statement.executeQuery(sql.get(MAX_USER));
             if ( !resultSet.next() )
                 return 0;
-            Integer id = resultSet.getInt(1);
-            return id;
+            return resultSet.getInt(1);
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání!", e);
         } finally {
@@ -1675,8 +1681,7 @@ public final class SQLTool implements Configurable {
             statement = con.prepareStatement(sql.get(DELETE_OLD_COMMENTS));
             statement.setInt(1, userId);
             statement.setTimestamp(2, timestamp);
-            int affected = statement.executeUpdate();
-            return affected;
+            return statement.executeUpdate();
         } catch (SQLException e) {
             throw new PersistenceException("Chyba pri ukladani!", e);
         } finally {
@@ -2256,6 +2261,128 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Inserts monitor on given object for specified user.
+     * @param obj item or category that user wants to monitor
+     * @param user user wishing to start monitor
+     */
+    public void insertMonitor(GenericDataObject obj, User user) {
+        alterMonitor(obj, user, true);
+    }
+
+    /**
+     * Removes monitor of given object for specified user.
+     * @param obj item or category that user wants to stop monitoring
+     * @param user user wishing to stop monitor
+     */
+    public void removeMonitor(GenericDataObject obj, User user) {
+        alterMonitor(obj, user, false);
+    }
+
+    private int alterMonitor(GenericDataObject obj, User user, boolean insert) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            if (insert)
+                statement = con.prepareStatement(sql.get(MONITOR_INSERT_USER));
+            else
+                statement = con.prepareStatement(sql.get(MONITOR_REMOVE_USER));
+            statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
+            statement.setInt(2, obj.getId());
+            statement.setInt(3, user.getId());
+
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba při změně monitoru!", e);
+        } finally {
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Removes all monitors for given user.
+     * @param user user
+     * @return number of removed monitors
+     */
+    public int removeAllMonitors(User user) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(sql.get(MONITOR_REMOVE_ALL));
+            statement.setInt(1, user.getId());
+
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba při vypínání monitoru!", e);
+        } finally {
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Loads users monitoring given document.
+     * @param obj document
+     * @return Set of user ids
+     */
+    public Set<Integer> getMonitors(GenericDataObject obj) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(sql.get(MONITOR_GET));
+            statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
+            statement.setInt(2, obj.getId());
+            resultSet = statement.executeQuery();
+
+            Set<Integer> result = new HashSet<Integer>();
+            while (resultSet.next()) {
+                result.add(resultSet.getInt(1));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba při hledání monitoru!", e);
+        } finally {
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Finds relations where child is monitored by specified user. You shall
+     * add additional criteria into qualifiers.
+     * @return List of initialized relations
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public List<Relation> findMonitoredRelations(int user, Qualifier[] qualifiers) {
+        if (qualifiers == null)
+            qualifiers = new Qualifier[]{};
+        StringBuilder sb = new StringBuilder(sql.get(MONITOR_FIND_BY_USER));
+        List params = new ArrayList();
+        params.add(user);
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Count relations where child is monitored by specified user.
+     * @return number of found relations
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public int countMonitoredRelations(int user) {
+        StringBuilder sb = new StringBuilder(sql.get(MONITOR_FIND_BY_USER));
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(user);
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
      * Finds new address for an old URL. If found, then it returns either initialized Relation
      * or String holding new URL. Null is returned for no match.
      * @param oldUrl urtl starting with /
@@ -2369,8 +2496,7 @@ public final class SQLTool implements Configurable {
             if (!resultSet.next())
                 return null;
 
-            Item item = (Item) persistance.findById(new Item(resultSet.getInt(1)));
-            return item;
+            return (Item) persistance.findById(new Item(resultSet.getInt(1)));
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání reklamy!", e);
         } finally {
@@ -2487,6 +2613,11 @@ public final class SQLTool implements Configurable {
         store(MOST_VOTED_POLLS, prefs);
 		store(HIGHEST_SCORE_USERS, prefs);
         store(FIND_ADVERTISEMENT_BY_STRING, prefs);
+        store(MONITOR_GET, prefs);
+        store(MONITOR_INSERT_USER, prefs);
+        store(MONITOR_REMOVE_USER, prefs);
+        store(MONITOR_REMOVE_ALL, prefs);
+        store(MONITOR_FIND_BY_USER, prefs);
     }
 
     /**
@@ -2513,6 +2644,8 @@ public final class SQLTool implements Configurable {
         int position = sb.indexOf(" ");
         sb.insert(position + 1, "count(");
         position = sb.indexOf("from", position + 6);
+        if (position == -1)
+            position = sb.indexOf("FROM", position + 6);
         sb.insert(position - 1, ')');
     }
 }
