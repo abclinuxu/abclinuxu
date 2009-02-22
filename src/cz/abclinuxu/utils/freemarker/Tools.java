@@ -1088,6 +1088,7 @@ public class Tools implements Configurable {
      * @return counter value for selected GenericObject
      */
     public static int getCounterValue(GenericObject obj, String type) {
+//        throw new RuntimeException();
         return persistence.getCounterValue(obj, type);
     }
 
@@ -1097,9 +1098,9 @@ public class Tools implements Configurable {
      * @param type type of counter to be fetched
      * @return map where key is GenericObject and value is Number with its counter.
      */
-    public static Map getRelationCountersValue(List relations, String type) {
-        if (relations==null || relations.size()==0)
-            return Collections.EMPTY_MAP;
+    public static Map<GenericObject, Integer> getRelationCountersValue(List relations, String type) {
+        if (relations == null || relations.isEmpty())
+            return Collections.emptyMap();
         List list = new ArrayList(relations.size());
         for (Object relation1 : relations) {
             Relation relation = (Relation) relation1;
@@ -1113,7 +1114,7 @@ public class Tools implements Configurable {
      * one of Constants.TYPE_* strings. The key represents list of relations, where
      * children are same type.
      */
-    public static Map<String, List> groupByType(List relations) throws PersistenceException {
+    public static Map<String, List<Relation>> groupByType(List relations) throws PersistenceException {
         return groupByType(relations, null);
     }
 
@@ -1126,7 +1127,7 @@ public class Tools implements Configurable {
      * class name (not FQCN).
      * @param classFilter comma separated list of classes, that may be included in the list
      */
-    public static Map<String, List> groupByType(List relations, String classFilter) throws PersistenceException {
+    public static Map<String, List<Relation>> groupByType(List relations, String classFilter) throws PersistenceException {
         if (relations==null)
             return Collections.emptyMap();
         else
@@ -1138,7 +1139,7 @@ public class Tools implements Configurable {
             itemYes = recordYes = categoryYes = userYes = pollYes = linkYes = dataYes = serverYes = true;
         else {
             itemYes = recordYes = categoryYes = userYes = pollYes = linkYes = dataYes = serverYes = false;
-            StringTokenizer stk = new StringTokenizer(classFilter);
+            StringTokenizer stk = new StringTokenizer(classFilter, ",; ");
             while (stk.hasMoreTokens()) {
                 String className = stk.nextToken();
                 if ("Item".equalsIgnoreCase(className))
@@ -1202,13 +1203,13 @@ public class Tools implements Configurable {
         if (needsSync)
             syncList(relations);
 
-        Map<String, List> map = new HashMap<String, List>();
+        Map<String, List<Relation>> map = new HashMap<String, List<Relation>>();
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
 
             child = relation.getChild();
             if ( child instanceof Category )
-                Misc.storeToMap(map,Constants.TYPE_CATEGORY,relation);
+                Misc.storeToMap(map, Constants.TYPE_CATEGORY, relation);
             else if ( child instanceof Item ) {
                 Item item = (Item) child;
                 switch (item.getType()) {
@@ -1241,15 +1242,15 @@ public class Tools implements Configurable {
                         break;
                 }
             } else if ( child instanceof Record )
-                Misc.storeToMap(map,Constants.TYPE_RECORD, relation);
+                Misc.storeToMap(map, Constants.TYPE_RECORD, relation);
             else if ( child instanceof Data )
-                Misc.storeToMap(map,Constants.TYPE_DATA, relation);
+                Misc.storeToMap(map, Constants.TYPE_DATA, relation);
             else if ( child instanceof Link )
-                Misc.storeToMap(map,Constants.TYPE_LINK, relation);
+                Misc.storeToMap(map, Constants.TYPE_LINK, relation);
             else if ( child instanceof Poll )
-                Misc.storeToMap(map,Constants.TYPE_POLL, relation);
-            else if ( child instanceof User )
-                Misc.storeToMap(map,Constants.TYPE_USER, relation);
+                Misc.storeToMap(map, Constants.TYPE_POLL, relation);
+            else if (child instanceof User)
+                Misc.storeToMap(map, Constants.TYPE_USER, relation);
             else if ( child instanceof Server )
                 Misc.storeToMap(map, Constants.TYPE_SERVER, relation);
         }
@@ -1568,7 +1569,7 @@ public class Tools implements Configurable {
         if (item.getChildren().isEmpty())
             return discussion;
 
-        Map<String, List> childrenMap = groupByType(item.getChildren());
+        Map<String, List<Relation>> childrenMap = groupByType(item.getChildren());
         discussion.setAttachments(childrenMap.get(Constants.TYPE_DATA));
 
         List recordRelations = childrenMap.get(Constants.TYPE_RECORD);
@@ -1613,9 +1614,71 @@ public class Tools implements Configurable {
      */
     public Discussion createEmptyDiscussionWithAttachments(Item item) {
         Discussion discussion = new Discussion();
-        Map<String, List> childrenMap = groupByType(item.getChildren(), "Data");
+        Map<String, List<Relation>> childrenMap = groupByType(item.getChildren(), "Data");
         discussion.setAttachments(childrenMap.get(Constants.TYPE_DATA));
         return discussion;
+    }
+
+    /**
+     * Analyzes initialized relation containing bog story.
+     * @param relation initialized relation
+     * @param withContent flag whether to parse perex / content
+     * @param withCategory flag whether to parse category of this story
+     * @return bean
+     */
+    public static BlogStory analyzeBlogStory(Relation relation, boolean withContent, boolean withCategory) {
+        Item item = (Item) relation.getChild();
+        Category blog = (Category) sync(relation.getParent());
+        BlogStory story = new BlogStory();
+        story.setTitle(item.getTitle());
+        story.setRelation(relation);
+        story.setUrl(getUrlForBlogStory(relation));
+        story.setBlogUrl("/blog/" + blog.getSubType());
+        story.setBlogTitle(blog.getTitle());
+        story.setAuthor(createUser(item.getOwner()));
+        story.setCreated(item.getCreated());
+        story.setDigest(! item.getProperty(Constants.PROPERTY_BLOG_DIGEST).isEmpty());
+
+        Map<String, List<Relation>> children = groupByType(item.getChildren(), "Data,Item,Poll");
+        List list = children.get(Constants.TYPE_POLL);
+        if (list != null)
+            story.setPolls(list.size());
+        list = children.get(Constants.TYPE_DATA);
+        if (list != null && list.size() > 0)
+            story.setImages(list.size());
+        list = children.get(Constants.TYPE_VIDEO);
+        if (list != null)
+            story.setVideos(list.size());
+        list = children.get(Constants.TYPE_DISCUSSION);
+        if (list != null && list.size() > 0)
+            story.setDiscussion(analyzeDiscussion((Relation) list.get(0)));
+
+        if (withContent) {
+            Element element = (Element) item.getData().selectSingleNode("/data/perex");
+            if (element != null)
+                story.setPerex(element.getText());
+
+            element = (Element) item.getData().selectSingleNode("/data/content");
+            story.setContent(element.getText());
+        }
+
+        if (withCategory) {
+            String xpath = "//category[@id='" + item.getSubType() + "']";
+            Element element = (Element) blog.getData().selectSingleNode(xpath);
+            if (element != null) {
+                String id = element.attributeValue("id");
+                String name = element.attributeValue("name");
+                String url = element.attributeValue("url");
+                if (!Misc.empty(name)) {
+                    BlogCategory category = new BlogCategory(id, name, url);
+                    if (!Misc.empty(url))
+                        category.setAbsoluteUrl(story.getBlogUrl() + "/" + url);
+                    story.setCategory(category);
+                }
+            }
+        }
+
+        return story;
     }
 
     /**
@@ -1671,8 +1734,7 @@ public class Tools implements Configurable {
         else
             discussion.lastCommentId = discussion.responseCount;
 
-        discussion.title = item.getTitle();
-        discussion.title = removeTags(discussion.title);
+        discussion.title = removeTags(item.getTitle());
         return discussion;
     }
 
@@ -1947,16 +2009,24 @@ public class Tools implements Configurable {
      * Finds all screenshots for given object.
      * @return list of Maps with several keys
      */
-    public List screenshotsFor(GenericDataObject obj) {
+    public List<Map> screenshotsFor(GenericDataObject obj) {
         if (obj == null)
             return Collections.EMPTY_LIST;
 
-        Map byType = groupByType(obj.getChildren(), "Data");
-        List images = (List) byType.get(Constants.TYPE_DATA);
+        Map<String, List<Relation>> byType = groupByType(obj.getChildren(), "Data");
+        List<Relation> images = byType.get(Constants.TYPE_DATA);
+        return analyzeScreenshots(images);
+    }
+
+    /**
+     * Finds all screenshots for given object.
+     * @return list of Maps with several keys
+     */
+    public List<Map> analyzeScreenshots(List<Relation> images) {
         if (images == null)
             return Collections.EMPTY_LIST;
 
-        List result = new ArrayList();
+        List<Map> result = new ArrayList<Map>();
         for (Iterator iter = images.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
             Data data = (Data) relation.getChild();
@@ -1989,7 +2059,7 @@ public class Tools implements Configurable {
         if (obj == null)
             return Collections.emptyList();
 
-        Map<String, List> byType = groupByType(obj.getChildren(), "Data");
+        Map<String, List<Relation>> byType = groupByType(obj.getChildren(), "Data");
         List objs = (List) byType.get(Constants.TYPE_DATA);
         if (objs == null)
             return Collections.emptyList();

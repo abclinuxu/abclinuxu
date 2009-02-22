@@ -163,7 +163,7 @@ public interface Persistence {
      * @return map where key is GenericObject and value is Number with its counter.
      * @throws cz.abclinuxu.exceptions.PersistenceException When something goes wrong.
      */
-    public Map getCountersValue(List objects, String type);
+    public Map<GenericObject, Integer> getCountersValue(List objects, String type);
 
     /**
      * Removes given counter for specified object. To be used to clean up database after unit test.

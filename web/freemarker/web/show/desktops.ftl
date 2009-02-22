@@ -45,10 +45,9 @@
 
 <h1>Desktopy</h1>
 
-<#global CITACE = TOOL.getRelationCountersValue(ITEMS.data,"read")/>
 <#list ITEMS.data as relation>
     <#assign desktop = TOOL.createScreenshot(relation), item = relation.child, autor=TOOL.createUser(item.owner)>
-    <#assign reads = TOOL.getCounterValue(item,"read"), usedBy = item.getProperty("favourited_by")>
+    <#assign usedBy = item.getProperty("favourited_by")>
     <#assign tmp = TOOL.groupByType(item.children, "Item"), diz=TOOL.analyzeDiscussion(tmp.discussion[0])>
 
     <h2 class="st_nadpis"><a href="${desktop.url}" title="${desktop.title}">${desktop.title}</a></h2>
@@ -63,7 +62,7 @@
         <@lib.showUser autor/> |
         ${DATE.show(item.created,"SMART_DMY")} |
         <a href="${diz.url}">Komentářů: ${diz.responseCount}<@lib.markNewComments diz/></a> |
-        Zhlédnuto: <@lib.showCounter item, .globals["CITACE"]!, "read" />&times;
+        Zhlédnuto: <@lib.showCounter item, "read" />&times;
         <#if (usedBy?size > 0)>
             | <a href="${relation.url}?action=users" title="Seznam uživatelů abclinuxu, kterým se líbí tento desktop">Oblíbenost: ${usedBy?size}</a>
         </#if>

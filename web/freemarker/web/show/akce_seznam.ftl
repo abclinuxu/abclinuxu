@@ -19,7 +19,7 @@
         </ul>
     </div>
     <#if "unpublished"!=PARAMS.mode!"UNDEF">
-        <#assign subtype=PARAMS.subtype?default("")?html>
+        <#assign subtype=PARAMS.subtype!""?html>
         <div class="s_nadpis">Kalendář</div>
         <div class="s_sekce">
             <table cellspacing="0" class="eventCalendar">
@@ -125,8 +125,6 @@
 <#include "../header.ftl">
 
 <@lib.showMessages/>
-
-<#global CITACE = TOOL.getRelationCountersValue(ITEMS.data,"read")/>
 
 <#list ITEMS.data as event>
     <@lib.showEvent event, true, "unpublished"==PARAMS.mode!"UNDEF"/>

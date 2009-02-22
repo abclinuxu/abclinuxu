@@ -111,6 +111,7 @@ public class History implements AbcAction {
             type = VALUE_TYPE_ARTICLES;
             parents.add(persistence.findById(new Relation(Constants.REL_ARTICLES)));
             env.put(VAR_PAGE_TITLE, "Archiv článků");
+            env.put(Constants.VAR_READ_COUNTERS, Tools.getRelationCountersValue(data, Constants.COUNTER_READ));
 
         } else if ( VALUE_TYPE_NEWS.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);

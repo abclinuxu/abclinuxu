@@ -190,6 +190,10 @@ public class Constants implements Configurable {
     public static final String VAR_MESSAGES = "MESSAGES";
     /** holds request's URI */
     public static final String VAR_REQUEST_URI = "REQUEST_URI";
+    /** holder for map, where key is GenericObject and value is size of its read counter */
+    public static final String VAR_READ_COUNTERS = "READ_COUNTERS";
+    /** holder for map, where key is GenericObject and value is size of its visit counter */
+    public static final String VAR_VISIT_COUNTERS = "VISIT_COUNTERS";
     /** holds Tools instance */
     public static final String VAR_TOOL = "TOOL";
     /** holds Sorters2 instance */

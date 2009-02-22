@@ -108,11 +108,13 @@ public class ViewBazaar implements AbcAction {
         qualifiers.add(new LimitQualifier(from, count));
         Qualifier[] qa = new Qualifier[qualifiers.size()];
 
-        List ads = sqlTool.findItemRelationsWithType(Item.BAZAAR, (Qualifier[]) qualifiers.toArray(qa));
+        List<Relation> ads = sqlTool.findItemRelationsWithType(Item.BAZAAR, (Qualifier[]) qualifiers.toArray(qa));
         Tools.syncList(ads);
 
         Paging paging = new Paging(ads, from, count, total);
         env.put(VAR_ADS, paging);
+
+        env.put(Constants.VAR_READ_COUNTERS, Tools.getRelationCountersValue(ads, Constants.COUNTER_READ));
 
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);

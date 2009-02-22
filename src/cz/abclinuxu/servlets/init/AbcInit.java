@@ -559,18 +559,18 @@ public class AbcInit extends HttpServlet implements Configurable {
         delays.put(PREF_UPDATE_STATISTICS, prefs.getInt(PREF_UPDATE_STATISTICS + PREF_DELAY, 60));
         delays.put(PREF_JOB_OFFER_MANAGER, prefs.getInt(PREF_JOB_OFFER_MANAGER + PREF_DELAY, 60));
 
-        periods.put(PREF_POOL_MONITOR, prefs.getInt(PREF_POOL_MONITOR + PREF_PERIOD, 60));
-        periods.put(PREF_RSS_GENERATOR, prefs.getInt(PREF_RSS_GENERATOR + PREF_PERIOD, 60));
+        periods.put(PREF_POOL_MONITOR, prefs.getInt(PREF_POOL_MONITOR + PREF_PERIOD, 600));
+        periods.put(PREF_RSS_GENERATOR, prefs.getInt(PREF_RSS_GENERATOR + PREF_PERIOD, 600));
         periods.put(PREF_RSS_MONITOR, prefs.getInt(PREF_RSS_MONITOR + PREF_PERIOD, 60));
-        periods.put(PREF_VARIABLE_FETCHER, prefs.getInt(PREF_VARIABLE_FETCHER + PREF_PERIOD, 60));
-        periods.put(PREF_WATCHED_DISCUSSIONS_CLEANER, prefs.getInt(PREF_WATCHED_DISCUSSIONS_CLEANER + PREF_PERIOD, 60));
-        periods.put(PREF_RSS_OKSYSTEM, prefs.getInt(PREF_RSS_OKSYSTEM + PREF_PERIOD, 60));
-        periods.put(PREF_RSS_JOBPILOT, prefs.getInt(PREF_RSS_JOBPILOT + PREF_PERIOD, 60));
-        periods.put(PREF_RSS_JOBSCZ, prefs.getInt(PREF_RSS_JOBSCZ + PREF_PERIOD, 60));
-        periods.put(PREF_RSS_64BIT, prefs.getInt(PREF_RSS_64BIT + PREF_PERIOD, 60));
-        periods.put(PREF_UPDATE_STATISTICS, prefs.getInt(PREF_UPDATE_STATISTICS + PREF_PERIOD, 60));
-        periods.put(PREF_JOB_OFFER_MANAGER, prefs.getInt(PREF_JOB_OFFER_MANAGER + PREF_PERIOD, 60));
-        periods.put(PREF_USER_SYNC_SERVICE, prefs.getInt(PREF_USER_SYNC_SERVICE + PREF_PERIOD, 60));
+        periods.put(PREF_VARIABLE_FETCHER, prefs.getInt(PREF_VARIABLE_FETCHER + PREF_PERIOD, 600));
+        periods.put(PREF_WATCHED_DISCUSSIONS_CLEANER, prefs.getInt(PREF_WATCHED_DISCUSSIONS_CLEANER + PREF_PERIOD, 600));
+        periods.put(PREF_RSS_OKSYSTEM, prefs.getInt(PREF_RSS_OKSYSTEM + PREF_PERIOD, 600));
+        periods.put(PREF_RSS_JOBPILOT, prefs.getInt(PREF_RSS_JOBPILOT + PREF_PERIOD, 600));
+        periods.put(PREF_RSS_JOBSCZ, prefs.getInt(PREF_RSS_JOBSCZ + PREF_PERIOD, 600));
+        periods.put(PREF_RSS_64BIT, prefs.getInt(PREF_RSS_64BIT + PREF_PERIOD, 600));
+        periods.put(PREF_UPDATE_STATISTICS, prefs.getInt(PREF_UPDATE_STATISTICS + PREF_PERIOD, 600));
+        periods.put(PREF_JOB_OFFER_MANAGER, prefs.getInt(PREF_JOB_OFFER_MANAGER + PREF_PERIOD, 600));
+        periods.put(PREF_USER_SYNC_SERVICE, prefs.getInt(PREF_USER_SYNC_SERVICE + PREF_PERIOD, 600));
 
         endpointUrlServices = prefs.get(PREF_USERS_DEPLOY_PATH, "/users");
     }
@@ -580,7 +580,7 @@ public class AbcInit extends HttpServlet implements Configurable {
      */
     protected boolean isSet(String name) {
         Boolean aBoolean = services.get(name);
-        return aBoolean != null && aBoolean.booleanValue();
+        return aBoolean != null && aBoolean;
     }
 
     /**

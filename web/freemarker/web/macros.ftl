@@ -29,15 +29,21 @@
             <@showUserFromId clanek.owner/>
         </#if>
         |
-        Přečteno: <@showCounter clanek, .globals["CITACE"]!, "read" />&times;
+        Přečteno: <@showCounter clanek, "read" />&times;
         <#if diz??>| <@showCommentsInListing diz, settings[0]!dateFormat, "/clanky" /></#if>
         <@showShortRating relation, "| " />
     </p>
 </#macro>
 
-<#macro showCounter(item, map, type)><#rt>
-    <#if map.get??><#local value = map.get(item)!"UNDEF"><#else><#local value = "UNDEF"></#if><#rt>
-    <#lt><#if value?string!="UNDEF">${value}<#else>${TOOL.getCounterValue(item, type)}</#if><#rt>
+<#-- Prints specified counter for given document -->
+<#macro showCounter(item, type)><#rt>
+    <#local count = -1><#t>
+    <#if type == "read"><#t>
+        <#local count = (.globals["READ_COUNTERS"].get(item))!(-1)><#t>
+    <#elseif type == "visit"><#t>
+        <#local count = (.globals["VISIT_COUNTERS"].get(item))!(-1)><#t>
+    </#if><#t>
+    <#if count != -1>${count}<#else>${TOOL.getCounterValue(item, type)}</#if><#t>
 </#macro>
 
 <#macro showCommentsInListing(diz dateFormat urlPrefix)>
@@ -46,7 +52,6 @@
 </#macro>
 
 <#macro showSoftwareList(items)>
-<#local visits = TOOL.getRelationCountersValue(items,"visit")>
 <table class="sw-polozky">
   <thead>
     <tr>
@@ -63,7 +68,7 @@
       <td><a href="${software.url}" title="${TOOL.childName(software)}">${TOOL.childName(software)}</a></td>
       <td class="td-meta"><@showShortRating software, "", false /></td>
       <td class="td-meta">${software.child.getProperty("used_by")?size}</td>
-      <td class="td-meta"><@showCounter software.child, visits, "visit" />&times;</td>
+      <td class="td-meta"><@showCounter software.child, "visit" />&times;</td>
       <td class="td-datum">${DATE.show(software.child.updated, "SMART")}</td>
     </tr>
    </#list>
@@ -126,6 +131,54 @@
     <span><@showUser autor/>
     | <a href="${url}" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"><#rt>
       <#lt>Komentářů: ${diz.responseCount}<@lib.markNewComments diz/></a></span>
+</#macro>
+
+<#macro showStoryInListing (story, skipUser, shortened)>
+    <#if shortened><#local titleTag="h3"><#else><#local titleTag="h2"></#if>
+    <div class="cl">
+        <${titleTag} class="st_nadpis">
+            <a href="${story.url}">${story.title}</a>
+        </${titleTag}>
+        <p class="meta-vypis">
+            ${DATE.show(story.created, "SMART")}
+            <#if ! skipUser>
+                <a href="${story.blogUrl}">${story.blogTitle}</a> |
+                <@showUser story.author/>
+            </#if>
+            <#if (story.category??)>
+                <#if story.category.url??>
+                    | <a href="${story.category.absoluteUrl}" title="Kategorie zápisu">${story.category.name}</a>
+                <#else>
+                    | ${story.category.name}
+                </#if>
+            </#if>
+            <#if story.digest>
+                | <img src="/images/site2/digest.png" class="blog_digest" alt="Výběrový blog" title="Kvalitní zápisek vybraný do výběru z blogů">
+            </#if>
+            <#if (story.polls > 0)>| Anketa </#if>
+            <#if (story.videos > 0)>| Video </#if>
+            | Přečteno: <@showCounter story.relation.child, "read"/>&times;
+            <#if story.discussion??>| <@showCommentsInListing story.discussion, "SMART_DMY", "/blog" /></#if>
+            <@showShortRating story.relation, "| " />
+        </p>
+        <#if ! shortened>
+            <#local showMore=false>
+            <#if story.perex??>
+                ${story.perex}
+                <#local showMore=true>
+            <#else>
+                <#if (story.polls > 0 || story.images > 0 || story.videos > 0)><#local showMore=true></#if>
+                ${story.content}
+            </#if>
+            <#if showMore>
+                <div class="signature"><a href="${story.url}">více...</a></div>
+            </#if>
+        </#if>
+    </div>
+</#macro>
+
+<#macro showStoryInTable (relation)>
+    <#local story = TOOL.analyzeBlogStory(relation, true, true)>
 </#macro>
 
 <#macro markNewComments(discussion)><#t>
@@ -466,7 +519,7 @@
             </#if>
             | <a href="/revize?rid=${relation.id}&amp;prefix=${URL.prefix}" rel="nofollow">Historie změn</a>
         </#if>
-        | Zobrazeno: <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times;</p>
+        | Zobrazeno: ${TOOL.getCounterValue(relation.child,"read")}&times;</p>
     </p>
 </#macro>
 
@@ -678,7 +731,7 @@
             <p class="meta-vypis">Aktualizováno: ${DATE.show(item.updated,"SMART")}
                 | správce:&nbsp;<@showUserFromId item.owner />
                 <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/akce" /></#if>
-                | Přečteno:&nbsp;${TOOL.getCounterValue(item,"read")}&times; |
+                | Přečteno:&nbsp;<@showCounter item, "read"/>&times; |
                 <a href="${relation.url!("/akce/"+relation.id)}?action=participants">Účastníků:&nbsp;${regs?eval}</a>
             </p>
             <#if showManagement>
@@ -741,7 +794,7 @@
     <#elseif item.subType=="googlevideo"><#local player="http://video.google.com/googleplayer.swf?docid="+code+"&amp;hl=cs&amp;fs=true">
     </#if>
 
-    <#if showLink>(<a href="${relation.url?default("/videa/show/"+relation.id)}">správa videa</a>)</#if><br>
+    <#if showLink>(<a href="${relation.url!("/videa/show/"+relation.id)}">správa videa</a>)</#if><br>
     <object width="${width}" height="${height}">
         <param name="movie" value="${player}"></param><param name="allowFullScreen" value="true"></param>
         <embed src="${player}" type="application/x-shockwave-flash" allowfullscreen="true" width="${width}" height="${height}"></embed>
@@ -762,7 +815,7 @@
         </a>
         <p class="meta-vypis" style="text-align: left">
             ${DATE.show(item.created, "SMART")} | <@showUserFromId item.owner/><br>
-            Zhlédnuto: <#assign reads = TOOL.getCounterValue(item,"read")>${reads}&times;
+            Zhlédnuto: <@showCounter item, "read"/>&times;
             <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
         </p>
     </div>
@@ -778,7 +831,7 @@
         </a>
         <p class="meta-vypis" style="text-align: left">
             ${DATE.show(item.created, "SMART")} | <@showUserFromId item.owner/><br>
-            Zhlédnuto: <#assign reads = TOOL.getCounterValue(item,"read")>${reads}&times;
+            Zhlédnuto: <@showCounter item, "read"/>&times;
             <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
         </p>
     </div>

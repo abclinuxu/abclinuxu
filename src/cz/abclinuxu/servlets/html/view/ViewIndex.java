@@ -22,12 +22,16 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.scheduler.VariableFetcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.List;
 
 import org.dom4j.Node;
 
@@ -36,6 +40,8 @@ import org.dom4j.Node;
  */
 public class ViewIndex implements AbcAction {
     private static final String VAR_COMPLETE_ARTICLES = "COMPLETE_ARTICLES";
+    private static final String VAR_ARTICLES = "ARTICLES";
+    private static final String VAR_STORIES = "STORIES";
 
     /**
      * Evaluate the request.
@@ -51,6 +57,12 @@ public class ViewIndex implements AbcAction {
         if (count == -1)
             count = AbcConfig.getIndexCompleteArticles();
         env.put(VAR_COMPLETE_ARTICLES, count);
+
+        VariableFetcher variables = VariableFetcher.getInstance();
+        List<Relation> articles = variables.getFreshArticles(user);
+        env.put(VAR_ARTICLES, articles);
+        env.put(VAR_STORIES, variables.getFreshStories(user));
+        env.put(Constants.VAR_READ_COUNTERS, Tools.getRelationCountersValue(articles, Constants.COUNTER_READ));
 
         return FMTemplateSelector.select("ViewIndex","show",env, request);
     }

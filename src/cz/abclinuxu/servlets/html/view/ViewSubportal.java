@@ -61,7 +61,7 @@ public class ViewSubportal implements AbcAction {
     public static final String VAR_SUBPORTALS = "SUBPORTALS";
     public static final String VAR_ADMINS = "ADMINS";
 
-	public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
 		Persistence persistence = PersistenceFactory.getPersistence();
 
@@ -96,7 +96,7 @@ public class ViewSubportal implements AbcAction {
             List users = new ArrayList(keys.size());
             for ( Iterator iter = keys.iterator(); iter.hasNext(); ) {
                 Integer key = (Integer) iter.next();
-                users.add(Tools.sync(new User(key.intValue())));
+                users.add(Tools.sync(new User(key)));
             }
 
             env.put(VAR_ADMINS, users);
@@ -108,7 +108,7 @@ public class ViewSubportal implements AbcAction {
             return FMTemplateSelector.select("ViewSubportal", "admins", env, request);
         }
 
-		return FMTemplateSelector.select("ViewSubportal", "view", env, request);
+        return FMTemplateSelector.select("ViewSubportal", "view", env, request);
 	}
 
     public static String processSectionList(HttpServletRequest request, Map env) throws Exception {

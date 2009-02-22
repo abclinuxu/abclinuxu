@@ -12,7 +12,7 @@
 
 <h2>Úvod</h2>
 
-<p>Tento formulář slouží pro vkládání nových zápisů do vašeho blogu.
+<p>
 Každý zápis musí mít titulek, který by měl stručně a jasně popisovat,
 o čem váš zápis bude pojednávat. Titulek bude zobrazen i ve vašem RSS.
 Text zápisu pište ve validním HTML
@@ -54,11 +54,42 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
     <tr>
         <td>
             <span class="required">Titulek zápisu</span>
-            <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek vašeho zápisu. Je důležitý pro RSS.</span></a>
+            <@lib.showHelp>Zde nastavíte titulek vašeho zápisu. Je důležitý pro RSS.</@lib.showHelp>
             <input type="text" name="title" size="60" value="${PARAMS.title!?html}">
-            <div class="error">${ERRORS.title!}</div>
+            <@lib.showError key="title" />
         </td>
     </tr>
+    <tr>
+        <td>
+            <#if (CATEGORIES?size>0)>
+                Kategorie zápisu:
+                <select name="cid">
+                    <#list CATEGORIES as category>
+                        <option value="${category.id}"<#if category.id==PARAMS.cid!"UNDEF"> selected</#if>>${category.name}</option>
+                    </#list>
+                </select>&nbsp;
+                <@lib.showHelp>Zde nastavíte kategorii vašeho zápisu. Můžete tak členit zápisy do různých kategorií.</@lib.showHelp>
+            </#if>
+            <label>
+                Aktivovat sledování diskuse
+                <input type="checkbox" name="watchDiz" value="yes"<#if PARAMS.watchDiz??> checked</#if>>
+            </label>
+	        <@lib.showHelp>Zde můžete aktivovat sledování diskuse k tomuto zápisu. Komentáře čtenářů vám budou chodit emailem.</@lib.showHelp>
+        </td>
+    </tr>
+    <#if STORY.child.type==15 || PARAMS.publish??>
+        <tr>
+            <td>
+                <div>Datum zveřejnění</div>
+                <div>
+                    <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish!}">
+                    <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
+                    Formát 2005-01-25 07:12
+                    <@lib.showError key="publish" />
+                </div>
+            </td>
+        </tr>
+    </#if>
     <tr>
         <td>
             Kategorie zápisu
@@ -70,14 +101,6 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
             </select>
         </td>
     </tr>
-    <!--<tr>
-        <td>
-            <label>Vydat jako mikrozápisek
-            <input type="checkbox" name="micro" value="yes"<#if PARAMS.micro??> checked</#if>></label>
-                <a class="info" href="#">?<span class="tooltip">Pokud má váš text do 200 znaků, můžete jej vydat
-                jako mikrozápisek. Bude pak celý zobrazen na úvodní stránce AbcLinuxu.</span></a>
-        </td>
-    </tr>-->
     <tr>
         <td>
             <p class="required">Obsah zápisu</p>
@@ -90,23 +113,10 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
 		        <a href="javascript:insertAtCursor(document.form.content, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
                 <a href="javascript:insertAtCursor(document.form.content, '<break>', '');" id="mono" title="Vložit značku zlomu">&lt;break&gt;</a>
             </div>
-            <div class="error">${ERRORS.content!}</div>
+            <@lib.showError key="content" />
             <textarea tabindex="2" name="content" class="siroka" rows="30">${PARAMS.content!?html}</textarea>
         </td>
     </tr>
-    <#if STORY.child.type==15 || PARAMS.publish??>
-    <tr>
-        <td>
-            <div>Datum/čas zveřejnění</div>
-            <div>
-                <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish!}">
-                    <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
-                    Formát 2005-01-25 07:12
-                    <div class="error">${ERRORS.publish!}</div>
-            </div>
-        </td>
-    </tr>
-    </#if>
     <tr>
         <td>
             <input type="submit" name="preview" value="Náhled">

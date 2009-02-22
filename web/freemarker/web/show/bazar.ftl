@@ -28,8 +28,6 @@
         <tr>
             <td colspan="4" align="center">Nenalezeny žádné inzeráty</td>
         </tr>
-    <#else>
-        <#assign reads=TOOL.getRelationCountersValue(ADS.data,"read")>
     </#if>
     <#list ADS.data as ad>
         <tr>
@@ -44,7 +42,7 @@
                 </#if>
             </td>
             <td class="td-meta">
-                <@lib.showCounter ad.child, reads, "read" />&times;
+                <@lib.showCounter ad.child, "read" />&times;
             </td>
             <td class="td-meta">
                 <#assign diz=TOOL.findComments(ad.child)>

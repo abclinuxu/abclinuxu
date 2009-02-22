@@ -100,6 +100,8 @@ public class ViewAuthor implements AbcAction {
         Paging paging = new Paging(articles, from, count, total);
         env.put(VAR_ARTICLES, paging);
 
+        env.put(Constants.VAR_READ_COUNTERS, Tools.getRelationCountersValue(articles, Constants.COUNTER_READ));
+
         return FMTemplateSelector.select("ViewAuthor", "author", env, request);
     }
 

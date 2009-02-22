@@ -160,6 +160,7 @@ public class Misc {
      */
     public static Date parseDate(String date, DateFormat format) {
         try {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (format) {
                 return format.parse(date);
             }
@@ -211,6 +212,19 @@ public class Misc {
             map.put(key,list);
         }
         list.add(value);
+    }
+
+    /**
+     * Associates value with given key in the map. Each key contains
+     * list of values. If the list doesn't exist yet, it is created.
+     */
+    public static void storeToMap(Map<String, List<Relation>> map, String key, Relation relation) {
+        List list = map.get(key);
+        if (list == null) {
+            list = new ArrayList(5);
+            map.put(key,list);
+        }
+        list.add(relation);
     }
 
     /**
@@ -434,7 +448,7 @@ public class Misc {
             User owner = new User(story.getOwner());
             while (stack.size() > 0) {
                 Comment thread = (Comment) stack.removeFirst();
-                if (!owner.equals(thread.getAuthor()))
+                if (!owner.equals(thread.getAuthor())) //todo overit funkcnost
                     return true;
                 stack.addAll(thread.getChildren());
             }
@@ -488,6 +502,21 @@ public class Misc {
             attribute = DocumentHelper.createAttribute(element, name, value);
             element.add(attribute);
         }
+    }
+
+    /**
+     * Extracts value from element or attribute selected by given xpath starting at element.
+     * Purpose of this method is to simplify readability of source code, because it handles
+     * situation that xpath matched nothing.
+     * @param element starting element
+     * @param xpath xpath expression
+     * @return value of matched node or null
+     */
+    public static String getNodeValue(Element element, String xpath) {
+        Node node = element.selectSingleNode(xpath);
+        if (node != null)
+            return node.getText();
+        return null;
     }
 
     /**

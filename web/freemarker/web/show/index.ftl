@@ -46,8 +46,6 @@
 
 <@lib.showMessages/>
 
-<#assign ARTICLES=VARS.getFreshArticles(USER!)>
-<#global CITACE = TOOL.getRelationCountersValue(ARTICLES,"read")/>
 <#if (ARTICLES?size>0) >
     <#list ARTICLES as rel>
         <#if (rel_index < COMPLETE_ARTICLES)>
@@ -98,7 +96,6 @@
     <@lib.showForum 0, 0, true, true, true, single_mode/>
 </#if>
 
-<#assign STORIES=VARS.getFreshStories(USER!)>
 <#if (STORIES?size>0) >
   <#assign half = STORIES?size/2 >
   <#if STORIES?size%2==1><#assign half=half+1></#if>
@@ -350,7 +347,7 @@
 <#if (DESKTOPS?size > 0)>
     <div class="ramec">
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Sbírka uživatelských desktopů. Pochlubte se, jak vypadá vaše pracovní prostředí.</span></a>
+        <@lib.showHelp>Sbírka uživatelských desktopů. Pochlubte se, jak vypadá vaše pracovní prostředí.</@lib.showHelp>
         <a href="/desktopy">Vaše desktopy</a>
       </div>
       <div class="s_sekce" style="text-align:center;">

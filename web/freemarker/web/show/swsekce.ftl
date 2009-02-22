@@ -40,8 +40,8 @@
     </div>
 
     <div class="s_sekce">
-    <form action="${RELATION.url?default("/software/show/"+RELATION.id)}" method="GET">
-        <#assign userInterfaces = FILTERS.ui?default([])>
+    <form action="${RELATION.url!("/software/show/"+RELATION.id)}" method="GET">
+        <#assign userInterfaces = FILTERS.ui![]>
         <div class="filterHeader" onclick="prepni_plochu('ui')">Uživatelské rozhraní (${userInterfaces?size})</div>
         <div class="collapsible tree hidden" id="ui">
             <@lib.showOption2 "ui", "xwindows", UI_PROPERTY["xwindows"], "checkbox", userInterfaces />
@@ -80,7 +80,7 @@
             <@lib.showOption2 "ui", "web", UI_PROPERTY["web"], "checkbox", userInterfaces />
         </div>
 
-        <#assign licenses = FILTERS.license?default([])>
+        <#assign licenses = FILTERS.license![]>
         <div class="filterHeader" onclick="prepni_plochu('license')">Licence (${licenses?size})</div>
         <div class="collapsible hidden" id="license">
             <@lib.showOption2 "license", "gpl", LICENSE_PROPERTY["gpl"], "checkbox", licenses /><br>

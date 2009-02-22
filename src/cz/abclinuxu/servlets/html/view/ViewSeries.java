@@ -119,6 +119,8 @@ public class ViewSeries implements AbcAction {
         env.put(VAR_ARTICLES, paging);
         env.put(VAR_ITEM, series);
 
+        env.put(Constants.VAR_READ_COUNTERS, Tools.getRelationCountersValue(articles, Constants.COUNTER_READ));
+
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 

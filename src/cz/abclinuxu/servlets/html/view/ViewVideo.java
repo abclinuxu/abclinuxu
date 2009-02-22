@@ -97,12 +97,14 @@ public class ViewVideo implements AbcAction {
         qualifiers.add(new LimitQualifier(from, count));
         qa = new Qualifier[qualifiers.size()];
 
-        List videos = sqlTool.findItemRelationsWithType(Item.VIDEO, (Qualifier[]) qualifiers.toArray(qa));
+        List<Relation> videos = sqlTool.findItemRelationsWithType(Item.VIDEO, (Qualifier[]) qualifiers.toArray(qa));
         Tools.syncList(videos);
 
         Paging paging = new Paging(videos, from, count, total);
         env.put(VAR_ITEMS, paging);
-        
+
+        env.put(Constants.VAR_READ_COUNTERS, Tools.getRelationCountersValue(videos, Constants.COUNTER_READ));
+
         return FMTemplateSelector.select("ViewVideo", "list", env, request);
     }
     

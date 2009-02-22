@@ -237,7 +237,7 @@ public class EditAttachment implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Item item = (Item) relation.getChild();
-        Map<String, List> map = Tools.groupByType(item.getChildren(), "Data");
+        Map<String, List<Relation>> map = Tools.groupByType(item.getChildren(), "Data");
         int threadId = Misc.parseInt((String) params.get(EditDiscussion.PARAM_THREAD), 0);
 
         List<Relation> attachments = map.get(Constants.TYPE_DATA);
@@ -268,7 +268,7 @@ public class EditAttachment implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
-        Map<String, List> map = Tools.groupByType(item.getChildren(), "Data");
+        Map<String, List<Relation>> map = Tools.groupByType(item.getChildren(), "Data");
         List dataRelations = map.get(Constants.TYPE_DATA);
 
         Object param = params.get(PARAM_ATTACHMENT);

@@ -3,8 +3,8 @@
 <@lib.showMessages/>
 
 <div class="serial-nadpis">
-<#assign desc = TOOL.xpath(RELATION.child, "/data/description")?default("UNDEFINED"),
-         icon = TOOL.xpath(RELATION.child, "/data/icon")?default("UNDEFINED")>
+<#assign desc = TOOL.xpath(RELATION.child, "/data/description")!"UNDEFINED",
+         icon = TOOL.xpath(RELATION.child, "/data/icon")!"UNDEFINED">
 <#if icon != "UNDEFINED">
     <img src="${icon}" style="float: right" alt="${TOOL.childName(RELATION)}">
 </#if>
@@ -25,7 +25,6 @@
     </p>
 </#if>
 
-<#global CITACE = TOOL.getRelationCountersValue(ARTICLES.data,"read")/>
 <#list ARTICLES.data as relation>
     <@lib.showArticle relation, "SMART_DMY" />
     <hr>

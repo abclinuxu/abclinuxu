@@ -719,14 +719,14 @@ public class MySqlPersistence implements Persistence {
         }
     }
 
-    public Map getCountersValue(List objects, String  type) {
+    public Map<GenericObject, Integer> getCountersValue(List objects, String  type) {
         Connection con = null; Statement statement = null; ResultSet resultSet = null;
         if (objects == null || objects.size() == 0)
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         if (type.indexOf(';') != -1 || type.indexOf('\'') != -1)
             throw new InvalidInputException("Type contains illegal characters: '"+type+"'!");
 
-        Map map = new HashMap(objects.size() + 1, 1.0f);
+        Map<GenericObject, Integer> map = new HashMap<GenericObject, Integer>(objects.size() + 1, 1.0f);
         StringBuffer sql = new StringBuffer("SELECT soucet, typ, cislo FROM citac WHERE druh='"+type+"' AND ");
         appendMatchAllObjectsCondition(sql, objects, "typ", "cislo");
         try {

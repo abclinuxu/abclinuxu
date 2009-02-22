@@ -141,7 +141,7 @@ public class PoolMonitor extends TimerTask {
 						relation.getParent().addChildRelation(relation);
 
 						if (item.getData().selectSingleNode("/data/forbid_discussions") == null) {
-                            Map<String,List> archildren = Tools.groupByType(item.getChildren());
+                            Map<String,List<Relation>> archildren = Tools.groupByType(item.getChildren());
         
                             if (archildren.containsKey(Constants.TYPE_DISCUSSION)) {
                                 Relation disc = (Relation) archildren.get(Constants.TYPE_DISCUSSION).get(0);

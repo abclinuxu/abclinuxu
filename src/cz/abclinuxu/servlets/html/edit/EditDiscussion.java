@@ -255,38 +255,43 @@ public class EditDiscussion implements AbcAction {
     }
 
     /**
-     * Creates and persists empty discussion.
-     * @param relation parent relation
+     * Creates and persists empty discussion. If there is already a discussion, then it is returned.
+     * @param parentRelation parent relation
      * @param user user that created this discussion (may be empty).
      * @param persistence
      * @return relation between created discussion and its parent
      */
-    public static Relation createEmptyDiscussion(Relation relation, User user, Persistence persistence) {
+    public static Relation createEmptyDiscussion(Relation parentRelation, User user, Persistence persistence) {
+        GenericObject parent = persistence.findById(parentRelation.getChild());
+        Map<String, List<Relation>> map = Tools.groupByType(parent.getChildren(), "Item");
+        List<Relation> dizRelations = map.get(Constants.TYPE_DISCUSSION);
+        if (dizRelations != null)
+            return dizRelations.get(0);
+
         Item discussion = new Item(0, Item.DISCUSSION);
         Document document = DocumentHelper.createDocument();
         document.addElement("data").addElement("comments").setText("0");
         discussion.setData(document);
-        if ( user!=null )
+        if (user != null)
             discussion.setOwner(user.getId());
 
-        GenericObject parent = persistence.findById(relation.getChild());
         String title = Tools.childName(parent) + " (diskuse)";
         discussion.setTitle(title);
-
         persistence.create(discussion);
-        Relation relChild = new Relation(parent, discussion, relation.getId());
-        String url = relation.getUrl();
-        if (url!=null) {
-            if (url.charAt(url.length()-1)!='/') // zadne url by nemelo koncit na /
+
+        Relation relation = new Relation(parent, discussion, parentRelation.getId());
+        String url = parentRelation.getUrl();
+        if (url != null) {
+            if (url.charAt(url.length() - 1) != '/') // zadne url by nemelo koncit na /
                 url = url+'/';
             url += "diskuse";
             url = URLManager.protectFromDuplicates(url);
-            relChild.setUrl(url);
+            relation.setUrl(url);
         }
 
-        persistence.create(relChild);
-        relChild.getParent().addChildRelation(relChild);
-        return relChild;
+        persistence.create(relation);
+        relation.getParent().addChildRelation(relation);
+        return relation;
     }
 
     /**
