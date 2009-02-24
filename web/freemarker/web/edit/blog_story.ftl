@@ -70,11 +70,6 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
                 </select>&nbsp;
                 <@lib.showHelp>Zde nastavíte kategorii vašeho zápisu. Můžete tak členit zápisy do různých kategorií.</@lib.showHelp>
             </#if>
-            <label>
-                Aktivovat sledování diskuse
-                <input type="checkbox" name="watchDiz" value="yes"<#if PARAMS.watchDiz??> checked</#if>>
-            </label>
-	        <@lib.showHelp>Zde můžete aktivovat sledování diskuse k tomuto zápisu. Komentáře čtenářů vám budou chodit emailem.</@lib.showHelp>
         </td>
     </tr>
     <#if STORY.child.type==15 || PARAMS.publish??>
@@ -90,17 +85,6 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
             </td>
         </tr>
     </#if>
-    <tr>
-        <td>
-            Kategorie zápisu
-            <a class="info" href="#">?<span class="tooltip">Zde nastavíte kategorii vašeho zápisu. Můžete tak členit zápisy do různých kategorií.</span></a>
-            <select name="cid">
-                <#list CATEGORIES as category>
-                    <option value="${category.id}"<#if category.id==PARAMS.cid!"UNDEF"> selected</#if>>${category.name}</option>
-                </#list>
-            </select>
-        </td>
-    </tr>
     <tr>
         <td>
             <p class="required">Obsah zápisu</p>
