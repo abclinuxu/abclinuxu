@@ -27,7 +27,7 @@
             </tr>
         </#if>
 
-        <#local url = TOOL.xpath(software, "/data/url[@useType='homepage']"!"UNDFEFINED")>
+        <#local url = TOOL.xpath(software, "/data/url[@useType='homepage']")!"UNDFEFINED">
     	<#if url != "UNDFEFINED">
             <tr>
 	        	<td>Domovská stránka:</td>
