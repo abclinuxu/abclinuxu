@@ -177,8 +177,28 @@
     </div>
 </#macro>
 
-<#macro showStoryInTable (relation)>
-    <#local story = TOOL.analyzeBlogStory(relation, true, true)>
+<#macro showStoryInTable (story, skipUser)>
+    <#local signs="", tooltip="", linkTitle = "", spanTitle = "Počet&nbsp;komentářů", diz = story.discussion>
+    <#if (story.polls > 0)><#local signs = TOOL.append(signs, "A"), tooltip = TOOL.append(tooltip, "anketa")></#if>
+    <#if (story.images > 0)><#local signs = TOOL.append(signs, "O"), tooltip = TOOL.append(tooltip, "obrázek")></#if>
+    <#if (story.videos > 0)><#local signs = TOOL.append(signs, "V"), tooltip = TOOL.append(tooltip, "video")></#if>
+    <#if (! skipUser)>
+        <#local linkTitle = TOOL.append(linkTitle, story.author.nick!story.author.name?html)>
+        <#if story.blogTitle??><#local linkTitle = TOOL.append(linkTitle, story.blogTitle)></#if>
+    </#if>
+    <#if diz.responseCount gt 0>
+        <#local spanTitle = TOOL.append(spanTitle, "poslední&nbsp;" + DATE.show(diz.updated, "CZ_SHORT"))>
+    </#if>
+    <#if tooltip!=""><#local spanTitle = TOOL.append(spanTitle, tooltip)></#if>
+
+
+    <a href="${story.url}" title="${linkTitle}">${story.title}</a>
+    <span title="${spanTitle}">
+        (${diz.responseCount}<@lib.markNewComments diz/><#if signs != "">, ${signs}</#if>)
+    </span>
+    <#if (story.digest)>
+        <img src="/images/site2/digest.png" class="blog_digest" alt="Digest blog" title="Kvalitní zápisek vybraný do digestu">
+    </#if>
 </#macro>
 
 <#macro markNewComments(discussion)><#t>

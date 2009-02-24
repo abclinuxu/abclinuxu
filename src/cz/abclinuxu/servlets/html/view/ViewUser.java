@@ -27,6 +27,7 @@ import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.Desktop;
+import cz.abclinuxu.data.view.BlogStory;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.html.edit.EditBookmarks;
 import cz.abclinuxu.utils.InstanceUtils;
@@ -178,9 +179,14 @@ public class ViewUser implements AbcAction {
             qualifiers.add(new LimitQualifier(0, count));
 
             Qualifier[] qa = new Qualifier[qualifiers.size()];
-            List stories = SQLTool.getInstance().findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+            List<Relation> stories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
             Tools.syncList(stories);
-            env.put(ViewBlog.VAR_STORIES, stories);
+            List<BlogStory> blogStories = new ArrayList<BlogStory>(stories.size());
+            for (Relation relation : stories) {
+                BlogStory blogStory = Tools.analyzeBlogStory(relation, false, false);
+                blogStories.add(blogStory);
+            }
+            env.put(ViewBlog.VAR_STORIES, blogStories);
         }
 
         List<Relation> subportals = sqlTool.findSubportalMembership(user.getId());

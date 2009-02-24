@@ -110,15 +110,15 @@
         <tr>
           <td>
             <ul>
-              <#list STORIES[0..half-1] as relation>
-                <li><@printStory relation /></li>
+              <#list STORIES[0..half-1] as story>
+                <li><@lib.showStoryInTable story, false /></li>
               </#list>
             </ul>
           </td>
           <td>
             <ul>
-              <#list STORIES[half..] as relation>
-                <li><@printStory relation /></li>
+              <#list STORIES[half..] as story>
+                <li><@lib.showStoryInTable story, false /></li>
               </#list>
             </ul>
           </td>
@@ -126,30 +126,6 @@
       </table>
     </div>
 </#if>
-
-<#macro printStory relation>
-    <!-- UID: ${relation.parent.owner} -->
-    <#assign story=relation.child, blog=relation.parent, title=blog.title!"UNDEF",
-             url=TOOL.getUrlForBlogStory(relation), CHILDREN=TOOL.groupByType(story.children),
-             author=TOOL.createUser(blog.owner)>
-    <#if CHILDREN.discussion??>
-        <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
-    <#else>
-        <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
-    </#if>
-    <#local signs="", tooltip="">
-    <#if CHILDREN.poll??><#local signs=signs+", A", tooltip=tooltip+"anketa"></#if>
-    <#if TOOL.screenshotsFor(story)?size gt 0><#if tooltip!=""><#local tooltip=tooltip+", "></#if><#local signs=signs+", O", tooltip=tooltip+"obrázek"></#if>
-    <#if CHILDREN.video??><#if tooltip!=""><#local tooltip=tooltip+", "></#if><#local signs=signs+", V", tooltip=tooltip+"video"></#if>
-
-    <a href="${url}" title="${author.nick!author.name?html}<#if title!="UNDEF">, ${title}</#if>">${story.title}</a>
-    <span title="Počet&nbsp;komentářů<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if><#if tooltip!=""> [${tooltip}]</#if>">
-        (${diz.responseCount}<@lib.markNewComments diz/>${signs})
-    </span>
-    <#if (story.getProperty("digest")?size > 0)>
-        <img src="/images/site2/digest.png" class="blog_digest" alt="Digest blog" title="Kvalitní zápisek vybraný do digestu">
-    </#if>
-</#macro>
 
 <#assign SUBPORTALS = VARS.getLatestSubportalChanges(USER!)>
 <#if (SUBPORTALS?size>0) >

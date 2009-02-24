@@ -319,7 +319,7 @@ public class Tools implements Configurable {
      * @return name fetched from XML
      */
     public static String getPersonName(Item item) {
-        Element root = ((Item)item).getData().getRootElement();
+        Element root = item.getData().getRootElement();
         StringBuffer sb = new StringBuffer();
         String name = root.elementTextTrim("firstname");
         if (name != null)
@@ -448,7 +448,7 @@ public class Tools implements Configurable {
             Element element = (Element) iter.next();
             s = element.getText();
             int id = Misc.parseInt(s, -3);
-            User user = null;
+            User user;
             if (id == creator.getId())
                 user = creator;
             else if (id == last.getId())
@@ -721,9 +721,7 @@ public class Tools implements Configurable {
             for (Iterator iter = stories.iterator(); iter.hasNext() && result.size() < count;) {
                 Relation relation = (Relation) iter.next();
                 Item story = (Item) relation.getChild();
-                boolean removeStory = false;
-
-                removeStory |= blockedUsers.contains(new Integer(story.getOwner()));
+                boolean removeStory = blockedUsers.contains(new Integer(story.getOwner()));
                 removeStory |= (filterBanned && story.getSingleProperty(Constants.PROPERTY_BANNED_BLOG) != null);
 
                 if (!removeStory)
@@ -856,6 +854,20 @@ public class Tools implements Configurable {
         for (int i=0; i<count; i++)
             sb.append(what);
         return sb.toString();
+    }
+
+    /**
+     * Appends second parameter to the first one, separating them by comma. If the first parameter is empty,
+     * only the second parameter is returned.
+     * @param string string after which second parameter shall be appended
+     * @param appended string to be appended
+     * @return either second parameter or second parameter appended behind first parameter and comma
+     */
+    public static String append(String string, String appended) {
+        if (string == null || string.length() == 0)
+            return appended;
+        else
+            return string + ", " + appended;
     }
 
     /**

@@ -23,6 +23,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.view.BlogStory;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.dom4j.Node;
 
@@ -61,8 +63,15 @@ public class ViewIndex implements AbcAction {
         VariableFetcher variables = VariableFetcher.getInstance();
         List<Relation> articles = variables.getFreshArticles(user);
         env.put(VAR_ARTICLES, articles);
-        env.put(VAR_STORIES, variables.getFreshStories(user));
         env.put(Constants.VAR_READ_COUNTERS, Tools.getRelationCountersValue(articles, Constants.COUNTER_READ));
+
+        List<Relation> stories = variables.getFreshStories(user);
+        List<BlogStory> blogStories = new ArrayList<BlogStory>(stories.size());
+        for (Relation relation : stories) {
+            BlogStory blogStory = Tools.analyzeBlogStory(relation, false, false);
+            blogStories.add(blogStory);
+        }
+        env.put(VAR_STORIES, blogStories);
 
         return FMTemplateSelector.select("ViewIndex","show",env, request);
     }
