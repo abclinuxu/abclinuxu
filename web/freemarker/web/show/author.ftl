@@ -2,10 +2,10 @@
 
 <@lib.showMessages/>
 
-<#assign autor = RELATION.child, name = TOOL.xpath(autor, "/data/firstname")?default("UNDEFINED"),
-         surname = TOOL.xpath(autor, "/data/surname")?default("UNDEFINED"),
-         nickname = TOOL.xpath(autor, "/data/nickname")?default("UNDEFINED"),
-         uid = autor.numeric1?default(0)>
+<#assign name = AUTHOR.name?default("UNDEFINED"),
+         surname = AUTHOR.surname?default("UNDEFINED"),
+         nickname = AUTHOR.nickname?default("UNDEFINED"),
+         uid = AUTHOR.uid?default(0)>
 
 <h1>
     Autor
@@ -31,29 +31,29 @@
     <a href="${URL.noPrefix("/clanky/honorare?authorId="+RELATION.id)}">Honoráře</a>
     </p>
     <table border="0" cellpadding="2" cellspacing="0">
-        <#if TOOL.xpath(AUTHOR,"/data/birthNumber")??>
+        <#if AUTHOR.birthNumber??>
             <tr>
-                <td>Rodné číslo:</td><td>${TOOL.xpath(AUTHOR,"/data/birthNumber")}</td>
+                <td>Rodné číslo:</td><td>${AUTHOR.birthNumber}</td>
             </tr>
         </#if>
-        <#if TOOL.xpath(AUTHOR,"/data/accountNumber")??>
+        <#if AUTHOR.accountNumber??>
             <tr>
-                 <td>Číslo účtu:</td><td>${TOOL.xpath(AUTHOR,"/data/accountNumber")}</td>
+                 <td>Číslo účtu:</td><td>${AUTHOR.accountNumber}</td>
             </tr>
         </#if>
-        <#if TOOL.xpath(AUTHOR,"/data/email")??>
+        <#if AUTHOR.email??>
             <tr>
-                 <td>Email:</td><td>${TOOL.xpath(AUTHOR,"/data/email")}</td>
+                 <td>Email:</td><td>${AUTHOR.email}</td>
             </tr>
         </#if>
-        <#if TOOL.xpath(AUTHOR,"/data/phone")??>
+        <#if AUTHOR.phone??>
             <tr>
-                 <td>Telefon:</td><td>${TOOL.xpath(AUTHOR,"/data/phone")}</td>
+                 <td>Telefon:</td><td>${AUTHOR.phone}</td>
             </tr>
         </#if>
-        <#if TOOL.xpath(AUTHOR,"/data/address")??>
+        <#if AUTHOR.address??>
             <tr>
-                 <td>Adresa:</td><td>${TOOL.xpath(AUTHOR,"/data/address")}</td>
+                 <td>Adresa:</td><td>${AUTHOR.address}</td>
             </tr>
         </#if>
     </table>

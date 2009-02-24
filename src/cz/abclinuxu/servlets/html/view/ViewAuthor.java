@@ -30,9 +30,11 @@ import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.BeanFetcher.FetchType;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
@@ -84,8 +86,9 @@ public class ViewAuthor implements AbcAction {
      */
     public static String processAuthor(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
+        
         Item item = (Item) relation.getChild();
-        env.put(VAR_AUTHOR, item);
+        env.put(VAR_AUTHOR, BeanFetcher.fetchAuthorFromItem(item, FetchType.EAGER));
 
         int from = Misc.parseInt((String)params.get(PARAM_FROM), 0);
         int count = Misc.getPageSize(AbcConfig.getAuthorArticlesPageSize(), 50, env, null);

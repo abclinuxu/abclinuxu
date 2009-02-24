@@ -22,6 +22,7 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -34,8 +35,10 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.BeanFetcher.FetchType;
 import cz.abclinuxu.utils.freemarker.Tools;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -160,8 +163,8 @@ public class EditAuthor implements AbcAction {
 		item.setPermissions(cat.getPermissions());
 
         boolean canContinue = true;
-        canContinue &= setSurname(params, root, env);
-        canContinue &= setFirstname(params, root);
+        canContinue &= setSurname(params, item, env);
+        canContinue &= setFirstname(params, item);
         canContinue &= setNickname(params, root);
         canContinue &= setBirthNumber(params, root);
         canContinue &= setUserId(params, item, env);
@@ -182,7 +185,7 @@ public class EditAuthor implements AbcAction {
         persistence.create(item);
 
         Relation relation = new Relation(parent.getChild(), item, parent.getId());
-        String url = proposeAuthorsUrl(root);
+        String url = proposeAuthorsUrl(item);
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);
 
@@ -200,35 +203,17 @@ public class EditAuthor implements AbcAction {
     protected String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item item = (Item) relation.getChild();
-        Element root = item.getData().getRootElement();
-
-        Node node = root.element("surname");
-        params.put(PARAM_SURNAME, node.getText());
-        node = root.element("firstname");
-        if (node != null)
-            params.put(PARAM_NAME, node.getText());
-        node = root.element("nickname");
-        if (node != null)
-            params.put(PARAM_NICKNAME, node.getText());
-        node = root.element("birthNumber");
-        if (node != null)
-            params.put(PARAM_BIRTH_NUMBER, node.getText());
-        String user = item.getString1();
-        if (user != null)
-            params.put(PARAM_LOGIN, user);
-        node = root.element("accountNumber");
-        if (node != null)
-            params.put(PARAM_ACCOUNT_NUMBER, node.getText());
-        node = root.element("email");
-        if (node != null)
-            params.put(PARAM_EMAIL, node.getText());
-        node = root.element("phone");
-        if (node != null)
-            params.put(PARAM_PHONE, node.getText());
-        node = root.element("address");
-        if (node != null)
-            params.put(PARAM_ADDRESS, node.getText());
+        Author author = BeanFetcher.fetchAuthorFromItem((Item)relation.getChild(), FetchType.EAGER);
+                
+        params.put(PARAM_SURNAME, author.getSurname());
+        params.put(PARAM_NAME, author.getName());
+        params.put(PARAM_NICKNAME, author.getNickname());
+        params.put(PARAM_BIRTH_NUMBER, author.getBirthNumber());
+        params.put(PARAM_LOGIN, author.getLogin());
+        params.put(PARAM_ACCOUNT_NUMBER, author.getAccountNumber());
+        params.put(PARAM_EMAIL, author.getEmail());
+        params.put(PARAM_PHONE, author.getPhone());
+        params.put(PARAM_ADDRESS, author.getAddress());
 
         env.put(VAR_EDIT_MODE, Boolean.TRUE);
         return FMTemplateSelector.select("EditAuthor", "edit", env, request);
@@ -244,8 +229,8 @@ public class EditAuthor implements AbcAction {
         Element root = item.getData().getRootElement();
 
         boolean canContinue = true;
-        canContinue &= setSurname(params, root, env);
-        canContinue &= setFirstname(params, root);
+        canContinue &= setSurname(params, item, env);
+        canContinue &= setFirstname(params, item);
         canContinue &= setNickname(params, root);
         canContinue &= setUserId(params, item, env);
         canContinue &= setBirthNumber(params, root);
@@ -266,7 +251,7 @@ public class EditAuthor implements AbcAction {
         item.setTitle(Tools.getPersonName(item));
         persistence.update(item);
 
-        String url = proposeAuthorsUrl(root);
+        String url = proposeAuthorsUrl(item);
         if (! url.equals(relation.getUrl())) {
             url = URLManager.protectFromDuplicates(url);
             sqlTool.insertOldAddress(relation.getUrl(), url, relation.getId());
@@ -284,13 +269,11 @@ public class EditAuthor implements AbcAction {
     /**
      * @return absolute url for this author
      */
-    private String proposeAuthorsUrl(Element root) {
-        StringBuffer sb = new StringBuffer();
-        String name = root.elementTextTrim("firstname");
-        if ( name != null )
-            sb.append(name).append(' ');
-        sb.append(root.elementTextTrim("surname"));
-
+    private String proposeAuthorsUrl(Item item) {
+    	StringBuilder sb = new StringBuilder();
+		if(item.getString1()!=null) sb.append(item.getString1()).append(" ");
+		if(item.getString2()!=null) sb.append(item.getString2());
+		
         String url = UrlUtils.PREFIX_AUTHORS + "/" + URLManager.enforceRelativeURL(sb.toString());
         return url;
     }
@@ -302,11 +285,11 @@ public class EditAuthor implements AbcAction {
      * @param env    environment
      * @return false, if there is a major error.
      */
-    private boolean setSurname(Map params, Element root, Map env) {
+    private boolean setSurname(Map params, Item item, Map env) {
         String tmp = (String) params.get(PARAM_SURNAME);
-        if (tmp != null && tmp.length() > 0) {
+        if (!Misc.empty(tmp)) {
             tmp = Misc.filterDangerousCharacters(tmp);
-            DocumentHelper.makeElement(root, "surname").setText(tmp);
+            item.setString2(tmp);
             return true;
         } else {
             ServletUtils.addError(PARAM_SURNAME, "Zadejte příjmení!", env, null);
@@ -320,20 +303,15 @@ public class EditAuthor implements AbcAction {
      * @param root   root element of item to be updated
      * @return false, if there is a major error.
      */
-    private boolean setFirstname(Map params, Element root) {
-        String tmp = (String) params.get(PARAM_NAME);
-        Element element = root.element("firstname");
+    private boolean setFirstname(Map params, Item item) {
+        String tmp = (String) params.get(PARAM_NAME);        
         if (Misc.empty(tmp)) {
-            if (element != null)
-                element.detach();
-            return true;
+        	item.setString1(null);
         }
-
-        if (element == null)
-            element = DocumentHelper.makeElement(root, "firstname");
-
-        tmp = Misc.filterDangerousCharacters(tmp);
-        element.setText(tmp);
+        else {
+        	tmp = Misc.filterDangerousCharacters(tmp);
+        	item.setString1(tmp);
+        }
         return true;
     }
 
@@ -416,7 +394,6 @@ public class EditAuthor implements AbcAction {
         String login = (String) params.get(PARAM_LOGIN);
         if (Misc.empty(login)) {
             item.setNumeric1(null);
-            item.setString1(null);
         } else {
             Integer uid = SQLTool.getInstance().getUserByLogin(login);
             if (uid == null) {
@@ -424,7 +401,6 @@ public class EditAuthor implements AbcAction {
                 return false;
             }
             item.setNumeric1(uid);
-            item.setString1(login);
         }
         return true;
     }
