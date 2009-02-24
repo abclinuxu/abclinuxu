@@ -365,6 +365,7 @@ public class Constants implements Configurable {
     public static final String COUNTER_READ = "read";
     public static final String COUNTER_VISIT = "visit";
     public static final String COUNTER_PLAY = "play";
+    public static final int DAY_DURATION = 24*60*60*1000;
 
     public void configure(Preferences prefs) throws ConfigurationException {
         Field[] fields = Constants.class.getDeclaredFields();

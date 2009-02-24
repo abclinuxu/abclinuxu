@@ -73,8 +73,6 @@ public class DateTool implements Configurable {
     /** Selects best way according to distance from now, time is not included, month is expressed in word */
     public static final String CZ_SMART_DAY_MONTH_YEAR_TXT = "SMART_DMY_TXT";
 
-    private static final int DAY_DURATION = 24*60*60*1000;
-
     private static final String PREF_TODAY = "today";
     private static final String PREF_YESTERDAY = "yesterday";
 
@@ -312,8 +310,8 @@ public class DateTool implements Configurable {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         today = calendar.getTime().getTime();
-        tommorow = today + DAY_DURATION;
-        yesterday = today - DAY_DURATION;
+        tommorow = today + Constants.DAY_DURATION;
+        yesterday = today - Constants.DAY_DURATION;
         calendar.set(Calendar.DAY_OF_YEAR, 1);
         calendar.set(Calendar.MONTH, 1);
         thisYear = calendar.getTime().getTime();
