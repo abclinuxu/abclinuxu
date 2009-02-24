@@ -1236,7 +1236,8 @@ public class EditUser implements AbcAction {
             boolean unused = true;
             SQLTool sqlTool = SQLTool.getInstance();
 
-            Qualifier[] qualifiers = new Qualifier[]{new CompareCondition(Field.LOGIN, Operation.EQUAL, user1.getId())};
+            // check for authors related to this user ID
+            Qualifier[] qualifiers = new Qualifier[]{new CompareCondition(Field.NUMERIC1, Operation.EQUAL, user1.getId())};
             List<Relation> authors = sqlTool.findItemRelationsWithType(Item.AUTHOR, qualifiers);
 
             unused &= authors.isEmpty();

@@ -108,9 +108,10 @@ public class ViewAuthor implements AbcAction {
      */
     private String processSection(HttpServletRequest request, Map env) throws Exception {
         SQLTool sqlTool = SQLTool.getInstance();
-        List authors = sqlTool.findItemRelationsWithType(Item.AUTHOR, null);
+        
+        // sort authors by surname
+        List<Relation> authors = sqlTool.findItemRelationsWithType(Item.AUTHOR, new Qualifier[] { Qualifier.SORT_BY_STRING2});
         Tools.syncList(authors);
-        authors = Sorters2.byXPath(authors, "/data/surname");
         env.put(VAR_AUTHORS, authors);
 
         List counts = sqlTool.countArticleRelationsByAuthors();

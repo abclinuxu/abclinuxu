@@ -22,15 +22,18 @@ package cz.abclinuxu.persistence.extra;
  * Definition of behaviour of SQL commands or Persistance calls.
  */
 public class Qualifier {
-    public static final Qualifier SORT_BY_CREATED = new Qualifier("SORT_BY_CREATED");
-    public static final Qualifier SORT_BY_UPDATED = new Qualifier("SORT_BY_UPDATED");
-    public static final Qualifier SORT_BY_WHEN = new Qualifier("SORT_BY_WHEN");
-    public static final Qualifier SORT_BY_TITLE = new Qualifier("SORT_BY_TITLE");
-    public static final Qualifier SORT_BY_ID = new Qualifier("SORT_BY_ID");
+    public static final Qualifier SORT_BY_CREATED = new OrderByQualifier("CREATED", Field.CREATED);
+    public static final Qualifier SORT_BY_UPDATED = new OrderByQualifier("UPDATED", Field.UPDATED);
+    public static final Qualifier SORT_BY_WHEN = new OrderByQualifier("WHEN", Field.WHEN);
+    public static final Qualifier SORT_BY_TITLE = new OrderByQualifier("TITLE", Field.TITLE);
+    public static final Qualifier SORT_BY_ID = new OrderByQualifier("ID", Field.ID);
+    public static final Qualifier SORT_BY_STRING1 = new OrderByQualifier("STRING1", Field.STRING1);
+    public static final Qualifier SORT_BY_STRING2 = new OrderByQualifier("STRING2", Field.STRING2);
+    
     public static final Qualifier ORDER_ASCENDING = new Qualifier("ORDER_ASCENDING");
     public static final Qualifier ORDER_DESCENDING = new Qualifier("ORDER_DESCENDING");
 
-    private final String name;
+    protected final String name;
 
     protected Qualifier(String name) {
         this.name = name;
