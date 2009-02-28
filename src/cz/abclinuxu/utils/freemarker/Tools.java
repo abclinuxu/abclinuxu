@@ -1973,9 +1973,20 @@ public class Tools implements Configurable {
             return ((Collection) o).contains(s);
 
         if ( o instanceof String )
-            return ((String) o).equals(s);
+            return o.equals(s);
 
         return false;
+    }
+
+    /**
+     * Compares two dates and returns true if their difference is smaller than one second
+     * @param one existing date
+     * @param two existing date
+     * @return false if difference is bigger than one second
+     */
+    public static boolean isSame(Date one, Date two) {
+        long diff = one.getTime() - two.getTime();
+        return Math.abs(diff) < 1000;
     }
 
     /**

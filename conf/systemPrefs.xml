@@ -969,8 +969,7 @@
                                     <entry key="regexp.blog.summary.url" value="^/blog/((souhrn)|(([a-zA-Z][a-zA-Z0-9_]*)/souhrn))/?$"/>
                                     <entry key="regexp.blog.category.url" value="^/blog/([a-zA-Z][a-zA-Z0-9_]*)/([a-zA-Z\-][a-zA-Z0-9_\-]*)/?$"/>
                                     <entry key="regexp.blog.digest.url" value="^/blog/vyber"/>
-                                    <entry key="url.summary" value="souhrn"/>
-                                    <entry key="page.size" value="15"/>
+                                    <entry key="page.size" value="25"/>
                                     <entry key="summary.size" value="50"/>
                                     <entry key="fresh.stories.size" value="5"/>
                                 </map>

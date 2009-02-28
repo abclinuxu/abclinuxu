@@ -60,6 +60,10 @@ public class BlogStory {
         this.relation = relation;
     }
 
+    public int getId() {
+        return relation.getId();
+    }
+
     public String getPerex() {
         return perex;
     }

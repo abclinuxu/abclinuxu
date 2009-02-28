@@ -157,7 +157,7 @@
             </#if>
             <#if (story.polls > 0)>| Anketa </#if>
             <#if (story.videos > 0)>| Video </#if>
-            | Přečteno: <@showCounter story.relation.child, "read"/>&times;
+            <#if story.perex??>| Přečteno: <@showCounter story.relation.child, "read"/>&times;</#if>
             <#if story.discussion??>| <@showCommentsInListing story.discussion, "SMART_DMY", "/blog" /></#if>
             <@showShortRating story.relation, "| " />
         </p>

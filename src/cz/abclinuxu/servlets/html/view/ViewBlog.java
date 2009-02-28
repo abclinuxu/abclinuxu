@@ -22,7 +22,6 @@ import cz.abclinuxu.servlets.html.edit.EditBlog;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.data.*;
@@ -91,11 +90,9 @@ public class ViewBlog implements AbcAction, Configurable {
     static final String PREF_PAGE_SIZE = "page.size";
     static final String PREF_SUMMARY_SIZE = "summary.size";
     static final String PREF_FRESH_STORIES_SIZE = "fresh.stories.size";
-    static final String PREF_URL_SUMMARY = "url.summary";
 
     static REProgram reUrl, reSummaryUrl, reDigestUrl, reCategoryUrl;
     static int defaultPageSize, freshStoriesSize, summarySize;
-    static String urlSummary;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new ViewBlog());
     }
@@ -250,30 +247,21 @@ public class ViewBlog implements AbcAction, Configurable {
     public static String processStory(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Category blog = (Category) persistence.findById(relation.getParent());
+        BlogStory blogStory = Tools.analyzeBlogStory(relation, true, true);
         Item story = (Item) relation.getChild();
-        env.put(VAR_STORY, relation);
-
-        BlogCategory category = null;
-        List<BlogCategory> categories = EditBlog.storeCategories(blog, env);
-        for (BlogCategory blogCategory : categories) {
-            if (blogCategory.getId().equals(story.getSubType())) {
-                env.put(VAR_CATEGORY, blogCategory);
-                category = blogCategory;
-                break;
-            }
-        }
-
-        User user = (User) env.get(Constants.VAR_USER);
-        if (user == null || user.getId() != story.getOwner())
-            ReadRecorder.log(story, Constants.COUNTER_READ, env);
+        env.put(VAR_STORY, blogStory);
 
         List parents = persistence.findParents(relation);
+        BlogCategory category = blogStory.getCategory();
         if (category != null) {
-            String url = UrlUtils.PREFIX_BLOG + "/" + blog.getSubType() + "/" + category.getUrl();
-            Link link = new Link(category.getName(), url, null);
+            Link link = new Link(category.getName(), category.getAbsoluteUrl(), null);
             parents.add(parents.size() - 1, link);
         }
         env.put(ShowObject.VAR_PARENTS, parents);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        if (blogStory.getPerex() != null && (user == null || user.getId() != story.getOwner()))
+            ReadRecorder.log(story, Constants.COUNTER_READ, env);
 
         Relation blogRelation = (Relation) persistence.findById(new Relation(relation.getUpper()));
 
@@ -282,13 +270,12 @@ public class ViewBlog implements AbcAction, Configurable {
         env.put(VAR_BLOG_RELATION, blogRelation);
         env.put(VAR_BLOG_XML, NodeModel.wrap((new DOMWriter().write(blog.getData()))));
 
-        fillFreshStories(blog, env);
-
         if (user != null && user.getId() == blog.getOwner()) {
             fillUnpublishedStories(blog, env);
             fillWaitingStories(blog, env);
         }
 
+        fillFreshStories(blog, env);
         fillMonthStatistics(blog, env);
         fillLastDesktop(blog, env);
 
@@ -334,7 +321,6 @@ public class ViewBlog implements AbcAction, Configurable {
     protected String processStories(HttpServletRequest request, Relation blogRelation, boolean summary, int year, int month, int day, BlogCategory category, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
         SQLTool sqlTool = SQLTool.getInstance();
 
         Category blog = (Category) env.get(VAR_BLOG);
@@ -362,13 +348,6 @@ public class ViewBlog implements AbcAction, Configurable {
         for (Relation relation : stories) {
             BlogStory blogStory = Tools.analyzeBlogStory(relation, true, true);
             blogStories.add(blogStory);
-
-            // todo co takhle mit ctennost jen pro zapisky s perexem?
-            Item story = (Item) relation.getChild();
-            if (!summary && (user == null || user.getId() != blog.getOwner())) {
-                if (blogStory.getPerex() == null)
-                    ReadRecorder.log(story, Constants.COUNTER_READ, env);
-            }
         }
 
         Paging paging = new Paging(blogStories, from, count, total);
@@ -424,24 +403,17 @@ public class ViewBlog implements AbcAction, Configurable {
         if (user != null)
             stories = Tools.filterBannedStories(stories, user, count, false);
 
-        List<BlogStory> blogStories = new ArrayList<BlogStory>(stories.size());
         List parentBlogs = new ArrayList(stories.size());
+        for (Relation relation : stories)
+            parentBlogs.add(relation.getParent());
+        if (! parentBlogs.isEmpty())
+            Tools.syncList(parentBlogs); // initialize all blogs in single operation
+
+        List<BlogStory> blogStories = new ArrayList<BlogStory>(stories.size());
         for (Relation relation : stories) {
             BlogStory blogStory = Tools.analyzeBlogStory(relation, true, true);
             blogStories.add(blogStory);
-            if (! relation.getParent().isInitialized())
-                parentBlogs.add(relation.getParent());
-
-            // todo co takhle mit ctennost jen pro zapisky s perexem?
-            Item story = (Item) relation.getChild();
-            if (!summary && (user == null || user.getId() != story.getOwner())) {
-                if (blogStory.getPerex() == null)
-                    ReadRecorder.log(story, Constants.COUNTER_READ, env);
-            }
         }
-
-        if (! parentBlogs.isEmpty())
-            Tools.syncList(parentBlogs);
 
         Paging paging = new Paging(blogStories, from, stories.size(), total);
         env.put(VAR_STORIES, paging);
@@ -683,11 +655,6 @@ public class ViewBlog implements AbcAction, Configurable {
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
-        // TODO k cemu tato hodnota je? Nevidim zadne pouziti
-        urlSummary = prefs.get(PREF_URL_SUMMARY, null);
-        if (urlSummary==null)
-            throw new ConfigurationException("Chybí nastavení "+PREF_URL_SUMMARY);
-
         defaultPageSize = prefs.getInt(PREF_PAGE_SIZE, 10);
         summarySize = prefs.getInt(PREF_SUMMARY_SIZE, 20);
         freshStoriesSize = prefs.getInt(PREF_FRESH_STORIES_SIZE, 5);
