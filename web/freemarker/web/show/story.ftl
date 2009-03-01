@@ -1,8 +1,6 @@
 <#import "../macros.ftl" as lib>
-<#assign intro=TOOL.xpath(BLOG,"//custom/intro")!"UNDEF",
-        owner=TOOL.createUser(BLOG.owner),
-        CHILDREN=TOOL.groupByType(ITEM.children),
-        ITEM=STORY.relation.child>
+<#assign intro=TOOL.xpath(BLOG,"//custom/intro")!"UNDEF", owner=TOOL.createUser(BLOG.owner), ITEM=STORY.relation.child,
+        CHILDREN=TOOL.groupByType(ITEM.children)>
 
 
 <#assign plovouci_sloupec>
