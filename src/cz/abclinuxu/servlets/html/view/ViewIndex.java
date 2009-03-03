@@ -44,6 +44,7 @@ public class ViewIndex implements AbcAction {
     private static final String VAR_COMPLETE_ARTICLES = "COMPLETE_ARTICLES";
     private static final String VAR_ARTICLES = "ARTICLES";
     private static final String VAR_STORIES = "STORIES";
+    private static final String VAR_DIGEST_STORIES = "DIGEST_STORIES";
 
     /**
      * Evaluate the request.
@@ -65,8 +66,17 @@ public class ViewIndex implements AbcAction {
         env.put(VAR_ARTICLES, articles);
         env.put(Constants.VAR_READ_COUNTERS, Tools.getRelationCountersValue(articles, Constants.COUNTER_READ));
 
-        List<Relation> stories = variables.getFreshStories(user);
+        List<Relation>[] freshStories = variables.getFreshDigestStories(user);
+        List<Relation> stories = freshStories[0];
         List<BlogStory> blogStories = new ArrayList<BlogStory>(stories.size());
+        for (Relation relation : stories) {
+            BlogStory blogStory = Tools.analyzeBlogStory(relation, false, false);
+            blogStories.add(blogStory);
+        }
+        env.put(VAR_DIGEST_STORIES, blogStories);
+
+        stories = freshStories[1];
+        blogStories = new ArrayList<BlogStory>(stories.size());
         for (Relation relation : stories) {
             BlogStory blogStory = Tools.analyzeBlogStory(relation, false, false);
             blogStories.add(blogStory);

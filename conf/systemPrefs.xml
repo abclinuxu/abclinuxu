@@ -618,6 +618,8 @@
                             <entry key="max.driver" value="10"/>
                             <entry key="default.story" value="14"/>
                             <entry key="max.story" value="30"/>
+                            <entry key="default.digest.story" value="4"/>
+                            <entry key="max.digest.story" value="30"/>
                             <entry key="default.news" value="10"/>
                             <entry key="max.news" value="25"/>
                             <entry key="default.screenshots" value="3"/>

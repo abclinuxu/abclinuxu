@@ -79,13 +79,11 @@ v pravém sloupci v části nadepsané <b>Správa zápisku</b>.</p>
     </tr>
     <tr>
         <td>
-            <div>Datum zveřejnění</div>
-            <div>
-                <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish!}">
-                <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
-                Formát 2005-01-25 07:12
-                <@lib.showError key="publish" />
-            </div>
+            Datum zveřejnění
+            <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish!}">
+            <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
+            Formát 2005-01-25 07:12
+            <@lib.showError key="publish" />
         </td>
     </tr>
     <tr>

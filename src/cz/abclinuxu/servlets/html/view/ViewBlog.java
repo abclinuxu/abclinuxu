@@ -253,7 +253,7 @@ public class ViewBlog implements AbcAction, Configurable {
 
         List parents = persistence.findParents(relation);
         BlogCategory category = blogStory.getCategory();
-        if (category != null) {
+        if (category != null && category.getAbsoluteUrl() != null) {
             Link link = new Link(category.getName(), category.getAbsoluteUrl(), null);
             parents.add(parents.size() - 1, link);
         }

@@ -512,11 +512,26 @@ public class Misc {
      * @param xpath xpath expression
      * @return value of matched node or null
      */
-    public static String getNodeValue(Element element, String xpath) {
+    public static String getNodeValue(Node element, String xpath) {
         Node node = element.selectSingleNode(xpath);
         if (node != null)
             return node.getText();
         return null;
+    }
+
+    /**
+     * Extracts boolean value from element or attribute selected by given xpath starting at element.
+     * When xpath does not match anything, defaultValue is returned.
+     * @param element starting element
+     * @param xpath xpath expression
+     * @param defaultValue value to be returned when nothing is matched
+     * @return value of matched node or defaultValue
+     */
+    public static Boolean getNodeSetting(Node element, String xpath, Boolean defaultValue) {
+        Node node = element.selectSingleNode(xpath);
+        if (node != null)
+            return "yes".equalsIgnoreCase(node.getText());
+        return defaultValue;
     }
 
     /**

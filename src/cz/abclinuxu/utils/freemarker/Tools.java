@@ -708,13 +708,10 @@ public class Tools implements Configurable {
 
         if (aUser != null && (aUser instanceof User)) {
             User user = (User) aUser;
-            blockedUsers = Tools.getBlacklist(user, true);
+            blockedUsers = getBlacklist(user, true);
 
-            if(filterBanned) {
-                Element element = (Element) user.getData().selectSingleNode("/data/settings/hp_all_stories");
-                if (element != null && "yes".equals(element.getText()))
-                    filterBanned = false;
-            }
+            if (filterBanned)
+                filterBanned = Misc.getNodeSetting(user.getData(), "/data/settings/hp_all_stories", true);
         }
 
         if (! blockedUsers.isEmpty() || filterBanned) {
@@ -730,7 +727,7 @@ public class Tools implements Configurable {
         }
         else {
             // don't filter anything, just limit the story count
-            if(stories.size() > count)
+            if (stories.size() > count)
                 result.addAll(stories.subList(0, count));
             else
                 result.addAll(stories);
