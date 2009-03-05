@@ -96,7 +96,7 @@
     <@lib.showForum 0, 0, true, true, true, single_mode/>
 </#if>
 
-<#if (STORIES?size + DIGEST_STORIES?size > 0) >
+<#if (STORIES?size > 0) >
     <div class="ramec">
         <div class="s_nadpis">
             <@lib.showHelp>Vlastní blog si po přihlášení můžete založit v nastavení svého profilu</@lib.showHelp>
@@ -105,39 +105,29 @@
             <a href="/blog/vyber">výběr</a>
         </div>
         <table width="100%">
-            <#if (DIGEST_STORIES?size > 0) >
-                <@printListInRow DIGEST_STORIES />
-                <tr>
-                    <td colspan="2"><hr></td>
-                </tr>
-            </#if>
             <#if (STORIES?size > 0) >
-                <@printListInRow STORIES />
+                <#assign half = STORIES?size/2 >
+                <#if STORIES?size%2==1><#assign half=half+1></#if>
+                <tr>
+                    <td>
+                        <ul>
+                            <#list STORIES[0..half-1] as story>
+                                <li><@lib.showStoryInTable story, false /></li>
+                            </#list>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <#list STORIES[half..] as story>
+                                <li><@lib.showStoryInTable story, false /></li>
+                            </#list>
+                        </ul>
+                    </td>
+                </tr>
             </#if>
         </table>
     </div>
 </#if>
-
-<#macro printListInRow list>
-    <#assign half = list?size/2 >
-    <#if list?size%2==1><#assign half=half+1></#if>
-    <tr>
-        <td>
-            <ul>
-                <#list list[0..half-1] as story>
-                    <li><@lib.showStoryInTable story, false /></li>
-                </#list>
-            </ul>
-        </td>
-        <td>
-            <ul>
-                <#list list[half..] as story>
-                    <li><@lib.showStoryInTable story, false /></li>
-                </#list>
-            </ul>
-        </td>
-    </tr>
-</#macro>
 
 <#assign SUBPORTALS = VARS.getLatestSubportalChanges(USER!)>
 <#if (SUBPORTALS?size>0) >

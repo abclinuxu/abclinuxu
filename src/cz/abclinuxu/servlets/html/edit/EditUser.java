@@ -112,6 +112,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_SCREENSHOTS_COUNT = "screenshots";
     public static final String PARAM_NEWS_COUNT = "news";
     public static final String PARAM_STORIES_COUNT = "stories";
+    public static final String PARAM_DIGEST_STORIES_COUNT = "digestStories";
     public static final String PARAM_ARTICLES_COUNT = "articles";
     public static final String PARAM_COMPLETE_ARTICLES_COUNT = "complete_articles";
     public static final String PARAM_DEFAULT_PAGE_SIZE = "defaultPageSize";
@@ -152,6 +153,7 @@ public class EditUser implements AbcAction {
     public static final String VAR_DEFAULT_SCREENSHOT_COUNT = "DEFAULT_SCREENSHOTS";
     public static final String VAR_DEFAULT_NEWS_COUNT = "DEFAULT_NEWS";
     public static final String VAR_DEFAULT_STORIES_COUNT = "DEFAULT_STORIES";
+    public static final String VAR_DEFAULT_DIGEST_STORIES_COUNT = "DEFAULT_DIGEST_STORIES";
     public static final String VAR_DEFAULT_FEED_LINKS_COUNT = "DEFAULT_LINKS";
     public static final String VAR_DEFAULT_TEMPLATE_FEED_LINKS_COUNT = "DEFAULT_TEMPLATE_LINKS";
     public static final String VAR_USERS = "USERS";
@@ -840,6 +842,10 @@ public class EditUser implements AbcAction {
         if ( node!=null )
             params.put(PARAM_STORIES_COUNT, node.getText());
 
+        node = document.selectSingleNode("/data/settings/index_tail_digest_stories");
+        if ( node!=null )
+            params.put(PARAM_DIGEST_STORIES_COUNT, node.getText());
+
         node = document.selectSingleNode("/data/settings/page_size");
         if ( node!=null )
             params.put(PARAM_DEFAULT_PAGE_SIZE, node.getText());
@@ -958,6 +964,7 @@ public class EditUser implements AbcAction {
         env.put(VAR_DEFAULT_SCREENSHOT_COUNT, defaultSizes.get(VariableFetcher.KEY_SCREENSHOT));
         env.put(VAR_DEFAULT_NEWS_COUNT, defaultSizes.get(VariableFetcher.KEY_NEWS));
         env.put(VAR_DEFAULT_STORIES_COUNT, defaultSizes.get(VariableFetcher.KEY_STORY));
+        env.put(VAR_DEFAULT_DIGEST_STORIES_COUNT, defaultSizes.get(VariableFetcher.KEY_DIGEST_STORY));
         env.put(VAR_DEFAULT_FEED_LINKS_COUNT, defaultSizes.get(VariableFetcher.KEY_TEMPLATE_LINKS));
         env.put(VAR_DEFAULT_TEMPLATE_FEED_LINKS_COUNT, defaultSizes.get(VariableFetcher.KEY_INDEX_LINKS));
     }
@@ -2291,9 +2298,12 @@ public class EditUser implements AbcAction {
      * @return false, if there is a major error.
      */
     private boolean setStoriesSizeLimit(Map params, User user, Map env) {
-        Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
-        int max = (Integer) maxSizes.get(VariableFetcher.KEY_STORY);
-        return setLimitedSize(params, PARAM_STORIES_COUNT, user.getData(), "/data/settings/index_stories", 0, max, env);
+        Map<String, Integer> maxSizes = VariableFetcher.getInstance().getMaxSizes();
+        int max = maxSizes.get(VariableFetcher.KEY_STORY);
+        boolean result = setLimitedSize(params, PARAM_STORIES_COUNT, user.getData(), "/data/settings/index_stories", 0, max, env);
+        max = maxSizes.get(VariableFetcher.KEY_STORY);
+        result |= setLimitedSize(params, PARAM_DIGEST_STORIES_COUNT, user.getData(), "/data/settings/index_tail_digest_stories", 0, max, env);
+        return result;
     }
 
     /**

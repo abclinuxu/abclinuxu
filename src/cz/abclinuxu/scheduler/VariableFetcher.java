@@ -237,12 +237,11 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * the second List holds normal relations excluding those from digest. Banned stories and blocked users
      * may be filtered out.
      */
-    public List<Relation>[] getFreshDigestStories(Object user) {
-        int digestCount = getObjectCountForUser(user, KEY_DIGEST_STORY, "/data/settings/index_digest_stories");
+    public List<Relation> getFreshDigestStories(Object user) {
+        int digestCount = getObjectCountForUser(user, KEY_DIGEST_STORY, "/data/settings/index_tail_digest_stories");
         int normalCount = getObjectCountForUser(user, KEY_STORY, "/data/settings/index_stories");
         Set blockedUsers = Collections.EMPTY_SET;
-        List<Relation> resultNormal = new ArrayList<Relation>(normalCount);
-        List<Relation> resultDigest = new ArrayList<Relation>(digestCount);
+        List<Relation> result = new ArrayList<Relation>(normalCount);
         boolean filterBanned = true;
 
         if (user != null && (user instanceof User)) {
@@ -253,38 +252,37 @@ public class VariableFetcher extends TimerTask implements Configurable {
                 filterBanned = Misc.getNodeSetting(someUser.getData(), "/data/settings/hp_all_stories", true);
         }
 
-        for (Relation relation : freshDigestStories) {
-            if (! blockedUsers.isEmpty()) {
-                Item story = (Item) relation.getChild();
-                if (blockedUsers.contains(new Integer(story.getOwner())))
-                    continue;
-            }
-            resultDigest.add(relation);
-            if (resultDigest.size() == digestCount)
-                break;
-        }
-
-        for (Relation relation : freshStories) {
-            if (resultDigest.contains(relation))
-                continue;
-
+        int i = 0;
+        for (Iterator<Relation> iterator = freshStories.iterator(); i < normalCount && iterator.hasNext();) {
+            Relation relation = iterator.next();
             Item story = (Item) relation.getChild();
-            if (! blockedUsers.isEmpty()) {
-                if (blockedUsers.contains(new Integer(story.getOwner())))
-                    continue;
-            }
+            if (blockedUsers.contains(new Integer(story.getOwner())))
+                continue;
 
             if (filterBanned) {
                 if (story.getSingleProperty(Constants.PROPERTY_BANNED_BLOG) != null)
                     continue;
             }
 
-            resultNormal.add(relation);
-            if (resultNormal.size() == normalCount)
-                break;
+            result.add(relation);
+            i++;
         }
 
-        return new List[] {resultDigest, resultNormal};
+        i = 0;
+        for (Iterator<Relation> iterator = freshDigestStories.iterator(); i < digestCount && iterator.hasNext();) {
+            Relation relation = iterator.next();
+            if (result.contains(relation))
+                continue;
+
+            Item story = (Item) relation.getChild();
+            if (blockedUsers.contains(new Integer(story.getOwner())))
+                continue;
+
+            result.add(relation);
+            i++;
+        }
+
+        return result;
     }
 
     /**

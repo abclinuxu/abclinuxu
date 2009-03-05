@@ -277,10 +277,20 @@
         </tr>
 
         <tr>
+            <td class="required" width="200px">Počet výběrových zápisků</td>
+            <td>
+                <input type="text" name="digestStories" value="${PARAMS.digestStories!}" size="3" tabindex="15">
+                <@lib.showError key="digestStories"/>
+            </td>
+        </tr>
+
+        <tr>
             <td colspan="2">
-            Zde můžete specifikovat počet zápisků z blogů, které se zobrazují na úvodní stránce.
-            Standardní počet je nastaven na ${DEFAULT_STORIES} a můžete jej zde předefinovat. Nastavením na nulu
-            zrušíte jejich zobrazování.
+                Zde můžete specifikovat počet zápisků z blogů, které se zobrazují na úvodní stránce. První číslo
+                (defaultní hodnota je ${DEFAULT_STORIES}) určuje počet nejnovějších zápisků bez ohledu na to, zda
+                jsou či nejsou zařazeny do výběru. Druhé číslo (default je ${DEFAULT_DIGEST_STORIES})
+                určuje počet dodatečných zápisků z výběru, které se mají zobrazit na konci seznamu. Nastavením na nulu
+                zrušíte zobrazování zápisků. Další informace jsou v <a href="/napoveda/blogy">nápovědě</a>.
             </td>
         </tr>
 
