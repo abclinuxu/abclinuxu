@@ -2302,7 +2302,7 @@ public class EditUser implements AbcAction {
         int max = maxSizes.get(VariableFetcher.KEY_STORY);
         boolean result = setLimitedSize(params, PARAM_STORIES_COUNT, user.getData(), "/data/settings/index_stories", 0, max, env);
         max = maxSizes.get(VariableFetcher.KEY_STORY);
-        result |= setLimitedSize(params, PARAM_DIGEST_STORIES_COUNT, user.getData(), "/data/settings/index_tail_digest_stories", 0, max, env);
+        result &= setLimitedSize(params, PARAM_DIGEST_STORIES_COUNT, user.getData(), "/data/settings/index_tail_digest_stories", 0, max, env);
         return result;
     }
 

@@ -1203,7 +1203,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     public void refreshStories() {
         try {
-            int maximum = maxSizes.get(KEY_DIGEST_STORY);
+            int maximum = Tools.getPreloadedStoryCount(maxSizes.get(KEY_DIGEST_STORY));
             Set<String> values = Collections.singleton("yes");
             CompareCondition compareCondition = new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW);
             Qualifier[] qualifiers = new Qualifier[]{compareCondition, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
@@ -1212,7 +1212,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             synchronizeBlogRelations(list);
             freshDigestStories = list;
 
-            maximum = maxSizes.get(KEY_STORY);
+            maximum = Tools.getPreloadedStoryCount(maxSizes.get(KEY_STORY));
             qualifiers = new Qualifier[] {compareCondition, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
             list = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
             synchronizeBlogRelations(list);
@@ -1653,12 +1653,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
         size = prefs.getInt(PREF_DEFAULT + KEY_STORY, 5);
         defaultSizes.put(KEY_STORY, size);
         size = prefs.getInt(PREF_MAX + KEY_STORY, 5);
-        maxSizes.put(KEY_STORY, Tools.getPreloadedStoryCount(size));
+        maxSizes.put(KEY_STORY, size);
         freshStories = Collections.emptyList();
         size = prefs.getInt(PREF_DEFAULT + KEY_DIGEST_STORY, 4);
         defaultSizes.put(KEY_DIGEST_STORY, size);
         size = prefs.getInt(PREF_MAX + KEY_DIGEST_STORY, 5);
-        maxSizes.put(KEY_DIGEST_STORY, Tools.getPreloadedStoryCount(size));
+        maxSizes.put(KEY_DIGEST_STORY,size);
         freshDigestStories = Collections.emptyList();
 
         size = prefs.getInt(PREF_DEFAULT + KEY_BAZAAR, 5);
