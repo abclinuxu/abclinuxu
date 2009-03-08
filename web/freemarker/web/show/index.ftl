@@ -178,7 +178,7 @@
     <#assign HARDWARE = VARS.getFreshHardware(USER!)>
     <#if (HARDWARE?size>0) >
         <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Obrovská databáze znalostí o hardwaru, postupy zprovoznění v GNU/Linuxu.</span></a>
+            <@lib.showHelp>Obrovská databáze znalostí o hardwaru, postupy zprovoznění v GNU/Linuxu</@lib.showHelp>
             <a href="/hardware">Hardware</a>
         </div>
         <div class="s_sekce">
@@ -195,7 +195,7 @@
     <#assign SOFTWARE = VARS.getFreshSoftware(USER!)>
     <#if (SOFTWARE?size>0) >
         <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Katalog softwaru pro GNU/Linux.</span></a>
+            <@lib.showHelp>Katalog softwaru pro GNU/Linux</@lib.showHelp>
             <a href="/software">Software</a>
         </div>
         <div class="s_sekce">
@@ -212,7 +212,7 @@
    <td>
     <#assign DRIVERS = VARS.getFreshDrivers(USER!)>
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Nejčerstvější ovladače</span></a>
+          <@lib.showHelp>Nejčerstvější ovladače</@lib.showHelp>
         <a href="/ovladace">Ovladače</a>
       </div>
       <div class="s_sekce">
@@ -233,7 +233,7 @@
    <td>
     <#assign FAQ = VARS.getFreshFaqs(USER!)>
     <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Odpovědi na často kladené otázky.</span></a>
+        <@lib.showHelp>Odpovědi na často kladené otázky</@lib.showHelp>
         <a href="/faq">FAQ</a>
     </div>
     <div class="s_sekce">
@@ -248,7 +248,7 @@
    <td>
     <#assign DICTIONARY=VARS.getFreshDictionary(USER!)>
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Výkladový slovník linuxových pojmů.</span></a>
+          <@lib.showHelp>Výkladový slovník linuxových pojmů</@lib.showHelp>
         <a href="/slovnik">Slovník</a>
       </div>
       <div class="s_sekce">
@@ -264,7 +264,7 @@
   <td>
     <#assign PERSONALITY=VARS.getFreshPersonalities(USER!)>
     <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Databáze významných osobností z komunity.</span></a>
+        <@lib.showHelp>Databáze významných osobností z komunity</@lib.showHelp>
         <a href="/kdo-je">Kdo je</a>
     </div>
     <div class="s_sekce">
@@ -283,7 +283,7 @@
     <td>
     <#assign BAZAAR = VARS.getFreshBazaarAds(USER!)>
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Inzeráty z AbcBazaru.</span></a>
+          <@lib.showHelp>Inzeráty z AbcBazaru</@lib.showHelp>
         <a href="/bazar">Bazar</a>
       </div>
       <div class="s_sekce">
@@ -306,7 +306,7 @@
    <td>
     <#assign TRIVIAS = VARS.getFreshTrivia(USER!)>
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Nejčerstvější kvízy</span></a>
+          <@lib.showHelp>Nejčerstvější kvízy</@lib.showHelp>
         <a href="/hry">Kvízy</a>
       </div>
       <div class="s_sekce">
@@ -318,6 +318,22 @@
         <span class="s_sekce_dalsi"><a href="/hry">další&nbsp;&raquo;</a></span>
       </div>
    </td>
+
+    <td>
+        <#assign VIDEOS = VARS.getFreshVideos(USER!)>
+        <div class="s_nadpis">
+            <@lib.showHelp>Zajímavá linuxová videa</@lib.showHelp>
+            <a href="/videa">Videa</a>
+        </div>
+        <div class="s_sekce">
+            <ul>
+                <#list VIDEOS as rel>
+                    <li><a href="${rel.url}">${rel.child.title}</a></li>
+                </#list>
+            </ul>
+            <span class="s_sekce_dalsi"><a href="/videa">další&nbsp;&raquo;</a></span>
+        </div>
+    </td>
   </tr>
 </table>
 
@@ -339,28 +355,6 @@
           </tr>
         </table>
         <span class="s_sekce_dalsi"><a href="/desktopy">další&nbsp;&raquo;</a></span>
-      </div>
-    </div>
-</#if>
-
-<#assign VIDEOS = VARS.getFreshVideos(USER!)>
-<#if (VIDEOS?size > 0)>
-    <div class="ramec">
-      <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Zajímavá linuxová videa.</span></a>
-        <a href="/videa">Videa</a>
-      </div>
-      <div class="s_sekce" style="text-align:center;">
-        <table align="center">
-          <tr>
-            <#list VIDEOS as video>
-              <td>
-                <@lib.showVideo video />
-              </td>
-            </#list>
-          </tr>
-        </table>
-        <span class="s_sekce_dalsi"><a href="/videa">další&nbsp;&raquo;</a></span>
       </div>
     </div>
 </#if>
