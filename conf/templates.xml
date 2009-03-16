@@ -889,4 +889,23 @@
         <action name="content" template="print" content="/misc/what_happened.ftl">
         </action>
     </servlet>
+    
+    <servlet name="AdministrationEditorsPortal">
+    	<action name="content" content="/show/administration/editors_portal.ftl">
+            <var name="TITLE" value="Správa redakce" />
+        </action>
+        <action name="login" content="/show/login.ftl">
+            <var name="TITLE" value="Přihlášení do systému" />
+        </action>
+        <action name="forbidden" content="/misc/forbidden.ftl">
+            <var name="TITLE" value="Přístup odepřen" />
+        </action>
+    </servlet>
+    
+    <servlet name="AdministrationViewAuthors">
+    	<action name="list" content="/show/admininistration/authors.ftl" >
+    		<var name="TITLE" value="Správa autorů - seznam" />
+    	</action>
+    </servlet>
+    
 </config>

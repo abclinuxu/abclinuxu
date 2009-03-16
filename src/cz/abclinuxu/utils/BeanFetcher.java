@@ -118,7 +118,7 @@ public class BeanFetcher {
 					"Unable to fetch data with FetchType " + ft.toString());
 		}
 	}
-
+	
 	private static String safeRetrieveElementText(Element root, String xpath) {
 
 		Node node = root.selectSingleNode(xpath);
