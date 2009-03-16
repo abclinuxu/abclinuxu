@@ -100,7 +100,7 @@ public class ServletUtils implements Configurable {
      * simple String->String mapping is created. If parameter holds multiple values,
      * String->List of Strings mapping is created. The key is always parameter's name.
      */
-    public static Map putParamsToMap(HttpServletRequest request) throws InvalidInputException {
+	public static Map putParamsToMap(HttpServletRequest request) throws InvalidInputException {
         HttpSession session = request.getSession();
         Map map = (Map) session.getAttribute(Constants.VAR_PARAMS);
         if ( map!=null )
@@ -143,7 +143,7 @@ public class ServletUtils implements Configurable {
             Enumeration names = request.getParameterNames();
             while ( names.hasMoreElements() ) {
                 String name = (String) names.nextElement();
-                String[] values = request.getParameterValues(name);
+                String[] values = request.getParameterValues(name);               
 
                 if ( values.length==1 ) {
                     String value = values[0];
@@ -165,6 +165,25 @@ public class ServletUtils implements Configurable {
                 }
             }
         }
+        
+        // log passed content
+        /*
+        if(log.isDebugEnabled()) {
+        	StringBuilder sb = new StringBuilder();        	
+        	for(Map.Entry entry:  (Set<Map.Entry>) map.entrySet()) {
+        		
+        		String key = (entry.getKey()!=null) ? entry.getKey().toString() : null;
+        		String value = (entry.getValue()!=null) ? entry.getValue().toString() : null;
+        		
+        		sb.append(key).append(": ").append(value).append("\n");
+        		
+        	}        	
+        	if(sb.length()>0) sb.deleteCharAt(sb.length()-1);
+        	
+        	log.debug("Passed params: " + sb.toString());
+        }
+        */
+        
         return map;
     }
 
