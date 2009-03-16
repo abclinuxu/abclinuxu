@@ -69,8 +69,6 @@ public class History implements AbcAction {
 
     public static final String VALUE_FILTER_LAST = "last";
 
-    static final Qualifier[] QUALIFIERS_ARRAY = new Qualifier[]{};
-
     /** list of found relations, that match the conditions */
     public static final String VAR_FOUND = "FOUND";
     /** normalized type */
@@ -299,6 +297,6 @@ public class History implements AbcAction {
         if (limit != null)
             qualifiers.add(limit);
 
-        return (Qualifier[]) qualifiers.toArray(QUALIFIERS_ARRAY);
+        return (Qualifier[]) qualifiers.toArray(Qualifier.ARRAY_TYPE);
     }
 }

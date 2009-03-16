@@ -33,6 +33,9 @@ public class Qualifier {
     public static final Qualifier ORDER_ASCENDING = new Qualifier("ORDER_ASCENDING");
     public static final Qualifier ORDER_DESCENDING = new Qualifier("ORDER_DESCENDING");
 
+    public static final Qualifier[] ARRAY_TYPE = new Qualifier[] {};
+    
+    
     protected final String name;
 
     protected Qualifier(String name) {

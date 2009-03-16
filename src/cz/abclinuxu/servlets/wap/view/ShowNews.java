@@ -42,8 +42,6 @@ public class ShowNews implements AbcAction {
     /** list of found relations, that match the conditions */
     public static final String VAR_FOUND = "FOUND";
 
-    static final Qualifier[] QUALIFIERS_ARRAY = new Qualifier[]{};
-
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
@@ -78,6 +76,6 @@ public class ShowNews implements AbcAction {
         if ( rowCount>0 )
             qualifiers.add(new LimitQualifier(fromRow, rowCount));
 
-        return (Qualifier[]) qualifiers.toArray(QUALIFIERS_ARRAY);
+        return (Qualifier[]) qualifiers.toArray(Qualifier.ARRAY_TYPE);
     }
 }
