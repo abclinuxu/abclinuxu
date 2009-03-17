@@ -18,6 +18,25 @@
  */
 package cz.abclinuxu.persistence;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.prefs.Preferences;
+
 import cz.abclinuxu.data.CommonObject;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.GenericObject;
@@ -28,6 +47,7 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Server;
 import cz.abclinuxu.data.Tag;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
@@ -39,27 +59,12 @@ import cz.abclinuxu.persistence.extra.QualifierTool;
 import cz.abclinuxu.persistence.extra.tags.TagExpression;
 import cz.abclinuxu.persistence.impl.MySqlPersistence;
 import cz.abclinuxu.persistence.versioning.VersionedDocument;
-
 import cz.abclinuxu.scheduler.VariableFetcher;
-import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
-import cz.abclinuxu.utils.BeanFetcher.FetchType;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
-import java.sql.*;
-import java.util.prefs.Preferences;
-import java.util.Date;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Set;
 
 /**
  * Thread-safe singleton, that encapsulates SQL commands used outside of
@@ -168,6 +173,9 @@ public final class SQLTool implements Configurable {
 
 	public static final String MAX_SUBPORTAL_READS = "max.subportal.reads";
 	public static final String FIND_ADVERTISEMENT_BY_STRING = "find.advertisement.by.string";
+
+	public static final String GET_AUTHORS_WITH_ARTICLES_COUNT = "get.authors.with.articles.count";
+	public static final String COUNT_AUTHORS_WITH_ARTICLES_COUNT ="count.authors.with.articles.count";
 
 	private static SQLTool singleton;
 	static {
@@ -1758,8 +1766,11 @@ public final class SQLTool implements Configurable {
 
 	/**
 	 * Finds items of given type with applied qualifiers
-	 * @param type Type of items to be retrieved
-	 * @param qualifiers Narrowing qualifiers
+	 * 
+	 * @param type
+	 *            Type of items to be retrieved
+	 * @param qualifiers
+	 *            Narrowing qualifiers
 	 * @return List of items which fitted conditions
 	 */
 	public List<Item> findItemsWithType(int type, Qualifier[] qualifiers) {
@@ -2837,7 +2848,9 @@ public final class SQLTool implements Configurable {
 
 	/**
 	 * Finds author for given userId, if any
-	 * @param userId Id of user
+	 * 
+	 * @param userId
+	 *            Id of user
 	 * @return Item with author data
 	 */
 	public Item findAuthorByUserId(int userId) {
@@ -2849,6 +2862,24 @@ public final class SQLTool implements Configurable {
 		}
 
 		return null;
+	}
+
+	public List<Object[]> getAuthorsWithArticlesCount(Qualifier[] qualifiers) {
+		if (qualifiers == null)
+			qualifiers = Qualifier.ARRAY_TYPE;
+		StringBuilder sb = new StringBuilder(sql.get(GET_AUTHORS_WITH_ARTICLES_COUNT));
+		List params = new ArrayList();
+		appendQualifiers(sb, qualifiers, params, null, null);
+		return loadObjects(sb.toString(), params);
+	}
+
+	public Integer countAuthorWithArticlesCount(Qualifier[] qualifiers) {
+		if (qualifiers == null)
+			qualifiers = Qualifier.ARRAY_TYPE;
+		StringBuilder sb = new StringBuilder(sql.get(COUNT_AUTHORS_WITH_ARTICLES_COUNT));
+		List params = new ArrayList();
+		appendQualifiers(sb, qualifiers, params, null, null);
+		return loadNumber(sb.toString(), params);
 	}
 	
 	public Item findAdvertisementByString(String str) {
@@ -2987,6 +3018,8 @@ public final class SQLTool implements Configurable {
 		store(MOST_VOTED_POLLS, prefs);
 		store(HIGHEST_SCORE_USERS, prefs);
 		store(FIND_ADVERTISEMENT_BY_STRING, prefs);
+		store(GET_AUTHORS_WITH_ARTICLES_COUNT, prefs);
+		store(COUNT_AUTHORS_WITH_ARTICLES_COUNT, prefs);
 	}
 
 	/**

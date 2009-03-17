@@ -252,6 +252,9 @@ public class QualifierTool {
 		case CHILD_TYPE:
 			sb.append("typ_potomka");
 			break;
+		case COUNTER:
+			sb.append("counter");
+			break;
 		case CREATED:
 			sb.append("vytvoreno");
 			break;
