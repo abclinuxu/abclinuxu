@@ -24,6 +24,8 @@ public class Author {
 	private String photoUrl;
 	
 	private String about;
+
+	private int articleCount;
 	
 	/**
 	 * Creates empty author 
@@ -225,6 +227,20 @@ public class Author {
 	 */
 	public void setAbout(String about) {
 		this.about = about;
+	}
+
+	/**
+	 * @return the articleCount
+	 */
+	public int getArticleCount() {
+		return articleCount;
+	}
+
+	/**
+	 * @param articleCount the articleCount to set
+	 */
+	public void setArticleCount(int articleCount) {
+		this.articleCount = articleCount;
 	}
 
 	
