@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import sun.security.action.GetLongAction;
+
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.security.Permissions;
@@ -42,7 +44,7 @@ public class PwdNavigator {
 		/**
 		 * Navigation concerning administration part
 		 */
-		ADMINISTRATION {
+		ADMIN_BASE {
 			@Override
 			EnumSet<Right> fillRights(User user, EnumSet<Right> rights) {
 	
@@ -61,6 +63,18 @@ public class PwdNavigator {
 				links.add(new Link("Správa", url.toString(), "Portál správy abclinuxu.cz"));
 				url.append("/redakce");
 				links.add(new Link("Redakce", url.toString(), "Redakční systém"));				
+				return links;
+			}
+		},
+		ADMIN_AUTHORS {
+			@Override
+			EnumSet<Right> fillRights(User user, EnumSet<Right> rights) {
+				return ADMIN_BASE.fillRights(user, rights);
+			}
+			@Override
+			List<Link> navigate(List<Link> links, Link tail) {
+				links = ADMIN_BASE.navigate(links, tail);
+				links.add(new Link("Správa autorů", getUrlPrefix(links) + "autori", "Správa autorů"));
 				return links;
 			}
 		};
@@ -122,8 +136,7 @@ public class PwdNavigator {
 			if(links.isEmpty())
 				links.add(tail);
 			else {
-				String url = links.get(links.size()-1).getUrl() + "/" + tail.getUrl();
-				links.add(new Link(tail.getTitle(), url, tail.getDescription()));
+				links.add(new Link(tail.getTitle(), getUrlPrefix(links) +tail.getUrl(), tail.getDescription()));
 			}
 		}
 		
@@ -149,5 +162,14 @@ public class PwdNavigator {
 
 		// delegate functionality
 		return nt.fillRights(user, set);
+	}
+	
+	/**
+	 * Extract URL prefix from last link in list
+	 * @param links List of links
+	 * @return Prefix from last link
+	 */
+	private static String getUrlPrefix(List<Link> links) {
+		return links.get(links.size()-1).getUrl() + "/";
 	}
 }

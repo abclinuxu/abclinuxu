@@ -1,5 +1,7 @@
 package cz.abclinuxu.data.view;
 
+import java.util.Date;
+
 /**
  * Handles author for purposes of editors.
  * @author kapy
@@ -26,6 +28,8 @@ public class Author {
 	private String about;
 
 	private int articleCount;
+	
+	private Date lastArticleDate;
 	
 	/**
 	 * Creates empty author 
@@ -243,5 +247,18 @@ public class Author {
 		this.articleCount = articleCount;
 	}
 
-	
+	/**
+	 * @return the lastArticleDate
+	 */
+	public Date getLastArticleDate() {
+		return lastArticleDate;
+	}
+
+	/**
+	 * @param lastArticleDate the lastArticleDate to set
+	 */
+	public void setLastArticleDate(Date lastArticleDate) {
+		this.lastArticleDate = lastArticleDate;
+	}
+
 }

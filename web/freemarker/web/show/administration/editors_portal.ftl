@@ -3,7 +3,8 @@
 <@lib.showMessages/>
 
 <p>
-Vítejte v redakčním systému.
+Vítejte v redakčním systému. Zde můžete psát nové články, kontrolovat své honoráře,
+prohlížet náměty, upravovat osobní údaje atd.
 </p> 
 
 <div>

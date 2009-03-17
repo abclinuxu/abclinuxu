@@ -27,8 +27,7 @@ import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.BeanFetcher.FetchType;
 
 public class EditorsPortal implements AbcAction {
-
-	public static final String VAR_PARENTS = Constants.VAR_PARENTS;
+	
 	public static final String VAR_AUTHOR = "AUTHOR";
 
 	public String process(HttpServletRequest request,
@@ -51,7 +50,7 @@ public class EditorsPortal implements AbcAction {
 
 		// check advanced permissions and create navigation
 		// tree according to permissions given
-		PwdNavigator navigator = new PwdNavigator(user, PwdNavigator.NavigationType.ADMINISTRATION);
+		PwdNavigator navigator = new PwdNavigator(user, PwdNavigator.NavigationType.ADMIN_BASE);
 
 		if (!navigator.hasAppropriateRights()) {
 			return FMTemplateSelector.select("AdministrationEditorsPortal",
@@ -60,7 +59,7 @@ public class EditorsPortal implements AbcAction {
 
 		// store navigation structure
 		List<Link> parents = navigator.navigate();
-		env.put(VAR_PARENTS, parents);
+		env.put(Constants.VAR_PARENTS, parents);
 
 		// store author if any
 		Author author = findAssignedAuthor(user.getId());
