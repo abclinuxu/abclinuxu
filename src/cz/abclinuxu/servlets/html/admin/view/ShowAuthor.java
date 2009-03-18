@@ -16,6 +16,7 @@ import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.extra.QualifierTool;
+import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -41,7 +42,6 @@ public class ShowAuthor implements AbcAction {
 	public String process(HttpServletRequest request,
 			HttpServletResponse response, Map env) throws Exception {
 
-		Persistence persistence = PersistenceFactory.getPersistence();
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
 		User user = (User) env.get(Constants.VAR_USER);
 		String action = (String) params.get(PARAM_ACTION); 
@@ -53,29 +53,30 @@ public class ShowAuthor implements AbcAction {
 
 		// check permissions
 		if (user == null)
-			return FMTemplateSelector.select("AdministrationShowAuthor",
+			return FMTemplateSelector.select("AdministrationEditorsPortal",
 					"login", env, request);
 
-		// check advanced permissions and create navigation
+		// check permissions and create navigation
 		// tree according to permissions given
 		PwdNavigator navigator = new PwdNavigator(user,
 				PwdNavigator.NavigationType.ADMIN_AUTHORS);
 
-		if (!navigator.hasAppropriateRights()) {
-			return FMTemplateSelector.select("AdministrationShowAuthor",
+		if (!navigator.hasPermissions(Permissions.PERMISSION_MODIFY)) {
+			return FMTemplateSelector.select("AdministrationEditorsPortal",
 					"forbidden", env, request);
 		}
 		
 		if (action == null || action.length() == 0) 
-			return list(request, user, env, params, navigator);
+			return list(request, env, navigator);
 
 		throw new MissingArgumentException("Chybí parametr action!");
 				
 		
 	}
 	
-	private String list(HttpServletRequest request, User user, Map env, Map params, PwdNavigator navigator) {
+	private String list(HttpServletRequest request, Map env, PwdNavigator navigator) {
 
+		Map params = (Map) env.get(Constants.VAR_PARAMS);
 		int from = Misc.parseInt((String) params.get(PARAM_FROM),0);
 		int count = Misc.getPageSize(50, 50, env, null);
 

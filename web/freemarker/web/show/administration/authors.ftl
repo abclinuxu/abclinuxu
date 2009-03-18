@@ -2,10 +2,13 @@
 
 <@lib.showMessages/>
 <h3>Správa autorů</h3>
-<p>
-Na této stránce můžete prohlížet a spravovat autory. Sloupeček Smlouva ukazuje, zda uživatel souhlasil s autorskou
-smlouvou a zda není stará. Sloupeček Souhlas indikuje souhlas se zpracováním osobních údajů.
+<p>Na této stránce můžete prohlížet a spravovat autory.</p>
+<p>Authory lze filtrovat pomocí sloupců <b>Jméno</b> a <b>Příjmení</b>, kde stačí zadat začátek jména.
+Dále podle toho, zda uživatel souhlasil s autorskou smlouvou a zda odsouhlasená smlouva není stará.
+Sloupec <b>Aktivní</b> poté ukazuje, zda autor v poslední době (posledních 9 měsíců) vydal článek. 
+Datum posledního článku je zobrazen ve sloupci <b>Poslední</b> a toto stáří lze zde filtrovat. 
 </p> 
+<br/>
 
 <table>
 	<tr>
@@ -18,9 +21,9 @@ smlouvou a zda není stará. Sloupeček Souhlas indikuje souhlas se zpracování
 		<th>Akce</th>
 	</tr>
 	<tr>	
-	<form action="" method="post">
-		<td><input type="text" name="filterAuthorsByName" value="${FILTER.value("filterAuthorsByName")}" /></td>
-		<td><input type="text" name="filterAuthorsBySurname" value="${FILTER.value("filterAuthorsBySurname")}" /></td>
+	<form action="${URL.noPrefix("/sprava/redakce/autori")}" method="POST">
+		<td><input type="text" name="filterAuthorsByName" value="${FILTER.value("filterAuthorsByName")}" size="8"/></td>
+		<td><input type="text" name="filterAuthorsBySurname" value="${FILTER.value("filterAuthorsBySurname")}" size="8"/></td>
 		<td><select name="filterAuthorsByContract">
 			<@lib.showOption5 "", "", FILTER.checked("filterAuthorsByContract", "")/>
 			<@lib.showOption5 "old", "stará", FILTER.checked("filterAuthorsByContract", "old")/>
@@ -61,17 +64,21 @@ smlouvou a zda není stará. Sloupeček Souhlas indikuje souhlas se zpracování
 			<td>smlouva</td>
 			<td>${author.active?string("ano","ne")}</td>
 			<td>${author.articleCount}</td>
-			<td>${(author.lastArticleDate?date)!}</td>
+			<#assign date=""/>
+			<#if author.lastArticleDate??>
+				<#assign date=DATE.show(author.lastArticleDate, "CZ_DMY") />
+			</#if>
+			<td>${date}</td>
 			<td style="white-space:nowrap">
 			<#if author.email??><a href="mailto:${author.email}">email</a>
 			<#else>email
 			</#if>&nbsp;
-			<a href="${URL.make("redakce/autori?edit")}">upravit</a>&nbsp;
-			<a href="${URL.make("autori/namety")}">náměty</a>&nbsp;
-			<a href="${URL.make("autori/clanky")}">články</a>&nbsp;
-			<a href="${URL.make("autori/honorare")}">honoráře</a>&nbsp;
-			<a href="${URL.make("autori/smlouvy")}">smlouvy</a>&nbsp;
-			<a href="${URL.make("redakce/autori?delete")}">smazat</a>&nbsp;
+			<a href="${URL.make("/redakce/autori/edit")}/${author.id}?action=edit">upravit</a>&nbsp;
+			<a href="${URL.make("/autori/namety")}">náměty</a>&nbsp;
+			<a href="${URL.make("/autori/clanky")}">články</a>&nbsp;
+			<a href="${URL.make("/autori/honorare")}">honoráře</a>&nbsp;
+			<a href="${URL.make("/autori/smlouvy")}">smlouvy</a>&nbsp;
+			<a href="${URL.make("/redakce/autori/edit")}/${author.id}?action=delete">smazat</a>&nbsp;
 			</td>
 		</tr>
 	</#list>

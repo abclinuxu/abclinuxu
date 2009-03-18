@@ -18,6 +18,7 @@ import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -52,7 +53,7 @@ public class EditorsPortal implements AbcAction {
 		// tree according to permissions given
 		PwdNavigator navigator = new PwdNavigator(user, PwdNavigator.NavigationType.ADMIN_BASE);
 
-		if (!navigator.hasAppropriateRights()) {
+		if (!navigator.hasPermissions(Permissions.PERMISSION_MODIFY)) {
 			return FMTemplateSelector.select("AdministrationEditorsPortal",
 					"forbidden", env, request);
 		}

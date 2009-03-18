@@ -39,26 +39,6 @@ public class BeanFetcher {
 		OMIT_XML
 	}
 
-	/**
-	 * public static class ParamMapper { private List<ParamMapperElement>
-	 * elements;
-	 * 
-	 * public ParamMapper(String...parts) { if(parts.length%3!=0) throw new
-	 * IllegalArgumentException(
-	 * "Param mapper is not following required syntax, wrong number of arguments!"
-	 * );
-	 * 
-	 * elements = new ArrayList<ParamMapperElement>(); ParamMapperElement pme =
-	 * null; for(int i=0; i< parts.length; i++) { switch(i%3) { case 0: pme =
-	 * new ParamMapperElement(); pme.paramName = parts[i]; break; case 1:
-	 * pme.xpath = parts[i]; break; case 2: pme.errorMessage = parts[i];
-	 * elements.add(pme); break; } } } }
-	 * 
-	 * 
-	 * private static class ParamMapperElement { String paramName; String xpath;
-	 * String errorMessage; }
-	 */
-
 	// Disable instantiation
 	private BeanFetcher() {
 	}
@@ -118,6 +98,7 @@ public class BeanFetcher {
 	 * <li>string2</li>
 	 * <li>data</li>
 	 * <li>articleCount</li>
+	 * <li>lastArticleDate</li>
 	 * </ol>
 	 * @param objects Array of objects
 	 * @param ft Fetch type

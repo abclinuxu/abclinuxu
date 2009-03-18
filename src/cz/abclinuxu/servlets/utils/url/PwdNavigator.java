@@ -24,16 +24,6 @@ import cz.abclinuxu.utils.freemarker.Tools;
 public class PwdNavigator {
 
 	/**
-	 * Internally holds possible rights to create navigation structure
-	 * 
-	 * @author kapy
-	 * 
-	 */
-	private static enum Right {
-		NONE, AUTHOR, EDITOR
-	}
-
-	/**
 	 * Responsible for rights and navigation logic. Fills rights appropriately
 	 * and creates navigation stub.
 	 * 
@@ -46,67 +36,69 @@ public class PwdNavigator {
 		 */
 		ADMIN_BASE {
 			@Override
-			EnumSet<Right> fillRights(User user, EnumSet<Right> rights) {
-	
-				// set editor rights
-				Permissions editor = Tools.permissionsFor(user,
-						Constants.REL_AUTHORS);
-				if (editor.canModify()) {
-					rights.add(Right.EDITOR);
-				}
-				return rights;
+			Permissions getPermissions(User user) {
+				return Tools.permissionsFor(user, Constants.REL_AUTHORS);
 			}
+
 			@Override
 			List<Link> navigate(List<Link> links, Link tail) {
 
-				StringBuilder url = new StringBuilder(UrlUtils.PREFIX_ADMINISTRATION);				
-				links.add(new Link("Správa", url.toString(), "Portál správy abclinuxu.cz"));
+				StringBuilder url = new StringBuilder(
+						UrlUtils.PREFIX_ADMINISTRATION);
+				links.add(new Link("Správa", url.toString(),
+						"Portál správy abclinuxu.cz"));
 				url.append("/redakce");
-				links.add(new Link("Redakce", url.toString(), "Redakční systém"));				
+				links
+						.add(new Link("Redakce", url.toString(),
+								"Redakční systém"));
 				return links;
 			}
 		},
 		ADMIN_AUTHORS {
 			@Override
-			EnumSet<Right> fillRights(User user, EnumSet<Right> rights) {
-				return ADMIN_BASE.fillRights(user, rights);
+			Permissions getPermissions(User user) {
+				return ADMIN_BASE.getPermissions(user);
 			}
+
 			@Override
 			List<Link> navigate(List<Link> links, Link tail) {
 				links = ADMIN_BASE.navigate(links, tail);
-				links.add(new Link("Správa autorů", getUrlPrefix(links) + "autori", "Správa autorů"));
+				links.add(new Link("Správa autorů", getUrlPrefix(links)
+						+ "autori", "Správa autorů"));
 				return links;
 			}
 		};
 
-		abstract EnumSet<Right> fillRights(User user, EnumSet<Right> rights);
+		abstract Permissions getPermissions(User user);
+
 		abstract List<Link> navigate(List<Link> links, Link tail);
 	}
 
-	private EnumSet<Right> rights;
 	private NavigationType nt;
+	private Permissions permissions;
 
 	/**
 	 * Creates navigation creator for given user.
 	 * 
 	 * @param user
 	 *            User to create navigation for
-	 * @param nt Navigation type of this navigator
+	 * @param nt
+	 *            Navigation type of this navigator
 	 */
 	public PwdNavigator(User user, NavigationType nt) {
 
 		// set navigation type & rights
 		this.nt = nt;
-		this.rights = setRights(user);
+		this.permissions = nt.getPermissions(user);
 	}
 
 	/**
-	 * Checks whether user has any rights for given page
+	 * Checks whether user has permissions to perform operation
 	 * 
-	 * @return {@code true} if user has rights, {@code false} otherwise
+	 * @return {@code true} if user has permissions, {@code false} otherwise
 	 */
-	public boolean hasAppropriateRights() {
-		return !rights.isEmpty();
+	public boolean hasPermissions(int mask) {
+		return (permissions.getPermissions() & mask) != 0;
 	}
 
 	/**
@@ -129,47 +121,30 @@ public class PwdNavigator {
 	public List<Link> navigate(Link tail) {
 
 		List<Link> links = new ArrayList<Link>();
-		
-		links = nt.navigate(links, tail);				
+
+		links = nt.navigate(links, tail);
 		if (tail != null) {
 			// append first link
-			if(links.isEmpty())
+			if (links.isEmpty())
 				links.add(tail);
 			else {
-				links.add(new Link(tail.getTitle(), getUrlPrefix(links) +tail.getUrl(), tail.getDescription()));
+				links.add(new Link(tail.getTitle(), getUrlPrefix(links)
+						+ tail.getUrl(), tail.getDescription()));
 			}
 		}
-		
+
 		return links;
 
-	}
-
-	/**
-	 * Sets rights for given user and navigation type
-	 * 
-	 * @param user
-	 *            User object
-	 * @return Set of rights
-	 */
-	private EnumSet<Right> setRights(User user) {
-
-		EnumSet<Right> set = EnumSet.noneOf(Right.class);
-
-		// check root rights
-		if (user.isRoot() || user.hasRole(Roles.ROOT)) {
-			return EnumSet.allOf(Right.class);
-		}
-
-		// delegate functionality
-		return nt.fillRights(user, set);
 	}
 	
 	/**
 	 * Extract URL prefix from last link in list
-	 * @param links List of links
+	 * 
+	 * @param links
+	 *            List of links
 	 * @return Prefix from last link
 	 */
 	private static String getUrlPrefix(List<Link> links) {
-		return links.get(links.size()-1).getUrl() + "/";
+		return links.get(links.size() - 1).getUrl() + "/";
 	}
 }
