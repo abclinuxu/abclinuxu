@@ -36,6 +36,14 @@ public class Author {
 	 */
 	public Author() {
 	}
+	
+	public String getTitle() {
+		StringBuilder sb = new StringBuilder();
+		if(name!=null) sb.append(name).append(" ");
+		if(surname!=null) sb.append(surname);
+		
+		return sb.toString();
+	}
 
 	/**
 	 * @return the id
