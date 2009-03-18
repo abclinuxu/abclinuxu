@@ -706,7 +706,7 @@
 
     <servlet name="ViewAuthor">
         <action name="author" content="/show/author.ftl">
-            <var name="TITLE" value='Autor ${TOOL.childName(AUTHOR)}' type="Lazy"/>
+            <var name="TITLE" value='Autor ${AUTHOR.title}' type="Lazy"/>
         </action>
         <action name="authors_list" content="/show/sekce_autori.ftl">
             <var name="TITLE" value="Seznam autorů"/>
@@ -902,10 +902,21 @@
         </action>
     </servlet>
     
-    <servlet name="AdministrationViewAuthors">
-    	<action name="list" content="/show/admininistration/authors.ftl" >
+    <servlet name="AdministrationShowAuthor">
+    	<action name="list" content="/show/administration/authors.ftl" >
     		<var name="TITLE" value="Správa autorů - seznam" />
+    	</action>
+    	<action name="show" content="/show/administration/author.ftl" >
+    		<var name="TITLE" value="Zobrazení autora" />
     	</action>
     </servlet>
     
+    <servlet name="AdministrationEditAuthor">
+    	<action name="add" content="/add/administration/author.ftl" >
+    		<var name="TITLE" value="Přidání autora" />
+    	</action>
+    	<action name="edit" content="/add/administration/author.ftl" >
+    		<var name="TITLE" value="Editace autora" />
+    	</action>
+    </servlet>
 </config>
