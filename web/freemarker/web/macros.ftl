@@ -398,20 +398,20 @@
 
 <#macro showOption (param value caption type extra...)>
     <label>
-        <input type="${type}" name="${param}" value="${value}"<#if TOOL.isWithin(PARAMS[param], value)> checked</#if>${" "+extra[0]!}>
+        <input type="${type}" name="${param}" value="${value}"<#if TOOL.isWithin(PARAMS[param], value)> checked="checked"</#if>${" "+extra[0]!} />
         ${caption}
     </label>
 </#macro>
 
 <#macro showOption2 (param value caption type values)>
     <label>
-        <input type="${type}" name="${param}" value="${value}"<#if TOOL.isWithin(values, value)> checked</#if>> ${caption}
+        <input type="${type}" name="${param}" value="${value}"<#if TOOL.isWithin(values, value)> checked="checked"</#if> /> ${caption}
     </label>
 </#macro>
 
 <#macro showOption3 (param value caption type condition)>
     <label>
-        <input type="${type}" name="${param}" value="${value}"<#if condition> checked</#if>> ${caption}
+        <input type="${type}" name="${param}" value="${value}"<#if condition> checked="checked"</#if> /> ${caption}
     </label>
 </#macro>
 
@@ -422,6 +422,16 @@
 <#macro showOption5 (value caption condition)>
     <option value="${value}"<#if condition> selected</#if>>${caption}</option>
 </#macro>
+
+<#macro showOption6 (param value caption type condition extra...)>
+    <label>
+        <input type="${type}" name="${param}" value="${value}"
+        <#if condition> checked="checked"</#if>
+        <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+        ${caption}
+    </label>
+</#macro>
+
 
 <#macro advertisement (id)>${TOOL.getAdvertisement(id, .vars)}</#macro>
 
