@@ -1,5 +1,7 @@
 <#include "../../header.ftl">
 
+<div style="float:right"><a href="${URL.make("/redakce/autori/edit?action=add")}">Přidat autora</a></div>
+
 <@lib.showMessages/>
 <h3>Správa autorů</h3>
 <p>Na této stránce můžete prohlížet a spravovat autory.</p>
@@ -73,12 +75,12 @@ Datum posledního článku je zobrazen ve sloupci <b>Poslední</b> a toto stář
 			<#if author.email??><a href="mailto:${author.email}">email</a>
 			<#else>email
 			</#if>&nbsp;
-			<a href="${URL.make("/redakce/autori/edit")}/${author.id}?action=edit">upravit</a>&nbsp;
+			<a href="${URL.make("/redakce/autori/edit/${author.id}?action=edit")}">upravit</a>&nbsp;
 			<a href="${URL.make("/autori/namety")}">náměty</a>&nbsp;
 			<a href="${URL.make("/autori/clanky")}">články</a>&nbsp;
 			<a href="${URL.make("/autori/honorare")}">honoráře</a>&nbsp;
 			<a href="${URL.make("/autori/smlouvy")}">smlouvy</a>&nbsp;
-			<a href="${URL.make("/redakce/autori/edit")}/${author.id}?action=delete">smazat</a>&nbsp;
+			<a href="${URL.make("/redakce/autori/edit/${author.id}?action=edit")}">smazat</a>&nbsp;
 			</td>
 		</tr>
 	</#list>
