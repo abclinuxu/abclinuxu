@@ -7,7 +7,7 @@
 <p>Na této stránce můžete prohlížet a spravovat autory.</p>
 <p>Authory lze filtrovat pomocí sloupců <b>Jméno</b> a <b>Příjmení</b>, kde stačí zadat začátek jména.
 Dále podle toho, zda uživatel souhlasil s autorskou smlouvou a zda odsouhlasená smlouva není stará.
-Sloupec <b>Aktivní</b> poté ukazuje, zda autor v poslední době (posledních 9 měsíců) vydal článek. 
+Sloupec <b>Aktivní</b> poté ukazuje, zda autor autor nadále tvoří obsah abclinuxu.cz. 
 Datum posledního článku je zobrazen ve sloupci <b>Poslední</b> a toto stáří lze zde filtrovat. 
 </p> 
 <br/>

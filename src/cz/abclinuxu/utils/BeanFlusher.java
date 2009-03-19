@@ -11,8 +11,9 @@ import cz.abclinuxu.data.view.Author;
 
 /**
  * Transforms JavaBeans into persistence layer objects
+ * 
  * @author kapy
- *
+ * 
  */
 public class BeanFlusher {
 	private static final Logger log = Logger.getLogger(BeanFlusher.class);
@@ -21,17 +22,20 @@ public class BeanFlusher {
 	private BeanFlusher() {
 		throw new AssertionError();
 	}
-	
+
 	public static Item flushAuthorToItem(Item item, Author author) {
-		
-		
+
 		item.setNumeric1(author.getUid());
-		item.setNumeric2(author.isActive() ? 1:0);
+		item.setNumeric2(author.isActive() ? 1 : 0);
 		item.setString1(Misc.filterDangerousCharacters(author.getName()));
 		item.setString2(Misc.filterDangerousCharacters(author.getSurname()));
-		
+
+		// get/create XML document
 		Document doc = item.getData();
-		
+		if (doc == null)
+			doc = DocumentHelper.createDocument(DocumentHelper
+					.createElement("data"));
+
 		safeStoreNode(doc, "/data/about", author.getAbout());
 		safeStoreNode(doc, "/data/accountNumber", author.getAccountNumber());
 		safeStoreNode(doc, "/data/address", author.getAddress());
@@ -41,38 +45,37 @@ public class BeanFlusher {
 		safeStoreNode(doc, "/data/nickname", author.getNickname());
 		safeStoreNode(doc, "/data/phone", author.getPhone());
 		safeStoreNode(doc, "/data/photourl", author.getPhotoUrl());
-		
+
 		item.setData(doc);
-		
-		if(log.isDebugEnabled()) {
+
+		if (log.isDebugEnabled()) {
 			log.debug("Flushed:" + authorToString(item));
 		}
-		
+
 		return item;
-		
+
 	}
-	
-	
+
 	private static void safeStoreNode(Document doc, String xpath, String value) {
 
 		// check for existence of node
 		Node tmp = doc.selectSingleNode(xpath);
 		// check for value passed
-		if(Misc.empty(value)) {
+		if (Misc.empty(value)) {
 			// detach node if it will be empty
-			if(tmp!=null) {
+			if (tmp != null) {
 				tmp.detach();
 			}
 			return;
 		}
 		// create node if not found
-		if(tmp==null) {
+		if (tmp == null) {
 			tmp = DocumentHelper.makeElement(doc, xpath);
 		}
-		
+
 		tmp.setText(Misc.filterDangerousCharacters(value));
 	}
-	
+
 	/**
 	 * Helper function to print author
 	 * 

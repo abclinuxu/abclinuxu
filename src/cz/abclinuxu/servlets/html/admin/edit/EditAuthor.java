@@ -48,6 +48,7 @@ public class EditAuthor implements AbcAction {
 	public static final String PARAM_ADDRESS = "address";
 	public static final String PARAM_UID = "uid";
 	public static final String PARAM_LOGIN = "login";
+	public static final String PARAM_ACTIVE = "active";
 	public static final String PARAM_PREVIEW = "preview";
 
 	public static final String VAR_AUTHOR = "AUTHOR";
@@ -206,16 +207,6 @@ public class EditAuthor implements AbcAction {
 				"Editace autora, krok 1");
 		env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
 
-		params.put(PARAM_SURNAME, author.getSurname());
-		params.put(PARAM_NAME, author.getName());
-		params.put(PARAM_NICKNAME, author.getNickname());
-		params.put(PARAM_BIRTH_NUMBER, author.getBirthNumber());
-		params.put(PARAM_LOGIN, author.getLogin());
-		params.put(PARAM_ACCOUNT_NUMBER, author.getAccountNumber());
-		params.put(PARAM_EMAIL, author.getEmail());
-		params.put(PARAM_PHONE, author.getPhone());
-		params.put(PARAM_ADDRESS, author.getAddress());
-
 		env.put(VAR_EDIT_MODE, Boolean.TRUE);
 
 		return FMTemplateSelector.select("AdministrationEditAuthor", "edit",
@@ -307,6 +298,7 @@ public class EditAuthor implements AbcAction {
 					.addError(PARAM_SURNAME, "Zadejte příjmení!", env, null);
 			result = false;
 		}
+		// will set both uid and login
 		String login = (String) params.get(PARAM_LOGIN);
 		if (Misc.empty(login)) {
 			author.setUid(null);
@@ -317,6 +309,7 @@ public class EditAuthor implements AbcAction {
 				result = false;
 			}
 			author.setUid(uid);
+			author.setLogin(login);
 		}
 
 		String tmp = (String) params.get(PARAM_NAME);
@@ -333,6 +326,8 @@ public class EditAuthor implements AbcAction {
 		author.setPhone(tmp);
 		tmp = (String) params.get(PARAM_ADDRESS);
 		author.setAddress(tmp);
+		tmp = (String) params.get(PARAM_ACTIVE);
+		author.setActive("1".equalsIgnoreCase(tmp));
 
 		return result;
 	}
