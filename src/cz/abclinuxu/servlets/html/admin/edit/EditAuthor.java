@@ -111,6 +111,9 @@ public class EditAuthor implements AbcAction {
 		// find author
 		Item item = (Item) InstanceUtils.instantiateParam(PARAM_AUTHOR_ID,
 				Item.class, params, request);
+		if(item==null)
+			throw new MissingArgumentException("Chybí parametr aId!");
+		
 		persistence.synchronize(item);
 		env.put(VAR_AUTHOR, BeanFetcher.fetchAuthorFromItem(item, FetchType.EAGER));
 		
