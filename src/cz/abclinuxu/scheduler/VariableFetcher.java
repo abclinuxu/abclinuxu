@@ -247,9 +247,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         if (user != null && (user instanceof User)) {
             User someUser = (User) user;
             blockedUsers = Tools.getBlacklist(someUser, true);
-
-            if (filterBanned)
-                filterBanned = Misc.getNodeSetting(someUser.getData(), "/data/settings/hp_all_stories", true);
+            filterBanned = ! Misc.getNodeSetting(someUser.getData(), "/data/settings/hp_all_stories", false);
         }
 
         int i = 0;
