@@ -100,7 +100,7 @@
     </#if>
     <li><a href="/nej">Žebříčky a statistiky</a></li>
     <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Jak se stát autorem</a></li>
-    <li><a href="/clanky/show/44049">Náš tým</a></li>
+    <li><a href="/redakce">Redakce</a></li>
     <li><a href="/portal/propagace">Propagace</a></li>
     <li><a href="mailto:info@stickfish.com">Inzerce</a></li>
     <li><a href="/napoveda/rss-a-jine-pristupy">RSS feedy a PDA</a></li>
