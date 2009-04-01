@@ -168,15 +168,18 @@ mainCycle:
             return "<!-- error: no variant available for position '" + id + "', code '" + selected.attributeValue("regexp") + "' -->";
 
         String content = selectedVariant.getText();
+        StringBuilder sb = new StringBuilder();
+        sb.append("<!-- ad position '").append(id).append("' -->\n");
         if ("yes".equals(selectedVariant.attributeValue("dynamic")))
             try {
-                return FMUtils.executeCode(content, env);
+                sb.append(FMUtils.executeCode(content, env));
             } catch (Exception e) {
                 log.warn("Position " + id + " threw an exception. Content: \n" + content + "\n", e);
                 return "<!-- error: the code defined for position '" + id + "' failed! -->";
             }
         else
-            return content;
+            sb.append(content);
+        return sb.toString();
     }
 
     /**
