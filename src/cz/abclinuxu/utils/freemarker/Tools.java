@@ -2260,16 +2260,16 @@ public class Tools implements Configurable {
     }
 
 	public static Permissions permissionsFor(Object anUser, Relation rel) {
-		User user = (User) anUser;
-		if (user != null && user.hasRole(Roles.ROOT))
+        User user = null;
+        if (anUser instanceof User)
+            user = (User) anUser;
+        if (user != null && user.hasRole(Roles.ROOT))
 			return Permissions.PERMISSIONS_ROOT;
 
 		sync(rel);
-
 		GenericObject obj = rel.getChild();
 		if (obj instanceof GenericDataObject) {
 			GenericDataObject gdo = (GenericDataObject) obj;
-
 			int permissions, shift;
 
 			if ( user != null && user.isMemberOf(gdo.getGroup()) )
@@ -2278,7 +2278,6 @@ public class Tools implements Configurable {
 				shift = Permissions.PERMISSIONS_OTHERS_SHIFT;
 
 			permissions = gdo.getPermissions();
-
 			if (obj instanceof Category)
 				permissions &= ~Permissions.PERMISSIONS_CATEGORY_MASK;
 
