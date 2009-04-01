@@ -219,6 +219,9 @@
         <action name="reply" content="/add/reply.ftl">
             <var name="TITLE" value="Vlož reakci do diskuse"/>
         </action>
+        <action name="confirmOldReply" content="/add/replyOld.ftl">
+            <var name="TITLE" value="Pozor - stará diskuse"/>
+        </action>
         <action name="ask" content="/add/question.ftl">
             <var name="TITLE" value="Položit nový dotaz"/>
         </action>

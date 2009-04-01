@@ -89,6 +89,7 @@ public class EditDiscussion implements AbcAction {
     public static final String PARAM_ANTISPAM = "antispam";
     public static final String PARAM_ATTACHMENT = "attachment";
     public static final String PARAM_REMOVE_ATTACHMENT = "rmAttachment";
+    public static final String PARAM_CONFIRM_OLD_DISCUSSION = "confirmOld";
 
     public static final String COOKIE_USER_VERIFIED = "usrVrfd";
 
@@ -101,6 +102,7 @@ public class EditDiscussion implements AbcAction {
     public static final String VAR_USER_VERIFIED = "USER_VERIFIED";
     public static final String VAR_ATTACHMENTS = "ATTACHMENTS";
     public static final String VAR_COMMENTED_TEXT = "COMMENTED_TEXT";
+    public static final String VAR_DISCUSSION_AGE = "AGE";
 
     public static final String ACTION_ADD_DISCUSSION = "addDiz";
     public static final String ACTION_ADD_QUESTION = "addQuez";
@@ -404,14 +406,9 @@ public class EditDiscussion implements AbcAction {
 
         DateTime now = new DateTime();
         int daysCreated = Days.daysBetween(new DateTime(discussion.getCreated()), now).getDays();
-        int daysUpdated = Days.daysBetween(new DateTime(discussion.getUpdated()), now).getDays();
-        if (daysCreated > 20 && daysUpdated > 2) {
-            if (question)
-                ServletUtils.addMessage("Pozor, chystáte se komentovat " + daysCreated + " dní starý dotaz. " +
-                        "Pokud se nechystáte vložit či doplnit řešení tohoto dotazu, ale naopak se chcete na něco zeptat, " +
-                        "položte raději nový dotaz.", env, null);
-            else
-                ServletUtils.addMessage("Pozor, chystáte se komentovat " + daysCreated + " dní starou diskusi.", env, null);
+        if (daysCreated > 20 && ! params.containsKey(PARAM_CONFIRM_OLD_DISCUSSION)) {
+            env.put(VAR_DISCUSSION_AGE, daysCreated);
+            return FMTemplateSelector.select("EditDiscussion", "confirmOldReply", env, request);
         }
 
         // display discussed comment, only if it has title
