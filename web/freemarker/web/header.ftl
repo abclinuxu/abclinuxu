@@ -4,7 +4,7 @@
 <head>
     <#if USER?? && USER.hasRole("root")><!-- Sablona: ${TEMPLATE!"neznama"} --></#if>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>${PARAMS.TITLE?default(TITLE?default('www.abclinuxu.cz'))}</title>
+    <title>${PARAMS.TITLE!TITLE!'www.abclinuxu.cz'}</title>
     <link rel="stylesheet" type="text/css" href="${CSS_URI!}">
     <!--[if IE]>
        <link href="/msie.css" type="text/css" rel="stylesheet">
@@ -32,7 +32,17 @@
     <#if RSS??>
         <link rel="alternate" title="RSS zdroj aktuální sekce" href="http://www.abclinuxu.cz${RSS}" type="application/rss+xml">
     </#if>
-    <meta name="keywords" lang="cs" content="linux,abclinuxu,open source,komunita,hardware,software,ovladače,diskuse,nápověda,rada,pomoc">
+
+    <#if ASSIGNED_TAGS?? && ASSIGNED_TAGS?size &gt; 0>
+        <#assign keywords = "">
+        <#list ASSIGNED_TAGS as tag>
+           <#assign keywords = keywords + tag.title + ", ">
+        </#list>
+        <meta name="keywords" lang="cs" content="${keywords}">
+    <#elseif IS_INDEX??>
+        <meta name="keywords" lang="cs" content="linux,open source,free software,linux hardware,software,ovladače,pomoc">
+    </#if>
+
     <script type="text/javascript">
     	Page = new Object();
         <#if RELATION??>
@@ -45,7 +55,7 @@
     </script>
     <script type="text/javascript" src="/data/site/impact.js"></script>
     <script type="text/javascript" src="/data/site/scripts.js"></script>
-    <script src="/data/site/prototype.js" type="text/javascript"></script>
+    <#--<script src="/data/site/prototype.js" type="text/javascript"></script>-->
     <#if html_header??>
         ${html_header}
     </#if>
