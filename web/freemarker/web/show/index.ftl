@@ -2,6 +2,7 @@
 
  <#assign plovouci_sloupec>
 
+    <@adLib.advertisement id="ps-boxik1" />
     <@adLib.advertisement id="ps-upoutavka" />
 
     <#assign EVENTS=VARS.getFreshEvents(USER!)>
@@ -28,8 +29,6 @@
     </div>
 
     <@adLib.advertisement id="arbo-sq" />
-    <@adLib.advertisement id="oksystem" />
-    <@adLib.advertisement id="ps-boxik1" />
     <@adLib.advertisement id="ps-boxik2" />
     <@adLib.advertisement id="ps-boxik3" />
     <@adLib.advertisement id="ps-boxik4" />
