@@ -88,4 +88,6 @@
     <a href="/slovnik?prefix=z">Z</a>
 </p>
 
+<@lib.showPageTools RELATION />
+
 <#include "../footer.ftl">

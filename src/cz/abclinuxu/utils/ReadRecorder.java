@@ -35,7 +35,7 @@ public class ReadRecorder {
 
     public static void log(GenericObject obj, String type, Map env) {
         Boolean bot = (Boolean) env.get(Constants.VAR_BOT_DETECTED);
-        if (bot != null && bot.booleanValue()) // not interested in spiders and various bots
+        if (bot != null && bot) // not interested in spiders and various bots
             return;
 
         Persistence persistence = PersistenceFactory.getPersistence();

@@ -95,6 +95,10 @@
             <action>cz.abclinuxu.servlets.html.view.ViewTag</action>
         </mapping>
         <mapping>
+            <pattern>/sdilej</pattern>
+            <action>cz.abclinuxu.servlets.html.view.SharePage</action>
+        </mapping>
+        <mapping>
             <pattern>^/EditRelated</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditRelated</action>
         </mapping>

@@ -960,6 +960,23 @@
                         </node>
                         <node name="view">
                             <map/>
+                            <node name="SharePage">
+                                <map>
+                                    <entry key="services" value="google,fb,del,jag,link,sme"/>
+                                    <entry key="google.id" value="35"/>
+                                    <entry key="google.url" value="http://www.google.com/bookmarks/mark?op=edit&amp;bkmk=${LINK_URL}&amp;title=${LINK_TITLE}"/>
+                                    <entry key="fb.id" value="36"/>
+                                    <entry key="fb.url" value="http://www.facebook.com/share.php?u=${LINK_URL}&amp;title=${LINK_TITLE}"/>
+                                    <entry key="del.id" value="37"/>
+                                    <entry key="del.url" value="http://del.icio.us/post?v=4&amp;noui&amp;jump=close&amp;url=${LINK_URL}&amp;title=${LINK_TITLE}"/>
+                                    <entry key="jag.id" value="38"/>
+                                    <entry key="jag.url" value="http://www.jagg.cz/bookmarks.php?action=add&amp;address=${LINK_URL}&amp;title=${LINK_TITLE}"/>
+                                    <entry key="link.id" value="39"/>
+                                    <entry key="link.url" value="http://linkuj.cz/?id=linkuj&amp;url=${LINK_URL}&amp;title=${LINK_TITLE}"/>
+                                    <entry key="sme.id" value="40"/>
+                                    <entry key="sme.url" value="http://vybrali.sme.sk/submit.php?url=${LINK_URL}"/>
+                                </map>
+                            </node>
                             <node name="ShowDictionary">
                                 <map>
                                     <entry key="max.items" value="90"/>

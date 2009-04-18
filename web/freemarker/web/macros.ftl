@@ -887,3 +887,22 @@
         <p>Zdroj zatím nebyl načten, je prázdný nebo obsahuje chybu.</p>
     </#if>
 </#macro>
+
+<#macro showPageTools relation>
+    <p>
+        <a href="${URL.getRelationUrl(relation)}?varianta=print">Tiskni</a>
+        Sdílej:
+        <a href="/sdilej?rid=${relation.id}&amp;s=link"><img src="/images/link/linkuj.gif" width="16" height="16" alt="Linkuj"/></a>
+        <a href="/sdilej?rid=${relation.id}&amp;s=link">Linkuj.cz</a>
+        <a href="/sdilej?rid=${relation.id}&amp;s=jag"><img src="/images/link/jagg.png" width="16" height="16" alt="Jaggni to"/></a>
+        <a href="/sdilej?rid=${relation.id}&amp;s=jag">Jagg.cz</a>
+        <a href="/sdilej?rid=${relation.id}&amp;s=sme"><img src="/images/link/vybrali_sme.gif" width="15" height="15" alt="Vybrali.sme.sk"/></a>
+        <a href="/sdilej?rid=${relation.id}&amp;s=sme">Vybrali.sme.sk</a>
+        <a href="/sdilej?rid=${relation.id}&amp;s=google"><img src="/images/link/google.gif" width="16" height="16" alt="Google"/></a>
+        <a href="/sdilej?rid=${relation.id}&amp;s=google">Google</a>
+        <a href="/sdilej?rid=${relation.id}&amp;s=del"><img src="/images/link/delicio.gif" width="16" height="16" alt="Del.icio.us"/></a>
+        <a href="/sdilej?rid=${relation.id}&amp;s=del">Del.icio.us</a>
+        <a href="/sdilej?rid=${relation.id}&amp;s=fb"><img src="/images/link/facebook.gif" width="16" height="16" alt="Facebook"/></a>
+        <a href="/sdilej?rid=${relation.id}&amp;s=fb">Facebook</a>
+    </p>
+</#macro>
