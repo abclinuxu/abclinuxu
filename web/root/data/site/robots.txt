@@ -46,3 +46,4 @@ Disallow: /lide/*/objekty
 Disallow: /zmeny
 Disallow: /presmeruj
 Disallow: /hledani
+Disallow: /sdilej
