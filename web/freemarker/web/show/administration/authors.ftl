@@ -12,7 +12,8 @@ Datum posledního článku je zobrazen ve sloupci <b>Poslední</b> a toto stář
 </p> 
 <br/>
 
-<table>
+<table class="siroka list">
+	<thead>
 	<tr>
 		<th>Jméno</th>
 		<th>Příjmení</th>
@@ -22,6 +23,8 @@ Datum posledního článku je zobrazen ve sloupci <b>Poslední</b> a toto stář
 		<th>Poslední</th>
 		<th>Akce</th>
 	</tr>
+	</thead>
+	<tbody>
 	<tr>	
 	<form action="${URL.noPrefix("/sprava/redakce/autori")}" method="POST">
 		<td><input type="text" name="filterAuthorsByName" value="${FILTER.value("filterAuthorsByName")}" size="8"/></td>
@@ -71,19 +74,19 @@ Datum posledního článku je zobrazen ve sloupci <b>Poslední</b> a toto stář
 				<#assign date=DATE.show(author.lastArticleDate, "CZ_DMY") />
 			</#if>
 			<td>${date}</td>
-			<td style="white-space:nowrap">
-			<#if author.email??><a href="mailto:${author.email}">email</a>
-			<#else>email
-			</#if>&nbsp;
-			<a href="${URL.make("/redakce/autori/edit/${author.id}?action=edit")}">upravit</a>&nbsp;
-			<a href="${URL.make("/autori/namety")}">náměty</a>&nbsp;
-			<a href="${URL.make("/autori/clanky")}">články</a>&nbsp;
-			<a href="${URL.make("/autori/honorare")}">honoráře</a>&nbsp;
-			<a href="${URL.make("/autori/smlouvy")}">smlouvy</a>&nbsp;
-			<a href="${URL.make("/redakce/autori/edit/${author.id}?action=edit")}">smazat</a>&nbsp;
+			<td style="white-space: nowrap">
+			<#if author.email??><a href="mailto:${author.email}" title="Poslat email">@</a>
+			<#else>@</#if>&nbsp;
+			<a href="${URL.make("/redakce/autori/edit/${author.id}?action=edit")}" title="Upravit autora">U</a>&nbsp;
+			<a href="${URL.make("/autori/namety")}" title="Náměty">N</a>&nbsp;
+			<a href="${URL.make("/autori/clanky")}" title="Články">Č</a>&nbsp;
+			<a href="${URL.make("/autori/honorare")}" title="Honoráře">H</a>&nbsp;
+			<a href="${URL.make("/autori/smlouvy")}" title="Smlouvy">S</a>&nbsp;
+			<a href="${URL.make("/redakce/autori/edit/${author.id}?action=edit")}" title="Smazat autora">X</a>
 			</td>
 		</tr>
 	</#list>
+	</tbody>
 </table>
 
 <div>
