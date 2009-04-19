@@ -204,7 +204,7 @@
     <#if STORY.perex??>| Přečteno: ${TOOL.getCounterValue(ITEM, "read")}&times;</#if>
     <#if STORY.category??>
         <#if STORY.category.url??>
-            | <a href="/blog/${STORY.category.absoluteUrl}" title="Kategorie zápisu">${STORY.category.name}</a>
+            | <a href="${STORY.category.absoluteUrl}" title="Kategorie zápisu">${STORY.category.name}</a>
         <#else>
             | ${STORY.category.name}
         </#if>
