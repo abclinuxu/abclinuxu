@@ -49,7 +49,6 @@
                 <attribute rel="TITLE"/>
             </tag>
             <tag id="B" mustBeClosed="true"/>
-            <tag id="BIG" mustBeClosed="true"/>
             <tag id="BLOCKQUOTE" mustBeClosed="true">
                 <attribute rel="ID"/>
                 <attribute rel="STYLE"/>
@@ -131,7 +130,6 @@
             <tag id="Q" mustBeClosed="true">
                 <attribute rel="ID"/>
             </tag>
-            <tag id="SMALL" mustBeClosed="true"/>
             <tag id="SPAN" mustBeClosed="true">
                 <attribute rel="ID"/>
             </tag>
@@ -210,7 +208,6 @@
         <tag rel="ABBR"/>
         <tag rel="ACRONYM"/>
         <tag rel="B"/>
-        <tag rel="BIG"/>
         <tag rel="BLOCKQUOTE"/>
         <tag rel="BR"/>
         <tag rel="CENTER"/>
@@ -236,7 +233,6 @@
         <tag rel="P"/>
         <tag rel="PRE"/>
         <tag rel="Q"/>
-        <tag rel="SMALL"/>
         <tag rel="SPAN"/>
         <tag rel="STRONG"/>
         <tag rel="SUB"/>
@@ -271,7 +267,6 @@
     <rules id="blog-perex" extends="default" checker="cz.abclinuxu.utils.parser.clean.impl.BlogPerexChecker">
         <remove>
             <tag rel="B"/>
-            <tag rel="BIG"/>
             <tag rel="H1"/>
             <tag rel="H2"/>
             <tag rel="H3"/>

@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Onse set of rules for particular use case.
+ * One set of rules for particular use case.
  */
 public class Definition {
     Rules id;
