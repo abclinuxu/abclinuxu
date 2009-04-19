@@ -1,91 +1,128 @@
+<#assign html_header>
+    <script type="text/javascript" src="/data/site/jquery/jquery-1.3.2.js"></script>
+    <script type="text/javascript" src="/data/site/jquery/ui.core.js"></script>
+    <script type="text/javascript" src="/data/site/jquery/ui.dialog.js"></script>    
+    <script type="text/javascript" src="/data/site/ajax/finduser.js"></script>    
+    <script type="text/javascript"><!--
+    $(document).ready(function() {
+        var buttonParent = $('#findUser');
+        buttonParent.append('<input type="button" value="Vyhledat uživatele" id="findUserButton" tabindex="4"/>');
+        $('#findUserButton').bind('click', function() {
+    		findUserHandler('addauthor-login', 'findUserDialog', 
+    					    'addauthor-name', 'addauthor-surname');
+    	}); 
+    		   
+    });
+    
+    // -->
+    </script>
+    <link rel="stylesheet" type="text/css" href="/jquery-theme/ui.all.css" />       
+</#assign>
+
 <#include "../../header.ftl">
 
 <@lib.showMessages/>
 
-<h2>Údaje o autorovi</h2>
+<#if EDIT_MODE??>
+<h2>Upravit údaje autora</h2>
+<p>Tento formulář slouží pro editaci autora. 
+Foto by mělo mít rozměr přibližně 100x100 pixelů, pokud bude některý z rozměrů přesahovat tuto mez, obrázek bude automaticky zmenšen. 
+Text o autorovi se zobrazí na jeho stránce. Neaktivní autor se nezobrazuje ve výběrech autorů, je to vhodné nastavit například pro příjemce jednorázové odměny.
+</p>
+<#else>
+<h2>Vytvoření autora</h2>
+<p>Tento formulář slouží pro vytvoření nového autora. Autor, který není přiřazen k žádnému uživateli, nemůže používat
+redakční systém. Foto by mělo mít rozměr přibližně 100x100 pixelů. Text o autorovi se zobrazí na jeho stránce.</p>
+</#if>
 
 <form action="${URL.noPrefix("/sprava/redakce/autori/edit")}" method="POST">
-    <table width="100%" border="0" cellpadding="5">
+    <table class="siroka">
         <tr>
-            <td class="required" width="60">Jméno</td>
+            <td class="required">Jméno:</td>
             <td>
-                <input type="text" name="name" value="${PARAMS.name!?html}" size="24" tabindex="1">
+                <input type="text" id="addauthor-name" name="name" value="${(AUTHOR.name)!?html}" size="60" class="siroka" tabindex="1" />
                 <div class="error">${ERRORS.name!}<div>
             </td>
         </tr>
         <tr>
-            <td class="required" width="60">Příjmení</td>
+            <td class="required">Příjmení:</td>
             <td>
-            <input type="text" name="surname" value="${PARAMS.surname!?html}" size="24" tabindex="2">
+            <input type="text" id="addauthor-surname" name="surname" value="${(AUTHOR.surname)!?html}" size="60" class="siroka" tabindex="2" />
             <div class="error">${ERRORS.surname!}</div>
             </td>
         </tr>
+		<tr>
+            <td>Login:</td>
+            <td style="white-space: nowrap">
+            <div id="findUser">            
+            <input type="text" id="addauthor-login" name="login" value="${(AUTHOR.login)!}" size="24" tabindex="3" />&nbsp;
+            </div>
+            <div id="findUserDialog"></div>
+            <div class="error">${ERRORS.login!}</div>
+            </td>
+        </tr>
         <tr>
-            <td width="60">Přezdívka</td>
+            <td>Přezdívka:</td>
             <td>
-            <input type="text" name="nickname" value="${PARAMS.nickname!?html}" size="24" tabindex="3">
+            <input type="text" name="nickname" value="${(AUTHOR.nickname)!?html}" size="24" tabindex="5" />
             <div class="error">${ERRORS.nickname!}</div>
             </td>
         </tr>
-
+        <#if EDIT_MODE??>
         <tr>
-            <td width="60">Rodné číslo</td>
+        	<td>Aktivní:</td>
+        	<td>
+        		<@lib.showOption6 param="active" value="1" caption="ano" type="radio" condition=(AUTHOR.active)!false tabindex=6 />
+        		<@lib.showOption6 param="active" value="0" caption="ne" type="radio" condition=((AUTHOR.active)!false)==false tabindex=6 />
+        	</td>
+        </tr>
+        </#if>
+        <tr>
+            <td>Rodné číslo:</td>
             <td>
-            <input type="text" name="birthNumber" value="${PARAMS.birthNumber!}" size="24" tabindex="4">
+            <input type="text" name="birthNumber" value="${(AUTHOR.birthNumber)!}" size="60" class="siroka" tabindex="6" />
             <div class="error">${ERRORS.birthNumber!}</div>
             </td>
         </tr>
-
         <tr>
-            <td width="60">Číslo účtu</td>
+            <td>Číslo účtu:</td>
             <td>
-            <input type="text" name="accountNumber" value="${PARAMS.accountNumber!}" size="24" tabindex="5">
+            <input type="text" name="accountNumber" value="${(AUTHOR.accountNumber)!}" size="60" class="siroka" tabindex="7" />
             <div class="error">${ERRORS.accountNumber!}</div>
             </td>
         </tr>
 
         <tr>
-            <td width="60">Email</td>
+            <td>Email:</td>
             <td>
-            <input type="text" name="email" value="${PARAMS.email!?html}" size="24" tabindex="6">
+            <input type="text" name="email" value="${(AUTHOR.email)!?html}" size="60" class="siroka" tabindex="8" />
             <div class="error">${ERRORS.email!}</div>
             </td>
         </tr>
-
         <tr>
-            <td width="60">Telefon</td>
+            <td>Telefon:</td>
             <td>
-            <input type="text" name="phone" value="${PARAMS.phone!?html}" size="24" tabindex="7">
+            <input type="text" name="phone" value="${(AUTHOR.phone)!?html}" size="60" class="siroka" tabindex="9" />
             <div class="error">${ERRORS.phone!}</div>
             </td>
         </tr>
-
         <tr>
-            <td width="60">Adresa</td>
+            <td>Adresa:</td>
             <td>
-            <input type="text" name="address" value="${PARAMS.address!?html}" size="24" tabindex="8">
+            <textarea name="address" class="siroka" rows="4" tabindex="10">${(AUTHOR.address)!}</textarea>
             <div class="error">${ERRORS.address!}</div>
             </td>
         </tr>
-
         <tr>
-            <td width="60">Login uživatele</td>
-            <td>
-            <input type="text" name="login" value="${PARAMS.login!}" size="24" tabindex="9">
-            <div class="error">${ERRORS.login!}</div>
-            </td>
-        </tr>
-
-        <tr>
-            <td width="60">&nbsp;</td>
-            <td><input type="submit" value="Dokonči" tabindex="10"></td>
+            <td>&nbsp;</td>
+            <td><input type="submit" value="Dokonči" tabindex="11" /></td>
         </tr>
     </table>
-    <#if EDIT_MODE!false>
-        <input type="hidden" name="action" value="edit2">
-        <input type="hidden" name="aId" value="${AUTHOR.id}"/>
+    <#if EDIT_MODE??>
+        <input type="hidden" name="action" value="edit2" />
+        <input type="hidden" name="aId" value="${(AUTHOR.id)!}" />
     <#else>
-        <input type="hidden" name="action" value="add2">
+        <input type="hidden" name="action" value="add2" />
     </#if>
 </form>
 

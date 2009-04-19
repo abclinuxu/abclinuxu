@@ -21,6 +21,10 @@
             <pattern>/ajax/forum</pattern>
             <action>cz.abclinuxu.servlets.ajax.Forum</action>
         </mapping>
+        <mapping priority="true">
+        	<pattern>/ajax/findUser</pattern>
+        	<action>cz.abclinuxu.servlets.ajax.FindUser</action>
+        </mapping>
         <mapping>
             <pattern>/show</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowObject</action>
