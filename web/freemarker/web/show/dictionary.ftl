@@ -4,30 +4,23 @@
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <#if PARAMS.revize??>
-                <li>
-                    <a class="bez-slovniku" href="${RELATION.url}">Návrat na aktuální verzi</a>
-                </li>
-            <#else>
             <#if USER?? && permissions.canModify()>
                 <li><a class="bez-slovniku" href="${URL.make("/edit/"+RELATION.id+"?action=edit")}" rel="nofollow">Upravit</a></li>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
             </#if>
-                <li><a class="bez-slovniku" href="${RELATION.url}?varianta=print" rel="nofollow">Tisk</a></li>
-                <li>
-                    <@lib.showMonitor RELATION />
-                </li>
-                <#if USER??>
-                    <#if USER.hasRole("root")>
-                        <li>
-                            <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=setURL2")}">Url</a>
-                        </li>
-                    </#if>
-                    <#if permissions.canDelete()>
-                        <li>
-                            <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/slovnik")}" title="Smaž">Smazat</a>
-                        </li>
-                    </#if>
+            <li>
+                <@lib.showMonitor RELATION />
+            </li>
+            <#if USER??>
+                <#if USER.hasRole("root")>
+                    <li>
+                        <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=setURL2")}">Url</a>
+                    </li>
+                </#if>
+                <#if permissions.canDelete()>
+                    <li>
+                        <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/slovnik")}" title="Smaž">Smazat</a>
+                    </li>
                 </#if>
             </#if>
         </ul>

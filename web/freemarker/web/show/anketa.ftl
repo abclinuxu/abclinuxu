@@ -59,6 +59,8 @@
 <p>Celkem ${POLL.totalVoters} hlasů<br />
 Vytvořeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
 
+<@lib.showPageTools RELATION />
+
 <#if CHILDREN.discussion??>
     <h3>Komentáře</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>

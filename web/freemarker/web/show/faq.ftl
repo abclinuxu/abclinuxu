@@ -12,7 +12,6 @@
                     <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
                 </#if>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
-                <li><a href="${RELATION.url}?varianta=print" rel="nofollow">Tisk otázky</a></li>
                 <li>
                     <@lib.showMonitor RELATION />
                 </li>
@@ -43,5 +42,7 @@
 <@lib.showRelated ITEM/>
 
 <@lib.showRevisions RELATION, REVISIONS/>
+
+<@lib.showPageTools RELATION />
 
 <#include "../footer.ftl">

@@ -140,4 +140,6 @@
 
 <@lib.advertisement id="hosting90" />
 
+<@lib.showPageTools RELATION />
+
 <#include "../footer.ftl">

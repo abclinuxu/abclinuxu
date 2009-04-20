@@ -41,5 +41,6 @@
     </#if>
 </p>
 
+<@lib.showPageTools RELATION />
 
 <#include "../footer.ftl">

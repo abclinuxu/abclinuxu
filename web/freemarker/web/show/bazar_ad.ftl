@@ -43,6 +43,8 @@
 </#if>
 </div> <!-- bazar -->
 
+<@lib.showPageTools RELATION />
+
 <h3>Komentáře</h3>
 <#if CHILDREN.discussion??>
     <@lib.showDiscussion CHILDREN.discussion[0]/>

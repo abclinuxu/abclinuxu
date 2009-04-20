@@ -251,9 +251,11 @@
     <@lib.showRating RELATION/>
 </#if>
 
-<p><b>Nástroje</b>: <a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print">Tisk</a>,
+<p><b>Nástroje</b>:
 <a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print&amp;noDiz">Tisk bez diskuse</a>
 </p>
+
+<@lib.showPageTools RELATION />
 
 <#flush>
 

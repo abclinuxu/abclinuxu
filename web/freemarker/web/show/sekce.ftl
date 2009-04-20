@@ -87,4 +87,6 @@
     </#list>
 </table>
 
+<@lib.showPageTools RELATION />
+
 <#include "../footer.ftl">

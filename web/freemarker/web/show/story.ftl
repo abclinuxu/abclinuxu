@@ -267,7 +267,7 @@ ${STORY.content}
     </#list>
 </#if>
 
-<p><b>Nástroje</b>: <a rel="nofollow" href="${STORY.url}?varianta=print">Tisk</a></p>
+<@lib.showPageTools RELATION />
 
 <#if (ITEM.type==12)>
     <h3>Komentáře</h3>

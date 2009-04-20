@@ -889,8 +889,8 @@
 </#macro>
 
 <#macro showPageTools relation>
-    <p>
-        <a href="${URL.getRelationUrl(relation)}?varianta=print">Tiskni</a>
+    <p class="page_tools">
+        <a href="${URL.getRelationUrl(relation)}?varianta=print" rel="nofollow" class="bez-slovniku">Tiskni</a>
         Sdílej:
         <a href="/sdilej?rid=${relation.id}&amp;s=link"><img src="/images/link/linkuj.gif" width="16" height="16" alt="Linkuj"/></a>
         <a href="/sdilej?rid=${relation.id}&amp;s=link">Linkuj.cz</a>

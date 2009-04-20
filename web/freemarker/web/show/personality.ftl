@@ -13,7 +13,6 @@
                 <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Přidat fotografii</a></li>
             </#if>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
-                <li><a class="bez-slovniku" href="${RELATION.url}?varianta=print" rel="nofollow">Tisk</a></li>
                 <li>
                     <@lib.showMonitor RELATION />
                 </li>
@@ -96,5 +95,7 @@
     <a href="/kdo-je?prefix=y">Y</a>
     <a href="/kdo-je?prefix=z">Z</a>
 </p>
+
+<@lib.showPageTools RELATION />
 
 <#include "../footer.ftl">

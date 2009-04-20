@@ -8,7 +8,6 @@
         <#if PARAMS.revize??>
             <li><a href="${RELATION.url}">Návrat na aktuální verzi</a></li>
         <#else>
-            <li><a href="${RELATION.url}?varianta=print" rel="nofollow">Tisk</a></li>
             <li>
                 <@lib.showMonitor RELATION />
             </li>
@@ -70,5 +69,7 @@ ${content}
 <#if exec!="yes" || (USER?? && USER.hasRole("root"))>
     <@lib.showRevisions RELATION, REVISIONS/>
 </#if>
+
+<@lib.showPageTools RELATION />
 
 <#include "../footer.ftl">

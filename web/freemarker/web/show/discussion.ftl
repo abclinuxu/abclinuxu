@@ -31,7 +31,6 @@
         (${TOOL.xpath(ITEM,"//solved/@no")?default("0")}) vyřešena
         <a class="info" href="#">?<span class="tooltip">Kliknutím na příslušný odkaz zvolte, jestli otázka <i>byla</i> nebo <i>nebyla</i> vyřešena.</span></a>,
    </#if>
-   <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print" rel="nofollow">Tisk</a>
    <#if USER?? && (USER.hasRole("discussion admin") || USER.hasRole("move relation"))>
      <br />
      <b>Admin:</b>
@@ -89,5 +88,7 @@ FAQ: <a href="/faq/abclinuxu.cz/proc-byl-uzamcen-smazan-muj-dotaz-v-poradne">Pro
 </#if>
 
 <@lib.advertisement id="arbo-full" />
+
+<@lib.showPageTools RELATION />
 
 <#include "../footer.ftl">

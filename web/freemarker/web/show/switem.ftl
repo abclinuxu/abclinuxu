@@ -13,7 +13,6 @@
                 <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Přidat obrázek</a></li>
             </#if>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
-                <li><a href="${RELATION.url!("/software/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
                     <@lib.showMonitor RELATION />
                 </li>
@@ -53,6 +52,8 @@
 
 <@lib.advertisement id="arbo-sq" />
 <@lib.advertisement id="hosting90" />
+
+<@lib.showPageTools RELATION />
 
 <#include "../footer.ftl">
 

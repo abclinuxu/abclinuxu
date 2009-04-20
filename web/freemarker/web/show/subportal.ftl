@@ -115,4 +115,6 @@
   </div>
 </#if>
 
+<@lib.showPageTools RELATION />
+
 <#include "../footer.ftl">
