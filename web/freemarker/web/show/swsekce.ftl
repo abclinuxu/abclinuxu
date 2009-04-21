@@ -138,7 +138,8 @@
 
 </div>
 
-<@lib.advertisement id="hosting90" />
+<@lib.advertisement id="arbo-sq" />
+<div style="float:right; clear:right;"><@lib.advertisement id="arbo-full" /></div>
 
 <@lib.showPageTools RELATION />
 

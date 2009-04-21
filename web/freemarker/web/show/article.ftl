@@ -269,4 +269,6 @@
     <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vložit první komentář</a>
 </#if>
 
+<@lib.advertisement id="arbo-full" />
+
 <#include "../footer.ftl">

@@ -51,7 +51,7 @@
 <@lib.showRevisions RELATION, REVISIONS/>
 
 <@lib.advertisement id="arbo-sq" />
-<@lib.advertisement id="hosting90" />
+<div style="float:right; clear:right;"><@lib.advertisement id="arbo-full" /></div>
 
 <@lib.showPageTools RELATION />
 

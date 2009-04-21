@@ -167,7 +167,9 @@
     <a href="${map.relation.url}">${map.relation.child.title}</a>
 </#macro>
 
-<h2>Služby</h2>
+<div style="float:right"><@lib.advertisement id="arbo-full" /></div>
+
+<h2 style="clear:right">Služby</h2>
 
 <table class="boxy">
 
