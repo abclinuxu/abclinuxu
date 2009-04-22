@@ -216,6 +216,8 @@ public class Constants implements Configurable {
     public static final String VAR_CONFIG = "SYSTEM_CONFIG";
     /** uri (either relative or absolute) to css file to be used */
     public static final String VAR_CSS_URI = "CSS_URI";
+    /** CSS declaration to be included in every page */
+    public static final String VAR_INLINE_CSS = "INLINE_CSS";
     /** way to override default text/html content type */
     public static final String VAR_CONTENT_TYPE = "Content-Type";
     /** environment map */

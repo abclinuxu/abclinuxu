@@ -225,7 +225,7 @@
       <#local blacklisted = diz.isBlacklisted(comment), attachments = comment.attachments>
       <div class="ds_hlavicka<#if diz.isUnread(comment)>_novy</#if><#if blacklisted> ds_hlavicka_blacklisted</#if><#if who?? && USER?? && who.id == USER.id> ds_hlavicka_me</#if>" id="${comment.id}">
         <#if comment.author?? && showControls>
-            <#assign avatar = TOOL.getUserAvatar(who!, USER!)?default("UNDEFINED")>
+            <#assign avatar = TOOL.getUserAvatar(who!, USER!)!"UNDEFINED">
             <#if avatar != "UNDEFINED">
                 <img src="${avatar}" id="comment${comment.id}_avatar" alt="avatar" class="ds_avatar <#if blacklisted>ds_controls_blacklisted</#if>">
             </#if>
@@ -249,7 +249,7 @@
             <div id="comment${comment.id}_controls"<#if blacklisted> class="ds_controls_blacklisted"</#if>>
                 <#local nextUnread = diz.getNextUnread(comment)!"UNDEF">
                 <#if ! nextUnread?is_string><a href="#${nextUnread}" title="Skočit na další nepřečtený komentář">Další</a> |</#if>
-                <a href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=add&amp;dizId="+diz.id+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovědět</a> |
+                <a href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=add&amp;dizId="+diz.id+"&amp;threadId="+comment.id+extra[0]!"")}">Odpovědět</a> |
                 <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}" title="Žádost o přesun diskuse, stížnost na komentář">Admin</a> |
                 <a href="#${comment.id}" title="Přímá adresa na tento komentář">Link</a> |
                 <#if (comment.parent??)><a href="#${comment.parent}" title="Odkaz na komentář o jednu úroveň výše">Výše</a> |</#if>
@@ -891,14 +891,16 @@
 <#macro showPageTools relation>
     <p class="page_tools">
         <a href="${URL.getRelationUrl(relation)}?varianta=print" rel="nofollow" class="bez-slovniku">Tiskni</a>
-        <span id="bookmarks">
-            Sdílej:
-            <a href="/sdilej?rid=${relation.id}&amp;s=link"><img src="/images/link/linkuj.gif" width="16" height="16" alt="Linkuj"/></a>
-            <a href="/sdilej?rid=${relation.id}&amp;s=jag"><img src="/images/link/jagg.png" width="16" height="16" alt="Jaggni to"/></a>
-            <a href="/sdilej?rid=${relation.id}&amp;s=sme"><img src="/images/link/vybrali_sme.gif" width="15" height="15" alt="Vybrali.sme.sk"/></a>
-            <a href="/sdilej?rid=${relation.id}&amp;s=google"><img src="/images/link/google.gif" width="16" height="16" alt="Google"/></a>
-            <a href="/sdilej?rid=${relation.id}&amp;s=del"><img src="/images/link/delicio.gif" width="16" height="16" alt="Del.icio.us"/></a>
-            <a href="/sdilej?rid=${relation.id}&amp;s=fb"><img src="/images/link/facebook.gif" width="16" height="16" alt="Facebook"/></a>
-        </span>
+        <#if TOOL.displaySocialBookmarks(USER!)>
+            <span id="bookmarks">
+                Sdílej:
+                <a href="/sdilej?rid=${relation.id}&amp;s=link"><img src="/images/link/linkuj.gif" width="16" height="16" alt="Linkuj" title="Linkuj"/></a>
+                <a href="/sdilej?rid=${relation.id}&amp;s=jag"><img src="/images/link/jagg.png" width="16" height="16" alt="Jaggni to" title="Jaggni to"/></a>
+                <a href="/sdilej?rid=${relation.id}&amp;s=sme"><img src="/images/link/vybrali_sme.gif" width="15" height="15" alt="Vybrali.sme.sk" title="Vybrali.sme.sk"/></a>
+                <a href="/sdilej?rid=${relation.id}&amp;s=google"><img src="/images/link/google.gif" width="16" height="16" alt="Google" title="Google"/></a>
+                <a href="/sdilej?rid=${relation.id}&amp;s=del"><img src="/images/link/delicio.gif" width="16" height="16" alt="Del.icio.us" title="Del.icio.us"/></a>
+                <a href="/sdilej?rid=${relation.id}&amp;s=fb"><img src="/images/link/facebook.gif" width="16" height="16" alt="Facebook" title="Facebook"/></a>
+            </span>
+        </#if>
     </p>
 </#macro>

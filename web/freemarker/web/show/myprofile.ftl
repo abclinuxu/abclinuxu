@@ -107,8 +107,8 @@
             <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editSettings")}">změnit</a>
         </td>
         <td>
-            nastavení WYSIWYG editoru, cookies, CSS, zobrazování avatarů, patičky, grafické emotikony, rozcestníku,
-            serverů v rozcestníku a počtu dokumentů na titulní stránce i mimo ni
+            nastavení WYSIWYG editoru, cookies, CSS, zobrazování avatarů, patičky, grafických emotikonů,
+            záložkových služeb, rozcestníku, serverů v rozcestníku a počtu dokumentů na titulní stránce i mimo ni
         </td>
     </tr>
     <tr>

@@ -6,6 +6,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>${PARAMS.TITLE!TITLE!'www.abclinuxu.cz'}</title>
     <link rel="stylesheet" type="text/css" href="${CSS_URI!}">
+    <#if INLINE_CSS??>
+        <style type="text/css">
+            ${INLINE_CSS}
+        </style>
+    </#if>
     <!--[if IE]>
        <link href="/msie.css" type="text/css" rel="stylesheet">
     <![endif]-->

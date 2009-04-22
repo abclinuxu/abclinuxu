@@ -107,6 +107,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_AVATARS = "avatars";
     public static final String PARAM_DISPLAY_BANNED_STORIES = "bannedStories";
     public static final String PARAM_SIGNATURE = "signature";
+    public static final String PARAM_SOCIAL_BOOKMARKS = "social_bookmarks";
     public static final String PARAM_COOKIE_VALIDITY = "cookieValid";
     public static final String PARAM_DISCUSSIONS_COUNT = "discussions";
     public static final String PARAM_SCREENSHOTS_COUNT = "screenshots";
@@ -132,6 +133,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_USER_ROLES = "roles";
     public static final String PARAM_USERS = "users";
     public static final String PARAM_URL_CSS = "css";
+    public static final String PARAM_INLINE_CSS = "inline_css";
     public static final String PARAM_GUIDEPOST = "guidepost";
     public static final String PARAM_FEED = "feed";
     public static final String PARAM_TEMPLATE_FEED_SIZE = "feedSize";
@@ -788,10 +790,14 @@ public class EditUser implements AbcAction {
         Node node = document.selectSingleNode("/data/settings/emoticons");
         if ( node!=null )
             params.put(PARAM_EMOTICONS, node.getText());
-
+        
         node = document.selectSingleNode("/data/settings/signatures");
         if ( node!=null )
             params.put(PARAM_SIGNATURES, node.getText());
+
+        node = document.selectSingleNode("/data/settings/social_bookmarks");
+        if (node != null)
+            params.put(PARAM_SOCIAL_BOOKMARKS, node.getText());
 
         node = document.selectSingleNode("/data/settings/avatars");
         if ( node!=null )
@@ -813,6 +819,10 @@ public class EditUser implements AbcAction {
         node = document.selectSingleNode("/data/settings/css");
         if ( node!=null )
             params.put(PARAM_URL_CSS, node.getText());
+
+        node = document.selectSingleNode("/data/settings/inline_css");
+        if (node != null)
+            params.put(PARAM_INLINE_CSS, node.getText());
 
         node = document.selectSingleNode("/data/settings/cookie_valid");
         if ( node!=null )
@@ -908,8 +918,10 @@ public class EditUser implements AbcAction {
         }
 
         canContinue = setCssUrl(params, managed);
+        canContinue &= setInlineCss(params, managed);
         canContinue &= setCookieValidity(params, managed);
         canContinue &= setEmoticons(params, managed);
+        canContinue &= setSocialBookmarks(params, managed);
         canContinue &= setSignatures(params, managed);
         canContinue &= setBannedStories(params, managed);
         canContinue &= setAvatars(params, managed);
@@ -2066,6 +2078,25 @@ public class EditUser implements AbcAction {
     }
 
     /**
+     * Updates custom inline CSS from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param user   user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setInlineCss(Map params, User user) {
+        String content = (String) params.get(PARAM_INLINE_CSS);
+        if (content == null || content.trim().length() == 0) {
+            Node node = user.getData().selectSingleNode("/data/settings/inline_css");
+            if (node != null)
+                node.detach();
+        } else {
+            Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/inline_css");
+            element.setText(content.trim());
+        }
+        return true;
+    }
+
+    /**
      * Updates emoticons from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
@@ -2075,6 +2106,20 @@ public class EditUser implements AbcAction {
         String emoticons = (String) params.get(PARAM_EMOTICONS);
         Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/emoticons");
         String value = ("yes".equals(emoticons))? "yes":"no";
+        element.setText(value);
+        return true;
+    }
+
+    /**
+     * Updates social bookmarks setting from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setSocialBookmarks(Map params, User user) {
+        String setting = (String) params.get(PARAM_SOCIAL_BOOKMARKS);
+        Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/social_bookmarks");
+        String value = ("yes".equals(setting))? "yes":"no";
         element.setText(value);
         return true;
     }

@@ -71,19 +71,32 @@
 
     <table class="siroka" cellspacing="10px">
         <tr>
-            <td class="required" width="200px">Vlastní CSS</td>
+            <td class="required" width="200px" rowspan="4" valign="top">Vlastní CSS</td>
             <td>
-                <input type="text" name="css" size="40" value="${PARAMS.css!}" tabindex="4">
+                <input type="text" name="css" size="40" value="${PARAMS.css!}" tabindex="4"><br>
                 <@lib.showError key="css"/>
             </td>
         </tr>
 
         <tr>
-            <td colspan="2">
+            <td>
             Zadejte URL souboru obsahující CSS definici vzhledu portálu. Bude použita místo
             standardního vzhledu. Pro bílé písmo na černém podkladu vložte
             <code>/styles-dark.css</code>.
-            <a href="/napoveda/alternativni-design">Nápověda</a>.
+            <a href="/napoveda/alternativni-design">Nápověda</a>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <textarea name="inline_css" class="siroka" rows="4">${PARAMS.inline_css!?html}</textarea>
+                <@lib.showError key="inline_css"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Zde máte možnost definovat CSS deklaraci, která bude vložena do hlavičky HTML kódu každé stránky.
             </td>
         </tr>
 
@@ -103,10 +116,25 @@
         </tr>
 
         <tr>
+            <td class="required" width="200px">Záložkové služby</td>
+            <td>
+                <@lib.showOption "social_bookmarks", "yes", "ano", "radio", "tabindex='6'" />
+                <@lib.showOption "social_bookmarks", "no", "ne", "radio", "tabindex='6'" />
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                Umožňuje nezobrazovat ikonky online záložkových služeb typu Google bookmarks, Del.ici.ous,
+                Linkuj či Facebook.
+            </td>
+        </tr>
+
+        <tr>
             <td class="required" width="200px">Zobrazovat patičku</td>
             <td>
-                <@lib.showOption "signatures", "yes", "ano", "radio", "tabindex='6'" />
-                <@lib.showOption "signatures", "no", "ne", "radio", "tabindex='6'" />
+                <@lib.showOption "signatures", "yes", "ano", "radio", "tabindex='7'" />
+                <@lib.showOption "signatures", "no", "ne", "radio", "tabindex='7'" />
             </td>
         </tr>
 
@@ -119,8 +147,8 @@
         <tr>
             <td class="required" width="200px">Zobrazovat avatary</td>
             <td>
-                <@lib.showOption "avatars", "yes", "ano", "radio", "tabindex='7'" />
-                <@lib.showOption "avatars", "no", "ne", "radio", "tabindex='7'" />
+                <@lib.showOption "avatars", "yes", "ano", "radio", "tabindex='8'" />
+                <@lib.showOption "avatars", "no", "ne", "radio", "tabindex='8'" />
             </td>
         </tr>
 
@@ -154,7 +182,7 @@
                             <tr>
                                 <td>${name}</td>
                                 <td>
-                                    <input type="text" name="discussions_${forum.key}" value="${forum.value}" size="3" tabindex="8">
+                                    <input type="text" name="discussions_${forum.key}" value="${forum.value}" size="3" tabindex="9">
                                 </td>
                             </tr>
                         </#list>
@@ -164,7 +192,7 @@
                     |
                     všechny dotazy v jednom výpisu
                     <br>
-                    <select name="discussions" tabindex="8">
+                    <select name="discussions" tabindex="10">
                         <#assign discussions=PARAMS.discussions!"20">
                         <option value="-2"<#if discussions=="-2">SELECTED</#if>>default</option>
                         <option value="0" <#if discussions=="0">SELECTED</#if>>žádné</option>
@@ -191,7 +219,7 @@
         <tr>
             <td class="required" width="200px">Velikost stránky poradny</td>
             <td>
-                <input type="text" name="forum" value="${PARAMS.forum!}" size="3" tabindex="9">
+                <input type="text" name="forum" value="${PARAMS.forum!}" size="3" tabindex="11">
                 <@lib.showError key="forum"/>
             </td>
         </tr>
@@ -207,7 +235,7 @@
         <tr>
             <td class="required" width="200px">Počet zpráviček</td>
             <td>
-                <input type="text" name="news" value="${PARAMS.news!}" size="3" tabindex="10">
+                <input type="text" name="news" value="${PARAMS.news!}" size="3" tabindex="12">
                 <@lib.showError key="news"/>
             </td>
         </tr>
@@ -222,15 +250,15 @@
         <tr>
             <td class="required" width="200px">Zobrazovat titulky zpráviček</td>
             <td>
-                <@lib.showOption "newsTitles", "yes", "ano", "radio", "tabindex='11'" />
-                <@lib.showOption "newsTitles", "no", "ne", "radio", "tabindex='11'" />
+                <@lib.showOption "newsTitles", "yes", "ano", "radio", "tabindex='13'" />
+                <@lib.showOption "newsTitles", "no", "ne", "radio", "tabindex='13'" />
             </td>
         </tr>
         <tr>
             <td class="required" width="200px">Titulky zpráviček na více řádků</td>
             <td>
-                <@lib.showOption "newsMultiline", "yes", "ano", "radio", "tabindex='12'" />
-                <@lib.showOption "newsMultiline", "no", "ne", "radio", "tabindex='12'" />
+                <@lib.showOption "newsMultiline", "yes", "ano", "radio", "tabindex='14'" />
+                <@lib.showOption "newsMultiline", "no", "ne", "radio", "tabindex='14'" />
             </td>
         </tr>
     </table>
@@ -241,7 +269,7 @@
         <tr>
             <td class="required" width="200px">Počet článků</td>
             <td>
-                <input type="text" name="articles" value="${PARAMS.articles!}" size="3" tabindex="13">
+                <input type="text" name="articles" value="${PARAMS.articles!}" size="3" tabindex="15">
                 <@lib.showError key="articles"/>
             </td>
         </tr>
@@ -256,7 +284,7 @@
         <tr>
             <td class="required" width="200px">Počet nezkrácených článků</td>
             <td>
-                <input type="text" name="complete_articles" value="${PARAMS.complete_articles!}" size="3" tabindex="14">
+                <input type="text" name="complete_articles" value="${PARAMS.complete_articles!}" size="3" tabindex="16">
                 <@lib.showError key="complete_articles"/>
             </td>
         </tr>
@@ -271,7 +299,7 @@
         <tr>
             <td class="required" width="200px">Počet zápisků</td>
             <td>
-                <input type="text" name="stories" value="${PARAMS.stories!}" size="3" tabindex="15">
+                <input type="text" name="stories" value="${PARAMS.stories!}" size="3" tabindex="17">
                 <@lib.showError key="stories"/>
             </td>
         </tr>
@@ -279,7 +307,7 @@
         <tr>
             <td class="required" width="200px">Počet výběrových zápisků</td>
             <td>
-                <input type="text" name="digestStories" value="${PARAMS.digestStories!}" size="3" tabindex="15">
+                <input type="text" name="digestStories" value="${PARAMS.digestStories!}" size="3" tabindex="18">
                 <@lib.showError key="digestStories"/>
             </td>
         </tr>
@@ -297,8 +325,8 @@
         <tr>
             <td class="required" width="200px">Zobrazovat všechny zápisky</td>
             <td>
-                <@lib.showOption "bannedStories", "yes", "ano", "radio", "tabindex='16'" />
-                <@lib.showOption "bannedStories", "no", "ne", "radio", "tabindex='16'" />
+                <@lib.showOption "bannedStories", "yes", "ano", "radio", "tabindex='19'" />
+                <@lib.showOption "bannedStories", "no", "ne", "radio", "tabindex='19'" />
             </td>
         </tr>
 
@@ -313,7 +341,7 @@
         <tr>
             <td class="required" width="200px">Počet desktopů</td>
             <td>
-                <input type="text" name="screenshots" value="${PARAMS.screenshots!}" size="3" tabindex="17">
+                <input type="text" name="screenshots" value="${PARAMS.screenshots!}" size="3" tabindex="20">
                 <@lib.showError key="screenshots"/>
             </td>
         </tr>
@@ -333,7 +361,7 @@
         <tr>
             <td class="required" width="200px">Obecná velikost stránky</td>
             <td>
-                <input type="text" name="defaultPageSize" value="${PARAMS.defaultPageSize!}" size="3" tabindex="18">
+                <input type="text" name="defaultPageSize" value="${PARAMS.defaultPageSize!}" size="3" tabindex="21">
                 <@lib.showError key="defaultPageSize"/>
             </td>
         </tr>
@@ -345,7 +373,7 @@
         <tr>
             <td class="required" width="200px">Velikost stránky při hledání</td>
             <td>
-                <input type="text" name="search" value="${PARAMS.search!}" size="3" tabindex="19">
+                <input type="text" name="search" value="${PARAMS.search!}" size="3" tabindex="22">
                 <@lib.showError key="search"/>
             </td>
         </tr>
@@ -361,8 +389,8 @@
         <tr>
             <td class="required" width="200px">Zobrazovat rozcestník</td>
             <td>
-                <@lib.showOption "guidepost", "yes", "ano", "radio", "tabindex='20'" />
-                <@lib.showOption "guidepost", "no", "ne", "radio", "tabindex='20'" />
+                <@lib.showOption "guidepost", "yes", "ano", "radio", "tabindex='23'" />
+                <@lib.showOption "guidepost", "no", "ne", "radio", "tabindex='23'" />
             </td>
         </tr>
 

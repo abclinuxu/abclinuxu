@@ -624,6 +624,17 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Finds user setting about displaying social bookmarks icons. Default is true.
+     * @param visitor maybe user
+     * @return true, if social bookmarks icons shall be displayed
+     */
+    public boolean displaySocialBookmarks(Object visitor) {
+        if (visitor == null || !(visitor instanceof User))
+            return true;
+        return Misc.getNodeSetting(((User)visitor).getData(), "/data/settings/social_bookmarks", true);
+    }
+
+    /**
      * Finds user's avatar and displays it, unless visitor forbids it.
      * If user or visitor is registered, these objects will be instance of User
      * class. If avatar is for any reason not available, null will be returned.
