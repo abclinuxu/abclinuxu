@@ -2,47 +2,42 @@ package cz.abclinuxu.data.view;
 
 import java.util.Date;
 
+import cz.abclinuxu.data.ImageAssignable;
+
 /**
  * Handles author for purposes of editors.
+ * 
  * @author kapy
- *
+ * 
  */
-public class Author {
+public class Author implements ImageAssignable {
 
 	private int id;
-	
+
 	private Integer uid;
-	
+
 	private boolean active;
-	
+
 	private String name, surname, login, nickname;
-	
+
 	private String birthNumber, accountNumber;
-	
+
 	private String address;
-	
+
 	private String email, phone;
-	
+
 	private String photoUrl;
-	
+
 	private String about;
 
 	private int articleCount;
-	
+
 	private Date lastArticleDate;
-	
+
 	/**
-	 * Creates empty author 
+	 * Creates empty author
 	 */
 	public Author() {
-	}
-	
-	public String getTitle() {
-		StringBuilder sb = new StringBuilder();
-		if(name!=null) sb.append(name).append(" ");
-		if(surname!=null) sb.append(surname);
-		
-		return sb.toString();
 	}
 
 	/**
@@ -53,7 +48,8 @@ public class Author {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(int id) {
 		this.id = id;
@@ -67,7 +63,8 @@ public class Author {
 	}
 
 	/**
-	 * @param uid the uid to set
+	 * @param uid
+	 *            the uid to set
 	 */
 	public void setUid(Integer uid) {
 		this.uid = uid;
@@ -81,7 +78,8 @@ public class Author {
 	}
 
 	/**
-	 * @param active the active to set
+	 * @param active
+	 *            the active to set
 	 */
 	public void setActive(boolean active) {
 		this.active = active;
@@ -95,7 +93,8 @@ public class Author {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -109,7 +108,8 @@ public class Author {
 	}
 
 	/**
-	 * @param surname the surname to set
+	 * @param surname
+	 *            the surname to set
 	 */
 	public void setSurname(String surname) {
 		this.surname = surname;
@@ -123,7 +123,8 @@ public class Author {
 	}
 
 	/**
-	 * @param login the login to set
+	 * @param login
+	 *            the login to set
 	 */
 	public void setLogin(String login) {
 		this.login = login;
@@ -137,7 +138,8 @@ public class Author {
 	}
 
 	/**
-	 * @param nickname the nickname to set
+	 * @param nickname
+	 *            the nickname to set
 	 */
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
@@ -151,7 +153,8 @@ public class Author {
 	}
 
 	/**
-	 * @param birthNumber the birthNumber to set
+	 * @param birthNumber
+	 *            the birthNumber to set
 	 */
 	public void setBirthNumber(String birthNumber) {
 		this.birthNumber = birthNumber;
@@ -165,7 +168,8 @@ public class Author {
 	}
 
 	/**
-	 * @param accountNumber the accountNumber to set
+	 * @param accountNumber
+	 *            the accountNumber to set
 	 */
 	public void setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
@@ -179,7 +183,8 @@ public class Author {
 	}
 
 	/**
-	 * @param address the address to set
+	 * @param address
+	 *            the address to set
 	 */
 	public void setAddress(String address) {
 		this.address = address;
@@ -193,7 +198,8 @@ public class Author {
 	}
 
 	/**
-	 * @param email the email to set
+	 * @param email
+	 *            the email to set
 	 */
 	public void setEmail(String email) {
 		this.email = email;
@@ -207,7 +213,8 @@ public class Author {
 	}
 
 	/**
-	 * @param phone the phone to set
+	 * @param phone
+	 *            the phone to set
 	 */
 	public void setPhone(String phone) {
 		this.phone = phone;
@@ -221,7 +228,8 @@ public class Author {
 	}
 
 	/**
-	 * @param photoUrl the photoUrl to set
+	 * @param photoUrl
+	 *            the photoUrl to set
 	 */
 	public void setPhotoUrl(String photoUrl) {
 		this.photoUrl = photoUrl;
@@ -235,7 +243,8 @@ public class Author {
 	}
 
 	/**
-	 * @param about the about to set
+	 * @param about
+	 *            the about to set
 	 */
 	public void setAbout(String about) {
 		this.about = about;
@@ -249,7 +258,8 @@ public class Author {
 	}
 
 	/**
-	 * @param articleCount the articleCount to set
+	 * @param articleCount
+	 *            the articleCount to set
 	 */
 	public void setArticleCount(int articleCount) {
 		this.articleCount = articleCount;
@@ -263,10 +273,42 @@ public class Author {
 	}
 
 	/**
-	 * @param lastArticleDate the lastArticleDate to set
+	 * @param lastArticleDate
+	 *            the lastArticleDate to set
 	 */
 	public void setLastArticleDate(Date lastArticleDate) {
 		this.lastArticleDate = lastArticleDate;
+	}
+
+	/**
+	 * Constructs title (name with surname) for author
+	 * 
+	 * @return Full name representation of author
+	 */
+	public String getTitle() {
+		StringBuilder sb = new StringBuilder();
+		if (name != null)
+			sb.append(name).append(" ");
+		if (surname != null)
+			sb.append(surname);
+
+		return sb.toString();
+	}
+
+	public void assignImage(int imageNo, String imageUrl) {
+		this.photoUrl = imageUrl;
+	}
+
+	public String detractImage(int imageNo) {
+		String url = this.photoUrl;
+		this.photoUrl = null;
+		return url;
+	}
+
+	public String proposeImageUrl(int imageNo, String suffix) {
+		StringBuilder sb = new StringBuilder();
+		return sb.append("images/authors/").append(getTitle()).append("-")
+				.append(id).append('.').append(suffix).toString();
 	}
 
 }
