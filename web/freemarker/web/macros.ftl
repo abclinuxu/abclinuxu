@@ -513,7 +513,7 @@
     <#if TOOL.isQuestionSolved(diz.discussion.data)>
         <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle čtenářů vyřešena">
     </#if>
-    <#if USER?? && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")??>
+    <#if TOOL.isMonitored(diz.discussion, USER!)>
         <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
     </#if>
 </#macro>
@@ -666,7 +666,7 @@
          <#list FORUM as diz>
           <tr>
             <td><a href="${diz.url}">${TOOL.limit(diz.title,60,"...")}</a></td>
-            <td class="td-meta"><@lib.showDiscussionState diz /></td>
+            <td class="td-meta"><@showDiscussionState diz /></td>
             <td class="td-meta">${diz.responseCount}</td>
             <td class="td-datum">${DATE.show(diz.updated,"SMART")}</td>
           </tr>

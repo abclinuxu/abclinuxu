@@ -1784,7 +1784,7 @@ public class Tools implements Configurable {
      * @param content List of Relations containing Items with type=Item.Discussion
      * @return list of PreparedDiscussions.
      */
-    public List analyzeDiscussions(List content) {
+    public List<DiscussionHeader> analyzeDiscussions(List content) {
         List list = new ArrayList(content.size());
         for ( Iterator iter = content.iterator(); iter.hasNext(); ) {
             DiscussionHeader preparedDiscussion = analyzeDiscussion((Relation) iter.next());
