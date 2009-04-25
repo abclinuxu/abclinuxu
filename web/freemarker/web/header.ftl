@@ -5,7 +5,8 @@
     <#if USER?? && USER.hasRole("root")><!-- Sablona: ${TEMPLATE!"neznama"} --></#if>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>${PARAMS.TITLE?default(TITLE?default('www.abclinuxu.cz'))}</title>
-    <link rel="stylesheet" type="text/css" href="${CSS_URI!}">
+    <link rel="stylesheet" type="text/css" href="/jquery-theme/ui.all.css" />
+    <link rel="stylesheet" type="text/css" href="${CSS_URI!}">    
     <!--[if IE]>
        <link href="/msie.css" type="text/css" rel="stylesheet">
     <![endif]-->
@@ -88,6 +89,9 @@
             <div class="hl_vpravo">
               <#if USER??>
                 <@lib.showUser USER/> |
+                <#if TOOL.permissionsFor(USER, "ADMIN_BASE").canModify() >
+                <a href="/sprava/redakce">Správa</a> |
+                </#if>
                 <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")!"UNDEF">
                 <#if blogName!="UNDEF"><a href="/blog/${blogName}">Blog</a> |</#if>
                 <a href="/History?type=comments&amp;uid=${USER.id}">Mé komentáře</a> |

@@ -916,7 +916,10 @@
     		<var name="TITLE" value="Přidání autora" />
     	</action>
     	<action name="edit" content="/add/administration/author.ftl" >
-    		<var name="TITLE" value="Editace autora" />
+    		<var name="TITLE" value="Editace autora ${AUTHOR.title!?html}" />
+    	</action>
+    	<action name="remove" content="/remove/administration/author.ftl" >
+    		<var name="TITLE" value="Smazání autora ${AUTHOR.title!?html}" />
     	</action>
     </servlet>
 </config>

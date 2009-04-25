@@ -18,58 +18,96 @@
  */
 package cz.abclinuxu.utils.freemarker;
 
-import cz.abclinuxu.data.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import org.apache.log4j.Logger;
+import org.apache.regexp.RE;
+import org.apache.regexp.RECompiler;
+import org.apache.regexp.REProgram;
+import org.apache.regexp.RESyntaxException;
+import org.dom4j.Branch;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.Node;
+import org.dom4j.io.DOMWriter;
+import org.htmlparser.Text;
+import org.htmlparser.lexer.Lexer;
+import org.htmlparser.nodes.TagNode;
+import org.htmlparser.util.ParserException;
+
+import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.Data;
+import cz.abclinuxu.data.GenericDataObject;
+import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Link;
-import cz.abclinuxu.exceptions.PersistenceException;
+import cz.abclinuxu.data.Poll;
+import cz.abclinuxu.data.Record;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.Server;
+import cz.abclinuxu.data.Tag;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.XMLContainer;
+import cz.abclinuxu.data.view.Comment;
+import cz.abclinuxu.data.view.Desktop;
+import cz.abclinuxu.data.view.Discussion;
+import cz.abclinuxu.data.view.DiscussionHeader;
+import cz.abclinuxu.data.view.DiscussionRecord;
+import cz.abclinuxu.data.view.ItemComment;
+import cz.abclinuxu.data.view.RelatedDocument;
+import cz.abclinuxu.data.view.RevisionInfo;
 import cz.abclinuxu.exceptions.InvalidDataException;
-import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.persistence.Nursery;
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.html.edit.EditRating;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.data.view.*;
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.format.*;
-import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.Advertisement;
-import cz.abclinuxu.utils.TagTool;
-import cz.abclinuxu.utils.forms.RichTextEditor;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.scheduler.EnsureWatchedDiscussionsLimit;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.edit.EditRating;
+import cz.abclinuxu.servlets.utils.url.PwdNavigator;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.PwdNavigator.NavigationType;
+import cz.abclinuxu.utils.Advertisement;
+import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.TagTool;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
-import org.dom4j.Document;
-import org.dom4j.Node;
-import org.dom4j.Element;
-import org.dom4j.Branch;
-import org.dom4j.DocumentException;
-import org.dom4j.io.DOMWriter;
-import org.apache.log4j.Logger;
-import org.apache.regexp.RE;
-import org.apache.regexp.RESyntaxException;
-import org.apache.regexp.REProgram;
-import org.apache.regexp.RECompiler;
-import org.htmlparser.lexer.Lexer;
-import org.htmlparser.nodes.TagNode;
-import org.htmlparser.util.ParserException;
-import org.htmlparser.Text;
-
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-import java.util.regex.Matcher;
-import java.util.prefs.Preferences;
-
-import freemarker.template.*;
+import cz.abclinuxu.utils.format.Format;
+import cz.abclinuxu.utils.format.FormatDetector;
+import cz.abclinuxu.utils.format.HTMLFormatRenderer;
+import cz.abclinuxu.utils.format.Renderer;
+import cz.abclinuxu.utils.forms.RichTextEditor;
 import freemarker.ext.dom.NodeModel;
-import java.util.prefs.BackingStoreException;
+import freemarker.template.SimpleSequence;
+import freemarker.template.TemplateModelException;
+import freemarker.template.TemplateNumberModel;
 
 /**
  * Various utilities available for templates
@@ -2186,6 +2224,26 @@ public class Tools implements Configurable {
 
 	public static Permissions permissionsFor(Object user, int rel) {
 		return permissionsFor(user, new Relation(rel));
+	}
+	
+	/**
+	 * Retrieves permissions for given user and type of navigation
+	 * @param user User object
+	 * @param navigationType String name of navigation type Enum
+	 * @return Permissions for given combination
+	 */
+	public static Permissions permissionsFor(User user, String navigationType) {
+		try {
+			return NavigationType.valueOf(navigationType).getPermissions(user);
+		}
+		catch(IllegalArgumentException iae) {
+			log.warn("Attempted to access invalid navigationType: " + navigationType, iae);						
+		}
+		catch(NullPointerException npe) {
+			log.warn("Attempted to access empty navigationType: " + navigationType, npe);
+		}
+		
+		return new Permissions(0);
 	}
 
     /**

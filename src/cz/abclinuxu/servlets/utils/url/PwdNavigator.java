@@ -36,12 +36,12 @@ public class PwdNavigator {
 		 */
 		ADMIN_BASE {
 			@Override
-			Permissions getPermissions(User user) {
+			public Permissions getPermissions(User user) {
 				return Tools.permissionsFor(user, Constants.REL_AUTHORS);
 			}
 
 			@Override
-			List<Link> navigate(List<Link> links, Link tail) {
+			public List<Link> navigate(List<Link> links, Link tail) {
 
 				StringBuilder url = new StringBuilder(
 						UrlUtils.PREFIX_ADMINISTRATION);
@@ -56,12 +56,12 @@ public class PwdNavigator {
 		},
 		ADMIN_AUTHORS {
 			@Override
-			Permissions getPermissions(User user) {
+			public Permissions getPermissions(User user) {
 				return ADMIN_BASE.getPermissions(user);
 			}
 
 			@Override
-			List<Link> navigate(List<Link> links, Link tail) {
+			public List<Link> navigate(List<Link> links, Link tail) {
 				links = ADMIN_BASE.navigate(links, tail);
 				links.add(new Link("Správa autorů", getUrlPrefix(links)
 						+ "autori", "Správa autorů"));
@@ -69,9 +69,9 @@ public class PwdNavigator {
 			}
 		};
 
-		abstract Permissions getPermissions(User user);
+		public abstract Permissions getPermissions(User user);
 
-		abstract List<Link> navigate(List<Link> links, Link tail);
+		public abstract List<Link> navigate(List<Link> links, Link tail);
 	}
 
 	private NavigationType nt;

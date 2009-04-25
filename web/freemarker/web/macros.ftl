@@ -522,6 +522,17 @@
     </div>
 </#macro>
 
+<#macro showSignPost title cssStyle="">
+<div class="ui-dialog ui-widget ui-widget-content ui-corner-all sign-post"<#if (cssStyle?length gte 1)> style="${cssStyle}"</#if>>
+  <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" unselectable="on">
+    <span class="ui-dialog-title" unselectable="on">${title}</span>
+  </div>
+  <div class="sign-post-content">
+  <#nested/>
+  </div>
+</div>
+</#macro>
+
 <#macro repeat times>
     <#if times lt 1><#return></#if>
     <#list 1..times as temp>
