@@ -15,8 +15,7 @@
     });
     
     // -->
-    </script>
-    <link rel="stylesheet" type="text/css" href="/jquery-theme/ui.all.css" />       
+    </script>           
 </#assign>
 
 <#include "../../header.ftl">
@@ -35,7 +34,7 @@ Text o autorovi se zobrazí na jeho stránce. Neaktivní autor se nezobrazuje ve
 redakční systém. Foto by mělo mít rozměr přibližně 100x100 pixelů. Text o autorovi se zobrazí na jeho stránce.</p>
 </#if>
 
-<form action="${URL.noPrefix("/sprava/redakce/autori/edit")}" method="POST">
+<form action="${URL.noPrefix("/sprava/redakce/autori/edit")}" method="POST" enctype="multipart/form-data">
     <table class="siroka">
         <tr>
             <td class="required">Jméno:</td>
@@ -113,9 +112,29 @@ redakční systém. Foto by mělo mít rozměr přibližně 100x100 pixelů. Tex
             <div class="error">${ERRORS.address!}</div>
             </td>
         </tr>
+        <#if EDIT_MODE?? && AUTHOR.photoUrl?? >
+        <tr>
+        	<td>Současná fotografie:</td>
+        	<td><img src="${(AUTHOR.photoUrl)!?html}" />
+        	<input type="submit" name="remove_photo" value="Odstraň foto" tabindex="12"> 
+        	</td>
+        </tr>
+        </#if>
+        <tr>
+            <td>Foto:</td>
+            <td><input type="file" name="photo" size="40" tabindex="11" />
+            <div class="error">${ERRORS.photo!}</div>
+            </td>
+        </tr>
+        <tr>
+        	<td>O autorovi:</td>
+        	<td><textarea name="about" class="siroka" rows="4" tabindex="13">${(AUTHOR.about)!}</textarea>
+        	<div class="error">${ERRORS.about!}</div>
+        	</td>
+        </tr>        
         <tr>
             <td>&nbsp;</td>
-            <td><input type="submit" value="Dokonči" tabindex="11" /></td>
+            <td><input type="submit" value="Dokonči" tabindex="14" /></td>
         </tr>
     </table>
     <#if EDIT_MODE??>

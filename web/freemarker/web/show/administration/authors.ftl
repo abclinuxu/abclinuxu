@@ -1,6 +1,10 @@
 <#include "../../header.ftl">
 
-<div style="float:right"><a href="${URL.make("/redakce/autori/edit?action=add")}">Přidat autora</a></div>
+<@lib.showSignPost "Rozcestník">
+<ul>
+   <li><a href="${URL.make("/redakce/autori/edit?action=add")}">Přidat autora</a></li>
+</ul>
+</@lib.showSignPost>
 
 <@lib.showMessages/>
 <h3>Správa autorů</h3>
@@ -65,7 +69,8 @@ Datum posledního článku je zobrazen ve sloupci <b>Poslední</b> a toto stář
 	<#list FOUND.data as author>
 		<tr>
 			<td>${author.name}</td>
-			<td>${author.surname}</td>
+			<td>
+			<a href="${URL.make("/redakce/autori/show/?aId=${author.id}&amp;action=show")}">${author.surname}</a></td>
 			<td>smlouva</td>
 			<td>${author.active?string("ano","ne")}</td>
 			<td>${author.articleCount}</td>
@@ -82,7 +87,7 @@ Datum posledního článku je zobrazen ve sloupci <b>Poslední</b> a toto stář
 			<a href="${URL.make("/autori/clanky")}" title="Články">Č</a>&nbsp;
 			<a href="${URL.make("/autori/honorare")}" title="Honoráře">H</a>&nbsp;
 			<a href="${URL.make("/autori/smlouvy")}" title="Smlouvy">S</a>&nbsp;
-			<a href="${URL.make("/redakce/autori/edit/${author.id}?action=edit")}" title="Smazat autora">X</a>
+			<a href="${URL.make("/redakce/autori/edit/${author.id}?action=rm")}" title="Smazat autora">X</a>
 			</td>
 		</tr>
 	</#list>

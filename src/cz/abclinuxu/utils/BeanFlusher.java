@@ -29,6 +29,7 @@ public class BeanFlusher {
 		item.setNumeric2(author.isActive() ? 1 : 0);
 		item.setString1(Misc.filterDangerousCharacters(author.getName()));
 		item.setString2(Misc.filterDangerousCharacters(author.getSurname()));
+		item.setTitle(author.getTitle());
 
 		// get/create XML document
 		Document doc = item.getData();

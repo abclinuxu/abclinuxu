@@ -12,6 +12,8 @@ import cz.abclinuxu.data.ImageAssignable;
  */
 public class Author implements ImageAssignable {
 
+	public static final int AUTHOR_PHOTO = 1;
+	
 	private int id;
 
 	private Integer uid;
@@ -307,8 +309,14 @@ public class Author implements ImageAssignable {
 
 	public String proposeImageUrl(int imageNo, String suffix) {
 		StringBuilder sb = new StringBuilder();
-		return sb.append("images/authors/").append(getTitle()).append("-")
-				.append(id).append('.').append(suffix).toString();
+		sb.append("images/authors/").append(name).append('-').append(surname);
+		
+		if(uid!=null)
+			sb.append("-u-").append(uid);
+		else if(id!=0)
+			sb.append('-').append(id);
+		
+		return sb.append('.').append(suffix).toString();
 	}
 
 }
