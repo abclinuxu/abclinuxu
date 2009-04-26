@@ -19,6 +19,7 @@
 <h3>Správa redakce</h3>
 
 <ul>
+	<li><a href="${URL.noPrefix("/sprava/redakce")}">správa redakce</a></li>
     <li><a href="${URL.noPrefix("/clanky/dir/8082")}">čekající články</a></li>
     <li><a href="${URL.noPrefix("/clanky/honorare")}">honoráře</a></li>
     <li><a href="${URL.noPrefix("/autori")}">seznam autorů</a></li>
