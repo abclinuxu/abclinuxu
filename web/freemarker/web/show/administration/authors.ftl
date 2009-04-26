@@ -68,19 +68,19 @@ Datum posledního článku je zobrazen ve sloupci <b>Poslední</b> a toto stář
 
 	<#list FOUND.data as author>
 		<tr>
-			<td>${author.name}</td>
+			<td>${(author.name)!?html}</td>
 			<td>
-			<a href="${URL.make("/redakce/autori/show/?aId=${author.id}&amp;action=show")}">${author.surname}</a></td>
+			<a href="${URL.make("/redakce/autori/show/?aId=${author.id}&amp;action=show")}">${(author.surname)!?html}</a></td>
 			<td>smlouva</td>
-			<td>${author.active?string("ano","ne")}</td>
-			<td>${author.articleCount}</td>
+			<td>${(author.active)!?string("ano","ne")}</td>
+			<td>${(author.articleCount)!}</td>
 			<#assign date=""/>
 			<#if author.lastArticleDate??>
 				<#assign date=DATE.show(author.lastArticleDate, "CZ_DMY") />
 			</#if>
 			<td>${date}</td>
 			<td style="white-space: nowrap">
-			<#if author.email??><a href="mailto:${author.email}" title="Poslat email">@</a>
+			<#if author.email??><a href="mailto:${(author.email)!?html}" title="Poslat email">@</a>
 			<#else>@</#if>&nbsp;
 			<a href="${URL.make("/redakce/autori/edit/${author.id}?action=edit")}" title="Upravit autora">U</a>&nbsp;
 			<a href="${URL.make("/autori/namety")}" title="Náměty">N</a>&nbsp;
