@@ -1,15 +1,11 @@
 package cz.abclinuxu.servlets.utils.url;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
-
-import sun.security.action.GetLongAction;
 
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.security.Permissions;
-import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.freemarker.Tools;
 
