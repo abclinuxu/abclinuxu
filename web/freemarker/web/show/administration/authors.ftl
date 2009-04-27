@@ -8,14 +8,14 @@
 
 <@lib.showMessages/>
 <h3>Správa autorů</h3>
-<p>Na této stránce můžete prohlížet a spravovat autory.</p>
-<p>Authory lze filtrovat pomocí sloupců <b>Jméno</b> a <b>Příjmení</b>, kde stačí zadat začátek jména.
-Dále podle toho, zda uživatel souhlasil s autorskou smlouvou a zda odsouhlasená smlouva není stará.
-Sloupec <b>Aktivní</b> poté ukazuje, zda autor autor nadále tvoří obsah abclinuxu.cz. 
-Datum posledního článku je zobrazen ve sloupci <b>Poslední</b> a toto stáří lze zde filtrovat. 
-</p> 
-<br/>
-
+<p>Na této stránce můžete prohlížet a spravovat autory. Autory lze filtrovat podle následujících kritérií:</p>
+<ul style="list-style: none">
+	<li>Jméno a příjmení - stačí zadat začátek jména nebo příjmení</li>
+	<li>Smlouva - souhlas autora s autorskou smlouvou a její aktuálnost</li>
+	<li>Aktivní - indikace, zda autor stále tvoří obsah abclinuxu.cz</li>
+	<li>Článků - počet článku napsaný autorem, inkluzivní interval</li>
+	<li>Poslední - stáří posledního článku<li>
+</ul>
 <table class="siroka list">
 	<thead>
 	<tr>
@@ -25,7 +25,7 @@ Datum posledního článku je zobrazen ve sloupci <b>Poslední</b> a toto stář
 		<th>Aktivní</th>
 		<th>Článků</th>
 		<th>Poslední</th>
-		<th>Akce</th>
+		<th></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -47,11 +47,11 @@ Datum posledního článku je zobrazen ve sloupci <b>Poslední</b> a toto stář
 		<td><select name="filterAuthorsByArticles">
 			<@lib.showOption5 "", "", FILTER.checked("filterAuthorsByArticles", "")/>
 			<@lib.showOption5 "0", "žádný", FILTER.checked("filterAuthorsByArticles", "0")/>
-			<@lib.showOption5 "5", "&lt;5", FILTER.checked("filterAuthorsByArticles", "5")/>
-			<@lib.showOption5 "10", "&lt;10", FILTER.checked("filterAuthorsByArticles", "10")/>
-			<@lib.showOption5 "50", "&lt;50", FILTER.checked("filterAuthorsByArticles", "50")/>
-			<@lib.showOption5 "100", "&lt;100", FILTER.checked("filterAuthorsByArticles", "100")/>
-			<@lib.showOption5 "101", "&gt;100", FILTER.checked("filterAuthorsByArticles", "101")/>
+			<@lib.showOption5 "1-4", "1 až 4", FILTER.checked("filterAuthorsByArticles", "1-4")/>
+			<@lib.showOption5 "5-9", "5 až 9", FILTER.checked("filterAuthorsByArticles", "5-9")/>
+			<@lib.showOption5 "10-49", "10 až 49", FILTER.checked("filterAuthorsByArticles", "10-49")/>
+			<@lib.showOption5 "50-99", "50 až 99", FILTER.checked("filterAuthorsByArticles", "50-99")/>
+			<@lib.showOption5 "101", "100 a více", FILTER.checked("filterAuthorsByArticles", "101")/>
 			</select></td>
 		<td><select name="filterAuthorsByRecent">
 			<@lib.showOption5 "", "", FILTER.checked("filterAuthorsByRecent", "")/>
@@ -65,13 +65,24 @@ Datum posledního článku je zobrazen ve sloupci <b>Poslední</b> a toto stář
 		<td><input type="submit" value="Filtruj" /></td>
 		</form>
 	</tr>
-
+	</tbody>
+</table>
+<table class="siroka list">
+	<thead>
+	<tr>
+		<th>Jméno a příjmení </th>		
+		<th>Smlouva</th>
+		<th>Aktivní</th>
+		<th>Článků</th>
+		<th>Poslední</th>
+		<th>Akce</th>
+	</tr>
+	</thead>
+	<tbody>	
 	<#list FOUND.data as author>
 		<tr>
-			<td>${(author.name)!?html}</td>
-			<td>
-			<a href="${URL.make("/redakce/autori/show/?aId=${author.id}&amp;action=show")}">${(author.surname)!?html}</a></td>
-			<td>smlouva</td>
+			<td style="text-align: left"><a href="${URL.make("/redakce/autori/show/?aId=${author.id}&amp;action=show")}">${(author.title)!?html}</a></td>			
+			<td></td>
 			<td>${(author.active)!?string("ano","ne")}</td>
 			<td>${(author.articleCount)!}</td>
 			<#assign date=""/>
@@ -80,8 +91,7 @@ Datum posledního článku je zobrazen ve sloupci <b>Poslední</b> a toto stář
 			</#if>
 			<td>${date}</td>
 			<td style="white-space: nowrap">
-			<#if author.email??><a href="mailto:${(author.email)!?html}" title="Poslat email">@</a>
-			<#else>@</#if>&nbsp;
+			<#if author.email??><a href="mailto:${(author.email)!?html}" title="Poslat email">@</a>&nbsp;</#if>
 			<a href="${URL.make("/redakce/autori/edit/${author.id}?action=edit")}" title="Upravit autora">U</a>&nbsp;
 			<a href="${URL.make("/autori/namety")}" title="Náměty">N</a>&nbsp;
 			<a href="${URL.make("/autori/clanky")}" title="Články">Č</a>&nbsp;

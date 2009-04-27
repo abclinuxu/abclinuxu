@@ -37,7 +37,7 @@ redakční systém. Foto by mělo mít rozměr přibližně 100x100 pixelů. Tex
 <form action="${URL.noPrefix("/sprava/redakce/autori/edit")}" method="POST" enctype="multipart/form-data">
     <table class="siroka">
         <tr>
-            <td class="required">Jméno:</td>
+            <td>Jméno:</td>
             <td>
                 <input type="text" id="addauthor-name" name="name" value="${(AUTHOR.name)!?html}" size="60" class="siroka" tabindex="1" />
                 <div class="error">${ERRORS.name!}<div>

@@ -1228,7 +1228,22 @@ p.documentHistory {
 .right-column {
 	margin: 0 0 0 50%;
 	padding: 0;
-}	
+}
+
+/* listings */
+
+.list table {
+	margin-top: 2em;	
+}
+
+.list td  {
+	text-align: right;
+}
+.list th {
+	text-align: left;
+	font-width: normal;
+	font-size: 100%;
+}
 
 /* styly pro uzivatele */
 
