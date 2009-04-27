@@ -18,7 +18,7 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 
 public class FindUser implements AbcAction {
-	
+
     public static final String PARAM_USER = "uid";
     public static final String PARAM_LOGIN = "login";
     public static final String PARAM_NAME = "name";
@@ -30,124 +30,128 @@ public class FindUser implements AbcAction {
     public static final String VAR_TOO_MANY_USERS = "MANY";
     public static final String VAR_ZERO_USERS = "ZERO";
     public static final String VAR_SELECT_MODE = "SELECT_MODE";
-    
+
     public static final String ACTION_SELECT = "select";
-    
+
     public static final String AJAX_TEMPLATE = "/print/ajax/finduser.ftl";
-    
-	public String process(HttpServletRequest request,
-			HttpServletResponse response, Map env) throws Exception {
-		Persistence persistence = PersistenceFactory.getPersistence();
-		
-		
-		// set passed parameters
-		Map params = (Map) env.get(Constants.VAR_PARAMS);
-		User searched = new User();
+
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistence persistence = PersistenceFactory.getPersistence();
+
+
+        // set passed parameters
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User searched = new User();
         setId(params, searched, env);
         setName(params, searched, env);
         setLogin(params, searched, env);
         setEmail(params, searched, env);
-    	setCity(params,searched, env);
-    	
-    	// set list mode
-    	String action = (String) params.get(PARAM_ACTION);
-    	if(ACTION_SELECT.equals(action))
-    		env.put(VAR_SELECT_MODE, Boolean.TRUE);
+        setCity(params, searched, env);
 
-    	// add empty list to be sure there is some
-    	env.put(VAR_USERS, Collections.emptyList());
-    	
-    	// skip execution of query if not set
+        // set list mode
+        String action = (String) params.get(PARAM_ACTION);
+        if (ACTION_SELECT.equals(action))
+            env.put(VAR_SELECT_MODE, Boolean.TRUE);
+
+        // add empty list to be sure there is some
+        env.put(VAR_USERS, Collections.emptyList());
+
+        // skip execution of query if not set
         if (searched.preciseEquals(new User())) {
-        	env.put(VAR_TOO_MANY_USERS, Boolean.TRUE);
+            env.put(VAR_TOO_MANY_USERS, Boolean.TRUE);
             return AJAX_TEMPLATE;
         }
-        
+
         // search for similar users
         // use results only if there is less than maximum results
         List<User> users = persistence.findUsersLike(searched);
         int maxUsers = AbcConfig.getViewUserPageSize();
         if (users.size() == 0)
-        	env.put(VAR_ZERO_USERS, Boolean.TRUE);
+            env.put(VAR_ZERO_USERS, Boolean.TRUE);
         else if (users.size() > maxUsers)
-        	env.put(VAR_TOO_MANY_USERS, Boolean.TRUE);
+            env.put(VAR_TOO_MANY_USERS, Boolean.TRUE);
         else {
-        	List<User> results = new ArrayList<User>(users.size());
-        	for(User user: users) {
-        		results.add((User)persistence.findById(user));
-        	}
-        	// store results
-        	env.put(VAR_USERS, results);
-        	
+            List<User> results = new ArrayList<User>(users.size());
+            for (User user : users) {
+                results.add((User) persistence.findById(user));
+            }
+            // store results
+            env.put(VAR_USERS, results);
+
         }
-		
-	    return AJAX_TEMPLATE;
-	}
-	
+
+        return AJAX_TEMPLATE;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     //                          Setters                                      //
     ///////////////////////////////////////////////////////////////////////////
 
-     /**
-      * Sets city search field from parameters.
-      * @param params map holding request's parameters
-      * @param user user to be updated
-      * @param env environment
-      */
-     private void setCity(Map params, User user, Map env) {
-         String city = (String) params.get(PARAM_CITY);
-         if (city!=null && city.length()>3 )
-        	 user.setData("%<city>%"+city+"%</city>%");
-     }
+    /**
+     * Sets city search field from parameters.
+     *
+     * @param params map holding request's parameters
+     * @param user   user to be updated
+     * @param env    environment
+     */
+    private void setCity(Map params, User user, Map env) {
+        String city = (String) params.get(PARAM_CITY);
+        if (city != null && city.length() > 3)
+            user.setData("%<city>%" + city + "%</city>%");
+    }
 
     /**
      * Sets name search field from parameters.
+     *
      * @param params map holding request's parameters
-     * @param user user to be updated
-     * @param env environment
+     * @param user   user to be updated
+     * @param env    environment
      */
     private void setName(Map params, User user, Map env) {
         String name = (String) params.get(PARAM_NAME);
-        if (name!=null && name.length()>2)
-        	user.setName("%"+name+"%");
+        if (name != null && name.length() > 2)
+            user.setName("%" + name + "%");
     }
 
     /**
      * Sets login search field from parameters.
+     *
      * @param params map holding request's parameters
-     * @param user user to be updated
-     * @param env environment
+     * @param user   user to be updated
+     * @param env    environment
      */
     private void setLogin(Map params, User user, Map env) {
         String login = (String) params.get(PARAM_LOGIN);
-        if (login!=null && login.length() > 2 )
-        	user.setLogin("%"+login+"%");
+        if (login != null && login.length() > 2)
+            user.setLogin("%" + login + "%");
     }
 
     /**
      * Sets email search field from parameters.
+     *
      * @param params map holding request's parameters
-     * @param user user to be updated
-     * @param env environment
+     * @param user   user to be updated
+     * @param env    environment
      */
     private void setEmail(Map params, User user, Map env) {
         String email = (String) params.get(PARAM_EMAIL);
-        if (email!=null && email.length() > 2 )
-        	user.setEmail("%"+email+"%");
+        if (email != null && email.length() > 2)
+            user.setEmail("%" + email + "%");
     }
 
     /**
      * Sets id search field from parameters.
+     *
      * @param params map holding request's parameters
-     * @param user user to be updated
-     * @param env environment
+     * @param user   user to be updated
+     * @param env    environment
      */
     private void setId(Map params, User user, Map env) {
         String tmp = (String) params.get(PARAM_USER);
-        if (tmp==null)
+        if (tmp == null)
             return;
         tmp = tmp.trim();
-        if (tmp.length()==0)
+        if (tmp.length() == 0)
             return;
         // safely add uid of user
         try {
