@@ -1237,10 +1237,10 @@ p.documentHistory {
 }
 
 .list td  {
-	text-align: right;
+	text-align: center;
 }
 .list th {
-	text-align: left;
+	text-align: center;
 	font-width: normal;
 	font-size: 100%;
 }
