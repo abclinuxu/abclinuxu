@@ -215,7 +215,7 @@ a.thumb:hover,
 .prodej { color: #006400; }  /* darkgreen */
 .koupe { color: #8B0000; }  /* darkred */
 
-.ds_toolbox, .pwd-box, .tag-box {
+.ds_toolbox, .pwd-box, .cl-obrazky, .tag-box {
 	background-color: #ECECEC;
 	border-color: silver;
 }

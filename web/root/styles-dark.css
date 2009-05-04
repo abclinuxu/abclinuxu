@@ -219,9 +219,7 @@ td.pad,code.kod,pre.kod {
 a.thumb:hover,
 .cl-obrazky a:hover,
 .galerie a:hover,
-.sw h3 a:hover {
-	background-color: transparent;
-}
+.sw h3 a:hover { background-color: transparent; }
 
 .prodej { color: #90EE90; }  /* lightgreen */
 .koupe { color: #FFC0CB; }  /* pink */
@@ -229,7 +227,7 @@ a.thumb:hover,
 .meta-vypis,
 .treeview li span { color: #9A9A9A; }
 
-.ds_toolbox, .pwd-box {
+.ds_toolbox, .pwd-box, .cl-obrazky {
 	background-color: black;
 	border-color: #4B4B4B;
 }
