@@ -205,7 +205,7 @@ public class Search implements AbcAction, Configurable {
         } catch (Exception e) {
             log.error("Cannot search '"+query+"'",e);
             if (lastRunFileMissing)
-                ServletUtils.addError(PARAM_QUERY,"Došlo k chybě při hledání. Kontaktujte prosím správce.",env,null);
+                ServletUtils.addError(PARAM_QUERY,"Došlo k chybě při hledání. <a href=\"/pozadavky\">Kontaktujte</a> prosím správce.",env,null);
             else
                 ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zkuste zadat jiný řetězec.",env,null);
             return choosePage(onlyNews, request, env);
