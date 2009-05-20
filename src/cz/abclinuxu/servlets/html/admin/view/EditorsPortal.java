@@ -6,68 +6,79 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
-import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.url.PageNavigation;
 import cz.abclinuxu.servlets.utils.url.PwdNavigator;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.BeanFetcher.FetchType;
 
+/**
+ * Responsible for showing editors portal
+ * 
+ * @author kapy
+ * 
+ */
 public class EditorsPortal implements AbcAction {
 
     public static final String VAR_AUTHOR = "AUTHOR";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
-        String action = (String) params.get(PARAM_ACTION);
 
-        if (ServletUtils.handleMaintainance(request, env)) {
-            response.sendRedirect(response.encodeRedirectURL("/"));
-            return null;
-        }
+	Persistence persistence = PersistenceFactory.getPersistence();
+	Map params = (Map) env.get(Constants.VAR_PARAMS);
+	User user = (User) env.get(Constants.VAR_USER);
+	String action = (String) params.get(PARAM_ACTION);
 
-        // check permissions
-        if (user == null)
-            return FMTemplateSelector.select("AdministrationEditorsPortal", "login", env, request);
+	if (ServletUtils.handleMaintainance(request, env)) {
+	    response.sendRedirect(response.encodeRedirectURL("/"));
+	    return null;
+	}
 
-        // check advanced permissions and create navigation
-        // tree according to permissions given
-        PwdNavigator navigator = new PwdNavigator(user, PwdNavigator.NavigationType.ADMIN_BASE);
+	// check permissions
+	if (user == null)
+	    return FMTemplateSelector.select("AdministrationEditorsPortal", "login", env, request);
 
-        if (!navigator.hasPermissions(Permissions.PERMISSION_MODIFY)) {
-            return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
-        }
+	// check advanced permissions and create navigation
+	// tree according to permissions given
+	PwdNavigator navigator = new PwdNavigator(user, PageNavigation.EDITORS_PORTAL);
 
-        // store navigation structure
-        List<Link> parents = navigator.navigate();
-        env.put(Constants.VAR_PARENTS, parents);
+	if (navigator.indirectPerm(new Relation(Constants.REL_AUTHORS)).canModify()) {
+	    return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
+	}
 
-        // store author if any
-        Author author = findAssignedAuthor(user.getId());
-        env.put(VAR_AUTHOR, author);
+	// store navigation structure
+	List<Link> parents = navigator.navigate();
+	env.put(Constants.VAR_PARENTS, parents);
 
-        if (action == null || action.length() == 0)
-            return FMTemplateSelector.select("AdministrationEditorsPortal", "content", env, request);
+	// store author if any
+	Author author = findAssignedAuthor(user.getId());
+	env.put(VAR_AUTHOR, author);
 
-        throw new MissingArgumentException("Chybí parametr action!");
+	if (action == null || action.length() == 0)
+	    return FMTemplateSelector.select("AdministrationEditorsPortal", "content", env, request);
+
+	throw new MissingArgumentException("Chybí parametr action!");
     }
 
     /**
      * Find author object for given user id, if any
-     *
+     * 
      * @param userId Id of user
      * @return Author object, if given user is author at the same time
      */
     private Author findAssignedAuthor(int userId) {
-        SQLTool sqlTool = SQLTool.getInstance();
-        return BeanFetcher.fetchAuthorFromItem(sqlTool.findAuthorByUserId(userId), FetchType.OMIT_XML);
-	}
+	SQLTool sqlTool = SQLTool.getInstance();
+	return BeanFetcher.fetchAuthorFromItem(sqlTool.findAuthorByUserId(userId), FetchType.OMIT_XML);
+    }
 }

@@ -3,133 +3,107 @@ package cz.abclinuxu.servlets.utils.url;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.GenericDataObject;
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.security.Permissions;
-import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.freemarker.Tools;
 
 /**
- * Creates links for navigation panel (pwd-box). Checks user rights during
- * creation of links. Verification status for given user is stored inside of
- * this object.
- *
+ * Creates links for navigation panel (pwd-box). Checks appropriate rights
+ * during creation of links.
+ * 
  * @author kapy
  * @since 16.3.2009
  */
 public class PwdNavigator {
 
-    /**
-     * Responsible for rights and navigation logic. Fills rights appropriately
-     * and creates navigation stub.
-     *
-     * @author kapy
-     */
-    public enum NavigationType {
-        /**
-         * Navigation concerning administration part
-         */
-        ADMIN_BASE {
-            @Override
-            public Permissions getPermissions(User user) {
-                return Tools.permissionsFor(user, Constants.REL_AUTHORS);
-            }
-
-            @Override
-            public List<Link> navigate(List<Link> links, Link tail) {
-
-                StringBuilder url = new StringBuilder(UrlUtils.PREFIX_ADMINISTRATION);
-                links.add(new Link("Správa", url.toString(), "Portál správy abclinuxu.cz"));
-                url.append("/redakce");
-                links.add(new Link("Redakce", url.toString(), "Redakční systém"));
-                return links;
-            }
-        },
-        ADMIN_AUTHORS {
-            @Override
-            public Permissions getPermissions(User user) {
-                return ADMIN_BASE.getPermissions(user);
-            }
-
-            @Override
-            public List<Link> navigate(List<Link> links, Link tail) {
-                links = ADMIN_BASE.navigate(links, tail);
-                links.add(new Link("Správa autorů", getUrlPrefix(links) + "autori", "Správa autorů"));
-                return links;
-            }
-        };
-
-        public abstract Permissions getPermissions(User user);
-
-        public abstract List<Link> navigate(List<Link> links, Link tail);
-    }
-
-    private NavigationType nt;
-    private Permissions permissions;
+    private PageNavigation pn;
+    private User user;
 
     /**
      * Creates navigation creator for given user.
-     *
+     * 
      * @param user User to create navigation for
-     * @param nt   Navigation type of this navigator
+     * @param pn Page to be navigated
      */
-    public PwdNavigator(User user, NavigationType nt) {
+    public PwdNavigator(User user, PageNavigation pn) {
 
-        // set navigation type & rights
-        this.nt = nt;
-        this.permissions = nt.getPermissions(user);
-    }
-
-    /**
-     * Checks whether user has permissions to perform operation
-     *
-     * @return {@code true} if user has permissions, {@code false} otherwise
-     */
-    public boolean hasPermissions(int mask) {
-        return (permissions.getPermissions() & mask) != 0;
+	// set page navigation
+	this.pn = pn;
+	this.user = user;
     }
 
     /**
      * Creates navigation stub for this user and type of navigation
-     *
+     * 
      * @return List with parents of current page
      */
     public List<Link> navigate() {
-        return navigate(null);
+	return navigate(null);
     }
 
     /**
      * Creates navigation stub for this user and type of navigation. Allows one
      * link to be added at the end of navigation stub.
-     *
+     * 
      * @param tail Link to be added at the end
      * @return List with parents of current page
      */
     public List<Link> navigate(Link tail) {
+	// retrieve link stub
+	List<Link> links = new ArrayList<Link>();
+	links = pn.getLinks(user, links);
+	// append last link if any
+	if (tail != null) {
+	    if (links.isEmpty())
+		links.add(tail);
+	    else
+		links.add(new Link(tail.getTitle(), Util.prefix(links) + tail.getUrl(), tail.getDescription()));
+	}
+	return links;
+    }
 
-        List<Link> links = new ArrayList<Link>();
+    /**
+     * Checks permission for generic data object
+     * 
+     * @param user User to be checked against
+     * @param gdo Generic data object
+     * @return Right
+     */
+    public Permissions directPerm(GenericDataObject gdo) {
+	if (user.hasRole(Roles.ROOT))
+	    return Permissions.PERMISSIONS_ROOT;
 
-        links = nt.navigate(links, tail);
-        if (tail != null) {
-            // append first link
-            if (links.isEmpty())
-                links.add(tail);
-            else {
-                links.add(new Link(tail.getTitle(), getUrlPrefix(links) + tail.getUrl(), tail.getDescription()));
-            }
-        }
+	Tools.sync(gdo);
 
-        return links;
+	int permissions, shift;
+
+	if (user.isMemberOf(gdo.getGroup()))
+	    shift = Permissions.PERMISSIONS_GROUP_SHIFT;
+	else
+	    shift = Permissions.PERMISSIONS_OTHERS_SHIFT;
+
+	permissions = gdo.getPermissions();
+
+	if (gdo instanceof Category)
+	    permissions &= ~Permissions.PERMISSIONS_CATEGORY_MASK;
+
+	return new Permissions((permissions >> shift) & 0xff);
 
     }
 
     /**
-     * Extract URL prefix from last link in list
-     *
-     * @param links List of links
-     * @return Prefix from last link
+     * Checks right for child give by parental relation
+     * 
+     * @param user User to be checked against
+     * @param rel Parental relation
+     * @return Rights for given object
      */
-    private static String getUrlPrefix(List<Link> links) {
-		return links.get(links.size() - 1).getUrl() + "/";
-	}
+    public Permissions indirectPerm(Relation rel) {
+	return Tools.permissionsFor(user, rel);
+    }
 }

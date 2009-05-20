@@ -88,9 +88,7 @@ import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditRating;
-import cz.abclinuxu.servlets.utils.url.PwdNavigator;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.utils.url.PwdNavigator.NavigationType;
 import cz.abclinuxu.utils.Advertisement;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
@@ -2224,26 +2222,6 @@ public class Tools implements Configurable {
 
 	public static Permissions permissionsFor(Object user, int rel) {
 		return permissionsFor(user, new Relation(rel));
-	}
-	
-	/**
-	 * Retrieves permissions for given user and type of navigation
-	 * @param user User object
-	 * @param navigationType String name of navigation type Enum
-	 * @return Permissions for given combination
-	 */
-	public static Permissions permissionsFor(User user, String navigationType) {
-		try {
-			return NavigationType.valueOf(navigationType).getPermissions(user);
-		}
-		catch(IllegalArgumentException iae) {
-			log.warn("Attempted to access invalid navigationType: " + navigationType, iae);						
-		}
-		catch(NullPointerException npe) {
-			log.warn("Attempted to access empty navigationType: " + navigationType, npe);
-		}
-		
-		return new Permissions(0);
 	}
 
     /**

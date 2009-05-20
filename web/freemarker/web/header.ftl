@@ -89,9 +89,6 @@
             <div class="hl_vpravo">
               <#if USER??>
                 <@lib.showUser USER/> |
-                <#if TOOL.permissionsFor(USER, "ADMIN_BASE").canModify() >
-                <a href="/sprava/redakce">Správa</a> |
-                </#if>
                 <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")!"UNDEF">
                 <#if blogName!="UNDEF"><a href="/blog/${blogName}">Blog</a> |</#if>
                 <a href="/History?type=comments&amp;uid=${USER.id}">Mé komentáře</a> |
