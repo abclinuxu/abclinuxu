@@ -6,13 +6,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
@@ -22,20 +20,19 @@ import cz.abclinuxu.servlets.utils.url.PageNavigation;
 import cz.abclinuxu.servlets.utils.url.PwdNavigator;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.BeanFetcher.FetchType;
+import cz.abclinuxu.utils.freemarker.Tools;
 
 /**
- * Responsible for showing editors portal
- * 
+ * Handles both editor's and authors portal
  * @author kapy
- * 
+ *
  */
-public class EditorsPortal implements AbcAction {
-
+public class AEPortal implements AbcAction {
+    
     public static final String VAR_AUTHOR = "AUTHOR";
-
+    
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 
-	Persistence persistence = PersistenceFactory.getPersistence();
 	Map params = (Map) env.get(Constants.VAR_PARAMS);
 	User user = (User) env.get(Constants.VAR_USER);
 	String action = (String) params.get(PARAM_ACTION);
@@ -47,30 +44,35 @@ public class EditorsPortal implements AbcAction {
 
 	// check permissions
 	if (user == null)
-	    return FMTemplateSelector.select("AdministrationEditorsPortal", "login", env, request);
+	    return FMTemplateSelector.select("AdministrationAEPortal", "login", env, request);
 
 	// check advanced permissions and create navigation
 	// tree according to permissions given
-	PwdNavigator navigator = new PwdNavigator(user, PageNavigation.EDITORS_PORTAL);
-
-	if (navigator.indirectPerm(new Relation(Constants.REL_AUTHORS)).canModify()) {
-	    return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
-	}
+	PwdNavigator navigator = new PwdNavigator(user, PageNavigation.AUTHORS_EDITORS_PORTAL);
 
 	// store navigation structure
 	List<Link> parents = navigator.navigate();
 	env.put(Constants.VAR_PARENTS, parents);
-
-	// store author if any
+	
+	// store author
 	Author author = findAssignedAuthor(user.getId());
 	env.put(VAR_AUTHOR, author);
-
-	if (action == null || action.length() == 0)
-	    return FMTemplateSelector.select("AdministrationEditorsPortal", "content", env, request);
-
-	throw new MissingArgumentException("Chybí parametr action!");
+	
+	switch(navigator.determine()) {
+	case AUTHOR:
+	    if(author==null)	    
+		    throw new MissingArgumentException("K uživateli není přiřazen žádný autor");
+	    if (!navigator.permissionsFor(author).canModify()) 
+		    return FMTemplateSelector.select("AdministrationAEPortal", "forbidden", env, request);
+	    
+	    return FMTemplateSelector.select("AdministrationAEPortal", "author", env, request);
+	case EDITOR:    
+	    return FMTemplateSelector.select("AdministrationAEPortal", "editor", env, request);
+	}
+	
+	return null;
     }
-
+    
     /**
      * Find author object for given user id, if any
      * 
@@ -81,4 +83,5 @@ public class EditorsPortal implements AbcAction {
 	SQLTool sqlTool = SQLTool.getInstance();
 	return BeanFetcher.fetchAuthorFromItem(sqlTool.findAuthorByUserId(userId), FetchType.OMIT_XML);
     }
+    
 }

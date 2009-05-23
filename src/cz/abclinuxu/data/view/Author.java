@@ -2,6 +2,7 @@ package cz.abclinuxu.data.view;
 
 import java.util.Date;
 
+import cz.abclinuxu.data.AccessControllable;
 import cz.abclinuxu.data.ImageAssignable;
 
 /**
@@ -10,7 +11,7 @@ import cz.abclinuxu.data.ImageAssignable;
  * @author kapy
  * 
  */
-public class Author implements ImageAssignable {
+public class Author implements ImageAssignable, AccessControllable {
 
 	public static final int AUTHOR_PHOTO = 1;
 	
@@ -36,6 +37,8 @@ public class Author implements ImageAssignable {
 
 	private Date lastArticleDate;
 
+	private int permissions, group, owner;
+	
 	/**
 	 * Creates empty author
 	 */
@@ -317,6 +320,34 @@ public class Author implements ImageAssignable {
 			sb.append('-').append(id);
 		
 		return sb.append('.').append(suffix).toString();
+	}
+
+	public int getGroup() {
+	    return this.group;
+	}
+
+	public int getOwner() {
+	    return this.owner;
+	}
+
+	public int getPermissions() {
+	    return this.permissions;
+	}
+
+	public void setGroup(int group) {
+	    this.group = group;	    
+	}
+
+	public void setOwner(int owner) {
+	    this.owner = owner;	    
+	}
+
+	public void setPermissions(int permissions) {
+	    this.permissions = permissions;   
+	}
+
+	public boolean determineOwnership(int owner) {
+	    return this.owner == owner || this.uid == owner;
 	}
 
 }

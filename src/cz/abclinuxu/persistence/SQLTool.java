@@ -2869,7 +2869,7 @@ public final class SQLTool implements Configurable {
 			qualifiers = Qualifier.ARRAY_TYPE;
 		StringBuilder sb = new StringBuilder(sql.get(GET_AUTHORS_WITH_ARTICLES_COUNT));
 		List params = new ArrayList();
-		appendQualifiers(sb, qualifiers, params, null, null);
+		appendQualifiers(sb, qualifiers, params, "P", null);
 		return loadObjects(sb.toString(), params);
 	}
 

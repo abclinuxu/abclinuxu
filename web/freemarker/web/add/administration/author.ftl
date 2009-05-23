@@ -2,6 +2,7 @@
     <script type="text/javascript" src="/data/site/jquery/jquery-1.3.2.js"></script>
     <script type="text/javascript" src="/data/site/jquery/ui.core.js"></script>
     <script type="text/javascript" src="/data/site/jquery/ui.dialog.js"></script>    
+<#if EDITOR_MODE?? >    
     <script type="text/javascript" src="/data/site/ajax/finduser.js"></script>    
     <script type="text/javascript"><!--
     $(document).ready(function() {
@@ -15,19 +16,25 @@
     });
     
     // -->
-    </script>           
+    </script>     
+</#if>          
 </#assign>
 
 <#include "../../header.ftl">
 
 <@lib.showMessages/>
 
-<#if EDIT_MODE??>
+<#if EDIT_MODE?? >
+<#if EDITOR_MODE?? >
 <h2>Upravit údaje autora</h2>
 <p>Tento formulář slouží pro editaci autora. 
 Foto by mělo mít rozměr přibližně 100x100 pixelů, pokud bude některý z rozměrů přesahovat tuto mez, obrázek bude automaticky zmenšen. 
 Text o autorovi se zobrazí na jeho stránce. Neaktivní autor se nezobrazuje ve výběrech autorů, je to vhodné nastavit například pro příjemce jednorázové odměny.
 </p>
+<#else>
+<h2>Osobní údaje</h2>
+<p>Zadejte prosím své osobní kontaktní a bankovní údaje</p>
+</#if>
 <#else>
 <h2>Vytvoření autora</h2>
 <p>Tento formulář slouží pro vytvoření nového autora. Autor, který není přiřazen k žádnému uživateli, nemůže používat
@@ -36,6 +43,7 @@ redakční systém. Foto by mělo mít rozměr přibližně 100x100 pixelů. Tex
 
 <form action="${URL.noPrefix("/sprava/redakce/autori/edit")}" method="POST" enctype="multipart/form-data">
     <table class="siroka">
+    	<#if EDITOR_MODE?? >
         <tr>
             <td>Jméno:</td>
             <td>
@@ -83,6 +91,7 @@ redakční systém. Foto by mělo mít rozměr přibližně 100x100 pixelů. Tex
             <div class="error">${ERRORS.birthNumber!}</div>
             </td>
         </tr>
+        </#if>
         <tr>
             <td>Číslo účtu:</td>
             <td>
@@ -112,6 +121,7 @@ redakční systém. Foto by mělo mít rozměr přibližně 100x100 pixelů. Tex
             <div class="error">${ERRORS.address!}</div>
             </td>
         </tr>
+        <#if EDITOR_MODE??>
         <#if EDIT_MODE?? && AUTHOR.photoUrl?? >
         <tr>
         	<td>Současná fotografie:</td>
@@ -131,7 +141,8 @@ redakční systém. Foto by mělo mít rozměr přibližně 100x100 pixelů. Tex
         	<td><textarea name="about" class="siroka" rows="4" tabindex="13">${(AUTHOR.about)!}</textarea>
         	<div class="error">${ERRORS.about!}</div>
         	</td>
-        </tr>        
+        </tr>
+        </#if>        
         <tr>
             <td>&nbsp;</td>
             <td><input type="submit" value="Dokonči" tabindex="14" /></td>

@@ -5,6 +5,7 @@ import java.util.List;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.utils.freemarker.Tools;
 
 /**
  * Encapsulates links created for PwdNavigator. Call are able to be chained
@@ -16,7 +17,7 @@ import cz.abclinuxu.servlets.Constants;
 public enum PageNavigation {
 
     /**
-     * Administration link. It is not shown when appropriate rights are not present
+     * Administration link. It is shown only when appropriate rights are present (root)
      */
     ADMINISTRATION {
 	@Override
@@ -28,9 +29,9 @@ public enum PageNavigation {
     },
 
     /**
-     * Editorial stuff administration link
+     * Author or editor main portal
      */
-    EDITORS_PORTAL {
+    AUTHORS_EDITORS_PORTAL {
 	@Override
 	public List<Link> getLinks(User user, List<Link> links) {
 	    links = ADMINISTRATION.getLinks(user, links);
@@ -38,15 +39,16 @@ public enum PageNavigation {
 	    return links;
 	}
     },
-
+    
     /**
-     * Authors administration link
+     * Authors administration link. It is shown only when user can modify Authors
      */
     ADMIN_AUTHORS {
 	@Override
 	public List<Link> getLinks(User user, List<Link> links) {
-	    links = EDITORS_PORTAL.getLinks(user, links);
-	    links.add(new Link("Správa autorů", Util.prefix(links) + "autori", "Správa autorů"));
+	    links = AUTHORS_EDITORS_PORTAL.getLinks(user, links);
+	    if(user.isMemberOf(Constants.GROUP_ADMINI) || Tools.permissionsFor(user, Constants.REL_AUTHORS).canModify())
+		links.add(new Link("Správa autorů", Util.prefix(links) + "autori", "Správa autorů"));
 	    return links;
 	}
     };

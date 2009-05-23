@@ -62,6 +62,11 @@ public class BeanFetcher {
         author.setActive(active);
         author.setName(item.getString1());
         author.setSurname(item.getString2());
+        
+        // rights
+        author.setOwner(item.getOwner());
+        author.setPermissions(item.getPermissions());
+        author.setGroup(item.getGroup());
 
         switch (ft) {
             case OMIT_XML:
@@ -93,6 +98,9 @@ public class BeanFetcher {
      * <li>data</li>
      * <li>articleCount</li>
      * <li>lastArticleDate</li>
+     * <li>owner</li>
+     * <li>group</li>
+     * <li>permissions</li>
      * </ol>
      *
      * @param objects Array of objects
@@ -100,7 +108,8 @@ public class BeanFetcher {
      * @return Created author object
      */
     public static Author fetchAuthorFromObjects(Object[] objects, FetchType ft) {
-        if (objects == null || objects.length != 8)
+	// ! exact object length must be passed !
+        if (objects == null || objects.length != 11)
             return null;
 
         Author author = new Author();
@@ -117,6 +126,10 @@ public class BeanFetcher {
             if (date != null)
                 author.setLastArticleDate(new Date(date.getTime()));
 
+            author.setOwner((Integer) objects[8]);
+            author.setGroup((Integer) objects[9]);
+            author.setPermissions((Integer) objects[10]);
+            
             switch (ft) {
                 case OMIT_XML:
                     return author;

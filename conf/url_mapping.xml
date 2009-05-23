@@ -342,7 +342,7 @@
         </mapping>
         <mapping priority="true">
         	<pattern>^/sprava/redakce</pattern>
-        	<action>cz.abclinuxu.servlets.html.admin.view.EditorsPortal</action>
+        	<action>cz.abclinuxu.servlets.html.admin.view.AEPortal</action>
         </mapping>
     </format>
     <format version="wap">

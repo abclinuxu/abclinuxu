@@ -890,9 +890,12 @@
         </action>
     </servlet>
     
-    <servlet name="AdministrationEditorsPortal">
-    	<action name="content" content="/show/administration/editors_portal.ftl">
-            <var name="TITLE" value="Správa redakce" />
+    <servlet name="AdministrationAEPortal">
+    	<action name="editor" content="/show/administration/editors_portal.ftl">
+            <var name="TITLE" value="Správa redakce pro redaktory" />
+        </action>
+        <action name="author" content="/show/administration/authors_portal.ftl">
+            <var name="TITLE" value="Správa redakce pro autory" />
         </action>
         <action name="login" content="/show/login.ftl">
             <var name="TITLE" value="Přihlášení do systému" />
@@ -916,10 +919,10 @@
     		<var name="TITLE" value="Přidání autora" />
     	</action>
     	<action name="edit" content="/add/administration/author.ftl" >
-    		<var name="TITLE" value="Editace autora ${AUTHOR.title!?html}" />
+    		<var name="TITLE" value='Editace autora ${AUTHOR.title}' type="Lazy" />
     	</action>
     	<action name="remove" content="/remove/administration/author.ftl" >
-    		<var name="TITLE" value="Smazání autora ${AUTHOR.title!?html}" />
+    		<var name="TITLE" value='Smazání autora ${AUTHOR.title}' type="Lazy" />
     	</action>
-    </servlet>
+    </servlet>    
 </config>

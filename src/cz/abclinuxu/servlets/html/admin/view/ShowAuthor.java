@@ -30,6 +30,7 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.PageNavigation;
 import cz.abclinuxu.servlets.utils.url.PwdNavigator;
+import cz.abclinuxu.servlets.utils.url.PwdNavigator.Discriminator;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.BeanFetcher.FetchType;
@@ -50,6 +51,8 @@ public class ShowAuthor implements AbcAction {
     /** distinct author to be shown */
     public static final String VAR_AUTHOR = "AUTHOR";
 
+    public static final String VAR_EDITOR_MODE = "EDITOR_MODE";
+    
     /** form filtering */
     public static final String VAR_FILTER = "FILTER";
     /** Starting part of URL, until value of from parameter */
@@ -74,34 +77,26 @@ public class ShowAuthor implements AbcAction {
 	    return null;
 	}
 
+	if (user == null)
+	    return FMTemplateSelector.select("AdministrationAEPortal", "login", env, request);
+
 	PwdNavigator navigator = new PwdNavigator(user, PageNavigation.ADMIN_AUTHORS);
+	if(navigator.determine()==Discriminator.EDITOR)
+	    env.put(VAR_EDITOR_MODE, Boolean.TRUE);
+	    
 
 	// show author
 	if (ACTION_SHOW.equals(action)) {
-
-	    // TODO redirect to author page
-	    if (user == null)
-		return FMTemplateSelector.select("AdministrationEditorsPortal", "login", env, request);
-
-	    // find author
-	    Integer aId = null;
-	    try {
-		aId = Misc.parsePossiblyWrongInt((String) params.get(PARAM_AUTHOR_ID));
-	    } catch (InvalidInputException iie) {
-		throw new MissingArgumentException("Chybí parametr aId!");
-	    }
-
-	    if (!navigator.directPerm(new Item(aId)).canModify())
-		return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
-	    return show(request, env, navigator, aId);
+	    Author author = getAuthor(env);
+	    if (!navigator.permissionsFor(author).canModify())
+		return FMTemplateSelector.select("AdministrationAEPortal", "forbidden", env, request);
+	    return show(request, env, navigator, author);
 	}
 
 	// list authors
 	if (ACTION_LIST.equals(action) || action == null || action.length() == 0) {
-	    if (user == null)
-		return FMTemplateSelector.select("AdministrationEditorsPortal", "login", env, request);
-	    if (!navigator.indirectPerm(new Relation(Constants.REL_AUTHORS)).canModify())
-		return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
+	    if (!navigator.permissionsFor(new Relation(Constants.REL_AUTHORS)).canModify())
+		return FMTemplateSelector.select("AdministrationAEPortal", "forbidden", env, request);
 
 	    return list(request, env, navigator);
 	}
@@ -146,26 +141,34 @@ public class ShowAuthor implements AbcAction {
 	env.put(VAR_URL_AFTER_FROM, filter.encodeAsURL());
 
 	return FMTemplateSelector.select("AdministrationShowAuthor", "list", env, request);
-    }
+    }    
 
-    private String show(HttpServletRequest request, Map env, PwdNavigator navigator, Integer aId) {
-	Persistence persistence = PersistenceFactory.getPersistence();
+    private String show(HttpServletRequest request, Map env, PwdNavigator navigator, Author author) {
+	Link tail = new Link(author.getTitle(), "/sprava/redakce/autori/show?aId=" + author.getId() + "&amp;action=show", "Zobrazení autora");
+	env.put(VAR_AUTHOR, author);
+	env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
+	return FMTemplateSelector.select("AdministrationShowAuthor", "show", env, request);
+    }
+    
+    private Author getAuthor(Map env) {	
 	SQLTool sqlTool = SQLTool.getInstance();
 	Map params = (Map) env.get(Constants.VAR_PARAMS);
 
+	// find author
+	Integer aId = null;
+	try {
+	    aId = Misc.parsePossiblyWrongInt((String) params.get(PARAM_AUTHOR_ID));
+	} catch (InvalidInputException iie) {
+	    throw new MissingArgumentException("Chybí parametr aId!");
+	}
+
 	Qualifier[] qualifiers = { new CompareCondition(Field.ID, Operation.EQUAL, aId) };
 	List<Object[]> authorObjects = sqlTool.getAuthorsWithArticlesCount(qualifiers);
-
 	if (authorObjects.isEmpty()) {
 	    throw new InvalidDataException("Nepodařilo se najít rodičovskou relaci pro autora" + aId + "!");
 	}
-
-	Author author = BeanFetcher.fetchAuthorFromObjects(authorObjects.get(0), FetchType.EAGER);
-
-	Link tail = new Link(author.getTitle(), "show?aId=" + author.getId() + "&amp;action=show", "Zobrazení autora");
-	env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
-	env.put(VAR_AUTHOR, author);
-	return FMTemplateSelector.select("AdministrationShowAuthor", "show", env, request);
+	
+	return BeanFetcher.fetchAuthorFromObjects(authorObjects.get(0), FetchType.EAGER);
     }
 
     private Qualifier[] getQualifiers(FormFilter filter, int from, int count) {

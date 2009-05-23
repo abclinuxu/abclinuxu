@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.swing.text.StyledEditorKit.BoldAction;
 
 import org.apache.commons.fileupload.FileItem;
 
@@ -22,15 +22,16 @@ import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.security.ActionProtector;
-import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.admin.view.AEPortal;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.PageNavigation;
 import cz.abclinuxu.servlets.utils.url.PwdNavigator;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.PwdNavigator.Discriminator;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.BeanFlusher;
 import cz.abclinuxu.utils.ImageTool;
@@ -63,6 +64,7 @@ public class EditAuthor implements AbcAction {
     public static final String VAR_PREVIEW = "PREVIEW";
     public static final String VAR_EDIT_MODE = "EDIT_MODE";
     public static final String VAR_UNDELETABLE = "UNDELETABLE";
+    public static final String VAR_EDITOR_MODE = "EDITOR_MODE";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -90,11 +92,14 @@ public class EditAuthor implements AbcAction {
 	if (user == null)
 	    return FMTemplateSelector.select("AdministrationEditorsPortal", "login", env, request);
 
+	// create navigator and store type of user
 	PwdNavigator navigator = new PwdNavigator(user, PageNavigation.ADMIN_AUTHORS);
+	if (navigator.determine() == Discriminator.EDITOR)
+	    env.put(VAR_EDITOR_MODE, Boolean.TRUE);
 
 	// add step 1
 	if (ACTION_ADD.equals(action)) {
-	    if (!navigator.indirectPerm(new Relation(Constants.REL_AUTHORS)).canCreate())
+	    if (!navigator.permissionsFor(new Relation(Constants.REL_AUTHORS)).canCreate())
 		return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
 
 	    return actionAddStep1(request, response, env, navigator);
@@ -102,7 +107,7 @@ public class EditAuthor implements AbcAction {
 
 	// add step 2
 	if (ACTION_ADD_STEP2.equals(action)) {
-	    if (!navigator.indirectPerm(new Relation(Constants.REL_AUTHORS)).canCreate())
+	    if (!navigator.permissionsFor(new Relation(Constants.REL_AUTHORS)).canCreate())
 		return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
 
 	    ActionProtector.ensureContract(request, EditAuthor.class, true, true, true, false);
@@ -113,13 +118,13 @@ public class EditAuthor implements AbcAction {
 	Item item = (Item) InstanceUtils.instantiateParam(PARAM_AUTHOR_ID, Item.class, params, request);
 	if (item == null)
 	    throw new MissingArgumentException("Chybí parametr aId!");
+	persistence.synchronize(item);
+	Author author = BeanFetcher.fetchAuthorFromItem(item, FetchType.EAGER);
+	env.put(VAR_AUTHOR, author);
 
 	// check edit permissions
-	if (!navigator.directPerm(item).canModify())
+	if (!navigator.permissionsFor(author).canModify())
 	    return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
-
-	persistence.synchronize(item);
-	env.put(VAR_AUTHOR, BeanFetcher.fetchAuthorFromItem(item, FetchType.EAGER));
 
 	if (ACTION_EDIT.equals(action))
 	    return actionEditStep1(request, env, navigator);
@@ -130,13 +135,13 @@ public class EditAuthor implements AbcAction {
 	}
 
 	if (ACTION_REMOVE.equals(action)) {
-	    if (!navigator.directPerm(item).canDelete())
+	    if (!navigator.permissionsFor(author).canDelete())
 		return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
 	    return actionRemoveStep1(request, env, navigator);
 	}
 
 	if (ACTION_REMOVE_STEP2.equals(action)) {
-	    if (!navigator.directPerm(item).canDelete())
+	    if (!navigator.permissionsFor(author).canDelete())
 		return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
 	    return actionRemoveStep2(request, response, env, navigator);
 	}
@@ -162,17 +167,21 @@ public class EditAuthor implements AbcAction {
 	Link tail = new Link("Nový autor", "edit?action=add2", "Vytvořit nového autora, krok 2");
 	env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
 
-	Relation parent = (Relation) persistence.findById(new Relation(Constants.REL_AUTHORS));
-
-	Item item = new Item(0, Item.AUTHOR);
-	item.setOwner(user.getId());
-
-	Category cat = (Category) parent.getChild();
-	item.setGroup(cat.getGroup());
-	item.setPermissions(cat.getPermissions());
-
+	// create author in persistence storage
+	// if author is set, change owner of object
 	Author author = new Author();
 	boolean canContinue = fillAuthor(env, author);
+
+	// set rights
+	Relation parent = new Relation(Constants.REL_AUTHORS);
+	persistence.synchronize(parent);
+	persistence.synchronize(parent.getChild());
+	author.setOwner(user.getId());
+	Category cat = (Category) parent.getChild();
+	author.setGroup(cat.getGroup());
+	author.setPermissions(cat.getPermissions());
+
+	Item item = new Item(0, Item.AUTHOR);
 
 	if (!canContinue || params.get(PARAM_PREVIEW) != null) {
 	    if (!canContinue)
@@ -207,8 +216,13 @@ public class EditAuthor implements AbcAction {
 	throws Exception {
 	Map params = (Map) env.get(Constants.VAR_PARAMS);
 	Author author = (Author) env.get(VAR_AUTHOR);
+	Boolean isEditor = (Boolean) env.get(VAR_EDITOR_MODE);
 
-	Link tail = new Link(author.getTitle(), "edit/" + author.getId() + "?action=edit", "Editace autora, krok 1");
+	Link tail;
+	if (isEditor == Boolean.TRUE)
+	    tail = new Link(author.getTitle(), "edit/" + author.getId() + "?action=edit", "Editace autora, krok 1");
+	else
+	    tail = new Link("Osobní údaje", "/sprava/redakce/autori/edit/" + author.getId() + "?action=edit", "Osobní údaje");
 	env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
 
 	env.put(VAR_EDIT_MODE, Boolean.TRUE);
@@ -222,16 +236,16 @@ public class EditAuthor implements AbcAction {
 	Persistence persistence = PersistenceFactory.getPersistence();
 	SQLTool sqlTool = SQLTool.getInstance();
 	Map params = (Map) env.get(Constants.VAR_PARAMS);
-
 	Author author = (Author) env.get(VAR_AUTHOR);
-
-	Link tail = new Link(author.getTitle(), "edit/" + author.getId() + "?action=edit2", "Editace autora, krok 2");
-	env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
 
 	boolean canContinue = fillAuthor(env, author);
 
 	Item item = (Item) persistence.findById(new Item(author.getId()));
 	Relation relation = findParent(item);
+
+	// change owner if user with passed login exists
+	if (author.getUid() != null)
+	    item.setOwner(author.getUid());
 
 	if (!canContinue || params.get(PARAM_PREVIEW) != null) {
 	    if (!canContinue)
@@ -348,34 +362,61 @@ public class EditAuthor implements AbcAction {
     private boolean fillAuthor(Map env, Author author) {
 
 	Map params = (Map) env.get(Constants.VAR_PARAMS);
+	Boolean isEditor = (Boolean) env.get(VAR_EDITOR_MODE);
+
 	boolean result = true;
-	String surname = (String) params.get(PARAM_SURNAME);
-	if (!Misc.empty(surname))
-	    author.setSurname(surname);
-	else {
-	    ServletUtils.addError(PARAM_SURNAME, "Zadejte příjmení!", env, null);
-	    result = false;
-	}
-	// will set both uid and login
-	String login = (String) params.get(PARAM_LOGIN);
-	if (Misc.empty(login)) {
-	    author.setUid(null);
-	} else {
-	    Integer uid = SQLTool.getInstance().getUserByLogin(login);
-	    if (uid == null) {
-		ServletUtils.addError(PARAM_LOGIN, "Zadejte login!", env, null);
+	String tmp = null;
+
+	if (isEditor == Boolean.TRUE) {
+
+	    // set surname
+	    String surname = (String) params.get(PARAM_SURNAME);
+	    if (!Misc.empty(surname))
+		author.setSurname(surname);
+	    else {
+		ServletUtils.addError(PARAM_SURNAME, "Zadejte příjmení!", env, null);
 		result = false;
 	    }
-	    author.setUid(uid);
-	    author.setLogin(login);
-	}
+	    // will set both uid and login
+	    String login = (String) params.get(PARAM_LOGIN);
+	    if (Misc.empty(login)) {
+		author.setUid(null);
+	    } else {
+		Integer uid = SQLTool.getInstance().getUserByLogin(login);
+		if (uid == null) {
+		    ServletUtils.addError(PARAM_LOGIN, "Zadejte platný login!", env, null);
+		    result = false;
+		}
+		author.setUid(uid);
+		author.setLogin(login);
+	    }
 
-	String tmp = (String) params.get(PARAM_NAME);
-	author.setName(tmp);
-	tmp = (String) params.get(PARAM_NICKNAME);
-	author.setNickname(tmp);
-	tmp = (String) params.get(PARAM_BIRTH_NUMBER);
-	author.setBirthNumber(tmp);
+	    tmp = (String) params.get(PARAM_NAME);
+	    author.setName(tmp);
+	    tmp = (String) params.get(PARAM_NICKNAME);
+	    author.setNickname(tmp);
+	    tmp = (String) params.get(PARAM_BIRTH_NUMBER);
+	    author.setBirthNumber(tmp);
+	    tmp = (String) params.get(PARAM_ACTIVE);
+	    author.setActive("1".equalsIgnoreCase(tmp));
+	    tmp = (String) params.get(PARAM_ABOUT);
+	    author.setAbout(tmp);
+
+	    String oldPhoto = (String) params.get(PARAM_REMOVE_PHOTO);
+	    if (oldPhoto != null && oldPhoto.length() > 0) {
+		ImageTool.deleteImage(Author.AUTHOR_PHOTO, author);
+		ServletUtils.addMessage("Fotografie byla odstraněna", env, null);
+		return true;
+	    }
+
+	    // set photo
+	    FileItem photo = (FileItem) params.get(PARAM_PHOTO);
+	    if (photo != null && photo.getSize() > 0)
+		result = ImageTool.storeImage(
+		    Author.AUTHOR_PHOTO, photo, author, ImageTool.AUTHOR_PHOTO_RES, env, PARAM_PHOTO);
+
+	}
+	// author field available both for editor and author
 	tmp = (String) params.get(PARAM_ACCOUNT_NUMBER);
 	author.setAccountNumber(tmp);
 	tmp = (String) params.get(PARAM_EMAIL);
@@ -384,23 +425,6 @@ public class EditAuthor implements AbcAction {
 	author.setPhone(tmp);
 	tmp = (String) params.get(PARAM_ADDRESS);
 	author.setAddress(tmp);
-	tmp = (String) params.get(PARAM_ACTIVE);
-	author.setActive("1".equalsIgnoreCase(tmp));
-	tmp = (String) params.get(PARAM_ABOUT);
-	author.setAbout(tmp);
-
-	String oldPhoto = (String) params.get(PARAM_REMOVE_PHOTO);
-	if (oldPhoto != null && oldPhoto.length() > 0) {
-	    ImageTool.deleteImage(Author.AUTHOR_PHOTO, author);
-	    ServletUtils.addMessage("Fotografie byla odstraněna", env, null);
-	    return true;
-	}
-
-	// set photo
-	FileItem photo = (FileItem) params.get(PARAM_PHOTO);
-	if (photo != null && photo.getSize() > 0)
-	    result = ImageTool.storeImage(
-		Author.AUTHOR_PHOTO, photo, author, ImageTool.AUTHOR_PHOTO_RES, env, PARAM_PHOTO);
 
 	return result;
     }

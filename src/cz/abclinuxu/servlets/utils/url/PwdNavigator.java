@@ -3,13 +3,15 @@ package cz.abclinuxu.servlets.utils.url;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.abclinuxu.data.Category;
-import cz.abclinuxu.data.GenericDataObject;
+import org.apache.log4j.Logger;
+
+import cz.abclinuxu.data.AccessControllable;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.freemarker.Tools;
 
 /**
@@ -20,9 +22,21 @@ import cz.abclinuxu.utils.freemarker.Tools;
  * @since 16.3.2009
  */
 public class PwdNavigator {
+    private static final Logger log = Logger.getLogger(PwdNavigator.class);
 
+    /**
+     * Determines type of user
+     * @author kapy
+     *
+     */
+    public static enum Discriminator {
+	AUTHOR, EDITOR,
+    }
+
+    
     private PageNavigation pn;
     private User user;
+
 
     /**
      * Creates navigation creator for given user.
@@ -59,7 +73,7 @@ public class PwdNavigator {
 	links = pn.getLinks(user, links);
 	// append last link if any
 	if (tail != null) {
-	    if (links.isEmpty())
+	    if (links.isEmpty() || tail.getUrl().startsWith("/"))
 		links.add(tail);
 	    else
 		links.add(new Link(tail.getTitle(), Util.prefix(links) + tail.getUrl(), tail.getDescription()));
@@ -68,42 +82,58 @@ public class PwdNavigator {
     }
 
     /**
-     * Checks permission for generic data object
+     * Checks permission for object
      * 
      * @param user User to be checked against
      * @param gdo Generic data object
-     * @return Right
+     * @return Permissions to access given object
      */
-    public Permissions directPerm(GenericDataObject gdo) {
+    public Permissions permissionsFor(AccessControllable object) {
 	if (user.hasRole(Roles.ROOT))
 	    return Permissions.PERMISSIONS_ROOT;
 
-	Tools.sync(gdo);
+	int permissions = object.getPermissions();
 
-	int permissions, shift;
+	List<Permissions> perms = new ArrayList<Permissions>(3);
 
-	if (user.isMemberOf(gdo.getGroup()))
-	    shift = Permissions.PERMISSIONS_GROUP_SHIFT;
-	else
-	    shift = Permissions.PERMISSIONS_OTHERS_SHIFT;
+	// check ownership
+	if (object.determineOwnership(user.getId()))
+	    perms.add(Permissions.extractOwner(permissions));
 
-	permissions = gdo.getPermissions();
+	if (user.isMemberOf(object.getGroup()))
+	    perms.add(Permissions.extractGroup(permissions));
 
-	if (gdo instanceof Category)
-	    permissions &= ~Permissions.PERMISSIONS_CATEGORY_MASK;
+	perms.add(Permissions.extractOthers(permissions));
+	
+	if (log.isDebugEnabled()) {
+	    for (Permissions p : perms)
+		log.debug(p);
+	    log.debug("combined: " + Permissions.combine(perms));
+	}
 
-	return new Permissions((permissions >> shift) & 0xff);
-
+	return Permissions.combine(perms);
     }
 
     /**
-     * Checks right for child give by parental relation
+     * Checks right for child given by parental relation
      * 
      * @param user User to be checked against
      * @param rel Parental relation
-     * @return Rights for given object
+     * @return Permissions to access given object
      */
-    public Permissions indirectPerm(Relation rel) {
+    public Permissions permissionsFor(Relation rel) {
 	return Tools.permissionsFor(user, rel);
     }
+ 
+    /**
+     * Determines whether user is author or editor
+     * @return Type of user
+     */
+    public Discriminator determine() {
+	if (user.isMemberOf(Constants.GROUP_ADMINI) || Tools.permissionsFor(user, Constants.REL_AUTHORS)
+	    .canModify())
+	    return Discriminator.EDITOR;
+	return Discriminator.AUTHOR;
+    }
+    
 }
