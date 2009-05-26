@@ -11,7 +11,6 @@
 
 <#if !is_question>
  <@lib.advertisement id="gg-ds-obsah" />
- <@lib.advertisement id="obsah-box" />
 </#if>
 
 <@lib.advertisement id="arbo-sq" />

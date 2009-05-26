@@ -259,8 +259,6 @@
 
 <#flush>
 
-<@lib.advertisement id="obsah-box" />
-
 <#if CHILDREN.discussion??>
     <h3>Komentáře</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>

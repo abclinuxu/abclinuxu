@@ -259,9 +259,7 @@
 
         <div class="st" id="st"><a name="obsah"></a>
 
-        <#if URL.prefix=='/clanky'>
-             <@lib.advertisement id="clanky-top" />
-        </#if>
+        <@lib.advertisement id="obsah-box" />
 
         <#if PARENTS??>
           <div class="pwd-box">
