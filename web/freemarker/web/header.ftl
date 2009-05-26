@@ -259,7 +259,11 @@
 
         <div class="st" id="st"><a name="obsah"></a>
 
+    <#if plovouci_sloupec??>
+        <@lib.advertisement id="obsah-box-uzky" />
+    <#else>
         <@lib.advertisement id="obsah-box" />
+    </#if>
 
         <#if PARENTS??>
           <div class="pwd-box">
