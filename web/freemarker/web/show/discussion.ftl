@@ -55,9 +55,6 @@
         uložit vzorovou odpověď do <a href="/faq">Často kladených otázek (FAQ)</a>.
     </p>
 
- <@lib.advertisement id="obsah-box" />
- <@lib.advertisement id="bsupport-box" />
- <@lib.advertisement id="miton-box" />
  <@lib.advertisement id="gg-ds-otazka" />
 
  <#if DIZ.size==0>
