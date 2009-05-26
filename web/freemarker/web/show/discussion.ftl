@@ -86,6 +86,7 @@ FAQ: <a href="/faq/abclinuxu.cz/proc-byl-uzamcen-smazan-muj-dotaz-v-poradne">Pro
     </p>
 </#if>
 
+<@lib.advertisement id="obsah-box" />
 <@lib.advertisement id="arbo-full" />
 
 <@lib.showPageTools RELATION />
