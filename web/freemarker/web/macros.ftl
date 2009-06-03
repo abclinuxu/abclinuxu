@@ -758,7 +758,7 @@
                 <div>
                     <a href="${URL.noPrefix("/akce/edit/"+relation.id+"?action=approve"+TOOL.ticket(USER,false))}">Schválit</a>
                     |
-                    <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/akce")}">Smazat</a>
+                    <a href="${URL.noPrefix("/EditRelation/"+relation.id+"?action=remove&amp;prefix=/akce")}">Smazat</a>
                 </div>
             </#if>
         </td>
