@@ -383,6 +383,75 @@ public class Tools implements Configurable {
         return urlUtils.make("/show/" + relation.getId());
     }
 
+    public String getType(GenericObject obj) {
+        if (obj instanceof Item) {
+            switch (((Item)obj).getType()) {
+                case Item.ADVERTISEMENT:
+                    return "reklamní pozice";
+                case Item.ARTICLE:
+                    return "článek";
+                case Item.AUTHOR:
+                    return "autor";
+                case Item.BAZAAR:
+                    return "inzerát";
+                case Item.BLOG:
+                case Item.UNPUBLISHED_BLOG:
+                    return "zápisek";
+                case Item.CONTENT:
+                    return "wiki obsah";
+                case Item.DESKTOP:
+                    return "desktop";
+                case Item.DICTIONARY:
+                    return "pojem";
+                case Item.DISCUSSION:
+                    return "diskuse";
+                case Item.DRIVER:
+                    return "ovladač";
+                case Item.EVENT:
+                case Item.UNPUBLISHED_EVENT:
+                    return "událost";
+                case Item.FAQ:
+                    return "FAQ";
+                case Item.GROUP:
+                    return "systémová skupina";
+                case Item.HARDWARE:
+                    return "hardwarová položka";
+                case Item.NEWS:
+                    return "zprávička";
+                case Item.PERSONALITY:
+                    return "osobnost";
+                case Item.REQUEST:
+                    return "požadavek";
+                case Item.ROYALTIES:
+                    return "honorář";
+                case Item.SERIES:
+                    return "seriál";
+                case Item.SOFTWARE:
+                    return "softwarová položka";
+                case Item.SURVEY:
+                    return "velká anketa";
+                case Item.TOC:
+                    return "obsah";
+                case Item.TRIVIA:
+                    return "trivia";
+                case Item.VIDEO:
+                    return "video";
+                default:
+                    return "neznámá položka";
+            }
+        } else if (obj instanceof Category) {
+            return "sekce";
+        } else if (obj instanceof Poll) {
+            return "anketa";
+        } else if (obj instanceof Relation) {
+            return "relace";
+        } else if (obj instanceof Record) {
+            return "záznam";
+        } else {
+            return obj.getClass().getName();
+        }
+    }
+
     /**
      * Finds related documents for given Item.
      * @param item

@@ -25,6 +25,8 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 import java.util.prefs.Preferences;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * This interface holds all constants shared across servlets.
@@ -121,6 +123,8 @@ public class Constants implements Configurable {
 	public static int REL_EVENTS;
     public static int REL_VIDEOS;
     public static int REL_ADVERTISEMENTS;
+
+    public static List<Integer> SYSTEM_RELATIONS;
 
     public static int GROUP_ADMINI;
     public static int GROUP_AUTORI;
@@ -350,6 +354,7 @@ public class Constants implements Configurable {
     public static final String PROPERTY_USED_BY = "used_by";
 	public static final String PROPERTY_MEMBER = "member";
     public static final String PROPERTY_FAVOURITED_BY = "favourited_by";
+    public static final String PROPERTY_NOTIFIED = "notified";
 
     // see EditBazaar
     public static final String BAZAAR_BUY = "buy";
@@ -373,27 +378,21 @@ public class Constants implements Configurable {
 
     public void configure(Preferences prefs) throws ConfigurationException {
         Field[] fields = Constants.class.getDeclaredFields();
+        List<Integer> relations = new ArrayList();
 
         try {
             for (int i = 0; i < fields.length; i++) {
-                /*boolean found = false;
-                for (int j = 0; j < DYNAMIC_FIELDS.length; j++) {
-                    if (fields[i].getName().startsWith(DYNAMIC_FIELDS[i])) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found)
-                    continue;
-                */
-
                 if (!fields[i].getType().equals(int.class))
                     continue;
 
                 int value = prefs.getInt(fields[i].getName(), -1);
                 fields[i].setInt(null, value);
+
+                if (fields[i].getName().startsWith("REL_")) {
+                    relations.add(value);
+                }
             }
+            SYSTEM_RELATIONS = relations;
         } catch (Exception e) {
             throw new ConfigurationException(e.getMessage());
         }

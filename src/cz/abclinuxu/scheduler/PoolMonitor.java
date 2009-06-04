@@ -144,7 +144,7 @@ public class PoolMonitor extends TimerTask {
                             Map<String,List<Relation>> archildren = Tools.groupByType(item.getChildren());
         
                             if (archildren.containsKey(Constants.TYPE_DISCUSSION)) {
-                                Relation disc = (Relation) archildren.get(Constants.TYPE_DISCUSSION).get(0);
+                                Relation disc = archildren.get(Constants.TYPE_DISCUSSION).get(0);
 
                                 String urldisc = relation.getUrl() + "/diskuse";
                                 urldisc = URLManager.protectFromDuplicates(urldisc);
@@ -259,7 +259,7 @@ public class PoolMonitor extends TimerTask {
         // all upcoming events
         for (Relation rel : list) {
             Item item = (Item) rel.getChild();
-            if ("yes".equals(item.getSingleProperty("notified")))
+            if ("yes".equals(item.getSingleProperty(Constants.PROPERTY_NOTIFIED)))
                 continue;
             
             map.put(EmailSender.KEY_SUBJECT, "Upominka: "+item.getTitle());
@@ -282,7 +282,7 @@ public class PoolMonitor extends TimerTask {
                 EmailSender.sendEmail(map);
             }
             
-            item.addProperty("notified", "yes");
+            item.addProperty(Constants.PROPERTY_NOTIFIED, "yes");
             
             Date originalUpdated = item.getUpdated();
             persistence.update(item);

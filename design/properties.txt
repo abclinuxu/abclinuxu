@@ -76,11 +76,6 @@ purpose: user shows affiliation to the subproject
 
 ITEM.EVENT
 ===========
-name: region
-values: defined in ftl templates
-mapping: 1:1
-purpose: define the location of the event
-
 name: notified
 values: yes
 mapping: 1:1

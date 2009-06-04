@@ -94,7 +94,6 @@ public class EditEvent implements AbcAction {
     public static final String ACTION_REGISTER_STEP2 = "register2";
     public static final String ACTION_DEREGISTER_STEP2 = "deregister2";
     public static final String ACTION_APPROVE = "approve";
-    public static final String ACTION_REMOVE = "remove";
 
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditEvent.class);
 
@@ -172,11 +171,6 @@ public class EditEvent implements AbcAction {
 
         if (!Tools.permissionsFor(user, relation).canDelete())
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-        if (action.equals(ACTION_REMOVE)) {
-            ActionProtector.ensureContract(request, EditEvent.class, true, false, false, true);
-            return actionRemove(response, env);
-        }
 
         return null;
     }
@@ -353,8 +347,7 @@ public class EditEvent implements AbcAction {
 
         Element reg = DocumentHelper.createElement("registration");
 
-        boolean canContinue = true;
-        canContinue &= setRegistrationName(reg, params, env);
+        boolean canContinue = setRegistrationName(reg, params, env);
         canContinue &= setRegistrationEmail(reg, params, env);
         canContinue &= setRegistrationUser(reg, env);
 
@@ -429,25 +422,6 @@ public class EditEvent implements AbcAction {
         AdminLogger.logEvent(user, "  approve | event " + relation.getUrl());
 
         urlUtils.redirect(response, relation.getUrl());
-        return null;
-    }
-
-    private String actionRemove(HttpServletResponse response, Map env) throws Exception {
-        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
-        User user = (User) env.get(Constants.VAR_USER);
-        Persistence persistence = PersistenceFactory.getPersistence();
-        Relation upper = new Relation(relation.getUpper());
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-
-        Tools.sync(upper);
-
-        relation.getParent().removeChildRelation(relation);
-        persistence.remove(relation);
-
-        Tools.childUrl(relation, urlUtils);
-        AdminLogger.logEvent(user, "  remove | event " + relation.getUrl());
-
-        urlUtils.redirect(response, upper.getUrl());
         return null;
     }
 
