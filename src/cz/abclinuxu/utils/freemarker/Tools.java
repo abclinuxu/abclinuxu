@@ -319,6 +319,16 @@ public class Tools implements Configurable {
      * @return name fetched from XML
      */
     public static String getPersonName(Item item) {
+    
+    	if (item.getType()==Item.AUTHOR) {
+    		StringBuilder sb = new StringBuilder();
+    		if(item.getString1()!=null)
+                sb.append(item.getString1()).append(" ");
+    		if(item.getString2()!=null)
+                sb.append(item.getString2());
+    		return sb.toString();
+    	}
+    
         Element root = item.getData().getRootElement();
         StringBuffer sb = new StringBuffer();
         String name = root.elementTextTrim("firstname");

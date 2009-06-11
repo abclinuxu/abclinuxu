@@ -18,6 +18,26 @@
  */
 package cz.abclinuxu.persistence;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.prefs.Preferences;
+
 import cz.abclinuxu.data.CommonObject;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.GenericObject;
@@ -32,32 +52,20 @@ import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.OperationIn;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.extra.QualifierTool;
 import cz.abclinuxu.persistence.extra.tags.TagExpression;
 import cz.abclinuxu.persistence.impl.MySqlPersistence;
 import cz.abclinuxu.persistence.versioning.VersionedDocument;
-
 import cz.abclinuxu.scheduler.VariableFetcher;
+import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
-import java.sql.*;
-import java.util.prefs.Preferences;
-import java.util.Date;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Set;
-import java.util.HashSet;
 
 /**
  * Thread-safe singleton, that encapsulates SQL commands
@@ -166,6 +174,9 @@ public final class SQLTool implements Configurable {
     public static final String MAX_SUBPORTAL_READS = "max.subportal.reads";
     public static final String FIND_ADVERTISEMENT_BY_STRING = "find.advertisement.by.string";
 
+	public static final String GET_AUTHORS_WITH_ARTICLES_COUNT = "get.authors.with.articles.count";
+	public static final String COUNT_AUTHORS_WITH_ARTICLES_COUNT ="count.authors.with.articles.count";
+    
     public static final String MONITOR_INSERT_USER = "insert.monitor";
     public static final String MONITOR_REMOVE_USER = "remove.monitor";
     public static final String MONITOR_REMOVE_ALL = "remove.users.monitors";
@@ -364,6 +375,44 @@ public final class SQLTool implements Configurable {
             PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
+
+	/**
+	 * Loads items from database using given SQL command. 
+	 * @param sql Command to execute.
+	 * @param params List of parameters. It must not be null.
+	 * @return List of initialized items.
+	 * @throws PersistenceException If something goes wrong.
+	 */
+	private List<Item> loadItems(String sql, List params)
+			throws PersistenceException {
+		if (log.isDebugEnabled())
+			log.debug(sql);
+
+		MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+		Connection con = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			con = persistance.getSQLConnection();
+			statement = con.prepareStatement(sql);
+			int i = 1;
+			for (Iterator iter = params.iterator(); iter.hasNext();)
+				statement.setObject(i++, iter.next());
+
+			resultSet = statement.executeQuery();
+			List<Item> result = new ArrayList<Item>();
+			while (resultSet.next()) {
+				int id = resultSet.getInt(1);
+				result.add(new Item(id));
+			}
+			persistance.synchronizeList(result);
+			return result;
+		} catch (SQLException e) {
+			throw new PersistenceException("Nemohu vykonat SQL příkaz " + sql, e);
+		} finally {
+			PersistenceFactory.releaseSQLResources(con, statement, resultSet);
+		}
+	}
 
     /**
      * Generic method to get unspecified data from database using given SQL command. If list params is not
@@ -1452,6 +1501,20 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+	 * Finds items of given type with applied qualifiers 
+	 * @param type Type of items to be retrieved
+	 * @param qualifiers Narrowing qualifiers
+	 * @return List of items which fitted conditions
+	 */
+	public List<Item> findItemsWithType(int type, Qualifier[] qualifiers) {
+		StringBuilder sb = new StringBuilder(sql.get(ITEMS_WITH_TYPE));
+		List params = new ArrayList();
+		params.add(type);
+		appendQualifiers(sb, qualifiers, params, null, null);
+		return loadItems(sb.toString(), params);
+	}
+    
+    /**
      * Finds items of given type ordered by id property in ascending order.
      * Use offset to skip some record .
      * @return List of initialized Items
@@ -2477,6 +2540,61 @@ public final class SQLTool implements Configurable {
         }
     }
 
+	/**
+	 * Finds author for given userId, if any 
+	 * @param userId Id of user
+	 * @return Item with author data
+	 */
+	public Item findAuthorByUserId(int userId) {
+		Qualifier[] qualifiers = new Qualifier[] { new CompareCondition(Field.NUMERIC1, Operation.EQUAL, new Integer(userId)) };
+		List<Item> matches = findItemsWithType(Item.AUTHOR, qualifiers);
+		if (!matches.isEmpty()) {
+			return matches.get(0);
+		}
+		return null;
+	}
+
+	
+	
+	/**
+     * Gets authors with additional information fetched, such as article count or last article date
+     * @param qualifiers Narrowing qualifiers
+     * @return List of arrays of object containing data
+     * @see BeanFetcher To transform it to according Author JavaBean
+     */
+	public List<Object[]> getAuthorsWithArticlesCount(Qualifier[] qualifiers) {
+		
+		final Map<Field, String> mapping = new HashMap<Field, String>(1) {{
+			put(Field.ID, "P");
+		}};
+		
+		if (qualifiers == null)
+			qualifiers = Qualifier.ARRAY_TYPE;
+		StringBuilder sb = new StringBuilder(sql.get(GET_AUTHORS_WITH_ARTICLES_COUNT));
+		List params = new ArrayList();
+		appendQualifiers(sb, qualifiers, params, null, mapping);
+		return loadObjects(sb.toString(), params);
+	}
+	
+	/**
+     * Counts authors with additional information fetched, such as article count or last article date
+     * @param qualifiers Narrowing qualifiers
+     * @return Size of author collection satisfying conditions
+     */
+	public Integer countAuthorWithArticlesCount(Qualifier[] qualifiers) {
+		
+		final Map<Field, String> mapping = new HashMap<Field, String>(1) {{
+			put(Field.ID, "P");
+		}};
+		
+		if (qualifiers == null)
+			qualifiers = Qualifier.ARRAY_TYPE;
+		StringBuilder sb = new StringBuilder(sql.get(COUNT_AUTHORS_WITH_ARTICLES_COUNT));
+		List params = new ArrayList();
+		appendQualifiers(sb, qualifiers, params, null, mapping);
+		return loadNumber(sb.toString(), params);
+	}
+
     public List<Relation> findServerRelationsInCategory(int cat) {
         String query = sql.get(SERVER_RELATIONS_IN_CATEGORY);
         return loadRelations(query, Collections.singletonList(cat));
@@ -2613,6 +2731,8 @@ public final class SQLTool implements Configurable {
         store(MOST_VOTED_POLLS, prefs);
 		store(HIGHEST_SCORE_USERS, prefs);
         store(FIND_ADVERTISEMENT_BY_STRING, prefs);
+        store(GET_AUTHORS_WITH_ARTICLES_COUNT, prefs);
+		store(COUNT_AUTHORS_WITH_ARTICLES_COUNT, prefs);
         store(MONITOR_GET, prefs);
         store(MONITOR_INSERT_USER, prefs);
         store(MONITOR_REMOVE_USER, prefs);

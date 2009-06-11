@@ -1197,6 +1197,60 @@ p.documentHistory {
 	margin-left: 0.5em;
 }
 
+/* sign post */
+
+.sign-post {
+	float: right;
+	width: 180px;
+}
+
+.sign-post-content {
+	padding-left: 0;
+}
+
+.sign-post-content a {
+	text-decoration: none;
+	font-weight: bolder;
+}
+.sign-post-content ul,li {
+	margin-left: 0; 
+}
+
+/* two columns */
+.two-columns {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	padding-top: 2em; 
+}
+
+.left-column {
+	width: 50%;
+	float: left;
+	margin: 0;
+	padding: 0;
+}
+
+.right-column {
+	margin: 0 0 0 50%;
+	padding: 0;
+}
+
+/* listings */
+
+.list table {
+	margin-top: 2em;	
+}
+
+.list td  {
+	text-align: center;
+}
+.list th {
+	text-align: center;
+	font-width: normal;
+	font-size: 100%;
+}
+
 /* styly pro uzivatele */
 
 .tabulka {border-collapse: collapse;border:2px solid black}

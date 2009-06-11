@@ -24,6 +24,7 @@ import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
@@ -763,11 +764,10 @@ public class EditArticle implements AbcAction {
      * Finds relations to all authors.
      * @return List of Authors
      */
-    public List getAuthorRelations() {
+    public List<Relation> getAuthorRelations() {
         SQLTool sqlTool = SQLTool.getInstance();
-        List authors = sqlTool.findItemRelationsWithType(Item.AUTHOR, null);
+        List<Relation> authors = sqlTool.findItemRelationsWithType(Item.AUTHOR, new Qualifier[] {Qualifier.SORT_BY_STRING2});
         Tools.syncList(authors);
-        Sorters2.byXPath(authors, "/data/surname");
         return (authors);
     }
 

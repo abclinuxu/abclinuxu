@@ -20,33 +20,37 @@ package cz.abclinuxu.persistence.extra;
 
 import cz.abclinuxu.utils.Misc;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Collections;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.Date;
-import java.sql.Timestamp;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Helper class to translate Qualifiers to SQL query.
+ *
  * @author literakl
  * @since 1.6.2008
  */
 public class QualifierTool {
 
     /**
-     * Appends qualifiers to StringBuilder holding SQL command. DefaultTableNick is added
-     * before every column in custom conditions (in WHERE or ORDER BY clauses).
-     * if defaultTableNick cannot distinguish between two tables, fieldMapping can
-     * be used to assign exact tableNick to specific Field from qualifiers.
+     * Appends qualifiers to StringBuilder holding SQL command. DefaultTableNick
+     * is added before every column in custom conditions (in WHERE or ORDER BY
+     * clauses). if defaultTableNick cannot distinguish between two tables,
+     * fieldMapping can be used to assign exact tableNick to specific Field from
+     * qualifiers.
+     *
      * @param defaultTableNick nick of table to distinguish columns. Default is null.
-     * @param qualifiers list of query conditions and sort order and limit qualifiers. The order is important.
-     * @param fieldMapping key is PersistenceMapping.Table, value is tableNick to be used.
+     * @param qualifiers       list of query conditions and sort order and limit qualifiers.
+     *                         The order is important.
+     * @param fieldMapping     key is PersistenceMapping.Table, value is tableNick to be
+     *                         used.
      */
-    public static void appendQualifiers(StringBuilder sb, Qualifier[] qualifiers, List params, String defaultTableNick,
-                                        Map<Field, String> fieldMapping) {
+    public static void appendQualifiers(StringBuilder sb, Qualifier[] qualifiers, List params, String defaultTableNick, Map<Field, String> fieldMapping) {
         if (qualifiers == null || qualifiers.length == 0)
             return;
         if (fieldMapping == null)
@@ -57,26 +61,11 @@ public class QualifierTool {
         Qualifier qualifier;
         for (int i = 0; i < qualifiers.length; i++) {
             qualifier = qualifiers[i];
-            if (qualifier.equals(Qualifier.SORT_BY_CREATED)) {
+
+            if (qualifier instanceof OrderByQualifier) {
                 sb.append(" ORDER BY ");
-                addTableNick(Field.CREATED, fieldMapping, defaultTableNick, sb);
-                sb.append("vytvoreno");
-            } else if (qualifier.equals(Qualifier.SORT_BY_UPDATED)) {
-                sb.append(" ORDER BY ");
-                addTableNick(Field.UPDATED, fieldMapping, defaultTableNick, sb);
-                sb.append("zmeneno");
-            } else if (qualifier.equals(Qualifier.SORT_BY_WHEN)) {
-                sb.append(" ORDER BY ");
-                addTableNick(Field.WHEN, fieldMapping, defaultTableNick, sb);
-                sb.append("kdy");
-            } else if (qualifier.equals(Qualifier.SORT_BY_ID)) {
-                sb.append(" ORDER BY ");
-                addTableNick(Field.ID, fieldMapping, defaultTableNick, sb);
-                sb.append("cislo");
-            } else if (qualifier.equals(Qualifier.SORT_BY_TITLE)) {
-                sb.append(" ORDER BY ");
-                addTableNick(Field.TITLE, fieldMapping, defaultTableNick, sb);
-                sb.append("jmeno");
+                OrderByQualifier oq = (OrderByQualifier) qualifier;
+                appendField(oq.getField(), fieldMapping, defaultTableNick, sb);
             } else if (qualifier.equals(Qualifier.ORDER_ASCENDING)) {
                 sb.append(" ASC");
             } else if (qualifier.equals(Qualifier.ORDER_DESCENDING)) {
@@ -106,7 +95,9 @@ public class QualifierTool {
     }
 
     /**
-     * Removes sort by, order by and limit qualifiers, which cannot be used in count statements.
+     * Removes sort by, order by and limit qualifiers, which cannot be used in
+     * count statements.
+     *
      * @param qualifiers qualifiers
      * @return stripped version of qualifiers
      */
@@ -114,15 +105,7 @@ public class QualifierTool {
         List<Qualifier> safeQualifiers = new ArrayList<Qualifier>(qualifiers.length);
         for (int i = 0; i < qualifiers.length; i++) {
             Qualifier qualifier = qualifiers[i];
-            if (qualifier.equals(Qualifier.SORT_BY_CREATED))
-                continue;
-            else if (qualifier.equals(Qualifier.SORT_BY_UPDATED))
-                continue;
-            else if (qualifier.equals(Qualifier.SORT_BY_WHEN))
-                continue;
-            else if (qualifier.equals(Qualifier.SORT_BY_ID))
-                continue;
-            else if (qualifier.equals(Qualifier.SORT_BY_TITLE))
+            if (qualifier instanceof OrderByQualifier)
                 continue;
             else if (qualifier.equals(Qualifier.ORDER_ASCENDING))
                 continue;
@@ -138,13 +121,12 @@ public class QualifierTool {
     /**
      * Appends nested condition to StringBuilder
      */
-    private static void appendNestedCondition(StringBuilder sb, NestedCondition condition, List params, String defaultTableNick,
-                                       Map<Field, String> fieldMapping) {
+    private static void appendNestedCondition(StringBuilder sb, NestedCondition condition, List params, String defaultTableNick, Map<Field, String> fieldMapping) {
         sb.append('(');
 
         boolean first = true;
         for (Qualifier qualifier : condition.getQualifiers()) {
-            if (! first) {
+            if (!first) {
                 if (condition.getOperation() == LogicalOperation.OR)
                     sb.append(" OR ");
                 else
@@ -164,12 +146,11 @@ public class QualifierTool {
     /**
      * Append comparation condition to StringBuilder.
      */
-    private static void appendCompareCondition(StringBuilder sb, CompareCondition condition, List params,
-                                        String defaultTableNick, Map<Field, String> fieldMapping) {
+    private static void appendCompareCondition(StringBuilder sb, CompareCondition condition, List params, String defaultTableNick, Map<Field, String> fieldMapping) {
         appendField(condition.getField(), fieldMapping, defaultTableNick, sb);
 
         if (condition.isNegated())
-            sb.append(" NOT ");        
+            sb.append(" NOT ");
 
         Operation operation = condition.getOperation();
         if (operation == Operation.GREATER)
@@ -221,8 +202,9 @@ public class QualifierTool {
     }
 
     /**
-     * Appends table nick for specified field into StringBuilder. The priority is to search fieldMapping first,
-     * then use defaultTableNick from the field if defined, then argument defaultTableNick otherwise do nothing.
+     * Appends table nick for specified field into StringBuilder. The priority
+     * is to search fieldMapping first, then use defaultTableNick from the field
+     * if defined, then argument defaultTableNick otherwise do nothing.
      */
     private static void addTableNick(Field field, Map<Field, String> fieldMapping, String defaultTableNick, StringBuilder sb) {
         String tableNick = null;
@@ -247,6 +229,9 @@ public class QualifierTool {
                 break;
             case CHILD_TYPE:
                 sb.append("typ_potomka");
+                break;
+            case COUNTER:
+                sb.append("counter");
                 break;
             case CREATED:
                 sb.append("vytvoreno");
@@ -293,6 +278,9 @@ public class QualifierTool {
             case SUBTYPE:
                 sb.append("podtyp");
                 break;
+            case TITLE:
+                sb.append("jmeno");
+                break;
             case TYPE:
                 sb.append("typ");
                 break;
@@ -301,7 +289,9 @@ public class QualifierTool {
                 break;
             case UPPER:
                 sb.append("predchozi");
-                break;
-        }
-    }
+			break;
+		case WHEN:
+			sb.append("kdy");
+		}
+	}
 }

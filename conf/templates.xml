@@ -682,7 +682,7 @@
 
     <servlet name="ViewAuthor">
         <action name="author" content="/show/author.ftl">
-            <var name="TITLE" value='Autor ${TOOL.childName(AUTHOR)}' type="Lazy"/>
+            <var name="TITLE" value='Autor ${AUTHOR.title}' type="Lazy"/>
         </action>
         <action name="authors_list" content="/show/sekce_autori.ftl">
             <var name="TITLE" value="Seznam autorů"/>
@@ -898,4 +898,40 @@
         <action name="content" template="print" content="/misc/what_happened.ftl">
         </action>
     </servlet>
+    
+    <servlet name="AdministrationAEPortal">
+    	<action name="editor" content="/show/administration/editors_portal.ftl">
+            <var name="TITLE" value="Správa redakce pro redaktory" />
+        </action>
+        <action name="author" content="/show/administration/authors_portal.ftl">
+            <var name="TITLE" value="Správa redakce pro autory" />
+        </action>
+        <action name="login" content="/show/login.ftl">
+            <var name="TITLE" value="Přihlášení do systému" />
+        </action>
+        <action name="forbidden" content="/misc/forbidden.ftl">
+            <var name="TITLE" value="Přístup odepřen" />
+        </action>
+    </servlet>
+    
+    <servlet name="AdministrationShowAuthor">
+    	<action name="list" content="/show/administration/authors.ftl" >
+    		<var name="TITLE" value="Správa autorů - seznam" />
+    	</action>
+    	<action name="show" content="/show/administration/author.ftl" >
+    		<var name="TITLE" value="Zobrazení autora" />
+    	</action>
+    </servlet>
+    
+    <servlet name="AdministrationEditAuthor">
+    	<action name="add" content="/add/administration/author.ftl" >
+    		<var name="TITLE" value="Přidání autora" />
+    	</action>
+    	<action name="edit" content="/add/administration/author.ftl" >
+    		<var name="TITLE" value='Editace autora ${AUTHOR.title}' type="Lazy" />
+    	</action>
+    	<action name="remove" content="/remove/administration/author.ftl" >
+    		<var name="TITLE" value='Smazání autora ${AUTHOR.title}' type="Lazy" />
+    	</action>
+    </servlet>    
 </config>

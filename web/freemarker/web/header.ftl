@@ -5,6 +5,7 @@
     <#if USER?? && USER.hasRole("root")><!-- Sablona: ${TEMPLATE!"neznama"} --></#if>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>${PARAMS.TITLE!TITLE!'www.abclinuxu.cz'}</title>
+    <link rel="stylesheet" type="text/css" href="/jquery-theme/ui.all.css" />
     <link rel="stylesheet" type="text/css" href="${CSS_URI!}">
     <#if INLINE_CSS??>
         <style type="text/css">
@@ -59,8 +60,7 @@
 	    </#if>
     </script>
     <script type="text/javascript" src="/data/site/impact.js"></script>
-    <script type="text/javascript" src="/data/site/scripts.js"></script>
-    <#--<script src="/data/site/prototype.js" type="text/javascript"></script>-->
+    <script type="text/javascript" src="/data/site/scripts.js"></script>    
     <#if html_header??>
         ${html_header}
     </#if>

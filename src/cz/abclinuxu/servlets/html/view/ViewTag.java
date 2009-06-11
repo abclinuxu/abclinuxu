@@ -77,7 +77,6 @@ public class ViewTag implements AbcAction {
 	public static final String VAR_CREATOR = "CREATOR";
 
     private Pattern reTagId = Pattern.compile(UrlUtils.PREFIX_TAGS + "/" + "([^/?]+)");
-    static final Qualifier[] QUALIFIERS_ARRAY = new Qualifier[]{};
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         SQLTool sqlTool = SQLTool.getInstance();
@@ -229,7 +228,7 @@ public class ViewTag implements AbcAction {
         if (limit != null)
             qualifiers.add(limit);
 
-        return (Qualifier[]) qualifiers.toArray(QUALIFIERS_ARRAY);
+        return (Qualifier[]) qualifiers.toArray(Qualifier.ARRAY_TYPE);
     }
 
     private static Qualifier getDocumentTypeQualifier(DocumentTypesSet selectedTypes) {

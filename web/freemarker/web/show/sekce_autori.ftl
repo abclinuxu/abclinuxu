@@ -14,7 +14,7 @@
         <td>Jméno</td>
         <td>Počet článků</td>
     </tr>
-    <#list SORT.byName(AUTHORS) as author>
+    <#list AUTHORS as author>
         <tr>
             <td>
                 <a href="${author.url}">${TOOL.childName(author)}</a>

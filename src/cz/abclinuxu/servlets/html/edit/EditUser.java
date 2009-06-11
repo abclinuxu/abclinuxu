@@ -18,49 +18,21 @@
  */
 package cz.abclinuxu.servlets.html.edit;
 
-import cz.abclinuxu.data.User;
-import cz.abclinuxu.data.Server;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.Item;
-import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.exceptions.DuplicateKeyException;
-import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.persistence.SQLTool;
-import cz.abclinuxu.persistence.extra.Qualifier;
-import cz.abclinuxu.persistence.extra.CompareCondition;
-import cz.abclinuxu.persistence.extra.Field;
-import cz.abclinuxu.persistence.extra.Operation;
-import cz.abclinuxu.persistence.ldap.LdapUserManager;
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.servlets.html.view.ViewUser;
-import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.comparator.NameComparator;
-import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
-import cz.abclinuxu.utils.parser.clean.Rules;
-import cz.abclinuxu.utils.parser.clean.HtmlChecker;
-import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.config.impl.AbcConfig;
-import cz.abclinuxu.utils.email.EmailSender;
-import cz.abclinuxu.utils.email.monitor.MonitorTool;
-import cz.abclinuxu.utils.email.forum.SubscribedUsers;
-import cz.abclinuxu.security.Roles;
-import cz.abclinuxu.security.AdminLogger;
-import cz.abclinuxu.security.ActionProtector;
-import cz.abclinuxu.scheduler.VariableFetcher;
-import cz.abclinuxu.scheduler.UpdateLinks;
 import java.io.BufferedWriter;
-import org.apache.commons.fileupload.FileItem;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Node;
-import org.htmlparser.util.ParserException;
+import java.io.File;
+import java.io.FileWriter;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -68,14 +40,51 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.net.URL;
+
+import org.apache.commons.fileupload.FileItem;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.Node;
+import org.htmlparser.util.ParserException;
+
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.Server;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.exceptions.DuplicateKeyException;
+import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.CompareCondition;
+import cz.abclinuxu.persistence.extra.Field;
+import cz.abclinuxu.persistence.extra.Operation;
+import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.ldap.LdapUserManager;
+import cz.abclinuxu.scheduler.UpdateLinks;
+import cz.abclinuxu.scheduler.VariableFetcher;
+import cz.abclinuxu.security.ActionProtector;
+import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.view.ViewUser;
+import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.utils.ImageTool;
+import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.comparator.NameComparator;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
+import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.utils.email.forum.SubscribedUsers;
+import cz.abclinuxu.utils.email.monitor.MonitorTool;
+import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.utils.parser.clean.HtmlChecker;
+import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
+import cz.abclinuxu.utils.parser.clean.Rules;
 
 /**
  * Class for manipulation with User.
@@ -2603,58 +2612,10 @@ public class EditUser implements AbcAction {
      */
     private boolean setPhoto(Map params, User user, Map env) {
         if (params.containsKey(PARAM_REMOVE_PHOTO)) {
-            Node node = user.getData().selectSingleNode("/data/profile/photo");
-            if (node != null) {
-                String localPath = AbcConfig.calculateDeployedPath(node.getText().substring(1));
-                new File(localPath).delete();
-                node.detach();
-            }
-            return true;
-        }
-
-        FileItem fileItem = (FileItem) params.get(PARAM_PHOTO);
-        if ( fileItem==null ) {
-            ServletUtils.addError(PARAM_PHOTO, "Vyberte soubor s vaší fotografií!", env, null);
-            return false;
-        }
-
-        String suffix = getFileSuffix(fileItem.getName()).toLowerCase();
-        if ( !(suffix.equals("jpg") || suffix.equals("jpeg") || suffix.equals("png") || suffix.equals("gif")) ) {
-            ServletUtils.addError(PARAM_PHOTO, "Soubor musí být typu JPG, GIF nebo JPEG!", env, null);
-            return false;
-        }
-
-        try {
-            Iterator readers = ImageIO.getImageReadersBySuffix(suffix);
-            ImageReader reader = (ImageReader) readers.next();
-            ImageInputStream iis = ImageIO.createImageInputStream(fileItem.getInputStream());
-            reader.setInput(iis, false);
-            if (reader.getNumImages(true) > 1) {
-                ServletUtils.addError(PARAM_PHOTO, "Animované obrázky nejsou povoleny!", env, null);
-                return false;
-            }
-            if (reader.getHeight(0) > 500 || reader.getWidth(0) > 500) {
-                ServletUtils.addError(PARAM_PHOTO, "Obrázek přesahuje povolené maximální rozměry!", env, null);
-                return false;
-            }
-        } catch(Exception e) {
-            ServletUtils.addError(PARAM_PHOTO, "Nelze načíst obrázek!", env, null);
-            return false;
-        }
-
-        String fileName = "images/faces/"+user.getId()+"."+suffix;
-        File file = new File(AbcConfig.calculateDeployedPath(fileName));
-        try {
-            fileItem.write(file);
-        } catch (Exception e) {
-            ServletUtils.addError(PARAM_PHOTO, "Chyba při zápisu na disk!", env, null);
-            log.error("Neni mozne ulozit fotografii "+file.getAbsolutePath()+" na disk!",e);
-            return false;
-        }
-
-        Element photo = DocumentHelper.makeElement(user.getData(), "/data/profile/photo");
-        photo.setText("/"+fileName);
-        return true;
+			return ImageTool.deleteImage(User.USER_PHOTO, user);
+		}
+		FileItem image = (FileItem) params.get(PARAM_PHOTO);
+		return ImageTool.storeImage(User.USER_PHOTO, image, user, ImageTool.USER_PHOTO_RES, env, PARAM_PHOTO);
     }
 
     private boolean setGPG(Map params, User user, Map env) throws Exception {
@@ -2703,58 +2664,10 @@ public class EditUser implements AbcAction {
      */
     private boolean setAvatar(Map params, User user, Map env) {
         if (params.containsKey(PARAM_REMOVE_AVATAR)) {
-            Node node = user.getData().selectSingleNode("/data/profile/avatar");
-            if (node != null) {
-                String localPath = AbcConfig.calculateDeployedPath(node.getText().substring(1));
-                new File(localPath).delete();
-                node.detach();
-            }
-            return true;
-        }
-
-        FileItem fileItem = (FileItem) params.get(PARAM_AVATAR);
-        if ( fileItem == null ) {
-            ServletUtils.addError(PARAM_AVATAR, "Vyberte soubor s avatarem!", env, null);
-            return false;
-        }
-
-        String suffix = getFileSuffix(fileItem.getName()).toLowerCase();
-        if ( ! (suffix.equals("jpg") || suffix.equals("jpeg") || suffix.equals("png") || suffix.equals("gif")) ) {
-            ServletUtils.addError(PARAM_AVATAR, "Soubor musí být typu JPG, GIF nebo JPEG!", env, null);
-            return false;
-        }
-
-        try {
-            Iterator readers = ImageIO.getImageReadersBySuffix(suffix);
-            ImageReader reader = (ImageReader) readers.next();
-            ImageInputStream iis = ImageIO.createImageInputStream(fileItem.getInputStream());
-            reader.setInput(iis, false);
-            if (reader.getNumImages(true) > 1) {
-                ServletUtils.addError(PARAM_AVATAR, "Animované obrázky nejsou povoleny!", env, null);
-                return false;
-            }
-            if (reader.getHeight(0) > 50 || reader.getWidth(0) > 50) {
-                ServletUtils.addError(PARAM_AVATAR, "Avatar přesahuje povolené maximální rozměry!", env, null);
-                return false;
-            }
-        } catch(Exception e) {
-            ServletUtils.addError(PARAM_AVATAR, "Nelze načíst obrázek!", env, null);
-            return false;
-        }
-
-        String fileName = "images/avatars/" + user.getId() + "." + suffix;
-        File file = new File(AbcConfig.calculateDeployedPath(fileName));
-        try {
-            fileItem.write(file);
-        } catch (Exception e) {
-            ServletUtils.addError(PARAM_AVATAR, "Chyba při zápisu na disk!", env, null);
-            log.error("Není možné uložit avatar " + file.getAbsolutePath() + " na disk!",e);
-            return false;
-        }
-
-        Element photo = DocumentHelper.makeElement(user.getData(), "/data/profile/avatar");
-        photo.setText("/"+fileName);
-        return true;
+			return ImageTool.deleteImage(User.USER_AVATAR, user);
+		}
+		FileItem image = (FileItem) params.get(PARAM_AVATAR);
+		return ImageTool.storeImage(User.USER_AVATAR, image, user, ImageTool.USER_AVATAR_RES, env, PARAM_AVATAR);
     }
 
     /**
