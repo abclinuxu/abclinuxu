@@ -47,7 +47,7 @@
 </#macro>
 
 <#macro showCommentsInListing(diz dateFormat urlPrefix)>
-    <a href="${diz.url!(urlPrefix+"/show/"+diz.relationId)}">Komentářů:&nbsp;${diz.responseCount}<@markNewComments diz/></a><#rt>
+    <a href="${diz.url!(urlPrefix+"/show/"+diz.relationId)}">Komentářů:&nbsp;${diz.responseCount}</a><@markNewComments diz/><#rt>
     <#lt><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat)}</#if>
 </#macro>
 
@@ -126,11 +126,11 @@
     <#if shortened=="UNDEFINED">
         <div class="zpr_telo">${text}</div>
     <#else>
-        <div class="zpr_telo">${shortened}...&nbsp;<i><a href="${url}">více&nbsp;&raquo;</a></i></div>
+        <div class="zpr_telo">${shortened}&#8230;&nbsp;<i><a href="${url}">více&nbsp;&raquo;</a></i></div>
     </#if>
     <span><@showUser autor/>
     | <a href="${url}" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"><#rt>
-      <#lt>Komentářů: ${diz.responseCount}<@lib.markNewComments diz/></a></span>
+      <#lt>Komentářů:&nbsp;${diz.responseCount}</a><@lib.markNewComments diz/></span>
 </#macro>
 
 <#macro showStoryInListing (story, skipUser, shortened)>
