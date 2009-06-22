@@ -126,7 +126,7 @@
     <#if shortened=="UNDEFINED">
         <div class="zpr_telo">${text}</div>
     <#else>
-        <div class="zpr_telo">${shortened}&#8230;&nbsp;<i><a href="${url}">více&nbsp;&raquo;</a></i></div>
+        <div class="zpr_telo">${shortened}&hellip;&nbsp;<i><a href="${url}">více&nbsp;&raquo;</a></i></div>
     </#if>
     <span><@showUser autor/>
     | <a href="${url}" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"><#rt>
@@ -209,7 +209,7 @@
 
 <#macro markNewCommentsQuestion(discussion)><#t>
 <#if TOOL.hasNewComments(USER!, discussion)><#t>
-    <span title="V diskusi jsou nové komentáře" class="new_comment_state">*</span><#t>
+    <span title="V diskusi jsou nové komentáře" class="new_comment_state">&lowast;</span><#t>
 </#if><#t>
 </#macro>
 
