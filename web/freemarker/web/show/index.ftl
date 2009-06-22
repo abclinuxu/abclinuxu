@@ -252,7 +252,7 @@
           <@lib.showHelp>Výkladový slovník linuxových pojmů</@lib.showHelp>
         <a href="/slovnik">Slovník</a>
       </div>
-      <div class="s_sekce">
+      <div class="s_sekce bez-slovniku">
         <ul>
           <#list DICTIONARY as rel>
             <li><a href="${rel.url}">${rel.child.title}</a></li>
