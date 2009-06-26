@@ -44,7 +44,7 @@ public class AnalyzeSurveyXML {
     Map data = new HashMap(20);
 
     public static void main(String[] args) throws Exception {
-        if ( args.length!=1 ) {
+        if ( args.length < 1 ) {
             System.err.println("Chybi parametr - cislo polozky s anketou!");
             System.exit(1);
         }

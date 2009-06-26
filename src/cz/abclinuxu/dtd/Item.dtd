@@ -133,12 +133,13 @@
 <!ATTLIST node rid (#NMTOKEN) #REQUIRED> <!-- integer, id of the content relation -->
 
 <!-- Item.BLOG -->
-<!ELEMENT data (perex?,content, category?)>
+<!ELEMENT data (perex?, content, category?, watchDiscussion)>
 <!ELEMENT perex (#PCDATA)> <!-- story's perex for long stories -->
 <!ATTLIST perex format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT content (#PCDATA)> <!-- content of the story -->
 <!ATTLIST content format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT category (#NMTOKEN)> <!-- integer, if od the category. See blog/categories -->
+<!ELEMENT watchDiscussion (yes,no) #OPTIONAL)> <!-- boolean; flag to watch discussion when story is delayed, defaults to false -->
 
 <!-- Item.FAQ -->
 <!ELEMENT data (text,links?)>

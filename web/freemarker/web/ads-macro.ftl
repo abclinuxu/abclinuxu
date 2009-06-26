@@ -6,7 +6,7 @@
 </#macro>
 
 <#macro showTagAdvertisement text, image, trackerImage = {"src":"UNDEFINED"}, cssClass = {"name":"stitek-ad"}>
-    <div class="${cssClass.name}" style="min-height:${image.height}px">
+    <div class="${cssClass.name} noext" style="min-height:${image.height}px">
         <#if trackerImage.src != "UNDEFINED">
             <img src="${trackerImage.src}" border='0' alt='' />
         </#if>

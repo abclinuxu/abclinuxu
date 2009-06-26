@@ -18,20 +18,14 @@
  */
 package cz.abclinuxu.utils.email.monitor;
 
-import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.email.EmailSender;
-import cz.abclinuxu.data.GenericDataObject;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.Item;
 
-import java.util.prefs.Preferences;
 import java.util.Map;
-import java.util.List;
-
-import org.dom4j.Element;
+import java.util.Set;
+import java.util.prefs.Preferences;
 
 /**
  * InstantSender is used to process MonitorActions. E.g. to find
@@ -85,9 +79,9 @@ public class InstantSender extends Thread implements Configurable {
                     log.info("Processing action "+action.getAction()+" on "+action.getType()+" "+action.getRelation());
 
                 Map env = chooseDecorator(action).getEnvironment(action);
-                List<Integer> users = action.getRecipients();
+                Set<Integer> users = action.getRecipients();
                 if (users.size()>0)
-                    EmailSender.sendEmailToUsers(env,users);
+                    EmailSender.sendEmailToUsers(env, users);
             } catch (Exception e) {
                 log.error("Unknown exception!", e);
             }

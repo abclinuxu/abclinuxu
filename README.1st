@@ -10,19 +10,31 @@ Strucny navod
 
 Ant a jetty najdete v orezane verzi v adresari misc.
 
-2) nastavte si databazi
+2) nastavte si databazi $MYSQL_DB, 
+nahrajte jeji schema $MYSQL_SCHEMA a nactete do ni vzorova data $MYSQL_DATA.
+Tento usek kodu lze pouzit jako skript pod /bin/bash
 
-$ mysql
-CREATE DATABASE devel default character set utf8 collate utf8_czech_ci;
-USE devel;
-GRANT ALL ON *.* TO 'you'@'localhost' IDENTIFIED BY 'password' WITH GRANT OPTION;
+MYSQL_USER="user"  # jmeno uzivatele ktery pristuje do databaze
+MYSQL_HOST="stroj" # jmeno stroje, na kterem bezi databaze
+MYSQL_DB="devel"   # jmeno databaze
+MYSQL_PASSWORD="heslo" # pristupove heslo
+MYSQL_SCHEME="bin/sql/create_mysql_scheme.sql"
+MYSQL_DATA="misc/databaze.sql.bz2"
+
+echo "Vytvarim SQL databazi"
+mysql -u $MYSQL_USER --password=$MYSQL_PASSWORD --default-character-set=utf8 <<EOF 
+DROP DATABASE IF EXISTS $MYSQL_DB;
+CREATE DATABASE $MYSQL_DB default character set utf8 collate utf8_czech_ci;
+USE $MYSQL_DB;
+GRANT ALL ON *.* TO $MYSQL_USER@$MYSQL_HOST IDENTIFIED BY '$MYSQL_PASSWORD' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
+EOF
 
-$ bzcat misc/databaze.sql.bz2 | mysql -u 'you' --password='password' 'devel'
+echo "Vytvarim MYSQL schema"
+mysql -u $MYSQL_USER --password=$MYSQL_PASSWORD --default-character-set=utf8 $MYSQL_DB < $MYSQL_SCHEME
 
-kde 'you' je uzivatel, ktery se bude pripojovat k databazi, 
-'password' heslo, ktere jste mu zadali behem udelovani opravneni 
-a 'devel' jmeno databaze.
+echo "Naplnuji databazi vzorovymi daty"
+bzcat $MYSQL_DATA | mysql -u $MYSQL_USER --password=$MYSQL_PASSWORD --default-character-set=utf8 $MYSQL_DB
 
 Ujistete se, ze databaze je pristupna pres TCP/IP, v defaultnim
 nastaveni je to zakazano (skip-networking v konfiguraci ci spoustecim
@@ -70,7 +82,7 @@ Nastavte spravne promennou $JETTY_HOME v bin/jetty.sh.
 cd jetty/bin
 ./jetty.sh run
 
-8) otevrete prohlizec a napiste adresu
+8) otevrete prohlizec, pouzijte port uvedeny v conf_devel.properties (napr. 8080)
 
 http://localhost:8080
 

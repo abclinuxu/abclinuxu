@@ -22,7 +22,6 @@ import cz.abclinuxu.servlets.html.edit.EditBlog;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.data.*;
@@ -42,6 +41,7 @@ import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.data.view.BlogCategory;
+import cz.abclinuxu.data.view.BlogStory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -90,11 +90,9 @@ public class ViewBlog implements AbcAction, Configurable {
     static final String PREF_PAGE_SIZE = "page.size";
     static final String PREF_SUMMARY_SIZE = "summary.size";
     static final String PREF_FRESH_STORIES_SIZE = "fresh.stories.size";
-    static final String PREF_URL_SUMMARY = "url.summary";
 
     static REProgram reUrl, reSummaryUrl, reDigestUrl, reCategoryUrl;
     static int defaultPageSize, freshStoriesSize, summarySize;
-    static String urlSummary;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new ViewBlog());
     }
@@ -145,15 +143,15 @@ public class ViewBlog implements AbcAction, Configurable {
                             name = regexp.getParen(1);
                         if (matched > 2) {
                             year = Integer.parseInt(regexp.getParen(2));
-                            env.put(VAR_YEAR, new Integer(year));
+                            env.put(VAR_YEAR, year);
                         }
                         if (matched > 3) {
                             month = Integer.parseInt(regexp.getParen(3));
-                            env.put(VAR_MONTH, new Integer(month));
+                            env.put(VAR_MONTH, month);
                         }
                         if (matched > 4) {
                             day = Integer.parseInt(regexp.getParen(4));
-                            env.put(VAR_DAY, new Integer(day));
+                            env.put(VAR_DAY, day);
                         }
                         if (matched > 5)
                             rid = Integer.parseInt(regexp.getParen(5));
@@ -249,30 +247,21 @@ public class ViewBlog implements AbcAction, Configurable {
     public static String processStory(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Category blog = (Category) persistence.findById(relation.getParent());
+        BlogStory blogStory = Tools.analyzeBlogStory(relation, true, true);
         Item story = (Item) relation.getChild();
-        env.put(VAR_STORY, relation);
-
-        BlogCategory category = null;
-        List<BlogCategory> categories = EditBlog.storeCategories(blog, env);
-        for (BlogCategory blogCategory : categories) {
-            if (blogCategory.getId().equals(story.getSubType())) {
-                env.put(VAR_CATEGORY, blogCategory);
-                category = blogCategory;
-                break;
-            }
-        }
-
-        User user = (User) env.get(Constants.VAR_USER);
-        if (user == null || user.getId() != story.getOwner())
-            ReadRecorder.log(story, Constants.COUNTER_READ, env);
+        env.put(VAR_STORY, blogStory);
 
         List parents = persistence.findParents(relation);
-        if (category != null) {
-            String url = UrlUtils.PREFIX_BLOG + "/" + blog.getSubType() + "/" + category.getUrl();
-            Link link = new Link(category.getName(), url, null);
+        BlogCategory category = blogStory.getCategory();
+        if (category != null && category.getAbsoluteUrl() != null) {
+            Link link = new Link(category.getName(), category.getAbsoluteUrl(), null);
             parents.add(parents.size() - 1, link);
         }
         env.put(ShowObject.VAR_PARENTS, parents);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        if (blogStory.getPerex() != null && (user == null || user.getId() != story.getOwner()))
+            ReadRecorder.log(story, Constants.COUNTER_READ, env);
 
         Relation blogRelation = (Relation) persistence.findById(new Relation(relation.getUpper()));
 
@@ -281,13 +270,12 @@ public class ViewBlog implements AbcAction, Configurable {
         env.put(VAR_BLOG_RELATION, blogRelation);
         env.put(VAR_BLOG_XML, NodeModel.wrap((new DOMWriter().write(blog.getData()))));
 
-        fillFreshStories(blog, env);
-
         if (user != null && user.getId() == blog.getOwner()) {
             fillUnpublishedStories(blog, env);
             fillWaitingStories(blog, env);
         }
 
+        fillFreshStories(blog, env);
         fillMonthStatistics(blog, env);
         fillLastDesktop(blog, env);
 
@@ -331,9 +319,9 @@ public class ViewBlog implements AbcAction, Configurable {
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
     protected String processStories(HttpServletRequest request, Relation blogRelation, boolean summary, int year, int month, int day, BlogCategory category, Map env) throws Exception {
+        Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistence persistence = PersistenceFactory.getPersistence();
 
         Category blog = (Category) env.get(VAR_BLOG);
         int count = summarySize;
@@ -354,28 +342,21 @@ public class ViewBlog implements AbcAction, Configurable {
         qualifiers.add(new LimitQualifier(from, count));
         qa = new Qualifier[qualifiers.size()];
 
-        List stories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        List<Relation> stories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
         Tools.syncList(stories);
-
-        Paging paging = new Paging(stories, from, count, total);
-        env.put(VAR_STORIES, paging);
-
-        if (!summary) {
-            User user = (User) env.get(Constants.VAR_USER);
-            if (user==null || user.getId()!=blog.getOwner()) {
-                for (Iterator iter = stories.iterator(); iter.hasNext();) {
-                    Relation relation = (Relation) iter.next();
-                    Item story = (Item) relation.getChild();
-                    if (Tools.xpath(story,"/data/perex")==null)
-                        ReadRecorder.log(story, Constants.COUNTER_READ, env);
-                }
-            }
+        List<BlogStory> blogStories = new ArrayList<BlogStory>(stories.size());
+        for (Relation relation : stories) {
+            BlogStory blogStory = Tools.analyzeBlogStory(relation, true, true);
+            blogStories.add(blogStory);
         }
 
+        Paging paging = new Paging(blogStories, from, count, total);
+        env.put(VAR_STORIES, paging);
         List parents = persistence.findParents(blogRelation);
         env.put(ShowObject.VAR_PARENTS, parents);
-
         env.put(Constants.VAR_RSS, FeedGenerator.getBlogFeedUrl(blog));
+        env.put(Constants.VAR_READ_COUNTERS, Tools.getRelationCountersValue(stories, Constants.COUNTER_READ));
+
         return FMTemplateSelector.select("ViewBlog", "blog", env, request);
     }
 
@@ -387,8 +368,6 @@ public class ViewBlog implements AbcAction, Configurable {
         SQLTool sqlTool = SQLTool.getInstance();
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
-        Relation relation;
-        Item story;
 
         List qualifiers = new ArrayList();
         if (!summary)
@@ -401,7 +380,7 @@ public class ViewBlog implements AbcAction, Configurable {
 
         Qualifier[] qa = new Qualifier[qualifiers.size()];
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-        int total = -1;
+        int total;
         if (digest)
             total = sqlTool.countItemRelationsWithTypeWithFilters(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa), filters);
         else
@@ -413,7 +392,7 @@ public class ViewBlog implements AbcAction, Configurable {
         qualifiers.add(new LimitQualifier(from, Tools.getPreloadedStoryCount(count) ));
 
         qa = new Qualifier[qualifiers.size()];
-        List stories = null;
+        List<Relation> stories;
         if (digest)
             stories = sqlTool.findItemRelationsWithTypeWithFilters(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa), filters);
         else
@@ -425,30 +404,23 @@ public class ViewBlog implements AbcAction, Configurable {
             stories = Tools.filterBannedStories(stories, user, count, false);
 
         List parentBlogs = new ArrayList(stories.size());
-        for (Iterator iter = stories.iterator(); iter.hasNext();) {
-            relation = (Relation) iter.next();
-            if (!relation.getParent().isInitialized())
-                parentBlogs.add(relation.getParent());
-        }
-        if (parentBlogs.size()>0)
-            Tools.syncList(parentBlogs);
+        for (Relation relation : stories)
+            parentBlogs.add(relation.getParent());
+        if (! parentBlogs.isEmpty())
+            Tools.syncList(parentBlogs); // initialize all blogs in single operation
 
-        Paging paging = new Paging(stories, from, stories.size(), total);
+        List<BlogStory> blogStories = new ArrayList<BlogStory>(stories.size());
+        for (Relation relation : stories) {
+            BlogStory blogStory = Tools.analyzeBlogStory(relation, true, true);
+            blogStories.add(blogStory);
+        }
+
+        Paging paging = new Paging(blogStories, from, stories.size(), total);
         env.put(VAR_STORIES, paging);
 
-        if (!summary) {
-            for (Iterator iter = stories.iterator(); iter.hasNext();) {
-                relation = (Relation) iter.next();
-                story = (Item) relation.getChild();
-                if (user == null || user.getId() != story.getOwner()) {
-                    if (Tools.xpath(story, "/data/perex") == null)
-                        ReadRecorder.log(story, Constants.COUNTER_READ, env);
-                }
-            }
-        }
+        env.put(Constants.VAR_READ_COUNTERS, Tools.getRelationCountersValue(stories, Constants.COUNTER_READ));
 
-        relation = (Relation) persistence.findById(new Relation(Constants.REL_BLOGS));
-        List parents = persistence.findParents(relation);
+        List parents = persistence.findParents((Relation) persistence.findById(new Relation(Constants.REL_BLOGS)));
         env.put(ShowObject.VAR_PARENTS, parents);
 
         env.put(Constants.VAR_RSS, FeedGenerator.getBlogsFeedUrl());
@@ -509,7 +481,7 @@ public class ViewBlog implements AbcAction, Configurable {
             map = new HashMap();
             map.put("blog", blog);
             map.put("author", author);
-            map.put("stories", new Integer(count));
+            map.put("stories", count);
             result.add(map);
         }
 
@@ -565,7 +537,7 @@ public class ViewBlog implements AbcAction, Configurable {
     private static void fillFreshStories(Category blog, Map env) {
         List qualifiers = new ArrayList();
         qualifiers.add(new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW));
-        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(blog.getOwner())));
+        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner()));
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(Qualifier.ORDER_DESCENDING);
         qualifiers.add(new LimitQualifier(0, freshStoriesSize));
@@ -580,7 +552,7 @@ public class ViewBlog implements AbcAction, Configurable {
     private static void fillWaitingStories(Category blog, Map env) {
         List qualifiers = new ArrayList();
         qualifiers.add(new CompareCondition(Field.CREATED, Operation.GREATER, SpecialValue.NOW));
-        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(blog.getOwner())));
+        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner()));
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(Qualifier.ORDER_DESCENDING);
         Qualifier[] qa = new Qualifier[qualifiers.size()];
@@ -683,11 +655,6 @@ public class ViewBlog implements AbcAction, Configurable {
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
-        // TODO k cemu tato hodnota je? Nevidim zadne pouziti
-        urlSummary = prefs.get(PREF_URL_SUMMARY, null);
-        if (urlSummary==null)
-            throw new ConfigurationException("Chybí nastavení "+PREF_URL_SUMMARY);
-
         defaultPageSize = prefs.getInt(PREF_PAGE_SIZE, 10);
         summarySize = prefs.getInt(PREF_SUMMARY_SIZE, 20);
         freshStoriesSize = prefs.getInt(PREF_FRESH_STORIES_SIZE, 5);

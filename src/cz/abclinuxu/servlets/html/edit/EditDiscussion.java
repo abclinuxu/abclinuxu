@@ -89,6 +89,7 @@ public class EditDiscussion implements AbcAction {
     public static final String PARAM_ANTISPAM = "antispam";
     public static final String PARAM_ATTACHMENT = "attachment";
     public static final String PARAM_REMOVE_ATTACHMENT = "rmAttachment";
+    public static final String PARAM_CONFIRM_OLD_DISCUSSION = "confirmOld";
 
     public static final String COOKIE_USER_VERIFIED = "usrVrfd";
 
@@ -101,6 +102,7 @@ public class EditDiscussion implements AbcAction {
     public static final String VAR_USER_VERIFIED = "USER_VERIFIED";
     public static final String VAR_ATTACHMENTS = "ATTACHMENTS";
     public static final String VAR_COMMENTED_TEXT = "COMMENTED_TEXT";
+    public static final String VAR_DISCUSSION_AGE = "AGE";
 
     public static final String ACTION_ADD_DISCUSSION = "addDiz";
     public static final String ACTION_ADD_QUESTION = "addQuez";
@@ -255,38 +257,43 @@ public class EditDiscussion implements AbcAction {
     }
 
     /**
-     * Creates and persists empty discussion.
-     * @param relation parent relation
+     * Creates and persists empty discussion. If there is already a discussion, then it is returned.
+     * @param parentRelation parent relation
      * @param user user that created this discussion (may be empty).
      * @param persistence
      * @return relation between created discussion and its parent
      */
-    public static Relation createEmptyDiscussion(Relation relation, User user, Persistence persistence) {
+    public static Relation createEmptyDiscussion(Relation parentRelation, User user, Persistence persistence) {
+        GenericObject parent = persistence.findById(parentRelation.getChild());
+        Map<String, List<Relation>> map = Tools.groupByType(parent.getChildren(), "Item");
+        List<Relation> dizRelations = map.get(Constants.TYPE_DISCUSSION);
+        if (dizRelations != null)
+            return dizRelations.get(0);
+
         Item discussion = new Item(0, Item.DISCUSSION);
         Document document = DocumentHelper.createDocument();
         document.addElement("data").addElement("comments").setText("0");
         discussion.setData(document);
-        if ( user!=null )
+        if (user != null)
             discussion.setOwner(user.getId());
 
-        GenericObject parent = persistence.findById(relation.getChild());
         String title = Tools.childName(parent) + " (diskuse)";
         discussion.setTitle(title);
-
         persistence.create(discussion);
-        Relation relChild = new Relation(parent, discussion, relation.getId());
-        String url = relation.getUrl();
-        if (url!=null) {
-            if (url.charAt(url.length()-1)!='/') // zadne url by nemelo koncit na /
+
+        Relation relation = new Relation(parent, discussion, parentRelation.getId());
+        String url = parentRelation.getUrl();
+        if (url != null) {
+            if (url.charAt(url.length() - 1) != '/') // zadne url by nemelo koncit na /
                 url = url+'/';
             url += "diskuse";
             url = URLManager.protectFromDuplicates(url);
-            relChild.setUrl(url);
+            relation.setUrl(url);
         }
 
-        persistence.create(relChild);
-        relChild.getParent().addChildRelation(relChild);
-        return relChild;
+        persistence.create(relation);
+        relation.getParent().addChildRelation(relation);
+        return relation;
     }
 
     /**
@@ -399,14 +406,9 @@ public class EditDiscussion implements AbcAction {
 
         DateTime now = new DateTime();
         int daysCreated = Days.daysBetween(new DateTime(discussion.getCreated()), now).getDays();
-        int daysUpdated = Days.daysBetween(new DateTime(discussion.getUpdated()), now).getDays();
-        if (daysCreated > 20 && daysUpdated > 2) {
-            if (question)
-                ServletUtils.addMessage("Pozor, chystáte se komentovat " + daysCreated + " dní starý dotaz. " +
-                        "Pokud se nechystáte vložit či doplnit řešení tohoto dotazu, ale naopak se chcete na něco zeptat, " +
-                        "položte raději nový dotaz.", env, null);
-            else
-                ServletUtils.addMessage("Pozor, chystáte se komentovat " + daysCreated + " dní starou diskusi.", env, null);
+        if (daysCreated > 20 && ! params.containsKey(PARAM_CONFIRM_OLD_DISCUSSION)) {
+            env.put(VAR_DISCUSSION_AGE, daysCreated);
+            return FMTemplateSelector.select("EditDiscussion", "confirmOldReply", env, request);
         }
 
         // display discussed comment, only if it has title
@@ -847,16 +849,6 @@ public class EditDiscussion implements AbcAction {
             url = urlUtils.getPrefix() + "/show/" + mainRelation.getId();
         urlUtils.redirect(response, url, false);
         return null;
-    }
-
-    /**
-     * Reverts the current state of monitor on specified discussion.
-     */
-    public static void alterDiscussionMonitor(Item discussion, User user, Persistence persistence) {
-        Date originalUpdated = discussion.getUpdated();
-        MonitorTools.alterMonitor(discussion.getData().getRootElement(), user);
-        persistence.update(discussion);
-        SQLTool.getInstance().setUpdatedTimestamp(discussion, originalUpdated);
     }
 
     /**

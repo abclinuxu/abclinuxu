@@ -27,7 +27,7 @@
             </tr>
         </#if>
 
-        <#local url = TOOL.xpath(software, "/data/url[@useType='homepage']")?default("UNDFEFINED")>
+        <#local url = TOOL.xpath(software, "/data/url[@useType='homepage']")!"UNDFEFINED">
     	<#if url != "UNDFEFINED">
             <tr>
 	        	<td>Domovská stránka:</td>
@@ -40,7 +40,7 @@
                 </td>
             </tr>
         </#if>
-        <#local url = TOOL.xpath(software, "/data/url[@useType='download']")?default("UNDFEFINED")>
+        <#local url = TOOL.xpath(software, "/data/url[@useType='download']")!"UNDFEFINED">
         <#if url != "UNDFEFINED">
             <tr>
 	        	<td>Adresa ke stažení:</td>

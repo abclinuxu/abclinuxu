@@ -249,7 +249,10 @@ public class UpdateLinks extends TimerTask implements Configurable {
                 Link link = new Link();
                 link.setUrl(url);
                 link.setText(title);
-                link.setUpdated(entry.getPublishedDate());
+
+                Date published = entry.getPublishedDate(); // http://tremulous.net/rss_feed.xml has invalid feed time
+                if (published != null && published.getTime() < System.currentTimeMillis() + Constants.DAY_DURATION)
+                    link.setUpdated(published);
                 
                 if (link.getUpdated() == null || link.getUpdated().before(new Date(0))) {
                     link.setUpdated(new Date());

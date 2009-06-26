@@ -20,39 +20,43 @@ package cz.abclinuxu.data;
 
 /**
  * Allows object to have assigned image(s).
- * These image(s) can be either assigned or detracted. 
- * 
+ * These image(s) can be either assigned or detracted.
+ * <p/>
  * Object implementing this interface is supposed to store given information in
  * its content. No changes to persistence layer are made.
- * 
- * Each object allow to manage arbitrary number of images. 
+ * <p/>
+ * Each object allow to manage arbitrary number of images.
  * It is supposed to have different behavior for distinct image numbers
+ *
  * @author kapy
  */
 public interface ImageAssignable {
-	
-	/**
-	 * Informs object where image assigned to it is stored
-	 * @param imageNo Number of image 
-	 * @param imageUrl
-	 */
-	public void assignImage(int imageNo, String imageUrl);
-	
-	/**
-	 * Removes image information from object
-	 * @param imageNo Number of image
-	 * @return Returns URL where image is stored
-	 */
-	public String detractImage(int imageNo);
-	
-	/**
-	 * Makes proposal about where image should be stored.
-	 * This path should be unique for each object and should
-	 * not be absolute. 
-	 * @param imageNo Number of image
-	 * @param suffix File extension
-	 * @return URL where image can be stored 
-	 */
-	public String proposeImageUrl(int imageNo, String suffix);
+
+    /**
+     * Informs object where image assigned to it is stored
+     *
+     * @param imageNo  Number of image
+     * @param imageUrl
+     */
+    public void assignImage(int imageNo, String imageUrl);
+
+    /**
+     * Removes image information from object
+     *
+     * @param imageNo Number of image
+     * @return Returns URL where image is stored
+     */
+    public String detractImage(int imageNo);
+
+    /**
+     * Makes proposal about where image should be stored.
+     * This path should be unique for each object and should
+     * not be absolute.
+     *
+     * @param imageNo Number of image
+     * @param suffix  File extension
+     * @return URL where image can be stored
+     */
+    public String proposeImageUrl(int imageNo, String suffix);
 
 }

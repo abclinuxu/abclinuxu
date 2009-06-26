@@ -64,7 +64,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
     private String allVersions, insertVersion, fetchDocument, purgeDocument;
     private int committersCount;
 
-    static final String[] SKIPPED_ELEMENTS = {"monitor", "rating"};
+    static final String[] SKIPPED_ELEMENTS = {"rating"};
 
     public MysqlVersioningProvider() {
         ConfigurationManager.getConfigurator().configureAndRememberMe(this);

@@ -11,11 +11,12 @@ verze 2.0
 <!ELEMENT signature (#PCDATA)> <!-- podpis nebo citat vlozeny pro jeho prispevky do diskuse -->
 
 <!ELEMENT communication (email)>
-<!ELEMENT email (newsletter?,weekly_summary?,forum?)>
+<!ELEMENT email (newsletter?,weekly_summary?,forum?,ad?)>
 <!ATTLIST email valid (yes|no) #REQUIRED>
 <!ATTLIST email verified (yes|no) #OPTIONAL>
 <!ELEMENT newsletter (#PCDATA)> <!-- yes or no, pravidelny mesicnik -->
 <!ELEMENT weekly_summary (#PCDATA)> <!-- yes or no, tydenni sumar clanku a zajimavosti -->
+<!ELEMENT ad (#PCDATA)> <!-- yes or no, pure advertisement email -->
 <!ELEMENT forum (#PCDATA)> <!-- yes or no, emailove rozhrani k diskusnimu foru -->
 
 <!ELEMENT profile (about_myself?,home_page?,photo?,distributions?,linux_user_from_year?)>
@@ -33,8 +34,8 @@ verze 2.0
 <!ELEMENT prefix (#PCDATA)> <!-- prefix URL -->
 <!ELEMENT type (#PCDATA)> <!-- typ objektu -->
 
-<!ELEMENT settings (emoticons?,cookie_valid?,index_discussions?, index_stories?, index_links?, template_links?, return_to_forum?,
-                    blog?, css?, guidepost?, blacklist?, feeds?, hp_all_stories?, rte?)>
+<!ELEMENT settings (emoticons?, social_bookmarks?, cookie_valid?,index_discussions?, index_stories?, index_tail_digest_stories?, index_links?, template_links?, return_to_forum?,
+                    blog?, css?, inline_css?, guidepost?, blacklist?, feeds?, hp_all_stories?, rte?, index_articles?, index_complete_articles?)>
 <!ELEMENT emoticons (#PCDATA)> <!-- yes or no, zda nahrazovat emotikony obrazkem -->
 <!ELEMENT signatures (#PCDATA)> <!-- yes or no, zda zobrazovat signatury -->
 <!ELEMENT guidepost (#PCDATA)> <!-- yes or no, zda zobrazovat rozcestnik -->
@@ -43,7 +44,10 @@ verze 2.0
 <!ELEMENT index_discussions (#PCDATA)> <!-- integer, pocet diskusi na hlavni strance. -1 : vsechny -->
 <!ELEMENT index_news (#PCDATA)> <!-- integer, pocet zpravicek na hlavni strance -->
 <!ELEMENT index_stories (#PCDATA)> <!-- integer, pocet zapisu blogu na hlavni strance -->
+<!ELEMENT index_tail_digest_stories (#PCDATA)> <!-- integer, pocet vyberovych zapisu z blogu na hlavni strance -->
 <!ELEMENT index_links (#PCDATA)> <!-- integer, pocet odkazu pro jeden server na hlavni strance -->
+<!ELEMENT index_articles (#PCDATA)> <!-- integer, pocet clanku na hlavni strance -->
+<!ELEMENT index_complete_articles (#PCDATA)> <!-- integer, pocet nezkracenych clanku na hlavni strance (podmnozina celkoveho poctu) -->
 <!ELEMENT template_links (#PCDATA)> <!-- integer, pocet odkazu pro jeden server mimo hlavni stranku -->
 <!ELEMENT found_size (#PCDATA)> <!-- integer, pocet nalezenych objektu na strance -->
 <!ELEMENT forum_size (#PCDATA)> <!-- integer, pocet zobrazenych diskusi na strance -->
@@ -57,6 +61,8 @@ verze 2.0
 <!ELEMENT name (#PCDATA)> <!-- name of anonym visitor blocked in blacklist -->
 <!ELEMENT hp_all_stories (#PCDATA)> <!-- yes or no, whether to display all stories, including banned by administrator -->
 <!ELEMENT rte (#PCDATA)> <!-- textarea or wysiwyg, this settings controls rich text editor component behaviour -->
+<!ELEMENT inline_css (#PCDATA)> <!-- CSS content to be included in every page -->
+<!ELEMENT social_bookmarks (#PCDATA)> <!-- yes or no, zda zobrazovat ikonky pro zalozkove sluzby -->
 
 <!ELEMENT system (registration_date?,group?)>
 <!ELEMENT registration_date (#PCDATA)> <!-- ISO format, kdy se zaregistroval -->

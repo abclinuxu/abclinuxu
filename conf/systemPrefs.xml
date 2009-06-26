@@ -42,6 +42,7 @@
                                     <entry key="warn.old.diz.created.days" value="30" />
                                     <entry key="warn.old.diz.commented.days" value="3" />
                                     <entry key="login.use.https" value="@LOGIN.USE.HTTPS@"/>
+                                    <entry key="index.complete.articles" value="6"/>
                                 </map>
                             </node>
                         </node>
@@ -114,6 +115,7 @@
                                 <entry key="story.reserve.percents" value="25" />
                                 <entry key="news.letter.limit.soft" value="375" />
                                 <entry key="news.letter.limit.hard" value="475" />
+                                <entry key="missing.user.name" value="Neexistující uživatel"/>
                             </map>
                             <node name="css.styles">
                                 <map>
@@ -398,7 +400,7 @@
                             <entry key="relations.question.by.user" value="select R.cislo from relace R, polozka P, spolecne S where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and P.typ=3 and S.typ='P' and R.potomek=S.cislo and S.pridal=?"/>
                             <entry key="relations.comment.by.user" value="select R.predchozi,max(vytvoreno) from relace R, komentar K where R.typ_potomka='Z' and R.potomek=K.zaznam and K.autor=? group by K.zaznam order by 2"/>
                             <entry key="relations.wiki.by.user" value="select distinct R.cislo from verze V, relace R, spolecne S where kdo=? and R.potomek=V.cislo and R.typ_potomka=V.typ and S.cislo=R.potomek and S.typ=R.typ_potomka"/>
-                            <entry key="relations.with.tag" value="select R.cislo from relace R, stitkovani T, spolecne S, polozka P where R.typ_potomka=T.typ and R.potomek=T.cislo and  R.typ_potomka=S.typ and R.potomek=S.cislo and P.cislo = S.cislo and T.stitek=?" />
+                            <entry key="relations.with.tag" value="select R.cislo from relace R, stitkovani T, spolecne S, polozka P where R.typ_potomka=T.typ and R.potomek=T.cislo and  R.typ_potomka=S.typ and R.potomek=S.cislo and P.cislo = S.cislo and T.stitek=? and R.predchozi&lt;&gt;8082" />
                             <entry key="count.relations.wiki.by.user" value="select count(distinct R.cislo) from verze V, relace R where kdo=? and R.potomek=V.cislo and R.typ_potomka=V.typ"/>
                             <entry key="count.relations.comment.by.user" value="select count(distinct R.predchozi) from relace R, komentar K where R.typ_predka='P' and R.typ_potomka='Z' and R.potomek=K.zaznam and K.autor=?"/>
                             <entry key="relations.section.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek), spolecne S where R.typ_potomka='K' and K.typ=? and S.typ='K' and S.cislo=R.potomek"/>
@@ -435,7 +437,7 @@
                             <entry key="users.count.articles" value="select P2.numeric1, count(P.cislo) from polozka P, vlastnost V1, relace R, polozka P2 where P.typ=2 and V1.predek=P.cislo and V1.typ='author' and V1.hodnota=R.cislo and P2.cislo = R.potomek group by P2.numeric1" />
                             <entry key="users.count.wiki.records" value="select kdo,count(distinct cislo,typ) from verze group by kdo" />
                             <entry key="users.count.news" value="select pridal,count(*) from polozka P, spolecne S where P.typ=7 and S.typ='P' and S.cislo=P.cislo group by S.pridal" />
-                            <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
+                            <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;%&lt;weekly_summary>yes%'"/>
                             <entry key="users.with.forum.by.email" value="select cislo from uzivatel where data like '%&lt;email valid=&quot;yes&quot;%&lt;forum&gt;yes%&lt;/email%'"/>
                             <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'"/>
                             <entry key="users.with.login" value="select cislo from uzivatel where login = ?"/>
@@ -479,8 +481,13 @@
                             <entry key="find.hp.subportal.articles" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and P.podtyp='SUBPORTAL' and not exists (select * from vlastnost where predek=P.cislo and typ_predka='P' and typ='banned_article')"/>
                             <entry key="max.subportal.reads" value="select max(C.soucet) from citac C, kategorie K where C.typ='K' and C.cislo=K.cislo and K.typ=7 and C.druh='read'"/>
                             <entry key="find.advertisement.by.string" value="select cislo from polozka where typ = 29 and string1 = ?"/>
-                            <entry key="get.authors.with.articles.count" value="select P.cislo, P.numeric1, P.numeric2, P.string1, P.string2, P.data, coalesce(counter,0) as counter, kdy, S1.pridal, S1.skupina, S1.prava from spolecne S1, polozka P left join (select R.potomek as autor, count(P1.cislo) as counter, max(S.vytvoreno) as kdy from polozka P1, relace R, vlastnost V, spolecne S where P1.typ=2 and P1.cislo=V.predek and V.typ_predka='P' and V.typ='author' and R.typ_potomka='P' and V.hodnota=R.cislo and S.typ='P' and P1.cislo=S.cislo and S.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19 and S1.cislo=P.cislo" />
-                            <entry key="count.authors.with.articles.count" value="select count(*) from polozka P left join (select R.potomek as autor, count(P1.cislo) as counter, max(S.vytvoreno) as kdy from polozka P1, relace R, vlastnost V, spolecne S where P1.typ=2 and P1.cislo=V.predek and V.typ_predka='P' and V.typ='author' and R.typ_potomka='P' and V.hodnota=R.cislo and S.typ='P' and P1.cislo=S.cislo and S.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19" />
+                            <entry key="insert.monitor" value="INSERT INTO monitor (typ,cislo,uzivatel) VALUES (?,?,?)"/>
+                            <entry key="remove.monitor" value="DELETE FROM monitor WHERE typ=? AND cislo=? AND uzivatel=?"/>
+                            <entry key="remove.users.monitors" value="DELETE FROM monitor WHERE uzivatel=?"/>
+                            <entry key="get.monitors" value="SELECT uzivatel FROM monitor WHERE typ=? AND cislo=?" />
+                            <entry key="find.users.monitors" value="SELECT R.cislo FROM monitor M,relace R, spolecne S WHERE R.typ_potomka=M.typ AND R.potomek=M.cislo AND M.uzivatel=? and R.typ_potomka=S.typ and R.potomek=S.cislo" />
+			    			<entry key="get.authors.with.articles.count" value="select P.cislo, P.numeric1, P.numeric2, P.string1, P.string2, P.data, coalesce(counter,0) as counter, kdy, S.pridal, S.skupina, S.prava from spolecne S, polozka P left join (select R1.potomek as autor, count(P1.cislo) as counter, max(S1.vytvoreno) as kdy from polozka P1, relace R1, vlastnost V1, spolecne S1 where P1.typ=2 and P1.cislo=V1.predek and V1.typ_predka='P' and V1.typ='author' and R1.typ_potomka='P' and V1.hodnota=R1.cislo and S1.typ='P' and P1.cislo=S1.cislo and S1.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19 and S.typ='P' and S.cislo=P.cislo" />
+                            <entry key="count.authors.with.articles.count" value="select count(*) from polozka P left join (select R1.potomek as autor, count(P1.cislo) as counter, max(S1.vytvoreno) as kdy from polozka P1, relace R1, vlastnost V1, spolecne S1 where P1.typ=2 and P1.cislo=V1.predek and V1.typ_predka='P' and V1.typ='author' and R1.typ_potomka='P' and V1.hodnota=R1.cislo and S1.typ='P' and P1.cislo=S1.cislo and S1.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19" />
                         </map>
                     </node>
                     <node name="versioning">
@@ -611,13 +618,15 @@
                             <entry key="max.software" value="10"/>
                             <entry key="default.driver" value="3"/>
                             <entry key="max.driver" value="10"/>
-                            <entry key="default.story" value="14"/>
+                            <entry key="default.story" value="13"/>
                             <entry key="max.story" value="30"/>
+                            <entry key="default.digest.story" value="3"/>
+                            <entry key="max.digest.story" value="30"/>
                             <entry key="default.news" value="10"/>
                             <entry key="max.news" value="25"/>
                             <entry key="default.screenshots" value="3"/>
                             <entry key="max.screenshots" value="10"/>
-                            <entry key="default.video" value="4"/>
+                            <entry key="default.video" value="3"/>
                             <entry key="max.video" value="10"/>
                             <entry key="default.article" value="11"/>
                             <entry key="max.article" value="20"/>
@@ -663,6 +672,7 @@
                             <entry key="ratio.comment" value="1.0"/>
                             <entry key="ratio.wiki" value="3.0"/>
                             <entry key="ratio.news" value="3.0"/>
+                            <entry key="ignored.users" value="1429,4413,5473"/>
                         </map>
                     </node>
                     <node name="UpdateSubportalScore">
@@ -952,6 +962,23 @@
                         </node>
                         <node name="view">
                             <map/>
+                            <node name="SharePage">
+                                <map>
+                                    <entry key="services" value="google,fb,del,jag,link,sme"/>
+                                    <entry key="google.id" value="35"/>
+                                    <entry key="google.url" value="http://www.google.com/bookmarks/mark?op=edit&amp;bkmk=${LINK_URL}&amp;title=${LINK_TITLE}"/>
+                                    <entry key="fb.id" value="36"/>
+                                    <entry key="fb.url" value="http://www.facebook.com/share.php?u=${LINK_URL}&amp;title=${LINK_TITLE}"/>
+                                    <entry key="del.id" value="37"/>
+                                    <entry key="del.url" value="http://del.icio.us/post?v=4&amp;noui&amp;jump=close&amp;url=${LINK_URL}&amp;title=${LINK_TITLE}"/>
+                                    <entry key="jag.id" value="38"/>
+                                    <entry key="jag.url" value="http://www.jagg.cz/bookmarks.php?action=add&amp;address=${LINK_URL}&amp;title=${LINK_TITLE}"/>
+                                    <entry key="link.id" value="39"/>
+                                    <entry key="link.url" value="http://linkuj.cz/?id=linkuj&amp;url=${LINK_URL}&amp;title=${LINK_TITLE}"/>
+                                    <entry key="sme.id" value="40"/>
+                                    <entry key="sme.url" value="http://vybrali.sme.sk/submit.php?url=${LINK_URL}"/>
+                                </map>
+                            </node>
                             <node name="ShowDictionary">
                                 <map>
                                     <entry key="max.items" value="90"/>
@@ -963,8 +990,7 @@
                                     <entry key="regexp.blog.summary.url" value="^/blog/((souhrn)|(([a-zA-Z][a-zA-Z0-9_]*)/souhrn))/?$"/>
                                     <entry key="regexp.blog.category.url" value="^/blog/([a-zA-Z][a-zA-Z0-9_]*)/([a-zA-Z\-][a-zA-Z0-9_\-]*)/?$"/>
                                     <entry key="regexp.blog.digest.url" value="^/blog/vyber"/>
-                                    <entry key="url.summary" value="souhrn"/>
-                                    <entry key="page.size" value="15"/>
+                                    <entry key="page.size" value="25"/>
                                     <entry key="summary.size" value="50"/>
                                     <entry key="fresh.stories.size" value="5"/>
                                 </map>

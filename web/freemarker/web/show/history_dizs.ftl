@@ -16,7 +16,7 @@
  <tbody>
   <#list TOOL.analyzeDiscussions(FOUND.data) as diz>
    <tr>
-    <td><a href="${diz.url?default("/forum/show/"+diz.relationId)}">${TOOL.limit(diz.title,100," ..")}</a></td>
+    <td><a href="${diz.url!("/forum/show/"+diz.relationId)}">${TOOL.limit(diz.title,100," ..")}</a></td>
     <td class="td-meta">
        <@lib.markNewCommentsQuestion diz/>
        <#if TOOL.xpath(diz.discussion,"/data/frozen")??>
@@ -25,7 +25,7 @@
        <#if TOOL.isQuestionSolved(diz.discussion.data)>
          <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle čtenářů vyřešena">
        </#if>
-       <#if USER?? && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")??>
+       <#if USER?? && TOOL.isMonitored(diz.discussion, USER!)>
          <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
        </#if>
     </td>

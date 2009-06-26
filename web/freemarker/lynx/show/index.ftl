@@ -70,7 +70,7 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
             <#if TOOL.isQuestionSolved(diz.discussion.data)>
                 <b>V</b>,
             </#if>
-            <#if USER?? && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")??>
+            <#if USER?? && TOOL.isMonitored(diz.discussion, USER!)>
                 <b>S</b>
             </#if>
             <br>

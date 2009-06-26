@@ -1,16 +1,12 @@
 <#import "../macros.ftl" as lib>
-<#assign intro=TOOL.xpath(BLOG,"//custom/intro")!"UNDEF",
-        title=BLOG.title!"UNDEF",
-        owner=TOOL.createUser(BLOG.owner),
-        ITEM=STORY.child,
-        CHILDREN=TOOL.groupByType(ITEM.children),
-        story_url = TOOL.getUrlForBlogStory(STORY)>
+<#assign intro=TOOL.xpath(BLOG,"//custom/intro")!"UNDEF", owner=TOOL.createUser(BLOG.owner), ITEM=STORY.relation.child,
+        CHILDREN=TOOL.groupByType(ITEM.children)>
 
 
 <#assign plovouci_sloupec>
     <div class="s_nadpis">
         <@lib.showUser owner/>
-        <#if title!="UNDEF"> - <a href="/blog/${BLOG.subType}">${title}</a></#if>
+        <#if BLOG.title??> - <a href="/blog/${BLOG.subType}">${BLOG.title}</a></#if>
     </div>
     <div class="s_sekce">
         <#if intro!="UNDEF">${intro}</#if>
@@ -82,9 +78,7 @@
                 <#if USER.id==BLOG.owner>
                     <li><a href="${URL.make("/inset/"+STORY.id+"?action=addScreenshot")}">Přidej obrázek</a></li>
                     <li><a href="${URL.noPrefix("/videa/edit/"+STORY.id+"?action=add&amp;redirect="+STORY.url!)}">Přidej video</a></li>
-                    <#if !CHILDREN.poll??>
-                        <li><a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+STORY.id)}">Vlož anketu</a></li>
-                    </#if>
+                    <li><a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+STORY.id)}">Vlož anketu</a></li>
                 </#if>
                 <#if USER.hasRole("root") || USER.id==BLOG.owner>
                     <li><a href="${URL.make("/inset/"+STORY.id+"?action=manage")}">Správa příloh</a></li>
@@ -111,8 +105,7 @@
     <div class="s_sekce">
         <ul>
         <#list CURRENT_STORIES as relation>
-            <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
-            <li><a href="${url}">${story.title}</a></li>
+            <li><a href="${TOOL.getUrlForBlogStory(relation)}">${relation.child.title}</a></li>
         </#list>
         </ul>
     </div>
@@ -163,10 +156,10 @@
     </div>
     <div class="s_sekce">
         <ul>
-            <#if title!="UNDEF">
-                <li><a href="/blog/${BLOG.subType}">${title}, hlavní strana</a></li>
+            <#if BLOG.title??>
+                <li><a href="/blog/${BLOG.subType}">${BLOG.title}, hlavní strana</a></li>
             </#if>
-            <li><a href="/blog/${BLOG.subType}/souhrn"><#if title!="UNDEF">${title}, </#if>stručný souhrn</a></li>
+            <li><a href="/blog/${BLOG.subType}/souhrn"><#if BLOG.title!="UNDEF">${BLOG.title}, </#if>stručný souhrn</a></li>
             <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanál</a></li>
             <li><a href="/blog">Všechny blogy</a></li>
             <li><a href="/blog/souhrn">Všechny blogy, stručný souhrn</a></li>
@@ -205,41 +198,43 @@
 
 <@lib.showMessages/>
 
-<h2>${ITEM.title}</h2>
+<h2>${STORY.title}</h2>
 <p class="meta-vypis">
-    <#if ITEM.type==15>Odloženo<#else>${DATE.show(ITEM.created, "SMART")}</#if> |
-    Přečteno: ${TOOL.getCounterValue(ITEM,"read")}&times;
-    <#if CATEGORY??>|
-        <#if CATEGORY.url??>
-            <a href="/blog/${BLOG.subType + "/" + CATEGORY.url}" title="Kategorie zápisu">${CATEGORY.name}</a>
+    <#if ITEM.type==15>Odloženo<#else>${DATE.show(ITEM.created, "SMART")}</#if>
+    <#if STORY.perex??>| Přečteno: ${TOOL.getCounterValue(ITEM, "read")}&times;</#if>
+    <#if STORY.category??>
+        <#if STORY.category.url??>
+            | <a href="${STORY.category.absoluteUrl}" title="Kategorie zápisu">${STORY.category.name}</a>
         <#else>
-            ${CATEGORY.name}
+            | ${STORY.category.name}
         </#if>
     </#if>
-    <#if (ITEM.type==12 && ITEM.created.time!=ITEM.updated.time)>
+    <#if STORY.digest>
+        | <img src="/images/site2/digest.png" class="blog_digest" alt="Výběrový blog" title="Kvalitní zápisek vybraný do výběru z blogů">
+    </#if>
+    <#if (ITEM.type==12 && ! TOOL.isSame(ITEM.created, ITEM.updated))>
         | poslední úprava: ${DATE.show(ITEM.updated, "SMART")}
     </#if>
-    <#if DATE.now().compareTo(ITEM.created) lt 0>
+    <#if DATE.now().before(ITEM.created)>
         | <span style="color: red; font-weight: bold">Čeká na čas publikování</span>
     </#if>
 </p>
 
-<#assign text = TOOL.xpath(ITEM, "/data/perex")!"UNDEF">
-<#if text!="UNDEF">${text}</#if>
-${TOOL.xpath(ITEM, "/data/content")}
+<#if STORY.perex??>${STORY.perex}</#if>
+${STORY.content}
 
-<@lib.showRating STORY/>
+<@lib.showRating STORY.relation/>
 
-<#if CHILDREN.poll??>
+<#list CHILDREN.poll! as relation>
 <br />
     <h3>Anketa</h3>
     <div class="anketa">
-        <@lib.showPoll CHILDREN.poll[0], story_url />
+        <@lib.showPoll relation, STORY.url />
     </div>
-</#if>
+</#list>
 
-<#assign images = TOOL.screenshotsFor(ITEM)>
-<#if (images?size > 0)>
+<#if (STORY.images > 0)>
+    <#assign images = TOOL.screenshotsFor(ITEM)>
     <#assign wrote_section=false>
 
         <#list images as image>
@@ -272,7 +267,7 @@ ${TOOL.xpath(ITEM, "/data/content")}
     </#list>
 </#if>
 
-<p><b>Nástroje</b>: <a rel="nofollow" href="${story_url}?varianta=print">Tisk</a></p>
+<@lib.showPageTools RELATION />
 
 <#if (ITEM.type==12)>
     <h3>Komentáře</h3>

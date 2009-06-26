@@ -1,0 +1,26 @@
+Popis pouzivani knihovny jQuery
+
+Pro vyvoj je vhodne pouzit: 
+zakladni definice /root/data/site/jquery/jquery-$version.js a
+zakladni definice UI /root/data/site/jquery/jquery-ui-$version.custom.js
+
+Pro produkcni nasazeni potom komprimovane verze
+(obsahuji v nazvu min) a popripade nacist pro UI pouze
+ui.core.js a pozadovanou funkcionalitu.
+Vybrane zavislosti jsou zobrazeny na strankach jquery API
+http://docs.jquery.com/UI/
+
+CSS: 
+
+CSS(ui.theme.css) je modifikovane tak, aby respektovalo server layout abicka,
+a obrazky jsou tedy ve slozce /root/images/jquery-theme
+
+Lze nacist opet bud celkove definice - 
+/root/jquery-theme/ui.all.css
+Nebo po castech /root/jquery-theme/ui.core.css,
+ui.theme.css a potrebne casti. 
+
+Ladeni CSS schematu se nachazi v souboru ui.theme.css. 
+
+AJAXove skripty, vyuzivajici jQuery jsou potom v adresari /data/site/ajax.
+Freemarkerove sablony pro AJAX jsou v adresari /freemarker/print/ajax

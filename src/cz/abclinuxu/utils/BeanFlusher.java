@@ -1,12 +1,11 @@
 package cz.abclinuxu.utils;
 
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.view.Author;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
-
-import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.view.Author;
 
 /**
  * Transforms JavaBeans into persistence layer objects
@@ -33,7 +32,7 @@ public class BeanFlusher {
         item.setOwner(author.getOwner());
         item.setGroup(author.getGroup());
         item.setPermissions(author.getPermissions());
-        
+
         // get/create XML document
         Document doc = item.getData();
         if (doc == null)
@@ -95,5 +94,5 @@ public class BeanFlusher {
 
         return sb.toString();
 
-	}
+    }
 }

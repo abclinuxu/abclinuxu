@@ -24,7 +24,7 @@
     <#list FOUND.data as relation>
         <tr>
             <td>
-                <a href="${relation.url?default("/show/"+relation.id)}">${TOOL.childName(relation)}</a>
+                <a href="${relation.url!("/show/"+relation.id)}">${TOOL.childName(relation)}</a>
             </td>
             <td>
                 <#if sortByCreated??>
@@ -38,7 +38,7 @@
                     <#assign revInfo = TOOL.getRevisionInfo(relation.child)>
                     <@lib.showUser revInfo.creator/>
                 <#else>
-                    <@lib.showUser TOOL.createUser(relation.child.owner)/>
+                    <@lib.showUserFromId relation.child.owner/>
                 </#if>
             </td>
         </tr>

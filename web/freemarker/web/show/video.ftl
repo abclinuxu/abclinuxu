@@ -42,6 +42,8 @@
   </form>
 </p>
 
+<@lib.showPageTools RELATION />
+
 <#if CHILDREN.discussion??>
     <h3>Komentáře</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>

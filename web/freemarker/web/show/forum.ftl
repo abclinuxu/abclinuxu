@@ -1,18 +1,14 @@
-<#if USER?? && TOOL.xpath(CATEGORY,"//monitor/id[text()='"+USER.id+"']")??>
-    <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj sekci">
-</#if>
+<#import "../macros.ftl" as lib>
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-                <li>
-                    <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}">${monitorState}</a>
-                    <span title="Počet lidí, kteří sledují tuto sekci">(${TOOL.getMonitorCount(CATEGORY.data)})</span>
-                    <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při novém dotazu v této sekci poradny.</span></a>
-                </li>
-                <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
-                    <li><a href="/forum/edit/${RELATION.id}?action=edit">Nastavení poradny</a></li>
-                </#if>
-         </ul>
+            <li>
+                <@lib.showMonitor RELATION "Zašle upozornění na váš email při novém dotazu v této poradně."/>
+            </li>
+            <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
+                <li><a href="/forum/edit/${RELATION.id}?action=edit">Nastavení poradny</a></li>
+            </#if>
+        </ul>
     </div>
     <#if SUBPORTAL??>
         <#import "../macros.ftl" as lib>

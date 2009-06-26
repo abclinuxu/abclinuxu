@@ -1,21 +1,18 @@
 package cz.abclinuxu.servlets.ajax;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class FindUser implements AbcAction {
 

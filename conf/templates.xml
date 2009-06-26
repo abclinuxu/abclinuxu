@@ -219,6 +219,9 @@
         <action name="reply" content="/add/reply.ftl">
             <var name="TITLE" value="Vlož reakci do diskuse"/>
         </action>
+        <action name="confirmOldReply" content="/add/replyOld.ftl">
+            <var name="TITLE" value="Pozor - stará diskuse"/>
+        </action>
         <action name="ask" content="/add/question.ftl">
             <var name="TITLE" value="Položit nový dotaz"/>
         </action>
@@ -321,7 +324,7 @@
     </servlet>
 
     <servlet name="EditPoll">
-        <action name="add" template="print" content="/add/anketa.ftl">
+        <action name="add" content="/add/anketa.ftl">
             <var name="TITLE" value="Vytvoř anketu"/>
         </action>
         <action name="edit" content="/edit/anketa.ftl">
@@ -440,6 +443,9 @@
     <servlet name="EditUser">
         <action name="register" content="/add/user.ftl">
             <var name="TITLE" value="Registrace"/>
+        </action>
+        <action name="registered" content="/add/user2.ftl">
+            <var name="TITLE" value="Registrace - pokračování"/>
         </action>
         <action name="editBasic" content="/edit/user_basic.ftl">
             <var name="TITLE" value="Úprava účtu"/>
@@ -582,36 +588,6 @@
         </action>
     </servlet>
 
-    <servlet name="ViewBazaar">
-        <action name="ad" content="/show/bazar_ad.ftl">
-            <var name="TITLE" value='${ITEM.title} - Bazar' type="Lazy"/>
-        </action>
-        <action name="bazaar" content="/show/bazar.ftl">
-            <var name="TITLE" value='Bazar'/>
-        </action>
-    </servlet>
-
-    <servlet name="ViewGames">
-        <action name="list" content="/show/games.ftl">
-            <var name="TITLE" value="Hry"/>
-        </action>
-        <action name="trivia_play" content="/show/play_trivia.ftl">
-            <var name="TITLE" value="Kvíz"/>
-        </action>
-        <action name="trivia_results" content="/show/trivia_result.ftl">
-            <var name="TITLE" value="Výsledek kvízu"/>
-        </action>
-    </servlet>
-
-    <servlet name="ViewSeries">
-        <action name="main" content="/show/series_list.ftl">
-            <var name="TITLE" value='Seriály'/>
-        </action>
-        <action name="series" content="/show/series.ftl">
-            <var name="TITLE" value='Seriál ${ITEM.title}' type="Lazy"/>
-        </action>
-    </servlet>
-
     <servlet name="SelectIcon">
         <action name="show" content="/misc/selectIcon.ftl">
             <var name="TITLE" value="Vyběr ikony" />
@@ -713,9 +689,18 @@
         </action>
     </servlet>
 
+    <servlet name="ViewBazaar">
+        <action name="ad" content="/show/bazar_ad.ftl">
+            <var name="TITLE" value='${ITEM.title} - Bazar' type="Lazy"/>
+        </action>
+        <action name="bazaar" content="/show/bazar.ftl">
+            <var name="TITLE" value='Bazar'/>
+        </action>
+    </servlet>
+
     <servlet name="ViewBlog">
         <action name="story" content="/show/story.ftl">
-            <var name="TITLE" value='${STORY.child.title}' type="Lazy"/>
+            <var name="TITLE" value='${STORY.title}' type="Lazy"/>
         </action>
         <action name="blog" content="/show/blog.ftl">
             <var name="TITLE" value='${TOOL.xpath(BLOG,"/data/custom/page_title")}' type="Lazy"/>
@@ -795,6 +780,18 @@
         </action>
     </servlet>
 
+    <servlet name="ViewGames">
+        <action name="list" content="/show/games.ftl">
+            <var name="TITLE" value="Hry"/>
+        </action>
+        <action name="trivia_play" content="/show/play_trivia.ftl">
+            <var name="TITLE" value="Kvíz"/>
+        </action>
+        <action name="trivia_results" content="/show/trivia_result.ftl">
+            <var name="TITLE" value="Výsledek kvízu"/>
+        </action>
+    </servlet>
+
     <servlet name="ViewIndex">
         <action name="show" content="/show/index.ftl">
             <var name="TITLE" value="abclinuxu.cz - Linux na stříbrném podnose"/>
@@ -814,6 +811,15 @@
         </action>
         <action name="viewList" content="/show/personality_all.ftl">
             <var name="TITLE" value="Kdo je"/>
+        </action>
+    </servlet>
+
+    <servlet name="ViewSeries">
+        <action name="main" content="/show/series_list.ftl">
+            <var name="TITLE" value='Seriály'/>
+        </action>
+        <action name="series" content="/show/series.ftl">
+            <var name="TITLE" value='Seriál ${ITEM.title}' type="Lazy"/>
         </action>
     </servlet>
 
@@ -860,6 +866,9 @@
         </action>
         <action name="myProfile" content="/show/myprofile.ftl">
             <var name="TITLE" value="Můj profil" />
+        </action>
+        <action name="myMonitors" content="/show/my_monitors.ftl">
+            <var name="TITLE" value="Mé sledované dokumenty" />
         </action>
         <action name="counter" content="/show/mycounter.ftl">
             <var name="TITLE" value="Co jsem publikoval" />

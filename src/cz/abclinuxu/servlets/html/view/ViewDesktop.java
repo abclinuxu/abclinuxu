@@ -72,6 +72,8 @@ public class ViewDesktop implements AbcAction {
         Paging paging = new Paging(list, from, count, total);
         env.put(VAR_ITEMS, paging);
 
+        env.put(Constants.VAR_READ_COUNTERS, Tools.getRelationCountersValue(list, Constants.COUNTER_READ));
+
         env.put(Constants.VAR_RSS, FeedGenerator.getScreenshotsFeedUrl());
         return FMTemplateSelector.select("Desktop", "showList", env, request);
     }

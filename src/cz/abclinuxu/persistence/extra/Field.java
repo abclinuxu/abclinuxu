@@ -95,8 +95,7 @@ public class Field {
             new PersistenceMapping.Table[]{PersistenceMapping.Table.LAST_SEEN_COMMENT});
     public static final Field LOGIN = new Field(Id.LOGIN, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.USER});
-    public static final Field COUNTER = new Field(Id.COUNTER, null,
-    		null);
+    public static final Field COUNTER = new Field(Id.COUNTER, null, null);
 
     private final Id id;
     private Set<PersistenceMapping.Table> compatibility;

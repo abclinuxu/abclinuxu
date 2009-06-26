@@ -26,7 +26,7 @@
       </#list>
       <#assign subportal_article=false>
     <#else>
-        <@lib.showUser TOOL.createUser(ITEM.owner)/>
+        <@lib.showUserFromId ITEM.owner/>
         <#assign subportal_article=true>
     </#if>
     | <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times;
@@ -34,7 +34,7 @@
 
 <#if inPool>
     <h2>Rubrika:
-        <#assign section=TOOL.xpath(ITEM, "/data/section_rid")?default("UNDEFINED")>
+        <#assign section=TOOL.xpath(ITEM, "/data/section_rid")!"UNDEFINED">
         <#if section=="UNDEFINED">
             nezadána
         <#else>
@@ -251,13 +251,13 @@
     <@lib.showRating RELATION/>
 </#if>
 
-<p><b>Nástroje</b>: <a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print">Tisk</a>,
+<p><b>Nástroje</b>:
 <a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print&amp;noDiz">Tisk bez diskuse</a>
 </p>
 
-<#flush>
+<@lib.showPageTools RELATION />
 
-<@lib.advertisement id="obsah-box" />
+<#flush>
 
 <#if CHILDREN.discussion??>
     <h3>Komentáře</h3>
@@ -266,5 +266,7 @@
     <h3>Diskuse k tomuto článku</h3>
     <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vložit první komentář</a>
 </#if>
+
+<@lib.advertisement id="arbo-full" />
 
 <#include "../footer.ftl">

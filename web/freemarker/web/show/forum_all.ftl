@@ -23,14 +23,14 @@ Teprve když neuspějete, položte nový dotaz.</p>
          </div>
         </form>
     </li>
-    <li>
-        <a href="/History?from=0&amp;count=25&amp;orderBy=update&amp;orderDir=desc&amp;type=discussions">seznam živých diskusí</a>
-    </li>
-    <li>
-        <a href="nntp://news.gmane.org/gmane.user-groups.linux.czech">news rozhraní k diskusnímu fóru</a>
-    </li>
-    <li>
-        zasílání příspěvků emailem si můžete zapnout ve svém profilu
+    <li><a href="/History?from=0&amp;count=25&amp;orderBy=update&amp;orderDir=desc&amp;type=discussions">seznam živých diskusí</a></li>
+    <li><a href="nntp://news.gmane.org/gmane.user-groups.linux.czech">news rozhraní k diskusnímu fóru</a></li>
+    <li>zasílání příspěvků e-mailem 
+        <#if USER??>
+            si můžete zapnout ve <a href="/Profile/${USER.id}?action=myPage">svém profilu</a>
+        <#else>
+            je dostupné registrovaným uživatelům (<a href="${URL.noPrefix("/EditUser?action=register")}">registrace</a>)
+        </#if>
     </li>
 </ul>
 

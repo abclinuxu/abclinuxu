@@ -20,7 +20,7 @@
             </td>
         </tr>
 
-        <#if ! EDIT_MODE!>
+        <#if ! EDIT_MODE!false>
         <tr>
             <td class="required">URL seriálu</td>
             <td>
@@ -51,7 +51,7 @@
             <td><input type="submit" value="Dokonči" tabindex="5"></td>
         </tr>
     </table>
-    <#if EDIT_MODE!>
+    <#if EDIT_MODE!false>
         <input type="hidden" name="action" value="edit2">
         <input type="hidden" name="rid" value="${RELATION.id}">
     <#else>

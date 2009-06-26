@@ -181,11 +181,11 @@ public class EditBlog implements AbcAction, Configurable {
         relation = (Relation) persistence.findById(relation);
         Tools.sync(relation);
 
-        Category blog = null;
+        Category blog;
         Relation blogRelation = null;
         if (relation.getChild() instanceof Category) {
             blog = (Category) relation.getChild();
-        } else if (relation.getChild() instanceof Item) {
+        } else {
             if ( ! (relation.getParent() instanceof Category))
                 throw new InvalidInputException("Tato relace nepatří blogu!");
             blog = (Category) relation.getParent();
@@ -248,7 +248,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         if (ACTION_PUBLISH_DELAYED.equals(action)) {
             ActionProtector.ensureContract(request, EditBlog.class, true, false, false, true);
-            return actionPublishDelayedStory(request, response, blog, env);
+            return actionPublishDelayedStory(response, blog, env);
         }
 
         if ( ACTION_CUSTOMIZATION.equals(action) )
@@ -271,7 +271,7 @@ public class EditBlog implements AbcAction, Configurable {
             return actionShowCategories(request, blog, env);
 
         if (ACTION_ADD_CATEGORY.equals(action))
-            return actionAddCategory(request, blog, env);
+            return actionAddCategory(request, env);
 
         if (ACTION_ADD_CATEGORY_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditBlog.class, true, true, true, false);
@@ -312,12 +312,12 @@ public class EditBlog implements AbcAction, Configurable {
 
         if (ACTION_MOVE_LINK_UP.equals(action)) {
             ActionProtector.ensureContract(request, EditBlog.class, true, true, false, true);
-            return actionMoveLink(request, response, blog, true, env);
+            return actionMoveLink(response, blog, true, env);
         }
 
         if (ACTION_MOVE_LINK_DOWN.equals(action)) {
             ActionProtector.ensureContract(request, EditBlog.class, true, true, false, true);
-            return actionMoveLink(request, response, blog, false, env);
+            return actionMoveLink(response, blog, false, env);
         }
 
         throw new MissingArgumentException("Chybí parametr action!");
@@ -403,6 +403,7 @@ public class EditBlog implements AbcAction, Configurable {
         canContinue &= setStoryContent(params, root, env);
         canContinue &= setStoryCategory(params, story);
         canContinue &= setStoryPublishTime(params, story, env);
+        canContinue &= setWatchDiscussion(params, root);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
             if ( canContinue ) {
@@ -421,38 +422,16 @@ public class EditBlog implements AbcAction, Configurable {
         Relation relation = new Relation(blog, story, blogRelation.getId());
         persistence.create(relation);
 
-        Relation dizRelation = EditDiscussion.createEmptyDiscussion(relation, user, persistence);
-
-        String watchDiscussion = (String) params.get(PARAM_WATCH_DISCUSSION);
-        if ("yes".equals(watchDiscussion))
-            EditDiscussion.alterDiscussionMonitor((Item) dizRelation.getChild(), user, persistence);
-
-        String storyUrl = null;
-        if (!delayed) {
-            storyUrl = generateStoryURL(blog, story);
-
-            if (storyUrl != null) {
-                relation.setUrl(storyUrl);
-                persistence.update(relation);
-            }
-
-            TagTool.assignDetectedTags(story, user);
-
-            incrementArchiveRecord(blog.getData().getRootElement(), new Date());
-            persistence.update(blog);
-            FeedGenerator.updateBlog(blog);
-            VariableFetcher.getInstance().refreshStories();
-            sendDigestMessage(relation);
-
-            // run monitor
-            MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.BLOG, relation, "http://www.abclinuxu.cz"+storyUrl);
-            MonitorPool.scheduleMonitorAction(action);
-        } else {
+        if (! delayed)
+            publishStory(story, blog, relation, user);
+        else {
+            // todo proc takhle slozite? Maji jiny typ, jdou hledat dynamicky.
             Element unpublished = DocumentHelper.makeElement(blog.getData(), "/data/unpublished");
             unpublished.addElement("rid").setText(Integer.toString(relation.getId()));
             persistence.update(blog);
         }
 
+        String storyUrl = relation.getUrl();
         if (storyUrl == null)
             storyUrl = Tools.getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId());
 
@@ -472,28 +451,30 @@ public class EditBlog implements AbcAction, Configurable {
         Relation relation = (Relation) env.get(VAR_STORY);
         Item story = (Item) relation.getChild();
         Document document = story.getData();
-        params.put(PARAM_TITLE, story.getTitle());
+
         String text = null;
         Node node = document.selectSingleNode("/data/perex");
-        if (node!=null)
+        if (node != null)
             text = node.getText();
+
         node = document.selectSingleNode("/data/content");
-        if (text!=null) {
+        if (text != null) {
             text = text + "<break>" + node.getText();
         } else
             text = node.getText();
+
+        params.put(PARAM_TITLE, story.getTitle());
         params.put(PARAM_CONTENT, text);
         params.put(PARAM_CATEGORY_ID, story.getSubType());
 
         Date created = story.getCreated();
         Date now = Calendar.getInstance().getTime();
-
-        if (created.compareTo(now) > 0) {
+        if (created.after(now)) {
             String date = Constants.isoFormat.format(created);
             params.put(PARAM_PUBLISH, date);
         }
 
-        env.put(VAR_IS_DELAYED, Boolean.valueOf(story.getType() == Item.UNPUBLISHED_BLOG));
+        env.put(VAR_IS_DELAYED, story.getType() == Item.UNPUBLISHED_BLOG);
 
         storeCategories(blog, env);
         return FMTemplateSelector.select("EditBlog", "edit", env, request);
@@ -524,14 +505,13 @@ public class EditBlog implements AbcAction, Configurable {
             if ( canContinue )
                 env.put(VAR_PREVIEW, story);
 
-            env.put(VAR_IS_DELAYED, Boolean.valueOf(story.getType() == Item.UNPUBLISHED_BLOG));
+            env.put(VAR_IS_DELAYED, story.getType() == Item.UNPUBLISHED_BLOG);
             storeCategories(blog, env);
             return FMTemplateSelector.select("EditBlog", "edit", env, request);
         }
 
         if (!previousDate.equals(story.getCreated())) {
             String storyUrl = generateStoryURL(blog, story);
-
             if (storyUrl != null && !storyUrl.equals(relation.getUrl())) {
                 relation.setUrl(storyUrl);
                 persistence.update(relation);
@@ -543,7 +523,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         boolean delayed = params.get(PARAM_DELAY) != null;
         if (story.getType()==Item.UNPUBLISHED_BLOG && ! delayed)
-            publishDelayedStory(story, blog, relation, user);
+            publishStory(story, blog, relation, user);
         else
             persistence.update(story);
 
@@ -555,12 +535,37 @@ public class EditBlog implements AbcAction, Configurable {
         return null;
     }
 
-    protected void publishDelayedStory(Item story, Category blog, Relation relation, User user) {
+    /**
+     * Automatically switch delayed story to published state.
+     */
+    protected String actionPublishDelayedStory(HttpServletResponse response, Category blog, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Relation relation = (Relation) env.get(VAR_STORY);
+        Item story = (Item) relation.getChild();
+
+        publishStory(story, blog, relation, user);
+
+        FeedGenerator.updateBlog(blog);
+        VariableFetcher.getInstance().refreshStories();
+
+        urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId()));
+        return null;
+    }
+
+    /**
+     * Unified logic for publishing story. It handles situation that the story was unpublished or scheduled.
+     * It automatically creates new discussion and puts monitor on it based upon user request. Finally it
+     * refreshes a cache, a feed and notifies all users. 
+     * @param story story
+     * @param blog blog where the story belongs
+     * @param relation relation between the blog and the story
+     * @param user owner of the blog
+     */
+    protected void publishStory(Item story, Category blog, Relation relation, User user) {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Date timeNow = new Date();
 
         String storyUrl = generateStoryURL(blog, story);
-
         if (storyUrl != null) {
             relation.setUrl(storyUrl);
             persistence.update(relation);
@@ -568,6 +573,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         story.setType(Item.BLOG);
 
+        Date timeNow = new Date();
         if (timeNow.after(story.getCreated()))
             story.setCreated(timeNow);
 
@@ -582,25 +588,17 @@ public class EditBlog implements AbcAction, Configurable {
 
         TagTool.assignDetectedTags(story, user);
 
-        sendDigestMessage(relation);
-    }
-
-    /**
-     * Automatically switch delayed story to published state.
-     */
-    protected String actionPublishDelayedStory(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
-        User user = (User) env.get(Constants.VAR_USER);
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        Relation relation = (Relation) env.get(VAR_STORY);
-        Item story = (Item) relation.getChild();
-
-        publishDelayedStory(story, blog, relation, user);
+        Relation dizRelation = EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+        if ("yes".equals(Misc.getNodeValue(story.getData().getRootElement(), "/data/watchDiscussion")))
+            MonitorTool.startMonitor((GenericDataObject) dizRelation.getChild(), user);
 
         FeedGenerator.updateBlog(blog);
         VariableFetcher.getInstance().refreshStories();
 
-        urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId()));
-        return null;
+        // run monitor
+        MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.BLOG, relation, AbcConfig.getAbsoluteUrl() + storyUrl);
+        MonitorPool.scheduleMonitorAction(action);
+        sendDigestMessage(relation);
     }
 
     /**
@@ -854,7 +852,7 @@ public class EditBlog implements AbcAction, Configurable {
     /**
      * Confirmation dialog for submitting new category.
      */
-    protected String actionAddCategory(HttpServletRequest request, Category blog, Map env) throws Exception {
+    protected String actionAddCategory(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String name = (String) params.get(PARAM_CATEGORY_NAME);
         if (Misc.empty(name))
@@ -889,7 +887,7 @@ public class EditBlog implements AbcAction, Configurable {
         Element root = blog.getData().getRootElement();
         boolean canContinue = addCategory(params, root, env);
         if (!canContinue)
-            return actionAddCategory(request, blog, env);
+            return actionAddCategory(request, env);
 
         persistence.update(blog);
 
@@ -1050,7 +1048,7 @@ public class EditBlog implements AbcAction, Configurable {
     /**
      * Moves existing link.
      */
-    protected String actionMoveLink(HttpServletRequest request, HttpServletResponse response, Category blog, boolean up, Map env) throws Exception {
+    protected String actionMoveLink(HttpServletResponse response, Category blog, boolean up, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_BLOG_RELATION);
         Persistence persistence = PersistenceFactory.getPersistence();
@@ -1156,7 +1154,7 @@ public class EditBlog implements AbcAction, Configurable {
         name = (String) params.get(PARAM_CATEGORY_NAME+"3");
         if (name!=null && name.trim().length() > 0) {
             Element category = categories.addElement("category");
-            category.addAttribute("id",Integer.toString(id++));
+            category.addAttribute("id",Integer.toString(id));
             category.addAttribute("name",name);
         }
 
@@ -1508,7 +1506,7 @@ public class EditBlog implements AbcAction, Configurable {
             return false;
         }
 
-        String stripped = null, perex = null;
+        String stripped, perex = null;
         Matcher matcher = breakTagPattern.matcher(content);
         if ( matcher.find() ) {
             perex = content.substring(0, matcher.start());
@@ -1576,7 +1574,6 @@ public class EditBlog implements AbcAction, Configurable {
      */
     boolean setStoryPublishTime(Map params, Item story, Map env) {
         String publishTime = (String) params.get(PARAM_PUBLISH);
-
         if (Misc.empty(publishTime))
             return true;
 
@@ -1604,7 +1601,20 @@ public class EditBlog implements AbcAction, Configurable {
         }
 
         story.setCreated(date);
+        return true;
+    }
 
+    /**
+     * Sets flag whether story publisher wants to watch discussions.
+     * @param params a map holding request's parameters
+     * @param root root element
+     * @return false, if there is a major error
+     */
+    boolean setWatchDiscussion(Map params, Element root) {
+        String watchDiscussion = (String) params.get(PARAM_WATCH_DISCUSSION);
+        if ("yes".equals(watchDiscussion)) {
+            root.addElement("watchDiscussion").setText("yes");
+        }
         return true;
     }
 
@@ -1682,6 +1692,10 @@ public class EditBlog implements AbcAction, Configurable {
         }
     }
 
+    /**
+     * Inform administrators of blog digest, that new story was published.
+     * @param relation story relation
+     */
     void sendDigestMessage(Relation relation) {
         Persistence persistence = PersistenceFactory.getPersistence();
         Item story = (Item) relation.getChild();

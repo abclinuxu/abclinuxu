@@ -18,7 +18,6 @@
  */
 package cz.abclinuxu.servlets.html.edit;
 
-import cz.abclinuxu.AbcException;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.GenericObject;
@@ -85,6 +84,7 @@ public class EditRelation implements AbcAction {
     public static final String VAR_PARENT = "PARENT";
     public static final String VAR_ACL = "ACL";
     public static final String VAR_GROUPS = EditGroup.VAR_GROUPS;
+    public static final String VAR_SYSTEM_RELATION = "SYSTEM_RELATION";
 
     public static final String VALUE_DISCUSSIONS = "discussions";
     public static final String VALUE_MAKES = "makes";
@@ -191,8 +191,7 @@ public class EditRelation implements AbcAction {
 
     private boolean canMoveRelation(User user, Relation rel) {
 		GenericObject obj = rel.getChild();
-        boolean canMove = false;
-        canMove |= Tools.permissionsFor(user, rel.getUpper()).canModify();
+        boolean canMove = Tools.permissionsFor(user, rel.getUpper()).canModify();
         if (obj instanceof Item) {
             if (((Item) obj).getType() == Item.DISCUSSION)
                     canMove |= user.hasRole(Roles.DISCUSSION_ADMIN);
@@ -205,22 +204,22 @@ public class EditRelation implements AbcAction {
         boolean canRemove = false;
 		
         if (obj instanceof Category)
-            canRemove |= Tools.permissionsFor(user, rel.getUpper()).canModify();
+            canRemove = Tools.permissionsFor(user, rel.getUpper()).canModify();
 		
         if (obj instanceof Item) {
             switch (((Item) obj).getType()) {
                 case Item.DISCUSSION:
-                    canRemove |= user.hasRole(Roles.DISCUSSION_ADMIN);
+                    canRemove = user.hasRole(Roles.DISCUSSION_ADMIN);
                     break;
                 case Item.SURVEY:
-                    canRemove |= user.hasRole(Roles.SURVEY_ADMIN);
+                    canRemove = user.hasRole(Roles.SURVEY_ADMIN);
                     break;
 				default:
-                    canRemove |= Tools.permissionsFor(user, rel).canDelete();
+                    canRemove = Tools.permissionsFor(user, rel).canDelete();
             }
         }
         if (obj instanceof Poll)
-            canRemove |= user.hasRole(Roles.POLL_ADMIN);
+            canRemove = user.hasRole(Roles.POLL_ADMIN);
         // todo check ownership
         return canRemove;
     }
@@ -348,7 +347,7 @@ public class EditRelation implements AbcAction {
 
         if (originalUrl != null) {
             CustomURLCache.getInstance().remove(originalUrl);
-            sqlTool.insertOldAddress(originalUrl, null, new Integer(relation.getId()));
+            sqlTool.insertOldAddress(originalUrl, null, relation.getId());
             ServletUtils.addMessage("Adresa byla změněna. Nyní zkontrolujte, zda není třeba změnit i adresy podstránek.", env, request.getSession());
         }
 
@@ -359,6 +358,11 @@ public class EditRelation implements AbcAction {
     protected String actionRemove1(HttpServletRequest request, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_CURRENT);
+        if (Constants.SYSTEM_RELATIONS.contains(relation.getId()))
+            env.put(VAR_SYSTEM_RELATION, Boolean.TRUE);
+        else
+            env.put(VAR_SYSTEM_RELATION, Boolean.FALSE);
+
 
         Relation[] parents = persistence.findRelationsLike(new Relation(null,relation.getChild(),0));
         env.put(VAR_PARENTS,parents);
@@ -366,13 +370,20 @@ public class EditRelation implements AbcAction {
     }
 
     protected String actionRemove2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String prefix = (String) params.get(PARAM_PREFIX);
+        UrlUtils urlUtils = new UrlUtils(prefix, response, request);
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_CURRENT);
         GenericObject child = relation.getChild();
         String objectName = Tools.childName(relation);
+        if (Constants.SYSTEM_RELATIONS.contains(relation.getId())) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Systémové objekty není povoleno mazat!", env, request.getSession());
+            urlUtils.redirect(response, "/");
+            return null;
+        }
 
         if (child instanceof Item) {
             Item item = (Item) child;
@@ -393,14 +404,12 @@ public class EditRelation implements AbcAction {
 
         AdminLogger.logEvent(user, "remove | relation "+relation.getId()+" | "+objectName);
 
-        String url = null;
-        String prefix = (String) params.get(PARAM_PREFIX);
+        String url;
         if ( prefix != null && relation.getUpper() > 0 ) {
             url = UrlUtils.getRelationUrl(new Relation(relation.getUpper()), prefix);
         } else
             url = "/";
 
-        UrlUtils urlUtils = new UrlUtils(prefix, response, request);
         urlUtils.redirect(response, url);
         return null;
     }
@@ -505,7 +514,7 @@ public class EditRelation implements AbcAction {
     private void updateRelationUri(String originalUrl, Relation relation, Relation destination, Map env, HttpServletRequest request) {
         CustomURLCache.getInstance().remove(originalUrl);
         SQLTool sqlTool = SQLTool.getInstance();
-        sqlTool.insertOldAddress(originalUrl, null, new Integer(relation.getId()));	
+        sqlTool.insertOldAddress(originalUrl, null, relation.getId());
 
         String dirUri = destination.getUrl();
         if (dirUri == null) {

@@ -27,7 +27,7 @@ import java.text.Collator;
  */
 
 public class BlogCategory implements Comparable {
-    String id, name, url;
+    String id, name, url, absoluteUrl;
 
     public BlogCategory(String id, String name, String url) {
         this.id = id;
@@ -57,6 +57,14 @@ public class BlogCategory implements Comparable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getAbsoluteUrl() {
+        return absoluteUrl;
+    }
+
+    public void setAbsoluteUrl(String absoluteUrl) {
+        this.absoluteUrl = absoluteUrl;
     }
 
     public int compareTo(Object obj) {

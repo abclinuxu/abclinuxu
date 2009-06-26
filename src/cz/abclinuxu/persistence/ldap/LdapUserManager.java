@@ -371,18 +371,23 @@ public class LdapUserManager implements Configurable {
             InvalidInputException e = null;
 
             List<ModificationItem> modsList = new ArrayList<ModificationItem>();
-            // always remove the reset token
             BasicAttribute attr = new BasicAttribute(ATTRIB_FORGOTTEN_PASSWORD_TOKEN, null);
-            modsList.add(new ModificationItem(DirContext.REMOVE_ATTRIBUTE, attr));
+            ModificationItem removeToken = new ModificationItem(DirContext.REMOVE_ATTRIBUTE, attr);
 
-            if (realToken == null || ! realToken.equals(resetToken)) {
+            if (realToken == null) {
                 e = new InvalidInputException("Token je neplatný, vygenerujte si nový!");
+            } else if (!realToken.equals(resetToken)) {
+                e = new InvalidInputException("Token je neplatný, vygenerujte si nový!");
+                modsList.add(removeToken); // remove invalid reset token
             } else {
-                setPassword(password, modsList);
+                modsList.add(removeToken);
+                setPassword(password, modsList); // remove obsolete reset token
             }
-            ModificationItem[] mods = modsList.toArray(new ModificationItem[modsList.size()]);
 
-            ctx.modifyAttributes(ATTRIB_LOGIN + "=" + login + "," + parentContext, mods);
+            if (! modsList.isEmpty()) {
+                ModificationItem[] mods = modsList.toArray(new ModificationItem[modsList.size()]);
+                ctx.modifyAttributes(ATTRIB_LOGIN + "=" + login + "," + parentContext, mods);
+            }
 
             if (e != null)
                 throw e;

@@ -1,16 +1,15 @@
 package cz.abclinuxu.utils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.XMLHandler;
+import cz.abclinuxu.data.view.Author;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
-import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.XMLHandler;
-import cz.abclinuxu.data.view.Author;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Transforms persistence layer object into JavaBeans used in application
@@ -62,7 +61,7 @@ public class BeanFetcher {
         author.setActive(active);
         author.setName(item.getString1());
         author.setSurname(item.getString2());
-        
+
         // rights
         author.setOwner(item.getOwner());
         author.setPermissions(item.getPermissions());
@@ -108,7 +107,7 @@ public class BeanFetcher {
      * @return Created author object
      */
     public static Author fetchAuthorFromObjects(Object[] objects, FetchType ft) {
-	// ! exact object length must be passed !
+        // ! exact object length must be passed !
         if (objects == null || objects.length != 11)
             return null;
 
@@ -129,7 +128,7 @@ public class BeanFetcher {
             author.setOwner((Integer) objects[8]);
             author.setGroup((Integer) objects[9]);
             author.setPermissions((Integer) objects[10]);
-            
+
             switch (ft) {
                 case OMIT_XML:
                     return author;
@@ -172,11 +171,11 @@ public class BeanFetcher {
     private static String safeRetrieveElementText(Element root, String xpath) {
 
         Node node = root.selectSingleNode(xpath);
-		if (node != null)
-			return node.getText();
+        if (node != null)
+            return node.getText();
 
-		return null;
+        return null;
 
-	}
+    }
 
 }

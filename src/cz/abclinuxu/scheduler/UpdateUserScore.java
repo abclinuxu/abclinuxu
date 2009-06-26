@@ -26,12 +26,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.servlets.Constants;
 
-import java.util.TimerTask;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 import java.util.prefs.Preferences;
 
 /**
@@ -45,8 +40,10 @@ public class UpdateUserScore extends TimerTask implements Configurable {
     private static final String PREF_COMMENT_RATIO = "ratio.comment";
     private static final String PREF_WIKI_RATIO = "ratio.wiki";
     private static final String PREF_NEWS_RATIO = "ratio.news";
+    private static final String PREF_IGNORED_USERS = "ignored.users";
 
     private float ratioArticle, ratioComment, ratioWiki, ratioNews;
+    private Set<Integer> ignoredLogins = new HashSet<Integer>();
 
     /**
      * The action to be performed by this timer task.
@@ -57,6 +54,8 @@ public class UpdateUserScore extends TimerTask implements Configurable {
         SQLTool sqlTool = SQLTool.getInstance();
         for (Map.Entry<Integer, Integer> entry : users.entrySet()) {
             User user = new User(entry.getKey());
+            if (ignoredLogins.contains(user.getId()))
+                continue;
             int score = calculateScore(entry.getValue());
             if (score == 0)
                 continue;
@@ -85,7 +84,7 @@ public class UpdateUserScore extends TimerTask implements Configurable {
         for (Object[] objects : newValues) {
             if (objects[0] == null)
                 continue;
-            int user = 0;
+            int user;
             if (objects[0] instanceof Number)
                 user = ((Number) objects[0]).intValue();
             else
@@ -121,6 +120,14 @@ public class UpdateUserScore extends TimerTask implements Configurable {
         ratioComment = prefs.getFloat(PREF_COMMENT_RATIO, 1.0f);
         ratioWiki = prefs.getFloat(PREF_WIKI_RATIO, 5.0f);
         ratioNews = prefs.getFloat(PREF_NEWS_RATIO, 4.0f);
+
+        String users = prefs.get(PREF_IGNORED_USERS, "");
+        StringTokenizer stk = new StringTokenizer(users, ",");
+        while (stk.hasMoreTokens()) {
+            int uid = Misc.parseInt(stk.nextToken(), 0);
+            if (uid > 0)
+                ignoredLogins.add(uid);
+        }
     }
 
     public static void main(String[] args) {

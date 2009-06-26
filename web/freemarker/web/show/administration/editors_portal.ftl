@@ -42,11 +42,11 @@ prohlížet náměty, upravovat osobní údaje atd.
 	<div class="right-column" />		
 	<h3>Redaktor</h3>
 	<ul>
-		<li><a href="/autori/clanky">Mé články</a></li>
-		<li><a href="/autori/namety">Náměty</a></li>
-		<li><a href="/autori/honorare">Mé honoráře</a></li>
-		<li><a href="/autori/osobni-udaje">Osobní údaje</a></li>
-		<li><a href="/autori/smlouvy">Autorské smlouvy</a></li>
+		<li><a href="${URL.make("/autori/clanky")}">Mé články</a></li>
+		<li><a href="${URL.make("/autori/namety")}">Náměty</a></li>
+		<li><a href="${URL.make("/autori/honorare")}">Mé honoráře</a></li>
+		<li><a href="${URL.make("/redakce/autori/edit/${AUTHOR.id}?action=edit")}">Osobní údaje</a></li>
+		<li><a href="${URL.make("/autori/smlouvy")}">Autorské smlouvy</a></li>
 	</ul>
 	</div>
 	</#if>		

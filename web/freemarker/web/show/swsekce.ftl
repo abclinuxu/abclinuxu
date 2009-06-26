@@ -1,6 +1,3 @@
-<#if USER?? && TOOL.xpath(CATEGORY,"//monitor/id[text()='"+USER.id+"']")??>
-    <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj sekci">
-</#if>
 <#import "../macros.ftl" as lib>
 <#assign html_header>
     <script type="text/javascript" src="/data/site/treemenu.js"></script>
@@ -13,11 +10,8 @@
             </#if>
             <li><a href="/pozadavky?url=${URL.getRelationUrl(RELATION)?url}&categoryPosition=4#form">Požádat o vytvoření podsekce</a></li>
             <li><a href="/software/alternativy">Alternativy k aplikacím z Windows</a></li>
-            <li><a href="/software/zebricky">Žebříčky</a></li>
             <li>
-                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}">${monitorState}</a>
-                <span title="Počet lidí, kteří sledují tuto sekci">(${TOOL.getMonitorCount(CATEGORY.data)})</span>
-                <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při nové položce v této a v podřazených sekcích.</span></a>
+                <@lib.showMonitor RELATION "Zašle upozornění na váš email při nové položce v této a v podřazených sekcích."/>
             </li>
             <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
                 <hr />
@@ -46,8 +40,8 @@
     </div>
 
     <div class="s_sekce">
-    <form action="${RELATION.url?default("/software/show/"+RELATION.id)}" method="GET">
-        <#assign userInterfaces = FILTERS.ui?default([])>
+    <form action="${RELATION.url!("/software/show/"+RELATION.id)}" method="GET">
+        <#assign userInterfaces = FILTERS.ui![]>
         <div class="filterHeader" onclick="prepni_plochu('ui')">Uživatelské rozhraní (${userInterfaces?size})</div>
         <div class="collapsible tree hidden" id="ui">
             <@lib.showOption2 "ui", "xwindows", UI_PROPERTY["xwindows"], "checkbox", userInterfaces />
@@ -86,7 +80,7 @@
             <@lib.showOption2 "ui", "web", UI_PROPERTY["web"], "checkbox", userInterfaces />
         </div>
 
-        <#assign licenses = FILTERS.license?default([])>
+        <#assign licenses = FILTERS.license![]>
         <div class="filterHeader" onclick="prepni_plochu('license')">Licence (${licenses?size})</div>
         <div class="collapsible hidden" id="license">
             <@lib.showOption2 "license", "gpl", LICENSE_PROPERTY["gpl"], "checkbox", licenses /><br>
@@ -144,6 +138,9 @@
 
 </div>
 
-<@lib.advertisement id="hosting90" />
+<@lib.advertisement id="arbo-sq" />
+<div style="float:right; clear:right;"><@lib.advertisement id="arbo-full" /></div>
+
+<@lib.showPageTools RELATION />
 
 <#include "../footer.ftl">

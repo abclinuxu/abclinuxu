@@ -338,7 +338,7 @@ public class EditNews implements AbcAction {
         persistence.update(relation);
         TagTool.assignDetectedTags(item, user);
 
-        Map<String,List> children = Tools.groupByType(item.getChildren());
+        Map<String,List<Relation>> children = Tools.groupByType(item.getChildren());
 
         if (children.containsKey(Constants.TYPE_DISCUSSION)) {
             Relation disc = (Relation) children.get(Constants.TYPE_DISCUSSION).get(0);

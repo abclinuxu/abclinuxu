@@ -40,6 +40,7 @@ import java.net.URL;
  */
 public class UrlUtils {
 
+    public static final String PREFIX_ADMINISTRATION = "/sprava";
     public static final String PREFIX_AUTHORS = "/autori";
     public static final String PREFIX_BAZAAR = "/bazar";
     public static final String PREFIX_BLOG = "/blog";
@@ -61,11 +62,11 @@ public class UrlUtils {
     public static final String PREFIX_VIDEOS = "/videa";
     public static final String PREFIX_NONE = "";
 
-    public static final String PREFIX_ADMINISTRATION = "/sprava";
-    
+
     static List prefixes = null;
     static {
         prefixes = new ArrayList(18);
+        prefixes.add(PREFIX_ADMINISTRATION);
         prefixes.add(PREFIX_AUTHORS);
         prefixes.add(PREFIX_BAZAAR);
         prefixes.add(PREFIX_BLOG);
@@ -85,7 +86,6 @@ public class UrlUtils {
 		prefixes.add(PREFIX_EVENTS);
         prefixes.add(PREFIX_TAGS);
         prefixes.add(PREFIX_VIDEOS);
-        prefixes.add(PREFIX_ADMINISTRATION);
     }
 
     /** default prefix to URL */

@@ -1,7 +1,5 @@
+<#import "../macros.ftl" as lib>
 <#assign who=TOOL.createUser(ITEM.owner)>
-<#if USER?? && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")??>
-    <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj záznam">
-</#if>
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
@@ -15,11 +13,8 @@
                 <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Přidat obrázek</a></li>
             </#if>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
-                <li><a href="${RELATION.url!("/software/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
-                    <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}">${monitorState}</a>
-                    <span title="Počet lidí, kteří sledují tento záznam">(${TOOL.getMonitorCount(ITEM.data)})</span>
-                    <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při úpravě záznamu.</span></a>
+                    <@lib.showMonitor RELATION />
                 </li>
                 <form action="/hledani"><input type="text" class="text" name="dotaz" value="${ITEM.title}">
                     <input type="submit" class="button" value="Hledej">
@@ -56,7 +51,9 @@
 <@lib.showRevisions RELATION, REVISIONS/>
 
 <@lib.advertisement id="arbo-sq" />
-<@lib.advertisement id="hosting90" />
+<div style="float:right; clear:right;"><@lib.advertisement id="arbo-full" /></div>
+
+<@lib.showPageTools RELATION />
 
 <#include "../footer.ftl">
 

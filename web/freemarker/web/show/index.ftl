@@ -2,6 +2,7 @@
 
  <#assign plovouci_sloupec>
 
+    <@adLib.advertisement id="ps-boxik1" />
     <@adLib.advertisement id="ps-upoutavka" />
 
     <#assign EVENTS=VARS.getFreshEvents(USER!)>
@@ -28,8 +29,6 @@
     </div>
 
     <@adLib.advertisement id="arbo-sq" />
-    <@adLib.advertisement id="oksystem" />
-    <@adLib.advertisement id="ps-boxik1" />
     <@adLib.advertisement id="ps-boxik2" />
     <@adLib.advertisement id="ps-boxik3" />
     <@adLib.advertisement id="ps-boxik4" />
@@ -46,11 +45,13 @@
 
 <@lib.showMessages/>
 
-<#assign ARTICLES=VARS.getFreshArticles(USER!)>
-<#global CITACE = TOOL.getRelationCountersValue(ARTICLES,"read")/>
 <#if (ARTICLES?size>0) >
     <#list ARTICLES as rel>
-        <@lib.showArticle rel, "CZ_DM", "CZ_SHORT"/>
+        <#if (rel_index < COMPLETE_ARTICLES)>
+            <@lib.showArticle rel, "CZ_DM", "CZ_SHORT", true/>
+        <#else>
+            <@lib.showArticle rel, "CZ_DM", "CZ_SHORT", false/>
+        </#if>
         <hr />
         <#if rel_index==1>
           <@adLib.advertisement id="itbiz-box" />
@@ -94,61 +95,38 @@
     <@lib.showForum 0, 0, true, true, true, single_mode/>
 </#if>
 
-<#assign STORIES=VARS.getFreshStories(USER!)>
-<#if (STORIES?size>0) >
-  <#assign half = STORIES?size/2 >
-  <#if STORIES?size%2==1><#assign half=half+1></#if>
+<#if (STORIES?size > 0) >
     <div class="ramec">
-      <div class="s_nadpis">
-          <@lib.showHelp>Vlastní blog si po přihlášení můžete založit v nastavení svého profilu</@lib.showHelp>
-        <a href="/blog">Blogy na abclinuxu.cz</a>,
-        <a href="/blog/souhrn">stručnější souhrn</a>,
-        <a href="/blog/vyber">výběr</a>
-      </div>
-      <table class="siroka">
-        <tr>
-          <td>
-            <ul>
-              <#list STORIES[0..half-1] as relation>
-                <li><@printStory relation /></li>
-              </#list>
-            </ul>
-          </td>
-          <td>
-            <ul>
-              <#list STORIES[half..] as relation>
-                <li><@printStory relation /></li>
-              </#list>
-            </ul>
-          </td>
-        </tr>
-      </table>
+        <div class="s_nadpis">
+            <@lib.showHelp>Vlastní blog si po přihlášení můžete založit v nastavení svého profilu</@lib.showHelp>
+            <a href="/blog">Blogy na abclinuxu.cz</a>,
+            <a href="/blog/souhrn">stručnější souhrn</a>,
+            <a href="/blog/vyber">výběr</a>
+        </div>
+        <table width="100%">
+            <#if (STORIES?size > 0) >
+                <#assign half = STORIES?size/2 >
+                <#if STORIES?size%2==1><#assign half=half+1></#if>
+                <tr>
+                    <td>
+                        <ul>
+                            <#list STORIES[0..half-1] as story>
+                                <li><@lib.showStoryInTable story, false /></li>
+                            </#list>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <#list STORIES[half..] as story>
+                                <li><@lib.showStoryInTable story, false /></li>
+                            </#list>
+                        </ul>
+                    </td>
+                </tr>
+            </#if>
+        </table>
     </div>
 </#if>
-
-<#macro printStory relation>
-    <!-- UID: ${relation.parent.owner} -->
-    <#assign story=relation.child, blog=relation.parent, title=blog.title!"UNDEF",
-             url=TOOL.getUrlForBlogStory(relation), CHILDREN=TOOL.groupByType(story.children),
-             author=TOOL.createUser(blog.owner)>
-    <#if CHILDREN.discussion??>
-        <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
-    <#else>
-        <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
-    </#if>
-    <#local signs="", tooltip="">
-    <#if CHILDREN.poll??><#local signs=signs+", A", tooltip=tooltip+"anketa"></#if>
-    <#if TOOL.screenshotsFor(story)?size gt 0><#if tooltip!=""><#local tooltip=tooltip+", "></#if><#local signs=signs+", O", tooltip=tooltip+"obrázek"></#if>
-    <#if CHILDREN.video??><#if tooltip!=""><#local tooltip=tooltip+", "></#if><#local signs=signs+", V", tooltip=tooltip+"video"></#if>
-
-    <a href="${url}" title="${author.nick!author.name?html}<#if title!="UNDEF">, ${title}</#if>">${story.title}</a>
-    <span title="Počet&nbsp;komentářů<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if><#if tooltip!=""> [${tooltip}]</#if>">
-        (${diz.responseCount}<@lib.markNewComments diz/>${signs})
-    </span>
-    <#if (story.getProperty("digest")?size > 0)>
-        <img src="/images/site2/digest.png" class="blog_digest" alt="Digest blog" title="Kvalitní zápisek vybraný do digestu">
-    </#if>
-</#macro>
 
 <#assign SUBPORTALS = VARS.getLatestSubportalChanges(USER!)>
 <#if (SUBPORTALS?size>0) >
@@ -189,7 +167,9 @@
     <a href="${map.relation.url}">${map.relation.child.title}</a>
 </#macro>
 
-<h2>Služby</h2>
+<div style="float:right"><@lib.advertisement id="arbo-full" /></div>
+
+<h2 style="clear:right">Služby</h2>
 
 <table class="boxy">
 
@@ -199,7 +179,7 @@
     <#assign HARDWARE = VARS.getFreshHardware(USER!)>
     <#if (HARDWARE?size>0) >
         <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Obrovská databáze znalostí o hardwaru, postupy zprovoznění v GNU/Linuxu.</span></a>
+            <@lib.showHelp>Obrovská databáze znalostí o hardwaru, postupy zprovoznění v GNU/Linuxu</@lib.showHelp>
             <a href="/hardware">Hardware</a>
         </div>
         <div class="s_sekce">
@@ -216,7 +196,7 @@
     <#assign SOFTWARE = VARS.getFreshSoftware(USER!)>
     <#if (SOFTWARE?size>0) >
         <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Katalog softwaru pro GNU/Linux.</span></a>
+            <@lib.showHelp>Katalog softwaru pro GNU/Linux</@lib.showHelp>
             <a href="/software">Software</a>
         </div>
         <div class="s_sekce">
@@ -233,7 +213,7 @@
    <td>
     <#assign DRIVERS = VARS.getFreshDrivers(USER!)>
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Nejčerstvější ovladače</span></a>
+          <@lib.showHelp>Nejčerstvější ovladače</@lib.showHelp>
         <a href="/ovladace">Ovladače</a>
       </div>
       <div class="s_sekce">
@@ -254,7 +234,7 @@
    <td>
     <#assign FAQ = VARS.getFreshFaqs(USER!)>
     <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Odpovědi na často kladené otázky.</span></a>
+        <@lib.showHelp>Odpovědi na často kladené otázky</@lib.showHelp>
         <a href="/faq">FAQ</a>
     </div>
     <div class="s_sekce">
@@ -269,10 +249,10 @@
    <td>
     <#assign DICTIONARY=VARS.getFreshDictionary(USER!)>
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Výkladový slovník linuxových pojmů.</span></a>
+          <@lib.showHelp>Výkladový slovník linuxových pojmů</@lib.showHelp>
         <a href="/slovnik">Slovník</a>
       </div>
-      <div class="s_sekce">
+      <div class="s_sekce bez-slovniku">
         <ul>
           <#list DICTIONARY as rel>
             <li><a href="${rel.url}">${rel.child.title}</a></li>
@@ -285,7 +265,7 @@
   <td>
     <#assign PERSONALITY=VARS.getFreshPersonalities(USER!)>
     <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Databáze významných osobností z komunity.</span></a>
+        <@lib.showHelp>Databáze významných osobností z komunity</@lib.showHelp>
         <a href="/kdo-je">Kdo je</a>
     </div>
     <div class="s_sekce">
@@ -304,7 +284,7 @@
     <td>
     <#assign BAZAAR = VARS.getFreshBazaarAds(USER!)>
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Inzeráty z AbcBazaru.</span></a>
+          <@lib.showHelp>Inzeráty z AbcBazaru</@lib.showHelp>
         <a href="/bazar">Bazar</a>
       </div>
       <div class="s_sekce">
@@ -327,7 +307,7 @@
    <td>
     <#assign TRIVIAS = VARS.getFreshTrivia(USER!)>
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Nejčerstvější kvízy</span></a>
+          <@lib.showHelp>Nejčerstvější kvízy</@lib.showHelp>
         <a href="/hry">Kvízy</a>
       </div>
       <div class="s_sekce">
@@ -339,6 +319,22 @@
         <span class="s_sekce_dalsi"><a href="/hry">další&nbsp;&raquo;</a></span>
       </div>
    </td>
+
+    <td>
+        <#assign VIDEOS = VARS.getFreshVideos(USER!)>
+        <div class="s_nadpis">
+            <@lib.showHelp>Zajímavá linuxová videa</@lib.showHelp>
+            <a href="/videa">Videa</a>
+        </div>
+        <div class="s_sekce">
+            <ul>
+                <#list VIDEOS as rel>
+                    <li><a href="${rel.url}">${rel.child.title}</a></li>
+                </#list>
+            </ul>
+            <span class="s_sekce_dalsi"><a href="/videa">další&nbsp;&raquo;</a></span>
+        </div>
+    </td>
   </tr>
 </table>
 
@@ -346,7 +342,7 @@
 <#if (DESKTOPS?size > 0)>
     <div class="ramec">
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Sbírka uživatelských desktopů. Pochlubte se, jak vypadá vaše pracovní prostředí.</span></a>
+        <@lib.showHelp>Sbírka uživatelských desktopů. Pochlubte se, jak vypadá vaše pracovní prostředí.</@lib.showHelp>
         <a href="/desktopy">Vaše desktopy</a>
       </div>
       <div class="s_sekce" style="text-align:center;">
@@ -360,28 +356,6 @@
           </tr>
         </table>
         <span class="s_sekce_dalsi"><a href="/desktopy">další&nbsp;&raquo;</a></span>
-      </div>
-    </div>
-</#if>
-
-<#assign VIDEOS = VARS.getFreshVideos(USER!)>
-<#if (VIDEOS?size > 0)>
-    <div class="ramec">
-      <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Zajímavá linuxová videa.</span></a>
-        <a href="/videa">Videa</a>
-      </div>
-      <div class="s_sekce" style="text-align:center;">
-        <table align="center">
-          <tr>
-            <#list VIDEOS as video>
-              <td>
-                <@lib.showVideo video />
-              </td>
-            </#list>
-          </tr>
-        </table>
-        <span class="s_sekce_dalsi"><a href="/videa">další&nbsp;&raquo;</a></span>
       </div>
     </div>
 </#if>

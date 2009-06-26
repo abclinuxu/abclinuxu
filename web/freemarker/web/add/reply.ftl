@@ -20,14 +20,6 @@
 <#if THREAD??>
  <h2>Příspěvek, na který reagujete</h2>
  <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussionWithAttachments(DISCUSSION), false />
-
- <script language="javascript1.2" type="text/javascript">
-    original = "${TOOL.xpath(THREAD.data,"//text")?js_string}";
-    original = "<blockquote>"+original+"</blockquote>";
-    function cituj(input) {
-      input.value += original;
-    }
- </script>
 </#if>
 
 <#if PREVIEW??>

@@ -20,7 +20,7 @@
  <p>${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER!)}</p>
 </#if>
 
-<#global CITACE = TOOL.getRelationCountersValue(ARTICLES.data,"read")/>
+<#global READ_COUNTER = TOOL.getRelationCountersValue(ARTICLES.data,"read")/>
 <#list ARTICLES.data as relation>
     <@lib.showArticle relation, "SMART_DMY" />
     <hr>
@@ -36,5 +36,7 @@
    <a href="/clanky/dir/${RELATION.id}?from=${start}">Starší články</a>
   </#if>
  </p>
+
+<@lib.showPageTools RELATION />
 
 <#include "../footer.ftl">

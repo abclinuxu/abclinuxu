@@ -68,7 +68,7 @@ public class TagCache implements Configurable {
     public Tag get(String id) {
         if (id == null)
             return null;
-        return (Tag) tagCache.get(id.toLowerCase());
+        return tagCache.get(id.toLowerCase());
     }
 
     /**
@@ -115,7 +115,7 @@ public class TagCache implements Configurable {
      */
     public List<Tag> list(int from, int count, TagTool.ListOrder order, boolean ascending) {
         List<Tag> allTags = new ArrayList<Tag>(tagCache.values());
-        Comparator<Tag> comparator = null;
+        Comparator<Tag> comparator;
         if (TagTool.ListOrder.BY_CREATION.equals(order))
             comparator = new TagCreationComparator(ascending);
         else if (TagTool.ListOrder.BY_USAGE.equals(order))
@@ -161,7 +161,7 @@ public class TagCache implements Configurable {
      */
     public void assignTag(GenericDataObject obj, String id) {
         id = id.toLowerCase();
-        Tag tag = (Tag) tagCache.get(id);
+        Tag tag = tagCache.get(id);
         if (tag == null) {
             log.warn("Cannot increment usage for tag '" + id + "' - not in cache!");
             return;
@@ -182,7 +182,7 @@ public class TagCache implements Configurable {
      */
     public void unassignTag(GenericDataObject obj, String id) {
         id = id.toLowerCase();
-        Tag tag = (Tag) tagCache.get(id);
+        Tag tag = tagCache.get(id);
         if (tag == null) {
             log.warn("Cannot decrement usage for tag '" + id + "' - not in cache!");
             return;

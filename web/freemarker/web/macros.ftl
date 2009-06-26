@@ -1,52 +1,57 @@
 <#macro showMessages>
- <#list MESSAGES as msg>
-  <p class="message">${msg}</p>
- </#list>
- <#if ERRORS.generic??>
-  <p class="error">${ERRORS.generic}</p>
- </#if>
+    <#list MESSAGES as msg>
+        <p class="message">${msg}</p>
+    </#list>
+    <#if ERRORS.generic??>
+        <p class="error">${ERRORS.generic}</p>
+    </#if>
 </#macro>
 
-<#macro showArticle(relation dateFormat...)>
+<#-- settings[0] - date format pro diskuse, setting[1] - zda zobrazovat perex, settings[2] - CSS trida pro titulek -->
+<#macro showArticle(relation dateFormat settings...)>
     <#local clanek=relation.child,
         autors=TOOL.createAuthorsForArticle(clanek),
         thumbnail=TOOL.xpath(clanek,"/data/thumbnail")!"UNDEF",
         tmp=TOOL.groupByType(clanek.children, "Item"),
-        url=relation.url?default("/clanky/show/"+relation.id)
+        url=relation.url!("/clanky/show/"+relation.id), displayWithPerex = settings[1]!true
     >
     <#if tmp.discussion??><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
-    <#if thumbnail!="UNDEF"><div class="cl_thumbnail">${thumbnail}</div></#if>
-    <h1 class="st_nadpis"><a href="${url}">${clanek.title}</a></h1>
-    <p>${TOOL.xpath(clanek,"/data/perex")}</p>
+    <#if displayWithPerex && thumbnail!="UNDEF"><div class="cl_thumbnail">${thumbnail}</div></#if>
+    <h2 class="${settings[2]!"st_nadpis"}"><a href="${url}">${clanek.title}</a></h2>
+    <#if displayWithPerex><p>${TOOL.xpath(clanek,"/data/perex")}</p></#if>
     <p class="meta-vypis">
-        ${DATE.show(clanek.created, dateFormat[0])} |
-
+        ${DATE.show(clanek.created, dateFormat)} |
         <#if autors?size gt 0>
             <#list autors as autor>
                 <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
             </#list>
         <#else>
-            <@lib.showUser TOOL.createUser(clanek.owner)/>
+            <@showUserFromId clanek.owner/>
         </#if>
         |
-        Přečteno: <@showCounter clanek, .globals["CITACE"]!, "read" />&times;
-        <#if diz??>| <@showCommentsInListing diz, dateFormat[1]?default(dateFormat[0]), "/clanky" /></#if>
+        Přečteno: <@showCounter clanek, "read" />&times;
+        <#if diz??>| <@showCommentsInListing diz, settings[0]!dateFormat, "/clanky" /></#if>
         <@showShortRating relation, "| " />
     </p>
 </#macro>
 
-<#macro showCounter(item, map, type)><#rt>
-    <#if map.get??><#local value = map.get(item)!"UNDEF"><#else><#local value = "UNDEF"></#if><#rt>
-    <#lt><#if value?string!="UNDEF">${value}<#else>${TOOL.getCounterValue(item, type)}</#if><#rt>
+<#-- Prints specified counter for given document -->
+<#macro showCounter(item, type)><#rt>
+    <#local count = -1><#t>
+    <#if type == "read"><#t>
+        <#local count = (.globals["READ_COUNTERS"].get(item))!(-1)><#t>
+    <#elseif type == "visit"><#t>
+        <#local count = (.globals["VISIT_COUNTERS"].get(item))!(-1)><#t>
+    </#if><#t>
+    <#if count != -1>${count}<#else>${TOOL.getCounterValue(item, type)}</#if><#t>
 </#macro>
 
 <#macro showCommentsInListing(diz dateFormat urlPrefix)>
-    <a href="${diz.url?default(urlPrefix+"/show/"+diz.relationId)}">Komentářů:&nbsp;${diz.responseCount}<@markNewComments diz/></a><#rt>
+    <a href="${diz.url!(urlPrefix+"/show/"+diz.relationId)}">Komentářů:&nbsp;${diz.responseCount}</a><@markNewComments diz/><#rt>
     <#lt><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat)}</#if>
 </#macro>
 
 <#macro showSoftwareList(items)>
-<#local visits = TOOL.getRelationCountersValue(items,"visit")>
 <table class="sw-polozky">
   <thead>
     <tr>
@@ -63,7 +68,7 @@
       <td><a href="${software.url}" title="${TOOL.childName(software)}">${TOOL.childName(software)}</a></td>
       <td class="td-meta"><@showShortRating software, "", false /></td>
       <td class="td-meta">${software.child.getProperty("used_by")?size}</td>
-      <td class="td-meta"><@showCounter software.child, visits, "visit" />&times;</td>
+      <td class="td-meta"><@showCounter software.child, "visit" />&times;</td>
       <td class="td-datum">${DATE.show(software.child.updated, "SMART")}</td>
     </tr>
    </#list>
@@ -121,11 +126,79 @@
     <#if shortened=="UNDEFINED">
         <div class="zpr_telo">${text}</div>
     <#else>
-        <div class="zpr_telo">${shortened}...&nbsp;<i><a href="${url}">více&nbsp;&raquo;</a></i></div>
+        <div class="zpr_telo">${shortened}&hellip;&nbsp;<i><a href="${url}">více&nbsp;&raquo;</a></i></div>
     </#if>
     <span><@showUser autor/>
     | <a href="${url}" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"><#rt>
-      <#lt>Komentářů: ${diz.responseCount}<@lib.markNewComments diz/></a></span>
+      <#lt>Komentářů:&nbsp;${diz.responseCount}</a><@lib.markNewComments diz/></span>
+</#macro>
+
+<#macro showStoryInListing (story, skipUser, shortened)>
+    <#if shortened><#local titleTag="h3"><#else><#local titleTag="h2"></#if>
+    <div class="cl">
+        <${titleTag} class="st_nadpis">
+            <a href="${story.url}">${story.title}</a>
+        </${titleTag}>
+        <p class="meta-vypis">
+            ${DATE.show(story.created, "SMART")}
+            <#if ! skipUser>
+                <a href="${story.blogUrl}">${story.blogTitle}</a> |
+                <@showUser story.author/>
+            </#if>
+            <#if (story.category??)>
+                <#if story.category.url??>
+                    | <a href="${story.category.absoluteUrl}" title="Kategorie zápisu">${story.category.name}</a>
+                <#else>
+                    | ${story.category.name}
+                </#if>
+            </#if>
+            <#if story.digest>
+                | <img src="/images/site2/digest.png" class="blog_digest" alt="Výběrový blog" title="Kvalitní zápisek vybraný do výběru z blogů">
+            </#if>
+            <#if (story.polls > 0)>| Anketa </#if>
+            <#if (story.videos > 0)>| Video </#if>
+            <#if story.perex??>| Přečteno: <@showCounter story.relation.child, "read"/>&times;</#if>
+            <#if story.discussion??>| <@showCommentsInListing story.discussion, "SMART_DMY", "/blog" /></#if>
+            <@showShortRating story.relation, "| " />
+        </p>
+        <#if ! shortened>
+            <#local showMore=false>
+            <#if story.perex??>
+                ${story.perex}
+                <#local showMore=true>
+            <#else>
+                <#if (story.polls > 0 || story.images > 0 || story.videos > 0)><#local showMore=true></#if>
+                ${story.content}
+            </#if>
+            <#if showMore>
+                <div class="signature"><a href="${story.url}">více...</a></div>
+            </#if>
+        </#if>
+    </div>
+</#macro>
+
+<#macro showStoryInTable (story, skipUser)>
+    <#local signs="", tooltip="", linkTitle = "", spanTitle = "Počet&nbsp;komentářů", diz = story.discussion>
+    <#if (story.polls > 0)><#local signs = TOOL.append(signs, "A"), tooltip = TOOL.append(tooltip, "anketa")></#if>
+    <#if (story.images > 0)><#local signs = TOOL.append(signs, "O"), tooltip = TOOL.append(tooltip, "obrázek")></#if>
+    <#if (story.videos > 0)><#local signs = TOOL.append(signs, "V"), tooltip = TOOL.append(tooltip, "video")></#if>
+    <#if (! skipUser)>
+        <#local linkTitle = TOOL.append(linkTitle, story.author.nick!story.author.name?html)>
+        <#if story.blogTitle??><#local linkTitle = TOOL.append(linkTitle, story.blogTitle)></#if>
+    </#if>
+    <#if diz.responseCount gt 0>
+        <#local spanTitle = TOOL.append(spanTitle, "poslední&nbsp;" + DATE.show(diz.updated, "CZ_SHORT"))>
+    </#if>
+    <#if tooltip!=""><#local spanTitle = TOOL.append(spanTitle, tooltip)></#if>
+
+
+    <a href="${story.url}" title="${linkTitle}">${story.title}</a>
+    <span title="${spanTitle}">
+        (${diz.responseCount}<@lib.markNewComments diz/><#if signs != "">, ${signs}</#if>)
+    </span>
+    <#if (story.digest)>
+        <img src="/images/site2/digest.png" class="blog_digest" alt="Digest blog" title="Kvalitní zápisek vybraný do digestu">
+    </#if>
 </#macro>
 
 <#macro markNewComments(discussion)><#t>
@@ -136,7 +209,7 @@
 
 <#macro markNewCommentsQuestion(discussion)><#t>
 <#if TOOL.hasNewComments(USER!, discussion)><#t>
-    <span title="V diskusi jsou nové komentáře" class="new_comment_state">*</span><#t>
+    <span title="V diskusi jsou nové komentáře" class="new_comment_state">&lowast;</span><#t>
 </#if><#t>
 </#macro>
 
@@ -152,7 +225,7 @@
       <#local blacklisted = diz.isBlacklisted(comment), attachments = comment.attachments>
       <div class="ds_hlavicka<#if diz.isUnread(comment)>_novy</#if><#if blacklisted> ds_hlavicka_blacklisted</#if><#if who?? && USER?? && who.id == USER.id> ds_hlavicka_me</#if>" id="${comment.id}">
         <#if comment.author?? && showControls>
-            <#assign avatar = TOOL.getUserAvatar(who!, USER!)?default("UNDEFINED")>
+            <#assign avatar = TOOL.getUserAvatar(who!, USER!)!"UNDEFINED">
             <#if avatar != "UNDEFINED">
                 <img src="${avatar}" id="comment${comment.id}_avatar" alt="avatar" class="ds_avatar <#if blacklisted>ds_controls_blacklisted</#if>">
             </#if>
@@ -176,7 +249,7 @@
             <div id="comment${comment.id}_controls"<#if blacklisted> class="ds_controls_blacklisted"</#if>>
                 <#local nextUnread = diz.getNextUnread(comment)!"UNDEF">
                 <#if ! nextUnread?is_string><a href="#${nextUnread}" title="Skočit na další nepřečtený komentář">Další</a> |</#if>
-                <a href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=add&amp;dizId="+diz.id+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovědět</a> |
+                <a href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=add&amp;dizId="+diz.id+"&amp;threadId="+comment.id+extra[0]!"")}">Odpovědět</a> |
                 <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}" title="Žádost o přesun diskuse, stížnost na komentář">Admin</a> |
                 <a href="#${comment.id}" title="Přímá adresa na tento komentář">Link</a> |
                 <#if (comment.parent??)><a href="#${comment.parent}" title="Odkaz na komentář o jednu úroveň výše">Výše</a> |</#if>
@@ -211,7 +284,7 @@
             <div class="ds_text">
                 ${TOOL.render(TOOL.element(comment.data,"//text"),USER!)}
             </div>
-            <#assign signature = TOOL.getUserSignature(who!, USER!)?default("UNDEFINED")>
+            <#assign signature = TOOL.getUserSignature(who!, USER!)!"UNDEFINED">
             <#if signature!="UNDEFINED"><div class="signature">${signature}</div></#if>
         </#if>
         <#local level2=level+1>
@@ -226,10 +299,10 @@
 <#macro showCensored(comment dizId relId)>
     <div class="cenzura">
         <a href="/faq/abclinuxu.cz/co-znamena-symbol-u-cenzurovanych-prispevku"><img src="/images/site2/skryty-komentar-krizek.png" width="40" height="40" alt="skrytý komentář" style="float:right;"></a>
-        <#assign admin = TOOL.xpath(comment.data,"//censored/@admin")?default("5473")>
+        <#assign admin = TOOL.xpath(comment.data,"//censored/@admin")!"5473">
         Náš <a href="/Profile/${admin}">administrátor</a> shledal tento komentář
         <a href="/faq/abclinuxu.cz/proc-je-komentar-oznacen-jako-zavadny">závadným</a>.
-        <#assign message = TOOL.xpath(comment.data,"//censored")?default("")>
+        <#assign message = TOOL.xpath(comment.data,"//censored")!"">
         <#if message?has_content>
             <p class="cenzura_duvod">${message}</p>
         </#if>
@@ -242,15 +315,12 @@
 
 <#macro showDiscussion(relation)>
     <#local DIZ = TOOL.createDiscussionTree(relation.child,USER!,relation.id,true)>
-    <#if DIZ.monitored><#local monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj"></#if>
     <div class="ds_toolbox">
      <b>Nástroje:</b>
        <#if DIZ.hasUnreadComments>
          <a href="#${DIZ.firstUnread}" title="Skočit na první nepřečtený komentář" rel="nofollow">První nepřečtený komentář</a>,
        </#if>
-         <a href="${URL.make("/EditMonitor/"+DIZ.relationId+"?action=toggle"+TOOL.ticket(USER!, false))}" rel="nofollow">${monitorState}</a>
-           <span title="Počet lidí, kteří sledují tuto diskusi">(${DIZ.monitorSize})</span>
-           <a class="info" href="#">?<span class="tooltip">Zašle každý nový komentář emailem na vaši adresu</span></a>,
+        <@showMonitor relation "Zašle upozornění na váš email při vložení nového komentáře."/>,
          <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print" rel="nofollow">Tisk</a>
        <#if USER?? && USER.hasRole("discussion admin")>
          <br />
@@ -318,6 +388,16 @@
 <#macro showShortRating (relation, separator, heading=true)>
     <#local rating=TOOL.ratingFor(relation.child.data)!"UNDEF">
     <#if rating!="UNDEF"><#if heading>${separator}Hodnocení:&nbsp;</#if>${rating.percent}&nbsp;%&nbsp;(${rating.count}&nbsp;hlasů)</#if>
+</#macro>
+
+<#macro showMonitor relation help="Zašle upozornění na váš email při úpravě záznamu.">
+    <#if TOOL.isMonitored(relation.child, USER!)>
+        <a href="${URL.make("/EditMonitor/"+relation.id+"?action=stop"+TOOL.ticket(USER!, false))}">Přestaň sledovat</a>
+    <#else>
+        <a href="${URL.make("/EditMonitor/"+relation.id+"?action=start"+TOOL.ticket(USER!, false))}">Začni sledovat</a>
+    </#if>
+    <span title="Počet lidí, kteří sledují tento dokument nebo sekci">(${relation.child.monitorCount})</span>
+    <a class="info" href="#">?<span class="tooltip">${help}</span></a>
 </#macro>
 
 <#macro star value><#if (value>0.60)><img src="/images/site/star1.gif" alt="*"><#elseif (value<0.2)><img src="/images/site/star0.gif" alt="-"><#else><img src="/images/site/star5.gif" alt="+"></#if></#macro>
@@ -443,12 +523,17 @@
     <#if TOOL.isQuestionSolved(diz.discussion.data)>
         <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle čtenářů vyřešena">
     </#if>
-    <#if USER?? && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")??>
+    <#if TOOL.isMonitored(diz.discussion, USER!)>
         <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
     </#if>
 </#macro>
 
-<#macro showUser user><a href="/lide/${user.login}">${user.nick!(user.name)}</a></#macro>
+<#macro showUser user><#if (user.id > 0)><a href="/lide/${user.login}">${user.nick!(user.name)}</a><#else>${user.name}</#if></#macro>
+
+<#macro showUserFromId uid><#rt>
+    <#local user = TOOL.createUser(uid)><#t>
+    <@showUser user /><#t>
+</#macro>
 
 <#macro showRevisions relation info = TOOL.getRevisionInfo(relation.child)>
     <p class="documentHistory">
@@ -464,7 +549,7 @@
             </#if>
             | <a href="/revize?rid=${relation.id}&amp;prefix=${URL.prefix}" rel="nofollow">Historie změn</a>
         </#if>
-        | Zobrazeno: <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times;</p>
+        | Zobrazeno: ${TOOL.getCounterValue(relation.child,"read")}&times;</p>
     </p>
 </#macro>
 
@@ -602,7 +687,7 @@
          <#list FORUM as diz>
           <tr>
             <td><a href="${diz.url}">${TOOL.limit(diz.title,60,"...")}</a></td>
-            <td class="td-meta"><@lib.showDiscussionState diz /></td>
+            <td class="td-meta"><@showDiscussionState diz /></td>
             <td class="td-meta">${diz.responseCount}</td>
             <td class="td-datum">${DATE.show(diz.updated,"SMART")}</td>
           </tr>
@@ -676,25 +761,25 @@
         </td>
         <td>
             <#if showLogo>
-                <#assign logo=TOOL.xpath(item, "/data/icon")?default("NOLOGO")>
+                <#assign logo=TOOL.xpath(item, "/data/icon")!"NOLOGO">
                 <#if logo!="NOLOGO">
                     <div class="cl_thumbnail"><img src="${logo}" alt="Logo akce ${TOOL.childName(item)}"></div>
                 </#if>
             </#if>
-            <h2 class="st_nadpis"><a href="${relation.url?default("/akce/show/"+relation.id)}">${TOOL.childName(item)}</a></h2>
+            <h2 class="st_nadpis"><a href="${relation.url!("/akce/show/"+relation.id)}">${TOOL.childName(item)}</a></h2>
             <p>${TOOL.xpath(item, "/data/descriptionShort")}</p>
 
             <p class="meta-vypis">Aktualizováno: ${DATE.show(item.updated,"SMART")}
-                | správce:&nbsp;<@lib.showUser TOOL.createUser(item.owner) />
+                | správce:&nbsp;<@showUserFromId item.owner />
                 <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/akce" /></#if>
-                | Přečteno:&nbsp;${TOOL.getCounterValue(item,"read")}&times; |
-                <a href="${relation.url?default("/akce/"+relation.id)}?action=participants">Účastníků:&nbsp;${regs?eval}</a>
+                | Přečteno:&nbsp;<@showCounter item, "read"/>&times; |
+                <a href="${relation.url!("/akce/"+relation.id)}?action=participants">Účastníků:&nbsp;${regs?eval}</a>
             </p>
             <#if showManagement>
                 <div>
                     <a href="${URL.noPrefix("/akce/edit/"+relation.id+"?action=approve"+TOOL.ticket(USER,false))}">Schválit</a>
                     |
-                    <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/akce")}">Smazat</a>
+                    <a href="${URL.noPrefix("/EditRelation/"+relation.id+"?action=remove&amp;prefix=/akce")}">Smazat</a>
                 </div>
             </#if>
         </td>
@@ -750,7 +835,7 @@
     <#elseif item.subType=="googlevideo"><#local player="http://video.google.com/googleplayer.swf?docid="+code+"&amp;hl=cs&amp;fs=true">
     </#if>
 
-    <#if showLink>(<a href="${relation.url?default("/videa/show/"+relation.id)}">správa videa</a>)</#if><br>
+    <#if showLink>(<a href="${relation.url!("/videa/show/"+relation.id)}">správa videa</a>)</#if><br>
     <object width="${width}" height="${height}">
         <param name="movie" value="${player}"></param><param name="allowFullScreen" value="true"></param>
         <embed src="${player}" type="application/x-shockwave-flash" allowfullscreen="true" width="${width}" height="${height}"></embed>
@@ -770,8 +855,8 @@
             <img src="${icon}" alt="${title}" border="0">
         </a>
         <p class="meta-vypis" style="text-align: left">
-            ${DATE.show(item.created, "SMART")} | <@lib.showUser TOOL.createUser(item.owner)/><br>
-            Zhlédnuto: <#assign reads = TOOL.getCounterValue(item,"read")>${reads}&times;
+            ${DATE.show(item.created, "SMART")} | <@showUserFromId item.owner/><br>
+            Zhlédnuto: <@showCounter item, "read"/>&times;
             <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
         </p>
     </div>
@@ -786,8 +871,8 @@
             <img width="200" src="${desktop.thumbnailListingUrl}" alt="${desktop.title}" border="0">
         </a>
         <p class="meta-vypis" style="text-align: left">
-            ${DATE.show(item.created, "SMART")} | <@lib.showUser TOOL.createUser(item.owner)/><br>
-            Zhlédnuto: <#assign reads = TOOL.getCounterValue(item,"read")>${reads}&times;
+            ${DATE.show(item.created, "SMART")} | <@showUserFromId item.owner/><br>
+            Zhlédnuto: <@showCounter item, "read"/>&times;
             <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
         </p>
     </div>
@@ -822,4 +907,21 @@
     <#else>
         <p>Zdroj zatím nebyl načten, je prázdný nebo obsahuje chybu.</p>
     </#if>
+</#macro>
+
+<#macro showPageTools relation>
+    <p class="page_tools">
+        <a href="${URL.getRelationUrl(relation)}?varianta=print" rel="nofollow" class="bez-slovniku">Tiskni</a>
+        <#if TOOL.displaySocialBookmarks(USER!)>
+            <span id="bookmarks">
+                Sdílej:
+                <a href="/sdilej?rid=${relation.id}&amp;s=link"><img src="/images/link/linkuj.gif" width="16" height="16" alt="Linkuj" title="Linkuj"/></a>
+                <a href="/sdilej?rid=${relation.id}&amp;s=jag"><img src="/images/link/jagg.png" width="16" height="16" alt="Jaggni to" title="Jaggni to"/></a>
+                <a href="/sdilej?rid=${relation.id}&amp;s=sme"><img src="/images/link/vybrali_sme.gif" width="15" height="15" alt="Vybrali.sme.sk" title="Vybrali.sme.sk"/></a>
+                <a href="/sdilej?rid=${relation.id}&amp;s=google"><img src="/images/link/google.gif" width="16" height="16" alt="Google" title="Google"/></a>
+                <a href="/sdilej?rid=${relation.id}&amp;s=del"><img src="/images/link/delicio.gif" width="16" height="16" alt="Del.icio.us" title="Del.icio.us"/></a>
+                <a href="/sdilej?rid=${relation.id}&amp;s=fb"><img src="/images/link/facebook.gif" width="16" height="16" alt="Facebook" title="Facebook"/></a>
+            </span>
+        </#if>
+    </p>
 </#macro>

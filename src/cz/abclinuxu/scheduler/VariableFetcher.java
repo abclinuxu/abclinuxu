@@ -67,6 +67,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String KEY_SOFTWARE = "software";
     public static final String KEY_DRIVER = "driver";
     public static final String KEY_STORY = "story";
+    public static final String KEY_DIGEST_STORY = "digest.story";
     public static final String KEY_NEWS = "news";
     public static final String KEY_ARTICLE = "article";
     public static final String KEY_QUESTION = "question";
@@ -91,8 +92,8 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String PREF_SECTION_CACHE_FREQUENCY = "section.cache.rebuild.frequency";
     public static final String PREF_MAIN_FORUMS = "forums";
 
-    List<Relation> freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
-    List<Relation> freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities;
+    List<Relation> freshHardware, freshSoftware, freshDrivers, freshStories, freshDigestStories, freshArticles;
+    List<Relation> freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities, freshNews;
     List<Relation> freshTrivias, freshEvents, freshVideos, freshHPSubportalArticles;
     List<Relation> topSubportals;
     List<Map> latestSubportalChanges;
@@ -227,15 +228,66 @@ public class VariableFetcher extends TimerTask implements Configurable {
      */
     public List<Relation> getFreshStories(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_STORY, "/data/settings/index_stories");
-        List<Relation> unfiltered = getSubList(freshStories, Tools.getPreloadedStoryCount(userLimit) );
-        return Tools.filterBannedStories(unfiltered, user, userLimit, true);
+        return Tools.filterBannedStories(freshStories, user, userLimit, true);
+    }
+
+    /**
+     * Array of Lists of the most fresh blog story relations. Returned relations count is set according to
+     * user preference or system setting. The first list holds relations categorized as digest,
+     * the second List holds normal relations excluding those from digest. Banned stories and blocked users
+     * may be filtered out.
+     */
+    public List<Relation> getFreshDigestStories(Object user) {
+        int digestCount = getObjectCountForUser(user, KEY_DIGEST_STORY, "/data/settings/index_tail_digest_stories");
+        int normalCount = getObjectCountForUser(user, KEY_STORY, "/data/settings/index_stories");
+        Set blockedUsers = Collections.EMPTY_SET;
+        List<Relation> result = new ArrayList<Relation>(normalCount);
+        boolean filterBanned = true;
+
+        if (user != null && (user instanceof User)) {
+            User someUser = (User) user;
+            blockedUsers = Tools.getBlacklist(someUser, true);
+            filterBanned = ! Misc.getNodeSetting(someUser.getData(), "/data/settings/hp_all_stories", false);
+        }
+
+        int i = 0;
+        for (Iterator<Relation> iterator = freshStories.iterator(); i < normalCount && iterator.hasNext();) {
+            Relation relation = iterator.next();
+            Item story = (Item) relation.getChild();
+            if (blockedUsers.contains(new Integer(story.getOwner())))
+                continue;
+
+            if (filterBanned) {
+                if (story.getSingleProperty(Constants.PROPERTY_BANNED_BLOG) != null)
+                    continue;
+            }
+
+            result.add(relation);
+            i++;
+        }
+
+        i = 0;
+        for (Iterator<Relation> iterator = freshDigestStories.iterator(); i < digestCount && iterator.hasNext();) {
+            Relation relation = iterator.next();
+            if (result.contains(relation))
+                continue;
+
+            Item story = (Item) relation.getChild();
+            if (blockedUsers.contains(new Integer(story.getOwner())))
+                continue;
+
+            result.add(relation);
+            i++;
+        }
+
+        return result;
     }
 
     /**
      * List of the most fresh article relations according to user preference or system setting.
      */
     public List<Relation> getFreshArticles(Object user) {
-        int userLimit = getObjectCountForUser(user, KEY_ARTICLE, null);
+        int userLimit = getObjectCountForUser(user, KEY_ARTICLE, "/data/settings/index_articles");
         return getSubList(freshArticles, userLimit);
     }
 
@@ -1149,23 +1201,34 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     public void refreshStories() {
         try {
-            int maximum = maxSizes.get(KEY_STORY);
-            Qualifier[] qualifiers = new Qualifier[] {
-                new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW),
-                Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)
-            };
-            List<Relation> list = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
-            List blogs = new ArrayList(list.size());
-            for (Object aList : list) {
-                Relation relation = (Relation) aList;
-                blogs.add(relation.getParent());
-            }
-            Tools.syncList(blogs); // parent on relation must be synchronized
-            Tools.syncList(list);
+            int maximum = Tools.getPreloadedStoryCount(maxSizes.get(KEY_DIGEST_STORY));
+            Set<String> values = Collections.singleton("yes");
+            CompareCondition compareCondition = new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW);
+            Qualifier[] qualifiers = new Qualifier[]{compareCondition, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
+            Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_BLOG_DIGEST, values);
+            List<Relation> list = sqlTool.findItemRelationsWithTypeWithFilters(Item.BLOG, qualifiers, filters);
+            synchronizeBlogRelations(list);
+            freshDigestStories = list;
+
+            maximum = Tools.getPreloadedStoryCount(maxSizes.get(KEY_STORY));
+            qualifiers = new Qualifier[] {compareCondition, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
+            list = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
+            synchronizeBlogRelations(list);
             freshStories = list;
+
         } catch (Exception e) {
             log.error("Selhalo nacitani blogu", e);
         }
+    }
+
+    private void synchronizeBlogRelations(List<Relation> list) {
+        List blogs = new ArrayList(list.size());
+        for (Object aList : list) {
+            Relation relation = (Relation) aList;
+            blogs.add(relation.getParent());
+        }
+        Tools.syncList(blogs); // parent on relation must be synchronized
+        Tools.syncList(list);
     }
 
     public void refreshHardware() {
@@ -1588,8 +1651,13 @@ public class VariableFetcher extends TimerTask implements Configurable {
         size = prefs.getInt(PREF_DEFAULT + KEY_STORY, 5);
         defaultSizes.put(KEY_STORY, size);
         size = prefs.getInt(PREF_MAX + KEY_STORY, 5);
-        maxSizes.put(KEY_STORY, Tools.getPreloadedStoryCount(size));
+        maxSizes.put(KEY_STORY, size);
         freshStories = Collections.emptyList();
+        size = prefs.getInt(PREF_DEFAULT + KEY_DIGEST_STORY, 4);
+        defaultSizes.put(KEY_DIGEST_STORY, size);
+        size = prefs.getInt(PREF_MAX + KEY_DIGEST_STORY, 5);
+        maxSizes.put(KEY_DIGEST_STORY,size);
+        freshDigestStories = Collections.emptyList();
 
         size = prefs.getInt(PREF_DEFAULT + KEY_BAZAAR, 5);
         defaultSizes.put(KEY_BAZAAR, size);

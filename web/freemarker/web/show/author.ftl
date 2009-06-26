@@ -2,10 +2,10 @@
 
 <@lib.showMessages/>
 
-<#assign name = AUTHOR.name?default("UNDEFINED"),
-         surname = AUTHOR.surname?default("UNDEFINED"),
-         nickname = AUTHOR.nickname?default("UNDEFINED"),
-         uid = AUTHOR.uid?default(0)>
+<#assign name = AUTHOR.name!"UNDEFINED",
+         surname = AUTHOR.surname!"UNDEFINED",
+         nickname = AUTHOR.nickname!"UNDEFINED",
+         uid = AUTHOR.uid!0>
 
 <h1>
     Autor
@@ -17,7 +17,7 @@
 <p>
 <#if uid != 0>
     <#assign uauthor=TOOL.createUser(uid)>
-    <a href="/lide/${uauthor.login}" title="${name?default("")} ${surname?default("")}">Profil autora na abclinuxu</a>
+    <a href="/lide/${uauthor.login}" title="${name!""} ${surname!""}">Profil autora na abclinuxu</a>
 </#if>
 </p>
 
@@ -71,20 +71,19 @@
     </tr>
   </thead>
   <tbody>
-    <#global CITACE = TOOL.getRelationCountersValue(ARTICLES.data,"read")/>
     <#list ARTICLES.data as relation>
       <#assign clanek=relation.child, tmp=TOOL.groupByType(clanek.children, "Item"),
-               url=relation.url?default("/clanky/show/"+relation.id),
+               url=relation.url!("/clanky/show/"+relation.id),
                rating=TOOL.ratingFor(clanek.data)!"UNDEF">
       <tr>
         <td><a href="${url}">${clanek.title}</a></td>
         <td class="td-datum">${DATE.show(clanek.created, "SMART_DMY")}</td>
-        <td class="td-meta td-right"><@lib.showCounter clanek, .globals["CITACE"]!, "read" />&times;</td>
+        <td class="td-meta td-right"><@lib.showCounter clanek, "read" />&times;</td>
         <td class="td-meta td-right">
           <#if tmp.discussion??>
               <#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])>
               <#if (diz.responseCount > 0)>
-                  <a href="${diz.url?default("/clanky/show/"+diz.relationId)}">${diz.responseCount}<@lib.markNewComments diz/></a>
+                  <a href="${diz.url!("/clanky/show/"+diz.relationId)}">${diz.responseCount}<@lib.markNewComments diz/></a>
               </#if>
           </#if>
         </td>
@@ -105,5 +104,7 @@
     <a href="${RELATION.url}?from=${start}&amp;count=${ARTICLES.pageSize}">Starší články</a>
 </#if>
 </p>
+
+<@lib.showPageTools RELATION />
 
 <#include "../footer.ftl">

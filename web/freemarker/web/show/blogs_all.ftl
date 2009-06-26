@@ -75,46 +75,8 @@
     <p>Vašemu výběru neodpovídá žádný zápis.</p>
 </#if>
 
-<#list STORIES.data as relation>
-    <#assign story=relation.child, blog=relation.parent, author=TOOL.createUser(blog.owner),
-             url=TOOL.getUrlForBlogStory(relation),
-             title=blog.title?default("blog"),
-             category = story.subType!"UNDEF", tmp=TOOL.groupByType(story.children)>
-    <#if category!="UNDEF"><#assign category=TOOL.xpath(blog, "//category[@id='"+category+"']/@name")!"UNDEF"></#if>
-    <div class="cl">
-        <#if SUMMARY??>
-            <h3 class="st_nadpis">
-                <a href="${url}">${story.title}</a>
-            </h3>
-        <#else>
-            <h2 class="st_nadpis">
-                <a href="${url}">${story.title}</a>
-            </h2>
-        </#if>
-        <p class="meta-vypis">
-            ${DATE.show(story.created, "SMART")} |
-            <a href="/blog/${blog.subType}">${title}</a> |
-            <@lib.showUser author/>
-            <#if (category!="UNDEF" && category?length > 1)>| ${category}</#if>
-            <#if SUMMARY??><br /><#else> | </#if>
-               Přečteno: ${TOOL.getCounterValue(story,"read")}&times;
-            <#if tmp.discussion??>| <@lib.showCommentsInListing TOOL.analyzeDiscussion(tmp.discussion[0]), "SMART_DMY", "/blog" /></#if>
-            <@lib.showShortRating relation, "| " />
-        </p>
-        <#if ! SUMMARY??>
-            <#assign text = TOOL.xpath(story, "/data/perex")!"UNDEF", showmore=false>
-            <#if text!="UNDEF">
-                ${text}
-                <#assign showmore=true>
-            <#else>
-                <#if TOOL.groupByType(story.children).poll?? || TOOL.screenshotsFor(story)?size gt 0><#assign showmore=true></#if>
-                ${TOOL.xpath(story, "/data/content")}
-            </#if>
-            <#if showmore>
-                <div class="signature"><a href="${url}">více...</a></div>
-            </#if>
-        </#if>
-    </div>
+<#list STORIES.data as blogStory>
+    <@lib.showStoryInListing blogStory, false, SUMMARY!false />
     <hr />
 </#list>
 

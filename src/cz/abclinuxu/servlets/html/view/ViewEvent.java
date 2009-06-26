@@ -266,7 +266,9 @@ public class ViewEvent implements AbcAction, Configurable {
 
         Paging paging = new Paging(list, from, count, total);
         env.put(VAR_ITEMS, paging);
-        
+
+        env.put(Constants.VAR_READ_COUNTERS, Tools.getRelationCountersValue(list, Constants.COUNTER_READ));
+
         // Process the month for the calendar view
         Map map = new HashMap(10);
         Calendar cal;

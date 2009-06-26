@@ -55,8 +55,7 @@
 
 <@lib.advertisement id="gg-zpravicka" />
 
-<p><b>Nástroje</b>:
-<a href="${RELATION.url?default("/zpravicky/show/"+RELATION.id)}?varianta=print" rel="nofollow">Tisk</a></p>
+<@lib.showPageTools RELATION />
 
 <#if CHILDREN.discussion??>
     <h3>Komentáře</h3>
@@ -65,5 +64,7 @@
     <h3>Komentáře</h3>
    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vložit první komentář</a>
 </#if>
+
+<@lib.advertisement id="arbo-full" />
 
 <#include "../footer.ftl">

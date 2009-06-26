@@ -3,19 +3,17 @@
 <h1>${PAGE_TITLE}</h1>
 
 <#if TYPE=="articles">
- <#global CITACE = TOOL.getRelationCountersValue(FOUND.data,"read")/>
+    <@lib.advertisement id="gg-sky" />
 
- <@lib.advertisement id="gg-sky" />
-
- <#list FOUND.data as relation>
-  <@lib.showArticle relation, "CZ_FULL" />
-  <hr>
- </#list>
+    <#list FOUND.data as relation>
+        <@lib.showArticle relation, "CZ_FULL" />
+        <hr>
+    </#list>
 <#else>
- <#list FOUND.data as relation>
-  <@lib.showNews relation />
-  <hr>
- </#list>
+    <#list FOUND.data as relation>
+        <@lib.showNews relation />
+        <hr>
+    </#list>
 </#if>
 
 <form action="/History">

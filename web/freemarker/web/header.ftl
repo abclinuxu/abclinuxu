@@ -4,9 +4,14 @@
 <head>
     <#if USER?? && USER.hasRole("root")><!-- Sablona: ${TEMPLATE!"neznama"} --></#if>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>${PARAMS.TITLE?default(TITLE?default('www.abclinuxu.cz'))}</title>
+    <title>${PARAMS.TITLE!TITLE!'www.abclinuxu.cz'}</title>
     <link rel="stylesheet" type="text/css" href="/jquery-theme/ui.all.css" />
-    <link rel="stylesheet" type="text/css" href="${CSS_URI!}">    
+    <link rel="stylesheet" type="text/css" href="${CSS_URI!}">
+    <#if INLINE_CSS??>
+        <style type="text/css">
+            ${INLINE_CSS}
+        </style>
+    </#if>
     <!--[if IE]>
        <link href="/msie.css" type="text/css" rel="stylesheet">
     <![endif]-->
@@ -33,7 +38,17 @@
     <#if RSS??>
         <link rel="alternate" title="RSS zdroj aktuální sekce" href="http://www.abclinuxu.cz${RSS}" type="application/rss+xml">
     </#if>
-    <meta name="keywords" lang="cs" content="linux,abclinuxu,open source,komunita,hardware,software,ovladače,diskuse,nápověda,rada,pomoc">
+
+    <#if ASSIGNED_TAGS?? && ASSIGNED_TAGS?size &gt; 0>
+        <#assign keywords = "">
+        <#list ASSIGNED_TAGS as tag>
+           <#assign keywords = keywords + tag.title + ", ">
+        </#list>
+        <meta name="keywords" lang="cs" content="${keywords}">
+    <#elseif IS_INDEX??>
+        <meta name="keywords" lang="cs" content="linux,open source,free software,linux hardware,software,ovladače,pomoc">
+    </#if>
+
     <script type="text/javascript">
     	Page = new Object();
         <#if RELATION??>
@@ -45,7 +60,7 @@
 	    </#if>
     </script>
     <script type="text/javascript" src="/data/site/impact.js"></script>
-    <script type="text/javascript" src="/data/site/scripts.js"></script>
+    <script type="text/javascript" src="/data/site/scripts.js"></script>    
     <#if html_header??>
         ${html_header}
     </#if>
@@ -153,9 +168,8 @@
                     </form>
                 </div>
                 <#assign diz=TOOL.findComments(anketa)>
-                <div>&nbsp;<a href="${url}" title="${anketa.text}">Komentářů:</a>
-                     ${diz.responseCount}<#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslední
-                     ${DATE.show(diz.updated,"CZ_SHORT")}</#if>
+                <div>&nbsp;<a href="${url}" title="${anketa.text}">Komentářů: ${diz.responseCount}</a><#rt>
+                  <#lt><#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslední ${DATE.show(diz.updated,"CZ_SHORT")}</#if>
                   <@lib.advertisement id="anketa" />
                 </div>
             </#if>
@@ -244,9 +258,11 @@
 
         <div class="st" id="st"><a name="obsah"></a>
 
-        <#if URL.prefix=='/clanky'>
-             <@lib.advertisement id="clanky-top" />
-        </#if>
+    <#if plovouci_sloupec??>
+        <@lib.advertisement id="obsah-box-uzky" />
+    <#else>
+        <@lib.advertisement id="obsah-box" />
+    </#if>
 
         <#if PARENTS??>
           <div class="pwd-box">

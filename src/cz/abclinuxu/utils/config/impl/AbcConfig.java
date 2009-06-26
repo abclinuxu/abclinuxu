@@ -48,6 +48,7 @@ public class AbcConfig implements Configurable {
     public static final String PREF_SERIES_ARTICLES_COUNT = "series.article.count";
     public static final String PREF_ARTICLE_SECTION_ARTICLES_COUNT = "article.section.articles.count";
     public static final String PREF_AUTHOR_ARTICLES_PAGE_SIZE = "author.articles.page.size";
+    public static final String PREF_INDEX_COMPLETE_ARTICLES = "index.complete.articles";
     public static final String PREF_BAZAAR_PAGE_SIZE = "bazaar.page.size";
     public static final String PREF_SEARCH_RESULTS_COUNT = "search.results.count";
     public static final String PREF_FAQ_COUNT = "section.faq.count";
@@ -64,6 +65,7 @@ public class AbcConfig implements Configurable {
     static int defaultPageSize, viewUserPageSize, sectionArticleCount, seriesArticleCount, bazaarPageSize;
     static int articleSectionArticlesCount, authorArticlesPageSize, searchResultsCount, faqSectionCount;
     static int maxWatchedDiscussions, ticketLength, oldDiscussionAge, oldDiscussionSleep;
+    static int indexCompleteArticles;
     static boolean maintainanceMode, loginUseHttps;
 
     /**
@@ -88,6 +90,7 @@ public class AbcConfig implements Configurable {
         ticketLength = prefs.getInt(PREF_TICKET_LENGTH, 10);
         oldDiscussionAge = prefs.getInt(PREF_WARN_OLD_DISCUSSION_CREATED, 30);
         oldDiscussionSleep = prefs.getInt(PREF_WARN_OLD_DISCUSSION_COMMENTED, 10);
+        indexCompleteArticles = prefs.getInt(PREF_INDEX_COMPLETE_ARTICLES, 6);
         maintainanceMode = prefs.getBoolean(PREF_MAINTAINANCE_MODE, false);
         blogWatchEmail = prefs.get(PREF_MAILING_LIST_BLOG_WATCH, null);
         adminsEmail = prefs.get(PREF_MAILING_LIST_ADMINS, null);
@@ -168,6 +171,13 @@ public class AbcConfig implements Configurable {
      */
     public static int getViewUserPageSize() {
         return viewUserPageSize;
+    }
+
+    /**
+     * @return number of articles displayed with perex on home page
+     */
+    public static int getIndexCompleteArticles() {
+        return indexCompleteArticles;
     }
 
     /**

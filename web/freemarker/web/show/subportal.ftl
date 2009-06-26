@@ -1,11 +1,8 @@
 <#import "../macros.ftl" as lib>
 
-<#assign desc=TOOL.xpath(ITEM,"/data/description")?default(TOOL.xpath(ITEM,"/data/descriptionShort")),
+<#assign desc=TOOL.xpath(ITEM,"/data/description")!(TOOL.xpath(ITEM,"/data/descriptionShort")),
         articles=TOOL.createRelation(TOOL.xpath(ITEM,"/data/articles")),
         events=TOOL.createRelation(TOOL.xpath(ITEM,"/data/events"))>
-<#if USER?? && TOOL.xpath(articles.child,"//monitor/id[text()='"+USER.id+"']")??>
-    <#assign monitorState="Přestaň sledovat články"><#else><#assign monitorState="Sleduj články">
-</#if>
 
 <#assign plovouci_sloupec>
     <@lib.showSubportal RELATION, true />
@@ -15,13 +12,12 @@
     </div>
     <div class="s_sekce">
     <ul>
-        <#assign articles_rid=TOOL.xpath(ITEM,"/data/article_pool"),
-            counter=VARS.getSubportalCounter(RELATION)>
+        <#assign articles_rid=TOOL.xpath(ITEM,"/data/article_pool"), counter=VARS.getSubportalCounter(RELATION)>
         <li><a href="/skupiny/edit?action=edit&amp;rid=${RELATION.id}">Nastavení</a></li>
         <li><a href="/Group?action=members&amp;gid=${ITEM.group}">Správa administrátorů</a></li>
         <li><a href="/clanky/edit/${articles_rid}?action=add">Napsat článek</a></li>
-        <li><a href="/clanky/dir/${articles_rid}">Čekající články</a> <span>(${counter.WAITING_ARTICLES?default("?")})</span></li>
-        <li><a href="${events.url}?mode=unpublished">Čekající akce</a> <span>(${counter.WAITING_EVENTS?default("?")})</span></li>
+        <li><a href="/clanky/dir/${articles_rid}">Čekající články</a> <span>(${counter.WAITING_ARTICLES!"?"})</span></li>
+        <li><a href="${events.url}?mode=unpublished">Čekající akce</a> <span>(${counter.WAITING_EVENTS!"?"})</span></li>
         <li><a href="${URL.make("/EditServers/"+RELATION.id)}">Servery rozcestníku</a></li>
     </ul>
     </div>
@@ -33,9 +29,7 @@
             <li><a href="?action=admins">Seznam administrátorů</a></li>
             <li><a href="/akce/edit/${events.id}?action=add">Přidat akci</a></li>
             <li>
-                <a href="${URL.make("/EditMonitor/"+articles.id+"?action=toggle&amp;redirect="+RELATION.url+TOOL.ticket(USER!, false))}">${monitorState}</a>
-                <span title="Počet lidí, kteří sledují tuto sekci">(${TOOL.getMonitorCount(articles.child.data)})</span>
-                <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při vydání nového článku.</span></a>
+                <@lib.showMonitor RELATION "Zašle upozornění na váš email při vydání nového článku."/>
             </li>
          </ul>
     </div>
@@ -52,7 +46,7 @@
 <hr />
 
 <#assign ARTICLES=VARS.getFreshSubportalArticles(USER!, articles.id)>
-<#global CITACE = TOOL.getRelationCountersValue(ARTICLES,"read")/>
+<#global READ_COUNTER = TOOL.getRelationCountersValue(ARTICLES,"read")/>
 <#if (ARTICLES?size>0) >
     <#list ARTICLES as rel>
         <@lib.showArticle rel, "CZ_DM", "CZ_SHORT"/>
@@ -66,13 +60,13 @@
 
 
 <#assign wiki_rel=TOOL.createRelation(TOOL.xpath(ITEM,"/data/wiki"))>
-<#assign exec=TOOL.xpath(wiki_rel.child,"/data/content/@execute")?default("no"), content=TOOL.xpath(wiki_rel.child,"/data/content")>
+<#assign exec=TOOL.xpath(wiki_rel.child,"/data/content/@execute")!"no", content=TOOL.xpath(wiki_rel.child,"/data/content")>
 <h1 class="st_nadpis"><a href="${wiki_rel.url}">Wiki</a></h1>
 
 <#if exec!="yes">
-${content}
+    ${content}
 <#else>
-<@content?interpret />
+    <@content?interpret />
 </#if>
 
 <hr />
@@ -88,11 +82,11 @@ ${content}
     <hr />
 </#if>
 
-<#if TOOL.xpath(RELATION.child, "/data/forumHidden")?default("no")!="yes">
+<#if TOOL.xpath(RELATION.child, "/data/forumHidden")!"no" != "yes">
     <#assign forum_rid=TOOL.xpath(RELATION.child,"/data/forum")>
     <#assign single_mode=false>
     <#if USER??>
-        <#if TOOL.xpath(USER, "/data/profile/forum_mode")?default("")=="single">
+        <#if TOOL.xpath(USER, "/data/profile/forum_mode")!"" == "single">
             <#assign single_mode=true>
         </#if>
     </#if>
@@ -120,5 +114,7 @@ ${content}
     </table>
   </div>
 </#if>
+
+<@lib.showPageTools RELATION />
 
 <#include "../footer.ftl">

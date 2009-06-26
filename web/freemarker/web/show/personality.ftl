@@ -1,7 +1,5 @@
+<#import "../macros.ftl" as lib>
 <#assign who=TOOL.createUser(ITEM.owner)>
-<#if USER?? && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")??>
-    <#assign monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj záznam">
-</#if>
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
@@ -15,11 +13,8 @@
                 <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Přidat fotografii</a></li>
             </#if>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
-                <li><a class="bez-slovniku" href="${RELATION.url}?varianta=print" rel="nofollow">Tisk</a></li>
                 <li>
-                    <a class="bez-slovniku" href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER!, false))}">${monitorState}</a>
-                    <span title="Počet lidí, kteří sledují tento záznam">(${TOOL.getMonitorCount(ITEM.data)})</span>
-                    <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při úpravě záznamu.</span></a>
+                    <@lib.showMonitor RELATION />
                 </li>
                 <#if USER??>
                     <#if USER?? && TOOL.permissionsFor(USER, RELATION.upper).canModify()>
@@ -100,5 +95,7 @@
     <a href="/kdo-je?prefix=y">Y</a>
     <a href="/kdo-je?prefix=z">Z</a>
 </p>
+
+<@lib.showPageTools RELATION />
 
 <#include "../footer.ftl">

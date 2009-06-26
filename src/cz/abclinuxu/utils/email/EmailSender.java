@@ -185,7 +185,7 @@ public class EmailSender implements Configurable {
      * @param users list of Integers - ids of users.
      * @return number of sent emails.
      */
-    public synchronized static int sendEmailToUsers(Map params, List users) {
+    public synchronized static int sendEmailToUsers(Map params, Collection users) {
         if ( users.size()==0 )
             return 0;
 

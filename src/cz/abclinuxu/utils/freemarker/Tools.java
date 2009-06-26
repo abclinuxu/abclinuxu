@@ -18,94 +18,60 @@
  */
 package cz.abclinuxu.utils.freemarker;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import org.apache.log4j.Logger;
-import org.apache.regexp.RE;
-import org.apache.regexp.RECompiler;
-import org.apache.regexp.REProgram;
-import org.apache.regexp.RESyntaxException;
-import org.dom4j.Branch;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.Node;
-import org.dom4j.io.DOMWriter;
-import org.htmlparser.Text;
-import org.htmlparser.lexer.Lexer;
-import org.htmlparser.nodes.TagNode;
-import org.htmlparser.util.ParserException;
-
-import cz.abclinuxu.data.Category;
-import cz.abclinuxu.data.Data;
-import cz.abclinuxu.data.GenericDataObject;
-import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.Link;
-import cz.abclinuxu.data.Poll;
-import cz.abclinuxu.data.Record;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.Server;
-import cz.abclinuxu.data.Tag;
-import cz.abclinuxu.data.User;
-import cz.abclinuxu.data.XMLContainer;
-import cz.abclinuxu.data.view.Comment;
-import cz.abclinuxu.data.view.Desktop;
-import cz.abclinuxu.data.view.Discussion;
-import cz.abclinuxu.data.view.DiscussionHeader;
-import cz.abclinuxu.data.view.DiscussionRecord;
-import cz.abclinuxu.data.view.ItemComment;
-import cz.abclinuxu.data.view.RelatedDocument;
-import cz.abclinuxu.data.view.RevisionInfo;
-import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.exceptions.PersistenceException;
-import cz.abclinuxu.persistence.Nursery;
-import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.exceptions.InvalidDataException;
+import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.Nursery;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.edit.EditRating;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.data.view.*;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.format.*;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Advertisement;
+import cz.abclinuxu.utils.TagTool;
+import cz.abclinuxu.utils.email.monitor.MonitorTool;
+import cz.abclinuxu.utils.forms.RichTextEditor;
 import cz.abclinuxu.scheduler.EnsureWatchedDiscussionsLimit;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.security.Roles;
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.html.edit.EditRating;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.utils.Advertisement;
-import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.TagTool;
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
-import cz.abclinuxu.utils.format.Format;
-import cz.abclinuxu.utils.format.FormatDetector;
-import cz.abclinuxu.utils.format.HTMLFormatRenderer;
-import cz.abclinuxu.utils.format.Renderer;
-import cz.abclinuxu.utils.forms.RichTextEditor;
+import org.dom4j.Document;
+import org.dom4j.Node;
+import org.dom4j.Element;
+import org.dom4j.Branch;
+import org.dom4j.DocumentException;
+import org.dom4j.io.DOMWriter;
+import org.apache.log4j.Logger;
+import org.apache.regexp.RE;
+import org.apache.regexp.RESyntaxException;
+import org.apache.regexp.REProgram;
+import org.apache.regexp.RECompiler;
+import org.htmlparser.lexer.Lexer;
+import org.htmlparser.nodes.TagNode;
+import org.htmlparser.util.ParserException;
+import org.htmlparser.Text;
+
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import java.util.regex.Matcher;
+import java.util.prefs.Preferences;
+
+import freemarker.template.*;
 import freemarker.ext.dom.NodeModel;
-import freemarker.template.SimpleSequence;
-import freemarker.template.TemplateModelException;
-import freemarker.template.TemplateNumberModel;
+import java.util.prefs.BackingStoreException;
 
 /**
  * Various utilities available for templates
@@ -123,6 +89,7 @@ public class Tools implements Configurable {
     public static final String PREF_NEWS_LETTER_LIMIT_SOFT = "news.letter.limit.soft";
     public static final String PREF_NEWS_LETTER_LIMIT_HARD = "news.letter.limit.hard";
     public static final String PREF_CSS_STYLES = "css.styles";
+    public static final String PREF_MISSING_USER_NAME = "missing.user.name";
 
     static Persistence persistence = PersistenceFactory.getPersistence();
     // TODO replace with java regexp
@@ -132,8 +99,11 @@ public class Tools implements Configurable {
     static int storyReservePercents;
     static int newsLetterSoftLimit, newsLetterHardLimit;
     static Map<String,String> offeredCssStyles;
+    private static final User MISSING_USER;
 
     static {
+        MISSING_USER = new User(-1);
+        MISSING_USER.setInitialized(true);
         Tools tools = new Tools();
         ConfigurationManager.getConfigurator().configureAndRememberMe(tools);
         Tools.ampersand = Pattern.compile("&");
@@ -162,6 +132,7 @@ public class Tools implements Configurable {
             storyReservePercents = prefs.getInt(PREF_STORY_RESERVE_PERCENTS, 50);
             newsLetterSoftLimit = prefs.getInt(PREF_NEWS_LETTER_LIMIT_SOFT, 400);
             newsLetterHardLimit = prefs.getInt(PREF_NEWS_LETTER_LIMIT_HARD, 500);
+            MISSING_USER.setName(prefs.get(PREF_MISSING_USER_NAME, "Nobody"));
 
             try {
                 Preferences subprefs = prefs.node(PREF_CSS_STYLES);
@@ -348,15 +319,17 @@ public class Tools implements Configurable {
      * @return name fetched from XML
      */
     public static String getPersonName(Item item) {
-    	
-    	if(item.getType()==Item.AUTHOR) {
+    
+    	if (item.getType()==Item.AUTHOR) {
     		StringBuilder sb = new StringBuilder();
-    		if(item.getString1()!=null) sb.append(item.getString1()).append(" ");
-    		if(item.getString2()!=null) sb.append(item.getString2());
+    		if(item.getString1()!=null)
+                sb.append(item.getString1()).append(" ");
+    		if(item.getString2()!=null)
+                sb.append(item.getString2());
     		return sb.toString();
     	}
-    	    	
-        Element root = ((Item)item).getData().getRootElement();
+    
+        Element root = item.getData().getRootElement();
         StringBuffer sb = new StringBuffer();
         String name = root.elementTextTrim("firstname");
         if (name != null)
@@ -418,6 +391,75 @@ public class Tools implements Configurable {
         }
 
         return urlUtils.make("/show/" + relation.getId());
+    }
+
+    public String getType(GenericObject obj) {
+        if (obj instanceof Item) {
+            switch (((Item)obj).getType()) {
+                case Item.ADVERTISEMENT:
+                    return "reklamní pozice";
+                case Item.ARTICLE:
+                    return "článek";
+                case Item.AUTHOR:
+                    return "autor";
+                case Item.BAZAAR:
+                    return "inzerát";
+                case Item.BLOG:
+                case Item.UNPUBLISHED_BLOG:
+                    return "zápisek";
+                case Item.CONTENT:
+                    return "wiki obsah";
+                case Item.DESKTOP:
+                    return "desktop";
+                case Item.DICTIONARY:
+                    return "pojem";
+                case Item.DISCUSSION:
+                    return "diskuse";
+                case Item.DRIVER:
+                    return "ovladač";
+                case Item.EVENT:
+                case Item.UNPUBLISHED_EVENT:
+                    return "událost";
+                case Item.FAQ:
+                    return "FAQ";
+                case Item.GROUP:
+                    return "systémová skupina";
+                case Item.HARDWARE:
+                    return "hardwarová položka";
+                case Item.NEWS:
+                    return "zprávička";
+                case Item.PERSONALITY:
+                    return "osobnost";
+                case Item.REQUEST:
+                    return "požadavek";
+                case Item.ROYALTIES:
+                    return "honorář";
+                case Item.SERIES:
+                    return "seriál";
+                case Item.SOFTWARE:
+                    return "softwarová položka";
+                case Item.SURVEY:
+                    return "velká anketa";
+                case Item.TOC:
+                    return "obsah";
+                case Item.TRIVIA:
+                    return "trivia";
+                case Item.VIDEO:
+                    return "video";
+                default:
+                    return "neznámá položka";
+            }
+        } else if (obj instanceof Category) {
+            return "sekce";
+        } else if (obj instanceof Poll) {
+            return "anketa";
+        } else if (obj instanceof Relation) {
+            return "relace";
+        } else if (obj instanceof Record) {
+            return "záznam";
+        } else {
+            return obj.getClass().getName();
+        }
     }
 
     /**
@@ -485,7 +527,7 @@ public class Tools implements Configurable {
             Element element = (Element) iter.next();
             s = element.getText();
             int id = Misc.parseInt(s, -3);
-            User user = null;
+            User user;
             if (id == creator.getId())
                 user = creator;
             else if (id == last.getId())
@@ -603,16 +645,6 @@ public class Tools implements Configurable {
     }
 
     /**
-     * Gets number of activated monitors in given document.
-     *
-     * @return integer
-     */
-    public static Integer getMonitorCount(Document document) {
-        Object value = document.selectObject("count(//monitor/id)");
-        return ((Double) value).intValue();
-    }
-
-    /**
      * If number of votes for yes is higher than for no, than
      * this question is considered to be solved.
      * @return whether the question is solved
@@ -668,6 +700,17 @@ public class Tools implements Configurable {
                 return null;
         }
         return element.getText();
+    }
+
+    /**
+     * Finds user setting about displaying social bookmarks icons. Default is true.
+     * @param visitor maybe user
+     * @return true, if social bookmarks icons shall be displayed
+     */
+    public boolean displaySocialBookmarks(Object visitor) {
+        if (visitor == null || !(visitor instanceof User))
+            return true;
+        return Misc.getNodeSetting(((User)visitor).getData(), "/data/settings/social_bookmarks", true);
     }
 
     /**
@@ -755,22 +798,17 @@ public class Tools implements Configurable {
 
         if (aUser != null && (aUser instanceof User)) {
             User user = (User) aUser;
-            blockedUsers = Tools.getBlacklist(user, true);
+            blockedUsers = getBlacklist(user, true);
 
-            if(filterBanned) {
-                Element element = (Element) user.getData().selectSingleNode("/data/settings/hp_all_stories");
-                if (element != null && "yes".equals(element.getText()))
-                    filterBanned = false;
-            }
+            if (filterBanned)
+                filterBanned = Misc.getNodeSetting(user.getData(), "/data/settings/hp_all_stories", true);
         }
 
         if (! blockedUsers.isEmpty() || filterBanned) {
             for (Iterator iter = stories.iterator(); iter.hasNext() && result.size() < count;) {
                 Relation relation = (Relation) iter.next();
                 Item story = (Item) relation.getChild();
-                boolean removeStory = false;
-
-                removeStory |= blockedUsers.contains(new Integer(story.getOwner()));
+                boolean removeStory = blockedUsers.contains(new Integer(story.getOwner()));
                 removeStory |= (filterBanned && story.getSingleProperty(Constants.PROPERTY_BANNED_BLOG) != null);
 
                 if (!removeStory)
@@ -779,7 +817,7 @@ public class Tools implements Configurable {
         }
         else {
             // don't filter anything, just limit the story count
-            if(stories.size() > count)
+            if (stories.size() > count)
                 result.addAll(stories.subList(0, count));
             else
                 result.addAll(stories);
@@ -903,6 +941,20 @@ public class Tools implements Configurable {
         for (int i=0; i<count; i++)
             sb.append(what);
         return sb.toString();
+    }
+
+    /**
+     * Appends second parameter to the first one, separating them by comma. If the first parameter is empty,
+     * only the second parameter is returned.
+     * @param string string after which second parameter shall be appended
+     * @param appended string to be appended
+     * @return either second parameter or second parameter appended behind first parameter and comma
+     */
+    public static String append(String string, String appended) {
+        if (string == null || string.length() == 0)
+            return appended;
+        else
+            return string + ", " + appended;
     }
 
     /**
@@ -1033,18 +1085,22 @@ public class Tools implements Configurable {
      * @return synchronized User.
      */
     public static User createUser(String id) {
-        int i = Integer.parseInt(id);
-        User user = new User(i);
-        return (User) persistence.findById(user);
+        int uid = Integer.parseInt(id);
+        return createUser(uid);
     }
 
     /**
-     * This method instantiates user and synchronizes it.
+     * This method instantiates user and synchronizes it. If the user is not found, virtual user with negative id
+     * is returned instead.
      * @return synchronized User.
      */
     public static User createUser(int id) {
-        User user = new User(id);
-        return (User) persistence.findById(user);
+        try {
+            User user = new User(id);
+            return (User) persistence.findById(user);
+        } catch (NotFoundException e) {
+            return MISSING_USER;
+        }
     }
 
     /**
@@ -1131,6 +1187,7 @@ public class Tools implements Configurable {
      * @return counter value for selected GenericObject
      */
     public static int getCounterValue(GenericObject obj, String type) {
+//        throw new RuntimeException();
         return persistence.getCounterValue(obj, type);
     }
 
@@ -1140,9 +1197,9 @@ public class Tools implements Configurable {
      * @param type type of counter to be fetched
      * @return map where key is GenericObject and value is Number with its counter.
      */
-    public static Map getRelationCountersValue(List relations, String type) {
-        if (relations==null || relations.size()==0)
-            return Collections.EMPTY_MAP;
+    public static Map<GenericObject, Integer> getRelationCountersValue(List relations, String type) {
+        if (relations == null || relations.isEmpty())
+            return Collections.emptyMap();
         List list = new ArrayList(relations.size());
         for (Object relation1 : relations) {
             Relation relation = (Relation) relation1;
@@ -1156,7 +1213,7 @@ public class Tools implements Configurable {
      * one of Constants.TYPE_* strings. The key represents list of relations, where
      * children are same type.
      */
-    public static Map<String, List> groupByType(List relations) throws PersistenceException {
+    public static Map<String, List<Relation>> groupByType(List relations) throws PersistenceException {
         return groupByType(relations, null);
     }
 
@@ -1169,7 +1226,7 @@ public class Tools implements Configurable {
      * class name (not FQCN).
      * @param classFilter comma separated list of classes, that may be included in the list
      */
-    public static Map<String, List> groupByType(List relations, String classFilter) throws PersistenceException {
+    public static Map<String, List<Relation>> groupByType(List relations, String classFilter) throws PersistenceException {
         if (relations==null)
             return Collections.emptyMap();
         else
@@ -1181,7 +1238,7 @@ public class Tools implements Configurable {
             itemYes = recordYes = categoryYes = userYes = pollYes = linkYes = dataYes = serverYes = true;
         else {
             itemYes = recordYes = categoryYes = userYes = pollYes = linkYes = dataYes = serverYes = false;
-            StringTokenizer stk = new StringTokenizer(classFilter);
+            StringTokenizer stk = new StringTokenizer(classFilter, ",; ");
             while (stk.hasMoreTokens()) {
                 String className = stk.nextToken();
                 if ("Item".equalsIgnoreCase(className))
@@ -1245,13 +1302,13 @@ public class Tools implements Configurable {
         if (needsSync)
             syncList(relations);
 
-        Map<String, List> map = new HashMap<String, List>();
+        Map<String, List<Relation>> map = new HashMap<String, List<Relation>>();
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
 
             child = relation.getChild();
             if ( child instanceof Category )
-                Misc.storeToMap(map,Constants.TYPE_CATEGORY,relation);
+                Misc.storeToMap(map, Constants.TYPE_CATEGORY, relation);
             else if ( child instanceof Item ) {
                 Item item = (Item) child;
                 switch (item.getType()) {
@@ -1284,15 +1341,15 @@ public class Tools implements Configurable {
                         break;
                 }
             } else if ( child instanceof Record )
-                Misc.storeToMap(map,Constants.TYPE_RECORD, relation);
+                Misc.storeToMap(map, Constants.TYPE_RECORD, relation);
             else if ( child instanceof Data )
-                Misc.storeToMap(map,Constants.TYPE_DATA, relation);
+                Misc.storeToMap(map, Constants.TYPE_DATA, relation);
             else if ( child instanceof Link )
-                Misc.storeToMap(map,Constants.TYPE_LINK, relation);
+                Misc.storeToMap(map, Constants.TYPE_LINK, relation);
             else if ( child instanceof Poll )
-                Misc.storeToMap(map,Constants.TYPE_POLL, relation);
-            else if ( child instanceof User )
-                Misc.storeToMap(map,Constants.TYPE_USER, relation);
+                Misc.storeToMap(map, Constants.TYPE_POLL, relation);
+            else if (child instanceof User)
+                Misc.storeToMap(map, Constants.TYPE_USER, relation);
             else if ( child instanceof Server )
                 Misc.storeToMap(map, Constants.TYPE_SERVER, relation);
         }
@@ -1604,17 +1661,14 @@ public class Tools implements Configurable {
         discussion.setId(obj.getId());
         discussion.setRelationId(rid);
         discussion.setFrozen(document.selectSingleNode("/data/frozen") != null);
-        Integer monitorCount = getMonitorCount(document);
-        discussion.setMonitorSize(monitorCount);
-        if (user != null) {
-            String xpath = "//monitor/id[text()='"+user.getId()+"']";
-            discussion.setMonitored(document.selectSingleNode(xpath) != null);
-        }
+        discussion.setMonitorSize(item.getMonitorCount());
+        if (user != null)
+            discussion.setMonitored(isMonitored(item, user));
 
         if (item.getChildren().isEmpty())
             return discussion;
 
-        Map<String, List> childrenMap = groupByType(item.getChildren());
+        Map<String, List<Relation>> childrenMap = groupByType(item.getChildren());
         discussion.setAttachments(childrenMap.get(Constants.TYPE_DATA));
 
         List recordRelations = childrenMap.get(Constants.TYPE_RECORD);
@@ -1659,9 +1713,71 @@ public class Tools implements Configurable {
      */
     public Discussion createEmptyDiscussionWithAttachments(Item item) {
         Discussion discussion = new Discussion();
-        Map<String, List> childrenMap = groupByType(item.getChildren(), "Data");
+        Map<String, List<Relation>> childrenMap = groupByType(item.getChildren(), "Data");
         discussion.setAttachments(childrenMap.get(Constants.TYPE_DATA));
         return discussion;
+    }
+
+    /**
+     * Analyzes initialized relation containing bog story.
+     * @param relation initialized relation
+     * @param withContent flag whether to parse perex / content
+     * @param withCategory flag whether to parse category of this story
+     * @return bean
+     */
+    public static BlogStory analyzeBlogStory(Relation relation, boolean withContent, boolean withCategory) {
+        Item item = (Item) relation.getChild();
+        Category blog = (Category) sync(relation.getParent());
+        BlogStory story = new BlogStory();
+        story.setTitle(item.getTitle());
+        story.setRelation(relation);
+        story.setUrl(getUrlForBlogStory(relation));
+        story.setBlogUrl("/blog/" + blog.getSubType());
+        story.setBlogTitle(blog.getTitle());
+        story.setAuthor(createUser(item.getOwner()));
+        story.setCreated(item.getCreated());
+        story.setDigest(! item.getProperty(Constants.PROPERTY_BLOG_DIGEST).isEmpty());
+
+        Map<String, List<Relation>> children = groupByType(item.getChildren(), "Data,Item,Poll");
+        List list = children.get(Constants.TYPE_POLL);
+        if (list != null)
+            story.setPolls(list.size());
+        list = children.get(Constants.TYPE_DATA);
+        if (list != null && list.size() > 0)
+            story.setImages(list.size());
+        list = children.get(Constants.TYPE_VIDEO);
+        if (list != null)
+            story.setVideos(list.size());
+        list = children.get(Constants.TYPE_DISCUSSION);
+        if (list != null && list.size() > 0)
+            story.setDiscussion(analyzeDiscussion((Relation) list.get(0)));
+
+        if (withContent) {
+            Element element = (Element) item.getData().selectSingleNode("/data/perex");
+            if (element != null)
+                story.setPerex(element.getText());
+
+            element = (Element) item.getData().selectSingleNode("/data/content");
+            story.setContent(element.getText());
+        }
+
+        if (withCategory) {
+            String xpath = "//category[@id='" + item.getSubType() + "']";
+            Element element = (Element) blog.getData().selectSingleNode(xpath);
+            if (element != null) {
+                String id = element.attributeValue("id");
+                String name = element.attributeValue("name");
+                String url = element.attributeValue("url");
+                if (!Misc.empty(name)) {
+                    BlogCategory category = new BlogCategory(id, name, url);
+                    if (!Misc.empty(url))
+                        category.setAbsoluteUrl(story.getBlogUrl() + "/" + url);
+                    story.setCategory(category);
+                }
+            }
+        }
+
+        return story;
     }
 
     /**
@@ -1717,8 +1833,7 @@ public class Tools implements Configurable {
         else
             discussion.lastCommentId = discussion.responseCount;
 
-        discussion.title = item.getTitle();
-        discussion.title = removeTags(discussion.title);
+        discussion.title = removeTags(item.getTitle());
         return discussion;
     }
 
@@ -1748,7 +1863,7 @@ public class Tools implements Configurable {
      * @param content List of Relations containing Items with type=Item.Discussion
      * @return list of PreparedDiscussions.
      */
-    public List analyzeDiscussions(List content) {
+    public List<DiscussionHeader> analyzeDiscussions(List content) {
         List list = new ArrayList(content.size());
         for ( Iterator iter = content.iterator(); iter.hasNext(); ) {
             DiscussionHeader preparedDiscussion = analyzeDiscussion((Relation) iter.next());
@@ -1945,9 +2060,20 @@ public class Tools implements Configurable {
             return ((Collection) o).contains(s);
 
         if ( o instanceof String )
-            return ((String) o).equals(s);
+            return o.equals(s);
 
         return false;
+    }
+
+    /**
+     * Compares two dates and returns true if their difference is smaller than one second
+     * @param one existing date
+     * @param two existing date
+     * @return false if difference is bigger than one second
+     */
+    public static boolean isSame(Date one, Date two) {
+        long diff = one.getTime() - two.getTime();
+        return Math.abs(diff) < 1000;
     }
 
     /**
@@ -1993,16 +2119,24 @@ public class Tools implements Configurable {
      * Finds all screenshots for given object.
      * @return list of Maps with several keys
      */
-    public List screenshotsFor(GenericDataObject obj) {
+    public List<Map> screenshotsFor(GenericDataObject obj) {
         if (obj == null)
             return Collections.EMPTY_LIST;
 
-        Map byType = groupByType(obj.getChildren(), "Data");
-        List images = (List) byType.get(Constants.TYPE_DATA);
+        Map<String, List<Relation>> byType = groupByType(obj.getChildren(), "Data");
+        List<Relation> images = byType.get(Constants.TYPE_DATA);
+        return analyzeScreenshots(images);
+    }
+
+    /**
+     * Finds all screenshots for given object.
+     * @return list of Maps with several keys
+     */
+    public List<Map> analyzeScreenshots(List<Relation> images) {
         if (images == null)
             return Collections.EMPTY_LIST;
 
-        List result = new ArrayList();
+        List<Map> result = new ArrayList<Map>();
         for (Iterator iter = images.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
             Data data = (Data) relation.getChild();
@@ -2035,7 +2169,7 @@ public class Tools implements Configurable {
         if (obj == null)
             return Collections.emptyList();
 
-        Map<String, List> byType = groupByType(obj.getChildren(), "Data");
+        Map<String, List<Relation>> byType = groupByType(obj.getChildren(), "Data");
         List objs = (List) byType.get(Constants.TYPE_DATA);
         if (objs == null)
             return Collections.emptyList();
@@ -2192,17 +2326,40 @@ public class Tools implements Configurable {
         return item.getSubType() != null;
     }
 
+    /**
+     * Tests, whether speficied user is watching given document. If maybeUser is not User instance, false is returned.
+     * @param obj Item or Category, it must be initialized
+     * @param maybeUser this may be instance of User
+     * @return true if current user is monitoring this object
+     */
+    public static boolean isMonitored(GenericDataObject obj, Object maybeUser) {
+        if (obj.getMonitorCount() == 0)
+            return false;
+
+        User user = null;
+        if (maybeUser instanceof User)
+            user = (User) maybeUser;
+        if (user == null)
+            return false;
+
+        Set<Integer> users = MonitorTool.get(obj);
+        if (users == null || users.isEmpty())
+            return false;
+
+        return users.contains(new Integer(user.getId()));
+    }
+
 	public static Permissions permissionsFor(Object anUser, Relation rel) {
-		User user = (User) anUser;
-		if (user != null && user.hasRole(Roles.ROOT))
+        User user = null;
+        if (anUser instanceof User)
+            user = (User) anUser;
+        if (user != null && user.hasRole(Roles.ROOT))
 			return Permissions.PERMISSIONS_ROOT;
 
 		sync(rel);
-
 		GenericObject obj = rel.getChild();
 		if (obj instanceof GenericDataObject) {
 			GenericDataObject gdo = (GenericDataObject) obj;
-
 			int permissions, shift;
 
 			if ( user != null && user.isMemberOf(gdo.getGroup()) )
@@ -2211,7 +2368,6 @@ public class Tools implements Configurable {
 				shift = Permissions.PERMISSIONS_OTHERS_SHIFT;
 
 			permissions = gdo.getPermissions();
-
 			if (obj instanceof Category)
 				permissions &= ~Permissions.PERMISSIONS_CATEGORY_MASK;
 

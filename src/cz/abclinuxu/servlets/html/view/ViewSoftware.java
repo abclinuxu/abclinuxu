@@ -172,6 +172,7 @@ public class ViewSoftware implements AbcAction {
         if (items.size() > 0)
             env.put(VAR_ITEMS, Tools.syncList(items));
         env.put(VAR_SOFTWARE_NAME, name);
+        env.put(Constants.VAR_VISIT_COUNTERS, Tools.getRelationCountersValue(items, Constants.COUNTER_VISIT));
         return FMTemplateSelector.select("ViewSoftware", "alternative", env, request);
     }
 
@@ -215,6 +216,7 @@ public class ViewSoftware implements AbcAction {
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
         env.put(VAR_CATEGORY, Tools.sync(relation.getChild()));
+        env.put(Constants.VAR_VISIT_COUNTERS, Tools.getRelationCountersValue(items, Constants.COUNTER_VISIT));
 
         env.put(Constants.VAR_RSS, FeedGenerator.getSoftwareFeedUrl());
         return FMTemplateSelector.select("ViewSoftware", "swsekce", env, request);

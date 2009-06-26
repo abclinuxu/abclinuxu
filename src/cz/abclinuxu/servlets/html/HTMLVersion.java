@@ -169,12 +169,16 @@ public class HTMLVersion implements Configurable {
      */
     public static void setLayout(HttpServletRequest request, Map env) {
         User user = (User) env.get(Constants.VAR_USER);
-        String css = null;
-        if (user != null)
-            css = Tools.xpath(user.getData(), "/data/settings/css");
-        if (css == null)
-            css = defaultCss;
-        env.put(Constants.VAR_CSS_URI, css);
+        String cssUri = null, inlineCss;
+        if (user != null) {
+            cssUri = Tools.xpath(user.getData(), "/data/settings/css");
+            inlineCss = Tools.xpath(user.getData(), "/data/settings/inline_css");
+            if (inlineCss != null)
+                env.put(Constants.VAR_INLINE_CSS, inlineCss);
+        }
+        if (cssUri == null)
+            cssUri = defaultCss;
+        env.put(Constants.VAR_CSS_URI, cssUri);
 
         String serverName = request.getServerName();
         int i = serverName.indexOf(AbcConfig.getDomain());
@@ -193,13 +197,13 @@ public class HTMLVersion implements Configurable {
         response.setContentType("text/html; charset=UTF-8");
         Writer writer = response.getWriter();
         String url = ServletUtils.getURL(request);
-        Template template = null;
+        Template template;
 
         Configuration config = FMUtils.getConfiguration();
         if ( e instanceof NotFoundException ) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             template = config.getTemplate("/web/show/notfound.ftl");
-        } else if ( e instanceof MissingArgumentException || e instanceof InvalidInputException || e instanceof MissingArgumentException) {
+        } else if ( e instanceof MissingArgumentException || e instanceof InvalidInputException) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             template = config.getTemplate("/errors/badinput.ftl");
         } else if ( e instanceof NotAuthorizedException) {

@@ -41,7 +41,7 @@ import org.dom4j.Element;
  * @author literakl
  * @since 11.10.2008
  */
-public class MigrateParagraphs {
+public class MigrateParagraphs extends Migration {
 
     public static void main(String[] args) throws SQLException {
         convertParagraphs("zaznam", 50);
@@ -56,7 +56,7 @@ public class MigrateParagraphs {
         Statement statement = null;
         PreparedStatement updateStatement = null;
         ResultSet rs = null;
-        int items = 0, strings = 0, id, result;
+        int strings = 0, id, result;
         List<Integer> ids = new ArrayList<Integer>(initial), interval;
         long started = System.currentTimeMillis();
         String data, content, converted, repaired;
@@ -118,26 +118,18 @@ public class MigrateParagraphs {
                         continue;
                     }
 
-                    hash(items++);
+                    hash();
                 }
             }
 
             System.out.println();
             System.out.println();
-            System.out.println("Table " + table + ": modified " + items + " rows, " + strings + " strings, " +
+            System.out.println("Table " + table + ": modified " + getCounter() + " rows, " + strings + " strings, " +
                                 (System.currentTimeMillis() - started) / 1000 + " seconds");
             System.out.println();
             System.out.println();
         } finally {
             PersistenceFactory.releaseSQLResources(con, new Statement[] {statement, updateStatement}, new ResultSet[] {rs});
-        }
-    }
-
-    static void hash(int column) {
-        System.out.print('#');
-        if (column % 50 == 49) {
-            System.out.println(" " + (column + 1));
-            System.out.flush();
         }
     }
 }

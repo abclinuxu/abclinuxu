@@ -23,6 +23,8 @@ import freemarker.template.TemplateException;
 import freemarker.core.Environment;
 
 import java.io.Writer;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 
 import org.apache.log4j.Logger;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -44,6 +46,13 @@ public class LogUrlExceptionHandler implements TemplateExceptionHandler {
      */
     public void handleTemplateException(TemplateException e, Environment environment, Writer writer) throws TemplateException {
         String url = ServletUtils.getCurrentURL();
-        log.error("Chyba v sablone na adrese "+url+"\n"+e.getMessage()+"\n"+e.getFTLInstructionStack());
+        StringBuilder sb = new StringBuilder(e.getMessage()).append("\n").append(e.getFTLInstructionStack());
+        if (e.getCauseException() != null) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.getCauseException().printStackTrace(pw);
+            sb.append("\n").append(sw);
+        }
+        log.error("Chyba v šabloně na adrese " + url + "\n" + sb.toString());
     }
 }

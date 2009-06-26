@@ -136,16 +136,9 @@
 <div class="profile_list reverse_anchor">
     <h2>Můj blog: <a href="/blog/${BLOG.subType}">${BLOG.title!"blog"}</a></h2>
     <ul>
-      <#list STORIES as relation>
-        <#assign story=relation.child, url=TOOL.getUrlForBlogStory(relation)>
-        <#assign CHILDREN=TOOL.groupByType(story.children)>
-        <#if CHILDREN.discussion??>
-          <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
-        <#else>
-          <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
-        </#if>
-        <li><a href="${url}">${story.title}</a> | ${DATE.show(story.created, "CZ_DMY")} | <span title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>"> komentářů: ${diz.responseCount}<@lib.markNewComments diz/></span></li>
-      </#list>
+    <#list STORIES as story>
+        <li><@lib.showStoryInTable story, true /></li>
+    </#list>
     </ul>
 </div>
 </#if>

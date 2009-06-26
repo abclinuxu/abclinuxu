@@ -10,11 +10,47 @@ hr {
 	border-top-color: #808080;
 }
 
+.obal a[href^="http://"],
+.obal a[href^="https://"],
+.obal a[href^="ftp://"] {
+	background-image: url("/images/site2/ext-arrow-80bbca.gif");
+}
+.obal a[href^="http://"]:hover,
+.obal a[href^="https://"]:hover,
+.obal a[href^="ftp://"]:hover {
+	background-image: url("/images/site2/ext-arrow-000.gif");
+}
+.obal a.noext, .obal .noext a,
+.obal a[href^="http://www.abclinuxu.cz"],
+.obal a[href^="http://abclinuxu.cz"],
+.obal a[href^="https://www.abclinuxu.cz"],
+.obal a[href^="https://abclinuxu.cz"],
+.obal a.noext:hover, .obal .noext a:hover,
+.obal a[href^="http://www.abclinuxu.cz"]:hover,
+.obal a[href^="http://abclinuxu.cz"]:hover,
+.obal a[href^="https://www.abclinuxu.cz"]:hover,
+.obal a[href^="https://abclinuxu.cz"]:hover {
+	background-image: none;
+}
+
+.st a[href^="/slovnik/"],
+.st a[href^="http://www.abclinuxu.cz/slovnik/"],
+.st a[href^="https://www.abclinuxu.cz/slovnik/"],
+.st a[href^="http://abclinuxu.cz/slovnik/"],
+.st a[href^="https://abclinuxu.cz/slovnik/"] {
+	background-image: url("/images/site2/slovnik.png");
+}
+.st .bez-slovniku a,
+.st a.bez-slovniku {
+	background-image: none;
+}
+
 a,
 .s ul,
 .ramec ul,
 .boxy ul,
-.rozc ul { color: #80BBCA; }
+.rozc ul,
+.new_comment_state { color: #80BBCA; }
 
 a:hover {
 	color: black;
@@ -219,9 +255,7 @@ td.pad,code.kod,pre.kod {
 a.thumb:hover,
 .cl-obrazky a:hover,
 .galerie a:hover,
-.sw h3 a:hover {
-	background-color: transparent;
-}
+.sw h3 a:hover { background-color: transparent; }
 
 .prodej { color: #90EE90; }  /* lightgreen */
 .koupe { color: #FFC0CB; }  /* pink */
@@ -229,7 +263,7 @@ a.thumb:hover,
 .meta-vypis,
 .treeview li span { color: #9A9A9A; }
 
-.ds_toolbox, .pwd-box {
+.ds_toolbox, .pwd-box, .cl-obrazky {
 	background-color: black;
 	border-color: #4B4B4B;
 }

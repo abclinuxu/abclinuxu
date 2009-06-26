@@ -18,7 +18,6 @@
  */
 package cz.abclinuxu.utils.email.monitor;
 
-import org.dom4j.Element;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.GenericDataObject;
@@ -26,12 +25,7 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.utils.freemarker.Tools;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Holder of data for monitor, when the event
@@ -49,7 +43,7 @@ public class MonitorAction {
     Relation relation;
     Date performed;
     Map map;
-    List<Integer> recipients;
+    Set<Integer> recipients;
 
     /**
      * Creates new instance of MonitorAction.
@@ -61,7 +55,7 @@ public class MonitorAction {
      */
     public MonitorAction(User user, UserAction action, ObjectType type, Relation relation, String url) {
         this.actor = user.getNick()!=null ? user.getNick():user.getName();
-        this.actorId = new Integer(user.getId());
+        this.actorId = user.getId();
         this.action = action;
         this.type = type;
         this.url = url;
@@ -78,7 +72,7 @@ public class MonitorAction {
      */
     public MonitorAction(String actor, UserAction action, ObjectType type, Relation relation, String url) {
         this.actor = actor;
-        this.actorId = new Integer(0);
+        this.actorId = 0;
         this.action = action;
         this.type = type;
         this.url = url;
@@ -121,7 +115,7 @@ public class MonitorAction {
         return performed;
     }
 
-    public List<Integer> getRecipients() {
+    public Set<Integer> getRecipients() {
         return recipients;
     }
 
@@ -131,7 +125,7 @@ public class MonitorAction {
      * @param value property
      */
     public void setProperty(String key, Object value) {
-        if (map==null)
+        if (map == null)
             map = new HashMap(3,1.0f);
         map.put(key,value);
     }
@@ -142,7 +136,7 @@ public class MonitorAction {
      * @return property
      */
     public Object getProperty(String key) {
-        if (map==null)
+        if (map == null)
             return null;
         return map.get(key);
     }
@@ -153,51 +147,34 @@ public class MonitorAction {
      */
     public void gatherRecipients() {
         Relation rel = this.relation;
-        Integer actor = Integer.valueOf(this.actorId);
         GenericDataObject obj = this.object;
-
-        recipients = new ArrayList();
-
         Tools.sync(obj);
 
+        recipients = new HashSet();
         do {
-            Element monitor = (Element) obj.getData().selectSingleNode("//monitor");
-
-            if (monitor != null) {
-                List keys = monitor.elements("id");
-                for ( Iterator iter = keys.iterator(); iter.hasNext(); ) {
-                    Element id = (Element) iter.next();
-                    try {
-                        Integer key = Integer.valueOf(id.getTextTrim());
-                        if ( !actor.equals(key) && !recipients.contains(key) )
-                            recipients.add(key);
-                    } catch (NumberFormatException e) {
-                        log.error("Error in XML in object "+this.getObject(), e);
-                    }
-                }
-            }
+            recipients.addAll(MonitorTool.get(obj));
 
             int upper = rel.getUpper();
             if ( upper == 0)
-                rel = null;
-            else {
-                rel = new Relation(upper);
-                Tools.sync(rel);
+                break;
 
-                GenericObject genobj = rel.getChild();
+            rel = new Relation(upper);
+            Tools.sync(rel);
 
-                if (! (genobj instanceof GenericDataObject))
-                    break;
+            GenericObject genobj = rel.getChild();
+            if (!(genobj instanceof GenericDataObject))
+                break;
 
-                obj = (GenericDataObject) genobj;
+            obj = (GenericDataObject) genobj;
 
-                // send discussion changes only to people watching the discussion
-                // or whole forum
-                if ( ObjectType.DISCUSSION.equals(this.type) ) {
-                    if ( ! (obj instanceof Category) || ((Category) obj).getType() != Category.FORUM )
-                        rel = null;
-                }
+            // send discussion changes only to people watching the discussion
+            // or whole forum
+            if (ObjectType.DISCUSSION.equals(this.type)) {
+                if (!(obj instanceof Category) || obj.getType() != Category.FORUM)
+                    rel = null;
             }
         } while (rel != null);
+
+        recipients.remove(this.actorId);
     }
 }

@@ -59,6 +59,8 @@
 <p>Celkem ${POLL.totalVoters} hlasů<br />
 Vytvořeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
 
+<@lib.showPageTools RELATION />
+
 <#if CHILDREN.discussion??>
     <h3>Komentáře</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>
@@ -66,5 +68,7 @@ Vytvořeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
     <h3>Diskuse k tomuto článku</h3>
     <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vložit první komentář</a>
 </#if>
+
+<@lib.advertisement id="arbo-full" />
 
 <#include "../footer.ftl">
