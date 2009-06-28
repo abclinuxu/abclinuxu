@@ -1,21 +1,9 @@
 <#assign html_header>
+<#if EDITOR_MODE?? >
 <script type="text/javascript" src="/data/site/jquery/jquery-1.3.2.js"></script>
 <script type="text/javascript" src="/data/site/jquery/ui.core.js"></script>
 <script type="text/javascript" src="/data/site/jquery/ui.dialog.js"></script>
-<#if EDITOR_MODE?? >
 <script type="text/javascript" src="/data/site/ajax/finduser.js"></script>
-<script type="text/javascript"><!--
-$(document).ready(function() {
-    var buttonParent = $('#findUser');
-    buttonParent.append('<input type="button" value="Vyhledat uživatele" id="findUserButton" tabindex="4"/>');
-    $('#findUserButton').bind('click', function() {
-        findUserHandler('addauthor-login', 'findUserDialog', 'addauthor-name', 'addauthor-surname');
-    });
-
-});
-
-// -->
-</script>
 </#if>
 </#assign>
 
@@ -69,7 +57,7 @@ $(document).ready(function() {
             <td style="white-space: nowrap">
                 <div id="findUser">
                     <input type="text" id="addauthor-login" name="login" value="${(AUTHOR.login)!}" size="24"
-                           tabindex="3"/>&nbsp;
+                           tabindex="3"/>&nbsp;       
                 </div>
                 <div id="findUserDialog"></div>
                 <div class="error">${ERRORS.login!}</div>
