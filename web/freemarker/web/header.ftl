@@ -59,6 +59,7 @@
             Page.ticket = "${TOOL.ticketValue(USER)}";
 	    </#if>
     </script>
+    <script type="text/javascript" src="/data/site/jquery/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="/data/site/impact.js"></script>
     <script type="text/javascript" src="/data/site/scripts.js"></script>    
     <#if html_header??>

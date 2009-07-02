@@ -1,6 +1,5 @@
 <#assign html_header>
 <#if EDITOR_MODE?? >
-<script type="text/javascript" src="/data/site/jquery/jquery-1.3.2.js"></script>
 <script type="text/javascript" src="/data/site/jquery/ui.core.js"></script>
 <script type="text/javascript" src="/data/site/jquery/ui.dialog.js"></script>
 <script type="text/javascript" src="/data/site/ajax/finduser.js"></script>
