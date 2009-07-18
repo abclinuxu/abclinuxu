@@ -301,7 +301,7 @@ public class EditAuthor implements AbcAction {
         String delete = (String) params.get(PARAM_DELETE);
         if (!Misc.empty(delete)) {
             Author author = (Author) env.get(VAR_AUTHOR);
-            ImageTool.deleteImage(Author.AUTHOR_PHOTO, author);
+            ImageTool.deleteImage(Author.AuthorImage.PHOTO, author);
             persistence.remove(findParent(new Item(author.getId())));
             ServletUtils.addMessage("Autor " + author.getTitle() + " byl smazán!", env, request.getSession());
             persistence.clearCache();
@@ -389,7 +389,7 @@ public class EditAuthor implements AbcAction {
 
             String oldPhoto = (String) params.get(PARAM_REMOVE_PHOTO);
             if (oldPhoto != null && oldPhoto.length() > 0) {
-                ImageTool.deleteImage(Author.AUTHOR_PHOTO, author);
+                ImageTool.deleteImage(Author.AuthorImage.PHOTO, author);
                 ServletUtils.addMessage("Fotografie byla odstraněna", env, null);
                 return true;
             }
@@ -397,7 +397,7 @@ public class EditAuthor implements AbcAction {
             // set photo
             FileItem photo = (FileItem) params.get(PARAM_PHOTO);
             if (photo != null && photo.getSize() > 0)
-                result = ImageTool.storeImage(Author.AUTHOR_PHOTO, photo, author, ImageTool.AUTHOR_PHOTO_RES, env, PARAM_PHOTO);
+                result = ImageTool.storeImage(Author.AuthorImage.PHOTO, photo, author, ImageTool.AUTHOR_PHOTO_RES, env, PARAM_PHOTO);
 
         }
         // author field available both for editor and author

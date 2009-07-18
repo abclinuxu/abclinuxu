@@ -2612,10 +2612,10 @@ public class EditUser implements AbcAction {
      */
     private boolean setPhoto(Map params, User user, Map env) {
         if (params.containsKey(PARAM_REMOVE_PHOTO)) {
-			return ImageTool.deleteImage(User.USER_PHOTO, user);
+			return ImageTool.deleteImage(User.UserImage.PHOTO, user);
 		}
 		FileItem image = (FileItem) params.get(PARAM_PHOTO);
-		return ImageTool.storeImage(User.USER_PHOTO, image, user, ImageTool.USER_PHOTO_RES, env, PARAM_PHOTO);
+		return ImageTool.storeImage(User.UserImage.PHOTO, image, user, ImageTool.USER_PHOTO_RES, env, PARAM_PHOTO);
     }
 
     private boolean setGPG(Map params, User user, Map env) throws Exception {
@@ -2664,10 +2664,10 @@ public class EditUser implements AbcAction {
      */
     private boolean setAvatar(Map params, User user, Map env) {
         if (params.containsKey(PARAM_REMOVE_AVATAR)) {
-			return ImageTool.deleteImage(User.USER_AVATAR, user);
+			return ImageTool.deleteImage(User.UserImage.AVATAR, user);
 		}
 		FileItem image = (FileItem) params.get(PARAM_AVATAR);
-		return ImageTool.storeImage(User.USER_AVATAR, image, user, ImageTool.USER_AVATAR_RES, env, PARAM_AVATAR);
+		return ImageTool.storeImage(User.UserImage.AVATAR, image, user, ImageTool.USER_AVATAR_RES, env, PARAM_AVATAR);
     }
 
     /**

@@ -18,18 +18,6 @@
  */
 package cz.abclinuxu.data;
 
-import cz.abclinuxu.persistence.SQLTool;
-import cz.abclinuxu.security.Roles;
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.html.edit.EditGroup;
-import cz.abclinuxu.utils.LRUMap;
-import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.config.impl.AbcConfig;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Node;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,14 +25,34 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.Node;
+
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.edit.EditGroup;
+import cz.abclinuxu.utils.LRUMap;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
+
 /**
  * Class containing basic user data
  */
-public class User extends CommonObject implements ImageAssignable {
+public class User extends CommonObject implements ImageAssignable<User.UserImage> {
     private boolean virtual; // brainstorming
 
-    public static final int USER_PHOTO = 1;
-    public static final int USER_AVATAR = 2;
+    /**
+     * All available images for user
+     * @author kapy
+     *
+     */
+    public enum UserImage implements ImageAssignable.AssignedImage {
+    	PHOTO,
+    	AVATAR
+    }
 
     /**
      * login name of the user
@@ -319,13 +327,13 @@ public class User extends CommonObject implements ImageAssignable {
         roles = null;
     }
 
-    public void assignImage(int imageNo, String imageUrl) {
+    public void assignImage(UserImage imageId, String imageUrl) {
         Element image = null;
-        switch (imageNo) {
-            case USER_AVATAR:
+        switch (imageId) {
+            case AVATAR:
                 image = DocumentHelper.makeElement(getData(), "/data/profile/avatar");
                 break;
-            case USER_PHOTO:
+            case PHOTO:
                 image = DocumentHelper.makeElement(getData(), "/data/profile/photo");
                 break;
             default:
@@ -335,13 +343,13 @@ public class User extends CommonObject implements ImageAssignable {
             image.setText(imageUrl);
     }
 
-    public String detractImage(int imageNo) {
+    public String detractImage(UserImage imageId) {
         Node node = null;
-        switch (imageNo) {
-            case USER_AVATAR:
+        switch (imageId) {
+            case AVATAR:
                 node = getData().selectSingleNode("/data/profile/avatar");
                 break;
-            case USER_PHOTO:
+            case PHOTO:
                 node = getData().selectSingleNode("/data/profile/photo");
                 break;
             default:
@@ -356,12 +364,12 @@ public class User extends CommonObject implements ImageAssignable {
         return url;
     }
 
-    public String proposeImageUrl(int imageNo, String suffix) {
+    public String proposeImageUrl(UserImage imageId, String suffix) {
         StringBuilder sb = new StringBuilder();
-        switch (imageNo) {
-            case USER_AVATAR:
+        switch (imageId) {
+            case AVATAR:
                 return sb.append("images/avatars/").append(id).append('.').append(suffix).toString();
-            case USER_PHOTO:
+            case PHOTO:
                 return sb.append("images/faces/").append(id).append('.').append(suffix).toString();
             default:
                 return null;

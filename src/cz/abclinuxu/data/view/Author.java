@@ -10,9 +10,16 @@ import java.util.Date;
  *
  * @author kapy
  */
-public class Author implements ImageAssignable, AccessControllable {
+public class Author implements ImageAssignable<Author.AuthorImage>, AccessControllable {
 
-    public static final int AUTHOR_PHOTO = 1;
+	/**
+	 * All available images for author
+	 * @author kapy
+	 *
+	 */
+	public enum AuthorImage implements ImageAssignable.AssignedImage {
+		PHOTO
+	};
 
     private int id;
 
@@ -283,17 +290,17 @@ public class Author implements ImageAssignable, AccessControllable {
         return sb.toString();
     }
 
-    public void assignImage(int imageNo, String imageUrl) {
+    public void assignImage(AuthorImage imageId, String imageUrl) {
         this.photoUrl = imageUrl;
     }
 
-    public String detractImage(int imageNo) {
+    public String detractImage(AuthorImage imageId) {
         String url = this.photoUrl;
         this.photoUrl = null;
         return url;
     }
 
-    public String proposeImageUrl(int imageNo, String suffix) {
+    public String proposeImageUrl(AuthorImage imageId, String suffix) {
         StringBuilder sb = new StringBuilder();
         sb.append("images/authors/").append(name).append('-').append(surname);
 
