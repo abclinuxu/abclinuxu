@@ -94,6 +94,13 @@ cd jetty/bin
 
 http://localhost:8080
 
+Pouzivani IDE Eclipse
+=====================
+Pokud pouzivate Eclipse, nastavte si formatter codu na soubor prilozeny v
+conf/eclipse. Tento by vam mel pomoct udrzovat formatovani kodu konzistentni
+s projektem.
+
+
 Slozitejsi veci
 ===============
 
