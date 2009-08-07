@@ -18,7 +18,7 @@
     <#if tmp.discussion??><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
     <#if displayWithPerex && thumbnail!="UNDEF"><div class="cl_thumbnail">${thumbnail}</div></#if>
     <h2 class="${settings[2]!"st_nadpis"}"><a href="${url}">${clanek.title}</a></h2>
-    <#if displayWithPerex><p>${TOOL.xpath(clanek,"/data/perex")}</p></#if>
+    <#if displayWithPerex><p class="st_perex">${TOOL.xpath(clanek,"/data/perex")}</p></#if>
     <p class="meta-vypis">
         ${DATE.show(clanek.created, dateFormat)} |
         <#if autors?size gt 0>
