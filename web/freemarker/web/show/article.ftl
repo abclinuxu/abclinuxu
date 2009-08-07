@@ -8,9 +8,11 @@
 <#include "../header.ftl">
 
 <#assign autors=TOOL.createAuthorsForArticle(RELATION.getChild()),
-         forbidRating=TOOL.xpath(ITEM, "//forbid_rating")!"UNDEF",
-         forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")!"UNDEF",
+         forbidRating=TOOL.xpath(ITEM, "//forbid_rating" )!"UNDEF",
+         forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions" )!"UNDEF",
          inPool=RELATION.upper==8082>
+
+<div class="clanek">
 
 <#if PAGES?? && PAGE??>
     <h1>${PAGES[PAGE]}</h1>
@@ -254,6 +256,8 @@
 <p><b>Nástroje</b>:
 <a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print&amp;noDiz">Tisk bez diskuse</a>
 </p>
+
+</div> <!-- class="clanek" -->
 
 <@lib.showPageTools RELATION />
 
