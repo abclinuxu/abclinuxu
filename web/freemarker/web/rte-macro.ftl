@@ -22,7 +22,7 @@
             <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '&amp;gt;', '');" id="mono" title="Vložit písmeno &gt;">&gt;</a>
             <#if editor.commentedContent??>
                 <script language="javascript1.2" type="text/javascript">
-                original = "<blockquote>" + ${editor.commentedContent?js_string} + "</blockquote>";
+                original = "<blockquote>${editor.commentedContent?js_string}</blockquote>";
                 function cituj(input) {
                     input.value += original;
                 }
