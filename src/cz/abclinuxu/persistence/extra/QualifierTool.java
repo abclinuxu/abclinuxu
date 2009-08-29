@@ -43,6 +43,10 @@ public class QualifierTool {
      * clauses). if defaultTableNick cannot distinguish between two tables,
      * fieldMapping can be used to assign exact tableNick to specific Field from
      * qualifiers.
+     * 
+     * Order in which qualifiers are passed in array is important.
+     * If sorting and sorting direction qualifiers are present, they must be 
+     * present consecutively or in pairs sorting column followed by sorting direction.
      *
      * @param defaultTableNick nick of table to distinguish columns. Default is null.
      * @param qualifiers       list of query conditions and sort order and limit qualifiers.
@@ -63,7 +67,13 @@ public class QualifierTool {
             qualifier = qualifiers[i];
 
             if (qualifier instanceof OrderByQualifier) {
-                sb.append(" ORDER BY ");
+            	// first order by qualifier
+            	if(sb.indexOf(" ORDER BY ")==-1)
+            		sb.append(" ORDER BY ");
+            	// next order by qualifier
+            	else 
+            		sb.append(", ");
+            	
                 OrderByQualifier oq = (OrderByQualifier) qualifier;
                 appendField(oq.getField(), fieldMapping, defaultTableNick, sb);
             } else if (qualifier.equals(Qualifier.ORDER_ASCENDING)) {
