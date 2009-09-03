@@ -152,7 +152,7 @@ public class EditNews implements AbcAction {
 
         if ( ACTION_REMOVE_STEP2.equals(action) ) {
             ActionProtector.ensureContract(request, EditNews.class, true, true, true, false);
-            return actionRemoveStep2(request, response, env);
+            return actionRemoveStep2(response, env);
         }
 
         if ( ACTION_SEND_EMAIL.equals(action) )
@@ -160,12 +160,12 @@ public class EditNews implements AbcAction {
 
         if ( ACTION_LOCK.equals(action) ) {
             ActionProtector.ensureContract(request, EditNews.class, true, false, false, true);
-            return actionLock(request, response, env);
+            return actionLock(response, env);
         }
 
         if ( ACTION_UNLOCK.equals(action) ) {
             ActionProtector.ensureContract(request, EditNews.class, true, false, false, true);
-            return actionUnlock(request, response, env);
+            return actionUnlock(response, env);
         }
 
         throw new MissingArgumentException("Chybí parametr action!");
@@ -192,13 +192,12 @@ public class EditNews implements AbcAction {
         item.setData(DocumentHelper.createDocument());
         item.setOwner(user.getId());
 
-        boolean canContinue = true;
-        canContinue &= setTitle(params, item, env);
+        boolean canContinue = setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setCategory(params, item);
 
-        if (user.hasRole("news admin") && canContinue) {
-            canContinue &= setOwner(params, item, env);
+        if (user.hasRole(Roles.NEWS_ADMIN) && canContinue) {
+            canContinue = setOwner(params, item, env);
             canContinue &= setForbidDiscussions(params, item);
             canContinue &= setPublishDate(params, item, env);
         }
@@ -217,7 +216,7 @@ public class EditNews implements AbcAction {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
-        if (!user.hasRole("news admin") || params.get(PARAM_FORBID_DISCUSSIONS) == null)
+        if (!user.hasRole(Roles.NEWS_ADMIN) || params.get(PARAM_FORBID_DISCUSSIONS) == null)
             EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
         if (redirect) {
@@ -276,13 +275,12 @@ public class EditNews implements AbcAction {
         Item item = (Item) relation.getChild();
         User user = (User) env.get(Constants.VAR_USER);
 
-        boolean canContinue = true;
-        canContinue &= setTitle(params, item, env);
+        boolean canContinue = setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setCategory(params, item);
 
-        if (user.hasRole("news admin")) {
-            canContinue &= setOwner(params, item, env);
+        if (user.hasRole(Roles.NEWS_ADMIN) && canContinue) {
+            canContinue = setOwner(params, item, env);
             canContinue &= setForbidDiscussions(params, item);
             canContinue &= setPublishDate(params, item, env);
         }
@@ -341,7 +339,7 @@ public class EditNews implements AbcAction {
         Map<String,List<Relation>> children = Tools.groupByType(item.getChildren());
 
         if (children.containsKey(Constants.TYPE_DISCUSSION)) {
-            Relation disc = (Relation) children.get(Constants.TYPE_DISCUSSION).get(0);
+            Relation disc = children.get(Constants.TYPE_DISCUSSION).get(0);
 
             String urldisc = url + "/diskuse";
             urldisc = URLManager.protectFromDuplicates(urldisc);
@@ -369,7 +367,7 @@ public class EditNews implements AbcAction {
         return null;
     }
 
-    protected String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String actionRemoveStep2(HttpServletResponse response, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
@@ -410,7 +408,7 @@ public class EditNews implements AbcAction {
         return null;
     }
 
-    protected String actionLock(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String actionLock(HttpServletResponse response, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
@@ -427,7 +425,7 @@ public class EditNews implements AbcAction {
         return null;
     }
 
-    protected String actionUnlock(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String actionUnlock(HttpServletResponse response, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
@@ -556,9 +554,8 @@ public class EditNews implements AbcAction {
     */
     private boolean setOwner(Map params, Item item, Map env) {
         String suid = (String) params.get(PARAM_UID);
-        User user = (User) env.get(Constants.VAR_USER);
 
-        if (!Misc.empty(suid) && user.hasRole("news admin")) {
+        if (!Misc.empty(suid)) {
             try {
                 User owner = Tools.createUser(suid);
                 item.setOwner(owner.getId());
