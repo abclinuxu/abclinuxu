@@ -22,4 +22,6 @@
     </#list>
 </table>
 
+<@lib.advertisement id="arbo-sq" />
+
 <#include "../footer.ftl">

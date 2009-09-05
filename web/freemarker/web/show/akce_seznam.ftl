@@ -124,6 +124,8 @@
 
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <@lib.showMessages/>
 
 <#list ITEMS.data as event>

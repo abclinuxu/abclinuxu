@@ -19,6 +19,9 @@
     <div class="s_sekce" align="center">
         <#list TOOL.sublist(VARS.recentMostPopularDesktops.keySet(), 0, 3) as rel>
             <@lib.showTopDesktop rel />
+            <#if rel_index == 0>
+                 <@lib.advertisement id="arbo-sq" />
+            </#if>
         </#list>
     </div>
     <div class="s_nadpis">Nejprohlíženější nové desktopy</div>

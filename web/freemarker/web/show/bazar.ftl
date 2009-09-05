@@ -2,6 +2,8 @@
 
 <div class="bazar">
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Bazar</h1>
 
 <p>

@@ -28,7 +28,7 @@
     <#if !single_mode>
         <form method="post" action="/EditUser/${USER.id}">
         <div style="float: right">
-            <#assign questionCount=TOOL.getUserForums(USER).get(RELATION.id)?default(0)>
+            <#assign questionCount=TOOL.getUserForums(USER).get(RELATION.id)!0>
             <#if questionCount!=0>
                 <input type="image" title="Odlepit" src="/images/actions/remove.png" style="background-color:transparent">
             <#else>
@@ -78,7 +78,7 @@
   <tbody>
    <#list TOOL.analyzeDiscussions(DIZS.data) as diz>
     <tr>
-      <td><a href="${diz.url?default("/forum/show/"+diz.relationId)}" title="${diz.title}">${TOOL.limit(diz.title,60," ..")}</a></td>
+      <td><a href="${diz.url!("/forum/show/"+diz.relationId)}" title="${diz.title}">${TOOL.limit(diz.title,60," ..")}</a></td>
       <td class="td-meta"><@lib.showDiscussionState diz /></td>
       <td class="td-meta">${diz.responseCount}</td>
       <td class="td-datum">${DATE.show(diz.updated,"SMART")}</td>
@@ -112,5 +112,7 @@
    <li><a href="${RELATION.url?default("/forum/dir/"+RELATION.id)}?from=${start}&amp;count=${DIZS.pageSize}&amp;tags=${tags}">Starší dotazy</a>
   </#if>
  </ul>
+
+<@lib.advertisement id="arbo-sq" />
 
 <#include "../footer.ftl">

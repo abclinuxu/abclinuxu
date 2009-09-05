@@ -12,6 +12,8 @@
 
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Seznam skupin</h1>
 
 ${TOOL.xpath(RELATION.child,"/data/note")}
@@ -24,7 +26,7 @@ ${TOOL.xpath(RELATION.child,"/data/note")}
         url=relation.url,
         desc=TOOL.xpath(cat,"/data/descriptionShort")!"UNDEF",
         members = cat.getProperty("member"),
-        score=cat.getIntProperty("score")?default(-1)>
+        score=cat.getIntProperty("score")!-1>
     <#if icon!="UNDEF"><div style="float:right; padding: 5px"><img src="${icon}" alt="${cat.title}" /></div></#if>
 
     <h2 class="st_nadpis"><a href="${url}">${cat.title}</a></h2>

@@ -33,6 +33,8 @@
 
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1 style="margin-bottom:1em;">${ITEM.title}</h1>
 
 <div>

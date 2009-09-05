@@ -7,6 +7,8 @@
 
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Obsah</h1>
 
 <#assign first = TOC.firstChapter>

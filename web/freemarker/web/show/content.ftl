@@ -36,7 +36,9 @@
     </p>
 </#if>
 
-<#assign exec=TOOL.xpath(ITEM,"/data/content/@execute")?default("no"), content=TOOL.xpath(ITEM,"/data/content")>
+<@lib.advertisement id="arbo-sq" />
+
+<#assign exec=TOOL.xpath(ITEM,"/data/content/@execute")!"no", content=TOOL.xpath(ITEM,"/data/content")>
 <#if exec!="yes">
 ${content}
 <#else>

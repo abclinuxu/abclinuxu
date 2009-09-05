@@ -1,5 +1,7 @@
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <@lib.showMessages/>
 
 <h1>Hry</h1>

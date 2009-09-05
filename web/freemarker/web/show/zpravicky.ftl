@@ -14,6 +14,8 @@
     }
 </script>
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Zprávičky</h1>
 
 <#list NEWS as rel>

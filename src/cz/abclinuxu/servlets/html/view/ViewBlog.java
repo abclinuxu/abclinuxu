@@ -423,7 +423,10 @@ public class ViewBlog implements AbcAction, Configurable {
         List parents = persistence.findParents((Relation) persistence.findById(new Relation(Constants.REL_BLOGS)));
         env.put(ShowObject.VAR_PARENTS, parents);
 
-        env.put(Constants.VAR_RSS, FeedGenerator.getBlogsFeedUrl());
+        if (digest)
+            env.put(Constants.VAR_RSS, FeedGenerator.getBlogDigestFeedUrl());
+        else
+            env.put(Constants.VAR_RSS, FeedGenerator.getBlogsFeedUrl());
         return FMTemplateSelector.select("ViewBlog", "blogspace", env, request);
     }
 

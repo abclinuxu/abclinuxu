@@ -5,7 +5,7 @@
         <ul>
             <#if PARAMS.revize??>
                 <li>
-                    <a href="${RELATION.url?default("/hardware/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
+                    <a href="${RELATION.url!"/hardware/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
                 </li>
             <#else>
             <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
@@ -40,6 +40,7 @@
 <#import "../misc/hardware.ftl" as hwlib>
 
 <div class="hw">
+<@lib.advertisement id="arbo-sq" />
 
 <@lib.advertisement id="gg-hw-item" />
 
@@ -65,7 +66,6 @@
 
 <@lib.showRevisions RELATION, REVISIONS/>
 
-<@lib.advertisement id="arbo-sq" />
 <div style="float:right; clear:right;"><@lib.advertisement id="arbo-full" /></div>
 
 <@lib.showPageTools RELATION />

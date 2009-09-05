@@ -7,6 +7,8 @@
          nickname = AUTHOR.nickname!"UNDEFINED",
          uid = AUTHOR.uid!0>
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>
     Autor
     <#if name!="UNDEFINED">${name}</#if>

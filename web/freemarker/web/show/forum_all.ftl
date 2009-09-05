@@ -1,5 +1,7 @@
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Poradna</h1>
 
 <p>Poradna slouží jako místo, kde mohou nováčci i zkušení

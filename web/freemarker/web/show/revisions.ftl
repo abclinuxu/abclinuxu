@@ -2,6 +2,8 @@
 
 <@lib.showMessages/>
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Historie</h1>
 
 <p>Nacházíte se na stránce obsahující historii objektu

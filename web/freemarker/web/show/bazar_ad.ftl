@@ -22,6 +22,8 @@
 <#include "../header.ftl">
 <#import "../misc/lib-bazar.ftl" as bazarlib>
 
+<@lib.advertisement id="arbo-sq" />
+
 <@lib.showMessages/>
 
 <div class="bazar">

@@ -1,5 +1,7 @@
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Účastníci akce ${TOOL.childName(ITEM)}</h1>
 
 <#assign regs=ITEM.data.selectNodes("/data/registrations/registration")>

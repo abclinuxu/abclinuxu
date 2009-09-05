@@ -1,5 +1,7 @@
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Často kladené otázky</h1>
 
 <p>Často kladené otázky (anglicky <a href="/slovnik/faq">FAQ</a>) jsou kolekcí předem

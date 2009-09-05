@@ -188,8 +188,8 @@
             </ul>
         </#if>
     </div>
-  <#--<hr id="arbo-sq-cara" />
-  <@lib.advertisement id="arbo-sq" />-->
+  <hr id="arbo-sq-cara" />
+  <@lib.advertisement id="arbo-sq" />
   <@lib.advertisement id="gg-sq-blog" />
 
 </#assign>

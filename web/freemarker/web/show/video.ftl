@@ -17,6 +17,8 @@
 <#include "../header.ftl">
 <@lib.showMessages/>
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>${ITEM.title}</h1>
 <p class="meta-vypis">Vytvořeno: ${DATE.show(ITEM.created,"SMART")}
     | <@lib.showUser TOOL.createUser(ITEM.owner) />

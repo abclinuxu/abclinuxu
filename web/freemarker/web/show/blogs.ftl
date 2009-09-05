@@ -41,6 +41,8 @@
 
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <table>
   <thead>
     <tr>
@@ -52,7 +54,7 @@
   </thead>
   <tbody>
   <#list BLOGS.data as info>
-    <#assign title=info.blog.title?default("blog")>
+    <#assign title=info.blog.title!"blog">
       <tr>
         <td><a href="/blog/${info.blog.subType}">${title}</a></td>
         <td><@lib.showUser info.author /></td>

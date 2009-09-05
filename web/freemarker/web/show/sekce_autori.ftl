@@ -2,6 +2,8 @@
 
 <@lib.showMessages/>
 
+<h1>Sekce ${CATEGORY.title}</h1>
+
 <h1>Autoři</h1>
 <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
     <p><a href="${URL.noPrefix("/autori/edit?action=add")}">Přidat</a></p>

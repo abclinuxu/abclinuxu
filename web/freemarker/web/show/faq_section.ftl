@@ -1,6 +1,8 @@
 <#include "../header.ftl">
 <#assign CATEGORY=RELATION.child>
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>${CATEGORY.title} - často kladené otázky</h1>
 
 <#if TOOL.xpath(CATEGORY,"data/note")??>

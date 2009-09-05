@@ -174,6 +174,8 @@
 <#include "../header.ftl">
 <@lib.showMessages/>
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Archiv</h1>
 
 <#list BLOG_XML.data.archive.year?reverse as year>

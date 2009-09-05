@@ -24,6 +24,9 @@
      <div class="s_sekce" align="center">
          <#list MY_OLDER_DESKTOPS as rel>
              <@lib.showTopDesktop rel />
+            <#if rel_index == 0>
+                 <@lib.advertisement id="arbo-sq" />
+            </#if>
          </#list>
      </div>
   </#if>

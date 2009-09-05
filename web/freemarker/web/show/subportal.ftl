@@ -33,6 +33,8 @@
             </li>
          </ul>
     </div>
+
+    <@lib.advertisement id="arbo-sq" />
 </#assign>
 
 

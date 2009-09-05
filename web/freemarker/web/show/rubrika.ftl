@@ -1,6 +1,10 @@
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <@lib.showMessages/>
+
+<h1>Rubrika ${CATEGORY.title}</h1>
 
 <#if USER??>
     <#if TOOL.permissionsFor(USER, RELATION).canCreate()>

@@ -21,6 +21,8 @@
 
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Sekce ${CATEGORY.title}</h1>
 
 <@lib.showMessages/>
@@ -43,7 +45,7 @@
         </tr>
         <tr>
             <th align="left">Podtyp</th>
-            <td>${CATEGORY.subType?default("NULL")}</td>
+            <td>${CATEGORY.subType!"NULL"}</td>
         </tr>
         <tr>
             <th align="left">Upravil</th>

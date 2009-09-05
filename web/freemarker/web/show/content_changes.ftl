@@ -46,4 +46,6 @@ jejich adres a datumu poslední úpravy. </p>
     ${URL.make(url)}
 </#macro>
 
+<@lib.advertisement id="arbo-sq" />
+
 <#include "../footer.ftl">

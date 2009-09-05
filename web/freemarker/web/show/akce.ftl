@@ -68,6 +68,8 @@
 
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>${TOOL.childName(ITEM)}</h1>
 
 <p class="meta-vypis">

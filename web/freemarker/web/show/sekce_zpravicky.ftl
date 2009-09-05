@@ -1,5 +1,7 @@
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <#if USER?? && USER.hasRole("category admin")>
  <p>
  <a href="${URL.make("/EditCategory?action=edit&rid="+RELATION.id+"&categoryId="+CATEGORY.id)}"

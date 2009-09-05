@@ -31,13 +31,6 @@
                 </li>
             </#if>
             <li><a href="/blogy">Seznam blogů</a></li>
-            <li>
-                <#if DIGEST??>
-                    <a href="/auto/blogDigest.rss">RSS kanál</a>
-                <#else>
-                    <a href="/auto/blog.rss">RSS kanál</a>
-                </#if>
-            </li>
         </ul>
     </div>
 
@@ -52,6 +45,7 @@
                 </#list>
             </ul>
         </#if>
+        <@lib.advertisement id="arbo-sq" />
 
         <#if VARS.recentMostCommentedStories??>
             <b>Nejkomentovanější za poslední měsíc</b>
@@ -64,7 +58,6 @@
         </#if>
     </div>
 
-    <#--<@lib.advertisement id="arbo-sq" />-->
     <@lib.advertisement id="gg-sq-blog" />
 
 </#assign>

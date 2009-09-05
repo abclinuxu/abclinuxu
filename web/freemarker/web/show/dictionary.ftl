@@ -29,6 +29,8 @@
 
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>${ITEM.title}</h1>
 
 <div class="dict-item">

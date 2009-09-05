@@ -39,12 +39,14 @@
 <#include "../header.ftl">
 <#import "../misc/personality.ftl" as perslib>
 
+<@lib.advertisement id="arbo-sq" />
+
 <@lib.showMessages/>
 
 <div class="personality">
     <@perslib.showPersonality ITEM, true />
 
-    <#assign feedUrl = TOOL.xpath(ITEM, "/data/url[@useType='rss']")?default("UNDEFINED")>
+    <#assign feedUrl = TOOL.xpath(ITEM, "/data/url[@useType='rss']")!"UNDEFINED">
     <#if feedUrl!="UNDEFINED">
         <@lib.showNewsFromFeed feedUrl FEED_LINKS!"UNDEFINED" />
     </#if>

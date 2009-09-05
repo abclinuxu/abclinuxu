@@ -37,6 +37,7 @@
 <div class="sw">
 
     <@lib.advertisement id="gg-sw-item" />
+    <@lib.advertisement id="arbo-sq" />
 
     <@swlib.showSoftware ITEM, true />
 
@@ -50,7 +51,6 @@
 
 <@lib.showRevisions RELATION, REVISIONS/>
 
-<@lib.advertisement id="arbo-sq" />
 <div style="float:right; clear:right;"><@lib.advertisement id="arbo-full" /></div>
 
 <@lib.showPageTools RELATION />

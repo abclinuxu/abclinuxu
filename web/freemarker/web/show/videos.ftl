@@ -10,7 +10,11 @@
 
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <@lib.showMessages/>
+
+<h1>Videa</h1>
 
 <#list ITEMS.data as video>
     <#assign item=video.child, tmp=TOOL.groupByType(item.children, "Item"),

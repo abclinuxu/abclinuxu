@@ -8,6 +8,8 @@
 
 <@lib.showMessages/>
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Štítky</h1>
 
 <#if TAGS.thisPage.row == 0>

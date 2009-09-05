@@ -14,6 +14,8 @@
 
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Výkladový slovník</h1>
 
 <p>

@@ -1,6 +1,8 @@
 <#include "../header.ftl">
 <@lib.showMessages/>
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Administrativní požadavky</h1>
 
 <p>Tato stránka slouží pro zadávání <b>administrativních</b> požadavků

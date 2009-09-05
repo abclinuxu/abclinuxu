@@ -23,6 +23,8 @@
  <p class="note">${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER!)}</p>
 </#if>
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Seznam rubrik</h1>
 
 <ul>

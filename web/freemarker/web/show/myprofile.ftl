@@ -16,6 +16,8 @@
     </p>
 </#if>
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Nastavení účtu</h1>
 
 <p>
@@ -25,7 +27,7 @@
     stránce.
 </p>
 
-<table class="siroka">
+<table>
     <tr>
         <td align="right" valign="top">
             <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editBasic")}">změnit</a>

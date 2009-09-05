@@ -24,6 +24,8 @@
 
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <@lib.showMessages/>
 
 <h1>Štítek ${TAG.title}</h1>
@@ -37,7 +39,7 @@
             neregistrovaný uživatel
         </#if>
         <#if USER?? && USER.hasRole("tag admin")>
-            (${CREATOR.ip?default("Neznámá IP")})
+            (${CREATOR.ip!"Neznámá IP"})
         </#if>
     <#else>
         neznámý
@@ -45,7 +47,7 @@
 </p>
 
 <p>
-    <#assign PARENT = TOOL.findTag(TAG.parent)?default("UNDEFINED")>
+    <#assign PARENT = TOOL.findTag(TAG.parent)!"UNDEFINED">
     <#if (PARENT?string != "UNDEFINED")>
         <br>
         Nadřazený štítek: <a href="/stitky/${PARENT.id}">${PARENT.title}</a>
@@ -55,7 +57,7 @@
 <ul>
     <#list DOCUMENTS.data as relation>
         <li>
-            <a href="${relation.url?default("/show/"+relation.id)}">${TOOL.childName(relation)}</a>
+            <a href="${relation.url!("/show/"+relation.id)}">${TOOL.childName(relation)}</a>
         </li>
     </#list>
 </ul>

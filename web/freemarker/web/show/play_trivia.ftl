@@ -2,6 +2,8 @@
 
 <@lib.showMessages/>
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>${POSITION}. ${QUESTION}</h1>
 
 <form action="${RELATION.url}" method="POST">

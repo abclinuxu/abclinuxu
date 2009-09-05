@@ -1,6 +1,8 @@
 <#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1><@lib.showUser PROFILE/> - přehled aktivit uživatele</h1>
 
 <@lib.showMessages/>

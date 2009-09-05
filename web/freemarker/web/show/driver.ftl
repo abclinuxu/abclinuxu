@@ -6,7 +6,7 @@
         <ul>
             <#if PARAMS.revize??>
                 <li>
-                    <a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
+                    <a href="${RELATION.url!("/ovladace/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
                 </li>
             <#else>
             <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
@@ -28,6 +28,8 @@
 </#assign>
 
 <#include "../header.ftl">
+
+<@lib.advertisement id="arbo-sq" />
 
 <h1>${ITEM.title}</h1>
 
