@@ -42,6 +42,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.scheduler.VariableFetcher;
@@ -252,6 +253,7 @@ public class ViewSoftware implements AbcAction {
             parents.add(link);
         }
         env.put(ShowObject.VAR_PARENTS, parents);
+        env.put(Constants.VAR_ASSIGNED_TAGS, TagTool.getAssignedTags(item));
 
         env.put(Constants.VAR_RSS, FeedGenerator.getSoftwareFeedUrl());
         return FMTemplateSelector.select("ViewSoftware", "software", env, request);
