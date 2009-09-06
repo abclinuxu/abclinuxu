@@ -5,7 +5,7 @@
         <ul>
             <#if PARAMS.revize??>
                 <li>
-                    <a href="${RELATION.url!"/hardware/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
+                    <a href="${RELATION.url!("/hardware/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
                 </li>
             <#else>
             <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
