@@ -73,6 +73,7 @@ public class ShowSurvey implements AbcAction {
     public static final int SURVEY_PREFIX = 30000000;
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
@@ -81,7 +82,6 @@ public class ShowSurvey implements AbcAction {
         Item survey = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY_ID, Item.class, params, request);
         if (survey == null) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Anketa nebyla nalezena!", env, session);
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/");
             return null;
         }
@@ -89,7 +89,6 @@ public class ShowSurvey implements AbcAction {
         persistence.synchronize(survey);
         if (survey.getType() != Item.SURVEY) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Tento objekt není anketa!", env, session);
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/");
             return null;
         }
@@ -105,7 +104,6 @@ public class ShowSurvey implements AbcAction {
         if (screen == null) {
             log.error("Survey " + survey.getId() + " does not define screen " + nextScreen + " (called from " + currentScreen + ")!");
             ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale v anketě nastala chyba.", env, session);
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/");
             return null;
         }
@@ -142,17 +140,21 @@ public class ShowSurvey implements AbcAction {
             } catch (Exception e) {
                 log.error("Error in survey " + survey.getId(), e);
                 ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale v anketě nastala chyba.", env, session);
-                UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
                 urlUtils.redirect(response, "/");
                 return null;
             }
+        }
+
+        Element url = screen.element("url");
+        if (url != null) {
+            urlUtils.redirect(response, url.getText());
+            return null;
         }
 
         Element template = screen.element("template");
         if (template == null || template.getTextTrim().length() == 0) {
             log.error("Survey " + survey.getId() + " does not define template in screen " + nextScreen + "!");
             ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale v anketě nastala chyba.", env, session);
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/");
         }
 
