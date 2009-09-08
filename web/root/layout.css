@@ -1047,6 +1047,10 @@ p.documentHistory {
 	padding: 0 0 5px 5px;
 	float: right;
 }
+.s .arbo-sq {
+	float: none;
+	text-align: center;
+}
 
 .arbo-sky { clear: right; }
 
