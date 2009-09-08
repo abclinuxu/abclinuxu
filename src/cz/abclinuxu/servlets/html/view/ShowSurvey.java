@@ -147,7 +147,11 @@ public class ShowSurvey implements AbcAction {
 
         Element url = screen.element("url");
         if (url != null) {
-            urlUtils.redirect(response, url.getText());
+            String surl = url.getText();
+            if (surl.startsWith("/"))
+                urlUtils.redirect(response, url.getText());
+            else
+                response.sendRedirect(surl);
             return null;
         }
 
