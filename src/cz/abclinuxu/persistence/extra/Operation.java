@@ -29,6 +29,7 @@ public class Operation {
     public static final Operation EQUAL = new Operation("EQUAL");
     public static final Operation NOT_EQUAL = new Operation("NOT_EQUAL");
     public static final Operation LIKE = new Operation("LIKE");
+    public static final Operation NOT_LIKE = new Operation("NOT LIKE");
     public static final Operation IS_NULL = new Operation("IS NULL");
 
     private final String myName; // for debug only

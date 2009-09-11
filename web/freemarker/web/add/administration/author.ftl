@@ -35,19 +35,14 @@
         <tr>
             <td>Jméno:</td>
             <td>
-                <input type="text" id="addauthor-name" name="name" value="${(AUTHOR.name)!?html}" size="60"
-                       class="siroka" tabindex="1"/>
-
-                <div class="error">${ERRORS.name!}
-                <div>
+                <input type="text" id="addauthor-name" name="name" value="${(AUTHOR.name)!?html}" size="60" class="siroka" tabindex="1"/>
+                <div class="error">${ERRORS.name!}</div>
             </td>
         </tr>
         <tr>
             <td class="required">Příjmení:</td>
             <td>
-                <input type="text" id="addauthor-surname" name="surname" value="${(AUTHOR.surname)!?html}" size="60"
-                       class="siroka" tabindex="2"/>
-
+                <input type="text" id="addauthor-surname" name="surname" value="${(AUTHOR.surname)!?html}" size="60" class="siroka" tabindex="2"/>
                 <div class="error">${ERRORS.surname!}</div>
             </td>
         </tr>
@@ -55,8 +50,7 @@
             <td>Login:</td>
             <td style="white-space: nowrap">
                 <div id="findUser">
-                    <input type="text" id="addauthor-login" name="login" value="${(AUTHOR.login)!}" size="24"
-                           tabindex="3"/>&nbsp;       
+                    <input type="text" id="addauthor-login" name="login" value="${(AUTHOR.login)!}" size="24" tabindex="3"/>&nbsp;       
                 </div>
                 <div id="findUserDialog"></div>
                 <div class="error">${ERRORS.login!}</div>
@@ -66,7 +60,6 @@
             <td>Přezdívka:</td>
             <td>
                 <input type="text" name="nickname" value="${(AUTHOR.nickname)!?html}" size="24" tabindex="5"/>
-
                 <div class="error">${ERRORS.nickname!}</div>
             </td>
         </tr>
@@ -82,9 +75,7 @@
         <tr>
             <td>Rodné číslo:</td>
             <td>
-                <input type="text" name="birthNumber" value="${(AUTHOR.birthNumber)!}" size="60" class="siroka"
-                       tabindex="6"/>
-
+                <input type="text" name="birthNumber" value="${(AUTHOR.birthNumber)!}" size="60" class="siroka" tabindex="6"/>
                 <div class="error">${ERRORS.birthNumber!}</div>
             </td>
         </tr>
@@ -92,18 +83,14 @@
         <tr>
             <td>Číslo účtu:</td>
             <td>
-                <input type="text" name="accountNumber" value="${(AUTHOR.accountNumber)!}" size="60" class="siroka"
-                       tabindex="7"/>
-
+                <input type="text" name="accountNumber" value="${(AUTHOR.accountNumber)!}" size="60" class="siroka" tabindex="7"/>
                 <div class="error">${ERRORS.accountNumber!}</div>
             </td>
         </tr>
-
         <tr>
             <td>Email:</td>
             <td>
                 <input type="text" name="email" value="${(AUTHOR.email)!?html}" size="60" class="siroka" tabindex="8"/>
-
                 <div class="error">${ERRORS.email!}</div>
             </td>
         </tr>
@@ -111,7 +98,6 @@
             <td>Telefon:</td>
             <td>
                 <input type="text" name="phone" value="${(AUTHOR.phone)!?html}" size="60" class="siroka" tabindex="9"/>
-
                 <div class="error">${ERRORS.phone!}</div>
             </td>
         </tr>
@@ -119,7 +105,6 @@
             <td>Adresa:</td>
             <td>
                 <textarea name="address" class="siroka" rows="4" tabindex="10">${(AUTHOR.address)!}</textarea>
-
                 <div class="error">${ERRORS.address!}</div>
             </td>
         </tr>
@@ -127,22 +112,23 @@
         <#if EDIT_MODE?? && AUTHOR.photoUrl?? >
         <tr>
             <td>Současná fotografie:</td>
-            <td><img src="${(AUTHOR.photoUrl)!?html}"/>
+            <td>
+            	<img src="${(AUTHOR.photoUrl)!?html}"/>
                 <input type="submit" name="remove_photo" value="Odstraň foto" tabindex="12">
             </td>
         </tr>
         </#if>
         <tr>
             <td>Foto:</td>
-            <td><input type="file" name="photo" size="40" tabindex="11"/>
-
+            <td>
+            	<input type="file" name="photo" size="40" tabindex="11"/>
                 <div class="error">${ERRORS.photo!}</div>
             </td>
         </tr>
         <tr>
             <td>O autorovi:</td>
-            <td><textarea name="about" class="siroka" rows="4" tabindex="13">${(AUTHOR.about)!}</textarea>
-
+            <td>
+            	<textarea name="about" class="siroka" rows="4" tabindex="13">${(AUTHOR.about)!}</textarea>
                 <div class="error">${ERRORS.about!}</div>
             </td>
         </tr>

@@ -96,6 +96,7 @@ public class Field {
     public static final Field LOGIN = new Field(Id.LOGIN, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.USER});
     public static final Field COUNTER = new Field(Id.COUNTER, null, null);
+    public static final Field ISNULL = new Field(Id.ISNULL, null, null); 
 
     private final Id id;
     private Set<PersistenceMapping.Table> compatibility;
@@ -149,6 +150,7 @@ public class Field {
         DATE2,
         DAY,
         ID,
+        ISNULL,
         LOGIN,
         NUMERIC1,
         NUMERIC2,

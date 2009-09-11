@@ -177,6 +177,9 @@ public final class SQLTool implements Configurable {
 	public static final String GET_AUTHORS_WITH_ARTICLES_COUNT = "get.authors.with.articles.count";
 	public static final String COUNT_AUTHORS_WITH_ARTICLES_COUNT ="count.authors.with.articles.count";
     
+	public static final String GET_TOPICS = "get.topics";
+	public static final String COUNT_TOPICS = "count.topics";
+	
     public static final String MONITOR_INSERT_USER = "insert.monitor";
     public static final String MONITOR_REMOVE_USER = "remove.monitor";
     public static final String MONITOR_REMOVE_ALL = "remove.users.monitors";
@@ -2560,7 +2563,7 @@ public final class SQLTool implements Configurable {
      * Gets authors with additional information fetched, such as article count or last article date
      * @param qualifiers Narrowing qualifiers
      * @return List of arrays of object containing data
-     * @see BeanFetcher To transform it to according Author JavaBean
+     * @see BeanFetcher#fetchAuthorsFromObjects(List, cz.abclinuxu.utils.BeanFetcher.FetchType) To transform it to according Author JavaBean
      */
 	public List<Object[]> getAuthorsWithArticlesCount(Qualifier[] qualifiers) {
 		
@@ -2592,6 +2595,36 @@ public final class SQLTool implements Configurable {
 		StringBuilder sb = new StringBuilder(sql.get(COUNT_AUTHORS_WITH_ARTICLES_COUNT));
 		List params = new ArrayList();
 		appendQualifiers(sb, qualifiers, params, null, mapping);
+		return loadNumber(sb.toString(), params);
+	}
+	
+	/**
+	 * Retrieves topics available for authors
+	 * @param qualifiers Narrowing qualifiers
+	 * @return List of items containing data
+	 */
+	public List<Item> getTopics(Qualifier[] qualifiers) {
+		if (qualifiers == null)
+			qualifiers = Qualifier.ARRAY_TYPE;
+		StringBuilder sb = new StringBuilder(sql.get(GET_TOPICS));
+		List params = new ArrayList();
+		appendQualifiers(sb, qualifiers, params, null, null);
+		log.info(sb.toString());
+		return loadItems(sb.toString(), params);
+	}
+	
+	/**
+	 * Counts topics available for authors
+	 * @param qualifiers Narrowing qualifiers
+	 * @return Size of topics collection satisfying conditions
+	 */
+	public Integer countTopics(Qualifier[] qualifiers) {
+		if (qualifiers == null)
+			qualifiers = Qualifier.ARRAY_TYPE;
+		StringBuilder sb = new StringBuilder(sql.get(COUNT_TOPICS));
+		List params = new ArrayList();
+		appendQualifiers(sb, qualifiers, params, null, null);
+		log.info(sb.toString());
 		return loadNumber(sb.toString(), params);
 	}
 
@@ -2738,6 +2771,8 @@ public final class SQLTool implements Configurable {
         store(MONITOR_REMOVE_USER, prefs);
         store(MONITOR_REMOVE_ALL, prefs);
         store(MONITOR_FIND_BY_USER, prefs);
+        store(GET_TOPICS, prefs);
+        store(COUNT_TOPICS, prefs);
     }
 
     /**

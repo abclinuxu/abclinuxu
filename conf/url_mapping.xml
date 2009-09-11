@@ -336,6 +336,14 @@
             <pattern>^/skupiny/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditSubportal</action>
         </mapping>
+        <mapping priority="true">
+        	<pattern>^/sprava/redakce/namety/edit</pattern>
+        	<action>cz.abclinuxu.servlets.html.admin.edit.EditTopic</action>
+        </mapping>
+        <mapping priority="true">
+        	<pattern>^/sprava/redakce/namety</pattern>
+        	<action>cz.abclinuxu.servlets.html.admin.view.ShowTopic</action>
+        </mapping>
 		<mapping priority="true">
         	<pattern>^/sprava/redakce/autori/edit</pattern>
         	<action>cz.abclinuxu.servlets.html.admin.edit.EditAuthor</action>

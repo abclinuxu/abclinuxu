@@ -59,7 +59,7 @@ public class ImageTool {
 	 * @param <T> Enumeration representing image identification in object
 	 * @return {@code true} if stored successfully, {@code false} otherwise
 	 */
-	public static <T extends Enum<T> & AssignedImage> boolean storeImage(T imageId, FileItem image, ImageAssignable<T> object, ImageRestriction res, Map env, String errorKey) {
+	public static <T extends Enum<T> & AssignedImage> boolean storeImage(T imageId, FileItem image, ImageAssignable<T> object, ImageRestriction res, Map<?,?> env, String errorKey) {
 		if (image == null) {
 			ServletUtils.addError(errorKey, res.getEMsg(ImageRestriction.EMPTY), env, null);
 			return false;

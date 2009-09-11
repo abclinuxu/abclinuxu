@@ -1450,6 +1450,8 @@ public class VariableFetcher extends TimerTask implements Configurable {
     		// sort by name
     		Collections.sort(result);
     		freshCloudTags = result;
+    	} catch(IndexOutOfBoundsException e) {
+    		log.warn("Cloud tags: Tags are not cached yet, retrieval returned empty list");
     	} catch(Exception e) {
     		log.error("Selhalo nacitani tag cloud", e);
     	}

@@ -10,7 +10,7 @@
 
 <@lib.showMessages/>
 
-<h1>Smazání autora</h1>
+<h2>Smazání autora</h2>
 
 <#if UNDELETABLE??>
     <p>

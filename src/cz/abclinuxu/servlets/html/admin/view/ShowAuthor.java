@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
+import static cz.abclinuxu.utils.forms.FormFilter.Filter.*;
 /**
  * Responsible for showing one author or their listing
  *
@@ -119,8 +120,7 @@ public class ShowAuthor implements AbcAction {
         env.put(Constants.VAR_PARENTS, parents);
 
         // create filters
-        FormFilter filter = new FormFilter(params, FormFilter.AUTHORS_BY_NAME, FormFilter.AUTHORS_BY_SURNAME, FormFilter.AUTHORS_BY_CONTRACT,
-                FormFilter.AUTHORS_BY_ACTIVE, FormFilter.AUTHORS_BY_ARTICLES, FormFilter.AUTHORS_BY_RECENT);
+        FormFilter filter = new FormFilter(params, AUTHORS_BY_NAME, AUTHORS_BY_SURNAME, AUTHORS_BY_CONTRACT, AUTHORS_BY_ACTIVE, AUTHORS_BY_ARTICLES, AUTHORS_BY_RECENT);
 
         Paging found = null;
         int total = 0;
@@ -135,7 +135,7 @@ public class ShowAuthor implements AbcAction {
         Qualifier[] qualifiers = getQualifiers(filter, from, count);
         List<Object[]> items = sqlTool.getAuthorsWithArticlesCount(qualifiers);
         total = sqlTool.countAuthorWithArticlesCount(QualifierTool.removeOrderQualifiers(qualifiers));
-        found = new Paging(BeanFetcher.fetchAuthorsFromObjects(items, FetchType.EAGER), from, count, total, qualifiers);
+        found = new Paging(BeanFetcher.fetchAuthorsFromObjects(items, FetchType.PROCESS_NONATOMIC), from, count, total, qualifiers);
         // }
         env.put(VAR_FILTER, filter);
         env.put(VAR_FOUND, found);
@@ -172,7 +172,7 @@ public class ShowAuthor implements AbcAction {
             throw new InvalidDataException("Nepodařilo se najít rodičovskou relaci pro autora" + aId + "!");
         }
 
-        return BeanFetcher.fetchAuthorFromObjects(authorObjects.get(0), FetchType.EAGER);
+        return BeanFetcher.fetchAuthorFromObjects(authorObjects.get(0), FetchType.PROCESS_NONATOMIC);
     }
 
     private Qualifier[] getQualifiers(FormFilter filter, int from, int count) {

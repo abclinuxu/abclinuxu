@@ -4,7 +4,7 @@
 <preferences EXTERNAL_XML_VERSION="1.0">
     <root type="system">
         <map>
-            <entry key="location" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/systemPrefs.xml" />
+            <entry key="location" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/systemPrefs.xml"/>
         </map>
         <node name="cz">
             <map/>
@@ -39,8 +39,8 @@
                                     <entry key="maintainance.mode" value="false"/>
                                     <entry key="mail.blog.watch" value="digest@abclinuxu.cz"/>
                                     <entry key="mailing.list.admini" value="admini@abclinuxu.cz"/>
-                                    <entry key="warn.old.diz.created.days" value="30" />
-                                    <entry key="warn.old.diz.commented.days" value="3" />
+                                    <entry key="warn.old.diz.created.days" value="30"/>
+                                    <entry key="warn.old.diz.commented.days" value="3"/>
                                     <entry key="login.use.https" value="@LOGIN.USE.HTTPS@"/>
                                     <entry key="index.complete.articles" value="6"/>
                                 </map>
@@ -56,7 +56,7 @@
                         </node>
                         <node name="AbcQueryParser">
                             <map>
-                                <entry key="use.multifieldqueryparser" value="true" />
+                                <entry key="use.multifieldqueryparser" value="true"/>
                                 <entry key="boost.title" value="1.0"/>
                                 <entry key="boost.content" value="1.0"/>
                             </map>
@@ -65,22 +65,22 @@
                             <map>
                                 <entry key="path" value="@DEPLOY_ABCLINUXU@/WEB-INF/index/"/>
                                 <entry key="last.run.file" value="last_run.txt"/>
-                                <entry key="indexing.page.size" value="50" />
-                                <entry key="merge.factor" value="100" />
+                                <entry key="indexing.page.size" value="50"/>
+                                <entry key="merge.factor" value="100"/>
                                 <!--entry key="max.merge.docs" value="10000" /-->
                                 <!--entry key="max.field.length" value="10000" /-->
-                                <entry key="boost.article" value="1.5" />
+                                <entry key="boost.article" value="1.5"/>
                                 <entry key="boost.bazaar" value="1.0"/>
                                 <entry key="boost.blog" value="0.5"/>
                                 <entry key="boost.dictionary" value="1.0"/>
                                 <entry key="boost.personalities" value="1.0"/>
-                                <entry key="boost.discussion" value="0.8" />
-                                <entry key="boost.document" value="1.9" />
-                                <entry key="boost.driver" value="1.0" />
-                                <entry key="boost.faq" value="1.5" />
+                                <entry key="boost.discussion" value="0.8"/>
+                                <entry key="boost.document" value="1.9"/>
+                                <entry key="boost.driver" value="1.0"/>
+                                <entry key="boost.faq" value="1.5"/>
                                 <entry key="boost.hardware" value="1.5"/>
                                 <entry key="boost.news" value="1.0"/>
-                                <entry key="boost.poll" value="0.5" />
+                                <entry key="boost.poll" value="0.5"/>
                                 <entry key="boost.question" value="1.3"/>
                                 <entry key="boost.section" value="1.0"/>
                                 <entry key="boost.software" value="1.9"/>
@@ -110,17 +110,17 @@
                                 <entry key="RE_REMOVE_PARAGRAPHS" value="(&lt;p&gt;|&lt;/p&gt;)"/>
                                 <entry key="RE_VLNKA" value="((^|\s)\w)\s+(\S+)"/>
                                 <entry key="REPLACEMENT_VLNKA" value="$1&amp;nbsp;$3"/>
-                                <entry key="RE_AMPERSAND" value="&amp;(?!#?[a-zA-Z0-9]+;)" />
-                                <entry key="RE_ARTICLE_OBJECT" value='&lt;inline type="([^"]+)" id="(\d+)"&gt;' />
-                                <entry key="story.reserve.percents" value="25" />
-                                <entry key="news.letter.limit.soft" value="375" />
-                                <entry key="news.letter.limit.hard" value="475" />
+                                <entry key="RE_AMPERSAND" value="&amp;(?!#?[a-zA-Z0-9]+;)"/>
+                                <entry key="RE_ARTICLE_OBJECT" value="&lt;inline type=&quot;([^&quot;]+)&quot; id=&quot;(\d+)&quot;&gt;"/>
+                                <entry key="story.reserve.percents" value="25"/>
+                                <entry key="news.letter.limit.soft" value="375"/>
+                                <entry key="news.letter.limit.hard" value="475"/>
                                 <entry key="missing.user.name" value="Neexistující uživatel"/>
                             </map>
                             <node name="css.styles">
                                 <map>
-                                    <entry key="" value="Standardní světlý" />
-                                    <entry key="/styles-dark.css" value="Oficiální tmavý" />
+                                    <entry key="" value="Standardní světlý"/>
+                                    <entry key="/styles-dark.css" value="Oficiální tmavý"/>
                                 </map>
                             </node>
                         </node>
@@ -306,19 +306,18 @@
                     </node>
                     <node name="DateTool">
                         <map>
-                            <entry key="today" value="dnes" />
-                            <entry key="yesterday" value="včera" />
+                            <entry key="today" value="dnes"/>
+                            <entry key="yesterday" value="včera"/>
                         </map>
                     </node>
                     <node name="TagTool">
                         <map>
                             <entry key="regexp.invalid.title" value="[^a-z0-9 +_.!/=\-]"/>
-                            <entry key="detector.skipped.tags" value="vi,kde" />
+                            <entry key="detector.skipped.tags" value="vi,kde"/>
                         </map>
                     </node>
                     <node name="Advertisement">
-                        <map>
-                        </map>
+                        <map/>
                         <node name="standard.regexps">
                             <map>
                                 <entry key="" value="všude"/>
@@ -366,12 +365,15 @@
                     <node name="Nursery">
                         <map>
                             <entry key="cache.class" value="cz.abclinuxu.persistence.cache.WhirlyChildrenCache"/>
-
                             <entry key="ignore.section" value="A,B,C,D"/>
-                            <entry key="ignore.section.A" value="452"/><!-- zpravicky -->
-                            <entry key="ignore.section.B" value="569"/><!-- vykladovy slovnik -->
-                            <entry key="ignore.section.C" value="240"/><!-- ankety -->
-                            <entry key="ignore.section.D" value="589"/><!-- blogy -->
+                            <entry key="ignore.section.A" value="452"/>
+                            <!-- zpravicky -->
+                            <entry key="ignore.section.B" value="569"/>
+                            <!-- vykladovy slovnik -->
+                            <entry key="ignore.section.C" value="240"/>
+                            <!-- ankety -->
+                            <entry key="ignore.section.D" value="589"/>
+                            <!-- blogy -->
                         </map>
                     </node>
                     <node name="impl">
@@ -385,11 +387,11 @@
                     <node name="SQLTool">
                         <map>
                             <entry key="relations.item.by.type" value="select R.cislo from polozka P, relace R, spolecne S where P.typ=? and P.cislo=R.potomek and typ_potomka='P' and S.typ='P' and S.cislo=R.potomek"/>
-			                <entry key="relations.item.by.type.with.filters" value="select distinct R.cislo from polozka P, relace R, vlastnost V, spolecne S where P.typ=? and P.cislo=R.potomek and R.typ_potomka='P' and S.cislo=R.potomek and S.typ='P'"/>
+                            <entry key="relations.item.by.type.with.filters" value="select distinct R.cislo from polozka P, relace R, vlastnost V, spolecne S where P.typ=? and P.cislo=R.potomek and R.typ_potomka='P' and S.cislo=R.potomek and S.typ='P'"/>
                             <entry key="relations.categories" value="select R.cislo from kategorie K, relace R, spolecne S where K.cislo=R.potomek and typ_potomka='K' and S.cislo=R.potomek and S.typ='K'"/>
                             <entry key="relations.discussion" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek, spolecne S where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3 and S.cislo=R.potomek and S.typ='P' and P.podtyp = 'question'"/>
                             <entry key="relations.discussion.in.section" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek, spolecne S where R.predchozi=? and P.typ=3 and S.cislo=R.potomek and S.typ='P'"/>
-                            <entry key="relations.discussion.last.seen.by.user" value="select R.cislo from relace R, posledni_komentar K, spolecne S where R.typ_potomka='P' and R.potomek=K.diskuse and S.typ='P' and S.cislo=K.diskuse and K.kdo=?" />
+                            <entry key="relations.discussion.last.seen.by.user" value="select R.cislo from relace R, posledni_komentar K, spolecne S where R.typ_potomka='P' and R.potomek=K.diskuse and S.typ='P' and S.cislo=K.diskuse and K.kdo=?"/>
                             <entry key="relations.article" value="select R.cislo from polozka P, relace R, kategorie K, spolecne S where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&lt;now()"/>
                             <entry key="relations.article.on.index" value="select R.cislo from polozka P, relace R, kategorie K, spolecne S where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and ((P.podtyp!='NOTONINDEX' and P.podtyp!='SUBPORTAL') or P.podtyp is null) and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&lt;now()"/>
                             <entry key="relations.article.within.period" value="select R.cislo from polozka P, relace R, kategorie K, spolecne S where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&gt;? and S.vytvoreno&lt;?"/>
@@ -400,46 +402,46 @@
                             <entry key="relations.question.by.user" value="select R.cislo from relace R, polozka P, spolecne S where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and P.typ=3 and S.typ='P' and R.potomek=S.cislo and S.pridal=?"/>
                             <entry key="relations.comment.by.user" value="select R.predchozi,max(vytvoreno) from relace R, komentar K where R.typ_potomka='Z' and R.potomek=K.zaznam and K.autor=? group by K.zaznam order by 2"/>
                             <entry key="relations.wiki.by.user" value="select distinct R.cislo from verze V, relace R, spolecne S where kdo=? and R.potomek=V.cislo and R.typ_potomka=V.typ and S.cislo=R.potomek and S.typ=R.typ_potomka"/>
-                            <entry key="relations.with.tag" value="select R.cislo from relace R, stitkovani T, spolecne S, polozka P where R.typ_potomka=T.typ and R.potomek=T.cislo and  R.typ_potomka=S.typ and R.potomek=S.cislo and P.cislo = S.cislo and T.stitek=? and R.predchozi&lt;&gt;8082" />
+                            <entry key="relations.with.tag" value="select R.cislo from relace R, stitkovani T, spolecne S, polozka P where R.typ_potomka=T.typ and R.potomek=T.cislo and  R.typ_potomka=S.typ and R.potomek=S.cislo and P.cislo = S.cislo and T.stitek=? and R.predchozi&lt;&gt;8082"/>
                             <entry key="count.relations.wiki.by.user" value="select count(distinct R.cislo) from verze V, relace R where kdo=? and R.potomek=V.cislo and R.typ_potomka=V.typ"/>
                             <entry key="count.relations.comment.by.user" value="select count(distinct R.predchozi) from relace R, komentar K where R.typ_predka='P' and R.typ_potomka='Z' and R.potomek=K.zaznam and K.autor=?"/>
                             <entry key="relations.section.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek), spolecne S where R.typ_potomka='K' and K.typ=? and S.typ='K' and S.cislo=R.potomek"/>
                             <entry key="relations.standalone.polls" value="select R.cislo from relace R, anketa2 A where typ_potomka='A' and potomek=A.cislo and predchozi=250"/>
                             <entry key="relation.by.url" value="select cislo from relace where url=?"/>
                             <entry key="max.user" value="select max(cislo) from uzivatel"/>
-                            <entry key="user.by.login" value="select cislo from uzivatel where login=?" />
+                            <entry key="user.by.login" value="select cislo from uzivatel where login=?"/>
                             <entry key="insert.last.comment" value="replace into posledni_komentar (kdo,diskuse,posledni,kdy) values(?,?,?,NULL);"/>
-                            <entry key="get.last.comment" value="select posledni from posledni_komentar where kdo=? and diskuse=?" />
-                            <entry key="get.last.comments" value="select diskuse, posledni, kdy from posledni_komentar where kdo=? order by kdy desc limit ?,?" />
-                            <entry key="delete.old.comments" value="delete from posledni_komentar where kdo=? and kdy&lt;=?" />
+                            <entry key="get.last.comment" value="select posledni from posledni_komentar where kdo=? and diskuse=?"/>
+                            <entry key="get.last.comments" value="select diskuse, posledni, kdy from posledni_komentar where kdo=? order by kdy desc limit ?,?"/>
+                            <entry key="delete.old.comments" value="delete from posledni_komentar where kdo=? and kdy&lt;=?"/>
                             <entry key="items.with.type" value="select cislo from polozka where typ=?"/>
                             <entry key="records.with.type" value="select cislo from zaznam where typ=?"/>
                             <entry key="count.articles.by.author" value="select count(P.cislo) from polozka P, vlastnost V, spolecne S where P.typ=2 and P.cislo=V.predek and V.typ_predka='P' and V.typ='author' and V.hodnota=? and S.typ='P' and P.cislo=S.cislo and S.vytvoreno&lt;now()"/>
-                            <entry key="count.articles.by.authors" value="select V.hodnota, count(P.cislo) from polozka P, vlastnost V where P.typ=2 and P.cislo=V.predek and V.typ_predka='P' and V.typ='author' group by (V.hodnota)" />
-                            <entry key="insert.user.action" value="insert into akce (kdo,relace,typ,kdy) values(?,?,?,NULL)" />
-                            <entry key="get.user.action" value="select kdy from akce where kdo=? and relace=? and typ=?" />
-                            <entry key="remove.user.action" value="delete from akce where kdo=? and relace=? and typ=?" />
-                            <entry key="items.count.in.section" value="select R1.potomek, count(R2.cislo) from relace R1, relace R2 where R1.potomek in ? and R1.typ_potomka='K' and R1.cislo=R2.predchozi and R2.typ_potomka='P' group by R1.potomek" />
-                            <entry key="item.last.and.count.in.section" value="select R1.potomek, count(R2.cislo), (select R3.cislo from relace R3, polozka P, spolecne S where R3.typ_predka='K' and R3.predek=R1.potomek and R3.typ_potomka='P' and R3.potomek=P.cislo and S.typ='P' and S.cislo=P.cislo order by S.zmeneno desc limit 1) from relace R1, relace R2 where R1.potomek in ? and R1.typ_potomka='K' and R1.cislo=R2.predchozi and R2.typ_potomka='P' group by R1.potomek" />
-                            <entry key="insert.search.query" value="insert into hledano (retezec,pocet) values(?,1)" />
-                            <entry key="update.search.query" value="update hledano set pocet=pocet+1 where retezec=?" />
-                            <entry key="get.search.query.for" value="select retezec,pocet from hledano where retezec like concat(?,'%') order by pocet desc" />
-                            <entry key="insert.statistika" value="insert into statistika (den,typ,pocet) values(curdate(),?,?)" />
-                            <entry key="update.statistika" value="update statistika set pocet=pocet+? where typ=? and den=curdate()" />
+                            <entry key="count.articles.by.authors" value="select V.hodnota, count(P.cislo) from polozka P, vlastnost V where P.typ=2 and P.cislo=V.predek and V.typ_predka='P' and V.typ='author' group by (V.hodnota)"/>
+                            <entry key="insert.user.action" value="insert into akce (kdo,relace,typ,kdy) values(?,?,?,NULL)"/>
+                            <entry key="get.user.action" value="select kdy from akce where kdo=? and relace=? and typ=?"/>
+                            <entry key="remove.user.action" value="delete from akce where kdo=? and relace=? and typ=?"/>
+                            <entry key="items.count.in.section" value="select R1.potomek, count(R2.cislo) from relace R1, relace R2 where R1.potomek in ? and R1.typ_potomka='K' and R1.cislo=R2.predchozi and R2.typ_potomka='P' group by R1.potomek"/>
+                            <entry key="item.last.and.count.in.section" value="select R1.potomek, count(R2.cislo), (select R3.cislo from relace R3, polozka P, spolecne S where R3.typ_predka='K' and R3.predek=R1.potomek and R3.typ_potomka='P' and R3.potomek=P.cislo and S.typ='P' and S.cislo=P.cislo order by S.zmeneno desc limit 1) from relace R1, relace R2 where R1.potomek in ? and R1.typ_potomka='K' and R1.cislo=R2.predchozi and R2.typ_potomka='P' group by R1.potomek"/>
+                            <entry key="insert.search.query" value="insert into hledano (retezec,pocet) values(?,1)"/>
+                            <entry key="update.search.query" value="update hledano set pocet=pocet+1 where retezec=?"/>
+                            <entry key="get.search.query.for" value="select retezec,pocet from hledano where retezec like concat(?,'%') order by pocet desc"/>
+                            <entry key="insert.statistika" value="insert into statistika (den,typ,pocet) values(curdate(),?,?)"/>
+                            <entry key="update.statistika" value="update statistika set pocet=pocet+? where typ=? and den=curdate()"/>
                             <entry key="get.statistika" value="select den,typ,pocet from statistika where "/>
                             <entry key="get.statistika.by.month" value="select typ,sum(pocet),date_format(den,&quot;%Y-%m&quot;) from statistika group by typ,3 order by 3 asc"/>
-                            <entry key="insert.stara_adresa" value="insert into stara_adresa (puvodni,rid,nova) values(?,?,?)" />
-                            <entry key="select.stara.adresa" value="select rid,nova from stara_adresa where puvodni=?" />
-                            <entry key="get.property.values" value="select distinct hodnota from vlastnost where typ=?" />
+                            <entry key="insert.stara_adresa" value="insert into stara_adresa (puvodni,rid,nova) values(?,?,?)"/>
+                            <entry key="select.stara.adresa" value="select rid,nova from stara_adresa where puvodni=?"/>
+                            <entry key="get.property.values" value="select distinct hodnota from vlastnost where typ=?"/>
                             <entry key="delete.property" value="delete from vlastnost where typ_predka=? and predek=? and typ=?"/>
                             <entry key="relations.royalty" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=9 and R.typ_predka='P' and R.predek=K.cislo and K.typ=2"/>
-                            <entry key="users.count.forum.comments" value="select K.autor, count(distinct K.zaznam) from komentar K, relace R1, relace R2, kategorie F where R1.typ_potomka='Z' and R1.potomek=K.zaznam  and R1.predchozi=R2.cislo and R2.typ_predka='K' and  R2.predek=F.cislo and F.typ=2 group by K.autor" />
-                            <entry key="users.count.articles" value="select P2.numeric1, count(P.cislo) from polozka P, vlastnost V1, relace R, polozka P2 where P.typ=2 and V1.predek=P.cislo and V1.typ='author' and V1.hodnota=R.cislo and P2.cislo = R.potomek group by P2.numeric1" />
-                            <entry key="users.count.wiki.records" value="select kdo,count(distinct cislo,typ) from verze group by kdo" />
-                            <entry key="users.count.news" value="select pridal,count(*) from polozka P, spolecne S where P.typ=7 and S.typ='P' and S.cislo=P.cislo group by S.pridal" />
-                            <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;%&lt;weekly_summary>yes%'"/>
+                            <entry key="users.count.forum.comments" value="select K.autor, count(distinct K.zaznam) from komentar K, relace R1, relace R2, kategorie F where R1.typ_potomka='Z' and R1.potomek=K.zaznam  and R1.predchozi=R2.cislo and R2.typ_predka='K' and  R2.predek=F.cislo and F.typ=2 group by K.autor"/>
+                            <entry key="users.count.articles" value="select P2.numeric1, count(P.cislo) from polozka P, vlastnost V1, relace R, polozka P2 where P.typ=2 and V1.predek=P.cislo and V1.typ='author' and V1.hodnota=R.cislo and P2.cislo = R.potomek group by P2.numeric1"/>
+                            <entry key="users.count.wiki.records" value="select kdo,count(distinct cislo,typ) from verze group by kdo"/>
+                            <entry key="users.count.news" value="select pridal,count(*) from polozka P, spolecne S where P.typ=7 and S.typ='P' and S.cislo=P.cislo group by S.pridal"/>
+                            <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication&gt;&lt;email valid=&quot;yes&quot;%&lt;weekly_summary&gt;yes%'"/>
                             <entry key="users.with.forum.by.email" value="select cislo from uzivatel where data like '%&lt;email valid=&quot;yes&quot;%&lt;forum&gt;yes%&lt;/email%'"/>
-                            <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'"/>
+                            <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles&gt;%'"/>
                             <entry key="users.with.login" value="select cislo from uzivatel where login = ?"/>
                             <entry key="users.with.nick" value="select cislo from uzivatel where prezdivka = ?"/>
                             <entry key="users.in.group" value="select cislo from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%')"/>
@@ -457,25 +459,19 @@
                             <entry key="tag.get.creator" value="select ip,autor from stitky_log where stitek=? and akce='add' order by kdy desc limit 1"/>
                             <entry key="most.commented.polls" value="select RP.cislo, count(*) from relace RZ, zaznam Z, komentar K, relace RP, anketa2 PP, relace RD, polozka PD where RP.potomek = PP.cislo and RD.potomek = PD.cislo and RD.predchozi = RP.cislo and RP.predchozi=250 and PD.typ=3 and RD.typ_potomka = 'P' and RP.typ_potomka = 'A' and RZ.predchozi = RD.cislo and RZ.typ_potomka='Z' and RZ.potomek = Z.cislo and Z.typ=4 and K.zaznam = Z.cislo group by RZ.cislo order by 2 desc"/>
                             <entry key="most.voted.polls" value="select RP.cislo, P.hlasu from relace RP, anketa2 P where RP.predchozi=250 and RP.typ_potomka='A' and RP.potomek = P.cislo order by 2 desc"/>
-                            <entry key="most.commented.relations"
-                                   value="select RA.cislo, count(*) from relace RZ, zaznam Z, komentar K, relace RA, polozka PA, relace RD, polozka PD where RA.potomek = PA.cislo and RD.potomek = PD.cislo and RD.predchozi = RA.cislo and PA.typ=? and PD.typ=3 and RD.typ_potomka = 'P' and RA.typ_potomka = 'P' and RZ.predchozi = RD.cislo and RZ.typ_potomka='Z' and RZ.potomek = Z.cislo and Z.typ=4 and K.zaznam = Z.cislo group by RZ.cislo order by 2 desc"/>
-                            <entry key="most.commented.recent.relations"
-                                   value="select RA.cislo, count(*) from relace RZ, zaznam Z, komentar K, relace RA, polozka PA, relace RD, polozka PD, spolecne S where RA.potomek = PA.cislo and RD.potomek = PD.cislo and RD.predchozi = RA.cislo and PA.typ=? and PD.typ=3 and RD.typ_potomka = 'P' and RA.typ_potomka = 'P' and RZ.predchozi = RD.cislo and RZ.typ_potomka='Z' and RZ.potomek = Z.cislo and Z.typ=4 and K.zaznam = Z.cislo and S.typ = 'P' and S.cislo = RA.potomek and S.vytvoreno > ? group by RZ.cislo order by 2 desc"/>
-                            <entry key="most.counted.relations"
-                                   value="select R.cislo, C.soucet from relace R, citac C, polozka P where R.potomek=C.cislo and R.typ_potomka='P' and R.potomek=P.cislo and C.druh=? and P.typ=? order by 2 desc"/>
-                            <entry key="most.counted.recent.relations"
-                                   value="select R.cislo, C.soucet from relace R, citac C, spolecne S, polozka P where R.potomek=C.cislo and R.typ_potomka='P' and R.potomek=S.cislo and R.potomek=P.cislo and C.druh=? and S.typ='P' and P.typ=? and S.vytvoreno > ? order by 2 desc"/>
-                            <entry key="most.having.property.relations"
-                                   value="select R.cislo, count(*) from relace R, polozka P, vlastnost V where V.typ=? and R.typ_potomka='P' and R.potomek=P.cislo and P.typ=? and V.typ_predka='P' and R.potomek=V.predek group by R.potomek order by 2 desc"/>
-                            <entry key="most.having.property.recent.relations"
-                                   value="select R.cislo, count(*) from relace R, polozka P, spolecne S, vlastnost V where V.typ=? and R.typ_potomka='P' and R.potomek=P.cislo and P.typ=? and S.typ='P' and P.cislo=S.cislo and S.vytvoreno>? and R.potomek=V.predek group by R.potomek order by 2 desc"/>
+                            <entry key="most.commented.relations" value="select RA.cislo, count(*) from relace RZ, zaznam Z, komentar K, relace RA, polozka PA, relace RD, polozka PD where RA.potomek = PA.cislo and RD.potomek = PD.cislo and RD.predchozi = RA.cislo and PA.typ=? and PD.typ=3 and RD.typ_potomka = 'P' and RA.typ_potomka = 'P' and RZ.predchozi = RD.cislo and RZ.typ_potomka='Z' and RZ.potomek = Z.cislo and Z.typ=4 and K.zaznam = Z.cislo group by RZ.cislo order by 2 desc"/>
+                            <entry key="most.commented.recent.relations" value="select RA.cislo, count(*) from relace RZ, zaznam Z, komentar K, relace RA, polozka PA, relace RD, polozka PD, spolecne S where RA.potomek = PA.cislo and RD.potomek = PD.cislo and RD.predchozi = RA.cislo and PA.typ=? and PD.typ=3 and RD.typ_potomka = 'P' and RA.typ_potomka = 'P' and RZ.predchozi = RD.cislo and RZ.typ_potomka='Z' and RZ.potomek = Z.cislo and Z.typ=4 and K.zaznam = Z.cislo and S.typ = 'P' and S.cislo = RA.potomek and S.vytvoreno &gt; ? group by RZ.cislo order by 2 desc"/>
+                            <entry key="most.counted.relations" value="select R.cislo, C.soucet from relace R, citac C, polozka P where R.potomek=C.cislo and R.typ_potomka='P' and R.potomek=P.cislo and C.druh=? and P.typ=? order by 2 desc"/>
+                            <entry key="most.counted.recent.relations" value="select R.cislo, C.soucet from relace R, citac C, spolecne S, polozka P where R.potomek=C.cislo and R.typ_potomka='P' and R.potomek=S.cislo and R.potomek=P.cislo and C.druh=? and S.typ='P' and P.typ=? and S.vytvoreno &gt; ? order by 2 desc"/>
+                            <entry key="most.having.property.relations" value="select R.cislo, count(*) from relace R, polozka P, vlastnost V where V.typ=? and R.typ_potomka='P' and R.potomek=P.cislo and P.typ=? and V.typ_predka='P' and R.potomek=V.predek group by R.potomek order by 2 desc"/>
+                            <entry key="most.having.property.recent.relations" value="select R.cislo, count(*) from relace R, polozka P, spolecne S, vlastnost V where V.typ=? and R.typ_potomka='P' and R.potomek=P.cislo and P.typ=? and S.typ='P' and P.cislo=S.cislo and S.vytvoreno&gt;? and R.potomek=V.predek group by R.potomek order by 2 desc"/>
                             <entry key="highest.score.users" value="select U.cislo, cast(V.hodnota as unsigned) from uzivatel U, vlastnost V where V.predek=U.cislo and V.typ_predka='U' and V.typ='score' order by 2 desc"/>
                             <entry key="subportal.count.articles" value="select RS.cislo, count(*) from relace RS, kategorie K, polozka P, relace RA, relace RAS where RS.typ_potomka='K' and RS.potomek=K.cislo and K.typ=7 and P.typ=2 and RA.typ_potomka='P' and RA.potomek=P.cislo and RA.predchozi=RAS.cislo and RAS.predchozi=RS.cislo group by RS.cislo"/>
                             <entry key="subportal.count.events" value="select RS.cislo, count(*) from relace RS, kategorie K, polozka P, relace RA, relace RAS where RS.typ_potomka='K' and RS.potomek=K.cislo and K.typ=7 and P.typ=26 and RA.typ_potomka='P' and RA.potomek=P.cislo and RA.predchozi=RAS.cislo and RAS.predchozi=RS.cislo group by RS.cislo"/>
                             <entry key="subportal.count.forum.questions" value="select RS.cislo, count(*) from relace RS, kategorie K, relace RF, relace RQ, polozka P where RS.typ_potomka='K' and RS.potomek=K.cislo and K.typ=7 and RF.predchozi=RS.cislo and RQ.predchozi=RF.cislo and RQ.typ_potomka='P' and RQ.potomek=P.cislo and P.podtyp='question' group by RS.cislo"/>
                             <entry key="subportals.ordered.by.score" value="select R.cislo from relace R, kategorie K left join vlastnost V on K.cislo=V.predek and V.typ='score' and V.typ_predka='K' where R.typ_potomka='K' and R.potomek=K.cislo and K.typ=7 order by cast(hodnota as unsigned)"/>
-                            <entry key="subportals.ordered.by.member.count" value="select R.cislo,count(*) from relace R, kategorie K, vlastnost V where R.typ_potomka='K' and R.potomek=K.cislo and K.typ=7 and V.predek=K.cislo and V.typ_predka='K' and V.typ='member' group by V.predek order by count(*)" />
-                            <entry key="find.subportal.membership" value="select R.cislo from vlastnost V, kategorie K, relace R where K.cislo=V.predek and V.typ_predka='K' and V.typ='member' and R.typ_potomka='K' and R.potomek=K.cislo and K.typ=7 and V.hodnota = ?" />
+                            <entry key="subportals.ordered.by.member.count" value="select R.cislo,count(*) from relace R, kategorie K, vlastnost V where R.typ_potomka='K' and R.potomek=K.cislo and K.typ=7 and V.predek=K.cislo and V.typ_predka='K' and V.typ='member' group by V.predek order by count(*)"/>
+                            <entry key="find.subportal.membership" value="select R.cislo from vlastnost V, kategorie K, relace R where K.cislo=V.predek and V.typ_predka='K' and V.typ='member' and R.typ_potomka='K' and R.potomek=K.cislo and K.typ=7 and V.hodnota = ?"/>
                             <entry key="valid.servers" value="select cislo from server where rss is not null"/>
                             <entry key="server.relations.in.category" value="select R.cislo from relace R where R.typ_potomka='S' and R.predek = ?"/>
                             <entry key="find.hp.subportal.articles" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and P.podtyp='SUBPORTAL' and not exists (select * from vlastnost where predek=P.cislo and typ_predka='P' and typ='banned_article')"/>
@@ -484,10 +480,12 @@
                             <entry key="insert.monitor" value="INSERT INTO monitor (typ,cislo,uzivatel) VALUES (?,?,?)"/>
                             <entry key="remove.monitor" value="DELETE FROM monitor WHERE typ=? AND cislo=? AND uzivatel=?"/>
                             <entry key="remove.users.monitors" value="DELETE FROM monitor WHERE uzivatel=?"/>
-                            <entry key="get.monitors" value="SELECT uzivatel FROM monitor WHERE typ=? AND cislo=?" />
-                            <entry key="find.users.monitors" value="SELECT R.cislo FROM monitor M,relace R, spolecne S WHERE R.typ_potomka=M.typ AND R.potomek=M.cislo AND M.uzivatel=? and R.typ_potomka=S.typ and R.potomek=S.cislo" />
-			    			<entry key="get.authors.with.articles.count" value="select P.cislo, P.numeric1, P.numeric2, P.string1, P.string2, P.data, coalesce(counter,0) as counter, kdy, S.pridal, S.skupina, S.prava from spolecne S, polozka P left join (select R1.potomek as autor, count(P1.cislo) as counter, max(S1.vytvoreno) as kdy from polozka P1, relace R1, vlastnost V1, spolecne S1 where P1.typ=2 and P1.cislo=V1.predek and V1.typ_predka='P' and V1.typ='author' and R1.typ_potomka='P' and V1.hodnota=R1.cislo and S1.typ='P' and P1.cislo=S1.cislo and S1.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19 and S.typ='P' and S.cislo=P.cislo" />
-                            <entry key="count.authors.with.articles.count" value="select count(*) from polozka P left join (select R1.potomek as autor, count(P1.cislo) as counter, max(S1.vytvoreno) as kdy from polozka P1, relace R1, vlastnost V1, spolecne S1 where P1.typ=2 and P1.cislo=V1.predek and V1.typ_predka='P' and V1.typ='author' and R1.typ_potomka='P' and V1.hodnota=R1.cislo and S1.typ='P' and P1.cislo=S1.cislo and S1.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19" />
+                            <entry key="get.monitors" value="SELECT uzivatel FROM monitor WHERE typ=? AND cislo=?"/>
+                            <entry key="find.users.monitors" value="SELECT R.cislo FROM monitor M,relace R, spolecne S WHERE R.typ_potomka=M.typ AND R.potomek=M.cislo AND M.uzivatel=? and R.typ_potomka=S.typ and R.potomek=S.cislo"/>
+                            <entry key="get.authors.with.articles.count" value="select P.cislo, P.numeric1, P.numeric2, P.string1, P.string2, P.data, coalesce(counter,0) as counter, kdy, S.pridal, S.skupina, S.prava from spolecne S, polozka P left join (select R1.potomek as autor, count(P1.cislo) as counter, max(S1.vytvoreno) as kdy from polozka P1, relace R1, vlastnost V1, spolecne S1 where P1.typ=2 and P1.cislo=V1.predek and V1.typ_predka='P' and V1.typ='author' and R1.typ_potomka='P' and V1.hodnota=R1.cislo and S1.typ='P' and P1.cislo=S1.cislo and S1.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19 and S.typ='P' and S.cislo=P.cislo"/>
+                            <entry key="count.authors.with.articles.count" value="select count(*) from polozka P left join (select R1.potomek as autor, count(P1.cislo) as counter, max(S1.vytvoreno) as kdy from polozka P1, relace R1, vlastnost V1, spolecne S1 where P1.typ=2 and P1.cislo=V1.predek and V1.typ_predka='P' and V1.typ='author' and R1.typ_potomka='P' and V1.hodnota=R1.cislo and S1.typ='P' and P1.cislo=S1.cislo and S1.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19"/>
+                            <entry key="get.topics" value="select *, date1 IS NULL as isnull from polozka where typ=31 and (numeric1 &lt;&gt; 1 or numeric1 is null)" />
+                            <entry key="count.topics" value="select count(*) from polozka where typ=31 and (numeric1 &lt;&gt; 1 or numeric1 is null)" />
                         </map>
                     </node>
                     <node name="versioning">
@@ -512,10 +510,7 @@
                         <node name="JobOfferManager">
                             <map>
                                 <entry key="jdbc.url" value="jdbc:mysql://@DB_HOST@/@PRACE_DB_SCHEMA@?user=@PRACE_DB_USER@&amp;password=@PRACE_DB_PASSWORD@&amp;useUnicode=true"/>
-                                <entry key="sql.offers" value="select O.id,O.title,O.last_modify_date,O.it,O.linux,C.name as category,R.name as region,F.name as firma,T.name as typ
-                                from hr_offer as O, hr_category as C, hr_region as R, hr_company as F, hr_relation as T
-                                where C.id=O.idcategory and R.id=O.idregion and F.id=O.idcompany and T.id=O.idrelation
-                                and (it=1 or linux=1) order by last_modify_date desc limit 60"/>
+                                <entry key="sql.offers" value="select O.id,O.title,O.last_modify_date,O.it,O.linux,C.name as category,R.name as region,F.name as firma,T.name as typ                                 from hr_offer as O, hr_category as C, hr_region as R, hr_company as F, hr_relation as T                                 where C.id=O.idcategory and R.id=O.idregion and F.id=O.idcompany and T.id=O.idrelation                                 and (it=1 or linux=1) order by last_modify_date desc limit 60"/>
                             </map>
                         </node>
                     </node>
@@ -568,7 +563,7 @@
                         <map>
                             <entry key="file" value="WEB-INF/freemarker/include/oksystem.txt"/>
                             <entry key="uri" value="http://www.oksystem.cz/apps/rss/kurzy-linux.php"/>
-                            <entry key="max" value="5" />
+                            <entry key="max" value="5"/>
                         </map>
                     </node>
                     <node name="JobsCzFetcher">
@@ -582,7 +577,7 @@
                         <map>
                             <entry key="file" value="WEB-INF/freemarker/include/jobpilot.txt"/>
                             <entry key="uri" value="http://www.jobpilot.b26.cz/abclinux/vypis.txt"/>
-                            <entry key="max" value="5" />
+                            <entry key="max" value="5"/>
                         </map>
                     </node>
                     <node name="Shop64bitFetcher">
@@ -598,10 +593,10 @@
                             <entry key="mailbox.folder" value="@UNDELIVERED_FOLDER@"/>
                             <entry key="mailbox.user" value="@UNDELIVERED_USER@"/>
                             <entry key="mailbox.password" value="@UNDELIVERED_PASSWORD@"/>
-                            <entry key="debug" value="false" />
-                            <entry key="regexp.vacation" value="nepritomnost|vacation|holiday|dovolen|kancelar|office" />
-                            <entry key="regexp.retry" value="resend|retried|delayed|deferred|warning:" />
-                            <entry key="regexp.antispam" value="antispam|verification" />
+                            <entry key="debug" value="false"/>
+                            <entry key="regexp.vacation" value="nepritomnost|vacation|holiday|dovolen|kancelar|office"/>
+                            <entry key="regexp.retry" value="resend|retried|delayed|deferred|warning:"/>
+                            <entry key="regexp.antispam" value="antispam|verification"/>
                         </map>
                     </node>
                     <node name="UpdateLinks">
@@ -644,25 +639,31 @@
                             <entry key="max.personalities" value="10"/>
                             <entry key="default.bazaar" value="3"/>
                             <entry key="max.bazaar" value="10"/>
-                            <entry key="feeds.for.index" value="15,19,20" />
-                            <entry key="default.links.in.index" value="3" />
-                            <entry key="max.links.in.index" value="5" />
-                            <entry key="feeds.for.template" value="7,16,20" />
+                            <entry key="feeds.for.index" value="15,19,20"/>
+                            <entry key="default.links.in.index" value="3"/>
+                            <entry key="max.links.in.index" value="5"/>
+                            <entry key="feeds.for.template" value="7,16,20"/>
                             <entry key="default.links.in.template" value="2"/>
-                            <entry key="max.links.in.template" value="5" />
-                            <entry key="default.tagcloud" value="30" />
+                            <entry key="max.links.in.template" value="5"/>
+                            <entry key="default.tagcloud" value="30"/>
                             <entry key="default.jobscz" value="10"/>
-                            <entry key="section.cache.rebuild.frequency" value="10" />
+                            <entry key="section.cache.rebuild.frequency" value="10"/>
                         </map>
                         <node name="forums">
                             <map>
                                 <entry key="order" value="49490,192836,222493,192820,222492,-1"/>
-                                <entry key="49490" value="15"/><!-- linuxova poradna -->
-                                <entry key="192820" value="5"/><!-- programatorska poradna -->
-                                <entry key="222493" value="5"/><!-- databazova poradna -->
-                                <entry key="222492" value="5"/><!-- hardwarova poradna -->
-                                <entry key="192836" value="5"/><!-- unixova poradna -->
-                                <entry key="-1" value="10"/><!-- sdruzena skupinova poradna -->
+                                <entry key="49490" value="15"/>
+                                <!-- linuxova poradna -->
+                                <entry key="192820" value="5"/>
+                                <!-- programatorska poradna -->
+                                <entry key="222493" value="5"/>
+                                <!-- databazova poradna -->
+                                <entry key="222492" value="5"/>
+                                <!-- hardwarova poradna -->
+                                <entry key="192836" value="5"/>
+                                <!-- unixova poradna -->
+                                <entry key="-1" value="10"/>
+                                <!-- sdruzena skupinova poradna -->
                             </map>
                         </node>
                     </node>
@@ -694,7 +695,7 @@
                     <map/>
                     <node name="Controller">
                         <map>
-                            <entry key="regexp.bots" value="bot|spider|crawl|blog|feed|rss|subscriber|liferea|slurp|archive|plucker|DigExt" />
+                            <entry key="regexp.bots" value="bot|spider|crawl|blog|feed|rss|subscriber|liferea|slurp|archive|plucker|DigExt"/>
                         </map>
                     </node>
                     <node name="Constants">
@@ -784,6 +785,10 @@
                             <entry key="GROUP_STICKFISH" value="12651"/>
                             <entry key="GROUP_TEAM_ABCLINUXU" value="20468"/>
                             <entry key="USER_REDAKCE" value="5473"/>
+                            <entry key="CAT_TOPICS" value="2364"/>
+                            <entry key="CAT_CONTRACTS" value="2365"/>
+                            <entry key="REL_TOPICS" value="269500"/>
+                            <entry key="REL_CONTRACTS" value="269501"/>
                         </map>
                     </node>
                     <node name="utils">
@@ -799,7 +804,7 @@
                                 <map>
                                     <entry key="regexp.invalid.characters.relative.url" value="[^a-zA-Z0-9.]+"/>
                                     <entry key="regexp.invalid.characters.absolute.url" value="[^a-zA-Z0-9/.]+"/>
-                                    <entry key="forbidden.extensions" value=".tgz,.tar.gz,.tar.bz2" />
+                                    <entry key="forbidden.extensions" value=".tgz,.tar.gz,.tar.bz2"/>
                                 </map>
                             </node>
                             <node name="CustomURLCache">
@@ -904,7 +909,7 @@
                         <map/>
                         <node name="HTMLVersion">
                             <map>
-                                <entry key="default.css.uri" value="/styles.css" />
+                                <entry key="default.css.uri" value="/styles.css"/>
                             </map>
                         </node>
                         <node name="edit">
@@ -940,12 +945,11 @@
                             <node name="EditAdvertisement">
                                 <map>
                                     <entry key="regexp.valid.identifier" value="[a-z0-9_-]+"/>
-                                    <entry key="regexp.64bit.url" value="/([\d]+)/product.html" />
+                                    <entry key="regexp.64bit.url" value="/([\d]+)/product.html"/>
                                 </map>
                             </node>
                             <node name="EditVideo">
-                                <map>
-                                </map>
+                                <map/>
                                 <node name="urls">
                                     <map>
                                         <entry key="youtube" value="http://w*\.?youtube\.com/watch\?v=([^&amp;]+)"/>
@@ -954,8 +958,8 @@
                                 </node>
                                 <node name="players">
                                     <map>
-                                        <entry key="youtube" value='http://www.youtube.com/v/%s&amp;hl=en&amp;fs=1'/>
-                                        <entry key="googlevideo" value='http://video.google.com/googleplayer.swf?docid=%s&amp;hl=cs&amp;fs=true'/>
+                                        <entry key="youtube" value="http://www.youtube.com/v/%s&amp;hl=en&amp;fs=1"/>
+                                        <entry key="googlevideo" value="http://video.google.com/googleplayer.swf?docid=%s&amp;hl=cs&amp;fs=true"/>
                                     </map>
                                 </node>
                             </node>
@@ -1022,8 +1026,8 @@
                     <map/>
                     <node name="AccessKeeper">
                         <map>
-                            <entry key="block.same.ua.for" value="600" />
-                            <entry key="block.same.ip.for" value="90" />
+                            <entry key="block.same.ua.for" value="600"/>
+                            <entry key="block.same.ip.for" value="90"/>
                         </map>
                     </node>
                 </node>
@@ -1083,6 +1087,3 @@
         </node>
     </root>
 </preferences>
-
-
-

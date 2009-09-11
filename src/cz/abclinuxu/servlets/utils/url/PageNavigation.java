@@ -51,7 +51,16 @@ public enum PageNavigation {
                 links.add(new Link("Správa autorů", Util.prefix(links) + "autori", "Správa autorů"));
             return links;
         }
-    };
+    },
+    ADMIN_TOPICS {
+    	@Override
+    	public List<Link> getLinks(User user, List<Link> links) {
+    		links = AUTHORS_EDITORS_PORTAL.getLinks(user, links);
+    		links.add(new Link("Náměty", Util.prefix(links) + "namety", "Správa námětů"));
+    	    return links;
+    	}
+    }
+    ;
 
     public abstract List<Link> getLinks(User user, List<Link> links);
 }

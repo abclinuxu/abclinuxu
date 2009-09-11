@@ -88,7 +88,7 @@ public class ViewAuthor implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         
         Item item = (Item) relation.getChild();
-        env.put(VAR_AUTHOR, BeanFetcher.fetchAuthorFromItem(item, FetchType.EAGER));
+        env.put(VAR_AUTHOR, BeanFetcher.fetchAuthorFromItem(item, FetchType.PROCESS_NONATOMIC));
 
         int from = Misc.parseInt((String)params.get(PARAM_FROM), 0);
         int count = Misc.getPageSize(AbcConfig.getAuthorArticlesPageSize(), 50, env, null);

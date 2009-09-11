@@ -505,13 +505,14 @@
 
 <#macro showOption6 (param value caption type condition extra...)>
     <label>
-        <input type="${type}" name="${param}" value="${value}"
-        <#if condition> checked="checked"</#if>
-        <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+        <input type="${type}" name="${param}" value="${value}" <#if condition> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
         ${caption}
     </label>
 </#macro>
 
+<#macro showFilterInput (filter id size)>
+	<input type="text" name="${id}" size="${size}" value="${filter.value(id)}" />
+</#macro>
 
 <#macro advertisement (id)>${TOOL.getAdvertisement(id, .vars)}</#macro>
 

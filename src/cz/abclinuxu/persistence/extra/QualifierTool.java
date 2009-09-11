@@ -177,6 +177,8 @@ public class QualifierTool {
             sb.append("!=");
         else if (operation == Operation.LIKE)
             sb.append(" LIKE ");
+        else if (operation == Operation.NOT_LIKE)
+        	sb.append(" NOT LIKE ");
         else if (operation instanceof OperationIn)
             sb.append(" IN ").append(Misc.getInCondition(((OperationIn) operation).getCount()));
         else if (operation == Operation.IS_NULL) {
@@ -261,6 +263,9 @@ public class QualifierTool {
             case ID:
                 sb.append("cislo");
                 break;
+            case ISNULL:
+            	sb.append("isnull");
+            	break;
             case LOGIN:
                 sb.append("login");
                 break;

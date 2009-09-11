@@ -35,8 +35,8 @@
 	    <tbody>
             <tr>
                 <td>
-                    <input type="text" name="filterAuthorsByName" value="${FILTER.value("filterAuthorsByName")}" size="8"/>
-                    <input type="text" name="filterAuthorsBySurname" value="${FILTER.value("filterAuthorsBySurname")}" size="8"/>
+                    <@lib.showFilterInput FILTER, "filterAuthorsByName", "8" />
+                    <@lib.showFilterInput FILTER, "filterAuthorsBySurname", "8" />
                 </td>
                 <td>
                     <select name="filterAuthorsByContract">

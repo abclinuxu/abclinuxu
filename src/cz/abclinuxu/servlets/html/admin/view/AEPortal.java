@@ -75,7 +75,7 @@ public class AEPortal implements AbcAction {
      */
     private Author findAssignedAuthor(int userId) {
         SQLTool sqlTool = SQLTool.getInstance();
-        return BeanFetcher.fetchAuthorFromItem(sqlTool.findAuthorByUserId(userId), FetchType.OMIT_XML);
+        return BeanFetcher.fetchAuthorFromItem(sqlTool.findAuthorByUserId(userId), FetchType.LAZY);
     }
 
 }

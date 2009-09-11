@@ -240,6 +240,14 @@
 <!ELEMENT descriptionShort (#PCDATA)> <!-- short description displayed as a perex and in the list of events -->
 <!ELEMENT icon (#PCDATA)> <!-- optional event logo -->
 
+<!-- Item.CONTRACT -->
+<!ELEMENT data (signatures, content, title) >
+<!ELEMENT signatures (employee, employer) >
+<!ELEMENT title (#PCDATA) > <!-- title of contract -->
+<!ELEMENT content (#PCDATA) > <!-- textual content of contract -->
+<!ELEMENT employee (#PCDATA) > <!-- path to signature of employee -->
+<!ELEMENT employer (#PCDATA) > <!-- path to signature of employer -->
+
 <!-- common -->
 
 <!ELEMENT versioning (title?, properties*, revisions?)> <!-- mandatory element under root that contains versioning specific data -->

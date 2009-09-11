@@ -203,7 +203,7 @@ public class EditAuthor implements AbcAction {
     protected String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Author author = BeanFetcher.fetchAuthorFromItem((Item)relation.getChild(), FetchType.EAGER);
+        Author author = BeanFetcher.fetchAuthorFromItem((Item)relation.getChild(), FetchType.PROCESS_NONATOMIC);
                 
         params.put(PARAM_SURNAME, author.getSurname());
         params.put(PARAM_NAME, author.getName());
