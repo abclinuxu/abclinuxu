@@ -784,11 +784,11 @@
                             <entry key="GROUP_AUTORI" value="11247"/>
                             <entry key="GROUP_STICKFISH" value="12651"/>
                             <entry key="GROUP_TEAM_ABCLINUXU" value="20468"/>
-                            <entry key="USER_REDAKCE" value="5473"/>
+                            <entry key="USER_REDAKCE" value="5473"/><!--
                             <entry key="CAT_TOPICS" value="2364"/>
                             <entry key="CAT_CONTRACTS" value="2365"/>
                             <entry key="REL_TOPICS" value="269500"/>
-                            <entry key="REL_CONTRACTS" value="269501"/>
+                            <entry key="REL_CONTRACTS" value="269501"/>-->
                         </map>
                     </node>
                     <node name="utils">
