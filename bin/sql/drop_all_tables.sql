@@ -12,6 +12,7 @@ drop table if exists polozka;
 drop table if exists posledni_komentar;
 drop table if exists pravo;
 drop table if exists relace;
+drop table if exists reseni;
 drop table if exists server;
 drop table if exists spolecne;
 drop table if exists stara_adresa;

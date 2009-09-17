@@ -288,6 +288,16 @@ CREATE TABLE komentar (
 ALTER TABLE komentar ADD INDEX komentar_zaznam (zaznam);
 ALTER TABLE komentar ADD INDEX komentar_autor (autor);
 
+-- flag indicating that given user has voted for this comment as solution
+CREATE TABLE reseni (
+ zaznam INT NOT NULL,                            -- id asociovaneho zaznamu
+ komentar INT NOT NULL,                          -- id komentare
+ kdo INT(5) NOT NULL,                            -- cislo uzivatele
+ kdy DATETIME NOT NULL                           -- cas pridani
+);
+ALTER TABLE reseni ADD UNIQUE INDEX reseni_kdo_komentar (kdo,komentar);
+ALTER TABLE reseni ADD INDEX reseni_zaznam (zaznam);
+
 -- tabulka nahrad URL
 CREATE TABLE stara_adresa (
  puvodni VARCHAR(255) PRIMARY KEY,               -- puvodni URL, ktere jiz neni platne
