@@ -445,7 +445,7 @@ public class Misc {
 
             LinkedList stack = new LinkedList();
             stack.addAll(diz.getThreads());
-            User owner = new User(story.getOwner());
+            Integer owner = story.getOwner();
             while (stack.size() > 0) {
                 Comment thread = (Comment) stack.removeFirst();
                 if (!owner.equals(thread.getAuthor())) //todo overit funkcnost

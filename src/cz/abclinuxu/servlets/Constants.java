@@ -22,6 +22,7 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 import java.util.prefs.Preferences;
@@ -324,6 +325,8 @@ public class Constants implements Configurable {
 
     /** value for subtype that marks discussion item as question */
     public static final String SUBTYPE_QUESTION = "question";
+    public static final int QUESTION_SOLVED = 1;
+    public static final int QUESTION_NOT_SOLVED = 0;
 
     public static final SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     public static final DateFormat isoFormatShort = new SimpleDateFormat("yyyy-MM-dd");
@@ -382,13 +385,16 @@ public class Constants implements Configurable {
 
         try {
             for (int i = 0; i < fields.length; i++) {
-                if (!fields[i].getType().equals(int.class))
+                Field field = fields[i];
+                if (Modifier.isFinal(field.getModifiers()))
+                    continue;
+                if (!field.getType().equals(int.class))
                     continue;
 
-                int value = prefs.getInt(fields[i].getName(), -1);
-                fields[i].setInt(null, value);
+                int value = prefs.getInt(field.getName(), -1);
+                field.setInt(null, value);
 
-                if (fields[i].getName().startsWith("REL_")) {
+                if (field.getName().startsWith("REL_")) {
                     relations.add(value);
                 }
             }

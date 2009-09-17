@@ -36,6 +36,7 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.format.*;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.SolutionTool;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Advertisement;
 import cz.abclinuxu.utils.TagTool;
@@ -46,6 +47,7 @@ import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.utils.comparator.SolutionVotesComparator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import org.dom4j.Document;
 import org.dom4j.Node;
@@ -645,17 +647,14 @@ public class Tools implements Configurable {
     }
 
     /**
-     * If number of votes for yes is higher than for no, than
+     * If there is at least single solution, than
      * this question is considered to be solved.
      * @return whether the question is solved
      */
-    public static boolean isQuestionSolved(Document document) {
-        Element solved = (Element) document.selectSingleNode("/data/solved");
-        if (solved==null)
+    public static boolean isQuestionSolved(Item item) {
+        if (item.getNumeric1() == null)
             return false;
-        int yes = Misc.parseInt(solved.attributeValue("yes"), 0);
-        int no = Misc.parseInt(solved.attributeValue("no"), 0);
-        return yes>no;
+        return item.getNumeric1() > 0;
     }
 
     /**
@@ -1682,6 +1681,35 @@ public class Tools implements Configurable {
         DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
         if (dizRecord.getThreads().isEmpty())
             return discussion;
+
+        List<Solution> solutions = new ArrayList<Solution>(SolutionTool.get(item));
+        Map<Solution, Comment> mapSolutions = new LinkedHashMap<Solution, Comment>(solutions.size());
+
+        Collections.sort(solutions, new SolutionVotesComparator());
+        Collections.reverse(solutions);
+
+        for (Solution s : solutions) {
+            Comment c = dizRecord.getComment(s.getId());
+            if (c == null) {
+                log.warn("Comment not found for solution: "+s);
+                continue;
+            }
+            c.setVoters(s.getVoters());
+            c.setSolution(true);
+            mapSolutions.put(s, c);
+        }
+
+        discussion.setSolutions(mapSolutions);
+
+        dizRecord.walkComments(new DiscussionRecord.CommentWalker() {
+            public boolean process(Comment c) {
+                if (c.isSolution() && c.getVoters().isEmpty()) {
+                    c.setSolution(false);
+                    c.setVoters(null);
+                }
+                return true;
+            }
+        });
 
         discussion.init(dizRecord);
 

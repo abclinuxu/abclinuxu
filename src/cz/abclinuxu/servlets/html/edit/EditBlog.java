@@ -149,6 +149,7 @@ public class EditBlog implements AbcAction, Configurable {
     static REProgram reBlogName;
     static int maxStoryTitleLength, maxStoryWordCount;
     static List forbiddenCategoryNames;
+    // <break> nebo <break /> nebo TODO <!--pagebreak-->
     private final Pattern breakTagPattern = Pattern.compile("\\<break[ ]*/?\\>", Pattern.CASE_INSENSITIVE);
 
     static {

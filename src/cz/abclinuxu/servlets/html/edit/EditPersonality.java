@@ -172,12 +172,7 @@ public class EditPersonality implements AbcAction {
 
         Versioning versioning = VersioningFactory.getVersioning();
         versioning.prepareObjectBeforeCommit(item, user.getId());
-        try {
-            persistence.create(item);
-        } catch (DuplicateKeyException e) {
-            ServletUtils.addError(PARAM_SURNAME, "Takový uživatel již existuje", env, null);
-            return FMTemplateSelector.select("EditPersonality", "add", env, request);
-        }
+        persistence.create(item);
         versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
 
         persistence.create(relation);
@@ -255,8 +250,7 @@ public class EditPersonality implements AbcAction {
         item.setOwner(user.getId());
         Element root = item.getData().getRootElement();
 
-        boolean canContinue = true;
-        canContinue &= setFirstname(params, root, env);
+        boolean canContinue = setFirstname(params, root, env);
         canContinue &= setSurname(params, item, root, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setWebUrl(params, root, env); // "more information" website (e.g. Wikipedia)
@@ -445,7 +439,7 @@ public class EditPersonality implements AbcAction {
         dynamicConfig = (Item) dynamicConfig.clone();
         Element configRoot = dynamicConfig.getData().getRootElement();
         Element configRss = (Element) configRoot.selectSingleNode("/data/feeds/feed[@relation='" + relationId + "']");
-        Element itemRoot = (Element) item.getData().getRootElement();
+        Element itemRoot = item.getData().getRootElement();
         Element rssElement = (Element) itemRoot.selectSingleNode("/data/url[@useType='rss']");
 
         String url = (String) params.get(PARAM_RSS_URL);

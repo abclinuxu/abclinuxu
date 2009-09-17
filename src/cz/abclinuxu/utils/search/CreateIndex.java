@@ -708,7 +708,7 @@ public class CreateIndex implements Configurable {
         doc.setUpdated(discussion.getUpdated());
         doc.setCid(discussion);
         if (question) {
-            doc.setQuestionSolved(Tools.isQuestionSolved(discussion.getData()));
+            doc.setQuestionSolved(discussion.getNumeric1() == Constants.QUESTION_SOLVED);
             doc.setType(MyDocument.TYPE_QUESTION);
             doc.setBoost(boostQuestion);
         } else {
@@ -806,8 +806,6 @@ public class CreateIndex implements Configurable {
         Item news = (Item) relation.getChild();
         indexDiscussionFor(news);
 
-        Element data = news.getData().getRootElement();
-        String content = data.element("content").getText();
         String title = news.getTitle();
 
         String category = null;

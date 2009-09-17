@@ -40,6 +40,7 @@ public class Discussion {
     private boolean frozen;
     private boolean monitored;
     private int monitorSize;
+    private Map<Solution, Comment> solutions;
 
     public Discussion() {
     }
@@ -135,12 +136,12 @@ public class Discussion {
         if (lastRead == null || greatestId <= lastRead)
             return;
 
-        int lastId = lastRead;
-        int unreadSize = size - lastId;
+        int unreadSize = size - lastRead;
         if (unreadSize <= 0)
             unreadSize = 10;
         unreadComments = new ArrayList(unreadSize);
-        Comment current = null;
+
+        Comment current;
         LinkedList stack = new LinkedList(threads);
         while (stack.size() > 0) {
             current = (Comment) stack.removeFirst();
@@ -150,7 +151,7 @@ public class Discussion {
             
             if (current.getChildren() != null)
                 stack.addAll(0, current.getChildren());
-            if (current.getId() > lastId)
+            if (current.getId() > lastRead)
                 unreadComments.add(current.getId());
         }
     }
@@ -198,14 +199,14 @@ public class Discussion {
     }
 
     /**
-     * @return list of users (Integer) that are in blacklist for current user
+     * @return list of people (Integer for user, String for anonymous user) that are in blacklist for current user
      */
     public List getBlacklist() {
         return new ArrayList(blacklist);
     }
 
     /**
-     * Sets list of blacklisted users (id - Integer) for current user.
+     * Sets list of blacklisted users for current user.
      * @param blacklist (Users) not null
      */
     public void setBlacklist(Set blacklist) {
@@ -284,5 +285,13 @@ public class Discussion {
     public Data getAttachment(String relationId) {
         int id = Misc.parseInt(relationId, -1);
         return attachments.get(id);
+    }
+
+    public Map<Solution, Comment> getSolutions() {
+        return solutions;
+    }
+
+    public void setSolutions(Map<Solution, Comment> solutions) {
+        this.solutions = solutions;
     }
 }

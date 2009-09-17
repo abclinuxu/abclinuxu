@@ -24,7 +24,7 @@ import java.util.*;
  * @author literakl
  * @since 19.2.2006
  */
-public class DiscussionRecord implements Cloneable {
+public final class DiscussionRecord implements Cloneable {
     private List<Comment> threads;
     private int maxCommentId;
     private int totalComments;
@@ -239,5 +239,20 @@ public class DiscussionRecord implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void walkComments(CommentWalker walker) {
+        LinkedList stack = new LinkedList(threads);
+        Comment comment;
+        while (stack.size() > 0) {
+            comment = (Comment) stack.removeFirst();
+            if (!walker.process(comment))
+                break;
+            stack.addAll(comment.getChildren());
+        }
+    }
+
+    public static interface CommentWalker {
+        public boolean process(Comment c);
     }
 }

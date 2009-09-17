@@ -44,6 +44,7 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
 
 import cz.abclinuxu.utils.Advertisement;
+import cz.abclinuxu.utils.SolutionTool;
 import cz.abclinuxu.utils.email.monitor.MonitorTool;
 
 import javax.servlet.http.HttpServletRequest;
@@ -135,6 +136,7 @@ public class AdminServlet implements AbcAction {
         new UpdateTopStatistics().run();
         TagTool.init();
         MonitorTool.clearCache();
+        SolutionTool.clearCache();
         Advertisement.clearCache();
 
         User user = (User) env.get(Constants.VAR_USER);
@@ -177,7 +179,7 @@ public class AdminServlet implements AbcAction {
             return FMTemplateSelector.select("Admin", "show", env, request);
         }
 
-        User user = null;
+        User user;
         try {
             int uid = Integer.parseInt(s);
             user = new User(uid);

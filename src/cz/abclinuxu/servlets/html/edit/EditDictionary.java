@@ -146,8 +146,7 @@ public class EditDictionary implements AbcAction {
 
         Relation relation = new Relation(parent.getChild(), item, parent.getId());
 
-        boolean canContinue = true;
-        canContinue &= setName(params, item, env);
+        boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setURL(relation, item, env);
         if (!canContinue || params.get(PARAM_PREVIEW)!=null)
@@ -203,8 +202,7 @@ public class EditDictionary implements AbcAction {
         item.setOwner(user.getId());
         Element root = item.getData().getRootElement();
 
-        boolean canContinue = true;
-        canContinue &= setName(params, item, env);
+        boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= ServletUtils.checkNoChange(item, origItem, env);
         String changesDescription = Misc.getRevisionString(params, env);

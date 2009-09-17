@@ -39,6 +39,8 @@ public abstract class Comment implements Cloneable, Comparable {
     List<Comment> children;
     int id;
     Integer parent;
+    boolean solution;
+    List<Integer> voters;
 
     protected Comment() {
     }
@@ -281,5 +283,31 @@ public abstract class Comment implements Cloneable, Comparable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean isSolution() {
+        return solution;
+    }
+
+    public void setSolution(boolean solution) {
+        this.solution = solution;
+    }
+
+    public List<Integer> getVoters() {
+        return voters;
+    }
+
+    public void setVoters(List<Integer> voters) {
+        this.voters = voters;
+    }
+
+    public boolean hasVoted(int uid) {
+        if (voters == null)
+            return false;
+        for (Integer i : voters) {
+            if (i == uid)
+                return true;
+        }
+        return false;
     }
 }

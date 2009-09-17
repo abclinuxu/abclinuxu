@@ -48,6 +48,7 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Server;
 import cz.abclinuxu.data.Tag;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.view.Solution;
 import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
@@ -182,6 +183,11 @@ public final class SQLTool implements Configurable {
     public static final String MONITOR_REMOVE_ALL = "remove.users.monitors";
     public static final String MONITOR_GET = "get.monitors";
     public static final String MONITOR_FIND_BY_USER = "find.users.monitors";
+
+    public static final String SOLUTIONS_GET = "get.solutions";
+    public static final String SOLUTIONS_INSERT = "insert.solution";
+    public static final String SOLUTIONS_DELETE = "delete.solutions";
+    public static final String SOLUTIONS_DELETE_SINGLE = "delete.single.solution";
 
     private static SQLTool singleton;
     static {
@@ -2446,6 +2452,80 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Loads solutions for given question.
+     * @param diz question
+     * @return List of solutions
+     */
+    public List<Solution> getSolutions(Item diz) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(sql.get(SOLUTIONS_GET));
+            statement.setInt(1, diz.getId());
+            resultSet = statement.executeQuery();
+
+            List<Solution> result = new ArrayList<Solution>();
+            Solution solution = null;
+            while (resultSet.next()) {
+                int id = resultSet.getInt(1);
+                if (solution == null || solution.getId() != id) { // SQL query is ordered by id
+                    solution = new Solution(id);
+                    result.add(solution);
+                }
+                solution.addVoter(resultSet.getInt(2));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba při hledání řešení!", e);
+        } finally {
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    public boolean insertSolutionVote(Item diz, int thread, int uid) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(sql.get(SOLUTIONS_INSERT));
+            statement.setInt(1, uid);
+            statement.setInt(2, diz.getId() );
+            statement.setInt(3, thread);
+
+            return statement.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba při hlasování pro řešení!", e);
+        } finally {
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    public boolean removeSolutionVote(Item diz, int thread, int uid) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(sql.get(SOLUTIONS_DELETE_SINGLE));
+            statement.setInt(1, diz.getId() );
+            statement.setInt(2, thread);
+            statement.setInt(3, uid);
+
+            return statement.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba při mazání hlasování pro řešení!", e);
+        } finally {
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
      * Finds new address for an old URL. If found, then it returns either initialized Relation
      * or String holding new URL. Null is returned for no match.
      * @param oldUrl urtl starting with /
@@ -2546,7 +2626,7 @@ public final class SQLTool implements Configurable {
 	 * @return Item with author data
 	 */
 	public Item findAuthorByUserId(int userId) {
-		Qualifier[] qualifiers = new Qualifier[] { new CompareCondition(Field.NUMERIC1, Operation.EQUAL, new Integer(userId)) };
+		Qualifier[] qualifiers = new Qualifier[] { new CompareCondition(Field.NUMERIC1, Operation.EQUAL, userId) };
 		List<Item> matches = findItemsWithType(Item.AUTHOR, qualifiers);
 		if (!matches.isEmpty()) {
 			return matches.get(0);
@@ -2738,6 +2818,10 @@ public final class SQLTool implements Configurable {
         store(MONITOR_REMOVE_USER, prefs);
         store(MONITOR_REMOVE_ALL, prefs);
         store(MONITOR_FIND_BY_USER, prefs);
+        store(SOLUTIONS_GET, prefs);
+        store(SOLUTIONS_INSERT, prefs);
+        store(SOLUTIONS_DELETE, prefs);
+        store(SOLUTIONS_DELETE_SINGLE, prefs);
     }
 
     /**

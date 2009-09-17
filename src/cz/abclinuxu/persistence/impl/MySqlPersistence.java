@@ -508,6 +508,11 @@ public class MySqlPersistence implements Persistence {
                             statement = con.prepareStatement("DELETE FROM komentar WHERE zaznam=?");
                             statement.setInt(1, obj.getId());
                             statement.executeUpdate();
+
+                            statement.close();
+                            statement = con.prepareStatement("DELETE FROM reseni WHERE zaznam=?");
+                            statement.setInt(1, obj.getId());
+                            statement.executeUpdate();
                         }
                     }
                 }
@@ -852,7 +857,7 @@ public class MySqlPersistence implements Persistence {
                 syncRelationFromRS(relation, resultSet);
                 cache.store(relation);
 
-                list = (List<Relation>) map.get(relation.getParent());
+                list = map.get(relation.getParent());
                 if (list == null) {
                     list = new ArrayList<Relation>();
                     map.put(relation.getParent(), list);
@@ -976,7 +981,7 @@ public class MySqlPersistence implements Persistence {
             conditions.add(link.getServer());
             conditions.add(link.getText());
             conditions.add(link.getUrl());
-            conditions.add(Boolean.valueOf(link.isFixed()));
+            conditions.add(link.isFixed());
             conditions.add(link.getOwner());
             if (link.getUpdated() == null)
                 link.setUpdated(new java.util.Date());
@@ -1662,7 +1667,7 @@ public class MySqlPersistence implements Persistence {
 
         Connection con = null;
         Statement statement = null;
-        ResultSet resultSet = null;
+        ResultSet resultSet;
         try {
             con = getSQLConnection();
             statement = con.createStatement();
@@ -1822,7 +1827,7 @@ public class MySqlPersistence implements Persistence {
             statement.setTimestamp(5, new Timestamp(obj.getCreated().getTime()));
             statement.setString(6, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(7, obj.getId());
-            result = statement.executeUpdate();
+            statement.executeUpdate();
 
             if (obj instanceof Record && obj.getType() == Record.DISCUSSION)
                 updateComments((DiscussionRecord) obj.getCustom(), obj.getId(), con);
@@ -1852,7 +1857,7 @@ public class MySqlPersistence implements Persistence {
                 int i = 1;
                 for (Iterator iter = deleted.iterator(); iter.hasNext();) {
                     Integer id = (Integer) iter.next();
-                    statement1.setInt(i++, id.intValue());
+                    statement1.setInt(i++, id);
                 }
                 statement1.executeUpdate();
                 deleted.clear();

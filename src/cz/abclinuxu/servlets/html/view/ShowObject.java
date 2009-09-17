@@ -171,8 +171,10 @@ public class ShowObject implements AbcAction {
                 if (Tools.isQuestion(relation)) {
                     ReadRecorder.log(item, Constants.COUNTER_READ, env);
                     env.put(Constants.VAR_RSS, FeedGenerator.getForumFeedUrl(upper.getId()));
+                    return FMTemplateSelector.select("ShowObject", "question", env, request);
                 }
-                return FMTemplateSelector.select("ShowObject", "discussion", env, request);
+                else
+                    return FMTemplateSelector.select("ShowObject", "discussion", env, request);
             }
             case Item.HARDWARE: {
                 RevisionInfo revisionInfo = Tools.getRevisionInfo(item);

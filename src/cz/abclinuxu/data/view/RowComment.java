@@ -61,7 +61,7 @@ public class RowComment extends Comment {
     }
 
     public void setParent(int parent) {
-        this.parent = new Integer(parent);
+        this.parent = parent;
     }
 
     public Integer getAuthor() {
@@ -73,7 +73,7 @@ public class RowComment extends Comment {
     }
 
     public void setAuthor(int author) {
-        this.author = new Integer(author);
+        this.author = author;
     }
 
     public void setAuthor(Integer author) {

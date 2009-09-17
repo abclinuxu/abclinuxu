@@ -27,7 +27,7 @@ public class MonitorCache {
      * @param doc monitored document
      * @param uid user
      */
-    public void put(GenericDataObject doc, int uid) {
+    public synchronized void put(GenericDataObject doc, int uid) {
         put(doc, Collections.singleton(uid));
     }
 
@@ -36,7 +36,7 @@ public class MonitorCache {
      * @param doc monitored document
      * @param uids list of user
      */
-    public void put(GenericDataObject doc, Set<Integer> uids) {
+    public synchronized void put(GenericDataObject doc, Set<Integer> uids) {
         Set<Integer> currentUids = (Set<Integer>) cache.retrieve(doc);
         if (currentUids == null) {
             if (uids.isEmpty()) {
@@ -58,7 +58,7 @@ public class MonitorCache {
      * @param doc monitored document
      * @param uid user
      */
-    public boolean remove(GenericDataObject doc, int uid) {
+    public synchronized boolean remove(GenericDataObject doc, int uid) {
         Set<Integer> users = get(doc);
         if (users == null)
             return false;
@@ -78,7 +78,7 @@ public class MonitorCache {
     /**
      * Clears the cache.
      */
-    public void clear() {
+    public synchronized void clear() {
         cache.clear();
     }
 
