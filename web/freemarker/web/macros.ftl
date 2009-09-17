@@ -219,18 +219,28 @@
 </#macro>
 
 <#macro showThread(comment level diz showControls extra...)>
-    <#if comment.author??>
-        <#local who=TOOL.createUser(comment.author)>
-    </#if>
-      <#local blacklisted = diz.isBlacklisted(comment), attachments = comment.attachments>
-      <div class="ds_hlavicka<#if diz.isUnread(comment)>_novy</#if><#if blacklisted> ds_hlavicka_blacklisted</#if><#if who?? && USER?? && who.id == USER.id> ds_hlavicka_me</#if>" id="${comment.id}">
+    <#if comment.author??><#local who=TOOL.createUser(comment.author)></#if>
+    <#local blacklisted = diz.isBlacklisted(comment), attachments = comment.attachments, mode = extra[0]!"comment">
+    <#if diz.isUnread(comment)><#local css = "ds_hlavicka_novy"><#else><#local css = "ds_hlavicka"></#if>
+    <#if blacklisted><#local css = css + " ds_hlavicka_blacklisted"></#if>
+    <#if who?? && USER?? && who.id == USER.id><#local css = css + " ds_hlavicka_me"></#if>
+
+    <div class="${css}" id="${comment.id}">
+        <div class="ds_reseni" <#if !comment.solution>style="display:none"</#if>>
+            <#if comment.solution>
+             Řešení ${comment.voters?size}&times;
+            </#if>
+        </div>
+
         <#if comment.author?? && showControls>
             <#assign avatar = TOOL.getUserAvatar(who!, USER!)!"UNDEFINED">
             <#if avatar != "UNDEFINED">
                 <img src="${avatar}" id="comment${comment.id}_avatar" alt="avatar" class="ds_avatar <#if blacklisted>ds_controls_blacklisted</#if>">
             </#if>
         </#if>
+
         ${DATE.show(comment.created,"SMART")}
+
         <#if comment.author??>
             <@showUser who/>
             <#local score=who.getIntProperty("score")!(-1)><#if score != -1> | skóre: ${score}</#if>
@@ -238,45 +248,71 @@
             <#local city=TOOL.xpath(who,"//personal/city")!"UNDEF"><#if city!="UNDEF"> | ${city}</#if>
         <#else>
             ${comment.anonymName!}
-        </#if><br>
-        <span class="<#if blacklisted>ds_control_sbalit<#else>ds_control_sbalit2</#if>" id="comment${comment.id}_toggle2">
-            <a onClick="schovej_vlakno(${comment.id})" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
-            <a onClick="rozbal_vse(${comment.id})" title="Schová nebo rozbalí vše pod tímto komentářem">Rozbalit vše</a>
-        </span>
+        </#if>
+
+        <br>
+
+        <#if mode != "question">
+            <span class="<#if blacklisted>ds_control_sbalit<#else>ds_control_sbalit2</#if>" id="comment${comment.id}_toggle2">
+                <a onClick="schovej_vlakno(${comment.id})" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
+                <a onClick="rozbal_vse(${comment.id})" title="Schová nebo rozbalí vše pod tímto komentářem">Rozbalit vše</a>
+            </span>
+        </#if>
+
         ${comment.title!}
+
         <#nested>
+
         <#if showControls>
             <div id="comment${comment.id}_controls"<#if blacklisted> class="ds_controls_blacklisted"</#if>>
                 <#local nextUnread = diz.getNextUnread(comment)!"UNDEF">
                 <#if ! nextUnread?is_string><a href="#${nextUnread}" title="Skočit na další nepřečtený komentář">Další</a> |</#if>
-                <a href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=add&amp;dizId="+diz.id+"&amp;threadId="+comment.id+extra[0]!"")}">Odpovědět</a> |
-                <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}" title="Žádost o přesun diskuse, stížnost na komentář">Admin</a> |
-                <a href="#${comment.id}" title="Přímá adresa na tento komentář">Link</a> |
-                <#if (comment.parent??)><a href="#${comment.parent}" title="Odkaz na komentář o jednu úroveň výše">Výše</a> |</#if>
-                <#if comment.author??><#local blockTarget="bUid=" + who.id><#else><#local blockTarget="bName=" + comment.anonymName?url></#if>
-                <#if blacklisted>
-                    <#local blockUrl="/EditUser?action=fromBlacklist&amp;"+blockTarget, title="Neblokovat", hint="Odstraní autora ze seznamu blokovaných uživatelů">
-                <#else>
-                    <#local blockUrl="/EditUser?action=toBlacklist&amp;"+blockTarget, title="Blokovat", hint="Přidá autora na seznam blokovaných uživatelů">
+                <a href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=add&amp;dizId="+diz.id+"&amp;threadId="+comment.id)}">Odpovědět</a>
+                <#if mode = "reply">
+                    |
+                    <#if USER??>
+                        <#if comment.hasVoted(USER.id)>
+                            <a class="ds_solutionToggle ds_solutionUnset" href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=unsetSolution&amp;threadId="+comment.id+TOOL.ticket(USER!, false))}">Není řešením</a>
+                        <#else>
+                            <a class="ds_solutionToggle ds_solutionSet" href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=setSolution&amp;threadId="+comment.id+TOOL.ticket(USER!, false))}">Označit jako řešení</a>
+                        </#if>
+                    </#if>
                 </#if>
-                <a href="${URL.noPrefix(blockUrl+TOOL.ticket(USER!, false)+"&amp;url="+URL.prefix+"/show/"+diz.relationId+"#"+comment.id)}" title="${hint}">${title}</a> |
-                <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle1" title="Schová nebo rozbalí celé vlákno" class="ds_control_sbalit3"><#if ! blacklisted>Sbalit<#else>Rozbalit</#if></a>
+                <#if mode != "question">
+                    | <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle1" title="Schová nebo rozbalí celé vlákno"
+                       class="ds_control_sbalit3"><#if ! blacklisted>Sbalit<#else>Rozbalit</#if></a>
+                    <#if (comment.parent??)>| <a href="#${comment.parent}" title="Odkaz na komentář o jednu úroveň výše">Výše</a></#if>
+                    | <a href="#${comment.id}" title="Přímá adresa na tento komentář">Link</a>
+                    <#if comment.author??><#local blockTarget="bUid=" + who.id><#else><#local blockTarget="bName=" + comment.anonymName?url></#if>
+                    <#if blacklisted>
+                        <#local blockUrl="/EditUser?action=fromBlacklist&amp;"+blockTarget, title="Neblokovat", hint="Odstraní autora ze seznamu blokovaných uživatelů">
+                    <#else>
+                        <#local blockUrl="/EditUser?action=toBlacklist&amp;"+blockTarget, title="Blokovat", hint="Přidá autora na seznam blokovaných uživatelů">
+                    </#if>
+                    | <a href="${URL.noPrefix(blockUrl+TOOL.ticket(USER!, false)+"&amp;url="+URL.prefix+"/show/"+diz.relationId+"#"+comment.id)}" title="${hint}">${title}</a>
+                </#if>
+                | <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}" title="Žádost o přesun diskuse, stížnost na komentář">Admin</a>
             </div>
         <#elseif USER?? && USER.hasRole("discussion admin")>
             <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}">Admin</a>
         </#if>
+
         <#if (attachments?size > 0)>
-            <div class="ds_attachments"><span><#if (attachments?size == 1)>Příloha:<#else>Přílohy:</#if></span>
+            <div class="ds_attachments">
+                <span><#if (attachments?size == 1)>Příloha:<#else>Přílohy:</#if></span>
                 <ul>
                     <#list attachments as id>
-                        <li><#local attachment = diz.attachments(id)>
-                        <a href="${TOOL.xpath(attachment, "/data/object/@path")}">${TOOL.xpath(attachment, "/data/object/originalFilename")}</a>
-                        (${TOOL.xpath(attachment, "/data/object/size")} bytů)</li>
+                        <li>
+                            <#local attachment = diz.attachments(id)>
+                            <a href="${TOOL.xpath(attachment, "/data/object/@path")}">${TOOL.xpath(attachment, "/data/object/originalFilename")}</a>
+                            (${TOOL.xpath(attachment, "/data/object/size")} bytů)
+                        </li>
                     </#list>
                 </ul>
-           </div>
+            </div>
         </#if>
     </div>
+
     <div id="comment${comment.id}" <#if who??>class="ds_text_user${who.id}"</#if><#if blacklisted!> style="display: none;"</#if>>
         <#if TOOL.xpath(comment.data,"//censored")??>
             <@showCensored comment, diz.id, diz.relationId/>
@@ -284,9 +320,11 @@
             <div class="ds_text">
                 ${TOOL.render(TOOL.element(comment.data,"//text"),USER!)}
             </div>
+
             <#assign signature = TOOL.getUserSignature(who!, USER!)!"UNDEFINED">
             <#if signature!="UNDEFINED"><div class="signature">${signature}</div></#if>
         </#if>
+
         <#local level2=level+1>
         <div class="ds_odsazeni">
             <#list comment.children! as child>
@@ -520,7 +558,7 @@
     <#if TOOL.xpath(diz.discussion,"/data/frozen")??>
         <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamčena">
     </#if>
-    <#if TOOL.isQuestionSolved(diz.discussion.data)>
+    <#if TOOL.isQuestionSolved(diz.discussion)>
         <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle čtenářů vyřešena">
     </#if>
     <#if TOOL.isMonitored(diz.discussion, USER!)>
@@ -924,4 +962,18 @@
             </span>
         </#if>
     </p>
+</#macro>
+
+<#macro showAdminTools relation frozen>
+    <#if USER?? && (USER.hasRole("discussion admin") || USER.hasRole("move relation"))>
+        <br />
+        <b>Admin:</b>
+        <a href="/SelectRelation?prefix=/forum&amp;url=/EditRelation&amp;action=move&amp;rid=${relation.id}">Přesunout</a>
+        <#if USER.hasRole("discussion admin")>
+            <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+relation.id+"&amp;prefix="+URL.prefix)}">Smazat</a>
+            <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+relation.id+"&amp;dizId="+relation.child.id+TOOL.ticket(USER, false))}">
+                <#if frozen>Rozmrazit<#else>Zmrazit</#if>
+            </a>
+        </#if>
+    </#if>
 </#macro>

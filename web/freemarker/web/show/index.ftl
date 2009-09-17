@@ -9,7 +9,7 @@
     <div class="s_nadpis">
         <a class="s_nadpis-pravy-odkaz" href="${URL.make("/akce/edit/233274?action=add")}">zadejte &raquo;</a>
         <#if USER?? && TOOL.permissionsFor(USER,TOOL.createRelation(233274)).canModify()>
-            <a class="s_nadpis-pravy-odkaz" href="${URL.make("/akce?mode=unpublished")}" title="Počet neschválených akcí">(${VARS.counter.WAITING_EVENTS})&nbsp;</a>
+            <a class="s_nadpis-pravy-odkaz" href="${URL.make("/akce?mode=unpublished")}" title="Počet neschválených akcí">(${VARS.counter.WAITING_EVENTS!0})&nbsp;</a>
         </#if>
         <a href="/akce">Kalendář akcí</a>
     </div>

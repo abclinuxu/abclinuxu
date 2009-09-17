@@ -49,6 +49,8 @@
         <meta name="keywords" lang="cs" content="linux,open source,free software,linux hardware,software,ovladače,pomoc">
     </#if>
 
+    <script type="text/javascript" src="/data/site/jquery/jquery-1.3.2.min.js"></script>
+    <#--<@lib.initRTE />-->
     <script type="text/javascript">
     	Page = new Object();
         <#if RELATION??>
@@ -60,11 +62,10 @@
 	    </#if>
     </script>
     <script type="text/javascript" src="/data/site/impact.js"></script>
-    <script type="text/javascript" src="/data/site/scripts.js"></script>    
+    <script type="text/javascript" src="/data/site/scripts.js"></script>
     <#if html_header??>
         ${html_header}
     </#if>
-    <@lib.initRTE />
 </head>
 
 <body id="www-abclinuxu-cz">
@@ -140,7 +141,7 @@
             <!-- ANKETA -->
             <#if VARS.currentPoll??>
                 <#assign relAnketa = VARS.currentPoll, anketa = relAnketa.child, total = anketa.totalVoters,
-                         url=relAnketa.url?default("/ankety/show/"+relAnketa.id)>
+                         url=relAnketa.url!("/ankety/show/"+relAnketa.id)>
                 <#if anketa.multiChoice><#assign type = "checkbox"><#else><#assign type = "radio"></#if>
 
                 <div class="s_nadpis">

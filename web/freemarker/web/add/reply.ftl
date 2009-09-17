@@ -35,14 +35,14 @@
   <#if ! USER??>
    <p>
     <span class="required">Zadejte vaše jméno</span>
-        <input tabindex="4" type="text" size="30" name="author" value="${PARAMS.author!?html}">
+    <input tabindex="1" type="text" size="30" name="author" value="${PARAMS.author!?html}">
     <span class="error">${ERRORS.author!}</span><br>
         nebo <a href="/Profile?action=login">se přihlašte</a>.
    </p>
    <#if ! USER_VERIFIED!false>
        <p>
            <span class="required">Zadejte aktuální rok</span>
-           <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}">
+           <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}" tabindex="2">
            <@lib.showHelp>Vložte aktuální rok. Jedná se o ochranu před spamboty. Po úspěšném ověření
            se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.</@lib.showHelp>
            <@lib.showError key="antispam" />
@@ -60,17 +60,18 @@
         <#assign title=THREAD.title!>
         <#if !title.startsWith("Re: ")><#assign title="Re: "+title></#if>
     </#if>
-   <input tabindex="4" type="text" name="title" size="60" maxlength="70" value="${title!?html}">
+   <input tabindex="3" type="text" name="title" size="60" maxlength="70" value="${title!?html}">
    <div class="error">${ERRORS.title!}</div>
   </p>
     <div>
         <span class="required">Váš komentář</span>
         <@lib.showError key="text"/>
         <@rte.showFallback "text"/>
-        <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea>
+        <#--<a href="javascript:toggleRTE('text');">přepni editor</a>-->
+        <textarea tabindex="4" name="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea>
     </div>
     <p>
-        Vložení přílohy: <input type="file" name="attachment" tabindex="6">
+        Vložení přílohy: <input type="file" name="attachment" tabindex="5">
         <@lib.showHelp>Například výpis logu, konfigurační soubor, snímek obrazovky a podobně.</@lib.showHelp>
         <@lib.showError key="attachment" />
         <#if ATTACHMENTS??>
@@ -83,10 +84,10 @@
     </p>
   <p>
     <#if PREVIEW??>
-     <input tabindex="7" type="submit" name="preview" value="Zopakuj náhled komentáře">
-     <input tabindex="8" type="submit" name="finish" value="Dokonči">
+     <input tabindex="6" type="submit" name="preview" value="Zopakuj náhled komentáře">
+     <input tabindex="7" type="submit" name="finish" value="Dokonči">
     <#else>
-     <input tabindex="7" type="submit" name="preview" value="Náhled komentáře">
+     <input tabindex="6" type="submit" name="preview" value="Náhled komentáře">
     </#if>
   </p>
 
