@@ -416,6 +416,7 @@ a.selected:hover {
 .ad_inactive { color: red; }
 
 .itbiz { border-color: #cfe8ff;
+         background-color: white;
          background-image: url('/images/site2/itbiz-top-bg.gif'); }
 .itbiz a { color: black;
            text-decoration: none; }
