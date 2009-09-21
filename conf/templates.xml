@@ -634,28 +634,30 @@
     </servlet>
 
     <servlet name="ShowObject">
-        <action name="hardware" content="/show/hwitem.ftl">
-            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
+        <action name="article" content="/show/article.ftl"/>
+        <action name="censored" content="/show/cenzura.ftl">
+            <var name="TITLE" value="Nevhodný příspěvek"/>
         </action>
         <action name="discussion" content="/show/discussion.ftl">
             <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
         </action>
-        <action name="article" content="/show/article.ftl">
-        </action>
         <action name="driver" content="/show/driver.ftl">
             <var name="TITLE" value='${ITEM.title} - ${TOOL.xpath(ITEM,"data/version")}' type="Lazy"/>
+        </action>
+        <action name="hardware" content="/show/hwitem.ftl">
+            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
         </action>
         <action name="news" content="/show/zpravicka.ftl">
             <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
         </action>
+        <action name="notfound" content="/show/notfound.ftl">
+            <var name="TITLE" value="Stránka nebyla nalezena"/>
+        </action>
         <action name="poll" content="/show/anketa.ftl">
             <var name="TITLE" value="Anketa"/>
         </action>
-        <action name="censored" content="/show/cenzura.ftl">
-            <var name="TITLE" value="Nevhodný příspěvek"/>
-        </action>
-        <action name="notfound" content="/show/notfound.ftl">
-            <var name="TITLE" value="Stránka nebyla nalezena"/>
+        <action name="question" content="/show/question.ftl">
+            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
         </action>
     </servlet>
 
