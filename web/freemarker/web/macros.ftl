@@ -223,12 +223,18 @@
     <#local blacklisted = diz.isBlacklisted(comment), attachments = comment.attachments, mode = extra[0]!"comment">
     <#if diz.isUnread(comment)><#local css = "ds_hlavicka_novy"><#else><#local css = "ds_hlavicka"></#if>
     <#if blacklisted><#local css = css + " ds_hlavicka_blacklisted"></#if>
+    <#if comment.solution && ITEM?? && comment.voters.contains(ITEM.owner)><#local css = css + " ds_author_approved"></#if>
     <#if who?? && USER?? && who.id == USER.id><#local css = css + " ds_hlavicka_me"></#if>
 
     <div class="${css}" id="${comment.id}">
         <div class="ds_reseni" <#if !comment.solution>style="display:none"</#if>>
             <#if comment.solution>
-             Řešení ${comment.voters?size}&times;
+                <#if ITEM?? && ITEM.owner != 0>
+                    <#assign dizOwner = ITEM.owner>
+                <#else>
+                    <#assign dizOwner = 0>
+                </#if>
+                <@showCommentVoters comment.id, comment.voters, dizOwner />
             </#if>
         </div>
 
@@ -976,4 +982,16 @@
             </a>
         </#if>
     </#if>
+</#macro>
+
+<#macro showCommentVoters (threadId, voters, xauthor, shorten = true)>
+    Řešení ${voters?size}&times;
+     (<#--
+        --><#list voters as voter>
+            <#if shorten && (voter_index >= 3) && voters?size gt 4>
+                    a <a href="javascript:showCommentVoters(${threadId})">${voters?size - 3} dalších</a>
+                <#break>
+            <#else><@lib.showUserFromId voter /><#if xauthor==voter> (tazatel)</#if><#if voter_has_next>,</#if></#if><#--
+        --></#list><#--
+     -->)
 </#macro>
