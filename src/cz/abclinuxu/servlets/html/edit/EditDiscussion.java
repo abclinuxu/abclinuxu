@@ -127,6 +127,7 @@ public class EditDiscussion implements AbcAction {
     public static final String ACTION_THREAD_TO_DIZ_STEP2 = "toQuestion2";
     public static final String ACTION_SET_SOLUTION = "setSolution";
     public static final String ACTION_UNSET_SOLUTION = "unsetSolution";
+    public static final String ACTION_SHOW_VOTERS = "showVoters";
 
 
 // prepsat a overit kazdou jednotlivou funkci
@@ -166,6 +167,9 @@ public class EditDiscussion implements AbcAction {
             ActionProtector.ensureContract(request, EditDiscussion.class, false, true, true, false);
             return actionAddQuestion2(request, response, env, true);
         }
+
+        if (ACTION_SHOW_VOTERS.equals(action))
+            return actionShowVoters(request, response, env);
 
         // check permissions
         User user = (User) env.get(Constants.VAR_USER);
@@ -625,6 +629,17 @@ public class EditDiscussion implements AbcAction {
             writer.write(""+votes);
         }
         return null;
+    }
+
+    protected String actionShowVoters(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistence persistence = PersistenceFactory.getPersistence();
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item diz = (Item) persistence.findById(relation.getChild());
+        List<Solution> solutions = SolutionTool.get(diz);
+
+        env.put(ShowObject.VAR_ITEM, diz);
+        
+        return FMTemplateSelector.select("EditDiscussion", "showVoters", env, request);
     }
 
     private static Comment getDiscussionComment(Item item, int thread) {
