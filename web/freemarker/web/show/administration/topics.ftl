@@ -22,86 +22,95 @@ Téma je přijato, pokud je přiřazeno k článku, které editor přidal a ten 
 	<li>Honorář - výše honoráře za námět<li>
 </ul>
 
-<form action="${URL.noPrefix("/sprava/redakce/namety")}" method="POST">
-    <table class="siroka list">
-	    <thead>
+<table class="siroka list">
+	<thead>
+        <tr>
+            <th>&nbsp;</th>
+            <th>Název</th>
+            <th>Veřejný</th>
+            <th>Autor</th>
+            <th>Termín</th>
+            <th>Přijatý</th>
+            <th>Honorář</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+	<tbody>
+	<form action="${URL.noPrefix("/sprava/redakce/namety")}" method="POST">	    
+        <tr>
+        	<td>&nbsp;</td>
+            <td><@lib.filterInput filter=FILTER id="filterTopicsByTitle" size="8" tabindex="1"/></td>
+            <td><select name="filterTopicsByOpened" tabindex="2">
+            		<@lib.filterOption filter=FILTER id="filterTopicsByOpened" value=""></@lib.filterOption>
+            		<@lib.filterOption filter=FILTER id="filterTopicsByOpened" value="1">ano</@lib.filterOption>
+            		<@lib.filterOption filter=FILTER id="filterTopicsByOpened" value="0">ne</@lib.filterOption>
+              	</select>
+            </td>
+            <td><select name="filterTopicsByAuthor" tabindex="3">
+              	<@lib.filterOption filter=FILTER id="filterTopicsByAuthor" value=""></@lib.filterOption>
+                <#list AUTHORS as author>
+					  <@lib.filterOption filter=FILTER id="filterTopicsByAuthor" value="${author.id}">${author.title}</@lib.filterOption>
+				</#list>
+                </select>
+            </td>
+            <td>
+                 <select name="filterTopicsByTerm" tabindex="4">
+                	 <@lib.filterOption filter=FILTER id="filterTopicsByTerm" value=""></@lib.filterOption>
+                	 <@lib.filterOption filter=FILTER id="filterTopicsByTerm" value="0">v prodlení</@lib.filterOption>
+                	 <@lib.filterOption filter=FILTER id="filterTopicsByTerm" value="0-1">tento měsíc</@lib.filterOption>
+                	 <@lib.filterOption filter=FILTER id="filterTopicsByTerm" value="1-2">příští měsíc</@lib.filterOption>
+                 </select>
+            </td>
+            <td>
+                 <select name="filterTopicsByAccepted" tabindex="5">
+                 	 <@lib.filterOption filter=FILTER id="filterTopicsByAccepted" value=""></@lib.filterOption>
+                 	 <@lib.filterOption filter=FILTER id="filterTopicsByAccepted" value="1">ano</@lib.filterOption>
+                 	 <@lib.filterOption filter=FILTER id="filterTopicsByAccepted" value="0">ne</@lib.filterOption>
+                 </select>
+            </td>
+            <td>
+                 <select name="filterTopicsByRoyalty" tabindex="6">
+                 	 <@lib.filterOption filter=FILTER id="filterTopicsByRoyalty" value=""></@lib.filterOption>
+                 	 <@lib.filterOption filter=FILTER id="filterTopicsByRoyalty" value="0">běžný</@lib.filterOption>
+                 	 <@lib.filterOption filter=FILTER id="filterTopicsByRoyalty" value="1">jiný</@lib.filterOption>
+                 </select>
+            </td>
+            <td><input type="submit" name="list" value="Filtruj" tabindex="7" /></td>
+        </tr>         
+        <#list FOUND.data as topic>
             <tr>
-                <th>&nbsp;</th>
-                <th>Název</th>
-                <th>Veřejný</th>
-                <th>Autor</th>
-                <th>Termín</th>
-                <th>Přijatý</th>
-                <th>Honorář</th>
-                <th>&nbsp;</th>
-            </tr>
-        </thead>
-	    <tbody>
-            <tr>
-            	<td>&nbsp;</td>
-                <td><@lib.showFilterInput FILTER, "filterTopicsByTitle", "8" /></td>
-                <td><select name="filterTopicsByOpened">
-                		<@lib.showOption5 "", "", FILTER.checked("filterTopicsByOpened", "")/>
-                        <@lib.showOption5 "1", "ano", FILTER.checked("filterTopicsByOpened", "1")/>
-                        <@lib.showOption5 "0", "ne", FILTER.checked("filterTopicsByOpened", "0")/> 
-                	</select>
+              	<td>
+              		<@lib.filterCheckBox filter=FILTER id="topicId" value="${topic.id}"></@lib.filterCheckBox>
+              	</td>
+                <td style="text-align: left">${(topic.title)!?html}</td>
+                <td>${(topic.isPublic())!?string("ano","ne")}</td>
+                <td><#if (topic.author)?? >
+                   	<a href="${URL.make("/redakce/autori/show/?aId=${(topic.author.id)!}&amp;action=show")}">${(topic.author.title)!?html}</a>
+                  	</#if>
                 </td>
-                <td><select name="filterTopicsByAuthor">
-                		<@lib.showOption5 "", "", FILTER.checked("filterTopicsByAuthor", "") />
-                    	<#list AUTHORS as author>
-							<@lib.showOption5 "${author.id}", "${author.title}", FILTER.checked("filterTopicsByAuthor", "${author.id}") />
-						</#list>
-                    </select>
+                <td><#if (topic.deadline)??>
+                  		<#if topic.isInDelay() ><span style="color: red"></#if>
+                        ${DATE.show(topic.deadline, "CZ_DMY")}
+                        <#if topic.isInDelay()></span></#if>
+                    </#if>
                 </td>
-                <td>
-                    <select name="filterTopicsByTerm">
-                        <@lib.showOption5 "", "", FILTER.checked("filterTopicsByTerm", "") />
-                        <@lib.showOption5 "0", "v prodlení", FILTER.checked("filterTopicsByTerm", "0") />
-                        <@lib.showOption5 "0-1", "tento měsíc", FILTER.checked("filterTopicsByTerm", "0-1") />
-                        <@lib.showOption5 "1-2", "příští měsíc", FILTER.checked("filterTopicsByTerm", "1-2") />
-                    </select>
+                <td>${(topic.accepted)!?string("ano","ne")}</td>
+                <td>${(topic.royalty)!"běžný"}</td>
+                <td style="white-space: nowrap">
+                     <a href="${URL.make("/sprava/redakce/namety/edit/${topic.id}?action=edit")}" title="Upravit námět">U</a>&nbsp;
+                     <a href="${URL.make("/sprava/redakce/namety/edit/${topic.id}?action=rm")}" title="Smazat námět">X</a>
                 </td>
-                <td>
-                    <select name="filterTopicsByAccepted">
-                        <@lib.showOption5 "", "", FILTER.checked("filterTopicsByAccepted", "") />
-                        <@lib.showOption5 "1", "ano", FILTER.checked("filterTopicsByAccepted", "1") />
-                        <@lib.showOption5 "0", "ne", FILTER.checked("filterTopicsByAccepted", "0") />
-                    </select>
-                </td>
-                <td>
-                    <select name="filterTopicsByRoyalty">
-                        <@lib.showOption5 "", "", FILTER.checked("filterTopicsByRoyalty", "") />
-                        <@lib.showOption5 "0", "běžný", FILTER.checked("filterTopicsByRoyalty", "0") />
-                        <@lib.showOption5 "1", "jiný", FILTER.checked("filterTopicsByRoyalty", "1") />
-                    </select>
-                </td>
-                <td><input type="submit" value="Filtruj" /></td>
-            </tr>
-            <#list FOUND.data as topic>
-                <tr>
-                	<td><input type="checkbox" value="${topic.id}" name="filterTopics" /></td>
-                    <td style="text-align: left">${(topic.title)!?html}</td>
-                    <td>${(topic.isPublic())!?string("ano","ne")}</td>
-                    <td><#if (topic.author)?? >
-                    	<a href="${URL.make("/redakce/autori/show/?aId=${(topic.author.id)!}&amp;action=show")}">${(topic.author.title)!?html}</a>
-                    	</#if>
-                    </td>
-                    <td><#if (topic.deadline)??>
-                    		<#if topic.isInDelay() ><span style="color: red"></#if>
-                            ${DATE.show(topic.deadline, "CZ_DMY")}
-                            <#if topic.isInDelay()></span></#if>
-                        </#if>
-                    </td>
-                    <td>${(topic.accepted)!?string("ano","ne")}</td>
-                    <td>${(topic.royalty)!"běžný"}</td>
-                    <td style="white-space: nowrap">
-                        <a href="${URL.make("/sprava/redakce/namety/edit/${topic.id}?action=edit")}" title="Upravit námět">U</a>&nbsp;
-                        <a href="${URL.make("/sprava/redakce/namety/edit/${topic.id}?action=rm")}" title="Smazat námět">X</a>
-                    </td>
-                </tr>
-            </#list>
-	    </tbody>
-    </table>
+            </tr>                
+        </#list>
+        <#if FOUND.data??>
+           	<tr>
+           		<td colspan="8" style="text-align: right">
+           			<input type="submit" name="notify" value="Notifikace"/>
+           		</td>
+           	</tr>
+	    </#if>
+    </tbody>
+</table>
 </form>
 
 <div>

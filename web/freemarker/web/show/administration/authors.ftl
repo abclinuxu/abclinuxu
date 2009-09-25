@@ -35,44 +35,44 @@
 	    <tbody>
             <tr>
                 <td>
-                    <@lib.showFilterInput FILTER, "filterAuthorsByName", "8" />
-                    <@lib.showFilterInput FILTER, "filterAuthorsBySurname", "8" />
+                    <@lib.filterInput filter=FILTER id="filterAuthorsByName" size="8" />
+                    <@lib.filterInput filter=FILTER id="filterAuthorsBySurname" size="8" />
                 </td>
                 <td>
                     <select name="filterAuthorsByContract">
-                        <@lib.showOption5 "", "", FILTER.checked("filterAuthorsByContract", "")/>
-                        <@lib.showOption5 "old", "stará", FILTER.checked("filterAuthorsByContract", "old")/>
-                        <@lib.showOption5 "current", "aktualní", FILTER.checked("filterAuthorsByContract", "current")/>
-                        <@lib.showOption5 "none", "žádná", FILTER.checked("filterAuthorsByContract", "none")/>
+                        <@lib.filterOption filter=FILTER id="filterAuthorsByContract" value=""></@lib.filterOption>
+                        <@lib.filterOption filter=FILTER id="filterAuthorsByContract" value="old">stará</@lib.filterOption>
+                        <@lib.filterOption filter=FILTER id="filterAuthorsByContract" value="current">aktuální</@lib.filterOption>
+                        <@lib.filterOption filter=FILTER id="filterAuthorsByContract" value="none">žádná</@lib.filterOption>
                     </select>
                 </td>
                 <td>
                     <select name="filterAuthorsByActive">
-                        <@lib.showOption5 "", "", FILTER.checked("filterAuthorsByActive", "")/>
-                        <@lib.showOption5 "1", "ano", FILTER.checked("filterAuthorsByActive", "1")/>
-                        <@lib.showOption5 "0", "ne", FILTER.checked("filterAuthorsByActive", "0")/>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByActive" value=""></@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByActive" value="1">ano</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByActive" value="0">ne</@lib.filterOption>
                     </select>
                 </td>
                 <td>
                     <select name="filterAuthorsByArticles">
-                        <@lib.showOption5 "", "", FILTER.checked("filterAuthorsByArticles", "")/>
-                        <@lib.showOption5 "0", "žádný", FILTER.checked("filterAuthorsByArticles", "0")/>
-                        <@lib.showOption5 "1-4", "1 až 4", FILTER.checked("filterAuthorsByArticles", "1-4")/>
-                        <@lib.showOption5 "5-9", "5 až 9", FILTER.checked("filterAuthorsByArticles", "5-9")/>
-                        <@lib.showOption5 "10-49", "10 až 49", FILTER.checked("filterAuthorsByArticles", "10-49")/>
-                        <@lib.showOption5 "50-99", "50 až 99", FILTER.checked("filterAuthorsByArticles", "50-99")/>
-                        <@lib.showOption5 "101", "100 a více", FILTER.checked("filterAuthorsByArticles", "101")/>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByArticles" value=""></@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByArticles" value="0">žádný</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByArticles" value="1-4">1 až 4</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByArticles" value="5-9">5 až 9</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByArticles" value="10-49">10 až 49</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByArticles" value="50-99">50 až 99</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByArticles" value="100">100 a více</@lib.filterOption>
                     </select>
                 </td>
                 <td>
                     <select name="filterAuthorsByRecent">
-                        <@lib.showOption5 "", "", FILTER.checked("filterAuthorsByRecent", "")/>
-                        <@lib.showOption5 "25", "starší než dva roky", FILTER.checked("filterAuthorsByRecent", "25")/>
-                        <@lib.showOption5 "24", "nejvíce dva roky", FILTER.checked("filterAuthorsByRecent", "24")/>
-                        <@lib.showOption5 "12", "nejvíce rok", FILTER.checked("filterAuthorsByRecent", "12")/>
-                        <@lib.showOption5 "6", "nejvíce půl roku", FILTER.checked("filterAuthorsByRecent", "6")/>
-                        <@lib.showOption5 "2", "minulý měsíc", FILTER.checked("filterAuthorsByRecent", "2")/>
-                        <@lib.showOption5 "1", "poslední měsíc", FILTER.checked("filterAuthorsByRecent", "1")/>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByRecent" value=""></@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByRecent" value="25">starší než dva roky</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByRecent" value="24">nejvíce dva roky</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByRecent" value="12">nejvíce rok</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByRecent" value="6">nejvíce půl roku</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByRecent" value="2">minulý měsíc</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER id="filterAuthorsByRecent" value="1">poslední měsíc</@lib.filterOption>
                     </select>
                 </td>
                 <td><input type="submit" value="Filtruj" /></td>

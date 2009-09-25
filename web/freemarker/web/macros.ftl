@@ -510,9 +510,35 @@
     </label>
 </#macro>
 
-<#macro showFilterInput (filter id size)>
-	<input type="text" name="${id}" size="${size}" value="${filter.value(id)}" />
+<#macro filterOption (filter id value extra...) >
+	<option value="${value}" <#if filter.checked("${id}", "${value}")> selected</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> >
+	<#nested/>
+	</option>
 </#macro>
+
+<#macro filterInput (filter id extra...) >
+	<input type="text" name="${id}" value="${filter.value(id)}" <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+</#macro>
+
+<#macro filterHidden (filter id extra...) >
+	<input type="hidden" name="${id}" value="${filter.value(id)}" <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+</#macro>
+
+<#macro filterRadio (filter id value extra...) >
+	<input type="radio" name="${id}" value="${value}" <#if filter.checked("${id}", "${value}")> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+	<#nested/>
+</#macro>
+
+<#macro filterCheckBox (filter id value extra...) >
+    <input type="checkbox" name="${id}" value="${value}" <#if filter.checked("${id}", "${value}")> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+	<#nested/>
+</#macro>
+
+<#macro filterText (filter id extra...) >
+	<textarea name="${id}" <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> >${filter.value("${id}")}</textarea>
+</#macro>
+
+
 
 <#macro advertisement (id)>${TOOL.getAdvertisement(id, .vars)}</#macro>
 

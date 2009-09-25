@@ -2,7 +2,6 @@ package cz.abclinuxu.servlets.html.admin.edit;
 
 import static cz.abclinuxu.servlets.Constants.PARAM_NAME;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +19,7 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.util.RelationUtil;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
@@ -412,17 +412,4 @@ public class EditAuthor implements AbcAction {
 
         return result;
     }  
-}
-
-class RelationUtil {
-	public static Relation findParent(Item item) {
-        Persistence persistence = PersistenceFactory.getPersistence();
-        List<Relation> parents = persistence.findRelationsFor(item);
-
-        if (parents.size() == 1)
-            return parents.get(0);
-
-        throw new MissingArgumentException("Nepodařilo se najít rodičovskou relaci pro objekt " + item.getTypeString() + "!");
-    }
-
 }

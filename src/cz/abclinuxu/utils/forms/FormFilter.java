@@ -1,5 +1,17 @@
 package cz.abclinuxu.utils.forms;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import org.apache.log4j.Logger;
+
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.LogicalOperation;
@@ -8,19 +20,10 @@ import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.extra.SpecialValue;
 import cz.abclinuxu.utils.Misc;
-import org.apache.log4j.Logger;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
 
 /**
  * Allows form to apply different filtering conditions for result.
+ * Allows multiple choice of objects
  * 
  * @author kapy
  */
@@ -59,7 +62,7 @@ public class FormFilter {
 				Pair pair = new Pair(value.toString());
 				// double-single value
 				if (pair.single != null) {
-					return new FilterQualifier(nestedQualifer(Field.COUNTER, pair.single, Operation.SMALLER, 101, Operation.GREATER_OR_EQUAL, IsNullCheck.BEFORE_CAP), value);
+					return new FilterQualifier(nestedQualifer(Field.COUNTER, pair.single, Operation.SMALLER, 100, Operation.GREATER_OR_EQUAL, IsNullCheck.BEFORE_CAP), value);
 				}
 				// interval of value
 				else if (pair.right != null) {
@@ -123,30 +126,30 @@ public class FormFilter {
 				Pair pair = new Pair(value.toString());
 				final Integer zero = new Integer(0);
 				// get articles in delay
-				if(zero.equals(pair.single)) {
-					return new FilterQualifier(new CompareCondition(Field.DATE1, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW), value); 
+				if (zero.equals(pair.single)) {
+					return new FilterQualifier(new CompareCondition(Field.DATE1, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW), value);
 				}
 				// get articles in next month
-				else if(pair.right != null) {
+				else if (pair.right != null) {
 					Calendar left = Calendar.getInstance();
 					Calendar right = (Calendar) left.clone();
 					left.set(Calendar.MONTH, left.get(Calendar.MONTH) + pair.left);
 					left = monthBeginning(left);
 					right.set(Calendar.MONTH, right.get(Calendar.MONTH) + pair.right);
 					right = monthBeginning(right);
-					
-					if(log.isDebugEnabled()) {
+
+					if (log.isDebugEnabled()) {
 						log.debug("Left date: " + (new java.sql.Date(left.getTimeInMillis())).getTime());
 						log.debug("Right date: " + (new java.sql.Date(right.getTimeInMillis())).getTime());
 					}
-					
+
 					Qualifier[] list = {
 					        new CompareCondition(Field.DATE1, Operation.GREATER_OR_EQUAL, new java.sql.Date(left.getTimeInMillis())),
 					        new CompareCondition(Field.DATE1, Operation.SMALLER_OR_EQUAL, new java.sql.Date(right.getTimeInMillis()))
-					};
+					        };
 					return new FilterQualifier(new NestedCondition(list, LogicalOperation.AND), value);
 				}
-				
+
 				log.warn("Unable to determine topics deadline date from value " + value);
 				return new FilterQualifier(null, value);
 			}
@@ -204,7 +207,7 @@ public class FormFilter {
 			if (("1".equals(text) || "true".equalsIgnoreCase(text) || "ano".equalsIgnoreCase(text))) return true;
 			return false;
 		}
-		
+
 		protected Calendar monthBeginning(Calendar cal) {
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -299,8 +302,19 @@ public class FormFilter {
 	 * @param formValue Value passed from form
 	 * @return Modified instance of filter
 	 */
-	public FormFilter appendFilterQualifier(String paramName, Qualifier qualifer, String formValue) {
+	public FormFilter appendFilterQualifier(String paramName, Qualifier qualifer, Object formValue) {
 		filters.put(paramName, new FilterQualifier(qualifer, formValue));
+		return this;
+	}
+
+	/**
+	 * Allows removing qualifier after filter is created
+	 * 
+	 * @param paramName Name of parameter (or filter)
+	 * @return Modified instance of filter
+	 */
+	public FormFilter removeFilterQualifer(String paramName) {
+		filters.remove(paramName);
 		return this;
 	}
 
@@ -339,13 +353,21 @@ public class FormFilter {
 
 		for (Map.Entry<String, FilterQualifier> entry : filters.entrySet()) {
 			try {
-				sb.append("&amp;").append(entry.getKey()).append('=').append(URLEncoder.encode(entry.getValue().formValue, "UTF-8"));
+				String key = entry.getKey();
+				FilterQualifier fq = entry.getValue();
+				if (fq.isSingleValue())
+					sb.append("&amp;").append(key).append('=').append(URLEncoder.encode(fq.formValue.toString(), "UTF-8"));
+				else
+					for (Object o : (Collection<?>) fq.formValue)
+						sb.append("&amp;").append(key).append('=').append(URLEncoder.encode(o.toString(), "UTF-8"));
+
 			}
 			catch (UnsupportedEncodingException uee) {
-				log.error("Couldn't not convert form parameters to UTF-8 URL encoded string in string: " + entry.getValue().formValue, uee);
+				log.error("Couldn't not convert form parameters to UTF-8 URL encoded string in string: " + entry.getValue(), uee);
 				return null;
 			}
 		}
+
 		return sb.toString();
 	}
 
@@ -364,18 +386,30 @@ public class FormFilter {
 		}
 
 		FilterQualifier fq = filters.get(param);
-		return fq != null && value.equals(fq.formValue);
+		if(fq==null)
+			return false;
+		if(fq.isSingleValue()) 
+			return value.equals(fq.formValue.toString());
+		else {
+			@SuppressWarnings("unchecked")
+			Collection<? super Object> candidates = (Collection<? super Object>) fq.formValue;
+			return candidates.contains(value);
+		}
 	}
 
 	/**
-	 * Returns value of parameter, as passed from form
+	 * Returns value of parameter as passed from form. Allows multiple values.
 	 * 
-	 * @param param Value passed from form
-	 * @return Value of parameter passed od {@code null}
+	 * @param param Name of parameter passed from form
+	 * @return Either single value passed from form or collection of values
+	 * 		
 	 */
-	public String value(String param) {
+	public Object value(String param) {
 		FilterQualifier fq = filters.get(param);
-		return (fq != null) ? fq.formValue : "";
+		if(fq == null) 
+			return "";
+		
+		return fq.formValue;
 	}
 
 	/**
@@ -388,16 +422,37 @@ public class FormFilter {
 	 */
 	private static class FilterQualifier {
 		Qualifier qualifier;
-		String formValue;
+		Object formValue;
 
 		public FilterQualifier(Qualifier qualifer, Object formValue) {
 			this.qualifier = qualifer;
-			this.formValue = formValue.toString();
+			this.formValue = formValue;
+		}
+
+		public boolean isSingleValue() {
+			return !isMultipleValue();
+		}
+
+		public boolean isMultipleValue() {
+			return (formValue instanceof Collection<?>);
 		}
 
 		@Override
 		public String toString() {
-			return "FQ:" + formValue;
+			StringBuilder sb = new StringBuilder();
+			if (isMultipleValue()) {
+				sb.append("{");
+				for (Object o : (Collection<?>) formValue)
+					sb.append(o.toString()).append(",");
+				sb.replace(sb.length() - 1, sb.length(), "}");
+			}
+			else {
+				sb.append(formValue);
+			}
+			sb.append("\n").append("with qualifer: ").append(qualifier);
+
+			return sb.toString();
+
 		}
 	}
 

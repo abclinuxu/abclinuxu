@@ -934,4 +934,26 @@
     		<var name="TITLE" value='Smazání autora ${AUTHOR.title}' type="Lazy" />
     	</action>
     </servlet>    
+    
+    <servlet name="AdministrationShowTopic">
+    	<action name="list" content="/show/administration/topics.ftl">
+    		<var name="TITLE" value="Správa námětů - seznam" />
+    	</action>
+    	<action name="notify" content="/show/administration/topic_notification.ftl">
+    		<var name="TITLE" value="Zaslání námětů autorům"/>
+    	</action>    	
+    </servlet>
+    
+    <servlet name="AdministrationEditTopic">
+    	<action name="add" content="/add/administration/topic.ftl">
+    		<var name="TITLE" value="Přidání námětu" />
+    	</action>
+    	<action name="edit" content="/add/administration/topic.ftl">
+    		<var name="TITLE" value='Editace námětu ${TOPIC.title}' type="Lazy" />
+    	</action>
+    	<action name="remove" content="/remove/administration/topic.ftl">
+    		<var title="TITLE" value='Smazání námětu ${TOPIC.title}' type="Lazy" />
+    	</action>
+    </servlet>
+    
 </config>

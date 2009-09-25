@@ -1,6 +1,5 @@
 package cz.abclinuxu.servlets.html.admin.edit;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
 
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
@@ -17,7 +17,6 @@ import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.data.view.Topic;
 import cz.abclinuxu.exceptions.InternalException;
-import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -26,6 +25,7 @@ import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.util.RelationUtil;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
@@ -37,7 +37,6 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.BeanFlusher;
-import cz.abclinuxu.utils.ImageTool;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.BeanFetcher.FetchType;
@@ -176,7 +175,7 @@ public class EditTopic implements AbcAction {
 			env.put(VAR_TOPIC, topic);
 			return FMTemplateSelector.select("AdministrationEditTopic", "add", env, request);
 		}
-
+		try {
 		// store in database
 		Item item = new Item(0, Item.TOPIC);
 
@@ -201,6 +200,12 @@ public class EditTopic implements AbcAction {
 		topic = BeanFetcher.fetchTopicFromItem(item, FetchType.EAGER);
 		redirect(response, env);
 		return null;
+		}
+		catch (Exception e) {
+			Logger log = Logger.getLogger(EditTopic.class);
+			log.fatal("Whatever bad", e);
+			return null;
+		}
 	}
 
 	private String actionEditStep1(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) {
@@ -292,6 +297,12 @@ public class EditTopic implements AbcAction {
 		}
 		return authors;
 	}
+	
+	public static void redirect(HttpServletResponse response, Map env) throws Exception {
+		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+		// redirect to topics in administration system
+		urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/namety/show?action=list"));
+	}
 
 	/**
 	 * Creates absolute URL for this topic
@@ -302,12 +313,6 @@ public class EditTopic implements AbcAction {
 	private String proposeTopicsUrl(Topic topic) {
 		String url = UrlUtils.PREFIX_ADMINISTRATION + "redakce/namety/" + URLManager.enforceRelativeURL(topic.getTitle());
 		return URLManager.protectFromDuplicates(url);
-	}
-
-	private void redirect(HttpServletResponse response, Map env) throws Exception {
-		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-		// redirect to topics in administration system
-		urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/namety/show?action=list"));
 	}
 
 	/**
@@ -343,7 +348,7 @@ public class EditTopic implements AbcAction {
 			result &= validateNotEmptyAndSet(String.class, PARAM_TITLE, "Zadejte název!");
 			result &= validateNotEmptyAndSet(String.class, PARAM_DESCRIPTION, "Zadejte popis!");
 			// date is not mandatory
-			setBeanField(Date.class, PARAM_DEADLINE, (String) params.get(PARAM_DEADLINE), "Zadejte termnín!");
+			setBeanField(Date.class, PARAM_DEADLINE, (String) params.get(PARAM_DEADLINE), "Zadejte termín!");
 			// author
 			if (!transform(Boolean.class, PARAM_PUBLIC, (String) params.get(PARAM_PUBLIC), "Námět musí být veřejný nebo přiřazen")) {
 				result &= validateNotEmptyAndSet(Author.class, PARAM_AUTHOR, "Vyberte přiřazeného autora!");
