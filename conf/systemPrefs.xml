@@ -735,6 +735,8 @@
                             <entry key="CAT_VIDEOS" value="2123"/>
                             <entry key="CAT_ADVERTISEMENTS" value="2228"/>
                             <entry key="CAT_SHOP_64BIT_CZ" value="2085"/>
+                            <entry key="CAT_TOPICS" value="2398"/>
+                            <entry key="CAT_CONTRACTS" value="2399"/>
                             <entry key="ITEM_DIZ_TODO" value="11606"/>
                             <entry key="ITEM_DYNAMIC_CONFIGURATION" value="59516"/>
                             <entry key="REC_DIZ_TODO" value="38280"/>
@@ -780,15 +782,13 @@
                             <entry key="REL_LINKS" value="319"/>
                             <entry key="REL_REQUESTS" value="3500"/>
                             <entry key="REL_ADVERTISEMENTS" value="243515"/>
+                            <entry key="REL_TOPICS" value="279001"/>
+                            <entry key="REL_CONTRACTS" value="279002"/>
                             <entry key="GROUP_ADMINI" value="11246"/>
                             <entry key="GROUP_AUTORI" value="11247"/>
                             <entry key="GROUP_STICKFISH" value="12651"/>
                             <entry key="GROUP_TEAM_ABCLINUXU" value="20468"/>
-                            <entry key="USER_REDAKCE" value="5473"/><!--
-                            <entry key="CAT_TOPICS" value="2364"/>
-                            <entry key="CAT_CONTRACTS" value="2365"/>
-                            <entry key="REL_TOPICS" value="269500"/>
-                            <entry key="REL_CONTRACTS" value="269501"/>-->
+                            <entry key="USER_REDAKCE" value="5473"/>
                         </map>
                     </node>
                     <node name="utils">
