@@ -67,7 +67,7 @@ public class EditTopic implements AbcAction {
 
 	public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 
-		Map<?, ?> params = (Map<?, ?>) env.get(Constants.VAR_PARAMS);
+		Map params = (Map) env.get(Constants.VAR_PARAMS);
 		User user = (User) env.get(Constants.VAR_USER);
 		String action = (String) params.get(PARAM_ACTION);
 
@@ -204,7 +204,6 @@ public class EditTopic implements AbcAction {
 	}
 
 	private String actionEditStep1(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) {
-		Map<?,?> params = (Map<?,?>) env.get(Constants.VAR_PARAMS);
 		Topic topic = (Topic) env.get(VAR_TOPIC);
 		
 		Link tail = new Link(topic.getTitle(), "edit/" + topic.getId() + "?action=edit", "Editace námětu: "  + topic.getTitle());
@@ -220,7 +219,6 @@ public class EditTopic implements AbcAction {
 
 		Persistence persistence = PersistenceFactory.getPersistence();
         SQLTool sqlTool = SQLTool.getInstance();
-        Map<?,?> params = (Map<?,?>) env.get(Constants.VAR_PARAMS);
         Topic topic = (Topic) env.get(VAR_TOPIC);
         TopicValidator validator = new TopicValidator(topic, env);
         
@@ -253,11 +251,7 @@ public class EditTopic implements AbcAction {
 	}
 
 	private String actionRemoveStep(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) {
-        SQLTool sqlTool = SQLTool.getInstance();
-
-        Map<?,?> params = (Map<?,?>) env.get(Constants.VAR_PARAMS);
         Topic topic = (Topic) env.get(VAR_TOPIC);
-
         Link tail = new Link(topic.getTitle(), "edit/" + topic.getId() + "?action=rm", "Smazání námětu, krok 1");
         env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
 
@@ -265,9 +259,8 @@ public class EditTopic implements AbcAction {
 	}
 
 	private String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) throws Exception {
-		
 		Persistence persistence = PersistenceFactory.getPersistence();
-        Map<?,?> params = (Map<?,?>) env.get(Constants.VAR_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         // delete author
         String delete = (String) params.get(PARAM_DELETE);
@@ -362,7 +355,5 @@ public class EditTopic implements AbcAction {
 
 			return result;
 		}
-
 	}
-
 }
