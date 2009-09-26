@@ -124,19 +124,11 @@ public class ShowAuthor implements AbcAction {
 
         Paging found = null;
         int total = 0;
-        // select according query
-        // FIXME add contract logic
-        // if(filter.containsParam(FormFilter.AUTHORS_BY_CONTRACT)) {
-
-        // }
-        // no additional queries required
-        // else {
         SQLTool sqlTool = SQLTool.getInstance();
         Qualifier[] qualifiers = getQualifiers(filter, from, count);
         List<Object[]> items = sqlTool.getAuthorsWithArticlesCount(qualifiers);
         total = sqlTool.countAuthorWithArticlesCount(QualifierTool.removeOrderQualifiers(qualifiers));
         found = new Paging(BeanFetcher.fetchAuthorsFromObjects(items, FetchType.PROCESS_NONATOMIC), from, count, total, qualifiers);
-        // }
         env.put(VAR_FILTER, filter);
         env.put(VAR_FOUND, found);
 
