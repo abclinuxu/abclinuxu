@@ -39,40 +39,40 @@ Téma je přijato, pokud je přiřazeno k článku, které editor přidal a ten 
 	<form action="${URL.noPrefix("/sprava/redakce/namety")}" method="POST">	    
         <tr>
         	<td>&nbsp;</td>
-            <td><@lib.filterInput filter=FILTER id="filterTopicsByTitle" size="8" tabindex="1"/></td>
+            <td><@lib.filterInput filter=FILTER name="filterTopicsByTitle" size="8" tabindex="1"/></td>
             <td><select name="filterTopicsByOpened" tabindex="2">
-            		<@lib.filterOption filter=FILTER id="filterTopicsByOpened" value=""></@lib.filterOption>
-            		<@lib.filterOption filter=FILTER id="filterTopicsByOpened" value="1">ano</@lib.filterOption>
-            		<@lib.filterOption filter=FILTER id="filterTopicsByOpened" value="0">ne</@lib.filterOption>
+            		<@lib.filterOption filter=FILTER name="filterTopicsByOpened" value=""></@lib.filterOption>
+            		<@lib.filterOption filter=FILTER name="filterTopicsByOpened" value="1">ano</@lib.filterOption>
+            		<@lib.filterOption filter=FILTER name="filterTopicsByOpened" value="0">ne</@lib.filterOption>
               	</select>
             </td>
             <td><select name="filterTopicsByAuthor" tabindex="3">
-              	<@lib.filterOption filter=FILTER id="filterTopicsByAuthor" value=""></@lib.filterOption>
+              	<@lib.filterOption filter=FILTER name="filterTopicsByAuthor" value=""></@lib.filterOption>
                 <#list AUTHORS as author>
-					  <@lib.filterOption filter=FILTER id="filterTopicsByAuthor" value="${author.id}">${author.title}</@lib.filterOption>
+					  <@lib.filterOption filter=FILTER name="filterTopicsByAuthor" value="${author.id}">${author.title}</@lib.filterOption>
 				</#list>
                 </select>
             </td>
             <td>
                  <select name="filterTopicsByTerm" tabindex="4">
-                	 <@lib.filterOption filter=FILTER id="filterTopicsByTerm" value=""></@lib.filterOption>
-                	 <@lib.filterOption filter=FILTER id="filterTopicsByTerm" value="0">v prodlení</@lib.filterOption>
-                	 <@lib.filterOption filter=FILTER id="filterTopicsByTerm" value="0-1">tento měsíc</@lib.filterOption>
-                	 <@lib.filterOption filter=FILTER id="filterTopicsByTerm" value="1-2">příští měsíc</@lib.filterOption>
+                	 <@lib.filterOption filter=FILTER name="filterTopicsByTerm" value=""></@lib.filterOption>
+                	 <@lib.filterOption filter=FILTER name="filterTopicsByTerm" value="0">v prodlení</@lib.filterOption>
+                	 <@lib.filterOption filter=FILTER name="filterTopicsByTerm" value="0-1">tento měsíc</@lib.filterOption>
+                	 <@lib.filterOption filter=FILTER name="filterTopicsByTerm" value="1-2">příští měsíc</@lib.filterOption>
                  </select>
             </td>
             <td>
                  <select name="filterTopicsByAccepted" tabindex="5">
-                 	 <@lib.filterOption filter=FILTER id="filterTopicsByAccepted" value=""></@lib.filterOption>
-                 	 <@lib.filterOption filter=FILTER id="filterTopicsByAccepted" value="1">ano</@lib.filterOption>
-                 	 <@lib.filterOption filter=FILTER id="filterTopicsByAccepted" value="0">ne</@lib.filterOption>
+                 	 <@lib.filterOption filter=FILTER name="filterTopicsByAccepted" value=""></@lib.filterOption>
+                 	 <@lib.filterOption filter=FILTER name="filterTopicsByAccepted" value="1">ano</@lib.filterOption>
+                 	 <@lib.filterOption filter=FILTER name="filterTopicsByAccepted" value="0">ne</@lib.filterOption>
                  </select>
             </td>
             <td>
                  <select name="filterTopicsByRoyalty" tabindex="6">
-                 	 <@lib.filterOption filter=FILTER id="filterTopicsByRoyalty" value=""></@lib.filterOption>
-                 	 <@lib.filterOption filter=FILTER id="filterTopicsByRoyalty" value="0">běžný</@lib.filterOption>
-                 	 <@lib.filterOption filter=FILTER id="filterTopicsByRoyalty" value="1">jiný</@lib.filterOption>
+                 	 <@lib.filterOption filter=FILTER name="filterTopicsByRoyalty" value=""></@lib.filterOption>
+                 	 <@lib.filterOption filter=FILTER name="filterTopicsByRoyalty" value="0">běžný</@lib.filterOption>
+                 	 <@lib.filterOption filter=FILTER name="filterTopicsByRoyalty" value="1">jiný</@lib.filterOption>
                  </select>
             </td>
             <td><input type="submit" name="list" value="Filtruj" tabindex="7" /></td>
@@ -80,7 +80,7 @@ Téma je přijato, pokud je přiřazeno k článku, které editor přidal a ten 
         <#list FOUND.data as topic>
             <tr>
               	<td>
-              		<@lib.filterCheckBox filter=FILTER id="topicId" value="${topic.id}"></@lib.filterCheckBox>
+              		<@lib.filterCheckBox filter=FILTER name="topicId" value="${topic.id}"></@lib.filterCheckBox>
               	</td>
                 <td style="text-align: left">${(topic.title)!?html}</td>
                 <td>${(topic.isPublic())!?string("ano","ne")}</td>

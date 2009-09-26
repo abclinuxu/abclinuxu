@@ -510,32 +510,32 @@
     </label>
 </#macro>
 
-<#macro filterOption (filter id value extra...) >
-	<option value="${value}" <#if filter.checked("${id}", "${value}")> selected</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> >
+<#macro filterOption (filter name value extra...) >
+	<option value="${value}" <#if filter.checked("${name}", "${value}")> selected</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> >
 	<#nested/>
 	</option>
 </#macro>
 
-<#macro filterInput (filter id extra...) >
-	<input type="text" name="${id}" value="${filter.value(id)}" <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+<#macro filterInput (filter name extra...) >
+	<input type="text" name="${name}" value="${filter.value(name)}" <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
 </#macro>
 
-<#macro filterHidden (filter id extra...) >
-	<input type="hidden" name="${id}" value="${filter.value(id)}" <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+<#macro filterHidden (filter name extra...) >
+	<input type="hidden" name="${name}" value="${filter.value(name)}" <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
 </#macro>
 
-<#macro filterRadio (filter id value extra...) >
-	<input type="radio" name="${id}" value="${value}" <#if filter.checked("${id}", "${value}")> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+<#macro filterRadio (filter name value extra...) >
+	<input type="radio" name="${name}" value="${value}" <#if filter.checked("${name}", "${value}")> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
 	<#nested/>
 </#macro>
 
-<#macro filterCheckBox (filter id value extra...) >
-    <input type="checkbox" name="${id}" value="${value}" <#if filter.checked("${id}", "${value}")> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+<#macro filterCheckBox (filter name value extra...) >
+    <input type="checkbox" name="${name}" value="${value}" <#if filter.checked("${name}", "${value}")> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
 	<#nested/>
 </#macro>
 
-<#macro filterText (filter id extra...) >
-	<textarea name="${id}" <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> >${filter.value("${id}")}</textarea>
+<#macro filterText (filter name extra...) >
+	<textarea name="${name}" <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> >${filter.value("${name}")}</textarea>
 </#macro>
 
 

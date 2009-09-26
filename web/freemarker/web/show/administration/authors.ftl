@@ -35,44 +35,44 @@
 	    <tbody>
             <tr>
                 <td>
-                    <@lib.filterInput filter=FILTER id="filterAuthorsByName" size="8" />
-                    <@lib.filterInput filter=FILTER id="filterAuthorsBySurname" size="8" />
+                    <@lib.filterInput filter=FILTER name="filterAuthorsByName" size="8" />
+                    <@lib.filterInput filter=FILTER name="filterAuthorsBySurname" size="8" />
                 </td>
                 <td>
                     <select name="filterAuthorsByContract">
-                        <@lib.filterOption filter=FILTER id="filterAuthorsByContract" value=""></@lib.filterOption>
-                        <@lib.filterOption filter=FILTER id="filterAuthorsByContract" value="old">stará</@lib.filterOption>
-                        <@lib.filterOption filter=FILTER id="filterAuthorsByContract" value="current">aktuální</@lib.filterOption>
-                        <@lib.filterOption filter=FILTER id="filterAuthorsByContract" value="none">žádná</@lib.filterOption>
+                        <@lib.filterOption filter=FILTER name="filterAuthorsByContract" value=""></@lib.filterOption>
+                        <@lib.filterOption filter=FILTER name="filterAuthorsByContract" value="old">stará</@lib.filterOption>
+                        <@lib.filterOption filter=FILTER name="filterAuthorsByContract" value="current">aktuální</@lib.filterOption>
+                        <@lib.filterOption filter=FILTER name="filterAuthorsByContract" value="none">žádná</@lib.filterOption>
                     </select>
                 </td>
                 <td>
                     <select name="filterAuthorsByActive">
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByActive" value=""></@lib.filterOption>
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByActive" value="1">ano</@lib.filterOption>
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByActive" value="0">ne</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByActive" value=""></@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByActive" value="1">ano</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByActive" value="0">ne</@lib.filterOption>
                     </select>
                 </td>
                 <td>
                     <select name="filterAuthorsByArticles">
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByArticles" value=""></@lib.filterOption>
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByArticles" value="0">žádný</@lib.filterOption>
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByArticles" value="1-4">1 až 4</@lib.filterOption>
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByArticles" value="5-9">5 až 9</@lib.filterOption>
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByArticles" value="10-49">10 až 49</@lib.filterOption>
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByArticles" value="50-99">50 až 99</@lib.filterOption>
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByArticles" value="100">100 a více</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByArticles" value=""></@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByArticles" value="0">žádný</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByArticles" value="1-4">1 až 4</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByArticles" value="5-9">5 až 9</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByArticles" value="10-49">10 až 49</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByArticles" value="50-99">50 až 99</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByArticles" value="100">100 a více</@lib.filterOption>
                     </select>
                 </td>
                 <td>
                     <select name="filterAuthorsByRecent">
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByRecent" value=""></@lib.filterOption>
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByRecent" value="25">starší než dva roky</@lib.filterOption>
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByRecent" value="24">nejvíce dva roky</@lib.filterOption>
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByRecent" value="12">nejvíce rok</@lib.filterOption>
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByRecent" value="6">nejvíce půl roku</@lib.filterOption>
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByRecent" value="2">minulý měsíc</@lib.filterOption>
-                    	<@lib.filterOption filter=FILTER id="filterAuthorsByRecent" value="1">poslední měsíc</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByRecent" value=""></@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByRecent" value="25">starší než dva roky</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByRecent" value="24">nejvíce dva roky</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByRecent" value="12">nejvíce rok</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByRecent" value="6">nejvíce půl roku</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByRecent" value="2">minulý měsíc</@lib.filterOption>
+                    	<@lib.filterOption filter=FILTER name="filterAuthorsByRecent" value="1">poslední měsíc</@lib.filterOption>
                     </select>
                 </td>
                 <td><input type="submit" value="Filtruj" /></td>
