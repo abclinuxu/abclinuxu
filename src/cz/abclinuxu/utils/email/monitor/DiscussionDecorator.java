@@ -72,7 +72,10 @@ public class DiscussionDecorator implements Decorator, Configurable {
             case REPLY:
                 changeMessage = actionReply; break;
             case CENSORE:
-                changeMessage = actionCensore;
+                changeMessage = actionCensore; break;
+            case EDIT:
+            	// FIXME what is expected behaviour of EDIT action?
+            	break;
         }
 
         env.put(VAR_ACTION,changeMessage);
