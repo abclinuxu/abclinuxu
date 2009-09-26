@@ -283,14 +283,22 @@ public class EditTopic implements AbcAction {
 	// ////////////////////////////////////////////////////////////////////////
 	// helpers
 
+	/**
+	 * Gets list of active authors ordered by their surnames.
+	 * Checks whether authors are already stored in conversation,
+	 * if not, performs query to persistence layer
+	 * @param env Conversation variables
+	 * @return List of active authors
+	 */
 	@SuppressWarnings("unchecked")
 	public static List<Author> getActiveAuthors(Map env) {
-		SQLTool sqlTool = SQLTool.getInstance();
 		List<Author> authors = (List<Author>) env.get(VAR_AUTHORS);
 		if (Misc.empty(authors)) {
 			// store available authors
+			SQLTool sqlTool = SQLTool.getInstance();
 			Qualifier[] qualifiers = new Qualifier[] {
-			        new CompareCondition(Field.NUMERIC2, Operation.EQUAL, 1)
+			        new CompareCondition(Field.NUMERIC2, Operation.EQUAL, 1),
+			        Qualifier.SORT_BY_STRING2
 			        };
 			List<Object[]> objects = sqlTool.getAuthorsWithArticlesCount(qualifiers);
 			authors = BeanFetcher.fetchAuthorsFromObjects(objects, FetchType.LAZY);
