@@ -16,12 +16,20 @@
 
 package org.apache.regexp;
 
-import javax.swing.*;
-import java.applet.Applet;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 /**
  * Interactive demonstration and testing harness for regular expressions classes.
