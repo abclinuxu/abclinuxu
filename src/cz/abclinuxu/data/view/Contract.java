@@ -3,7 +3,6 @@ package cz.abclinuxu.data.view;
 import java.util.Date;
 
 import cz.abclinuxu.data.ImageAssignable;
-import cz.abclinuxu.data.ImageAssignable.AssignedImage;
 
 /**
  * This class represents contract signed between Employer and Employee
