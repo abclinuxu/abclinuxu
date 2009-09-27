@@ -185,6 +185,10 @@ public class QualifierTool {
             sb.append(" IS NULL");
             return;
         }
+        else if (operation == Operation.IS_NOT_NULL) {
+        	sb.append(" IS NOT NULL");
+        	return;
+        }
 
         Object value = condition.getValue();
         if (value instanceof Field) {
