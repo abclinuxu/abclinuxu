@@ -1,10 +1,21 @@
 package cz.abclinuxu.servlets.html.admin.view;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Link;
+import cz.abclinuxu.data.view.Topic;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.CompareCondition;
+import cz.abclinuxu.persistence.extra.Field;
+import cz.abclinuxu.persistence.extra.Operation;
+import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -12,12 +23,8 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.PageNavigation;
 import cz.abclinuxu.servlets.utils.url.PwdNavigator;
 import cz.abclinuxu.utils.BeanFetcher;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.BeanFetcher.FetchType;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Handles both editor's and authors portal
@@ -27,6 +34,8 @@ import java.util.Map;
 public class AEPortal implements AbcAction {
 
     public static final String VAR_AUTHOR = "AUTHOR";
+    public static final String VAR_TOPICS = "TOPICS";
+    public static final String VAR_EDITOR_MODE = "EDITOR_MODE";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         User user = (User) env.get(Constants.VAR_USER);
@@ -58,13 +67,32 @@ public class AEPortal implements AbcAction {
                     throw new MissingArgumentException("K uživateli není přiřazen žádný autor");
                 if (!navigator.permissionsFor(author).canModify())
                     return FMTemplateSelector.select("AdministrationAEPortal", "forbidden", env, request);
-
-                return FMTemplateSelector.select("AdministrationAEPortal", "author", env, request);
+                break;
             case EDITOR:
-                return FMTemplateSelector.select("AdministrationAEPortal", "editor", env, request);
+            	env.put(VAR_EDITOR_MODE, Boolean.TRUE);
+            	break;
         }
+        
+        listTopics(request, env, author);
+        return FMTemplateSelector.select("AdministrationAEPortal", "ae-portal", env, request);
+    }
+    
+    private void listTopics(HttpServletRequest request, Map env, Author author) {
+    	if(author==null)
+    		return;
+    	
+    	SQLTool sqlTool = SQLTool.getInstance();
+		Qualifier[] qualifiers = new Qualifier[] {
+				new CompareCondition(Field.DATA, Operation.LIKE, "%<author>" + author.getId() + "</author>%"),
+				new CompareCondition(Field.DATE1, Operation.IS_NOT_NULL, null),
+				new CompareCondition(Field.NUMERIC2, Operation.EQUAL, 1),
+				Qualifier.SORT_BY_DATE1,
+				Qualifier.ORDER_ASCENDING
+		};
 
-        return null;
+		List<Topic> topics = BeanFetcher.fetchTopicsFromItems(sqlTool.getTopics(qualifiers), FetchType.EAGER);
+		if(!Misc.empty(topics))
+			env.put(VAR_TOPICS, topics);
     }
 
     /**
