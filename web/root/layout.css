@@ -1234,7 +1234,7 @@ p.documentHistory {
 	width: 100%;
 	margin: 0;
 	padding: 0;
-	padding-top: 2em; 
+	padding-top: 2em;
 }
 
 .left-column {
@@ -1275,3 +1275,6 @@ img.floatright {float:right; margin: 0 0 0 5px; border: none;}
 
 .cleaner {clear:both}
 
+.clear-float {
+	display: table;
+}
