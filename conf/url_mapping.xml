@@ -329,6 +329,10 @@
             <action>cz.abclinuxu.servlets.html.edit.EditTrivia</action>
         </mapping>
         <mapping>
+            <pattern>^/ViewDiscussion</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewDiscussion</action>
+        </mapping>
+        <mapping>
             <pattern>/newton</pattern>
             <action>cz.abclinuxu.servlets.html.various.NewtonExport</action>
         </mapping>

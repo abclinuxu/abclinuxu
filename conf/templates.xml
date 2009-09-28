@@ -245,6 +245,10 @@
         </action>
     </servlet>
 
+    <servlet name="ViewDiscussion">
+        <action name="showVoters" content="/show/answer_voters.ftl"/>
+    </servlet>
+
     <servlet name="EditDriver">
         <action name="add" content="/add/driver.ftl">
             <var name="TITLE" value="Vlož nový ovladač"/>
