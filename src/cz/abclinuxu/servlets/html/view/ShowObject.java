@@ -167,15 +167,8 @@ public class ShowObject implements AbcAction {
                 env.put(EditNews.VAR_CATEGORY, NewsCategories.get(item.getSubType()));
                 return FMTemplateSelector.select("ShowObject", "news", env, request);
             }
-            case Item.DISCUSSION: {
-                if (Tools.isQuestion(relation)) {
-                    ReadRecorder.log(item, Constants.COUNTER_READ, env);
-                    env.put(Constants.VAR_RSS, FeedGenerator.getForumFeedUrl(upper.getId()));
-                    return FMTemplateSelector.select("ShowObject", "question", env, request);
-                }
-                else
-                    return FMTemplateSelector.select("ShowObject", "discussion", env, request);
-            }
+            case Item.DISCUSSION:
+                return ViewDiscussion.processItem(relation, request, env);
             case Item.HARDWARE: {
                 RevisionInfo revisionInfo = Tools.getRevisionInfo(item);
                 env.put(Constants.VAR_REVISIONS, revisionInfo);

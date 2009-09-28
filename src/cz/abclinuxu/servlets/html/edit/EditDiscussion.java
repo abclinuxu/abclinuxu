@@ -29,6 +29,7 @@ import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.RowComment;
 import cz.abclinuxu.data.view.ItemComment;
 import cz.abclinuxu.data.view.DiscussionRecord;
+import cz.abclinuxu.data.view.Solution;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
@@ -52,6 +53,7 @@ import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
+import cz.abclinuxu.servlets.html.view.ShowObject;
 import org.dom4j.*;
 import org.joda.time.Days;
 import org.joda.time.DateTime;
@@ -67,7 +69,6 @@ import java.net.URLDecoder;
 import java.io.UnsupportedEncodingException;
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * This class is responsible for adding new
@@ -106,6 +107,7 @@ public class EditDiscussion implements AbcAction {
     public static final String VAR_ATTACHMENTS = "ATTACHMENTS";
     public static final String VAR_COMMENTED_TEXT = "COMMENTED_TEXT";
     public static final String VAR_DISCUSSION_AGE = "AGE";
+    public static final String VAR_VOTERS = "VOTERS";
 
     public static final String ACTION_ADD_DISCUSSION = "addDiz";
     public static final String ACTION_ADD_QUESTION = "addQuez";
@@ -127,7 +129,6 @@ public class EditDiscussion implements AbcAction {
     public static final String ACTION_THREAD_TO_DIZ_STEP2 = "toQuestion2";
     public static final String ACTION_SET_SOLUTION = "setSolution";
     public static final String ACTION_UNSET_SOLUTION = "unsetSolution";
-    public static final String ACTION_SHOW_VOTERS = "showVoters";
 
 
 // prepsat a overit kazdou jednotlivou funkci
@@ -168,9 +169,6 @@ public class EditDiscussion implements AbcAction {
             return actionAddQuestion2(request, response, env, true);
         }
 
-        if (ACTION_SHOW_VOTERS.equals(action))
-            return actionShowVoters(request, response, env);
-
         // check permissions
         User user = (User) env.get(Constants.VAR_USER);
         if ( user==null )
@@ -178,11 +176,11 @@ public class EditDiscussion implements AbcAction {
 
         if ( ACTION_SET_SOLUTION.equals(action) ) {
             ActionProtector.ensureContract(request, EditDiscussion.class, true, false, false, true);
-            return actionSetSolution(response, env);
+            return actionSetSolution(request, response, env);
         }
         if ( ACTION_UNSET_SOLUTION.equals(action) ) {
             ActionProtector.ensureContract(request, EditDiscussion.class, true, false, false, true);
-            return actionUnsetSolution(response, env);
+            return actionUnsetSolution(request, response, env);
         }
 
         // check permissions
@@ -575,7 +573,7 @@ public class EditDiscussion implements AbcAction {
         return null;
     }
 
-    protected String actionSetSolution(HttpServletResponse response, Map env) throws Exception {
+    protected String actionSetSolution(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -584,12 +582,12 @@ public class EditDiscussion implements AbcAction {
 
         Item diz = (Item) persistence.findById(relation.getChild()).clone();
         int thread = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
-        int votes = -1;
+        Solution solution = null;
 
         if (thread != 0) {
             Comment comment = getDiscussionComment(diz, thread);
             if (comment.getAuthor() == null || comment.getAuthor() != user.getId()) {
-                votes = SolutionTool.add(diz, thread, user.getId());
+                solution = SolutionTool.add(diz, thread, user.getId());
             }
         }
 
@@ -598,14 +596,20 @@ public class EditDiscussion implements AbcAction {
             if (url == null)
                 url = urlUtils.getPrefix() + "/show/" + relation.getId();
             urlUtils.redirect(response, url, false);
+
+            return null;
         } else {
-            Writer writer = response.getWriter();
-            writer.write(""+votes);
+            if (solution == null)
+                return null;
+            env.put(VAR_VOTERS, solution.getVoters());
+            env.put(ShowObject.VAR_ITEM, diz);
+
+            return FMTemplateSelector.select("ViewDiscussion", "showVoters", env, request);
         }
-        return null;
+        
     }
 
-    protected String actionUnsetSolution(HttpServletResponse response, Map env) throws Exception {
+    protected String actionUnsetSolution(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -614,10 +618,10 @@ public class EditDiscussion implements AbcAction {
 
         Item diz = (Item) persistence.findById(relation.getChild()).clone();
         int thread = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
-        int votes = -1;
+        Solution solution = null;
 
         if (thread != 0)
-            votes = SolutionTool.remove(diz, thread, user.getId());
+            solution = SolutionTool.remove(diz, thread, user.getId());
 
         if (!params.containsKey(PARAM_AJAX)) {
             String url = relation.getUrl();
@@ -625,21 +629,14 @@ public class EditDiscussion implements AbcAction {
                 url = urlUtils.getPrefix() + "/show/" + relation.getId();
             urlUtils.redirect(response, url, false);
         } else {
-            Writer writer = response.getWriter();
-            writer.write(""+votes);
+            if (solution == null)
+                return null;
+            env.put(VAR_VOTERS, solution.getVoters());
+            env.put(ShowObject.VAR_ITEM, diz);
+            
+            return FMTemplateSelector.select("ViewDiscussion", "showVoters", env, request);
         }
         return null;
-    }
-
-    protected String actionShowVoters(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistence();
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        Item diz = (Item) persistence.findById(relation.getChild());
-        List<Solution> solutions = SolutionTool.get(diz);
-
-        env.put(ShowObject.VAR_ITEM, diz);
-        
-        return FMTemplateSelector.select("EditDiscussion", "showVoters", env, request);
     }
 
     private static Comment getDiscussionComment(Item item, int thread) {
