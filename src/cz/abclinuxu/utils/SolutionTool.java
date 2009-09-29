@@ -32,19 +32,19 @@ public class SolutionTool {
         return solutions;
     }
 
-    public static int add(Item diz, int thread, int uid) {
+    public static Solution add(Item diz, int thread, int uid) {
         boolean newSolution = true;
-        int votes = 1;
+        Solution s = null;
 
         List<Solution> solutions = new ArrayList(get(diz));
         for (Solution solution : solutions) {
             if (solution.getId() == thread) {
                 newSolution = false;
                 if (solution.getVoters().contains(uid)) {
-                    return -1; // error, user is already there
+                    return null; // error, the user is already there
                 } else {
                     solution.addVoter(uid);
-                    votes = solution.getVotes();
+                    s = solution;
                 }
             }
         }
@@ -63,12 +63,14 @@ public class SolutionTool {
             Date updated = diz.getUpdated();
             persistence.update(diz);
             sqlTool.setUpdatedTimestamp(diz, updated);
+
+            s = solution;
         }
 
         sqlTool.insertSolutionVote(diz, thread, uid);
         cache.put(diz, solutions);
 
-        return votes;
+        return s;
     }
 
     /**
@@ -78,7 +80,7 @@ public class SolutionTool {
         cache.clear();
     }
 
-    public static int remove(Item diz, int thread, int uid) {
+    public static Solution remove(Item diz, int thread, int uid) {
         List<Solution> solutions = new ArrayList(get(diz));
 
         Iterator<Solution> iter = solutions.iterator();
@@ -87,7 +89,7 @@ public class SolutionTool {
         
             if (solution.getId() == thread) {
                 if (!solution.getVoters().contains(uid)) {
-                    return -1; // error, the user didn't vote
+                    return null; // error, the user didn't vote
                 } else {
                     int votes;
                     solution.removeVoter(uid);
@@ -105,11 +107,11 @@ public class SolutionTool {
                     }
 
                     cache.put(diz, solutions);
-                    return votes;
+                    return (votes > 0) ? solution : null;
                 }
             }
         }
 
-        return -1;
+        return null;
     }
 }
