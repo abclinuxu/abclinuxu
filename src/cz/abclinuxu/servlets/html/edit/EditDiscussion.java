@@ -588,6 +588,7 @@ public class EditDiscussion implements AbcAction {
             Comment comment = getDiscussionComment(diz, thread);
             if (comment.getAuthor() == null || comment.getAuthor() != user.getId()) {
                 solution = SolutionTool.add(diz, thread, user.getId());
+                persistence.update(diz);
             }
         }
 
@@ -620,8 +621,10 @@ public class EditDiscussion implements AbcAction {
         int thread = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
         Solution solution = null;
 
-        if (thread != 0)
+        if (thread != 0) {
             solution = SolutionTool.remove(diz, thread, user.getId());
+            persistence.update(diz);
+        }
 
         if (!params.containsKey(PARAM_AJAX)) {
             String url = relation.getUrl();
