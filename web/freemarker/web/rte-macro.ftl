@@ -18,8 +18,8 @@
             <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '&lt;p&gt;', '&lt;/p&gt;');" class="mono" title="Vložit značku odstavce">&lt;p&gt;</a>
             <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '&lt;pre&gt;', '&lt;/pre&gt;');" class="mono" title="Vložit značku formátovaného textu. Vhodné pro konfigurační soubory či výpisy.">&lt;pre&gt;</a>
             <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '&lt;code&gt;', '&lt;/code&gt;');" class="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
-            <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '&lt;ul&gt;\n&lt;li&gt;&lt;/li&gt;\n&lt;li&gt;&lt;/li&gt;\n&lt;li&gt;&lt;/li&gt;\n&lt;/ul&gt;');" class="mono" title="Vložit nečíslovaný seznam">&lt;ul&gt;</a>
-            <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '&lt;ol&gt;\n&lt;li&gt;&lt;/li&gt;\n&lt;li&gt;&lt;/li&gt;\n&lt;li&gt;&lt;/li&gt;\n&lt;/ol&gt;');" class="mono" title="Vložit číslovaný seznam">&lt;ol&gt;</a>
+            <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '&lt;ul&gt;\n&lt;li&gt;', '&lt;/li&gt;\n&lt;li&gt;&lt;/li&gt;\n&lt;li&gt;&lt;/li&gt;\n&lt;/ul&gt;');" class="mono" title="Vložit nečíslovaný seznam">&lt;ul&gt;</a>
+            <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '&lt;ol&gt;\n&lt;li&gt;', '&lt;/li&gt;\n&lt;li&gt;&lt;/li&gt;\n&lt;li&gt;&lt;/li&gt;\n&lt;/ol&gt;');" class="mono" title="Vložit číslovaný seznam">&lt;ol&gt;</a>
             <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '&amp;lt;', '');" class="mono" title="Vložit písmeno &lt;">&lt;</a>
             <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '&amp;gt;', '');" class="mono" title="Vložit písmeno &gt;">&gt;</a>
             <#if editor.commentedContent??>
