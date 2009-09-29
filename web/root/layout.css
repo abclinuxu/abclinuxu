@@ -915,8 +915,8 @@ a,
 	text-decoration: none;
 }
 
-.form-edit a#serif { font-family: serif }
-.form-edit a#mono { font-family: monospace }
+.form-edit a.serif { font-family: serif }
+.form-edit a.mono { font-family: monospace }
 
 .dict-abc a {
 	padding: 0 5px;
