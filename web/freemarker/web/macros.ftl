@@ -989,9 +989,8 @@
      (<#--
         --><#list voters as voter>
             <#if shorten && (voter_index >= 3) && voters?size gt 4>
-                    a <a href="javascript:showCommentVoters(${threadId})">${voters?size - 3} dalších</a>
-                <#break>
-            <#else><@lib.showUserFromId voter /><#if xauthor==voter> (tazatel)</#if><#if voter_has_next>,</#if></#if><#--
+                    a <a id="showMore-${threadId}" href="javascript:showCommentVoters(${threadId})">${voters?size - 3} dalších</a><#break>
+            <#else><@lib.showUserFromId voter /><#if xauthor==voter> (tazatel)</#if><#if voter_has_next>, </#if></#if><#--
         --></#list><#--
      -->)
 </#macro>
