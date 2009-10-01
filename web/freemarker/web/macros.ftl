@@ -227,8 +227,7 @@
     <#if who?? && USER?? && who.id == USER.id><#local css = css + " ds_hlavicka_me"></#if>
 
     <div class="${css}" id="${comment.id}">
-        <#if comment.solution>
-          <div class="ds_reseni">
+        <div class="ds_reseni"<#if ! comment.solution> style="display:none"</#if>>
             <#if comment.solution>
                 <#if ITEM?? && ITEM.owner != 0>
                     <#assign dizOwner = ITEM.owner>
@@ -237,8 +236,8 @@
                 </#if>
                 <@showCommentVoters comment.id, comment.voters, dizOwner />
             </#if>
-          </div>
-        </#if>
+        </div>
+
         <#if comment.author?? && showControls>
             <#assign avatar = TOOL.getUserAvatar(who!, USER!)!"UNDEFINED">
             <#if avatar != "UNDEFINED">
