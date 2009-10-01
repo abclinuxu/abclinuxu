@@ -227,7 +227,8 @@
     <#if who?? && USER?? && who.id == USER.id><#local css = css + " ds_hlavicka_me"></#if>
 
     <div class="${css}" id="${comment.id}">
-        <div class="ds_reseni" <#if !comment.solution>style="display:none"</#if>>
+        <#if comment.solution>
+          <div class="ds_reseni">
             <#if comment.solution>
                 <#if ITEM?? && ITEM.owner != 0>
                     <#assign dizOwner = ITEM.owner>
@@ -236,12 +237,12 @@
                 </#if>
                 <@showCommentVoters comment.id, comment.voters, dizOwner />
             </#if>
-        </div>
-
+          </div>
+        </#if>
         <#if comment.author?? && showControls>
             <#assign avatar = TOOL.getUserAvatar(who!, USER!)!"UNDEFINED">
             <#if avatar != "UNDEFINED">
-                <img src="${avatar}" id="comment${comment.id}_avatar" alt="avatar" class="ds_avatar <#if blacklisted>ds_controls_blacklisted</#if>">
+                <img src="${avatar}" id="comment${comment.id}_avatar" alt="${who.nick!(who.name)} avatar" class="ds_avatar<#if blacklisted> ds_controls_blacklisted</#if>">
             </#if>
         </#if>
 
@@ -985,7 +986,7 @@
 </#macro>
 
 <#macro showCommentVoters (threadId, voters, xauthor, shorten = true)>
-    Řešení ${voters?size}&times;
+    <span>Řešení ${voters?size}&times;</span>
      (<#--
         --><#list voters as voter>
             <#if shorten && (voter_index >= 3) && voters?size gt 4>

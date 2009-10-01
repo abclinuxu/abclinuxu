@@ -35,18 +35,22 @@
 -->
 
 <#if TOOL.isQuestionSolved(ITEM)>
-    <p class="ds_solutions">
-        <b>Následující reakce byly označeny za řešení dotazu:</b><br/>
+  <hr />
+    <div class="ds_solutions">
+        <p><b>Řešení dotazu:</b></p>
+        <ul>
         <#list DIZ.solutions.entrySet() as sol>
             <#assign comment=sol.value>
             <#if comment.author??><#assign author=TOOL.createUser(comment.author)></#if>
-            <li>
-                <a href="#${sol.key.id}">Komentář #${sol.key.id}</a> |
-                <#if comment.author??><@lib.showUser author /><#else>${comment.anonymName!}</#if>
-                | ${sol.key.getVotes()} hlasů
-            </li>
+            <li><#--
+             --><a href="#${sol.key.id}">Komentář #${sol.key.id}</a> (<#--
+                --><#if comment.author??><@lib.showUser author /><#else>${comment.anonymName!}</#if>, <#--
+                -->${sol.key.getVotes()} hlasů)<#--
+         --></li>
         </#list>
-    </p>
+        </ul>
+    </div>
+  <hr />
 </#if>
 
 <@lib.advertisement id="gg-ds-otazka" />

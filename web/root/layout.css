@@ -577,6 +577,9 @@ div.desktop {
 
 .ds_text { padding: 5px; }
 
+.ds_solutions ul { margin: 0 0 0.5em 0 }
+.ds_reseni span { font-weight: bold }
+
 .signature {
 	font-size: 80%;
 	margin: 1ex 0 0 5px;
@@ -667,7 +670,8 @@ a.info:hover span.tooltip {
 .search_details,
 #horni .lista-vpravo,
 .rating,
-.profile_list {
+.profile_list,
+.ds_solutions ul {
 	font-size: 90%;
 }
 
@@ -1277,4 +1281,3 @@ img.floatleft {float:left; margin: 0 5px 0 0; border: none;}
 img.floatright {float:right; margin: 0 0 0 5px; border: none;}
 
 .cleaner {clear:both}
-
