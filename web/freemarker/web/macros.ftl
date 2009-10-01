@@ -986,12 +986,23 @@
 </#macro>
 
 <#macro showCommentVoters (threadId, voters, xauthor, shorten = true)>
-    <span>Řešení ${voters?size}&times;</span>
-     (<#--
-        --><#list voters as voter>
-            <#if shorten && (voter_index >= 3) && voters?size gt 4>
-                    a <a id="showMore-${threadId}" href="javascript:showCommentVoters(${threadId})">${voters?size - 3} dalších</a><#break>
-            <#else><@lib.showUserFromId voter /><#if xauthor==voter> (tazatel)</#if><#if voter_has_next>, </#if></#if><#--
-        --></#list><#--
-     -->)
+    <span>Řešení ${voters?size}&times;</span> (<#--
+ --><#list voters as voter>
+        <#if shorten && (voter_index >= 3) && voters?size gt 4>
+            <#if voters?size lt 8>
+                <#assign dalsi_plural="další">
+            <#else>
+                <#assign dalsi_plural="dalších">
+            </#if>
+            a <a id="showMore-${threadId}" href="javascript:showCommentVoters(${threadId})">${voters?size - 3} ${dalsi_plural}</a><#--
+         --><#break>
+        <#else>
+            <@lib.showUserFromId voter /><#--
+         --><#if xauthor==voter> (tazatel)</#if><#--
+         --><#if ! shorten && voter_has_next>, 
+            <#elseif voter_has_next && ((voter_index = 2) && (voters?size > 4))> 
+            <#elseif voter_has_next>, </#if><#--
+     --></#if><#--
+ --></#list><#--
+ -->)
 </#macro>
