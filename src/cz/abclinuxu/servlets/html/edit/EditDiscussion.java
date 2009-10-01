@@ -588,7 +588,9 @@ public class EditDiscussion implements AbcAction {
             Comment comment = getDiscussionComment(diz, thread);
             if (comment.getAuthor() == null || comment.getAuthor() != user.getId()) {
                 solution = SolutionTool.add(diz, thread, user.getId());
+                Date originalUpdated = diz.getUpdated();
                 persistence.update(diz);
+                SQLTool.getInstance().setUpdatedTimestamp(diz, originalUpdated);
             }
         }
 
@@ -623,7 +625,9 @@ public class EditDiscussion implements AbcAction {
 
         if (thread != 0) {
             solution = SolutionTool.remove(diz, thread, user.getId());
+            Date originalUpdated = diz.getUpdated();
             persistence.update(diz);
+            SQLTool.getInstance().setUpdatedTimestamp(diz, originalUpdated);
         }
 
         if (!params.containsKey(PARAM_AJAX)) {
