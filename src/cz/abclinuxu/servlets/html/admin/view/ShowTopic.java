@@ -30,6 +30,8 @@ import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.LogicalOperation;
+import cz.abclinuxu.persistence.extra.NestedCondition;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.OperationIn;
 import cz.abclinuxu.persistence.extra.Qualifier;
@@ -81,6 +83,11 @@ public class ShowTopic implements AbcAction, Configurable {
 	public static final String VAR_AUTHORS = "AUTHORS";
 
 	/**
+	 * Active author
+	 */
+	public static final String VAR_AUTHOR = "AUTHOR";
+
+	/**
 	 * distinct topic to be shown
 	 */
 	public static final String VAR_TOPIC = "TOPIC";
@@ -110,7 +117,7 @@ public class ShowTopic implements AbcAction, Configurable {
 	public static final String DEST_AUTHOR = "author";
 	public static final String DEST_CONFERENCE = "conference";
 	public static final String DEST_DIRECT = "direct";
-	
+
 	public static final String ACTION_LIST = "list";
 	public static final String ACTION_SHOW = "show";
 	public static final String ACTION_MAIL = "mail";
@@ -132,7 +139,28 @@ public class ShowTopic implements AbcAction, Configurable {
 		if (user == null)
 		    return FMTemplateSelector.select("AdministrationAEPortal", "login", env, request);
 
-		PwdNavigator navigator = new PwdNavigator(user, PageNavigation.ADMIN_TOPICS);
+		PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_TOPICS);
+
+		// check invocation by author
+		if (ServletUtils.pathBeginsWith(request, "/redakce")) {
+			// TODO is there any way how to check invocation with finer granularity within current 
+			// permissions system?
+			SQLTool sqlTool = SQLTool.getInstance();
+			Item item = sqlTool.findAuthorByUserId(user.getId());
+			if (item == null)
+			    return FMTemplateSelector.select("AdministrationAEPortal", "forbidden", env, request);
+
+			// author was found, limit results to current author
+			Author author = BeanFetcher.fetchAuthorFromItem(item, FetchType.LAZY);
+			env.put(VAR_AUTHOR, author);
+			List<Qualifier> preQualifiers = new ArrayList<Qualifier>();
+			preQualifiers.add(new NestedCondition(new Qualifier[] {
+			        new CompareCondition(Field.DATA, Operation.LIKE, "%<author>" + author.getId() + "</author>%"),
+			        new CompareCondition(Field.DATA, Operation.NOT_LIKE, "%<author>%</author>%")
+			        }, LogicalOperation.OR));
+			actionList(request, env, navigator, preQualifiers);
+			return FMTemplateSelector.select("AdministrationShowTopic", "author-list", env, request);
+		}
 
 		// check permissions
 		if (!navigator.permissionsFor(new Relation(Constants.REL_TOPICS)).canCreate()) {
@@ -149,14 +177,15 @@ public class ShowTopic implements AbcAction, Configurable {
 		}
 		// list topics
 		else if (determineAction(params, ACTION_LIST) || determineAction(params, ACTION_BACK) || Misc.empty(action)) {
-			return actionList(request, env, navigator);
+			actionList(request, env, navigator, null);
+			return FMTemplateSelector.select("AdministrationShowTopic", "list", env, request);
 		}
 
 		throw new MissingArgumentException("Chybí parametr action!");
 
 	}
 
-	private String actionList(HttpServletRequest request, Map env, PwdNavigator navigator) {
+	private void actionList(HttpServletRequest request, Map env, PwdNavigator navigator, List<Qualifier> preQualifiers) {
 
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
 		int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
@@ -175,7 +204,7 @@ public class ShowTopic implements AbcAction, Configurable {
 		int total = 0;
 
 		SQLTool sqlTool = SQLTool.getInstance();
-		Qualifier[] qualifiers = getQualifiers(filter, from, count);
+		Qualifier[] qualifiers = getQualifiers(preQualifiers, filter, from, count);
 		List<Item> items = sqlTool.getTopics(qualifiers);
 		total = sqlTool.countTopics(QualifierTool.removeOrderQualifiers(qualifiers));
 		found = new Paging(BeanFetcher.fetchTopicsFromItems(items, FetchType.EAGER), from, count, total, qualifiers);
@@ -186,8 +215,6 @@ public class ShowTopic implements AbcAction, Configurable {
 		// store url links
 		env.put(VAR_URL_BEFORE_FROM, "/sprava/redakce/namety/?from=");
 		env.put(VAR_URL_AFTER_FROM, filter.encodeAsURL());
-
-		return FMTemplateSelector.select("AdministrationShowTopic", "list", env, request);
 	}
 
 	private String actionNotify(HttpServletRequest request, Map env, PwdNavigator navigator) {
@@ -261,50 +288,65 @@ public class ShowTopic implements AbcAction, Configurable {
 
 	private String actionMail(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
-		
+
 		// determine and set mail destination
 		String dest = (String) params.get(PARAM_DESTINATION);
-		String destEmail = authorsConference;		
-		if(DEST_AUTHOR.equals(dest)) {
+		String destEmail = authorsConference;
+		if (DEST_AUTHOR.equals(dest)) {
 			SQLTool sqlTool = SQLTool.getInstance();
-	        // find author
-	        Integer aId = null;
-	        try {
-	            aId = Misc.parsePossiblyWrongInt((String) params.get(PARAM_SINGLE_AUTHOR));
-	        } catch (InvalidInputException iie) {
-	            throw new MissingArgumentException("Chybí parametr authorId!");
-	        }
+			// find author
+			Integer aId = null;
+			try {
+				aId = Misc.parsePossiblyWrongInt((String) params.get(PARAM_SINGLE_AUTHOR));
+			}
+			catch (InvalidInputException iie) {
+				throw new MissingArgumentException("Chybí parametr authorId!");
+			}
 
-	        Qualifier[] qualifiers = {new CompareCondition(Field.ID, Operation.EQUAL, aId)};
-	        List<Object[]> authorObjects = sqlTool.getAuthorsWithArticlesCount(qualifiers);
-	        if (authorObjects.isEmpty()) {
-	            throw new InvalidDataException("Nepodařilo se najít rodičovskou relaci pro autora" + aId + "!");
-	        }
+			Qualifier[] qualifiers = { new CompareCondition(Field.ID, Operation.EQUAL, aId) };
+			List<Object[]> authorObjects = sqlTool.getAuthorsWithArticlesCount(qualifiers);
+			if (authorObjects.isEmpty()) {
+				throw new InvalidDataException("Nepodařilo se najít rodičovskou relaci pro autora" + aId + "!");
+			}
 
-	        Author author = BeanFetcher.fetchAuthorFromObjects(authorObjects.get(0), FetchType.PROCESS_NONATOMIC);
-	        destEmail = author.getEmail();
+			Author author = BeanFetcher.fetchAuthorFromObjects(authorObjects.get(0), FetchType.PROCESS_NONATOMIC);
+			destEmail = author.getEmail();
 		}
 		else if (DEST_DIRECT.equals(dest)) {
 			destEmail = (String) params.get(PARAM_EMAIL);
-		}			
+		}
 
 		String body = (String) params.get(PARAM_DESCRIPTION);
-		
+
 		// send message
-		boolean sent = EmailSender.sendEmail(sender, destEmail, "Náměty pro články na abclinuxu.cz", body); 
-		
+		boolean sent = EmailSender.sendEmail(sender, destEmail, "Náměty pro články na abclinuxu.cz", body);
+
 		if (sent)
 			ServletUtils.addMessage("Zpráva byla zaslaná na " + destEmail, env, request.getSession());
 		else
 			ServletUtils.addError("generic", "Nepodařilo se zaslat email na " + destEmail, env, request.getSession());
-		
+
 		EditTopic.redirect(response, env);
 		return null;
 
 	}
 
-	private Qualifier[] getQualifiers(FormFilter filter, int from, int count) {
-		List<Qualifier> qualifiers = filter.getQualifiers();
+	/**
+	 * Constructs qualifiers from input passed in form. Allows initial argument
+	 * to be passed
+	 * by the first argument
+	 * 
+	 * @param qualifiers If {@code null} is passed, qualifiers
+	 * @param filter Filter object constructed from HTTP parameters
+	 * @param from From parameter for paging results
+	 * @param count Count limit parameter for paging results
+	 * @return Array of qualifiers
+	 */
+	private Qualifier[] getQualifiers(List<Qualifier> qualifiers, FormFilter filter, int from, int count) {
+		if (qualifiers == null) {
+			qualifiers = new ArrayList<Qualifier>();
+		}
+		qualifiers.addAll(filter.getQualifiers());
 		// sort by surname in ascending order
 		qualifiers.add(Qualifier.SORT_BY_ISNULL);
 		qualifiers.add(Qualifier.ORDER_ASCENDING);

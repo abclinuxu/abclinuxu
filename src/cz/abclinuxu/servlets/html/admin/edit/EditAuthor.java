@@ -90,7 +90,7 @@ public class EditAuthor implements AbcAction {
             return FMTemplateSelector.select("AdministrationEditorsPortal", "login", env, request);
 
         // create navigator and store type of user
-        PwdNavigator navigator = new PwdNavigator(user, PageNavigation.ADMIN_AUTHORS);
+        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_AUTHORS);
         if (navigator.determine() == Discriminator.EDITOR)
             env.put(VAR_EDITOR_MODE, Boolean.TRUE);
 
@@ -156,7 +156,6 @@ public class EditAuthor implements AbcAction {
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) throws Exception {
 
         Persistence persistence = PersistenceFactory.getPersistence();
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 
         Link tail = new Link("Nový autor", "edit?action=add2", "Vytvořit nového autora, krok 2");
@@ -203,7 +202,6 @@ public class EditAuthor implements AbcAction {
     }
 
     protected String actionEditStep1(HttpServletRequest request, Map env, PwdNavigator navigator) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Author author = (Author) env.get(VAR_AUTHOR);
         Boolean isEditor = (Boolean) env.get(VAR_EDITOR_MODE);
 
@@ -276,7 +274,6 @@ public class EditAuthor implements AbcAction {
 
         SQLTool sqlTool = SQLTool.getInstance();
 
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Author author = (Author) env.get(VAR_AUTHOR);
 
         Link tail = new Link(author.getTitle(), "edit/" + author.getId() + "?action=rm", "Smazání autora, krok 1");

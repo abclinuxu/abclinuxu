@@ -4,6 +4,35 @@
     <script type="text/javascript" src="/data/site/calendar/calendar-en.js"></script>
     <script type="text/javascript" src="/data/site/calendar/calendar-cs-utf8.js"></script>
     <script type="text/javascript" src="/data/site/calendar/calendar-setup.js"></script>
+    <script type="text/javascript">
+	$(document).ready(function() {
+		/* disable all inputs */
+		$('#topic-assigned-select').attr('disabled', 'disabled');
+		$('#royalty-specified-input').attr('disabled', 'disabled');
+	
+		/* bind functions to radio buttons */
+		$('#topic-assigned').bind('click', function() {
+			$('#topic-assigned-select').attr('disabled', '');
+		});	
+		$('#topic-public').bind('click', function() {
+			$('#topic-assigned-select').attr('disabled', 'disabled');
+		});
+		$('#royalty-specified').bind('click', function() {
+			$('#royalty-specified-input').attr('disabled', '');
+		});
+		$('#royalty-casual').bind('click', function() {
+			$('#royalty-specified-input').attr('disabled', 'disabled');
+		});	
+	
+		/* automatically select enabled inputs */ 	
+		if($('#topic-assigned').is(':checked')) {
+			$('#dest-author-select').attr('disabled', '');
+		}	
+		if($('#royalty-specified').is(':checked')) {
+			$('#dest-author-input').attr('disabled', '');
+		}
+});
+</script>
 </#assign>
 
 <#include "../../header.ftl">
@@ -47,12 +76,12 @@
             <td style="white-space: nowrap">
             	<div class="two-columns">
             		<div class="left-column">
-            			<@lib.showOption6 param="public" value="1" caption="Veřejný námět" type="radio" condition=(TOPIC.isPublic())!true==true tabindex=6 />
+            			<@lib.showOption6 param="public" value="1" id="topic-public" caption="Veřejný námět" type="radio" condition=(TOPIC.isPublic())!true==true tabindex="6" />
             			<br />
-	            		<@lib.showOption6 param="public" value="0" caption="Přiřazený k" type="radio" condition=((TOPIC.isPublic())!true)==false tabindex=6 />
+	            		<@lib.showOption6 param="public" value="0" id="topic-assigned" caption="Přiřazený k" type="radio" condition=((TOPIC.isPublic())!true)==false tabindex="7" />
 					</div>
 					<div class="right-column">
-						<select name="author" id="authors-list">
+						<select name="author" id="topic-assigned-select">
 							<#list AUTHORS as author>
 								<@lib.showOption5 "${author.id}", "${author.title}", author.id==(TOPIC.author.id)!(-1) />
 							</#list>
@@ -65,18 +94,18 @@
         <tr>
             <td class="required">Honorář:</td>
             <td>
-            	<@lib.showOption6 param="royalty-mod" value="1" caption="Běžný honorář" type="radio" condition=((TOPIC.hasRoyalty())!false)==false tabindex=6 />
+            	<@lib.showOption6 param="royalty-mod" value="1" id="royalty-casual" caption="Běžný honorář" type="radio" condition=((TOPIC.hasRoyalty())!false)==false tabindex=6 />
             	<br />
             	<div>
-            	<@lib.showOption6 param="royalty-mod" value="0" caption="Jiný" type="radio" condition=((TOPIC.hasRoyalty())!false)==true tabindex=6 />&nbsp;                
-            	<input type="text" name="royalty" value="${(TOPIC.royalty)!}" size="20" tabindex="7"/>
+            	<@lib.showOption6 param="royalty-mod" value="0" id="royalty-specified" caption="Jiný" type="radio" condition=((TOPIC.hasRoyalty())!false)==true tabindex=6 />&nbsp;                
+            	<input type="text" name="royalty" id="royalty-specified-input" value="${(TOPIC.royalty)!}" size="20" tabindex="7"/>
             	</div>
             	<div class="error">${ERRORS.royalty!}</div>
             </td>
         </tr>
         <tr>
             <td class="required">Popis:</td>
-            <td><textarea name="description" size="60" class="siroka" tabindex="8">${(TOPIC.description)!}</textarea>
+            <td><textarea name="description" rows="10" cols="60" tabindex="8">${(TOPIC.description)!}</textarea>
             	<div class="error">${ERRORS.description!}</div>
             </td>
         </tr>

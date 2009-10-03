@@ -51,7 +51,7 @@ public class AEPortal implements AbcAction {
 
         // check advanced permissions and create navigation
         // tree according to permissions given
-        PwdNavigator navigator = new PwdNavigator(user, PageNavigation.AUTHORS_EDITORS_PORTAL);
+        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.AUTHORS_EDITORS_PORTAL);
 
         // store navigation structure
         List<Link> parents = navigator.navigate();

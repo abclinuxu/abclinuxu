@@ -39,11 +39,11 @@ prohlížet náměty, upravovat osobní údaje atd.
 	<#if EDITOR_MODE?? > <div class="right-column" id="author-menu-wrapper"/></#if>		
 	<h3>Redaktor</h3>
 	<ul id="author-menu" style="margin: 0; margin-left: 30px; padding: 0; display: table;">
-		<li><a href="${URL.make("/autori/clanky")}">Mé články</a></li>
-		<li><a href="${URL.make("/autori/namety")}">Náměty</a></li>
-		<li><a href="${URL.make("/autori/honorare")}">Mé honoráře</a></li>
-		<li><a href="${URL.make("/redakce/autori/edit/${AUTHOR.id}?action=edit")}">Osobní údaje</a></li>
-		<li><a href="${URL.make("/autori/smlouvy")}">Autorské smlouvy</a></li>
+		<li><a href="/redakce/clanky">Mé články</a></li>
+		<li><a href="/redakce/namety">Náměty</a></li>
+		<li><a href="/redakce/honorare"">Mé honoráře</a></li>
+		<li><a href="/redakce/autori/edit/${AUTHOR.id}?action=edit">Osobní údaje</a></li>
+		<li><a href="/redakce/smlouvy">Autorské smlouvy</a></li>
 	</ul>
 	<#if EDITOR_MODE?? ></div></#if>
 	</#if><#-- AUTHOR?? -->		
@@ -72,7 +72,7 @@ prohlížet náměty, upravovat osobní údaje atd.
 </#list>
 </table>
 <#else>
-	<p>Nejsou plánováné žádné náměty.</p>
+	<p>Nejsou pro Vás plánováné žádné náměty.</p>
 </#if>
 
 </#if><#-- end AUTHOR?? -->

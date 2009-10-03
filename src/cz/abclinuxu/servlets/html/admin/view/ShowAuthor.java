@@ -84,7 +84,7 @@ public class ShowAuthor implements AbcAction {
         if (user == null)
             return FMTemplateSelector.select("AdministrationAEPortal", "login", env, request);
 
-        PwdNavigator navigator = new PwdNavigator(user, PageNavigation.ADMIN_AUTHORS);
+        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_AUTHORS);
         if (navigator.determine() == Discriminator.EDITOR)
             env.put(VAR_EDITOR_MODE, Boolean.TRUE);
 

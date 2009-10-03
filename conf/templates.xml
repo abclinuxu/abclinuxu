@@ -900,11 +900,8 @@
     </servlet>
     
     <servlet name="AdministrationAEPortal">
-    	<action name="editor" content="/show/administration/editors_portal.ftl">
+    	<action name="ae-portal" content="/show/administration/ae_portal.ftl">
             <var name="TITLE" value="Správa redakce pro redaktory" />
-        </action>
-        <action name="author" content="/show/administration/authors_portal.ftl">
-            <var name="TITLE" value="Správa redakce pro autory" />
         </action>
         <action name="login" content="/show/login.ftl">
             <var name="TITLE" value="Přihlášení do systému" />
@@ -938,6 +935,9 @@
     <servlet name="AdministrationShowTopic">
     	<action name="list" content="/show/administration/topics.ftl">
     		<var name="TITLE" value="Správa námětů - seznam" />
+    	</action>
+    	<action name="author-list" content="/show/administration/author_topics.ftl">
+    		<var name="TITLE" value='Náměty pro ${AUTHOR.title}' type="Lazy" />
     	</action>
     	<action name="notify" content="/show/administration/topic_notification.ftl">
     		<var name="TITLE" value="Zaslání námětů autorům"/>

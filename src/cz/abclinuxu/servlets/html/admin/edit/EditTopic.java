@@ -83,7 +83,7 @@ public class EditTopic implements AbcAction {
 		    return FMTemplateSelector.select("AdministrationEditorsPortal", "login", env, request);
 
 		// create navigator and store type of user
-		PwdNavigator navigator = new PwdNavigator(user, PageNavigation.ADMIN_TOPICS);
+		PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_TOPICS);
 
 		// add step 1
 		if (ACTION_ADD.equals(action)) {
@@ -153,7 +153,6 @@ public class EditTopic implements AbcAction {
 		Link tail = new Link("Nový námět", "edit?action=add", "Vytvořit nový námět");
 		env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
 
-		SQLTool sqlTool = SQLTool.getInstance();
 		env.put(VAR_AUTHORS, getActiveAuthors(env));
 
 		return FMTemplateSelector.select("AdministrationEditTopic", "add", env, request);

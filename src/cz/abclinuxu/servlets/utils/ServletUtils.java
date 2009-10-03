@@ -432,6 +432,17 @@ public class ServletUtils implements Configurable {
         return servletPath.concat(pathInfo);
 
     }
+    
+    /**
+     * Checks whether servlet path of request begins with given prefix 
+     * @param request Request done on server path
+     * @param prefix Prefix to be beginning of path
+     * @return {@code true} if constructed path matched with prefix, {@code false} otherwise
+     */
+    public static boolean pathBeginsWith(HttpServletRequest request, String prefix) {
+    	String path = combinePaths(request.getServletPath(), request.getPathInfo());
+    	return path != null && path.startsWith(prefix); 
+    }
 
     /**
      * Handles situation, when user logs in. It checks his

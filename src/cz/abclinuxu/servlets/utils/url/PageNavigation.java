@@ -1,11 +1,10 @@
 package cz.abclinuxu.servlets.utils.url;
 
+import java.util.List;
+
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.utils.freemarker.Tools;
-
-import java.util.List;
 
 /**
  * Encapsulates links created for PwdNavigator. Call are able to be chained
@@ -21,9 +20,9 @@ public enum PageNavigation {
      */
     ADMINISTRATION {
         @Override
-        public List<Link> getLinks(User user, List<Link> links) {
+        public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
             if (user.isMemberOf(Constants.GROUP_ADMINI))
-                links.add(new Link("Správa", UrlUtils.PREFIX_ADMINISTRATION, "Portál správy abclinuxu.cz"));
+                links.add(new Link("Správa", urlUtils.noPrefix(UrlUtils.PREFIX_ADMINISTRATION), "Portál správy abclinuxu.cz"));
             return links;
         }
     },
@@ -33,9 +32,9 @@ public enum PageNavigation {
      */
     AUTHORS_EDITORS_PORTAL {
         @Override
-        public List<Link> getLinks(User user, List<Link> links) {
-            links = ADMINISTRATION.getLinks(user, links);
-            links.add(new Link("Redakce", UrlUtils.PREFIX_ADMINISTRATION + "/redakce", "Redakční systém"));
+        public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
+            links = ADMINISTRATION.getLinks(user, urlUtils, links);
+            links.add(new Link("Redakce", urlUtils.make("/redakce"), "Redakční systém"));
             return links;
         }
     },
@@ -45,24 +44,23 @@ public enum PageNavigation {
      */
     ADMIN_AUTHORS {
         @Override
-        public List<Link> getLinks(User user, List<Link> links) {
-            links = AUTHORS_EDITORS_PORTAL.getLinks(user, links);
-            if (user.isMemberOf(Constants.GROUP_ADMINI) || Tools.permissionsFor(user, Constants.REL_AUTHORS).canModify())
-                links.add(new Link("Správa autorů", Util.prefix(links) + "autori", "Správa autorů"));
+        public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
+            links = AUTHORS_EDITORS_PORTAL.getLinks(user, urlUtils, links);
+            links.add(new Link("Správa autorů", Util.prefix(links) + "autori", "Správa autorů"));
             return links;
         }
     },
     ADMIN_TOPICS {
     	@Override
-    	public List<Link> getLinks(User user, List<Link> links) {
-    		links = AUTHORS_EDITORS_PORTAL.getLinks(user, links);
+    	public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
+    		links = AUTHORS_EDITORS_PORTAL.getLinks(user, urlUtils, links);
     		links.add(new Link("Náměty", Util.prefix(links) + "namety", "Správa námětů"));
     	    return links;
     	}
     }
     ;
 
-    public abstract List<Link> getLinks(User user, List<Link> links);
+    public abstract List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links);
 }
 
 class Util {
