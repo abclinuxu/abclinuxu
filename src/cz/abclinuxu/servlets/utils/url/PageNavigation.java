@@ -1,5 +1,6 @@
 package cz.abclinuxu.servlets.utils.url;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cz.abclinuxu.data.User;
@@ -15,6 +16,21 @@ import cz.abclinuxu.servlets.Constants;
  */
 public enum PageNavigation {
 
+	/**
+	 * Page navigation which just passes current content in chain.
+	 * This can be used when PageNavigation should be disabled but 
+	 * it can't be directly removed from invocation.
+	 * 
+	 * This type of PageNavigation guarantees that all passed arguments
+	 * can be {@code null}. Collection returned is mutable.
+	 */
+	VOID {
+		@Override
+		public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
+			return new ArrayList<Link>(1);
+		}
+	},
+	
     /**
      * Administration link. It is shown only when appropriate rights are present (root)
      */

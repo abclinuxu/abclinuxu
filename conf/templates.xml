@@ -122,15 +122,6 @@
         </action>
     </servlet>
 
-    <servlet name="EditAuthor">
-        <action name="add" content="/add/author.ftl">
-            <var name="TITLE" value="Vložit autora" />
-        </action>
-        <action name="edit" content="/add/author.ftl">
-            <var name="TITLE" value="Upravit autora" />
-        </action>
-    </servlet>
-
     <servlet name="EditBazaar">
         <action name="add" content="/add/bazar_ad.ftl">
             <var name="TITLE" value="Vlož inzerát"/>

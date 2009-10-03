@@ -18,6 +18,16 @@
  */
 package cz.abclinuxu.migrate;
 
+import static cz.abclinuxu.servlets.Constants.PARAM_NAME;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.dom4j.Element;
+import org.dom4j.Node;
+
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
@@ -25,16 +35,10 @@ import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.html.edit.EditAuthor;
+import cz.abclinuxu.servlets.html.admin.edit.EditAuthor;
 import cz.abclinuxu.servlets.html.view.ShowObject;
-import org.dom4j.Element;
-import org.dom4j.Node;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import static cz.abclinuxu.servlets.Constants.PARAM_NAME;
+import cz.abclinuxu.servlets.utils.url.PageNavigation;
+import cz.abclinuxu.servlets.utils.url.PwdNavigator;
 
 public class MigrateArticles {
     private Persistence persistence = PersistenceFactory.getPersistence();
@@ -140,7 +144,7 @@ public class MigrateArticles {
         params.put(EditAuthor.PARAM_UID, Integer.toString(user.getId()));
 
         EditAuthor servlet = new EditAuthor();
-        servlet.actionAddStep2(null, null, map, false);
+        servlet.actionAddStep2(null, null, map, new PwdNavigator(null, null, PageNavigation.VOID));
         Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
         return created;
     }
