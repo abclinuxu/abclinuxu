@@ -202,7 +202,12 @@ public class EditNews implements AbcAction {
             canContinue &= setPublishDate(params, item, env);
         }
 
-        if ( !canContinue || params.get(PARAM_PREVIEW)!=null) {
+        if ( !canContinue) {
+            params.remove(PARAM_PREVIEW);
+            return actionAddStep1(request,env);
+        }
+
+        if (params.get(PARAM_PREVIEW) != null) {
             Relation relation = new Relation(null,item,0);
             item.setInitialized(true);
             item.setCreated(new Date());
