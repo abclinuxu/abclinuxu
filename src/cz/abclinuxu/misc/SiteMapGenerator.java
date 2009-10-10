@@ -22,7 +22,6 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.Server;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
