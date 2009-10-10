@@ -1,3 +1,4 @@
+<@lib.addRTE textAreaId="content" formId="form" menu="blog" />
 <#assign html_header>
     <link rel="stylesheet" type="text/css" media="all" href="/data/site/calendar/calendar-system.css" />
     <script type="text/javascript" src="/data/site/calendar/calendar.js"></script>
@@ -88,17 +89,9 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
     <tr>
         <td>
             <p class="required">Obsah zápisu</p>
-            <div class="form-edit">
-                <a href="javascript:insertAtCursor(document.form.content, '<b>', '</b>');" id="serif" title="Vložit značku tučně"><b>B</b></a>
-                <a href="javascript:insertAtCursor(document.form.content, '<i>', '</i>');" id="serif" title="Vložit značku kurzíva"><i>I</i></a>
-                <a href="javascript:insertAtCursor(document.form.content, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vložit značku odkazu">&lt;a&gt;</a>
-                <a href="javascript:insertAtCursor(document.form.content, '<p>', '</p>');" id="mono" title="Vložit značku odstavce">&lt;p&gt;</a>
-                <a href="javascript:insertAtCursor(document.form.content, '<pre>', '</pre>');" id="mono" title="Vložit formátovaný text. Vhodné pouze pro konfigurační soubory či výpisy.">&lt;pre&gt;</a>
-		        <a href="javascript:insertAtCursor(document.form.content, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
-                <a href="javascript:insertAtCursor(document.form.content, '<break>', '');" id="mono" title="Vložit značku zlomu">&lt;break&gt;</a>
-            </div>
+            <@lib.showRTEControls "content"/>
             <@lib.showError key="content" />
-            <textarea tabindex="2" name="content" class="siroka" rows="30">${PARAMS.content!?html}</textarea>
+            <textarea tabindex="2" name="content" id="content" class="siroka" rows="30">${PARAMS.content!?html}</textarea>
         </td>
     </tr>
     <tr>

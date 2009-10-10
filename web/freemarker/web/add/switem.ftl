@@ -1,5 +1,4 @@
-<#import "/web/rte-macro.ftl" as rte>
-<@rte.addRTE textAreaId="description" formId="softForm" inputMode="wiki" />
+<@lib.addRTE textAreaId="description" formId="softForm" menu="wiki" />
 <#include "../header.ftl">
 <#import "../misc/software.ftl" as swlib>
 
@@ -50,7 +49,7 @@
             <td class="required">Popis</td>
             <td>
                 <@lib.showError key="description"/>
-                <@rte.showFallback "description"/>
+                <@lib.showRTEControls "description"/>
                 <textarea name="description" rows="20" tabindex="2" class="siroka">${PARAMS.description!?html}</textarea>
             </td>
         </tr>

@@ -1,5 +1,4 @@
-<#import "/web/rte-macro.ftl" as rte>
-<@rte.addRTE textAreaId="intro" formId="form" inputMode="blog" />
+<@lib.addRTE textAreaId="intro" formId="form" menu="blog" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -40,7 +39,7 @@ přidat obrázek, odkazy na své přátelé nebo blogy, které čtete.
         <td>Popis blogu</td>
         <td>
             <@lib.showError key="intro"/>
-            <@rte.showFallback "intro"/>
+            <@lib.showRTEControls "intro"/>
             <textarea name="intro" class="siroka" rows="20">${PARAMS.intro!?html}</textarea>
         </td>
     </tr>

@@ -888,6 +888,8 @@ public class EditUser implements AbcAction {
         node = document.selectSingleNode("/data/settings/rte");
         if (node != null)
             params.put(PARAM_RICH_TEXT_EDITOR, node.getText());
+        else
+            params.put(PARAM_RICH_TEXT_EDITOR, Constants.RTE_SETTING_ON_REQUEST);
 
         node = document.selectSingleNode("/data/settings/return_to_forum");
         if ( node!=null )
@@ -1350,7 +1352,7 @@ public class EditUser implements AbcAction {
             ServletUtils.addMessage("Uživatelé byli sloučeni.", env, request.getSession());
             AdminLogger.logEvent(user, "sloucil uzivatele " + uid1 + "(" + user1.getEmail() + ") s uzivatelem " + uid2);
         } else {
-            ServletUtils.addMessage("Uživatel byl odstraněn.", env, request.getSession());;
+            ServletUtils.addMessage("Uživatel byl odstraněn.", env, request.getSession());
             AdminLogger.logEvent(user, "smazal uzivatele " + uid1 + "(" + user1.getEmail() + ")");
         }
 
@@ -2141,13 +2143,6 @@ public class EditUser implements AbcAction {
      */
     private boolean setRichTextEditor(Map params, User user) {
         String value = (String) params.get(PARAM_RICH_TEXT_EDITOR);
-        if (!("wysiwyg".equals(value) || "textarea".equals(value))) {
-            Node node = user.getData().selectSingleNode("/data/settings/rte");
-            if (node != null)
-                node.detach();
-
-            return true;
-        }
         Node node = DocumentHelper.makeElement(user.getData(), "/data/settings/rte");
         node.setText(value);
         return true;

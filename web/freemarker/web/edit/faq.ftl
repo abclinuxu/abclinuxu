@@ -1,5 +1,4 @@
-<#import "/web/rte-macro.ftl" as rte>
-<@rte.addRTE textAreaId="text" formId="form" inputMode="wiki" />
+<@lib.addRTE textAreaId="text" formId="form" menu="wiki" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -35,7 +34,7 @@ vrátit zpět.</p>
             <td class="required">Odpověď</td>
             <td>
                 <@lib.showError key="text"/>
-                <@rte.showFallback "text"/>
+                <@lib.showRTEControls "text"/>
                 <textarea tabindex="2" name="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea><br>
             </td>
         </tr>

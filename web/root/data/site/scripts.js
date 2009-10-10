@@ -154,6 +154,106 @@ function writeRemainingCharsCount(textarea) {
     document.getElementById('signatureTextCounter').innerHTML = '(zbývá '+Math.max(120-strippedStr.length, 0)+' znaků)';
 }
 
+function initializeEditor(type) {
+    var abcPlugins = "tabfocus,xhtmlxtras,visualchars,table,paste,searchreplace,contextmenu";
+    var abcButtons = "bold,italic,link,unlink,bullist,numlist,blockquote,sup,sub,anchor,table,image,charmap,formatselect,|," +
+                     "outdent,indent,justifyleft,justifycenter,justifyright,justifyfull,|," +
+                     "undo,redo,pastetext,pasteword,cleanup,search,replace,visualchars,help";
+    if (type == "blog") {
+        abcPlugins = abcPlugins + ",pagebreak";
+        abcButtons = abcButtons.replace(",|,undo",",pagebreak,|,undo");
+    } else if (type == "news") {
+        abcPlugins = "tabfocus";
+        abcButtons = "link,unlink,charmap,|,undo,redo,pastetext,search,replace,help";
+    }
+    if (typeof(quotedText) != "undefined") {
+        abcButtons = abcButtons.replace(",|,outdent",",template,|,outdent");
+    }
+    tinyMCE.init({
+        theme : "advanced",
+        mode : "none",
+        convert_urls : false,
+        entity_encoding : "raw",
+        plugins : abcPlugins,
+        pagebreak_separator : "<!--break-->",
+        theme_advanced_buttons1 : abcButtons,
+        theme_advanced_buttons2 : "",
+        theme_advanced_buttons3 : "",
+        theme_advanced_toolbar_location : "top",
+        theme_advanced_toolbar_align : "left",
+        theme_advanced_statusbar_location : "bottom",
+        theme_advanced_resizing : true,
+        theme_advanced_blockformats : "div,pre,code,h1,h2,h3,h4,dt,dd",
+        valid_elements : ""
+        +"a[href|name|rel|title|target],"
+        +"abbr[title],"
+        +"acronym[title],"
+        +"b,"
+        +"blockquote[id|style],"
+        +"br,"
+        +"center,"
+        +"cite,"
+        +"code,"
+        +"dd,"
+        +"del,"
+        +"div[class|id|style],"
+        +"dl,"
+        +"dt,"
+        +"em,"
+        +"h1[id],"
+        +"h2[id],"
+        +"h3[id],"
+        +"h4[id],"
+        +"h5[id],"
+        +"h6[id],"
+        +"hr,"
+        +"i,"
+        +"img[alt|border|class|src|title|height|width],"
+        +"ins,"
+        +"kbd,"
+        +"li,"
+        +"ol[id],"
+        +"p[class|id|style],"
+        +"pre[class|id|style|width],"
+        +"q[id],"
+        +"span[id|style],"
+        +"sub,"
+        +"sup,"
+        +"table[border|cellpadding|cellspacing|class|id|width],"
+        +"td[align<center?char?justify?left?right|colspan|rowspan|style|valign<baseline?bottom?middle?top],"
+        +"tfoot,"
+        +"th[align<center?char?justify?left?right|colspan|rowspan|style|valign<baseline?bottom?middle?top],"
+        +"thead,"
+        +"tr[style],"
+        +"tt,"
+        +"u,"
+        +"ul[id],"
+        +"var",
+
+        setup : function(ed) {
+            ed.addButton('template', {
+                title : 'Vloží komentovaný příspěvek jako citaci',
+                onclick : function() {
+                    ed.focus();
+                    ed.selection.setContent(quotedText);
+                }
+            });
+        }
+    });
+}
+
+function toggleEditor(id) {
+    if (!tinyMCE.get(id)) {
+        tinyMCE.execCommand('mceAddControl', true, id);
+        document.getElementById('jsEditorButtons').style.display = 'none';
+        document.getElementById('rte_'+id).value = "true";
+    } else {
+        tinyMCE.execCommand('mceRemoveControl', false, id);
+        document.getElementById('jsEditorButtons').style.display = 'inline';
+        document.getElementById('rte_'+id).value = "false";
+    }
+}
+
 // start method for checkParent
 function startCheckParent(event) {
     if (!event) {

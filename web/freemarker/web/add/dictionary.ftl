@@ -1,5 +1,4 @@
-<#import "/web/rte-macro.ftl" as rte>
-<@rte.addRTE textAreaId="desc" formId="dictForm" inputMode="wiki" />
+<@lib.addRTE textAreaId="desc" formId="dictForm" menu="wiki" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -47,7 +46,7 @@
             <td class="required">Popis</td>
             <td>
                 <@lib.showError key="desc"/>
-                <@rte.showFallback "desc"/>
+                <@lib.showRTEControls "desc"/>
                 <textarea tabindex="2" name="desc" class="siroka" rows="20" tabindex="2">${PARAMS.desc!?html}</textarea>
             </td>
         </tr>

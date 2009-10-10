@@ -1,5 +1,4 @@
-<#import "/web/rte-macro.ftl" as rte>
-<@rte.addRTE textAreaId="text" formId="form" inputMode="comment" />
+<@lib.addRTE textAreaId="text" formId="form" menu="comment" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -70,7 +69,7 @@
             <td class="required">Dotaz</td>
             <td>
                 <@lib.showError key="text"/>
-                <@rte.showFallback "text"/>
+                <@lib.showRTEControls "text"/>
                 <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea>
             </td>
         </tr>

@@ -1,5 +1,4 @@
-<#import "/web/rte-macro.ftl" as rte>
-<@rte.addRTE textAreaId="about" formId="form" inputMode="wiki" />
+<@lib.addRTE textAreaId="about" formId="form" menu="wiki" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -90,7 +89,7 @@
         <tr>
             <td colspan="2">
                 <@lib.showError key="about"/>
-                <@rte.showFallback "about"/>
+                <@lib.showRTEControls "about"/>
                 <textarea name="about" rows="25" class="siroka" tabindex="9">${PARAMS.about!?html}</textarea>
             </td>
         </tr>

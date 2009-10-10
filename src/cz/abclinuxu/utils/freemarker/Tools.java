@@ -2300,8 +2300,8 @@ public class Tools implements Configurable {
      * @param textAreaId id of associated text area
      * @param formId if od associated form
      */
-    public static void addRichTextEditor(RichTextEditor rte, String textAreaId, String formId, String inputMode) {
-        addRichTextEditor(rte, textAreaId, formId, inputMode, null);
+    public static void addRichTextEditor(RichTextEditor rte, String textAreaId, String formId, String menu) {
+        addRichTextEditor(rte, textAreaId, formId, menu, null);
     }
 
     /**
@@ -2311,11 +2311,10 @@ public class Tools implements Configurable {
      * @param formId if od associated form
      * @param commentedText optional HTML containing commented text, used for quotations
      */
-    public static void addRichTextEditor(RichTextEditor rte, String textAreaId, String formId, String inputMode, String commentedText) {
-        RichTextEditor.EditorInstance editor = new RichTextEditor.EditorInstance(textAreaId, formId, inputMode);
+    public static void addRichTextEditor(RichTextEditor rte, String textAreaId, String formId, String menu, String commentedText) {
+        RichTextEditor.EditorInstance editor = rte.addInstance(textAreaId, formId, menu);
         if (commentedText != null)
             editor.setCommentedContent(commentedText);
-        rte.addInstance(editor);
     }
 
     /**

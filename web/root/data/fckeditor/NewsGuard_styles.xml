@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<Styles>
-	<Style name="Abbreviation" element="abbr" />
-	<Style name="Acronym" element="acronym" />
-	<Style name="Computer Code" element="code" />
-	<Style name="Inline Quotation" element="q" />
-	<Style name="Cited Work" element="cite" />
-</Styles>

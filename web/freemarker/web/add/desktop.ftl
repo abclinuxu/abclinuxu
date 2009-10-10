@@ -1,5 +1,4 @@
-<#import "/web/rte-macro.ftl" as rte>
-<@rte.addRTE textAreaId="desc" formId="form" inputMode="wiki" />
+<@lib.addRTE textAreaId="desc" formId="form" menu="wiki" />
 <#include "../header.ftl">
 
 <h1>Nový desktop</h1>
@@ -50,7 +49,7 @@
             <td>Popis</td>
             <td>
                 <@lib.showError key="desc"/>
-                <@rte.showFallback "desc"/>
+                <@lib.showRTEControls "desc"/>
                 <textarea name="desc" class="siroka" rows="20" tabindex="4">${PARAMS.desc!?html}</textarea>
             </td>
         </tr>

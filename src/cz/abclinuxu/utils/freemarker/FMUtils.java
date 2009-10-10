@@ -154,6 +154,7 @@ public class FMUtils implements Configurable {
         config.setObjectWrapper(beansWrapper);
         config.setStrictSyntaxMode(true);
         config.setWhitespaceStripping(true);
+        config.addAutoImport("lib", "web/macros.ftl");
 
         try {
             config.setSetting("number_format", "0");

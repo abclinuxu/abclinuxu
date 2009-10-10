@@ -1,5 +1,4 @@
-<#import "/web/rte-macro.ftl" as rte>
-<@rte.addRTE textAreaId="note" formId="form" inputMode="wiki" />
+<@lib.addRTE textAreaId="note" formId="form" menu="wiki" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -75,7 +74,7 @@
             <td width="120">Poznámka</td>
             <td>
                 <@lib.showError key="note"/>
-                <@rte.showFallback "note"/>
+                <@lib.showRTEControls "note"/>
                 <textarea name="note" class="siroka" rows="20" tabindex="8">${PARAMS.note!?html}</textarea>
             </td>
         </tr>

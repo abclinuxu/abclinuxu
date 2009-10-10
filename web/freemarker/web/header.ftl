@@ -1,5 +1,4 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd" >
-<#import "macros.ftl" as lib>
 <html lang="cs">
 <head>
     <#if USER?? && USER.hasRole("root")><!-- Sablona: ${TEMPLATE!"neznama"} --></#if>
@@ -50,7 +49,8 @@
     </#if>
 
     <script type="text/javascript" src="/data/site/jquery/jquery-1.3.2.min.js"></script>
-    <#--<@lib.initRTE />-->
+    <script type="text/javascript" src="/data/site/scripts.js"></script>
+    <@lib.initRTE />
     <script type="text/javascript">
     	Page = new Object();
         <#if RELATION??>
@@ -62,7 +62,6 @@
 	    </#if>
     </script>
     <script type="text/javascript" src="/data/site/impact.js"></script>
-    <script type="text/javascript" src="/data/site/scripts.js"></script>
     <#if html_header??>
         ${html_header}
     </#if>

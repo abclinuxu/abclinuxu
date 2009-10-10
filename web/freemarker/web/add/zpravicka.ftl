@@ -1,3 +1,4 @@
+<@lib.addRTE textAreaId="content" formId="newsForm" menu="news" />
 <#assign html_header>
     <link rel="stylesheet" type="text/css" media="all" href="/data/site/calendar/calendar-system.css" />
     <script type="text/javascript" src="/data/site/calendar/calendar.js"></script>
@@ -60,10 +61,8 @@ s vysvětlením. Teprve po schválení bude zprávička zveřejněna.</p>
         <div class="error">${ERRORS.title!}</div>
 
         <span class="required">Obsah</span>
-        <div class="form-edit">
-            <a href="javascript:insertAtCursor(document.newsForm.content, '&lt;a href=&quot;&quot;&gt;', '</a>');" id="mono" title="Vložit značku odkazu">&lt;a&gt;</a>
-        </div>
-        <textarea tabindex="2" name="content" cols="60" rows="10" tabindex="1">${PARAMS.content!?html}</textarea>
+        <@lib.showRTEControls "content"/>
+        <textarea tabindex="2" name="content" id="content" class="siroka" rows="10" tabindex="1">${PARAMS.content!?html}</textarea>
         <div class="error">${ERRORS.content!}</div>
     </p>
 
@@ -95,7 +94,7 @@ s vysvětlením. Teprve po schválení bude zprávička zveřejněna.</p>
     </#if>
 
     <h3>Kategorie</h3>
-    <#assign selected = PARAMS.category?default("RELEASE")>
+    <#assign selected = PARAMS.category!"RELEASE">
     <dl>
         <#list CATEGORIES as category>
             <dt>

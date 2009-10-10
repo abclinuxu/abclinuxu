@@ -1,3 +1,4 @@
+<@lib.addRTE textAreaId="content" formId="form" menu="blog" />
 <#assign html_header>
     <link rel="stylesheet" type="text/css" media="all" href="/data/site/calendar/calendar-system.css" />
     <script type="text/javascript" src="/data/site/calendar/calendar.js"></script>
@@ -95,17 +96,9 @@ v pravém sloupci v části nadepsané <b>Správa zápisku</b>.</p>
                 <input tabindex="4" type="submit" name="upload" value="Načti">
             </div>
             <@lib.showError key="contentFile" />
-            <div class="form-edit">
-                <a href="javascript:insertAtCursor(document.form.content, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vložit značku tučně"><b>B</b></a>
-                <a href="javascript:insertAtCursor(document.form.content, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="Vložit značku kurzíva"><i>I</i></a>
-                <a href="javascript:insertAtCursor(document.form.content, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="Vložit značku odkazu">&lt;a&gt;</a>
-                <a href="javascript:insertAtCursor(document.form.content, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="Vložit značku odstavce">&lt;p&gt;</a>
-                <a href="javascript:insertAtCursor(document.form.content, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="Vložit formátovaný text. Vhodné pouze pro konfigurační soubory či výpisy.">&lt;pre&gt;</a>
-		        <a href="javascript:insertAtCursor(document.form.content, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
-                <a href="javascript:insertAtCursor(document.form.content, '&lt;break&gt;', '');" id="mono" title="Vložit značku zlomu">&lt;break&gt;</a>
-            </div>
+            <@lib.showRTEControls "content"/>
             <@lib.showError key="content" />
-            <textarea tabindex="2" name="content" class="siroka" rows="30">${PARAMS.content!"<p></p>"?html}</textarea>
+            <textarea tabindex="2" name="content" id="content" class="siroka" rows="30">${PARAMS.content!"<p></p>"?html}</textarea>
         </td>
     </tr>
     <tr>

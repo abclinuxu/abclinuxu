@@ -1,8 +1,7 @@
-<#import "/web/rte-macro.ftl" as rte>
-<@rte.addRTE textAreaId="note" formId="form" inputMode="wiki" />
-<@rte.addRTE textAreaId="setup" formId="form" inputMode="wiki" />
-<@rte.addRTE textAreaId="params" formId="form" inputMode="wiki" />
-<@rte.addRTE textAreaId="identification" formId="form" inputMode="wiki" />
+<@lib.addRTE textAreaId="note" formId="form" menu="wiki" />
+<@lib.addRTE textAreaId="setup" formId="form" menu="wiki" />
+<@lib.addRTE textAreaId="params" formId="form" menu="wiki" />
+<@lib.addRTE textAreaId="identification" formId="form" menu="wiki" />
 <#include "../header.ftl">
 <#import "../misc/hardware.ftl" as hwlib>
 
@@ -99,7 +98,7 @@
                     Zadejte jen skutečně relevantní údaje, buďte struční.
                 </div>
                 <@lib.showError key="identification"/>
-                <@rte.showFallback "identification"/>
+                <@lib.showRTEControls "identification"/>
                 <textarea name="identification" class="siroka" rows="15" tabindex="8">${PARAMS.identification!?html}</textarea>
             </td>
         </tr>
@@ -108,7 +107,7 @@
             <td>Technické parametry</td>
             <td>
                 <@lib.showError key="params"/>
-                <@rte.showFallback "params"/>
+                <@lib.showRTEControls "params"/>
                 <textarea name="params" class="siroka" rows="15" tabindex="9">${PARAMS.params!?html}</textarea>
             </td>
         </tr>
@@ -117,7 +116,7 @@
             <td>Postup zprovoznění</td>
             <td>
                 <@lib.showError key="setup"/>
-                <@rte.showFallback "setup"/>
+                <@lib.showRTEControls "setup"/>
                 <textarea name="setup" class="siroka" rows="20" tabindex="10">${PARAMS.setup!?html}</textarea>
             </td>
         </tr>
@@ -126,7 +125,7 @@
             <td>Poznámka</td>
             <td>
                 <@lib.showError key="note"/>
-                <@rte.showFallback "note"/>
+                <@lib.showRTEControls "note"/>
                 <textarea name="note" class="siroka" rows="20" tabindex="11">${PARAMS.note!?html}</textarea>
             </td>
         </tr>

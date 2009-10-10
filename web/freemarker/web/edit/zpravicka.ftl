@@ -1,3 +1,4 @@
+<@lib.addRTE textAreaId="content" formId="newsForm" menu="news" />
 <#assign html_header>
     <link rel="stylesheet" type="text/css" media="all" href="/data/site/calendar/calendar-system.css" />
     <script type="text/javascript" src="/data/site/calendar/calendar.js"></script>
@@ -45,10 +46,8 @@ a vygeneruje se z něj URL.</p>
         <tr>
             <td class="required">Obsah</td>
             <td>
-                <div class="form-edit">
-                    <a href="javascript:insertAtCursor(document.newsForm.content, '&lt;a href=&quot;&quot;&gt;', '</a>');" id="mono" title="Vložit značku odkazu">&lt;a&gt;</a>
-                </div>
-                <textarea name="content" class="siroka" rows="15" tabindex="1">${PARAMS.content!?html}</textarea>
+                <@lib.showRTEControls "content"/>
+                <textarea name="content" id="content" class="siroka" rows="15" tabindex="1">${PARAMS.content!?html}</textarea>
                 <div class="error">${ERRORS.content!}</div>
             </td>
         </tr>

@@ -28,6 +28,11 @@
                         <value>right</value>
                     </values>
                 </property>
+                <property id="TEXT-DECORATION">
+                    <values>
+                        <value>line-through</value>
+                    </values>
+                </property>
             </attribute>
             <attribute id="TARGET"/>
             <attribute id="TITLE"/>
@@ -98,8 +103,9 @@
                     </values>
                 </attribute>
                 <attribute rel="HEIGHT"/>
-                <attribute rel="WIDTH"/>
                 <attribute rel="SRC"/>
+                <attribute rel="TITLE"/>
+                <attribute rel="WIDTH"/>
             </tag>
             <tag id="INS" mustBeClosed="true"/>
             <tag id="KBD" mustBeClosed="true"/>
@@ -132,6 +138,7 @@
             </tag>
             <tag id="SPAN" mustBeClosed="true">
                 <attribute rel="ID"/>
+                <attribute rel="STYLE"/>
             </tag>
             <tag id="STRONG" mustBeClosed="true"/>
             <tag id="SUB" mustBeClosed="true"/>
@@ -226,6 +233,7 @@
         <tag rel="H4"/>
         <tag rel="H5"/>
         <tag rel="I"/>
+        <tag rel="IMG"/>
         <tag rel="INS"/>
         <tag rel="KBD"/>
         <tag rel="LI"/>

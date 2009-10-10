@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -44,21 +45,34 @@ public class RichTextEditor {
     public static final String PREF_BROWSERS_ONLY_TEXTAREA = "regexp.only.textarea.ua";
     public static final String PREF_DISABLED = "disabled";
 
-    public static final String SETTING_TEXTAREA = "textarea";
-    public static final String SETTING_WYSIWYG = "wysiwyg";
+    public static final String PARAM_PREFIX = "rte_";
 
     static Config config = Config.getConfig();
 
     List<EditorInstance> instances;
-    boolean wysiwygMode = true;
-    boolean displayJavascriptButtons = true;
+    Map<String, String> params = new HashMap<String, String>(2, 1.0f);
+    boolean displayControls = true;
+    String menu;
+    String mode = Constants.RTE_SETTING_ON_REQUEST;
 
     public RichTextEditor(Map env) {
+        Map<String,?> params = (Map) env.get(Constants.VAR_PARAMS);
+        for (String key : params.keySet()) {
+            if (key.startsWith(PARAM_PREFIX)) {
+                this.params.put(key.substring(PARAM_PREFIX.length()), (String) params.get(key));
+            }
+        }
+
         User user = (User) env.get(Constants.VAR_USER);
         if (user != null) {
             Element rteSetting = (Element) user.getData().selectSingleNode("/data/settings/rte']");
-            if (rteSetting != null && ! SETTING_WYSIWYG.equalsIgnoreCase(rteSetting.getText()))
-                wysiwygMode = false;
+            if (rteSetting != null) {
+                String value = rteSetting.getText();
+                if (! Constants.RTE_SETTING_ALWAYS.equalsIgnoreCase(value) && ! Constants.RTE_SETTING_NEVER.equalsIgnoreCase(value))
+                    mode = Constants.RTE_SETTING_ON_REQUEST;
+                else
+                    mode = value.toLowerCase();
+            }
         }
 
         String ua = (String) env.get(Constants.VAR_USER_AGENT);
@@ -67,8 +81,8 @@ public class RichTextEditor {
             if (config.reNoJavascriptBrowsers != null) {
                 Matcher matcher = config.reNoJavascriptBrowsers.matcher(ua);
                 if (matcher.find()) {
-                    wysiwygMode = false;
-                    displayJavascriptButtons = false;
+                    mode = Constants.RTE_SETTING_NEVER;
+                    displayControls = false;
                     jsDisabled = true;
                 }
             }
@@ -76,12 +90,12 @@ public class RichTextEditor {
             if (! jsDisabled && config.reOnlyJsButtonsBrowsers != null) {
                 Matcher matcher = config.reOnlyJsButtonsBrowsers.matcher(ua);
                 if (matcher.find())
-                    wysiwygMode = false;
+                    mode = Constants.RTE_SETTING_NEVER;
             }
         }
 
-        if (wysiwygMode && config.disabled)
-            wysiwygMode = false;
+        if (config.disabled)
+            mode = Constants.RTE_SETTING_NEVER;
     }
 
     public void addInstance(EditorInstance rte) {
@@ -113,36 +127,51 @@ public class RichTextEditor {
     }
 
     /**
-     * True when rich text editor with WYSIWYG display shall be presented instead of text area. This is true when
-     * current user agent is not matched by any regexp from configuration. For example Konqueror is not supported
-     * by current rich text editor (FCK). The user can configure to switch off rich text editor.
-     * @return whether WYSIWYG editor can be displayed
+     * Returns mode for rich text editor. It can be always (displayed automatically), request (displayed
+     * upon user's action) or never (unavailabe). The value is taken from current browser (JS support, compatibility),
+     * user's preference or last selection (hidden form field).
+     * @return on of the constant
      */
-    public boolean isWysiwygMode() {
-        return wysiwygMode;
+    public String getMode() {
+        return mode;
     }
 
     /**
-     * When WYSIWYG support is disabled for current user agent, then this property influences, whether javascript
-     * formatting buttons shall be rendered. For example lynx does not support javascript.
-     * @return true when javascript buttons can be rendered
+     * Returns true, when javascript controls shall be displayed. This is false for browsers without javascript like lynx.
+     * @return true when javascript buttons shall be rendered
      */
-    public boolean isDisplayJavascriptButtons() {
-        return displayJavascriptButtons;
+    public boolean isDisplayControls() {
+        return displayControls;
+    }
+
+    /**
+     * @return requested toolbar (list of tags)
+     */
+    public String getMenu() {
+        return menu;
+    }
+
+    public void setMenu(String menu) {
+        this.menu = menu;
+    }
+
+    public EditorInstance addInstance(String textAreaId, String formId, String menu) {
+        EditorInstance editor = new EditorInstance(textAreaId, formId);
+        setMenu(menu);
+        addInstance(editor);
+        return editor;
     }
 
     /**
      * Holder for one editor instance data.
      */
-    public static class EditorInstance {
+    public class EditorInstance {
         String id, form; // form identifier and text area id
         String commentedContent;
-        String inputMode; // constant for allowed HTML tags
 
-        public EditorInstance(String id, String formId, String inputMode) {
+        public EditorInstance(String id, String formId) {
             this.id = id;
             this.form = formId;
-            this.inputMode = inputMode;
         }
 
         /**
@@ -176,14 +205,20 @@ public class RichTextEditor {
         }
 
         /**
-         * @return requested toolbar (list of tags)
+         * If there is special form parameter for this textarea and its value is true, then
+         * user was using RTE on previous page and let redisplay it on current page. Otherwise
+         * use default value computed for all editors.
+         * @return mode constant
          */
-        public String getInputMode() {
-            return inputMode;
-        }
+        public String getMode() {
+            String value = params.get(id);
+            if (value == null)
+                return mode;
 
-        public void setInputMode(String inputMode) {
-            this.inputMode = inputMode;
+            if ("true".equals(value))
+                return Constants.RTE_SETTING_ALWAYS;
+            else
+                return Constants.RTE_SETTING_ON_REQUEST;
         }
     }
 

@@ -53,16 +53,18 @@
         <tr>
             <td class="required" width="200px">Wysiwyg editor</td>
             <td>
-                <@lib.showOption "rte", "wysiwyg", "ano", "radio", "tabindex='3'" />
-                <@lib.showOption "rte", "textarea", "ne", "radio", "tabindex='3'" />
+                <@lib.showOption "rte", "always", "zobrazit vždy", "radio", "tabindex='3'" />
+                <@lib.showOption "rte", "request", "na žádost", "radio", "tabindex='3'" />
+                <@lib.showOption "rte", "never", "nezobrazit nikdy", "radio", "tabindex='3'" />
             </td>
         </tr>
 
         <tr>
             <td colspan="2">
-                V případě přístupu z kompatibilního prohlížeče (Firefox, Internet Explorer či Opera) povolí či zakáže
-                použití WYSIWYG editoru. Jde o aplikaci napsanou v Javascriptu, která umožňuje nastavovat formátování,
-                aniž byste museli znát syntaxi HTML (poznámka - v přípravě).
+                V případě přístupu z kompatibilního prohlížeče (Firefox, Internet Explorer či Opera) povoluje WYSIWYG editor.
+                Jedná se o aplikaci napsanou v Javascriptu, která umožňuje pohodlně nastavovat formátování textu,
+                aniž byste museli znát syntaxi HTML. Můžete si vybrat, zda se má editor zobrazit automaticky vždy,
+                nebo jen když sami zmáčknete přepínací tlačítko (defaultní stav) nebo jej úplně vypnout.
             </td>
         </tr>
     </table>

@@ -370,6 +370,9 @@ public class Constants implements Configurable {
     public static final String INPUT_MODE_NEWS = "news";
     public static final String INPUT_MODE_BLOG = "blog";
     public static final String INPUT_MODE_WIKI = "wiki";
+    public static final String RTE_SETTING_ALWAYS = "always";
+    public static final String RTE_SETTING_NEVER = "never";
+    public static final String RTE_SETTING_ON_REQUEST = "request";
 
     // type of counter
     public static final String COUNTER_READ = "read";

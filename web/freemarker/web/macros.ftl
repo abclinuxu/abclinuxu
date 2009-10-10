@@ -606,36 +606,76 @@
 </#macro>
 
 <#macro initRTE>
-    <#if (RTE.wysiwygMode && RTE.instances?size > 0)>
-        <script type="text/javascript" src="/data/fckeditor/fckeditor.js"></script>
-        <script type="text/javascript">
-        window.onload = function() {
-            <#list RTE.instances as editor>
-                var aFCKeditor = new FCKeditor('${editor.id}');
-                aFCKeditor.BasePath = '/data/fckeditor/';
-                <#if editor.inputMode == "news">
-                    aFCKeditor.Config['CustomConfigurationsPath'] = aFCKeditor.BasePath + 'NewsGuard_config.js';
-                    aFCKeditor.ToolbarSet = 'NewsGuard';
+    <#if (RTE.instances?size > 0)>
+        <script language="javascript1.2" type="text/javascript">
+            <#list RTE.instances as instance>
+                <#if instance.commentedContent??>quotedText = "<blockquote>${instance.commentedContent?js_string}</blockquote>";</#if>
+            </#list>
+        </script>
+        <#if RTE.mode != "never">
+            <script language="javascript" type="text/javascript" src="/data/tiny_mce/tiny_mce.js"></script>
+            <script language="javascript" type="text/javascript">
+                initializeEditor('${RTE.menu}');
+                $().ready(function() {
+                    <#list RTE.instances as instance>
+                        <#if instance.mode == "always">toggleEditor('${instance.id}')</#if>
+                    </#list>
+                })
+            </script>
+        </#if>
+    </#if>
+</#macro>
+
+<#macro addRTE textAreaId formId menu commentedText="UNDEFINED">
+    <#if commentedText=="UNDEFINED">
+        ${TOOL.addRichTextEditor(RTE, textAreaId, formId, menu)}
+    <#else>
+        ${TOOL.addRichTextEditor(RTE, textAreaId, formId, menu, commentedText)}
+    </#if>
+</#macro>
+
+<#macro showRTEControls textAreaId>
+    <#if RTE.displayControls>
+        <#local editor = RTE[textAreaId]>
+        <div class="form-edit">
+            <#if editor.mode != "never">
+                <a href="javascript:toggleEditor('${editor.id}');" title="Přepne WYSIWYG editor pro pohodlné zadávání formátovaného textu">Editor</a>
+                <input type="hidden" name="rte_${editor.id}" id="rte_${editor.id}" value="request}">
+            </#if>
+            <span id="jsEditorButtons">
+                <#if RTE.menu = "news">
+                    <@jsInsert editor, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;', "mono", "Vložit značku odkazu", "&lt;a&gt;"/>
                 <#else>
-                    aFCKeditor.Config['CustomConfigurationsPath'] = aFCKeditor.BasePath + 'SafeHTMLGuard_config.js';
-                    <#if editor.inputMode == "wiki">
-                        aFCKeditor.ToolbarSet = 'WikiContentGuard';
-                    <#elseif editor.inputMode == "blog">
-                        aFCKeditor.ToolbarSet = 'BlogGuard';
-                    <#else>
-                        aFCKeditor.ToolbarSet = 'SafeHTMLGuard';
+                    <@jsInsert editor, '&lt;b&gt;', '&lt;/b&gt;', "serif", "Vložit značku tučně", "<b>B</b>"/>
+                    <@jsInsert editor, '&lt;i&gt;', '&lt;/i&gt;', "serif", "Vložit značku kurzíva", "<i>I</i>"/>
+                    <@jsInsert editor, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;', "mono", "Vložit značku odkazu", "&lt;a&gt;"/>
+                    <@jsInsert editor, '&lt;blockquote&gt;', '&lt;/blockquote&gt;', "mono", "Vložit značku citace", "BQ"/>
+                    <@jsInsert editor, '&lt;p&gt;', '&lt;/p&gt;', "mono", "Vložit značku odstavce", "&lt;p&gt;"/>
+                    <@jsInsert editor, '&lt;pre&gt;', '&lt;/pre&gt;', "mono", "Vložit značku formátovaného textu. Vhodné pro konfigurační soubory či výpisy.", "&lt;pre&gt;"/>
+                    <@jsInsert editor, '&lt;code&gt;', '&lt;/code&gt;', "mono", "Vložit značku pro písmo s pevnou šířkou", "&lt;code&gt;"/>
+                    <@jsInsert editor, '&lt;ul&gt;\n&lt;li&gt;', '&lt;/li&gt;\n&lt;li&gt;&lt;/li&gt;\n&lt;li&gt;&lt;/li&gt;\n&lt;/ul&gt;', "mono", "Vložit nečíslovaný seznam", "&lt;ul&gt;"/>
+                    <@jsInsert editor, '&lt;ol&gt;\n&lt;li&gt;', '&lt;/li&gt;\n&lt;li&gt;&lt;/li&gt;\n&lt;li&gt;&lt;/li&gt;\n&lt;/ol&gt;', "mono", "Vložit číslovaný seznam", "&lt;ol&gt;"/>
+                    <#if RTE.menu = "blog">
+                        <@jsInsert editor, '&lt;!--break--&gt;', '', "mono", "Vložit značku zlomu", "break"/>
+                    </#if>
+                    <@jsInsert editor, '&amp;lt;', '', "mono", "Vložit písmeno &lt;", "&lt;"/>
+                    <@jsInsert editor, '&amp;gt;', '', "mono", "Vložit písmeno &gt;", "&gt;"/>
+                    <#if editor.commentedContent??>
+                        <script language="javascript1.2" type="text/javascript">
+                            function cituj(input) {
+                                input.value += quotedText;
+                            }
+                        </script>
+                        <a href="javascript:cituj(document.${editor.form}.${editor.id});" class="mono" title="Vloží komentovaný příspěvek jako citaci">Citace</a>
                     </#if>
                 </#if>
-                <#if editor.commentedContent??>
-                    aFCKeditor.Config['AbcCitationContent'] = '${editor.commentedContent?js_string}';
-                </#if>
-                aFCKeditor.Config['ProcessHTMLEntities'] = false;
-                aFCKeditor.Height ='250';
-                aFCKeditor.ReplaceTextarea();
-            </#list>
-        }
-        </script>
+            </span>
+        </div>
     </#if>
+</#macro>
+
+<#macro jsInsert editor prefix suffix class hint title>
+    <a href="javascript:insertAtCursor(document.${editor.form}.${editor.id}, '${prefix}', '${suffix}');" class="${class}" title="${hint}">${title}</a>
 </#macro>
 
 <#macro showTagCloud list title cssStyle>

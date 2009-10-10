@@ -1,5 +1,4 @@
-<#import "/web/rte-macro.ftl" as rte>
-<@rte.addRTE textAreaId="desc" formId="persForm" inputMode="wiki" />
+<@lib.addRTE textAreaId="desc" formId="persForm" menu="wiki" />
 <#include "../header.ftl">
 <#import "../misc/personality.ftl" as perslib>
 
@@ -55,7 +54,7 @@
             <td class="required">Popis</td>
             <td>
                 <@lib.showError key="desc"/>
-                <@rte.showFallback "desc"/>
+                <@lib.showRTEControls "desc"/>
                 <textarea tabindex="3" name="desc" class="siroka" rows="20" tabindex="2">${PARAMS.desc!?html}</textarea>
             </td>
         </tr>

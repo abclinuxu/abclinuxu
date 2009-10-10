@@ -1,5 +1,4 @@
-<#import "/web/rte-macro.ftl" as rte>
-<@rte.addRTE textAreaId="content" formId="form" inputMode="wiki" />
+<@lib.addRTE textAreaId="content" formId="form" menu="wiki" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -62,7 +61,7 @@ pak však potřebuje podporu programátora, který připraví data.</p>
    <td>
         <p>Všechna URL na články, obrázky a soubory z našeho serveru musí být relativní!</p>
         <@lib.showError key="content"/>
-        <@rte.showFallback "content"/>
+        <@lib.showRTEControls "content"/>
         <textarea name="content" class="siroka" rows="30" tabindex="5">${PARAMS.content!?html}</textarea>
    </td>
   </tr>

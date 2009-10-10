@@ -1,8 +1,7 @@
-<#import "/web/rte-macro.ftl" as rte>
 <#if COMMENTED_TEXT??>
-    <@rte.addRTE textAreaId="text" formId="replyForm" inputMode="comment" commentedText="${COMMENTED_TEXT}" />
+    <@lib.addRTE textAreaId="text" formId="replyForm" menu="comment" commentedText="${COMMENTED_TEXT}" />
 <#else>
-    <@rte.addRTE textAreaId="text" formId="replyForm" inputMode="comment" />
+    <@lib.addRTE textAreaId="text" formId="replyForm" menu="comment" />
 </#if>
 <#include "../header.ftl">
 
@@ -65,10 +64,9 @@
   </p>
     <div>
         <span class="required">Váš komentář</span>
+        <@lib.showRTEControls "text"/>
         <@lib.showError key="text"/>
-        <@rte.showFallback "text"/>
-        <#--<a href="javascript:toggleRTE('text');">přepni editor</a>-->
-        <textarea tabindex="4" name="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea>
+        <textarea tabindex="4" name="text" id="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea>
     </div>
     <p>
         Vložení přílohy: <input type="file" name="attachment" tabindex="5">
