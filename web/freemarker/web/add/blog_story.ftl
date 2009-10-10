@@ -117,11 +117,10 @@ v pravém sloupci v části nadepsané <b>Správa zápisku</b>.</p>
 <input type="hidden" name="action" value="add2">
 </form>
 
-<#include "/include/napoveda-k-html-formatovani.txt">
+<#include "/include/napoveda-k-auto-formatovani.txt">
 <p>
     Na HTML značky v perexu jsou uplatňována ještě další omezení. Zde nejsou povoleny
-    značky B, BIG, STRONG, H1-H5 a IMG. Navíc je možné použít tagy P a BR maximálně
-    jednou.
+    značky B, H1-H5 a IMG. Navíc je možné použít tagy P a BR maximálně jednou.
 </p>
 
 <#include "../footer.ftl">

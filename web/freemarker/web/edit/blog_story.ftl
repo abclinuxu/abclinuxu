@@ -76,13 +76,11 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
     <#if STORY.child.type==15 || PARAMS.publish??>
         <tr>
             <td>
-                <div>Datum zveřejnění</div>
-                <div>
-                    <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish!}">
-                    <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
-                    Formát 2005-01-25 07:12
-                    <@lib.showError key="publish" />
-                </div>
+                Datum zveřejnění:
+                <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish!}">
+                <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
+                Formát 2005-01-25 07:12
+                <@lib.showError key="publish" />
             </td>
         </tr>
     </#if>
@@ -109,11 +107,10 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
 <input type="hidden" name="action" value="edit2">
 </form>
 
-<#include "/include/napoveda-k-html-formatovani.txt">
+<#include "/include/napoveda-k-auto-formatovani.txt">
 <p>
     Na HTML značky v perexu jsou uplatňována ještě další omezení. Zde nejsou povoleny
-    značky B, BIG, STRONG, H1-H5 a IMG. Navíc je možné použít tagy P a BR maximálně
-    jednou.
+    značky B, STRONG, H1-H5 a IMG. Navíc je možné použít tagy P a BR maximálně jednou.
 </p>
 
 <#include "../footer.ftl">
