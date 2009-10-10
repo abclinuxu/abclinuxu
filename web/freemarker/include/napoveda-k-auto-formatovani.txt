@@ -1,8 +1,15 @@
 <h2 id="formatovani">Nápověda k formátování</h2>
 
-<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html" rel="nofollow">značky</a>:
-A, ABBR, ACRONYM, B, BR, BLOCKQUOTE, CITE, CODE, DIV, EM, I, HR, H1, H2, H3, LI,
-OL, P, PRE, STRONG, TT, UL, VAR.</p>
+<p>Povolené HTML značky:
+A, ABBR, ACRONYM, B, BR, BLOCKQUOTE, CITE, CODE, DIV, EM, I, HR, H1, H2, H3, LI, OL, P, PRE, STRONG, TT, UL, VAR
+(<a href="https://zdrojaky.abclinuxu.cz/viewvc/abclinuxu/trunk/conf/tag_checker.xml?view=markup" rel="nofollow">aktuální
+konfigurace</a>). Pro zvýraznění syntaxe v tagu PRE použijte atribut <code>class</code>,
+kterým určíte jazyk pro zvýraznění. Hodnota atributu musí být ve tvaru: <code>class="brush: nazev"</code>,
+kde <code>nazev</code> je název jazyka
+(<a href="http://alexgorbatchev.com/wiki/SyntaxHighlighter:Brushes" rel="nofollow">seznam</a>).
+</p>
+
+<h2>Pokud nepoužíváte WYSIWYG editor</h2>
 
 <p>Nejrychlejší způsob formátování je rozdělovat
 text do odstavců. Systém detekuje prázdné řádky

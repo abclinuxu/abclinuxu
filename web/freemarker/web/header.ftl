@@ -1,7 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd" >
 <html lang="cs">
 <head>
-    <#if USER?? && USER.hasRole("root")><!-- Sablona: ${TEMPLATE!"neznama"} --></#if>
+    <#if PARAMS.debug??>
+        <!-- Sablona: ${TEMPLATE!"neznama"} -->
+    </#if>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>${PARAMS.TITLE!TITLE!'www.abclinuxu.cz'}</title>
     <link rel="stylesheet" type="text/css" href="/jquery-theme/ui.all.css" />
@@ -50,6 +52,29 @@
 
     <script type="text/javascript" src="/data/site/jquery/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="/data/site/scripts.js"></script>
+    <#if ! IS_INDEX??>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shCore.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushBash.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushCSharp.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushCpp.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushCss.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushDelphi.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushDiff.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushGroovy.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushJScript.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushJava.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushJavaFX.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushPerl.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushPhp.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushPlain.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushPowerShell.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushPython.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushRuby.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushSql.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushVb.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushXml.js"></script>
+        <script type="text/javascript">$(document).ready(function () {SyntaxHighlighter.all();});</script>
+    </#if>
     <@lib.initRTE />
     <script type="text/javascript">
     	Page = new Object();

@@ -1,4 +1,6 @@
 @import url("layout.css");
+@import url("/data/syntaxhighlighter/styles/shCore.css");
+@import url("/data/syntaxhighlighter/styles/shThemeDefault.css");
 
 body {
 	background-color: #F6F6F6;

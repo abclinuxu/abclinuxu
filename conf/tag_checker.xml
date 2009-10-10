@@ -126,6 +126,7 @@
             <tag id="PRE" mustBeClosed="true">
                 <attribute id="CLASS">
                     <values>
+                        <value>brush: .+</value>
                         <value>kod</value>
                     </values>
                 </attribute>

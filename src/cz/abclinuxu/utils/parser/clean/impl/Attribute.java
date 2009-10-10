@@ -24,6 +24,7 @@ import cz.abclinuxu.utils.parser.clean.exceptions.AttributeValueNotAllowedExcept
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Definition of one tag attribute and its allowed values.
@@ -48,7 +49,12 @@ public class Attribute {
             throw new AttributeValueNotAllowedException("Atribut " + id + " značky " + tag + " nesmí být prázdný!");
 
         if (values != null) {
-            if (! values.contains(value.toUpperCase()))
+            boolean found = false;
+            for (String s : values) {
+                if (Pattern.matches(s,value.toUpperCase()))
+                    found = true;
+            }
+            if(!found)
                 throw new AttributeValueNotAllowedException("Hodnota '" + value + "' atributu " + id + " značky " + tag + " není povolena!");
         }
 
