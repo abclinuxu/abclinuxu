@@ -22,6 +22,7 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Server;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
@@ -95,6 +96,8 @@ public class SiteMapGenerator implements Configurable {
         Relation software = (Relation) Tools.sync(new Relation(Constants.REL_SOFTWARE));
         Relation drivers = (Relation) Tools.sync(new Relation(Constants.REL_DRIVERS));
         Relation faqs = (Relation) Tools.sync(new Relation(Constants.REL_FAQ));
+        Relation authors = (Relation) Tools.sync(new Relation(Constants.REL_AUTHORS));
+        Relation subportals = (Relation) Tools.sync(new Relation(Constants.REL_SUBPORTALS));
         List<Relation> forums = sqlTool.findCategoryRelationsWithType(Category.FORUM, null);
 
         // index of sitemaps
@@ -122,6 +125,8 @@ public class SiteMapGenerator implements Configurable {
         dumpUrlsFor(software, UrlUtils.PREFIX_SOFTWARE, stream);
         dumpUrlsFor(drivers, UrlUtils.PREFIX_DRIVERS, stream);
         dumpUrlsFor(faqs, UrlUtils.PREFIX_FAQ, stream);
+        dumpUrlsFor(authors, UrlUtils.PREFIX_AUTHORS, stream);
+        dumpSubportalUrls(subportals, stream);
         dumpFaqUrls(stream);
         writeUrl(server + "/doc/portal/rss-a-jine-pristupy", null, DAILY, 0.8f, stream);
         writeUrl(server + "/hosting", null, DAILY, 0.8f, stream);
@@ -232,6 +237,17 @@ public class SiteMapGenerator implements Configurable {
                 url = server + UrlUtils.getRelationUrl(relation, UrlUtils.PREFIX_FORUM);
                 writeUrl(url, null, WEEKLY, null, stream);
             }
+        }
+    }
+
+    static void dumpSubportalUrls(Relation subportals, OutputStream stream) throws IOException {
+        String url;
+        List<Relation> relations = subportals.getChild().getChildren();
+//        Tools.syncList(relations);
+
+        for (Relation relation : relations) {
+            url = server + UrlUtils.getRelationUrl(relation, UrlUtils.PREFIX_NONE);
+            writeUrl(url, null, DAILY, null, stream);
         }
     }
 
