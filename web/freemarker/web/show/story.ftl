@@ -1,4 +1,3 @@
-<#import "../macros.ftl" as lib>
 <#assign intro=TOOL.xpath(BLOG,"//custom/intro")!"UNDEF", owner=TOOL.createUser(BLOG.owner), ITEM=STORY.relation.child,
         CHILDREN=TOOL.groupByType(ITEM.children)>
 
@@ -220,8 +219,8 @@
     </#if>
 </p>
 
-<#if STORY.perex??>${STORY.perex}</#if>
-${STORY.content}
+<#if STORY.perex??>${TOOL.render(STORY.perex,USER!)}</#if>
+${TOOL.render(STORY.content,USER!)}
 
 <@lib.showRating STORY.relation/>
 

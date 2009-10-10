@@ -1,5 +1,3 @@
-<#import "../ads-macro.ftl" as lib>
-
 <#assign plovouci_sloupec>
   <div class="s_nadpis">
     <a class="info" href="#">?<span class="tooltip">Vlastní blog si po přihlášení můžete založit v nastavení svého profilu.</span></a>

@@ -164,7 +164,7 @@
         <#if ! shortened>
             <#local showMore=false>
             <#if story.perex??>
-                ${story.perex}
+                ${TOOL.render(story.perex,USER!)}
                 <#local showMore=true>
             <#else>
                 <#if (story.polls > 0 || story.images > 0 || story.videos > 0)><#local showMore=true></#if>
