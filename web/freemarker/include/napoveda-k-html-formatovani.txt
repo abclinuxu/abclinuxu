@@ -1,3 +1,3 @@
 <p>
-    Aktuální seznam povolených HTMl značek najdete v <a href="/napoveda/formatovani-textu">nápovědě</a>.
+    Aktuální seznam povolených HTML značek najdete v <a href="/napoveda/formatovani-textu">nápovědě</a>.
 </p>
