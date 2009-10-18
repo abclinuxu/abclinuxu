@@ -62,7 +62,7 @@ pak však potřebuje podporu programátora, který připraví data.</p>
         <p>Všechna URL na články, obrázky a soubory z našeho serveru musí být relativní!</p>
         <@lib.showError key="content"/>
         <@lib.showRTEControls "content"/>
-        <textarea name="content" class="siroka" rows="30" tabindex="5">${PARAMS.content!?html}</textarea>
+        <textarea name="content" id="content" class="siroka" rows="30" tabindex="5">${PARAMS.content!?html}</textarea>
    </td>
   </tr>
     <#if PARAMS.action=="edit" || PARAMS.action="edit2" >
@@ -98,11 +98,6 @@ pak však potřebuje podporu programátora, který připraví data.</p>
  </#if>
 </form>
 
-<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">značky</a>:
- A,  B, BLOCKQUOTE, BR, CENTER, CITE, CODE, DD, DEL, DIV, DL, DT, EM, IMG, H1, H2, H3, H4, HR, I,
- INS, KBD, LI, OL, P, PRE, Q, SMALL, SPAN, STRONG, SUB, SUP, TABLE, TBODY, TD, TFOOT, TH, THEAD,
- TR, TT, U, UL, VAR. Značky P, PRE, DIV, SPAN, H1-H4 a A povolují atrubity ID a CLASS.
-</p>
-
+<#include "/include/napoveda-k-html-formatovani.txt">
 
 <#include "../footer.ftl">

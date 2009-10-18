@@ -286,10 +286,12 @@ public class EditContent implements AbcAction {
         canContinue &= !Constants.ERROR.equals(changesDescription);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
-            if (!canContinue)
+            if (!canContinue) {
                 params.remove(PARAM_PREVIEW);
-            item.setInitialized(true);
-            env.put(VAR_PREVIEW, item);
+            } else {
+                item.setInitialized(true);
+                env.put(VAR_PREVIEW, item);
+            }
             return FMTemplateSelector.select("EditContent", "addDerived", env, request);
         }
 
@@ -340,7 +342,7 @@ public class EditContent implements AbcAction {
         Element element = (Element) document.selectSingleNode("/data/content");
         params.put(PARAM_CONTENT, element.getText());
 
-        env.put(VAR_START_TIME, new Long(System.currentTimeMillis()));
+        env.put(VAR_START_TIME, System.currentTimeMillis());
         return FMTemplateSelector.select("EditContent", "editPublic", env, request);
     }
 
@@ -359,15 +361,17 @@ public class EditContent implements AbcAction {
         canContinue &= setContent(params, item, env);
         canContinue &= checkStartTime(params, item, env);
         if (canContinue)
-            canContinue &= ServletUtils.checkNoChange(item, origItem, env);
+            canContinue = ServletUtils.checkNoChange(item, origItem, env);
         String changesDescription = Misc.getRevisionString(params, env);
         canContinue &= !Constants.ERROR.equals(changesDescription);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
-            if (!canContinue)
+            if (!canContinue) {
                 params.remove(PARAM_PREVIEW);
-            item.setInitialized(true);
-            env.put(VAR_PREVIEW, item);
+            } else {
+                item.setInitialized(true);
+                env.put(VAR_PREVIEW, item);
+            }
             return FMTemplateSelector.select("EditContent", "editPublic", env, request);
         }
 

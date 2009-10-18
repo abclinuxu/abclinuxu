@@ -32,7 +32,7 @@ změny zpět.</p>
    <td>
     <p>Všechna URL na články, obrázky a soubory z našeho serveru musí být relativní!</p>
     <@lib.showRTEControls "content"/>
-    <textarea name="content" class="siroka" rows="30" tabindex="2">${PARAMS.content!?html}</textarea>
+    <textarea name="content" id="content" class="siroka" rows="30" tabindex="2">${PARAMS.content!?html}</textarea>
     <@lib.showError key="content"/>
    </td>
   </tr>

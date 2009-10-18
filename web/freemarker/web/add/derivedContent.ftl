@@ -36,7 +36,7 @@ nebudete moci změnit.
         <p>Všechna URL na články, obrázky a soubory z našeho serveru musí být relativní!</p>
         <@lib.showError key="content"/>
         <@lib.showRTEControls "content"/>
-        <textarea name="content" class="siroka" rows="30" tabindex="5">${PARAMS.content!?html}</textarea>
+        <textarea name="content" id="content" class="siroka" rows="30" tabindex="5">${PARAMS.content!?html}</textarea>
    </td>
   </tr>
   <tr>
