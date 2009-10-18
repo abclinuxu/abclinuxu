@@ -1,5 +1,3 @@
-<#import "../ads-macro.ftl" as lib>
-
 <#assign who=TOOL.createUser(ITEM.owner)>
 <#assign plovouci_sloupec>
   <div class="s_sekce">
