@@ -70,7 +70,7 @@
             <td>
                 <@lib.showError key="text"/>
                 <@lib.showRTEControls "text"/>
-                <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea>
+                <textarea tabindex="5" name="text" id="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea>
             </td>
         </tr>
         <tr>
