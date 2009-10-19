@@ -52,7 +52,7 @@
             <td>
                 <@lib.showError key="text"/>
                 <@lib.showRTEControls "text"/>
-                <textarea tabindex="5" name="text" class="siroka" rows="20"></textarea><br>
+                <textarea tabindex="5" name="text" id="text" class="siroka" rows="20"></textarea>
             </td>
         </tr>
         <tr>
