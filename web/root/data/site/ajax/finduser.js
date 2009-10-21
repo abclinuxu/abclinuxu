@@ -1,4 +1,4 @@
-function findUserHandler(resultId, dialogId, nameId, surnameId) {
+function findUserHandler(resultId, dialogId, nameId, surnameId, field) {
 	if(! $('#'+dialogId).length)
 		return false;
 	
@@ -9,7 +9,8 @@ function findUserHandler(resultId, dialogId, nameId, surnameId) {
 	// this loads html requests
 	win.load(
 		'/ajax/findUser?action=select', 
-		{'name':name}, 
+		{'name':name,
+		 'field':field}, 
 		function() {
 			win.dialog({width: 500,
 				        modal: true,
@@ -19,13 +20,3 @@ function findUserHandler(resultId, dialogId, nameId, surnameId) {
 		    	.dialog('open');
 	});	
 }
-
-$(document).ready(function() {	
-	var buttonParent = $('#findUser');
-    buttonParent.append('<input type="button" value="Vyhledat uživatele" id="findUserButton" tabindex="4"/>');
-    $('#findUserButton').bind('click', function() {
-        findUserHandler('addauthor-login', 'findUserDialog', 'addauthor-name', 'addauthor-surname');
-    });	
-});
-
-

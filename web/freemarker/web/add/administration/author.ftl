@@ -3,6 +3,15 @@
 <script type="text/javascript" src="/data/site/jquery/ui.core.js"></script>
 <script type="text/javascript" src="/data/site/jquery/ui.dialog.js"></script>
 <script type="text/javascript" src="/data/site/ajax/finduser.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {	
+	var buttonParent = $('#findUser');
+    buttonParent.append('<input type="button" value="Vyhledat uživatele" id="findUserButton" tabindex="4"/>');
+    $('#findUserButton').bind('click', function() {
+        findUserHandler('findUserResult-login', 'findUserDialog', 'addauthor-name', 'addauthor-surname', 'login');
+    });	
+});
+</script>
 </#if>
 </#assign>
 
@@ -50,7 +59,7 @@
             <td>Login:</td>
             <td style="white-space: nowrap">
                 <div id="findUser">
-                    <input type="text" id="addauthor-login" name="login" value="${(AUTHOR.login)!}" size="24" tabindex="3"/>&nbsp;       
+                    <input type="text" id="findUserResult-login" name="login" value="${(AUTHOR.login)!}" size="24" tabindex="3"/>&nbsp;       
                 </div>
                 <div id="findUserDialog"></div>
                 <div class="error">${ERRORS.login!}</div>
