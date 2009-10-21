@@ -84,9 +84,11 @@ public class Item extends GenericDataObject {
     /** advertisement (banner) object */
     public static final int ADVERTISEMENT = 29;
     /** contract with author */
-    public static final int CONTRACT = 30;
+    public static final int CONTRACT = 30;    
     /** topic for author's work */
     public static final int TOPIC = 31;
+    /** Freemarker template to be processed */
+    public static final int TEMPLATE = 32;
     
     
     public Item() {
@@ -134,6 +136,8 @@ public class Item extends GenericDataObject {
             case VIDEO: sb.append("Video"); break;
             case CONTRACT: sb.append("Contract"); break;
             case TOPIC: sb.append("Topic"); break;
+            case TEMPLATE: sb.append("Template"); break;
+            
             default: sb.append("Unknown Item");
         }
         sb.append(": id=").append(id);

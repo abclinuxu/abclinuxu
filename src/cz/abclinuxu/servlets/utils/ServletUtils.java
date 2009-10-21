@@ -18,45 +18,53 @@
  */
 package cz.abclinuxu.servlets.utils;
 
-import cz.abclinuxu.data.User;
-import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.persistence.SQLTool;
-import cz.abclinuxu.persistence.ldap.LdapUserManager;
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.config.Configurator;
-import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.config.impl.AbcConfig;
-import cz.abclinuxu.exceptions.InvalidInputException;
-import cz.abclinuxu.security.ActionProtector;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.scheduler.UserSync;
-import org.apache.log4j.Logger;
-import org.apache.commons.fileupload.DiskFileUpload;
-import org.apache.commons.fileupload.DefaultFileItemFactory;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.FileUploadBase;
-import org.dom4j.Node;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.DocumentHelper;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.prefs.Preferences;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.prefs.Preferences;
-import java.net.URL;
-import java.net.MalformedURLException;
+
+import org.apache.commons.fileupload.DefaultFileItemFactory;
+import org.apache.commons.fileupload.DiskFileUpload;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.Node;
+
+import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.exceptions.InvalidInputException;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.ldap.LdapUserManager;
+import cz.abclinuxu.scheduler.UserSync;
+import cz.abclinuxu.security.ActionProtector;
+import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.Configurator;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 
 /**
  * Class to hold useful methods related to servlets
@@ -443,6 +451,18 @@ public class ServletUtils implements Configurable {
     	String path = combinePaths(request.getServletPath(), request.getPathInfo());
     	return path != null && path.startsWith(prefix); 
     }
+    
+    /**
+     * Checks whether either action is defined or element with the same name
+     * as action is present within HTTP passed parameters
+     * @param params HTTP context
+     * @param testAction Value of desired action or name of element which must be present 
+     * @return {@code true} if testAction should be triggered, {@code false} otherwise
+     */
+    public static boolean determineAction(Map params, String testAction) {
+		String action = (String) params.get(AbcAction.PARAM_ACTION);
+		return testAction.equals(action) || (Misc.empty(action) && !Misc.empty((String) params.get(testAction)));
+	}
 
     /**
      * Handles situation, when user logs in. It checks his

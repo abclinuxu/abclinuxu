@@ -147,7 +147,7 @@ public class EditTopic implements AbcAction {
 		throw new MissingArgumentException("Chybí parametr action!");
 	}
 
-	// first step of author creation
+	// first step of topic creation
 	private String actionAddStep1(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) throws Exception {
 
 		Link tail = new Link("Nový námět", "edit?action=add", "Vytvořit nový námět");
@@ -169,48 +169,49 @@ public class EditTopic implements AbcAction {
 		Topic topic = new Topic();
 		TopicValidator validator = new TopicValidator(topic, env);
 		if (!validator.setAndValidate()) {
-			// restore authors if not valid
+			// restore topic if not valid
 			env.put(VAR_AUTHORS, getActiveAuthors(env));
 			env.put(VAR_TOPIC, topic);
 			return FMTemplateSelector.select("AdministrationEditTopic", "add", env, request);
 		}
 		try {
-		// store in database
-		Item item = new Item(0, Item.TOPIC);
+			// store in database
+			Item item = new Item(0, Item.TOPIC);
 
-		// refresh item content
-		item = BeanFlusher.flushTopicToItem(item, topic);
-		item.setTitle(topic.getTitle());
-		persistence.create(item);
+			// refresh item content
+			item = BeanFlusher.flushTopicToItem(item, topic);
+			item.setTitle(topic.getTitle());
+			persistence.create(item);
 
-		// set unique url
-		String url = proposeTopicsUrl(topic);
+			// set unique url
+			String url = proposeTopicsUrl(topic);
 
-		// set relation
-		Relation parent = new Relation(Constants.REL_TOPICS);
-		persistence.synchronize(parent);
-		persistence.synchronize(parent.getChild());
-		Relation relation = new Relation(parent.getChild(), item, parent.getId());
-		relation.setUrl(url);
-		persistence.create(relation);
-		relation.getParent().addChildRelation(relation);
+			// set relation
+			Relation parent = new Relation(Constants.REL_TOPICS);
+			persistence.synchronize(parent);
+			persistence.synchronize(parent.getChild());
+			Relation relation = new Relation(parent.getChild(), item, parent.getId());
+			relation.setUrl(url);
+			persistence.create(relation);
+			relation.getParent().addChildRelation(relation);
 
-		// retrieve fields changed by persistence
-		topic = BeanFetcher.fetchTopicFromItem(item, FetchType.EAGER);
-		redirect(response, env);
-		return null;
+			// retrieve fields changed by persistence
+			topic = BeanFetcher.fetchTopicFromItem(item, FetchType.EAGER);
+			env.put(VAR_TOPIC, topic);
+			redirect(response, env);
+			return null;
 		}
 		catch (Exception e) {
 			Logger log = Logger.getLogger(EditTopic.class);
-			log.fatal("Whatever bad", e);
+			log.fatal("Unable to add topic", e);
 			return null;
 		}
 	}
 
 	private String actionEditStep1(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) {
 		Topic topic = (Topic) env.get(VAR_TOPIC);
-		
-		Link tail = new Link(topic.getTitle(), "edit/" + topic.getId() + "?action=edit", "Editace námětu: "  + topic.getTitle());
+
+		Link tail = new Link(topic.getTitle(), "edit/" + topic.getId() + "?action=edit", "Editace námětu: " + topic.getTitle());
 
 		env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
 		env.put(VAR_AUTHORS, getActiveAuthors(env));
@@ -222,59 +223,59 @@ public class EditTopic implements AbcAction {
 	private String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) throws Exception {
 
 		Persistence persistence = PersistenceFactory.getPersistence();
-        SQLTool sqlTool = SQLTool.getInstance();
-        Topic topic = (Topic) env.get(VAR_TOPIC);
-        TopicValidator validator = new TopicValidator(topic, env);
-        
-        if(!validator.setAndValidate()) {
-        	Link tail = new Link(topic.getTitle(), "edit/" + topic.getId() + "?action=edit", "Editace námětu: " + topic.getTitle());
-        	env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
-        	env.put(VAR_AUTHORS, getActiveAuthors(env));
-        	env.put(VAR_EDIT_MODE, Boolean.TRUE);
-        	return FMTemplateSelector.select("AdministrationEditTopic", "edit", env, request);
-        }
-        
-        Item item = (Item) persistence.findById(new Item(topic.getId()));
-        Relation relation = RelationUtil.findParent(item);
+		SQLTool sqlTool = SQLTool.getInstance();
+		Topic topic = (Topic) env.get(VAR_TOPIC);
+		TopicValidator validator = new TopicValidator(topic, env);
 
-        // refresh item content
-        item = BeanFlusher.flushTopicToItem(item, topic);
-        persistence.update(item);
+		if (!validator.setAndValidate()) {
+			Link tail = new Link(topic.getTitle(), "edit/" + topic.getId() + "?action=edit", "Editace námětu: " + topic.getTitle());
+			env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
+			env.put(VAR_AUTHORS, getActiveAuthors(env));
+			env.put(VAR_EDIT_MODE, Boolean.TRUE);
+			return FMTemplateSelector.select("AdministrationEditTopic", "edit", env, request);
+		}
 
-        String url = proposeTopicsUrl(topic);
-        if (!url.equals(relation.getUrl())) {
-            url = URLManager.protectFromDuplicates(url);
-            sqlTool.insertOldAddress(relation.getUrl(), url, relation.getId());
-            relation.setUrl(url);
-            persistence.update(relation);
-        }
+		Item item = (Item) persistence.findById(new Item(topic.getId()));
+		Relation relation = RelationUtil.findParent(item);
 
-        ServletUtils.addMessage("Námět " + topic.getTitle() + " byl upraven", env, request.getSession());
-        redirect(response, env);
-        return null;
+		// refresh item content
+		item = BeanFlusher.flushTopicToItem(item, topic);
+		persistence.update(item);
+
+		String url = proposeTopicsUrl(topic);
+		if (!url.equals(relation.getUrl())) {
+			url = URLManager.protectFromDuplicates(url);
+			sqlTool.insertOldAddress(relation.getUrl(), url, relation.getId());
+			relation.setUrl(url);
+			persistence.update(relation);
+		}
+
+		ServletUtils.addMessage("Námět " + topic.getTitle() + " byl upraven", env, request.getSession());
+		redirect(response, env);
+		return null;
 	}
 
 	private String actionRemoveStep(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) {
-        Topic topic = (Topic) env.get(VAR_TOPIC);
-        Link tail = new Link(topic.getTitle(), "edit/" + topic.getId() + "?action=rm", "Smazání námětu, krok 1");
-        env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
+		Topic topic = (Topic) env.get(VAR_TOPIC);
+		Link tail = new Link(topic.getTitle(), "edit/" + topic.getId() + "?action=rm", "Smazání námětu, krok 1");
+		env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
 
-        return FMTemplateSelector.select("AdministrationEditTopic", "remove", env, request);
+		return FMTemplateSelector.select("AdministrationEditTopic", "remove", env, request);
 	}
 
 	private String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) throws Exception {
 		Persistence persistence = PersistenceFactory.getPersistence();
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+		Map params = (Map) env.get(Constants.VAR_PARAMS);
 
-        // delete author
-        String delete = (String) params.get(PARAM_DELETE);
-        if (!Misc.empty(delete)) {
-            Topic topic = (Topic) env.get(VAR_TOPIC);
-            persistence.remove(RelationUtil.findParent(new Item(topic.getId())));
-            persistence.remove(new Item(topic.getId()));
-            ServletUtils.addMessage("Námět " + topic.getTitle() + " byl smazán!", env, request.getSession());
-            persistence.clearCache();
-        }
+		// delete topic
+		String delete = (String) params.get(PARAM_DELETE);
+		if (!Misc.empty(delete)) {
+			Topic topic = (Topic) env.get(VAR_TOPIC);
+			persistence.remove(RelationUtil.findParent(new Item(topic.getId())));
+			persistence.remove(new Item(topic.getId()));
+			ServletUtils.addMessage("Námět " + topic.getTitle() + " byl smazán!", env, request.getSession());
+			persistence.clearCache();
+		}
 		redirect(response, env);
 		return null;
 	}
@@ -286,6 +287,7 @@ public class EditTopic implements AbcAction {
 	 * Gets list of active authors ordered by their surnames.
 	 * Checks whether authors are already stored in conversation,
 	 * if not, performs query to persistence layer
+	 * 
 	 * @param env Conversation variables
 	 * @return List of active authors
 	 */
@@ -304,7 +306,7 @@ public class EditTopic implements AbcAction {
 		}
 		return authors;
 	}
-	
+
 	public static void redirect(HttpServletResponse response, Map env) throws Exception {
 		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
 		// redirect to topics in administration system

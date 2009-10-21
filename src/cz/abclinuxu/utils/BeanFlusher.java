@@ -25,8 +25,13 @@ public class BeanFlusher {
 
 	public static Item flushContractToItem(Item item, Contract contract) {
 
-		item.setNumeric1(contract.getEmployee());
-		item.setNumeric2(contract.getEmployer());
+		// do not set employee for templates
+		if(contract.getEmployee()!=null)
+			item.setNumeric1(contract.getEmployee().getId());
+		
+		item.setNumeric2(contract.getEmployer().getId());
+		item.setDate1(contract.getEffectiveDate());
+		item.setDate2(contract.getProposedDate());
 		item.setString1(Misc.filterDangerousCharacters(contract.getVersion()));
 
 		// get/create XML document
@@ -35,6 +40,8 @@ public class BeanFlusher {
 		db.store("/data/signatures/employee", contract.getEmployeeSignature())
 		        .store("/data/signatures/employer", contract.getEmployerSignature())
 		        .store("/data/title", contract.getTitle())
+		        .store("/data/description", contract.getDescription())
+		        .store("/data/template-id", contract.getTemplateId())
 		        .store("/data/content", contract.getContent());
 
 		item.setData(db.getDocument());
@@ -112,7 +119,7 @@ public class BeanFlusher {
 	 * @author kapy
 	 * 
 	 */
-	private static class DocumentBuilder {
+	public static class DocumentBuilder {
 
 		private Document doc;
 
@@ -136,22 +143,22 @@ public class BeanFlusher {
 		 * @param value Value passed for DOM modification
 		 * @return Modified instance
 		 */
-		public DocumentBuilder store(String xpath, String value) {
+		public DocumentBuilder store(String xpath, Object value) {
 			Node node = doc.selectSingleNode(xpath);
 			// node will be detached, no value provided
-			if (Misc.empty(value) && node != null)
+			if (node != null && (value==null || Misc.empty(value.toString())))				
 				node.detach();
-			// ommit empty value
-			else if (Misc.empty(value))
+			// omit empty value
+			else if (value==null || Misc.empty(value.toString()))
 				return this;
 			// change text value
 			else {
 				if (node == null) node = DocumentHelper.makeElement(doc, xpath);
-				node.setText(Misc.filterDangerousCharacters(value));
+				node.setText(Misc.filterDangerousCharacters(value.toString()));
 			}
 			return this;
 		}
-
+		
 		/**
 		 * Returns document
 		 * 

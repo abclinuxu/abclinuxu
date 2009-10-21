@@ -30,6 +30,7 @@ public class Qualifier {
     public static final Qualifier SORT_BY_STRING1 = new OrderByQualifier("STRING1", Field.STRING1);
     public static final Qualifier SORT_BY_STRING2 = new OrderByQualifier("STRING2", Field.STRING2);
     public static final Qualifier SORT_BY_DATE1 = new OrderByQualifier("DATE1", Field.DATE1);
+    public static final Qualifier SORT_BY_DATE2 = new OrderByQualifier("DATE2", Field.DATE2);
     public static final Qualifier SORT_BY_ISNULL = new OrderByQualifier("ISNULL", Field.ISNULL);
     
     public static final Qualifier ORDER_ASCENDING = new Qualifier("ORDER_ASCENDING");

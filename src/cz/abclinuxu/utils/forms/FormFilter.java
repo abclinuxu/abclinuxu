@@ -169,6 +169,24 @@ public class FormFilter {
 				}
 				return new FilterQualifier(new CompareCondition(Field.DATA, Operation.NOT_LIKE, "%<royalty>%</royalty>%"), value);
 			}
+		},
+		CONTRACT_BY_TITLE("filterContractsByTitle") {
+			@Override
+			public FilterQualifier construct(Object value) {
+				return new FilterQualifier(new CompareCondition(Field.DATA, Operation.LIKE, "%<title>%" + value.toString() + "%</title>%"), value);
+			}
+		},
+		CONTRACT_BY_DESCRIPTION("filterContractsByDescription") {
+			@Override
+			public FilterQualifier construct(Object value) {
+				return new FilterQualifier(new CompareCondition(Field.DATA, Operation.LIKE, "%<description>%" + value.toString() + "%</description>%"), value);
+			}
+		},
+		CONTRACT_BY_VERSION("filterContractsByVersion") {
+			@Override
+			public FilterQualifier construct(Object value) {
+				return new FilterQualifier(new CompareCondition(Field.STRING1, Operation.LIKE, "%" + value.toString() + "%"), value);
+			}
 		};
 
 		// name of filter

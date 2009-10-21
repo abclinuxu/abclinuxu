@@ -66,12 +66,28 @@ public enum PageNavigation {
             return links;
         }
     },
+    
+    /**
+     * Topics administration link.
+     */
     ADMIN_TOPICS {
     	@Override
     	public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
     		links = AUTHORS_EDITORS_PORTAL.getLinks(user, urlUtils, links);
     		links.add(new Link("Náměty", Util.prefix(links) + "namety", "Správa námětů"));
     	    return links;
+    	}
+    },
+    
+    /**
+     * Contracts administration link.
+     */
+    ADMIN_CONTRACTS {
+    	@Override
+    	public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
+    		links = AUTHORS_EDITORS_PORTAL.getLinks(user, urlUtils, links);
+    		links.add(new Link("Smlouvy", Util.prefix(links) + "smlouvy", "Správe smluv"));
+    		return links;
     	}
     }
     ;

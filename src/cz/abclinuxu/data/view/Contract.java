@@ -3,9 +3,12 @@ package cz.abclinuxu.data.view;
 import java.util.Date;
 
 import cz.abclinuxu.data.ImageAssignable;
+import cz.abclinuxu.data.User;
 
 /**
- * This class represents contract signed between Employer and Employee
+ * This class represents contract signed between Employer and Employee.
+ * Both employer and employee are represented rather by users than
+ * authors, to allow assign contract for example for developers.
  * 
  * @author kapy
  * 
@@ -27,24 +30,50 @@ public class Contract implements ImageAssignable<Contract.ContractImage> {
 	private int id;
 
 	// id of employer
-	private Integer employer;
+	private User employer;
 	// path to employer's signature
 	private String employerSignature;
 	// id of employee
-	private Integer employee;
+	private User employee;
 	// path to employee's signature
 	private String employeeSignature;
 	// date when contract was signed
 	private Date effectiveDate;
+	// date when contract was proposed
+	private Date proposedDate;
 
-	// version identificator
+	// description of contract
+	private String description;
+	// version identification
 	private String version;
 	// title of contract
 	private String title;
 	// whole content
 	private String content;
 
+	// template from which this contract was generated
+	private Integer templateId;
 
+	public Contract() {
+	}
+
+	public Contract(Contract clone) {
+		this.content = clone.content;
+		this.description = clone.description;
+		if (clone.effectiveDate != null)
+		    this.effectiveDate = new Date(clone.getEffectiveDate().getTime());
+		if (clone.employee != null)
+		    this.employee = new User(clone.getEmployee().getId());
+		this.employeeSignature = clone.employeeSignature;
+		if (clone.employer != null)
+		    this.employer = new User(clone.getEmployer().getId());
+		this.employerSignature = clone.employerSignature;
+		if (clone.proposedDate != null)
+		    this.proposedDate = new Date(clone.getProposedDate().getTime());
+		this.templateId = clone.templateId;
+		this.title = clone.title;
+		this.version = clone.version;
+	}
 
 	/**
 	 * @return the id
@@ -63,14 +92,14 @@ public class Contract implements ImageAssignable<Contract.ContractImage> {
 	/**
 	 * @return the employer
 	 */
-	public Integer getEmployer() {
+	public User getEmployer() {
 		return employer;
 	}
 
 	/**
 	 * @param employer the employer to set
 	 */
-	public void setEmployer(Integer employer) {
+	public void setEmployer(User employer) {
 		this.employer = employer;
 	}
 
@@ -91,14 +120,14 @@ public class Contract implements ImageAssignable<Contract.ContractImage> {
 	/**
 	 * @return the employee
 	 */
-	public Integer getEmployee() {
+	public User getEmployee() {
 		return employee;
 	}
 
 	/**
 	 * @param employee the employee to set
 	 */
-	public void setEmployee(Integer employee) {
+	public void setEmployee(User employee) {
 		this.employee = employee;
 	}
 
@@ -131,6 +160,20 @@ public class Contract implements ImageAssignable<Contract.ContractImage> {
 	}
 
 	/**
+	 * @return the proposedDate
+	 */
+	public Date getProposedDate() {
+		return proposedDate;
+	}
+
+	/**
+	 * @param proposedDate the proposedDate to set
+	 */
+	public void setProposedDate(Date proposedDate) {
+		this.proposedDate = proposedDate;
+	}
+
+	/**
 	 * @return the version
 	 */
 	public String getVersion() {
@@ -156,6 +199,34 @@ public class Contract implements ImageAssignable<Contract.ContractImage> {
 	 */
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	/**
+	 * @return the templateId
+	 */
+	public Integer getTemplateId() {
+		return templateId;
+	}
+
+	/**
+	 * @param templateId the templateId to set
+	 */
+	public void setTemplateId(Integer templateId) {
+		this.templateId = templateId;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	/**
@@ -201,19 +272,19 @@ public class Contract implements ImageAssignable<Contract.ContractImage> {
 
 	@Override
 	public String proposeImageUrl(ContractImage imageId, String suffix) {
-		StringBuilder sb = new StringBuilder("images/signatures/");
+		StringBuilder sb = new StringBuilder("images/signatures/user.");
 		switch (imageId) {
 		case SIGNATURE_EMPLOYEE:
-			sb.append(employee);
+			sb.append(employee.getId());
 			break;
 		case SIGNATURE_EMPLOYER:
-			sb.append(employer);
+			sb.append(employer.getId());
 			break;
 		}
 		sb.append('.').append(suffix);
 		return sb.toString();
 	}
-	
+
 	public boolean isSigned() {
 		return effectiveDate != null;
 	}

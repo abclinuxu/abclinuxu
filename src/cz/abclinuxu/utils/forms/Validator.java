@@ -1,20 +1,20 @@
 /*
- *  Copyright (C) 2009 Karel Piwko
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; see the file COPYING.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ * Copyright (C) 2009 Karel Piwko
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING. If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 package cz.abclinuxu.utils.forms;
 
@@ -27,6 +27,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.exceptions.InternalException;
 import cz.abclinuxu.exceptions.InvalidDataException;
@@ -35,11 +36,11 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.Misc;
 
 /**
- * Validates output from form and updates validation candidate accordingly 
+ * Validates output from form and updates validation candidate accordingly
  * to passed values
  * 
  * @author kapy
- *
+ * 
  * @param <T> Type of validation candidate
  */
 public abstract class Validator<T> {
@@ -94,7 +95,7 @@ public abstract class Validator<T> {
 	 * @param <C> Type of class
 	 * @param paramType Type of class to be instantiated from paramType from
 	 *            argument retrieved under paramName key. This class must not be
-	 *            of primitive type unless input is always correct 
+	 *            of primitive type unless input is always correct
 	 * @param paramName Name of parameter to be retrieved
 	 * @param errorMessage Message added to paramName if anything goes wrong
 	 * @return {@code true} if validation succeeded
@@ -107,15 +108,18 @@ public abstract class Validator<T> {
 		}
 		return setBeanField(paramType, paramName, value, errorMessage);
 	}
-	
+
 	/**
-	 * Sets field value on validated candidate. If value set is null, returns {@code false} 
+	 * Sets field value on validated candidate. If value set is null, returns
+	 * {@code false}
+	 * 
 	 * @param paramType Type of class to be instantiated from paramType from
 	 *            argument retrieved under paramName key. This class must not be
-	 *            of primitive type unless input is always correct 
+	 *            of primitive type unless input is always correct
 	 * @param paramName Name of parameter to be retrieved
 	 * @param errorMessage Message added to paramName if anything goes wrong
-	 * @return {@code true} if field was set to not {@code null} value, {@code false} otherwise
+	 * @return {@code true} if field was set to not {@code null} value, {@code
+	 *         false} otherwise
 	 */
 	protected <C> boolean setBeanField(Class<C> paramType, String paramName, String value, String errorMessage) {
 		try {
@@ -125,7 +129,7 @@ public abstract class Validator<T> {
 			// set field value 
 			C fieldValue = transform(paramType, paramName, value, errorMessage);
 			field.set(validee, fieldValue);
-			return fieldValue!=null ? true : false; 
+			return fieldValue != null ? true : false;
 		}
 		catch (IllegalArgumentException e) {
 			log.warn("Trying to validate returned primitive object, assignment failed", e);
@@ -164,7 +168,7 @@ public abstract class Validator<T> {
 			else if ("0".equals(value) || "false".equalsIgnoreCase(value) || "ne".equalsIgnoreCase(value))
 				return clazz.cast(Boolean.FALSE);
 			else {
-				ServletUtils.addError(paramName, "Chybný formát hodnoty boolean", env, null);
+				ServletUtils.addError(paramName, "Chybný formát hodnoty boolean", env, session);
 				return null;
 			}
 		}
@@ -175,7 +179,7 @@ public abstract class Validator<T> {
 				return clazz.cast(val);
 			}
 			catch (NumberFormatException e) {
-				ServletUtils.addError(paramName, "Číslo je ve špatném formátu", env, null);
+				ServletUtils.addError(paramName, "Číslo je ve špatném formátu", env, session);
 				return null;
 			}
 		}
@@ -188,7 +192,7 @@ public abstract class Validator<T> {
 				}
 			}
 			catch (ParseException e) {
-				ServletUtils.addError(paramName, "Chybný formát data!", env, null);
+				ServletUtils.addError(paramName, "Chybný formát data!", env, session);
 				return null;
 			}
 		}
@@ -201,7 +205,19 @@ public abstract class Validator<T> {
 				return clazz.cast(tmp);
 			}
 			catch (NumberFormatException e) {
-				ServletUtils.addError(paramName, "Chybný formát identifikace autora", env, null);
+				ServletUtils.addError(paramName, "Chybný formát identifikace autora", env, session);
+				return null;
+			}
+		}
+		// user
+		else if (User.class.equals(clazz)) {
+			try {
+				int intVal = Integer.valueOf(value);
+				User tmp = new User(intVal);
+				return clazz.cast(tmp);
+			}
+			catch (NumberFormatException e) {
+				ServletUtils.addError(paramName, "Chybný formát identifikace uživatele", env, session);
 				return null;
 			}
 		}

@@ -168,15 +168,15 @@ public class ShowTopic implements AbcAction, Configurable {
 		}
 
 		// prepare notify page
-		if (determineAction(params, ACTION_PREPARE)) {
+		if (ServletUtils.determineAction(params, ACTION_PREPARE)) {
 			return actionNotify(request, env, navigator);
 		}
 		// mail topics
-		else if (determineAction(params, ACTION_MAIL)) {
+		else if (ServletUtils.determineAction(params, ACTION_MAIL)) {
 			return actionMail(request, response, env);
 		}
 		// list topics
-		else if (determineAction(params, ACTION_LIST) || determineAction(params, ACTION_BACK) || Misc.empty(action)) {
+		else if (ServletUtils.determineAction(params, ACTION_LIST) || ServletUtils.determineAction(params, ACTION_BACK) || Misc.empty(action)) {
 			actionList(request, env, navigator, null);
 			return FMTemplateSelector.select("AdministrationShowTopic", "list", env, request);
 		}
@@ -333,19 +333,17 @@ public class ShowTopic implements AbcAction, Configurable {
 
 	/**
 	 * Constructs qualifiers from input passed in form. Allows initial argument
-	 * to be passed
-	 * by the first argument
+	 * to be passed by the first argument
 	 * 
-	 * @param qualifiers If {@code null} is passed, qualifiers
+	 * @param preQualifiers Qualifiers applied before filtering
 	 * @param filter Filter object constructed from HTTP parameters
 	 * @param from From parameter for paging results
 	 * @param count Count limit parameter for paging results
 	 * @return Array of qualifiers
 	 */
-	private Qualifier[] getQualifiers(List<Qualifier> qualifiers, FormFilter filter, int from, int count) {
-		if (qualifiers == null) {
-			qualifiers = new ArrayList<Qualifier>();
-		}
+	private Qualifier[] getQualifiers(List<Qualifier> preQualifiers, FormFilter filter, int from, int count) {
+		
+		List<Qualifier> qualifiers = preQualifiers == null ? new ArrayList<Qualifier>() : new ArrayList<Qualifier>(preQualifiers);
 		qualifiers.addAll(filter.getQualifiers());
 		// sort by surname in ascending order
 		qualifiers.add(Qualifier.SORT_BY_ISNULL);
@@ -356,11 +354,6 @@ public class ShowTopic implements AbcAction, Configurable {
 		qualifiers.add(new LimitQualifier(from, count));
 
 		return qualifiers.toArray(Qualifier.ARRAY_TYPE);
-	}
-
-	private boolean determineAction(Map params, String testAction) {
-		String action = (String) params.get(PARAM_ACTION);
-		return testAction.equals(action) || (Misc.empty(action) && !Misc.empty((String) params.get(testAction)));
 	}
 
 	/**

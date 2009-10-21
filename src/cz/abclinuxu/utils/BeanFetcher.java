@@ -9,10 +9,13 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.XMLHandler;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Contract;
 import cz.abclinuxu.data.view.Topic;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
@@ -195,17 +198,29 @@ public class BeanFetcher {
 		Contract contract = new Contract();
 		contract.setId(item.getId());
 		contract.setEffectiveDate(item.getDate1());
-		contract.setEmployee(item.getNumeric1());
-		contract.setEmployer(item.getNumeric2());
+		contract.setProposedDate(item.getDate2());
+		if (item.getNumeric1() != null)
+		    contract.setEmployee(new User(item.getNumeric1()));
+		contract.setEmployer(new User(item.getNumeric2()));
 		contract.setVersion(item.getString1());
 
 		switch (ft) {
 		case LAZY:
 			break;
 		case PROCESS_NONATOMIC:
-		case EAGER:
 			Element root = item.getData().getRootElement();
 			contract = fillXMLProperties(contract, root);
+			break;
+		case EAGER:
+			root = item.getData().getRootElement();
+			contract = fillXMLProperties(contract, root);
+
+			// user objects are fetched from persistence layer
+			Persistence persistence = PersistenceFactory.getPersistence();
+			if (contract.getEmployee() != null)
+			    persistence.synchronize(contract.getEmployee());
+			persistence.synchronize(contract.getEmployer());
+			break;
 		}
 		return contract;
 	}
@@ -220,7 +235,9 @@ public class BeanFetcher {
 
 	private static Contract fillXMLProperties(Contract contract, Element root) {
 		contract.setTitle(Util.elementText(root, "/data/title"));
+		contract.setDescription(Util.elementText(root, "/data/description"));
 		contract.setContent(Util.elementText(root, "/data/content"));
+		contract.setTemplateId(Util.elementInt(root, "/data/template-id"));
 		contract.setEmployeeSignature(Util.elementText(root, "/data/signatures/employee"));
 		contract.setEmployerSignature(Util.elementText(root, "/data/signatures/employer"));
 
