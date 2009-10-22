@@ -140,7 +140,7 @@ public class ShowAuthor implements AbcAction {
     }
 
     private String show(HttpServletRequest request, Map env, PwdNavigator navigator, Author author) {
-        Link tail = new Link(author.getTitle(), "/sprava/redakce/autori/show?aId=" + author.getId() + "&amp;action=show", "Zobrazení autora");
+        Link tail = new Link(author.getTitle(), "/sprava/redakce/autori/?aId=" + author.getId() + "&amp;action=show", "Zobrazení autora");
         env.put(VAR_AUTHOR, author);
         env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
         return FMTemplateSelector.select("AdministrationShowAuthor", "show", env, request);

@@ -40,12 +40,14 @@ Smlouvy lze filtrovat dle následujících kritérií:</p>
             <#list FOUND.data as contract>
                 <tr>
                 	<td><@lib.filterCheckBox filter=FILTER name="contractId" value="${contract.id}"></@lib.filterCheckBox></td>
-                	<td>${contract.version?html}</td>	
-                	<td>${contract.title?html}</td>
-                	<td>
+                	<td style="text-align: left">${contract.version?html}</td>	
+                	<td style="text-align: left">
+                		<a href="${URL.make("/redakce/smlouvy/${contract.id}?action=show")}">${(contract.title)!?html}</a>
+                	</td>
+                	<td style="text-align: left">
                 		<textarea rows="3" cols="40" style="width: 400px; font-family: inherit; border: none; background: inherit;">${(contract.description)!?html}</textarea>     
                 	</td>
-                	<td><a href="${URL.make("/redakce/smlouvy/edit/${contract.id}?action=edit")}" title="Upravit smlouvu">U</a></td>
+                	<td style="text-align: left"><a href="${URL.make("/redakce/smlouvy/edit/${contract.id}?action=edit")}" title="Upravit smlouvu">U</a></td>
                 </tr>
             </#list>
 	    </tbody>

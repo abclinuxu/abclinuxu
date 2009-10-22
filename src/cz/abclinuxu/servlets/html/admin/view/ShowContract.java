@@ -45,9 +45,11 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.PageNavigation;
 import cz.abclinuxu.servlets.utils.url.PwdNavigator;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.PwdNavigator.Discriminator;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.BeanFlusher;
 import cz.abclinuxu.utils.DateTool;
+import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.BeanFetcher.FetchType;
 import cz.abclinuxu.utils.forms.FormFilter;
@@ -68,6 +70,11 @@ public class ShowContract implements AbcAction {
 	 * a contract which have to be accepted
 	 */
 	public static final String VAR_NEW_CONTRACT = "NEW_CONTRACT";
+
+	/**
+	 * Contract to be shown
+	 */
+	public static final String VAR_CONTRACT = "CONTRACT";
 
 	/**
 	 * Active authors, that is authors which can have assigned contract
@@ -97,6 +104,11 @@ public class ShowContract implements AbcAction {
 	public static final String VAR_FILTER = "FILTER";
 
 	/**
+	 * Editor flag
+	 */
+	public static final String VAR_EDITOR = "EDITOR";
+
+	/**
 	 * Starting part of URL, until value of from parameter
 	 */
 	public static final String VAR_URL_BEFORE_FROM = "URL_BEFORE_FROM";
@@ -123,6 +135,7 @@ public class ShowContract implements AbcAction {
 	public static final String ACTION_ASSIGN = "assign";
 	public static final String ACTION_ASSIGN2 = "assign2";
 
+	public static final String ACTION_SHOW = "show";
 	public static final String ACTION_LIST = "list";
 	public static final String ACTION_AUTHOR_LIST = "author-list";
 
@@ -141,7 +154,7 @@ public class ShowContract implements AbcAction {
 		if (user == null)
 		    return FMTemplateSelector.select("AdministrationAEPortal", "login", env, request);
 
-		PwdNavigator navigator = new PwdNavigator(env, PageNavigation.AUTHORS_EDITORS_PORTAL);
+		PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_CONTRACTS);
 
 		// TODO if contracts are extended to handle different contract relation than 
 		// that between author and editor (for example developer), this 
@@ -194,8 +207,33 @@ public class ShowContract implements AbcAction {
 			}
 		}
 
+		// action for both
+		if (ServletUtils.determineAction(params, ACTION_SHOW)) {
+			return actionShow(request, env, params, navigator);
+		}
+
 		throw new MissingArgumentException("Chybí parametr action!");
 
+	}
+
+	private String actionShow(HttpServletRequest request, Map env, Map params, PwdNavigator navigator) {
+
+		if (navigator.determine() == Discriminator.EDITOR) {
+			env.put(VAR_EDITOR, Boolean.TRUE);
+		}
+
+		// determine given topic by id
+		Persistence persistence = PersistenceFactory.getPersistence();
+		Item item = (Item) InstanceUtils.instantiateParam(PARAM_CONTRACT_ID, Item.class, params, request);
+		if (item == null)
+		    throw new MissingArgumentException("Chybí parametr contractId!");
+		persistence.synchronize(item);
+		Contract contract = BeanFetcher.fetchContractFromItem(item, FetchType.EAGER);
+		env.put(VAR_CONTRACT, contract);
+
+		Link tail = new Link(contract.getTitle(), "/redakce/smlouvy/" + contract.getId() + "&amp;action=show", "Zobrazení smlouvy");
+		env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
+		return FMTemplateSelector.select("AdministrationShowContract", "show", env, request);
 	}
 
 	private String actionContractList(HttpServletRequest request, Map env, Map params, PwdNavigator navigator) {
@@ -203,9 +241,8 @@ public class ShowContract implements AbcAction {
 		int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
 		int count = Misc.getPageSize(50, 50, env, null);
 
-		// store navigation structure
-		Link tail = new Link("Správa smluv", "smlouvy", "Správa smluv");
-		env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
+		// store navigation structure		
+		env.put(Constants.VAR_PARENTS, navigator.navigate());
 
 		Paging found = null;
 		int total = 0;
@@ -238,9 +275,8 @@ public class ShowContract implements AbcAction {
 		SQLTool sqlTool = SQLTool.getInstance();
 		User user = (User) env.get(Constants.VAR_USER);
 
-		// store navigation structure
-		Link tail = new Link("Mé smlouvy", "smlouvy", "Mnou schválené smlouvy");
-		env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
+		// store navigation structure		
+		env.put(Constants.VAR_PARENTS, navigator.navigate());
 
 		// get all contracts for current user
 		Qualifier[] qualifiers = new Qualifier[] {
@@ -521,7 +557,7 @@ public class ShowContract implements AbcAction {
 	public static void redirect(HttpServletResponse response, Map env) throws Exception {
 		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
 		// redirect to topics in administration system
-		urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/smlouvy/show?action=list"));
+		urlUtils.redirect(response, urlUtils.make("/redakce/smlouvy/show"));
 	}
 
 	/**

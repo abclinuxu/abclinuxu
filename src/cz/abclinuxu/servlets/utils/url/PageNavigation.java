@@ -86,7 +86,7 @@ public enum PageNavigation {
     	@Override
     	public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
     		links = AUTHORS_EDITORS_PORTAL.getLinks(user, urlUtils, links);
-    		links.add(new Link("Smlouvy", Util.prefix(links) + "smlouvy", "Správe smluv"));
+    		links.add(new Link("Smlouvy", Util.prefix(links) + "smlouvy", "Smlouvy"));
     		return links;
     	}
     }
