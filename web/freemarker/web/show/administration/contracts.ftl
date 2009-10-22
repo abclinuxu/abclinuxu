@@ -45,7 +45,7 @@ Smlouvy lze filtrovat dle následujících kritérií:</p>
                 	<td>
                 		<textarea rows="3" cols="40" style="width: 400px; font-family: inherit; border: none; background: inherit;">${(contract.description)!?html}</textarea>     
                 	</td>
-                	<td><#--<a href="${URL.make("/redakce/smlouvy/edit/${contract.id}?action=edit")}" title="Upravit smlouvu">U</a>--></td>
+                	<td><a href="${URL.make("/redakce/smlouvy/edit/${contract.id}?action=edit")}" title="Upravit smlouvu">U</a></td>
                 </tr>
             </#list>
 	    </tbody>

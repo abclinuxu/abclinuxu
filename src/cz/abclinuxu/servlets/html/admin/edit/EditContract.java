@@ -97,7 +97,7 @@ public class EditContract implements AbcAction {
 		Persistence persistence = PersistenceFactory.getPersistence();
 		Item item = (Item) InstanceUtils.instantiateParam(PARAM_ID, Item.class, params, request);
 		if (item == null)
-		    throw new MissingArgumentException("Chybí parametr topicId!");
+		    throw new MissingArgumentException("Chybí parametr contractId!");
 		persistence.synchronize(item);
 		Contract contract = BeanFetcher.fetchContractFromItem(item, FetchType.EAGER);
 		env.put(VAR_CONTRACT, contract);

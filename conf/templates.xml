@@ -943,8 +943,30 @@
     		<var name="TITLE" value='Editace námětu ${TOPIC.title}' type="Lazy" />
     	</action>
     	<action name="remove" content="/remove/administration/topic.ftl">
-    		<var title="TITLE" value='Smazání námětu ${TOPIC.title}' type="Lazy" />
+    		<var name="TITLE" value='Smazání námětu ${TOPIC.title}' type="Lazy" />
     	</action>
     </servlet>
+    
+    <servlet name="AdministrationShowContract">
+    	<action name="author-list" content="/show/administration/author_contracts.ftl">
+    		<var name="TITLE" value="Mé smlouvy"/>
+    	</action>
+    	<action name="list" content="/show/administration/contracts.ftl">
+    		<var name="TITLE" value="Správa smluv" />
+    	</action>
+    	<action name="assign" content="/show/administration/contract_assign.ftl">
+    		<var name="TITLE" value="Přiřazení smluv autorům" />
+    	</action>
+    </servlet>
+    
+    <servlet name="AdministrationEditContract">
+    	<action name="add" content="/add/administration/contract.ftl">
+    		<var name="TITLE" value="Přidání šablony smlouvy" />
+    	</action>
+    	<action name="edit" content="/add/administration/contract.ftl">
+    		<var name="TITLE" value='Editace šablony smlouvy ${CONTRACT.title}' type="Lazy" />
+    	</action>
+    </servlet>
+    
     
 </config>

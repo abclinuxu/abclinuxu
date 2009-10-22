@@ -349,9 +349,17 @@
         	<action>cz.abclinuxu.servlets.html.admin.view.ShowAuthor</action>
         </mapping>
         <mapping priority="true">
+        	<pattern>/redakce/smlouvy/edit</pattern>
+        	<action>cz.abclinuxu.servlets.html.admin.edit.EditContract</action>
+        </mapping>
+        <mapping priority="true">
+        	<pattern>/redakce/smlouvy</pattern>
+        	<action>cz.abclinuxu.servlets.html.admin.view.ShowContract</action>
+        </mapping>
+        <mapping priority="true">
         	<pattern>/redakce</pattern>
         	<action>cz.abclinuxu.servlets.html.admin.view.AEPortal</action>
-        </mapping>
+        </mapping>        
     </format>
     <format version="wap">
         <mapping>
