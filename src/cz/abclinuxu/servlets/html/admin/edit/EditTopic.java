@@ -25,7 +25,6 @@ import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
-import cz.abclinuxu.persistence.util.RelationUtil;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
@@ -33,7 +32,6 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.PageNavigation;
 import cz.abclinuxu.servlets.utils.url.PwdNavigator;
-import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.BeanFlusher;
@@ -183,18 +181,6 @@ public class EditTopic implements AbcAction {
 			item.setTitle(topic.getTitle());
 			persistence.create(item);
 
-			// set unique url
-			String url = proposeTopicsUrl(topic);
-
-			// set relation
-			Relation parent = new Relation(Constants.REL_TOPICS);
-			persistence.synchronize(parent);
-			persistence.synchronize(parent.getChild());
-			Relation relation = new Relation(parent.getChild(), item, parent.getId());
-			relation.setUrl(url);
-			persistence.create(relation);
-			relation.getParent().addChildRelation(relation);
-
 			// retrieve fields changed by persistence
 			topic = BeanFetcher.fetchTopicFromItem(item, FetchType.EAGER);
 			env.put(VAR_TOPIC, topic);
@@ -223,7 +209,6 @@ public class EditTopic implements AbcAction {
 	private String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) throws Exception {
 
 		Persistence persistence = PersistenceFactory.getPersistence();
-		SQLTool sqlTool = SQLTool.getInstance();
 		Topic topic = (Topic) env.get(VAR_TOPIC);
 		TopicValidator validator = new TopicValidator(topic, env);
 
@@ -236,19 +221,10 @@ public class EditTopic implements AbcAction {
 		}
 
 		Item item = (Item) persistence.findById(new Item(topic.getId()));
-		Relation relation = RelationUtil.findParent(item);
 
 		// refresh item content
 		item = BeanFlusher.flushTopicToItem(item, topic);
 		persistence.update(item);
-
-		String url = proposeTopicsUrl(topic);
-		if (!url.equals(relation.getUrl())) {
-			url = URLManager.protectFromDuplicates(url);
-			sqlTool.insertOldAddress(relation.getUrl(), url, relation.getId());
-			relation.setUrl(url);
-			persistence.update(relation);
-		}
 
 		ServletUtils.addMessage("Námět " + topic.getTitle() + " byl upraven", env, request.getSession());
 		redirect(response, env);
@@ -271,7 +247,6 @@ public class EditTopic implements AbcAction {
 		String delete = (String) params.get(PARAM_DELETE);
 		if (!Misc.empty(delete)) {
 			Topic topic = (Topic) env.get(VAR_TOPIC);
-			persistence.remove(RelationUtil.findParent(new Item(topic.getId())));
 			persistence.remove(new Item(topic.getId()));
 			ServletUtils.addMessage("Námět " + topic.getTitle() + " byl smazán!", env, request.getSession());
 			persistence.clearCache();
@@ -310,18 +285,7 @@ public class EditTopic implements AbcAction {
 	public static void redirect(HttpServletResponse response, Map env) throws Exception {
 		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
 		// redirect to topics in administration system
-		urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/namety/show?action=list"));
-	}
-
-	/**
-	 * Creates absolute URL for this topic
-	 * 
-	 * @param topic Topic
-	 * @return Created URL
-	 */
-	private String proposeTopicsUrl(Topic topic) {
-		String url = UrlUtils.PREFIX_ADMINISTRATION + "redakce/namety/" + URLManager.enforceRelativeURL(topic.getTitle());
-		return URLManager.protectFromDuplicates(url);
+		urlUtils.redirect(response, urlUtils.make("/redakce/namety/show?action=list"));
 	}
 
 	/**
@@ -362,9 +326,16 @@ public class EditTopic implements AbcAction {
 			if (!transform(Boolean.class, PARAM_PUBLIC, (String) params.get(PARAM_PUBLIC), "Námět musí být veřejný nebo přiřazen")) {
 				result &= validateNotEmptyAndSet(Author.class, PARAM_AUTHOR, "Vyberte přiřazeného autora!");
 			}
+			else {
+				validee.setAuthor(null);
+				validee.setAccepted(false);
+			}
 			// royalty
 			if (!transform(Boolean.class, PARAM_ROAYLTY_MOD, (String) params.get(PARAM_ROAYLTY_MOD), "Honorář musí být běžný nebo přiřazen")) {
 				result &= validateNotEmptyAndSet(Double.class, PARAM_ROYALTY, "Zadejte hodnotu honoráře!");
+			}
+			else {
+				validee.setRoyalty(null);
 			}
 
 			return result;

@@ -7,7 +7,7 @@
     <script type="text/javascript">
 	$(document).ready(function() {
 		/* disable all inputs */
-		$('#topic-assigned-select').attr('disabled', 'disabled');
+		$('#topic-assigned-select').attr('disabled', '');
 		$('#royalty-specified-input').attr('disabled', 'disabled');
 	
 		/* bind functions to radio buttons */
@@ -25,11 +25,11 @@
 		});	
 	
 		/* automatically select enabled inputs */ 	
-		if($('#topic-assigned').is(':checked')) {
-			$('#dest-author-select').attr('disabled', '');
+		if($('#topic-public').is(':checked')) {
+			$('#dest-author-select').attr('disabled', 'disabled');
 		}	
 		if($('#royalty-specified').is(':checked')) {
-			$('#dest-author-input').attr('disabled', '');
+			$('#royalty-specified-input').attr('disabled', '');
 		}
 });
 </script>
@@ -76,9 +76,9 @@
             <td style="white-space: nowrap">
             	<div class="two-columns">
             		<div class="left-column">
-            			<@lib.showOption6 param="public" value="1" id="topic-public" caption="Veřejný námět" type="radio" condition=(TOPIC.isPublic())!true==true tabindex="6" />
+            			<@lib.showOption6 param="public" value="0" id="topic-assigned" caption="Přiřazený k" type="radio" condition=((TOPIC.isPublic())!true)==false tabindex="6" />
             			<br />
-	            		<@lib.showOption6 param="public" value="0" id="topic-assigned" caption="Přiřazený k" type="radio" condition=((TOPIC.isPublic())!true)==false tabindex="7" />
+	            		<@lib.showOption6 param="public" value="1" id="topic-public" caption="Veřejný námět" type="radio" condition=(TOPIC.isPublic())!true==true tabindex="7" />
 					</div>
 					<div class="right-column">
 						<select name="author" id="topic-assigned-select">

@@ -222,7 +222,7 @@ public class ShowContract implements AbcAction {
 			env.put(VAR_EDITOR, Boolean.TRUE);
 		}
 
-		// determine given topic by id
+		// determine given contract by id
 		Persistence persistence = PersistenceFactory.getPersistence();
 		Item item = (Item) InstanceUtils.instantiateParam(PARAM_CONTRACT_ID, Item.class, params, request);
 		if (item == null)

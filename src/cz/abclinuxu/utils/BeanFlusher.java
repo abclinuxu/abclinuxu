@@ -26,9 +26,9 @@ public class BeanFlusher {
 	public static Item flushContractToItem(Item item, Contract contract) {
 
 		// do not set employee for templates
-		if(contract.getEmployee()!=null)
-			item.setNumeric1(contract.getEmployee().getId());
-		
+		if (contract.getEmployee() != null)
+		    item.setNumeric1(contract.getEmployee().getId());
+
 		item.setNumeric2(contract.getEmployer().getId());
 		item.setDate1(contract.getEffectiveDate());
 		item.setDate2(contract.getProposedDate());
@@ -90,9 +90,13 @@ public class BeanFlusher {
 		DocumentBuilder db = new DocumentBuilder(item.getData(), "data");
 
 		if (!topic.isPublic())
-		    db.store("/data/author", String.valueOf(topic.getAuthor().getId()));
+			db.store("/data/author", String.valueOf(topic.getAuthor().getId()));
+		else
+			db.store("/data/author", null);
 		if (topic.hasRoyalty())
-		    db.store("/data/royalty", topic.getRoyalty().toString());
+			db.store("/data/royalty", topic.getRoyalty().toString());
+		else
+			db.store("/data/royalty", null);
 
 		db.store("/data/description", topic.getDescription());
 
@@ -146,10 +150,10 @@ public class BeanFlusher {
 		public DocumentBuilder store(String xpath, Object value) {
 			Node node = doc.selectSingleNode(xpath);
 			// node will be detached, no value provided
-			if (node != null && (value==null || Misc.empty(value.toString())))				
+			if (node != null && (value == null || Misc.empty(value.toString())))
 				node.detach();
 			// omit empty value
-			else if (value==null || Misc.empty(value.toString()))
+			else if (value == null || Misc.empty(value.toString()))
 				return this;
 			// change text value
 			else {
@@ -158,7 +162,7 @@ public class BeanFlusher {
 			}
 			return this;
 		}
-		
+
 		/**
 		 * Returns document
 		 * 

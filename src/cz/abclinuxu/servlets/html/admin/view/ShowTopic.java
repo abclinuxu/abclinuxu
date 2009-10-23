@@ -26,6 +26,8 @@ import cz.abclinuxu.data.view.Topic;
 import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
@@ -44,7 +46,9 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.PageNavigation;
 import cz.abclinuxu.servlets.utils.url.PwdNavigator;
 import cz.abclinuxu.utils.BeanFetcher;
+import cz.abclinuxu.utils.BeanFlusher;
 import cz.abclinuxu.utils.DateTool;
+import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.BeanFetcher.FetchType;
 import cz.abclinuxu.utils.config.Configurable;
@@ -123,6 +127,7 @@ public class ShowTopic implements AbcAction, Configurable {
 	public static final String ACTION_MAIL = "mail";
 	public static final String ACTION_PREPARE = "notify";
 	public static final String ACTION_BACK = "back";
+	public static final String ACTION_ACCEPT = "accept";
 
 	@Override
 	public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -153,11 +158,17 @@ public class ShowTopic implements AbcAction, Configurable {
 			// author was found, limit results to current author
 			Author author = BeanFetcher.fetchAuthorFromItem(item, FetchType.LAZY);
 			env.put(VAR_AUTHOR, author);
+
+			if (ServletUtils.determineAction(params, ACTION_ACCEPT)) {
+				return actionAccept(request, response, env);
+			}
+
 			List<Qualifier> preQualifiers = new ArrayList<Qualifier>();
 			preQualifiers.add(new NestedCondition(new Qualifier[] {
 			        new CompareCondition(Field.DATA, Operation.LIKE, "%<author>" + author.getId() + "</author>%"),
 			        new CompareCondition(Field.DATA, Operation.NOT_LIKE, "%<author>%</author>%")
 			        }, LogicalOperation.OR));
+			preQualifiers.add(new CompareCondition(Field.NUMERIC2, Operation.EQUAL, 0));
 			actionList(request, env, navigator, preQualifiers);
 			return FMTemplateSelector.select("AdministrationShowTopic", "author-list", env, request);
 		}
@@ -331,6 +342,30 @@ public class ShowTopic implements AbcAction, Configurable {
 
 	}
 
+	private String actionAccept(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+		Map params = (Map) env.get(Constants.VAR_PARAMS);
+
+		// determine given topic by id
+		Persistence persistence = PersistenceFactory.getPersistence();
+		Item item = (Item) InstanceUtils.instantiateParam(PARAM_TOPIC_ID, Item.class, params, request);
+		if (item == null)
+		    throw new MissingArgumentException("Chybí parametr topicId!");
+		persistence.synchronize(item);
+
+		Author author = (Author) env.get(VAR_AUTHOR);
+		Topic topic = BeanFetcher.fetchTopicFromItem(item, FetchType.EAGER);
+		topic.setAccepted(true);
+		topic.setAuthor(author);
+
+		item = BeanFlusher.flushTopicToItem(item, topic);
+		persistence.update(item);
+
+		ServletUtils.addMessage("Námět " + topic.getTitle() + " byl přijat", env, request.getSession());
+		EditTopic.redirect(response, env);
+		return null;
+
+	}
+
 	/**
 	 * Constructs qualifiers from input passed in form. Allows initial argument
 	 * to be passed by the first argument
@@ -342,7 +377,7 @@ public class ShowTopic implements AbcAction, Configurable {
 	 * @return Array of qualifiers
 	 */
 	private Qualifier[] getQualifiers(List<Qualifier> preQualifiers, FormFilter filter, int from, int count) {
-		
+
 		List<Qualifier> qualifiers = preQualifiers == null ? new ArrayList<Qualifier>() : new ArrayList<Qualifier>(preQualifiers);
 		qualifiers.addAll(filter.getQualifiers());
 		// sort by surname in ascending order
