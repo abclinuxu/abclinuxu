@@ -102,7 +102,7 @@
     <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Jak se stát autorem</a></li>
     <li><a href="/redakce">Redakce</a></li>
     <li><a href="/portal/propagace">Propagace</a></li>
-    <li><a href="mailto:info@stickfish.com">Inzerce</a></li>
+    <li><a href="/reklama">Inzerce</a></li>
     <li><a href="/napoveda/rss-a-jine-pristupy">RSS feedy a PDA</a></li>
     <li><a href="http://bugzilla.abclinuxu.cz"  title="Požadavky týkající se funkčnosti portálu" rel="nofollow">Bugzilla - chyby a náměty</a></li>
     <li><a href="/pozadavky" title="Požadavky týkající se obsahu portálu">Vzkazy správcům (${VARS.counter.REQUESTS})</a></li>
