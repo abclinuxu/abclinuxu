@@ -67,7 +67,7 @@ Zkratka na <a href="#zpravicky">zprávičky</a>, <a href="#diskuse">diskusní f�
             <#if TOOL.xpath(diz.discussion,"/data/frozen")??>
                 <b>Z</b>,
             </#if>
-            <#if TOOL.isQuestionSolved(diz.discussion.data)>
+            <#if TOOL.isQuestionSolved(diz.discussion)>
                 <b>V</b>,
             </#if>
             <#if USER?? && TOOL.isMonitored(diz.discussion, USER!)>
