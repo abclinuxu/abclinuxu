@@ -53,7 +53,6 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.scheduler.VariableFetcher;
-import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.data.view.BlogCategory;
 
@@ -599,7 +598,6 @@ public class EditBlog implements AbcAction, Configurable {
         // run monitor
         MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.BLOG, relation, AbcConfig.getAbsoluteUrl() + storyUrl);
         MonitorPool.scheduleMonitorAction(action);
-        sendDigestMessage(relation);
     }
 
     /**
@@ -1691,26 +1689,6 @@ public class EditBlog implements AbcAction, Configurable {
         } catch(Exception e) {
             return null;
         }
-    }
-
-    /**
-     * Inform administrators of blog digest, that new story was published.
-     * @param relation story relation
-     */
-    void sendDigestMessage(Relation relation) {
-        Persistence persistence = PersistenceFactory.getPersistence();
-        Item story = (Item) relation.getChild();
-        Map data = new HashMap();
-
-        String title = story.getTitle();
-        data.put(VAR_RELATION, relation);
-        data.put(EmailSender.KEY_TO, AbcConfig.getBlogWatchEmail());
-//        data.put(EmailSender.KEY_RECEPIENT_UID, Integer.toString(user.getId())); TODO
-        data.put(EmailSender.KEY_SUBJECT, title);
-        data.put(EmailSender.KEY_TEMPLATE, "/mail/blogdigest.ftl");
-        data.put("URL", Tools.getUrlForBlogStory(relation));
-        data.put("AUTHOR", persistence.findById(new User(story.getOwner())));
-        EmailSender.sendEmail(data);
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
