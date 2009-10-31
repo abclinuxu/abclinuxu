@@ -6,11 +6,13 @@ import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.data.view.Solution;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.servlets.Constants;
 
 import java.util.List;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Collections;
 
 /**
  * Utility class for working with comments marked as solution
@@ -24,6 +26,8 @@ public class SolutionTool {
 
 
     public static List<Solution> get(Item diz) {
+        if (! Constants.SUBTYPE_QUESTION.equals(diz.getSubType())) 
+            return Collections.emptyList();
         List<Solution> solutions = cache.get(diz);
         if (solutions == null) {
             solutions = sqlTool.getSolutions(diz);
