@@ -308,11 +308,13 @@
                 <span><#if (attachments?size == 1)>Příloha:<#else>Přílohy:</#if></span>
                 <ul>
                     <#list attachments as id>
-                        <li>
-                            <#local attachment = diz.attachments(id)>
-                            <a href="${TOOL.xpath(attachment, "/data/object/@path")}">${TOOL.xpath(attachment, "/data/object/originalFilename")}</a>
-                            (${TOOL.xpath(attachment, "/data/object/size")} bytů)
-                        </li>
+                        <#if diz.attachments(id)??>
+                            <li>
+                                <#local attachment = diz.attachments(id)>
+                                <a href="${TOOL.xpath(attachment, "/data/object/@path")}">${TOOL.xpath(attachment, "/data/object/originalFilename")}</a>
+                                (${TOOL.xpath(attachment, "/data/object/size")} bytů)
+                            </li>
+                        </#if>
                     </#list>
                 </ul>
             </div>

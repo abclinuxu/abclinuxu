@@ -145,7 +145,7 @@ public abstract class Comment implements Cloneable, Comparable {
      * @return list (never null) of relation identifiers.
      */
     public List<Integer> getAttachments() {
-        List elements = (List) getData().selectNodes("/data/attachment");
+        List elements = getData().selectNodes("/data/attachment");
         if (elements == null || elements.isEmpty())
             return Collections.emptyList();
 
