@@ -105,6 +105,7 @@ public class Tools implements Configurable {
 
     static {
         MISSING_USER = new User(-1);
+        MISSING_USER.setData("<data/>");
         MISSING_USER.setInitialized(true);
         Tools tools = new Tools();
         ConfigurationManager.getConfigurator().configureAndRememberMe(tools);
