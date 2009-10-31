@@ -22,7 +22,7 @@
        <#if TOOL.xpath(diz.discussion,"/data/frozen")??>
          <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamčena">
        </#if>
-       <#if TOOL.isQuestionSolved(diz.discussion.data)>
+       <#if TOOL.isQuestionSolved(diz.discussion)>
          <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle čtenářů vyřešena">
        </#if>
        <#if USER?? && TOOL.isMonitored(diz.discussion, USER!)>
