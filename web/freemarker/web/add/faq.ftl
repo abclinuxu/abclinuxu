@@ -47,7 +47,7 @@
             <td>
                 <@lib.showError key="text"/>
                 <@lib.showRTEControls "text"/>
-                <textarea tabindex="2" name="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea><br>
+                <textarea tabindex="2" name="text" id="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea><br>
             </td>
         </tr>
         <tr>
