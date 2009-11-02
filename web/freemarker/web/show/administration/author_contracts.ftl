@@ -29,6 +29,7 @@
 <#if NEW_CONTRACT??>
 <div id="new-contract">
 <h3>Nová smlouva</h3>
+<p>Název: ${NEW_CONTRACT.title}</p>
 <p>Verze: ${NEW_CONTRACT.version}</p>
 <p>Popis: ${NEW_CONTRACT.description?html}</p>
 <br/>

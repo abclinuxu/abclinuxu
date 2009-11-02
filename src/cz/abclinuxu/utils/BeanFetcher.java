@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
@@ -200,12 +202,18 @@ public class BeanFetcher {
 		case LAZY:
 			break;
 		case PROCESS_NONATOMIC:
-			Element root = relation.getData().getRootElement();
+			Document doc = relation.getData();
+			if (doc == null)
+			    doc = DocumentHelper.createDocument(DocumentHelper.createElement("data"));
+			Element root = doc.getRootElement();
 			contract = fillXMLProperties(contract, root);
 			contract.setProposedDate(Util.elementDate(root, "/data/proposed-date"));
 			break;
 		case EAGER:
-			root = relation.getData().getRootElement();
+			doc = relation.getData();
+			if (doc == null) 
+				doc = DocumentHelper.createDocument(DocumentHelper.createElement("data"));
+			root = doc.getRootElement();
 			contract = fillXMLProperties(contract, root);
 			contract.setProposedDate(Util.elementDate(root, "/data/proposed-date"));
 

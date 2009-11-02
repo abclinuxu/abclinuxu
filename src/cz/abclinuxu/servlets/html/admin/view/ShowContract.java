@@ -318,10 +318,10 @@ public class ShowContract implements AbcAction {
 		env.put(Constants.VAR_PARENTS, navigator.navigate());
 
 		// go trough all relations for this author and find to be signed and not signed
-		List<Relation> items = getContracts(author);
-		int total = items.size();
+		List<Relation> relations = getContracts(author);
+		int total = relations.size();
 		List<Contract> toBeSigned = new ArrayList<Contract>();
-		Iterator<Relation> i = items.iterator();
+		Iterator<Relation> i = relations.iterator();
 		while (i.hasNext()) {
 			Relation relation = i.next();
 			Contract contract = BeanFetcher.fetchContractFromRelation(relation, FetchType.PROCESS_NONATOMIC);
@@ -356,12 +356,12 @@ public class ShowContract implements AbcAction {
 
 		if (log.isDebugEnabled()) {
 			log.debug(String.format("Contracts for author %d were found total: %d, accepted: %d, to be signed: %d",
-			        author.getId(), total, items.size(), toBeSigned.size()));
+			        author.getId(), total, relations.size(), toBeSigned.size()));
 		}
 
 		// put accepted contracts
-		if (!items.isEmpty()) {
-			List<Contract> contracts = BeanFetcher.fetchContractsFromRelations(items, FetchType.PROCESS_NONATOMIC);
+		if (!relations.isEmpty()) {
+			List<Contract> contracts = BeanFetcher.fetchContractsFromRelations(relations, FetchType.PROCESS_NONATOMIC);
 			Collections.sort(contracts, new ContractComparator(false));
 			env.put(VAR_CONTRACTS, contracts);
 		}
@@ -414,8 +414,7 @@ public class ShowContract implements AbcAction {
 				contract.setTemplateId(template.getId());
 
 				// force creation of new relation
-				Relation relation = new Relation(new Category(Constants.CAT_CONTRACTS), new Item(author.getId(), Item.AUTHOR), 0);
-				relation.setData("<data></data>");
+				Relation relation = new Relation(new Category(Constants.CAT_CONTRACTS), new Item(author.getId(), Item.AUTHOR), Constants.REL_CONTRACTS);
 				persistence.create(BeanFlusher.flushContractToRelation(relation, contract));
 			}
 		}
@@ -462,6 +461,7 @@ public class ShowContract implements AbcAction {
 		// set old contracts as obsolete
 		List<Contract> oldCandidates = BeanFetcher.fetchContractsFromRelations(getContracts(author), FetchType.PROCESS_NONATOMIC);
 		for (Contract candidate : oldCandidates) {
+			// check if not accepted above
 			if (!candidate.isAccepted() && contract.getId() != candidate.getId()) {
 				candidate.setObsolete(true);
 				Relation underlying = (Relation) persistence.findById(new Relation(candidate.getId()));
@@ -577,7 +577,8 @@ public class ShowContract implements AbcAction {
 		Persistence persistence = PersistenceFactory.getPersistence();
 		// get all contracts for current user
 		Qualifier[] qualifiers = new Qualifier[] {
-		        new CompareCondition(Field.CHILD, Operation.EQUAL, author.getId())
+		        new CompareCondition(Field.CHILD, Operation.EQUAL, author.getId()),
+		        new CompareCondition(Field.UPPER, Operation.EQUAL, Constants.REL_CONTRACTS)
 		        };
 
 		// go trough all relations for this author and find to be signed and signed
