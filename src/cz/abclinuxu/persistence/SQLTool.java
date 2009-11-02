@@ -603,6 +603,7 @@ public final class SQLTool implements Configurable {
 		Map<Field, String> fieldMapping = new HashMap<Field, String>();
 		fieldMapping.put(Field.UPPER, "R");
 		appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
+		
 		return loadRelations(sb.toString(), params);
 	}
 
@@ -2922,7 +2923,6 @@ public final class SQLTool implements Configurable {
 		StringBuilder sb = new StringBuilder(sql.get(GET_TOPICS));
 		List params = new ArrayList();
 		appendQualifiers(sb, qualifiers, params, null, null);
-		log.info(sb.toString());
 		return loadItems(sb.toString(), params);
 	}
 
@@ -2938,7 +2938,6 @@ public final class SQLTool implements Configurable {
 		StringBuilder sb = new StringBuilder(sql.get(COUNT_TOPICS));
 		List params = new ArrayList();
 		appendQualifiers(sb, qualifiers, params, null, null);
-		log.info(sb.toString());
 		return loadNumber(sb.toString(), params);
 	}
 

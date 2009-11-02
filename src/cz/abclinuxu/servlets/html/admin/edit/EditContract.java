@@ -40,9 +40,8 @@ public class EditContract implements AbcAction {
 	public static final String PARAM_PROPOSED_DATE = "proposedDate";
 	public static final String PARAM_DESCRIPTION = "description";
 	public static final String PARAM_VERSION = "version";
-	public static final String PARAM_ROYALTY = "royalty";
-	public static final String PARAM_EMPLOYER = "employer";
-	public static final String PARAM_EMPLOYER_SIG = "employerSignature";
+	public static final String PARAM_EMPLOYER_NAME = "employerName";
+	public static final String PARAM_EMPLOYER_POSITION = "employerPosition";
 	public static final String PARAM_CONTENT = "content";
 
 	public static final String VAR_CONTRACT = "CONTRACT";
@@ -148,16 +147,16 @@ public class EditContract implements AbcAction {
 		}
 		try {
 			// store template in database
-			Item item = new Item(0, Item.TEMPLATE);
-			item.setSubType(Constants.TYPE_CONTRACT);
+			Item item = new Item(0, Item.CONTRACT);
 
 			// refresh item content
 			item = BeanFlusher.flushContractToItem(item, template);
 			item.setTitle(template.getTitle());
-			DocumentBuilder db = new DocumentBuilder(item.getData(), "data");
 			// store template id
+			DocumentBuilder db = new DocumentBuilder(item.getData(), "data");
 			db.store("/data/template-id", template.getId());
 			item.setData(db.getDocument());
+
 			persistence.create(item);
 
 			// retrieve fields changed by persistence
@@ -218,7 +217,7 @@ public class EditContract implements AbcAction {
 
 	/**
 	 * Validates contracts template content.
-	 * FIXME Employers signature is hardcoded there as png version 
+	 * FIXME Employers signature is hardcoded there as png version
 	 * 
 	 * @author kapy
 	 * 
@@ -232,9 +231,9 @@ public class EditContract implements AbcAction {
 					put(PARAM_TITLE, Contract.class.getDeclaredField("title"));
 					put(PARAM_PROPOSED_DATE, Contract.class.getDeclaredField("proposedDate"));
 					put(PARAM_DESCRIPTION, Contract.class.getDeclaredField("description"));
-					put(PARAM_EMPLOYER, Contract.class.getDeclaredField("employer"));
+					put(PARAM_EMPLOYER_NAME, Contract.class.getDeclaredField("employerName"));
+					put(PARAM_EMPLOYER_POSITION, Contract.class.getDeclaredField("employerPosition"));
 					put(PARAM_VERSION, Contract.class.getDeclaredField("version"));
-					//put(PARAM_EMPLOYER_SIG, Contract.class.getDeclaredField("employerSignature"));
 					put(PARAM_CONTENT, Contract.class.getDeclaredField("content"));
 				}
 				catch (NoSuchFieldException e) {
@@ -255,13 +254,13 @@ public class EditContract implements AbcAction {
 			result &= validateNotEmptyAndSet(String.class, PARAM_CONTENT, "Zadejte obsah (šablonu) smlouvy!");
 			result &= validateNotEmptyAndSet(Date.class, PARAM_PROPOSED_DATE, "Zadejte předpokládaný datum platnosti smlouvy!");
 			// employer
-			result &= validateNotEmptyAndSet(User.class, PARAM_EMPLOYER, "Vyberte přiřazeného jednatele!");
+			result &= validateNotEmptyAndSet(String.class, PARAM_EMPLOYER_NAME, "Zadejte jméno přiřazeného jednatele!");
+			result &= validateNotEmptyAndSet(String.class, PARAM_EMPLOYER_POSITION, "Zadejte pozici přiřazeného jednatele!");
 
 			// FIXME hardcoded
 			// set employer signature
-			if(validee.getEmployer()!=null)
-				validee.setEmployeeSignature(validee.proposeImageUrl(ContractImage.SIGNATURE_EMPLOYER, "png"));
-			
+			if (validee.getEmployerName() != null) validee.setEmployerSignature(validee.proposeImageUrl(ContractImage.SIGNATURE_EMPLOYER, "png"));
+
 			return result;
 		}
 	}

@@ -53,6 +53,15 @@ public class Author implements ImageAssignable<Author.AuthorImage>, AccessContro
 	}
 
 	/**
+	 * Creates author with given id
+	 * 
+	 * @param id Identification of author
+	 */
+	public Author(int id) {
+		this.id = id;
+	}
+
+	/**
 	 * @return the id
 	 */
 	public int getId() {
@@ -284,9 +293,9 @@ public class Author implements ImageAssignable<Author.AuthorImage>, AccessContro
 	public String getTitle() {
 		StringBuilder sb = new StringBuilder();
 		if (name != null)
-			sb.append(name).append(" ");
+		    sb.append(name).append(" ");
 		if (surname != null)
-			sb.append(surname);
+		    sb.append(surname);
 
 		return sb.toString();
 	}
@@ -311,7 +320,7 @@ public class Author implements ImageAssignable<Author.AuthorImage>, AccessContro
 		if (uid != null)
 			sb.append("-u-").append(uid);
 		else if (id != 0)
-			sb.append('-').append(id);
+		    sb.append('-').append(id);
 
 		return sb.append('.').append(suffix).toString();
 	}
@@ -359,7 +368,7 @@ public class Author implements ImageAssignable<Author.AuthorImage>, AccessContro
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Author: ").append(id).append(", ").append(getTitle())
-				.append(active ? "active" : "");
+		        .append(active ? "active" : "");
 		return sb.toString();
 	}
 }

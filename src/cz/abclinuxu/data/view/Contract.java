@@ -1,9 +1,10 @@
 package cz.abclinuxu.data.view;
 
+import java.util.Comparator;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import cz.abclinuxu.data.ImageAssignable;
-import cz.abclinuxu.data.User;
 
 /**
  * This class represents contract signed between Employer and Employee.
@@ -22,25 +23,28 @@ public class Contract implements ImageAssignable<Contract.ContractImage> {
 	 * 
 	 */
 	public enum ContractImage implements ImageAssignable.AssignedImage {
-		SIGNATURE_EMPLOYER,
-		SIGNATURE_EMPLOYEE
+		SIGNATURE_EMPLOYER
 	}
 
 	// identification of contract
 	private int id;
 
-	// id of employer
-	private User employer;
+	// name of employer
+	private String employerName;
+	// position of employer in company
+	private String employerPosition;
 	// path to employer's signature
 	private String employerSignature;
+
+	// flag that newer contract was signed
+	private boolean obsolete;
+
 	// id of employee
-	private User employee;
-	// path to employee's signature
-	private String employeeSignature;
-	// date when contract was signed
-	private Date effectiveDate;
+	private Author employee;
 	// date when contract was proposed
 	private Date proposedDate;
+	// date when contract was signed
+	private Date signedDate;
 
 	// description of contract
 	private String description;
@@ -60,16 +64,19 @@ public class Contract implements ImageAssignable<Contract.ContractImage> {
 	public Contract(Contract clone) {
 		this.content = clone.content;
 		this.description = clone.description;
-		if (clone.effectiveDate != null)
-		    this.effectiveDate = new Date(clone.getEffectiveDate().getTime());
-		if (clone.employee != null)
-		    this.employee = new User(clone.getEmployee().getId());
-		this.employeeSignature = clone.employeeSignature;
-		if (clone.employer != null)
-		    this.employer = new User(clone.getEmployer().getId());
-		this.employerSignature = clone.employerSignature;
+		if (clone.employee != null) {
+			this.employee = new Author(clone.employee.getId());
+		}
 		if (clone.proposedDate != null)
-		    this.proposedDate = new Date(clone.getProposedDate().getTime());
+		    this.proposedDate = new Date(clone.proposedDate.getTime());
+
+		if (clone.signedDate != null)
+		    this.signedDate = new Date(clone.signedDate.getTime());
+
+		this.obsolete = clone.obsolete;
+		this.employerName = clone.employerName;
+		this.employerPosition = clone.employerPosition;
+		this.employerSignature = clone.employerSignature;
 		this.templateId = clone.templateId;
 		this.title = clone.title;
 		this.version = clone.version;
@@ -90,17 +97,31 @@ public class Contract implements ImageAssignable<Contract.ContractImage> {
 	}
 
 	/**
-	 * @return the employer
+	 * @return the employerName
 	 */
-	public User getEmployer() {
-		return employer;
+	public String getEmployerName() {
+		return employerName;
 	}
 
 	/**
-	 * @param employer the employer to set
+	 * @param employerName the employerName to set
 	 */
-	public void setEmployer(User employer) {
-		this.employer = employer;
+	public void setEmployerName(String employerName) {
+		this.employerName = employerName;
+	}
+
+	/**
+	 * @return the employerPosition
+	 */
+	public String getEmployerPosition() {
+		return employerPosition;
+	}
+
+	/**
+	 * @param employerPosition the employerPosition to set
+	 */
+	public void setEmployerPosition(String employerPosition) {
+		this.employerPosition = employerPosition;
 	}
 
 	/**
@@ -120,43 +141,15 @@ public class Contract implements ImageAssignable<Contract.ContractImage> {
 	/**
 	 * @return the employee
 	 */
-	public User getEmployee() {
+	public Author getEmployee() {
 		return employee;
 	}
 
 	/**
 	 * @param employee the employee to set
 	 */
-	public void setEmployee(User employee) {
+	public void setEmployee(Author employee) {
 		this.employee = employee;
-	}
-
-	/**
-	 * @return the employeeSignature
-	 */
-	public String getEmployeeSignature() {
-		return employeeSignature;
-	}
-
-	/**
-	 * @param employeeSignature the employeeSignature to set
-	 */
-	public void setEmployeeSignature(String employeeSignature) {
-		this.employeeSignature = employeeSignature;
-	}
-
-	/**
-	 * @return the effectiveDate
-	 */
-	public Date getEffectiveDate() {
-		return effectiveDate;
-	}
-
-	/**
-	 * @param effectiveDate the effectiveDate to set
-	 */
-	public void setEffectiveDate(Date effectiveDate) {
-		this.effectiveDate = effectiveDate;
 	}
 
 	/**
@@ -171,6 +164,48 @@ public class Contract implements ImageAssignable<Contract.ContractImage> {
 	 */
 	public void setProposedDate(Date proposedDate) {
 		this.proposedDate = proposedDate;
+	}
+
+	/**
+	 * @return the obsolete
+	 */
+	public boolean isObsolete() {
+		return obsolete;
+	}
+
+	/**
+	 * @param obsolete the obsolete to set
+	 */
+	public void setObsolete(boolean obsolete) {
+		this.obsolete = obsolete;
+	}
+
+	/**
+	 * @return the signedDate
+	 */
+	public Date getSignedDate() {
+		return signedDate;
+	}
+
+	/**
+	 * @param signedDate the signedDate to set
+	 */
+	public void setSignedDate(Date signedDate) {
+		this.signedDate = signedDate;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	/**
@@ -202,34 +237,6 @@ public class Contract implements ImageAssignable<Contract.ContractImage> {
 	}
 
 	/**
-	 * @return the templateId
-	 */
-	public Integer getTemplateId() {
-		return templateId;
-	}
-
-	/**
-	 * @param templateId the templateId to set
-	 */
-	public void setTemplateId(Integer templateId) {
-		this.templateId = templateId;
-	}
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	/**
 	 * @return the content
 	 */
 	public String getContent() {
@@ -243,12 +250,27 @@ public class Contract implements ImageAssignable<Contract.ContractImage> {
 		this.content = content;
 	}
 
+	/**
+	 * @return the templateId
+	 */
+	public Integer getTemplateId() {
+		return templateId;
+	}
+
+	/**
+	 * @param templateId the templateId to set
+	 */
+	public void setTemplateId(Integer templateId) {
+		this.templateId = templateId;
+	}
+
+	public boolean isAccepted() {
+		return this.signedDate != null;
+	}
+
 	@Override
 	public void assignImage(ContractImage imageId, String imageUrl) {
 		switch (imageId) {
-		case SIGNATURE_EMPLOYEE:
-			this.employeeSignature = imageUrl;
-			break;
 		case SIGNATURE_EMPLOYER:
 			this.employerSignature = imageUrl;
 			break;
@@ -259,33 +281,65 @@ public class Contract implements ImageAssignable<Contract.ContractImage> {
 	public String detractImage(ContractImage imageId) {
 		String url = null;
 		switch (imageId) {
-		case SIGNATURE_EMPLOYEE:
-			url = this.employeeSignature;
-			this.employeeSignature = null;
-			break;
 		case SIGNATURE_EMPLOYER:
 			url = this.employerSignature;
 			this.employerSignature = null;
+			break;
 		}
 		return url;
 	}
 
 	@Override
 	public String proposeImageUrl(ContractImage imageId, String suffix) {
-		StringBuilder sb = new StringBuilder("images/signatures/user.");
+
+		// pattern to find blank characters and replace them by '-' character
+		final Pattern spacing = Pattern.compile("\\d+");
+
+		StringBuilder sb = new StringBuilder("images/signatures/employer.");
 		switch (imageId) {
-		case SIGNATURE_EMPLOYEE:
-			sb.append(employee.getId());
-			break;
 		case SIGNATURE_EMPLOYER:
-			sb.append(employer.getId());
+			sb.append(spacing.matcher(employerName).replaceAll("-").toLowerCase());
 			break;
 		}
 		sb.append('.').append(suffix);
 		return sb.toString();
 	}
 
-	public boolean isSigned() {
-		return effectiveDate != null;
+	/**
+	 * Compares contract according to proposed date.
+	 * Note: this comparator imposes orderings that are inconsistent with
+	 * equals.
+	 * 
+	 * @author kapy
+	 * 
+	 */
+	public static class ContractComparator implements Comparator<Contract> {
+
+		// direction of comparison
+		private boolean ascending;
+
+		public ContractComparator() {
+			this(true);
+		}
+
+		public ContractComparator(boolean ascending) {
+			this.ascending = ascending;
+		}
+
+		@Override
+		public int compare(Contract o1, Contract o2) {
+			if (ascending)
+				return compare(o1.getProposedDate(), o2.getProposedDate());
+			else
+				return compare(o2.getProposedDate(), o1.getProposedDate());
+		}
+
+		private int compare(Date d1, Date d2) {
+			if (d1 == null && d2 == null) return 0;
+			if (d1 == null) return -1;
+			if (d2 == null) return 1;
+			return d1.compareTo(d2);
+		}
 	}
+
 }

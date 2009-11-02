@@ -42,7 +42,7 @@ Smlouvy lze filtrovat dle následujících kritérií:</p>
                 	<td><@lib.filterCheckBox filter=FILTER name="contractId" value="${contract.id}"></@lib.filterCheckBox></td>
                 	<td style="text-align: left">${contract.version?html}</td>	
                 	<td style="text-align: left">
-                		<a href="${URL.make("/redakce/smlouvy/${contract.id}?action=show")}">${(contract.title)!?html}</a>
+                		<a href="${URL.make("/redakce/smlouvy/?contractId=${contract.id}&amp;action=show")}">${(contract.title)!?html}</a>
                 	</td>
                 	<td style="text-align: left">
                 		<textarea rows="3" cols="40" style="width: 400px; font-family: inherit; border: none; background: inherit;">${(contract.description)!?html}</textarea>     

@@ -4,18 +4,6 @@
 <script type="text/javascript" src="/data/site/calendar/calendar-en.js"></script>
 <script type="text/javascript" src="/data/site/calendar/calendar-cs-utf8.js"></script>
 <script type="text/javascript" src="/data/site/calendar/calendar-setup.js"></script>
-<script type="text/javascript" src="/data/site/jquery/ui.core.js"></script>
-<script type="text/javascript" src="/data/site/jquery/ui.dialog.js"></script>
-<script type="text/javascript" src="/data/site/ajax/finduser.js"></script>
-<script type="text/javascript">
-$(document).ready(function() {	
-	var buttonParent = $('#findUser');
-    buttonParent.append('<input type="button" value="Vyhledat uživatele" id="findUserButton" tabindex="8"/>');
-    $('#findUserButton').bind('click', function() {
-        findUserHandler('findUserResult-login', 'findUserDialog', 'addcontract-empty', 'addcontract-empty', 'id');
-    });	
-});
-</script>
 </#assign>
 
 <#include "../../header.ftl">
@@ -70,27 +58,27 @@ $(document).ready(function() {
         </tr>
         <tr>
             <td class="required">Obsah šablony:</td>
-            <td><textarea name="content" rows="20" cols="60" tabindex="6">${(CONTRACT.content)!}</textarea>
+            <td>
+            	<div>
+            	V šabloně je dostupná proměnná <b>AUTHOR</b> odpovídající beanu reprezentujícímu autora,
+            	 a <b>NEW_CONTRACT</b> odpovídající beanu smlouvy. 
+            	</div>
+            	<textarea name="content" rows="20" cols="60" tabindex="6">${(CONTRACT.content)!}</textarea>
             	<div class="error">${ERRORS.content!}</div>
             </td>
         </tr>
         <tr>
-            <td class="required">Jednatelovo id:</td>
-            <td style="white-space: nowrap">
-                <div id="findUser">
-                    <input type="text" id="findUserResult-id" name="employer" value="${(CONTRACT.employer.id)!}" size="24" tabindex="7"/>&nbsp;
-                    <input type="hidden" id="addcontract-empty" value="" />       
-                </div>
-                <div id="findUserDialog"></div>
-                <div class="error">${ERRORS.employer!}</div>
+            <td class="required">Jednatelovo jméno:</td>
+            <td><input type="text" name="employerName" value="${(CONTRACT.employerName)!}" size="24" tabindex="7"/>
+                <div class="error">${ERRORS.employerName!}</div>
             </td>
         </tr>
-        <#--
         <tr>
-        	<td>Jednatelův podpis:</td>
-            <td></td>
+            <td class="required">Jednatelova pozice:</td>
+            <td><input type="text" name="employerPosition" value="${(CONTRACT.employerPosition)!}" size="24" tabindex="8"/>
+                <div class="error">${ERRORS.employerName!}</div>
+            </td>
         </tr>
-        -->    
         <tr>
             <td>&nbsp;</td>
             <td><input type="submit" value="Uložit" tabindex="9"/></td>

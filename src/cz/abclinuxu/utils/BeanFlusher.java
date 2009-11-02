@@ -1,11 +1,16 @@
 package cz.abclinuxu.utils;
 
+//import java.sql.Date;
+
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Contract;
 import cz.abclinuxu.data.view.Topic;
@@ -29,24 +34,51 @@ public class BeanFlusher {
 		if (contract.getEmployee() != null)
 		    item.setNumeric1(contract.getEmployee().getId());
 
-		item.setNumeric2(contract.getEmployer().getId());
-		item.setDate1(contract.getEffectiveDate());
-		item.setDate2(contract.getProposedDate());
-		item.setString1(Misc.filterDangerousCharacters(contract.getVersion()));
+		item.setDate1(contract.getProposedDate());
 
 		// get/create XML document
 		DocumentBuilder db = new DocumentBuilder(item.getData(), "data");
 
-		db.store("/data/signatures/employee", contract.getEmployeeSignature())
-		        .store("/data/signatures/employer", contract.getEmployerSignature())
+		db.store("/data/employer/name", contract.getEmployerName())
+		        .store("/data/employer/position", contract.getEmployerPosition())
+		        .store("/data/employer/signature", contract.getEmployerSignature())
 		        .store("/data/title", contract.getTitle())
 		        .store("/data/description", contract.getDescription())
 		        .store("/data/template-id", contract.getTemplateId())
-		        .store("/data/content", contract.getContent());
+		        .store("/data/content", contract.getContent())
+		        .store("/data/obsolete", contract.isObsolete())
+		        .store("/data/signed-date", (Date) contract.getSignedDate())
+		        .store("/data/version", contract.getVersion());
 
 		item.setData(db.getDocument());
 		debug("Flushed %s, value: %s %s", item, contract, db);
 		return item;
+	}
+
+	public static Relation flushContractToRelation(Relation relation, Contract contract) {
+
+		// do not set employee for templates
+		if (contract.getEmployee() != null)
+		    relation.setChild(new Item(contract.getEmployee().getId(), Item.CONTRACT));
+
+		// get/create XML document
+		DocumentBuilder db = new DocumentBuilder(relation.getData(), "data");
+
+		db.store("/data/employer/name", contract.getEmployerName())
+		        .store("/data/employer/position", contract.getEmployerPosition())
+		        .store("/data/employer/signature", contract.getEmployerSignature())
+		        .store("/data/title", contract.getTitle())
+		        .store("/data/description", contract.getDescription())
+		        .store("/data/template-id", contract.getTemplateId())
+		        .store("/data/content", contract.getContent())
+		        .store("/data/obsolete", contract.isObsolete())
+		        .store("/data/signed-date", contract.getSignedDate())
+		        .store("/data/proposed-date", contract.getProposedDate())
+		        .store("/data/version", contract.getVersion());
+
+		relation.setData(db.getDocument());
+		debug("Flushed %s, value: %s %s", relation, contract, db);
+		return relation;
 	}
 
 	public static Item flushAuthorToItem(Item item, Author author) {
@@ -160,6 +192,38 @@ public class BeanFlusher {
 				if (node == null) node = DocumentHelper.makeElement(doc, xpath);
 				node.setText(Misc.filterDangerousCharacters(value.toString()));
 			}
+			return this;
+		}
+
+		/**
+		 * Appends/updates/detaches element at given path depending on value
+		 * passed
+		 * 
+		 * @param xpath XPath locator in document
+		 * @param value Value passed for DOM modification
+		 * @return Modified instance
+		 */
+		public DocumentBuilder store(String xpath, boolean value) {
+			if (value)
+				store(xpath, "true");
+			else
+				store(xpath, "false");
+			return this;
+		}
+
+		/**
+		 * Appends/updates/detaches element at given path depending on value
+		 * passed
+		 * 
+		 * @param xpath XPath locator in document
+		 * @param value Value passed for DOM modification
+		 * @return Modified instance
+		 */
+		public DocumentBuilder store(String xpath, Date value) {
+			if (value != null)
+				store(xpath, Long.toString(value.getTime()));
+			else
+				store(xpath, (Object) null);
 			return this;
 		}
 

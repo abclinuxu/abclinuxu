@@ -31,15 +31,12 @@
         </tr>
         <#if EDITOR??>
         <tr>
-            <td>Jednatelovo id: ${(CONTRACT.employer.id)!}</td>
+            <td>Jednatelovo jméno: ${(CONTRACT.employerName)!}</td>
+        </tr>
+        <tr>
+            <td>Jednatelova pozice: ${(CONTRACT.employerPosition)!}</td>
         </tr>
         </#if>
-        <#--
-        <tr>
-        	<td>Jednatelův podpis:</td>
-            <td></td>
-        </tr>
-        -->    
     </table>
 
 <#include "../../footer.ftl">

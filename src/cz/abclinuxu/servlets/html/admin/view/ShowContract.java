@@ -7,23 +7,26 @@ import static cz.abclinuxu.utils.forms.FormFilter.Filter.CONTRACT_BY_VERSION;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Contract;
 import cz.abclinuxu.data.view.Link;
+import cz.abclinuxu.data.view.Contract.ContractComparator;
 import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
@@ -48,7 +51,6 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.url.PwdNavigator.Discriminator;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.BeanFlusher;
-import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.BeanFetcher.FetchType;
@@ -72,6 +74,11 @@ public class ShowContract implements AbcAction {
 	public static final String VAR_NEW_CONTRACT = "NEW_CONTRACT";
 
 	/**
+	 * Tail of contract
+	 */
+	public static final String VAR_CONTRACT_TAIL = "CONTRACT_TAIL";
+
+	/**
 	 * Contract to be shown
 	 */
 	public static final String VAR_CONTRACT = "CONTRACT";
@@ -91,7 +98,15 @@ public class ShowContract implements AbcAction {
 	 */
 	public static final String VAR_DRAFT = "DRAFT";
 
+	/**
+	 * This day
+	 */
 	public static final String VAR_TODAY = "TODAY";
+
+	/**
+	 * Location of author
+	 */
+	public static final String VAR_LOCATION = "LOCATION";
 
 	/**
 	 * contracts found for narrowing conditions
@@ -156,9 +171,7 @@ public class ShowContract implements AbcAction {
 
 		PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_CONTRACTS);
 
-		// TODO if contracts are extended to handle different contract relation than 
-		// that between author and editor (for example developer), this 
-		// is an extension point, for current moment handle only author related contract logic
+		// contracts are directly bound to author
 		Author author = getAuthor(user);
 		env.put(VAR_AUTHOR, author);
 		if (author == null) {
@@ -187,6 +200,10 @@ public class ShowContract implements AbcAction {
 				ActionProtector.ensureContract(request, ShowContract.class, true, true, true, false);
 				return actionAssignStep2(request, response, env, params, navigator);
 			}
+			// show contract
+			else if (ServletUtils.determineAction(params, ACTION_SHOW)) {
+				return actionShowTemplate(request, env, params, navigator);
+			}
 
 			// list contracts
 			else if (ServletUtils.determineAction(params, ACTION_LIST) || Misc.empty(action)) {
@@ -198,25 +215,27 @@ public class ShowContract implements AbcAction {
 		}
 		// author actions
 		else if (ServletUtils.pathBeginsWith(request, "/redakce")) {
-			// list accepted contracts, prepare contract to be signed if any
-			if (ServletUtils.determineAction(params, ACTION_AUTHOR_LIST) || Misc.empty(action)) {
-				return actionAuthorContractList(request, env, params, navigator);
-			}
-			else if (ServletUtils.determineAction(params, ACTION_ACCEPT) || Misc.empty(action)) {
+
+			if (ServletUtils.determineAction(params, ACTION_ACCEPT)) {
 				return actionAccept(request, response, env, params, navigator);
 			}
-		}
+			// show contract
+			if (ServletUtils.determineAction(params, ACTION_SHOW)) {
+				return actionShow(request, env, params, navigator);
+			}
 
-		// action for both
-		if (ServletUtils.determineAction(params, ACTION_SHOW)) {
-			return actionShow(request, env, params, navigator);
+			// list accepted contracts, prepare contract to be signed if any
+			else if (ServletUtils.determineAction(params, ACTION_AUTHOR_LIST) || Misc.empty(action)) {
+				return actionAuthorContractList(request, env, params, navigator);
+			}
+
 		}
 
 		throw new MissingArgumentException("Chybí parametr action!");
 
 	}
 
-	private String actionShow(HttpServletRequest request, Map env, Map params, PwdNavigator navigator) {
+	private String actionShowTemplate(HttpServletRequest request, Map env, Map params, PwdNavigator navigator) {
 
 		if (navigator.determine() == Discriminator.EDITOR) {
 			env.put(VAR_EDITOR, Boolean.TRUE);
@@ -231,7 +250,33 @@ public class ShowContract implements AbcAction {
 		Contract contract = BeanFetcher.fetchContractFromItem(item, FetchType.EAGER);
 		env.put(VAR_CONTRACT, contract);
 
-		Link tail = new Link(contract.getTitle(), "/redakce/smlouvy/" + contract.getId() + "&amp;action=show", "Zobrazení smlouvy");
+		Link tail = new Link(contract.getTitle(), "/redakce/smlouvy/?contractId=" + contract.getId() + "&amp;action=show", "Zobrazení smlouvy");
+		env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
+		return FMTemplateSelector.select("AdministrationShowContract", "show", env, request);
+	}
+
+	private String actionShow(HttpServletRequest request, Map env, Map params, PwdNavigator navigator) {
+
+		// determine given contract by id
+		Persistence persistence = PersistenceFactory.getPersistence();
+
+		int id = 0;
+		try {
+			id = Integer.parseInt((String) params.get(PARAM_CONTRACT_ID));
+		}
+		catch (NumberFormatException e) {
+			throw new MissingArgumentException("Chybí parametr contractId!");
+		}
+
+		Relation relation = (Relation) persistence.findById(new Relation(id));
+		if (relation == null)
+		    throw new MissingArgumentException("Chybí parametr contractId!");
+		// set contract as signed
+		persistence.synchronize(relation);
+		Contract contract = BeanFetcher.fetchContractFromRelation(relation, FetchType.EAGER);
+		env.put(VAR_CONTRACT, contract);
+
+		Link tail = new Link(contract.getTitle(), "/redakce/smlouvy/?contractId=" + contract.getId() + "&amp;action=show", "Zobrazení smlouvy");
 		env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
 		return FMTemplateSelector.select("AdministrationShowContract", "show", env, request);
 	}
@@ -251,15 +296,9 @@ public class ShowContract implements AbcAction {
 		FormFilter filter = createFilter(params);
 		env.put(VAR_FILTER, filter);
 
-		List<Qualifier> preQualifiers = new ArrayList<Qualifier>() {
-			{
-				add(new CompareCondition(Field.SUBTYPE, Operation.EQUAL, Constants.TYPE_CONTRACT));
-			}
-		};
-
-		Qualifier[] qualifiers = getQualifiers(preQualifiers, filter, from, count);
-		List<Item> items = sqlTool.findItemsWithType(Item.TEMPLATE, qualifiers);
-		total = sqlTool.countItemsWithType(Item.TEMPLATE, QualifierTool.removeOrderQualifiers(qualifiers));
+		Qualifier[] qualifiers = getQualifiers(null, filter, from, count);
+		List<Item> items = sqlTool.findItemsWithType(Item.CONTRACT, qualifiers);
+		total = sqlTool.countItemsWithType(Item.CONTRACT, QualifierTool.removeOrderQualifiers(qualifiers));
 		found = new Paging(BeanFetcher.fetchContractsFromItems(items, FetchType.PROCESS_NONATOMIC), from, count, total, qualifiers);
 
 		env.put(VAR_FOUND, found);
@@ -272,36 +311,43 @@ public class ShowContract implements AbcAction {
 
 	private String actionAuthorContractList(HttpServletRequest request, Map env, Map params, PwdNavigator navigator) {
 
-		SQLTool sqlTool = SQLTool.getInstance();
-		User user = (User) env.get(Constants.VAR_USER);
+		Persistence persistence = PersistenceFactory.getPersistence();
+		Author author = (Author) env.get(VAR_AUTHOR);
 
 		// store navigation structure		
 		env.put(Constants.VAR_PARENTS, navigator.navigate());
 
-		// get all contracts for current user
-		Qualifier[] qualifiers = new Qualifier[] {
-		        new CompareCondition(Field.NUMERIC1, Operation.EQUAL, user.getId()),
-		        Qualifier.SORT_BY_DATE1,
-		        Qualifier.ORDER_DESCENDING
-		        };
-
-		List<Item> items = sqlTool.findItemsWithType(Item.CONTRACT, qualifiers);
-		List<Item> accepted = new ArrayList<Item>(items);
-		List<Item> toBeSigned = new ArrayList<Item>();
-		Iterator<Item> i = accepted.iterator();
+		// go trough all relations for this author and find to be signed and not signed
+		List<Relation> items = getContracts(author);
+		int total = items.size();
+		List<Contract> toBeSigned = new ArrayList<Contract>();
+		Iterator<Relation> i = items.iterator();
 		while (i.hasNext()) {
-			Item item = i.next();
-			// item was not signed by author
-			if (item.getDate1() == null) {
+			Relation relation = i.next();
+			Contract contract = BeanFetcher.fetchContractFromRelation(relation, FetchType.PROCESS_NONATOMIC);
+			// contract was not accepted and it is not obsolete, propose it 
+			if (!contract.isAccepted() && !contract.isObsolete()) {
 				i.remove();
-				// contract has to be signed 
-				toBeSigned.add(item);
+				// get template's content
+				toBeSigned.add(contract);
+				log.debug("To be signed with id:" + contract.getId());
+			}
+			// remove obsolete contracts from accepted
+			else if (!contract.isAccepted() && contract.isObsolete()) {
+				i.remove();
 			}
 		}
 		// get contract which was added as last
+		// we will use template for content and then we must reset id to be the id of relation
 		if (!toBeSigned.isEmpty()) {
-			Collections.sort(toBeSigned, new Date2ItemComparator(false));
-			Contract newContract = BeanFetcher.fetchContractFromItem(toBeSigned.get(0), FetchType.EAGER);
+			Collections.sort(toBeSigned, new ContractComparator(false));
+			Contract first = toBeSigned.get(0);
+			Item item = (Item) persistence.findById(new Item(first.getTemplateId(), Item.CONTRACT));
+			persistence.synchronize(item);
+			Contract newContract = BeanFetcher.fetchContractFromItem(item, FetchType.EAGER);
+			newContract.setId(first.getId());
+			newContract.setTemplateId(first.getTemplateId());
+			newContract.setEmployee(author);
 			env.put(VAR_NEW_CONTRACT, newContract);
 			env.put(VAR_TODAY, new Date());
 			env.put(VAR_DRAFT, processContractDraft(newContract, env));
@@ -309,13 +355,16 @@ public class ShowContract implements AbcAction {
 		}
 
 		if (log.isDebugEnabled()) {
-			log.debug(String.format("Contracts for user %d were found total: %d, accepted: %d, to be signed: %d",
-			        user.getId(), items.size(), accepted.size(), toBeSigned.size()));
+			log.debug(String.format("Contracts for author %d were found total: %d, accepted: %d, to be signed: %d",
+			        author.getId(), total, items.size(), toBeSigned.size()));
 		}
 
 		// put accepted contracts
-		if (!accepted.isEmpty())
-		    env.put(VAR_CONTRACTS, BeanFetcher.fetchContractsFromItems(accepted, FetchType.PROCESS_NONATOMIC));
+		if (!items.isEmpty()) {
+			List<Contract> contracts = BeanFetcher.fetchContractsFromRelations(items, FetchType.PROCESS_NONATOMIC);
+			Collections.sort(contracts, new ContractComparator(false));
+			env.put(VAR_CONTRACTS, contracts);
+		}
 
 		return FMTemplateSelector.select("AdministrationShowContract", "author-list", env, request);
 	}
@@ -331,7 +380,7 @@ public class ShowContract implements AbcAction {
 		env.put(VAR_AUTHORS, EditTopic.getActiveAuthors(env));
 
 		env.put(VAR_FILTER, filter);
-		env.put(VAR_CONTRACTS, getContract(params));
+		env.put(VAR_CONTRACTS, getContracts(params));
 
 		return FMTemplateSelector.select("AdministrationShowContract", "assign", env, request);
 	}
@@ -339,67 +388,109 @@ public class ShowContract implements AbcAction {
 	private String actionAssignStep2(HttpServletRequest request, HttpServletResponse response, Map env, Map params, PwdNavigator navigator) throws Exception {
 
 		Persistence persistence = PersistenceFactory.getPersistence();
-		List<Contract> contracts = getContract(params);
-		List<Integer> users = getUsers(params);
+		List<Contract> contracts = getContracts(params);
+		List<Author> authors = getAuthors(params);
 
-		for (Integer userId : users) {
+		log.debug(String.format("To be assigned: %d contracts, %d authors", contracts.size(), authors.size()));
+
+		// for all authors assign them all templates selected
+		for (Author author : authors) {
+
+			// already signed 
+			List<Contract> signed = BeanFetcher.fetchContractsFromRelations(getContracts(author), FetchType.PROCESS_NONATOMIC);
+			Set<Integer> usedTemplates = new HashSet<Integer>(signed.size());
+			for (Contract tmp : signed) {
+				usedTemplates.add(tmp.getTemplateId());
+			}
+
 			for (Contract template : contracts) {
-				Contract contract = new Contract(template);
-				contract.setEmployee(new User(userId));
-				contract.setTemplateId(template.getId());
-				Item item = new Item(0, Item.CONTRACT);
 
-				persistence.create(BeanFlusher.flushContractToItem(item, contract));
+				// skip already used templates
+				if (usedTemplates.contains(template.getId()))
+				    continue;
+
+				Contract contract = new Contract(template);
+				contract.setEmployee(author);
+				contract.setTemplateId(template.getId());
+
+				// force creation of new relation
+				Relation relation = new Relation(new Category(Constants.CAT_CONTRACTS), new Item(author.getId(), Item.AUTHOR), 0);
+				relation.setData("<data></data>");
+				persistence.create(BeanFlusher.flushContractToRelation(relation, contract));
 			}
 		}
 
 		ServletUtils.addMessage("Smlouvy byly přiřazeny", env, request.getSession());
-		redirect(response, env);
+		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+		// redirect to topics in administration system
+		urlUtils.redirect(response, urlUtils.noPrefix("/sprava/redakce/smlouvy"));
 		return null;
 	}
 
 	private String actionAccept(HttpServletRequest request, HttpServletResponse response, Map env, Map params, PwdNavigator navigator) throws Exception {
 
-		SQLTool sqlTool = SQLTool.getInstance();
 		Persistence persistence = PersistenceFactory.getPersistence();
-		User user = (User) env.get(Constants.VAR_USER);
+		Author author = (Author) env.get(VAR_AUTHOR);
 
-		Integer contractId = Misc.parseInt((String) params.get(PARAM_CONTRACT_ID), 0);
-		String location = (String) params.get(PARAM_LOCATION);
+		env.put(VAR_LOCATION, params.get(PARAM_LOCATION));
 
-		Qualifier[] qualifiers = new Qualifier[] {
-		        new CompareCondition(Field.ID, Operation.EQUAL, contractId)
-		        };
+		int id = 0;
+		try {
+			id = Integer.parseInt((String) params.get(PARAM_CONTRACT_ID));
+		}
+		catch (NumberFormatException e) {
+			throw new MissingArgumentException("Chybí parametr contractId!");
+		}
 
-		Item item = sqlTool.findItemsWithType(Item.CONTRACT, qualifiers).get(0);
-		Contract contract = BeanFetcher.fetchContractFromItem(item, FetchType.EAGER);
-		contract.setContent(processContractDraft(contract, env));
-		contract.setEmployee(user);
-		contract.setEffectiveDate(new Date());
+		Relation relation = (Relation) persistence.findById(new Relation(id));
+		if (relation == null)
+		    throw new MissingArgumentException("Chybí parametr contractId!");
+		// set contract as signed
+		persistence.synchronize(relation);
 
-		String today = (new DateTool()).show(new Date(), "CZ_DMY", false);
+		Contract contract = BeanFetcher.fetchContractFromRelation(relation, FetchType.EAGER);
+		contract.setSignedDate(new Date());
+		env.put(VAR_NEW_CONTRACT, contract);
 
-		// add contract location
-		String suffix =
-		        "<div class=\"two-columns\"> " +
-		        "<div class=\"left-column\"> " +
-		        "V " + location + " dne " + today + " <br /> " +
-		        user.getName() + " <br/> " +
-		        "</div> " +
-		        "<div class=\"right-column\"> " +
-		        " V Praze dne " + today + " <br /> " +
-		        "<img src=\"" + contract.getEmployerSignature() + "\" /> <br /> " +
-		        contract.getEmployer().getName() + " <br /> " +
-		        "Objednatel</div></div>";
+		StringBuilder content = new StringBuilder();
+		content.append(processContractDraft(contract, env));
+		content.append(processContractTail(contract, env));
+		contract.setContent(content.toString());
 
-		contract.setContent(contract.getContent() + suffix);
+		persistence.update(BeanFlusher.flushContractToRelation(relation, contract));
 
-		persistence.update(BeanFlusher.flushContractToItem(item, contract));
+		// set old contracts as obsolete
+		List<Contract> oldCandidates = BeanFetcher.fetchContractsFromRelations(getContracts(author), FetchType.PROCESS_NONATOMIC);
+		for (Contract candidate : oldCandidates) {
+			if (!candidate.isAccepted() && contract.getId() != candidate.getId()) {
+				candidate.setObsolete(true);
+				Relation underlying = (Relation) persistence.findById(new Relation(candidate.getId()));
+				persistence.synchronize(underlying);
+				persistence.update(BeanFlusher.flushContractToRelation(underlying, candidate));
+			}
+		}
 
 		ServletUtils.addMessage("Smlouvy byla přijata", env, request.getSession());
-		redirect(response, env);
+		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+		// redirect to topics in administration system
+		urlUtils.redirect(response, urlUtils.make("/redakce/smlouvy/?contractId=" + contract.getId() + "&action=show"));
 		return null;
 
+	}
+
+	// append contract tail
+	private String processContractTail(Contract contract, Map env) {
+		try {
+			return FMUtils.executeTemplate("/include/misc/contract_tail.ftl", env);
+		}
+		catch (IOException e) {
+			log.error("Unable to access contract tail template", e);
+			throw new InvalidDataException("Nelze nalézt šablonu smlouvy", e);
+		}
+		catch (TemplateException e) {
+			log.error("Unable to process contract tail template", e);
+			throw new InvalidDataException("Nelze zpracovat šablonu smlouvy", e);
+		}
 	}
 
 	/**
@@ -416,15 +507,17 @@ public class ShowContract implements AbcAction {
 			return FMUtils.executeCode(text, env);
 		}
 		catch (NullPointerException e) {
+			log.error("Cannot find template for contract", e);
 			throw new InvalidDataException("Nelze nalézt šablonu pro smlouvu: " + contract.getTitle(), e);
 		}
 		catch (TemplateException e) {
+			log.error("Cannot process template for contract", e);
 			throw new InvalidDataException("Nemohu zpracovat šablonu pro smlouvu: " + contract.getTitle(), e);
 		}
 		catch (IOException e) {
+			log.error("Cannot process template for contract", e);
 			throw new InvalidDataException("Nemohu zpracovat šablonu pro smlouvu: " + contract.getTitle(), e);
 		}
-
 	}
 
 	/**
@@ -442,7 +535,7 @@ public class ShowContract implements AbcAction {
 		List<Qualifier> qualifiers = preQualifiers == null ? new ArrayList<Qualifier>() : new ArrayList<Qualifier>(preQualifiers);
 		qualifiers.addAll(filter.getQualifiers());
 		// sort by surname in ascending order
-		qualifiers.add(Qualifier.SORT_BY_DATE2);
+		qualifiers.add(Qualifier.SORT_BY_DATE1);
 		qualifiers.add(Qualifier.ORDER_DESCENDING);
 		qualifiers.add(new LimitQualifier(from, count));
 
@@ -477,7 +570,25 @@ public class ShowContract implements AbcAction {
 		return BeanFetcher.fetchAuthorFromItem(item, FetchType.EAGER);
 	}
 
-	private List<Contract> getContract(Map params) {
+	// get contracts for author
+	private List<Relation> getContracts(Author author) {
+
+		SQLTool sqlTool = SQLTool.getInstance();
+		Persistence persistence = PersistenceFactory.getPersistence();
+		// get all contracts for current user
+		Qualifier[] qualifiers = new Qualifier[] {
+		        new CompareCondition(Field.CHILD, Operation.EQUAL, author.getId())
+		        };
+
+		// go trough all relations for this author and find to be signed and signed
+		List<Relation> list = sqlTool.findItemRelationsWithType(Item.AUTHOR, qualifiers);
+		persistence.synchronizeList(list);
+		return list;
+
+	}
+
+	// get contracts templates
+	private List<Contract> getContracts(Map params) {
 		@SuppressWarnings("unchecked")
 		List<String> strings = (List<String>) Tools.asList(params.get(PARAM_CONTRACT_ID));
 
@@ -503,14 +614,13 @@ public class ShowContract implements AbcAction {
 
 		Qualifier[] qualifiers = new Qualifier[] {
 		        new CompareCondition(Field.ID, new OperationIn(ids.size()), ids),
-		        new CompareCondition(Field.SUBTYPE, Operation.EQUAL, Constants.TYPE_CONTRACT)
 		        };
 		// we must process non-atomically for author ids are stored in XML
-		return BeanFetcher.fetchContractsFromItems(sqlTool.findItemsWithType(Item.TEMPLATE, qualifiers), FetchType.PROCESS_NONATOMIC);
+		return BeanFetcher.fetchContractsFromItems(sqlTool.findItemsWithType(Item.CONTRACT, qualifiers), FetchType.PROCESS_NONATOMIC);
 
 	}
 
-	private List<Integer> getUsers(Map params) {
+	private List<Author> getAuthors(Map params) {
 		@SuppressWarnings("unchecked")
 		List<String> strings = (List<String>) Tools.asList(params.get(PARAM_AUTHOR_ID));
 
@@ -532,60 +642,14 @@ public class ShowContract implements AbcAction {
 			return Collections.emptyList();
 		}
 
-		log.warn("Total users" + ids.size());
-
 		SQLTool sqlTool = SQLTool.getInstance();
-
 		Qualifier[] qualifiers = new Qualifier[] {
 		        new CompareCondition(Field.ID, new OperationIn(ids.size()), ids),
 		        };
 
 		List<Author> authors = BeanFetcher.fetchAuthorsFromItems(sqlTool.findItemsWithType(Item.AUTHOR, qualifiers), FetchType.LAZY);
-		log.warn("Authors: " + authors.size());
+		log.info("Authors: " + authors.size());
 
-		// retrieve user ids
-		List<Integer> userIds = new ArrayList<Integer>(authors.size());
-		for (Author author : authors) {
-			userIds.add(author.getUid());
-		}
-
-		log.warn("Total users authors: " + userIds.size());
-
-		return userIds;
+		return authors;
 	}
-
-	public static void redirect(HttpServletResponse response, Map env) throws Exception {
-		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-		// redirect to topics in administration system
-		urlUtils.redirect(response, urlUtils.make("/redakce/smlouvy/show"));
-	}
-
-	/**
-	 * Compares items according to date2 column.
-	 * 
-	 * @author kapy
-	 * 
-	 */
-	public static class Date2ItemComparator implements Comparator<Item> {
-
-		// direction of comparision
-		private boolean ascending;
-
-		public Date2ItemComparator() {
-			this(true);
-		}
-
-		public Date2ItemComparator(boolean ascending) {
-			this.ascending = ascending;
-		}
-
-		@Override
-		public int compare(Item o1, Item o2) {
-			if (ascending)
-				return o1.getDate2().compareTo(o2.getDate2());
-			else
-				return o2.getDate2().compareTo(o1.getDate2());
-		}
-	}
-
 }

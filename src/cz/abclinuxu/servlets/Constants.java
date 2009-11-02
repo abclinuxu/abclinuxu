@@ -173,7 +173,6 @@ public class Constants implements Configurable {
     public static final String TYPE_VIDEO = "video";
     public static final String TYPE_CONTRACT = "contract";
     public static final String TYPE_TOPIC = "topic";
-    public static final String TYPE_TEMPLATE = "template";
 
     // template variables
 

@@ -15,8 +15,8 @@
 	<tbody>
 <#list CONTRACTS as contract>
 		<tr>
-			<td><a href="/redakce/smlouvy/${contract.id}?action=show">${(contract.version)!?html}</a></td>
-			<td>${DATE.show(contract.effectiveDate, "ISO_DMY")}</td>
+			<td><a href="/redakce/smlouvy/?contractId=${contract.id}&amp;action=show">${(contract.version)!?html}</a></td>
+			<td>${DATE.show(contract.signedDate, "ISO_DMY")}</td>
 		</tr>
 </#list>
 	</tbody>
@@ -34,24 +34,7 @@
 <br/>
 ${DRAFT}
 </div>
-
-<form action="${URL.noPrefix("/redakce/smlouvy?action=accept")}" method="POST">
-<div class="two-columns">
-	<div class="left-column">
-	V <input type="text" name="location" class="required" size="20" /> dne ${DATE.show(TODAY,"CZ_DMY",false)} <br />
-	${NEW_CONTRACT.employee.name!?html} <br/> 
-	<input type="submit" name="accept" value="Přijmout" />
-	</div>
-
-	<div class="right-column">
-	V Praze dne ${DATE.show(TODAY,"CZ_DMY",false)} <br />
-	<img src="${(NEW_CONTRACT.employerSignature)!}" /> <br />
-	${(NEW_CONTRACT.employer.name)!} <br />
-	Objednatel 
-	</div>
-</div>
-<input type="hidden" name="contractId" value="${NEW_CONTRACT.id}" />
-</form>
+<#include "../../misc/contract_tail.ftl" />
 
 </#if>
 <#include "../../footer.ftl">

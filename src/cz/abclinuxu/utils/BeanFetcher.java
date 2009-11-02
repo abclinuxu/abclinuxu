@@ -9,13 +9,11 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.XMLHandler;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Contract;
 import cz.abclinuxu.data.view.Topic;
-import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
@@ -187,6 +185,56 @@ public class BeanFetcher {
 	/**
 	 * Creates contract JavaBean from persistence layer's object
 	 * 
+	 * @param relation Persistence layer object to fill contract
+	 * @param ft Fetch type
+	 * @return Contract object
+	 */
+	public static Contract fetchContractFromRelation(Relation relation, FetchType ft) {
+		if (relation == null) return null;
+
+		Contract contract = new Contract();
+		contract.setId(relation.getId());
+
+		contract.setEmployee(new Author(relation.getChild().getId()));
+		switch (ft) {
+		case LAZY:
+			break;
+		case PROCESS_NONATOMIC:
+			Element root = relation.getData().getRootElement();
+			contract = fillXMLProperties(contract, root);
+			contract.setProposedDate(Util.elementDate(root, "/data/proposed-date"));
+			break;
+		case EAGER:
+			root = relation.getData().getRootElement();
+			contract = fillXMLProperties(contract, root);
+			contract.setProposedDate(Util.elementDate(root, "/data/proposed-date"));
+
+			// user objects are fetched from persistence layer
+			SQLTool sqlTool = SQLTool.getInstance();
+			if (contract.getEmployee() != null) {
+				Qualifier[] qualifiers = new Qualifier[] {
+				        new CompareCondition(Field.ID, Operation.EQUAL, contract.getEmployee().getId())
+				        };
+				contract.setEmployee(fetchAuthorFromItem(sqlTool.findItemsWithType(Item.AUTHOR, qualifiers).get(0), FetchType.EAGER));
+			}
+			break;
+		}
+
+		return contract;
+
+	}
+
+	public static List<Contract> fetchContractsFromRelations(List<Relation> relations, FetchType ft) {
+		List<Contract> contracts = new ArrayList<Contract>(relations.size());
+		for (Relation relation : relations) {
+			contracts.add(fetchContractFromRelation(relation, ft));
+		}
+		return contracts;
+	}
+
+	/**
+	 * Creates contract JavaBean from persistence layer's object
+	 * 
 	 * @param item Persistence layer object to fill contract
 	 * @param ft Fetch type
 	 * @return Contract object
@@ -197,12 +245,7 @@ public class BeanFetcher {
 
 		Contract contract = new Contract();
 		contract.setId(item.getId());
-		contract.setEffectiveDate(item.getDate1());
-		contract.setProposedDate(item.getDate2());
-		if (item.getNumeric1() != null)
-		    contract.setEmployee(new User(item.getNumeric1()));
-		contract.setEmployer(new User(item.getNumeric2()));
-		contract.setVersion(item.getString1());
+		contract.setProposedDate(item.getDate1());
 
 		switch (ft) {
 		case LAZY:
@@ -214,12 +257,6 @@ public class BeanFetcher {
 		case EAGER:
 			root = item.getData().getRootElement();
 			contract = fillXMLProperties(contract, root);
-
-			// user objects are fetched from persistence layer
-			Persistence persistence = PersistenceFactory.getPersistence();
-			if (contract.getEmployee() != null)
-			    persistence.synchronize(contract.getEmployee());
-			persistence.synchronize(contract.getEmployer());
 			break;
 		}
 		return contract;
@@ -235,11 +272,15 @@ public class BeanFetcher {
 
 	private static Contract fillXMLProperties(Contract contract, Element root) {
 		contract.setTitle(Util.elementText(root, "/data/title"));
+		contract.setVersion(Util.elementText(root, "/data/version"));
 		contract.setDescription(Util.elementText(root, "/data/description"));
 		contract.setContent(Util.elementText(root, "/data/content"));
 		contract.setTemplateId(Util.elementInt(root, "/data/template-id"));
-		contract.setEmployeeSignature(Util.elementText(root, "/data/signatures/employee"));
-		contract.setEmployerSignature(Util.elementText(root, "/data/signatures/employer"));
+		contract.setEmployerSignature(Util.elementText(root, "/data/employer/signature"));
+		contract.setEmployerName(Util.elementText(root, "/data/employer/name"));
+		contract.setEmployerPosition(Util.elementText(root, "/data/employer/position"));
+		contract.setSignedDate(Util.elementDate(root, "/data/signed-date"));
+		contract.setObsolete(Util.elementBoolean(root, "/data/obsolete"));
 
 		return contract;
 	}
@@ -336,7 +377,7 @@ class Util {
 		try {
 			String value = elementText(root, xpath);
 			if (value == null) return null;
-			return Integer.valueOf(elementText(root, xpath));
+			return Integer.valueOf(value);
 		}
 		catch (NumberFormatException nfe) {
 			return null;
@@ -354,7 +395,40 @@ class Util {
 		try {
 			String value = elementText(root, xpath);
 			if (value == null) return null;
-			return Double.valueOf(elementText(root, xpath));
+			return Double.valueOf(value);
+		}
+		catch (NumberFormatException nfe) {
+			return null;
+		}
+	}
+
+	/**
+	 * Parses XML chunk into atomic type in safe manner.
+	 * Accepts values {@code true} or {@code false}
+	 * 
+	 * @param root XPath context root
+	 * @param xpath XPath expression to be evaluated on root
+	 * @return Boolean value with result or {@code null}
+	 */
+	static boolean elementBoolean(Element root, String xpath) {
+		String value = elementText(root, xpath);
+		if (value == null) return false;
+		return Boolean.valueOf(value);
+	}
+
+	/**
+	 * Parses XML chunk into atomic type in safe manner.
+	 * Accepts values in number of milliseconds
+	 * 
+	 * @param root XPath context root
+	 * @param xpath XPath expression to be evaluated on root
+	 * @return Date or {@code null}
+	 */
+	static Date elementDate(Element root, String xpath) {
+		try {
+			String value = elementText(root, xpath);
+			if (value == null) return null;
+			return new Date(Long.valueOf(value));
 		}
 		catch (NumberFormatException nfe) {
 			return null;
