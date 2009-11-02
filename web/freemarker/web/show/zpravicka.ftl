@@ -53,6 +53,7 @@
 
 <p class="zpravicka">${TOOL.xpath(ITEM,"data/content")}</p>
 
+<br />
 <@lib.advertisement id="gg-zpravicka" />
 
 <@lib.showPageTools RELATION />
