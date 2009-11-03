@@ -224,19 +224,15 @@ public class ViewEvent implements AbcAction, Configurable {
         
         if (dateFrom != null) {
             String date = Constants.isoFormat.format(dateFrom.getTime());
-            CompareCondition left, right;
-            
-            left = new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, date);
-            right = new CompareCondition(Field.DATE1, Operation.GREATER_OR_EQUAL, date);
+            CompareCondition left = new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, date);
+            CompareCondition right = new CompareCondition(Field.DATE1, Operation.GREATER_OR_EQUAL, date);
             
             qualifiers.add(new NestedCondition(new Qualifier[] {left, right}, LogicalOperation.OR));
         }
         if (dateTo != null) {
             String date = Constants.isoFormat.format(dateTo.getTime());
-            CompareCondition left, right;
-            
-            left = new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, date);
-            right = new CompareCondition(Field.DATE1, Operation.SMALLER_OR_EQUAL, date);
+            CompareCondition left = new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, date);
+            CompareCondition right = new CompareCondition(Field.DATE1, Operation.SMALLER_OR_EQUAL, date);
             
             qualifiers.add(new NestedCondition(new Qualifier[] {left, right}, LogicalOperation.OR));
         }
@@ -252,9 +248,7 @@ public class ViewEvent implements AbcAction, Configurable {
         }
 
         Qualifier[] qa = new Qualifier[qualifiers.size()];
-        int total;
-        
-        total = sqlTool.countItemRelationsWithType(Item.EVENT, qualifiers.toArray(qa));
+        int total = sqlTool.countItemRelationsWithType(Item.EVENT, qualifiers.toArray(qa));
         
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(order);
@@ -295,10 +289,11 @@ public class ViewEvent implements AbcAction, Configurable {
         condLeft2 = new CompareCondition(Field.DATE1, Operation.GREATER_OR_EQUAL, date);
         qualifiersCal.add(new NestedCondition(new Qualifier[] { condLeft1, condLeft2 }, LogicalOperation.OR));
         
-        cal.set(Calendar.DAY_OF_MONTH, (Integer) map.get("days"));
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.MONTH, 1);
         date = Constants.isoFormat.format(cal.getTime());
-        condRight1 = new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, date);
-        condRight2 = new CompareCondition(Field.DATE1, Operation.SMALLER_OR_EQUAL, date);
+        condRight1 = new CompareCondition(Field.CREATED, Operation.SMALLER, date);
+        condRight2 = new CompareCondition(Field.DATE1, Operation.SMALLER, date);
         qualifiersCal.add(new NestedCondition(new Qualifier[] { condRight1, condRight2 }, LogicalOperation.OR));
         
         qualifiersCal.add(Qualifier.SORT_BY_CREATED);
