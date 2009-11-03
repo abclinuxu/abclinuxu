@@ -273,18 +273,17 @@ public class ViewEvent implements AbcAction, Configurable {
             cal = dateTo;
         else
             cal = Calendar.getInstance();
-                
+
+        int selectedMonth = cal.get(Calendar.MONTH);
         int month = cal.get(Calendar.MONTH)+1; // the selected month
         map.put("month", month);
         map.put("year", cal.get(Calendar.YEAR));
         map.put("days", cal.getActualMaximum(Calendar.DAY_OF_MONTH));
         
         // find all events in that month
-        String date;
-        
         CompareCondition condLeft1, condRight1, condLeft2, condRight2;
         cal.set(Calendar.DAY_OF_MONTH, 1);
-        date = Constants.isoFormat.format(cal.getTime());
+        String date = Constants.isoFormat.format(cal.getTime()); // TODO proc se porovna String a ne Date?
         condLeft1 = new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, date);
         condLeft2 = new CompareCondition(Field.DATE1, Operation.GREATER_OR_EQUAL, date);
         qualifiersCal.add(new NestedCondition(new Qualifier[] { condLeft1, condLeft2 }, LogicalOperation.OR));
@@ -309,28 +308,24 @@ public class ViewEvent implements AbcAction, Configurable {
         
         for (Relation r : list) {
             Item item = (Item) r.getChild();
-            Calendar cItemFrom = Calendar.getInstance();
-            Calendar cItemTo;
-            int fromIndex, toIndex = -1;
-            
-            cItemFrom.setTime(item.getCreated());
-            fromIndex = cItemFrom.get(Calendar.DAY_OF_MONTH)-1;
-            
-            if (item.getDate1() != null) {
-                cItemTo = Calendar.getInstance();
-                cItemTo.setTime(item.getDate1());
-                
-                if (cItemTo.get(Calendar.YEAR) > cItemFrom.get(Calendar.YEAR) ||
-                        cItemTo.get(Calendar.MONTH) > cItemFrom.get(Calendar.MONTH)) {
-                    toIndex = days - 1;
-                } else
-                    toIndex = cItemTo.get(Calendar.DAY_OF_MONTH)-1;
-            }
-            
-            
-            eventDays[fromIndex] = true;
-            
-            if (toIndex != -1) {
+            Calendar calendarStart = Calendar.getInstance();
+            calendarStart.setTime(item.getCreated());
+            int fromIndex = calendarStart.get(Calendar.DAY_OF_MONTH) - 1;
+
+            if (item.getDate1() == null) {
+                eventDays[fromIndex] = true;
+            } else {
+                if (calendarStart.get(Calendar.MONTH) != selectedMonth) {
+                    fromIndex = 0; // event started in previous month
+                }
+
+                Calendar calendarEnd = Calendar.getInstance();
+                calendarEnd.setTime(item.getDate1());
+                int toIndex = calendarEnd.get(Calendar.DAY_OF_MONTH) - 1;
+                if (calendarEnd.get(Calendar.MONTH) != selectedMonth) {
+                    toIndex = days - 1; // event ends in next month
+                }
+
                 for (int i = fromIndex; i <= toIndex; i++)
                     eventDays[i] = true;
             }
