@@ -2143,6 +2143,9 @@ public class EditUser implements AbcAction {
      */
     private boolean setRichTextEditor(Map params, User user) {
         String value = (String) params.get(PARAM_RICH_TEXT_EDITOR);
+        if (value == null)
+            return true;
+
         Node node = DocumentHelper.makeElement(user.getData(), "/data/settings/rte");
         node.setText(value);
         return true;
