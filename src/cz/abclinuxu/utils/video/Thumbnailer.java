@@ -26,10 +26,13 @@ package cz.abclinuxu.utils.video;
 public abstract class Thumbnailer {
     static final Thumbnailer youtubeThumbnailer = new YouTubeThumbnailer();
     static final Thumbnailer googleVideoThumbnailer = new GoogleVideoThumbnailer();
-    
+    static final Thumbnailer streamThumbnailer = new StreamThumbnailer();
+
     public static Thumbnailer getInstance(String server) {
         if ("youtube".equals(server))
             return youtubeThumbnailer;
+        else if ("stream".equals(server))
+            return streamThumbnailer;
         else if ("googlevideo".equals(server))
             return googleVideoThumbnailer;
         else

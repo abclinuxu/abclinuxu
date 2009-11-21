@@ -916,9 +916,13 @@
 </#macro>
 
 <#macro showVideoPlayer relation width height showLink>
-    <#local item=relation.child, code=TOOL.xpath(item,"//code"), desc=TOOL.xpath(item,"//description")?default("")>
-    <#if item.subType=="youtube"><#local player="http://www.youtube.com/v/"+code+"&amp;hl=en&amp;fs=1">
-    <#elseif item.subType=="googlevideo"><#local player="http://video.google.com/googleplayer.swf?docid="+code+"&amp;hl=cs&amp;fs=true">
+    <#local item=relation.child, code=TOOL.xpath(item,"//code"), desc=TOOL.xpath(item,"//description")!"">
+    <#if item.subType=="youtube">
+        <#local player="http://www.youtube.com/v/"+code+"&amp;hl=en&amp;fs=1">
+    <#elseif item.subType=="stream">
+        <#local player="http://www.stream.cz/object/" + code>
+    <#elseif item.subType=="googlevideo">
+        <#local player="http://video.google.com/googleplayer.swf?docid="+code+"&amp;hl=cs&amp;fs=true">
     </#if>
 
     <#if showLink>(<a href="${relation.url!("/videa/show/"+relation.id)}">správa videa</a>)</#if><br>

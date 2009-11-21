@@ -303,6 +303,14 @@
                             </map>
                         </node>
                     </node>
+                    <node name="video">
+                        <map/>
+                        <node name="StreamThumbnailer">
+                            <map>
+                                <entry key="RE_ID_PATTERN" value="/([0-9]+)-.*$"/>
+                            </map>
+                        </node>
+                    </node>
                     <node name="DateTool">
                         <map>
                             <entry key="today" value="dnes" />
@@ -955,12 +963,14 @@
                                     <map>
                                         <entry key="youtube" value="http://w*\.?youtube\.com/watch\?v=([^&amp;]+)"/>
                                         <entry key="googlevideo" value="http://video\.google\.com/videoplay\?docid=(-?\d+)"/>
+                                        <entry key="stream" value="http://www\.stream\.cz/.*/([^/]*)$"/>
                                     </map>
                                 </node>
                                 <node name="players">
                                     <map>
                                         <entry key="youtube" value='http://www.youtube.com/v/%s&amp;hl=en&amp;fs=1'/>
                                         <entry key="googlevideo" value='http://video.google.com/googleplayer.swf?docid=%s&amp;hl=cs&amp;fs=true'/>
+                                        <entry key="stream" value='http://www.stream.cz/object/%s'/>
                                     </map>
                                 </node>
                             </node>
