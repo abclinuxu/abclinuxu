@@ -167,7 +167,7 @@
         <tr>
             <td class="required" width="200px">Počet dotazů na úvodní stránce</td>
             <td>
-                <#assign single_mode=TOOL.xpath(MANAGED, "/data/profile/forum_mode")!""=="single">
+                <#assign single_mode=(TOOL.xpath(MANAGED, "/data/profile/forum_mode")!"")=="single">
                 <#if !single_mode>
                     samostatné poradny
                     |
