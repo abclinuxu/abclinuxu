@@ -5,7 +5,10 @@
 <@lib.showMessages/>
 
 <p>
-Podporovanými servery jsou YouTube a Google Video.
+    Na této stránce můžete přidat nové linuxové video. Podporovanými servery jsou Stream.cz, YouTube a Google Video.
+    Zadejte krátké jméno, pod kterým bude video dostupné na našem portálu, URL adresu detailu videa z podporovaných
+    serverů a popisek videa (nepovinné). Po odeslání bude video načteno a odkaz na něj uložen. Video pak budete moci
+    referencovat z článku nebo blogu a dále bude dostupné ve výpise všech videí.
 </p>
 
 <p>

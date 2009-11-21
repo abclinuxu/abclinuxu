@@ -5,7 +5,7 @@
 <@lib.showMessages/>
 
 <p>
-Podporovanými servery jsou YouTube a Google Video.
+    Zde máte možnost upravit video. Systém podporuje Stream.cz, Youtube a Google Video.
 </p>
 
 <p>
