@@ -80,7 +80,7 @@ s vysvětlením. Teprve po schválení bude zprávička zveřejněna.</p>
         <tr>
             <td>Vydat pod UID</td>
             <td>
-                <input type="text" size="5" name="uid">
+                <input type="text" size="5" name="uid" value="${PARAMS.uid!}">
                 <div class="error">${ERRORS.uid!}</div>
             </td>
         </tr>
