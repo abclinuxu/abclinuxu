@@ -206,7 +206,7 @@
         <tag rel="BR"/>
         <tag id="CITE" mustBeClosed="true"/>
         <tag id="CODE" mustBeClosed="true"/>
-        <tag id="P" mustBeClosed="true"/>
+        <tag rel="P"/>
         <tag id="Q" mustBeClosed="true"/>
     </rules>
 
