@@ -98,6 +98,11 @@ public class EditVideo implements AbcAction, Configurable {
         EditVideo instance = new EditVideo();
         ConfigurationManager.getConfigurator().configureAndRememberMe(instance);
     }
+
+    /*
+        http://www.vimeo.com/2010210
+        http://www.vimeo.com/moogaloop/load/clip:2010210/ - neobsahuje maly nahled
+     */
     
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
