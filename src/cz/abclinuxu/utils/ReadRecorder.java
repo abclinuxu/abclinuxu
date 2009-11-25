@@ -19,6 +19,8 @@
 package cz.abclinuxu.utils;
 
 import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.Item;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -36,6 +38,10 @@ public class ReadRecorder {
     public static void log(GenericObject obj, String type, Map env) {
         Boolean bot = (Boolean) env.get(Constants.VAR_BOT_DETECTED);
         if (bot != null && bot) // not interested in spiders and various bots
+            return;
+
+        User user = (User) env.get(Constants.VAR_USER);
+        if (user != null && (obj instanceof Item) && ((Item)obj).getOwner() == user.getId())
             return;
 
         Persistence persistence = PersistenceFactory.getPersistence();
