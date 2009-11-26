@@ -133,7 +133,9 @@ public final class SQLTool implements Configurable {
     public static final String DELETE_PROPERTY = "delete.property";
     public static final String ROYALTY_RELATIONS = "relations.royalty";
     public static final String USERS_COUNT_FORUM_COMMENTS = "users.count.forum.comments";
+    public static final String USERS_COUNT_SOLUTIONS = "users.count.solutions";
     public static final String USERS_COUNT_ARTICLES = "users.count.articles";
+    public static final String USERS_COUNT_DIGEST_STORIES = "users.count.digest.stories";
     public static final String USERS_COUNT_WIKI_RECORDS = "users.count.wiki.records";
     public static final String USERS_COUNT_NEWS = "users.count.news";
     public static final String LAST_REVISIONS = "last.versions";
@@ -1382,12 +1384,34 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds all users that wrote an answear to some question accepted as solution of the question.
+     * @return list of integer arrays, first item is user id, second item is count of his comments
+     * accepted as a solution by question author and the third item is count of his comments marked 
+     * as a solution by other users.
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public List<Object[]> countUsersSolutions() {
+        StringBuilder sb = new StringBuilder(sql.get(USERS_COUNT_SOLUTIONS));
+        return loadObjects(sb.toString(), Collections.EMPTY_LIST);
+    }
+
+    /**
      * Finds all users that wrote some articles and number of their articles.
      * @return list of arrays, first item is user id (String), second item is count of his articles (integer)
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public List<Object[]> countUsersArticles() {
         StringBuilder sb = new StringBuilder(sql.get(USERS_COUNT_ARTICLES));
+        return loadObjects(sb.toString(), Collections.EMPTY_LIST);
+    }
+
+    /**
+     * Finds all users that wrote blog stories marked as digest and their count.
+     * @return list of arrays, first item is user id (String), second item is count of his stories (integer)
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public List<Object[]> countUsersDigestStories() {
+        StringBuilder sb = new StringBuilder(sql.get(USERS_COUNT_DIGEST_STORIES));
         return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
 
@@ -2776,6 +2800,8 @@ public final class SQLTool implements Configurable {
         store(DELETE_PROPERTY, prefs);
         store(ROYALTY_RELATIONS, prefs);
         store(USERS_COUNT_FORUM_COMMENTS, prefs);
+        store(USERS_COUNT_SOLUTIONS, prefs);
+        store(USERS_COUNT_DIGEST_STORIES, prefs);
         store(USERS_COUNT_ARTICLES, prefs);
         store(USERS_COUNT_WIKI_RECORDS, prefs);
         store(USERS_COUNT_NEWS, prefs);

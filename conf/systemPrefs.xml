@@ -440,8 +440,10 @@
                             <entry key="get.property.values" value="select distinct hodnota from vlastnost where typ=?" />
                             <entry key="delete.property" value="delete from vlastnost where typ_predka=? and predek=? and typ=?"/>
                             <entry key="relations.royalty" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=9 and R.typ_predka='P' and R.predek=K.cislo and K.typ=2"/>
-                            <entry key="users.count.forum.comments" value="select K.autor, count(distinct K.zaznam) from komentar K, relace R1, relace R2, kategorie F where R1.typ_potomka='Z' and R1.potomek=K.zaznam  and R1.predchozi=R2.cislo and R2.typ_predka='K' and  R2.predek=F.cislo and F.typ=2 group by K.autor" />
+                            <entry key="users.count.forum.comments" value="select K.autor, count(distinct K.zaznam) from komentar K, relace R1, relace R2, kategorie F where R1.typ_potomka='Z' and R1.potomek=K.zaznam  and R1.predchozi=R2.cislo and R2.typ_predka='K' and  R2.predek=F.cislo and F.typ=2 and K.autor is not null group by K.autor" />
+                            <entry key="users.count.solutions" value="SELECT K.autor, SUM( CASE WHEN S.pridal = RS.kdo AND K.cislo = RS.komentar THEN 1 ELSE 0 END ) cnt1, SUM( CASE WHEN S.pridal &lt;&gt; RS.kdo OR S.pridal IS NULL THEN 1 ELSE 0 END ) cnt2 FROM komentar K JOIN reseni RS ON RS.komentar = K.cislo JOIN relace R ON R.potomek = RS.zaznam AND R.typ_potomka='Z' JOIN spolecne S ON S.cislo = R.predek AND S.typ='P' WHERE RS.kdo &lt;&gt; K.autor GROUP BY K.autor" />
                             <entry key="users.count.articles" value="select P2.numeric1, count(P.cislo) from polozka P, vlastnost V1, relace R, polozka P2 where P.typ=2 and V1.predek=P.cislo and V1.typ='author' and V1.hodnota=R.cislo and P2.cislo = R.potomek group by P2.numeric1" />
+                            <entry key="users.count.digest.stories" value="select S.pridal,count(R.cislo) from relace R JOIN polozka P ON R.typ_potomka='P' and R.potomek=P.cislo and P.typ=12 JOIN spolecne S ON S.cislo = P.cislo AND S.typ='P' JOIN vlastnost V ON V.predek=S.cislo and V.typ_predka='P' and V.typ='digest' group by S.pridal" />
                             <entry key="users.count.wiki.records" value="select kdo,count(distinct cislo,typ) from verze group by kdo" />
                             <entry key="users.count.news" value="select pridal,count(*) from polozka P, spolecne S where P.typ=7 and S.typ='P' and S.cislo=P.cislo group by S.pridal" />
                             <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;%&lt;weekly_summary>yes%'"/>
@@ -681,10 +683,13 @@
                     </node>
                     <node name="UpdateUserScore">
                         <map>
-                            <entry key="ratio.article" value="15.0"/>
+                            <entry key="ratio.article" value="14.0"/>
                             <entry key="ratio.comment" value="1.0"/>
                             <entry key="ratio.wiki" value="3.0"/>
                             <entry key="ratio.news" value="3.0"/>
+                            <entry key="ratio.digest.story" value="5.0"/>
+                            <entry key="ratio.solution" value="3.0"/>
+                            <entry key="ratio.accepted.solution" value="4.0"/>
                             <entry key="ignored.users" value="1429,4413,5473"/>
                         </map>
                     </node>

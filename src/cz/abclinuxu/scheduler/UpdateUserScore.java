@@ -40,9 +40,12 @@ public class UpdateUserScore extends TimerTask implements Configurable {
     private static final String PREF_COMMENT_RATIO = "ratio.comment";
     private static final String PREF_WIKI_RATIO = "ratio.wiki";
     private static final String PREF_NEWS_RATIO = "ratio.news";
+    private static final String PREF_DIGEST_STORY_RATIO = "ratio.digest.story";
+    private static final String PREF_SOLUTION_RATIO = "ratio.solution";
+    private static final String PREF_ACCEPTED_SOLUTION_RATIO = "ratio.accepted.solution";
     private static final String PREF_IGNORED_USERS = "ignored.users";
 
-    private float ratioArticle, ratioComment, ratioWiki, ratioNews;
+    private float ratioArticle, ratioComment, ratioWiki, ratioNews, ratioDigest, ratioSolution, ratioAccepted;
     private Set<Integer> ignoredLogins = new HashSet<Integer>();
 
     /**
@@ -70,27 +73,43 @@ public class UpdateUserScore extends TimerTask implements Configurable {
         Map<Integer, Integer> users = new HashMap<Integer, Integer>(20000);
         SQLTool sqlTool = SQLTool.getInstance();
         List<Object[]> found = sqlTool.countUsersCommentsInForum();
-        incrementUsersCounts(users, found, ratioComment);
+        incrementUsersCounts(users, found, ratioComment, null);
+
+        found = sqlTool.countUsersSolutions();
+        incrementUsersCounts(users, found, ratioAccepted, ratioSolution);
+
         found = sqlTool.countUsersArticles();
-        incrementUsersCounts(users, found, ratioArticle);
+        incrementUsersCounts(users, found, ratioArticle, null);
+
+        found = sqlTool.countUsersDigestStories();
+        incrementUsersCounts(users, found, ratioDigest, null);
+
         found = sqlTool.countUsersModifiedWikiRecords();
-        incrementUsersCounts(users, found, ratioWiki);
+        incrementUsersCounts(users, found, ratioWiki, null);
+
         found = sqlTool.countUsersNews();
-        incrementUsersCounts(users, found, ratioNews);
+        incrementUsersCounts(users, found, ratioNews, null);
         return users;
     }
 
-    private void incrementUsersCounts(Map<Integer, Integer> users, List<Object[]> newValues, float ratio) {
+    private void incrementUsersCounts(Map<Integer, Integer> users, List<Object[]> newValues, Float ratio1, Float ratio2) {
         for (Object[] objects : newValues) {
             if (objects[0] == null)
                 continue;
+
             int user;
             if (objects[0] instanceof Number)
                 user = ((Number) objects[0]).intValue();
             else
                 user = Misc.parseInt(objects[0].toString(), 0);
-            int count = ((Number) objects[1]).intValue();
-            count = (int) (ratio * count);
+
+            int value = ((Number) objects[1]).intValue();
+            int count = (int) (ratio1 * value);
+            if (ratio2 != null) {
+                value = ((Number) objects[1]).intValue();
+                count += (int) (ratio2 * value);
+            }
+
             Integer current = users.get(user);
             if (current != null)
                 count += current;
@@ -118,8 +137,11 @@ public class UpdateUserScore extends TimerTask implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         ratioArticle = prefs.getFloat(PREF_ARTICLE_RATIO, 10.0f);
         ratioComment = prefs.getFloat(PREF_COMMENT_RATIO, 1.0f);
+        ratioSolution = prefs.getFloat(PREF_SOLUTION_RATIO, 1.0f);
+        ratioAccepted = prefs.getFloat(PREF_ACCEPTED_SOLUTION_RATIO, 1.0f);
         ratioWiki = prefs.getFloat(PREF_WIKI_RATIO, 5.0f);
         ratioNews = prefs.getFloat(PREF_NEWS_RATIO, 4.0f);
+        ratioDigest = prefs.getFloat(PREF_DIGEST_STORY_RATIO, 4.0f);
 
         String users = prefs.get(PREF_IGNORED_USERS, "");
         StringTokenizer stk = new StringTokenizer(users, ",");
