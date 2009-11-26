@@ -585,13 +585,7 @@ public class EditDiscussion implements AbcAction {
         Solution solution = null;
 
         if (thread != 0) {
-            Comment comment = getDiscussionComment(diz, thread);
-            if (comment.getAuthor() == null || comment.getAuthor() != user.getId()) {
-                solution = SolutionTool.add(diz, thread, user.getId());
-                Date originalUpdated = diz.getUpdated();
-                persistence.update(diz);
-                SQLTool.getInstance().setUpdatedTimestamp(diz, originalUpdated);
-            }
+            solution = SolutionTool.add(diz, thread, user.getId());
         }
 
         if (!params.containsKey(PARAM_AJAX)) {

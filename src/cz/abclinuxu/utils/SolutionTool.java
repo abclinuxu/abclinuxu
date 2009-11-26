@@ -59,7 +59,6 @@ public class SolutionTool {
             solutions.add(solution);
 
             int count = 0;
-
             if (diz.getNumeric1() != null)
                 count = diz.getNumeric1();
 
