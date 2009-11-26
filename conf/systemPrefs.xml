@@ -683,10 +683,10 @@
                     </node>
                     <node name="UpdateUserScore">
                         <map>
-                            <entry key="ratio.article" value="14.0"/>
+                            <entry key="ratio.article" value="15.0"/>
                             <entry key="ratio.comment" value="1.0"/>
                             <entry key="ratio.wiki" value="3.0"/>
-                            <entry key="ratio.news" value="3.0"/>
+                            <entry key="ratio.news" value="2.0"/>
                             <entry key="ratio.digest.story" value="5.0"/>
                             <entry key="ratio.solution" value="3.0"/>
                             <entry key="ratio.accepted.solution" value="4.0"/>
