@@ -151,10 +151,10 @@ public abstract class GenericDataObject extends CommonObject {
 
     /**
      * Sets subtype of this object.
-     * @param subType max size is 30
+     * @param subType max size is 50
      */
     public void setSubType(String subType) {
-        if (subType!=null && subType.length()>30)
+        if (subType!=null && subType.length()>50)
             throw new java.lang.IllegalArgumentException("Subtype is too long: "+subType);
         this.subType = subType;
     }
