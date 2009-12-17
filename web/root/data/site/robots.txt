@@ -47,3 +47,4 @@ Disallow: /zmeny
 Disallow: /presmeruj
 Disallow: /hledani
 Disallow: /sdilej
+Sitemap: http://www.abclinuxu.cz/sitemap.xml.gz
