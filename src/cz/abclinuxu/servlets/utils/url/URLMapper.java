@@ -118,7 +118,7 @@ public final class URLMapper implements Configurable {
         }
 
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-        response.sendRedirect(newURL);
+        response.setHeader("location", newURL);
         return true;
     }
 
