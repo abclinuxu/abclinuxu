@@ -150,7 +150,7 @@ public class HTMLVersion implements Configurable {
             response.setHeader("Cache-Control", "no-cache, must-revalidate");
             response.setHeader("Pragma", "no-cache");
             
-            env.put("TEMPLATE", template.getName());
+            env.put(Constants.VAR_TEMPLATE, template.getName());
 
             template.process(env, writer);
 

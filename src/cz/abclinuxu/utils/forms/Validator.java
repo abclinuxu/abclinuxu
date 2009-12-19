@@ -54,11 +54,11 @@ public abstract class Validator<T> {
 	/**
 	 * Access to execution context
 	 */
-	protected Map<?, ?> env;
+	protected Map env;
 	/**
 	 * Parameters passed in HTTP request
 	 */
-	protected Map<?, ?> params;
+	protected Map params;
 	/**
 	 * HTTP session to make scope larger
 	 */
@@ -78,11 +78,11 @@ public abstract class Validator<T> {
 	 * @param env Execution context
 	 * @param session HTTP session
 	 */
-	public Validator(T validee, Map<String, Field> beanMapping, Map<?, ?> env, HttpSession session) {
+	public Validator(T validee, Map<String, Field> beanMapping, Map env, HttpSession session) {
 		this.validee = validee;
 		this.env = env;
 		this.beanMapping = beanMapping;
-		this.params = (Map<?, ?>) env.get(Constants.VAR_PARAMS);
+		this.params = (Map) env.get(Constants.VAR_PARAMS);
 		this.session = session;
 	}
 
@@ -129,7 +129,7 @@ public abstract class Validator<T> {
 			// set field value 
 			C fieldValue = transform(paramType, paramName, value, errorMessage);
 			field.set(validee, fieldValue);
-			return fieldValue != null ? true : false;
+			return fieldValue != null;
 		}
 		catch (IllegalArgumentException e) {
 			log.warn("Trying to validate returned primitive object, assignment failed", e);

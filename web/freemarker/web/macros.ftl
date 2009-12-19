@@ -538,8 +538,6 @@
 	<textarea name="${name}" <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> >${filter.value("${name}")}</textarea>
 </#macro>
 
-
-
 <#macro advertisement (id)>${TOOL.getAdvertisement(id, .vars)}</#macro>
 
 <#macro showDiscussionState diz>
@@ -561,6 +559,8 @@
     <#local user = TOOL.createUser(uid)><#t>
     <@showUser user /><#t>
 </#macro>
+
+<#macro showAuthor author><a href="${URL.make("/redakce/autori/show/" + author.relationId)}">${TOOL.getPersonName(author)}</a></#macro>
 
 <#macro showRevisions relation info = TOOL.getRevisionInfo(relation.child)>
     <p class="documentHistory">

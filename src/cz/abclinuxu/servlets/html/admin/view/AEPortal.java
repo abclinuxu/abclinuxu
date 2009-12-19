@@ -24,6 +24,7 @@ import cz.abclinuxu.servlets.utils.url.PageNavigation;
 import cz.abclinuxu.servlets.utils.url.PwdNavigator;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.BeanFetcher.FetchType;
 
 /**
@@ -58,7 +59,7 @@ public class AEPortal implements AbcAction {
         env.put(Constants.VAR_PARENTS, parents);
 
         // store author
-        Author author = findAssignedAuthor(user.getId());
+        Author author = Tools.getAuthor(user.getId());
         env.put(VAR_AUTHOR, author);
 
         switch (navigator.determine()) {
@@ -90,20 +91,8 @@ public class AEPortal implements AbcAction {
 				Qualifier.ORDER_ASCENDING
 		};
 
-		List<Topic> topics = BeanFetcher.fetchTopicsFromItems(sqlTool.getTopics(qualifiers), FetchType.EAGER);
+		List<Topic> topics = BeanFetcher.fetchTopics(sqlTool.getTopics(qualifiers), FetchType.EAGER);
 		if(!Misc.empty(topics))
 			env.put(VAR_TOPICS, topics);
     }
-
-    /**
-     * Find author object for given user id, if any
-     *
-     * @param userId Id of user
-     * @return Author object, if given user is author at the same time
-     */
-    private Author findAssignedAuthor(int userId) {
-        SQLTool sqlTool = SQLTool.getInstance();
-        return BeanFetcher.fetchAuthorFromItem(sqlTool.findAuthorByUserId(userId), FetchType.LAZY);
-    }
-
 }

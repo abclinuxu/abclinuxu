@@ -1,42 +1,36 @@
 <#include "../../header.ftl">
 
+<#if LAYOUT != "print">
+    <@lib.showSignPost "Rozcestník">
+    <ul>
+       <li>
+           <a href="${URL.make("/redakce/smlouvy/show/" + CONTRACT.relationId + "?varianta=print")}">Verze pro tisk</a>
+       </li>
+    </ul>
+    </@lib.showSignPost>
+</#if>
+
 <@lib.showMessages/>
 
-<h2>Zobrazení smlouvy</h2>
-
-	<table class="siroka">
+<#if EDITOR??>
+	<table>
         <tr>
-            <td>Název: ${(CONTRACT.title)!?html}</td>
+            <td>Název</td>
+            <td>${CONTRACT.title}</td>
         </tr>
         <tr>
-            <td>Verze: ${(CONTRACT.version)!?html}</td>
-        </tr>
-        <tr>
-            <td>Očekáváné datum platnosti: 
-            	<#if (CONTRACT.proposedDate)??>
-            		<#assign proposed_date=DATE.show(CONTRACT.proposedDate, "ISO_DMY") />
-            	<#else>
-            		<#assign proposed_date="">
-            	</#if>		
-                ${proposed_date}
+            <td>Autor</td>
+            <td>
+                <a href="${URL.make("/redakce/autori/show/" + AUTHOR.id)}">${(AUTHOR.title)!?html}</a>
             </td>
         </tr>
         <tr>
-            <td>Stručný popis: ${(CONTRACT.description)!?html}</td>
+            <td>Podepsáno</td>
+            <td>${DATE.show(CONTRACT.signed, "ISO_DMY")}</td>
         </tr>
-        <tr>
-            <td>Obsah:<br/>
-            ${(CONTRACT.content)!html}
-            </td>
-        </tr>
-        <#if EDITOR??>
-        <tr>
-            <td>Jednatelovo jméno: ${(CONTRACT.employerName)!}</td>
-        </tr>
-        <tr>
-            <td>Jednatelova pozice: ${(CONTRACT.employerPosition)!}</td>
-        </tr>
-        </#if>
     </table>
+</#if>
+
+${CONTRACT.content}
 
 <#include "../../footer.ftl">

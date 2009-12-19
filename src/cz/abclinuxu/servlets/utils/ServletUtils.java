@@ -20,6 +20,7 @@ package cz.abclinuxu.servlets.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -35,11 +36,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.fileupload.DefaultFileItemFactory;
-import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -98,7 +100,7 @@ public class ServletUtils implements Configurable {
 
     public static final String VAR_ERROR_MESSAGE = "ERROR";
 
-    private static DefaultFileItemFactory uploadFactory;
+    private static FileItemFactory uploadFactory;
     private static int uploadSizeLimit;
     private static LdapUserManager ldapManager = LdapUserManager.getInstance();
 
@@ -116,8 +118,8 @@ public class ServletUtils implements Configurable {
         else
             map = new HashMap();
 
-        if ( DiskFileUpload.isMultipartContent(request) ) {
-            DiskFileUpload uploader = new DiskFileUpload(uploadFactory);
+        if (ServletFileUpload.isMultipartContent(request) ) {
+            ServletFileUpload uploader = new ServletFileUpload(uploadFactory);
             uploader.setSizeMax(uploadSizeLimit);
             try {
                 List items = uploader.parseRequest(request);
@@ -126,7 +128,7 @@ public class ServletUtils implements Configurable {
 					Object value;
 
                     if ( fileItem.isFormField() )
-                        value = fileItem.getString();
+                        value = fileItem.getString("UTF-8");
                     else
 						value = fileItem;
 
@@ -146,6 +148,8 @@ public class ServletUtils implements Configurable {
                 throw new InvalidInputException("Zvolený soubor je příliš veliký!");
             } catch (FileUploadException e) {
                 throw new InvalidInputException("Chyba při čtení dat.");
+            } catch (UnsupportedEncodingException e) {
+                log.fatal("End of the world - UTF is not supported!");
             }
         } else {
             Enumeration names = request.getParameterNames();
@@ -593,7 +597,7 @@ public class ServletUtils implements Configurable {
         uploadSizeLimit = prefs.getInt(PREF_MAX_UPLOAD_SIZE, DEFAULT_MAX_UPLOAD_SIZE);
         File file = new File(uploadPath);
         file.mkdirs();
-        uploadFactory = new DefaultFileItemFactory(1024,file);
+        uploadFactory = new DiskFileItemFactory(1024000, file);
     }
 
     /**

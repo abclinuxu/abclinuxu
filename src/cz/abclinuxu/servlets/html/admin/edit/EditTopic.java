@@ -106,7 +106,7 @@ public class EditTopic implements AbcAction {
 		if (item == null)
 		    throw new MissingArgumentException("Chybí parametr topicId!");
 		persistence.synchronize(item);
-		Topic topic = BeanFetcher.fetchTopicFromItem(item, FetchType.EAGER);
+		Topic topic = BeanFetcher.fetchTopic(item, FetchType.EAGER);
 		env.put(VAR_TOPIC, topic);
 
 		// edit step 1
@@ -177,12 +177,12 @@ public class EditTopic implements AbcAction {
 			Item item = new Item(0, Item.TOPIC);
 
 			// refresh item content
-			item = BeanFlusher.flushTopicToItem(item, topic);
+			item = BeanFlusher.flushTopic(item, topic);
 			item.setTitle(topic.getTitle());
 			persistence.create(item);
 
 			// retrieve fields changed by persistence
-			topic = BeanFetcher.fetchTopicFromItem(item, FetchType.EAGER);
+			topic = BeanFetcher.fetchTopic(item, FetchType.EAGER);
 			env.put(VAR_TOPIC, topic);
 			redirect(response, env);
 			return null;
@@ -223,7 +223,7 @@ public class EditTopic implements AbcAction {
 		Item item = (Item) persistence.findById(new Item(topic.getId()));
 
 		// refresh item content
-		item = BeanFlusher.flushTopicToItem(item, topic);
+		item = BeanFlusher.flushTopic(item, topic);
 		persistence.update(item);
 
 		ServletUtils.addMessage("Námět " + topic.getTitle() + " byl upraven", env, request.getSession());
@@ -312,7 +312,7 @@ public class EditTopic implements AbcAction {
 			}
 		};
 
-		public TopicValidator(Topic topic, Map<?, ?> env) {
+		public TopicValidator(Topic topic, Map env) {
 			super(topic, fields, env, null);
 		}
 

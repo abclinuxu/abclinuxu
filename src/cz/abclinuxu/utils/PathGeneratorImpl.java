@@ -113,8 +113,8 @@ public class PathGeneratorImpl implements PathGenerator {
             throw new IOException("Supposed path " + dir.getAbsolutePath() + " is not directory!");
 
         String filePrefix = prefix;
-        File file = null;
-		
+        File file;
+
         try {
 			if (!Type.ARTICLE_ATTACHMENT.equals(usage)) {
 				filePrefix = id + "-" + prefix + "-";

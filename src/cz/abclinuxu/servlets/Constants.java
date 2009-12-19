@@ -178,6 +178,10 @@ public class Constants implements Configurable {
 
     /** holds VariableFetcher */
     public static final String VAR_FETCHER = "VARS";
+    /** string containing skin / version */
+    public static final String VAR_LAYOUT = "LAYOUT";
+    /** string containing template path from template root */
+    public static final String VAR_TEMPLATE = "TEMPLATE";
     /** holds category Rubriky */
     public static final String VAR_RUBRIKY = "RUBRIKY";
     /** holds category Abclinuxu */

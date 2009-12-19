@@ -63,6 +63,7 @@ import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -85,6 +86,7 @@ public final class SQLTool implements Configurable {
 	public static final String ARTICLES_ON_INDEX_RELATIONS = "relations.article.on.index";
 	// todo calculate it dynamically with findqualifier
 	public static final String ARTICLE_RELATIONS_WITHIN_PERIOD = "relations.article.within.period";
+    public static final String UNSIGNED_CONTRACT_RELATIONS = "relations.unsigned.contract";
 	public static final String NEWS_RELATIONS = "relations.news";
 	// todo calculate it dynamically with findqualifier
 	public static final String NEWS_RELATIONS_WITHIN_PERIOD = "relations.news.within.period";
@@ -979,6 +981,28 @@ public final class SQLTool implements Configurable {
 		fieldMapping.put(Field.UPPER, "R");
 		appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
 		return loadRelations(sb.toString(), params);
+	}
+
+	/**
+	 * Finds relations, where child is a contract template item in active mode (not draft, not obsolete)
+     * and there is no signed contract owned by given user.
+     * @param uid id of user searched for contracts
+	 * @return initialized relation or null
+	 * @throws PersistenceException if there is an error with the underlying
+	 *             persistent storage.
+	 */
+	public Relation findUnsignedContractRelation(int uid) {
+		StringBuilder sb = new StringBuilder(sql.get(UNSIGNED_CONTRACT_RELATIONS));
+		List params = new ArrayList();
+        params.add(uid);
+        List<Relation> relations = loadRelations(sb.toString(), params);
+        if (! relations.isEmpty()) {
+            Relation relation = relations.get(0);
+            Tools.sync(relation);
+            return relation;
+        } else {
+            return null;
+        }
 	}
 
 	/**
@@ -2848,17 +2872,23 @@ public final class SQLTool implements Configurable {
 	}
 
 	/**
-	 * Finds author for given userId, if any
-	 * 
+	 * Finds author for given userId or returns null.
 	 * @param userId Id of user
-	 * @return Item with author data
+	 * @return initialized Relation holding Author Item
 	 */
-	public Item findAuthorByUserId(int userId) {
-		Qualifier[] qualifiers = new Qualifier[] { new CompareCondition(Field.NUMERIC1, Operation.EQUAL, new Integer(userId)) };
-		List<Item> matches = findItemsWithType(Item.AUTHOR, qualifiers);
-		if (!matches.isEmpty()) {
-			return matches.get(0);
-		}
+	public Relation findAuthorByUserId(int userId) {
+        Qualifier[] qualifiers = new Qualifier[]{new CompareCondition(Field.NUMERIC1, Operation.EQUAL, userId)};
+        StringBuilder sb = new StringBuilder(sql.get(ITEM_RELATIONS_BY_TYPE));
+        List params = new ArrayList();
+        params.add(Item.AUTHOR);
+        Map<Field, String> fieldMapping = new HashMap<Field, String>();
+        fieldMapping.put(Field.TYPE, "P");
+        appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
+
+        List<Relation> relations = loadRelations(sb.toString(), params);
+		if ( ! relations.isEmpty())
+			return (Relation) Tools.sync(relations.get(0));
+
 		return null;
 	}
 
@@ -2873,7 +2903,6 @@ public final class SQLTool implements Configurable {
 	 *      according Author JavaBean
 	 */
 	public List<Object[]> getAuthorsWithArticlesCount(Qualifier[] qualifiers) {
-
 		final Map<Field, String> mapping = new HashMap<Field, String>(1) {
 			{
 				put(Field.ID, "P");
@@ -2999,6 +3028,7 @@ public final class SQLTool implements Configurable {
 		store(ARTICLE_RELATIONS, prefs);
 		store(ARTICLE_RELATIONS_WITHIN_PERIOD, prefs);
 		store(ARTICLES_ON_INDEX_RELATIONS, prefs);
+		store(UNSIGNED_CONTRACT_RELATIONS, prefs);
 		store(NEWS_RELATIONS, prefs);
 		store(NEWS_RELATIONS_WITHIN_PERIOD, prefs);
 		store(NEWS_RELATIONS_BY_USER, prefs);

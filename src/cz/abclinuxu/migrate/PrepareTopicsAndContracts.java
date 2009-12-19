@@ -13,7 +13,6 @@ import org.dom4j.io.XMLWriter;
 
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.view.Contract;
 import cz.abclinuxu.data.view.Topic;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -28,7 +27,7 @@ import cz.abclinuxu.servlets.Constants;
  * @{code system.prefs.file} is not set otherwise
  * 
  * @see Topic
- * @see Contract
+ * @see cz.abclinuxu.data.view.ContractTemplate
  * @author kapy
  * 
  */

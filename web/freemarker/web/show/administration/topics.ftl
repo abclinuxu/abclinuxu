@@ -84,8 +84,9 @@ Téma je přijato, pokud je přiřazeno k článku, které editor přidal a ten 
               	</td>
                 <td style="text-align: left">${(topic.title)!?html}</td>
                 <td>${(topic.isPublic())!?string("ano","ne")}</td>
-                <td><#if (topic.author)?? >
-                   	<a href="${URL.make("/redakce/autori/show/?aId=${(topic.author.id)!}&amp;action=show")}">${(topic.author.title)!?html}</a>
+                <td>
+                    <#if (topic.author)?? >
+                   	    <@lib.showAuthor topic.author />
                   	</#if>
                 </td>
                 <td><#if (topic.deadline)??>

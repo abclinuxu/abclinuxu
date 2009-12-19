@@ -35,6 +35,7 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
+import cz.abclinuxu.utils.XmlUtils;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.parser.clean.HtmlChecker;
 import cz.abclinuxu.utils.parser.clean.Rules;
@@ -589,7 +590,7 @@ public class EditBlog implements AbcAction, Configurable {
         TagTool.assignDetectedTags(story, user);
 
         Relation dizRelation = EditDiscussion.createEmptyDiscussion(relation, user, persistence);
-        if ("yes".equals(Misc.getNodeValue(story.getData().getRootElement(), "/data/watchDiscussion")))
+        if ("yes".equals(XmlUtils.getNodeText(story.getData().getRootElement(), "/data/watchDiscussion")))
             MonitorTool.startMonitor((GenericDataObject) dizRelation.getChild(), user);
 
         FeedGenerator.updateBlog(blog);

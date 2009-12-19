@@ -2,6 +2,7 @@ package cz.abclinuxu.data.view;
 
 import cz.abclinuxu.data.AccessControllable;
 import cz.abclinuxu.data.ImageAssignable;
+import cz.abclinuxu.utils.freemarker.Tools;
 
 import java.util.Date;
 
@@ -10,23 +11,24 @@ import java.util.Date;
  * 
  * @author kapy
  */
-public class Author implements ImageAssignable<Author.AuthorImage>, AccessControllable {
-
-	/**
-	 * All available images for author
-	 * 
-	 * @author kapy
-	 * 
-	 */
+public class Author implements Cloneable, ImageAssignable<Author.AuthorImage>, AccessControllable {
 	public enum AuthorImage implements ImageAssignable.AssignedImage {
 		PHOTO
-	};
+	}
+
+    public enum ContractStatus {
+        UNSIGNED, CURRENT, OBSOLETE
+    }
 
 	private int id;
 
 	private Integer uid;
+    // identification of relation to this author
+    private int relationId;
+    private Integer contractId;
+    private ContractStatus contractStatus;
 
-	private boolean active;
+    private boolean active;
 
 	private String name, surname, login, nickname;
 
@@ -89,7 +91,40 @@ public class Author implements ImageAssignable<Author.AuthorImage>, AccessContro
 		this.uid = uid;
 	}
 
-	/**
+    /**
+     * @return id of relation to this author
+     */
+    public int getRelationId() {
+        return relationId;
+    }
+
+    public void setRelationId(int relationId) {
+        this.relationId = relationId;
+    }
+
+    /**
+     * @return id of item containing last contract template signed by this author
+     */
+    public Integer getContractId() {
+        return contractId;
+    }
+
+    public void setContractId(Integer contractId) {
+        this.contractId = contractId;
+    }
+
+    /**
+     * @return status of signed contract
+     */
+    public ContractStatus getContractStatus() {
+        return contractStatus;
+    }
+
+    public void setContractStatus(ContractStatus contractStatus) {
+        this.contractStatus = contractStatus;
+    }
+
+    /**
 	 * @return the active
 	 */
 	public boolean isActive() {
@@ -291,13 +326,7 @@ public class Author implements ImageAssignable<Author.AuthorImage>, AccessContro
 	 * @return Full name representation of author
 	 */
 	public String getTitle() {
-		StringBuilder sb = new StringBuilder();
-		if (name != null)
-		    sb.append(name).append(" ");
-		if (surname != null)
-		    sb.append(surname);
-
-		return sb.toString();
+		return Tools.getPersonName(this);
 	}
 
 	@Override
@@ -360,7 +389,15 @@ public class Author implements ImageAssignable<Author.AuthorImage>, AccessContro
 		return this.owner == owner || this.uid == owner;
 	}
 
-	/**
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
 	 * Returns a brief description of author, in general his id in system, name
 	 * and surname
 	 */

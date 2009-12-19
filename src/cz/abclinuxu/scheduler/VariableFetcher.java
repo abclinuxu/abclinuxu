@@ -37,6 +37,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.TagTool;
+import cz.abclinuxu.utils.XmlUtils;
 import cz.abclinuxu.utils.TagTool.ListOrder;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -247,7 +248,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         if (user != null && (user instanceof User)) {
             User someUser = (User) user;
             blockedUsers = Tools.getBlacklist(someUser, true);
-            filterBanned = ! Misc.getNodeSetting(someUser.getData(), "/data/settings/hp_all_stories", false);
+            filterBanned = ! XmlUtils.getNodeSetting(someUser.getData(), "/data/settings/hp_all_stories", false);
         }
 
         int i = 0;

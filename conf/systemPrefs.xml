@@ -431,7 +431,9 @@
 								value="select distinct R.cislo from verze V, relace R, spolecne S where kdo=? and R.potomek=V.cislo and R.typ_potomka=V.typ and S.cislo=R.potomek and S.typ=R.typ_potomka" />
 							<entry key="relations.with.tag"
 								value="select R.cislo from relace R, stitkovani T, spolecne S, polozka P where R.typ_potomka=T.typ and R.potomek=T.cislo and  R.typ_potomka=S.typ and R.potomek=S.cislo and P.cislo = S.cislo and T.stitek=? and R.predchozi&lt;&gt;8082" />
-							<entry key="count.relations.wiki.by.user"
+							<entry key="relations.unsigned.contract"
+                                   value="select R.cislo from polozka P join relace R on P.cislo=R.potomek and typ_potomka='P' where P.typ=30 and boolean1='0' and boolean2='0' and not exists (select C.cislo from polozka C join spolecne S on S.typ='P' and S.cislo=C.cislo where P.cislo=C.numeric1 and S.pridal=?)" />
+                            <entry key="count.relations.wiki.by.user"
 								value="select count(distinct R.cislo) from verze V, relace R where kdo=? and R.potomek=V.cislo and R.typ_potomka=V.typ" />
 							<entry key="count.relations.comment.by.user"
 								value="select count(distinct R.predchozi) from relace R, komentar K where R.typ_predka='P' and R.typ_potomka='Z' and R.potomek=K.zaznam and K.autor=?" />
@@ -577,9 +579,9 @@
 							<entry key="find.users.monitors"
 								value="SELECT R.cislo FROM monitor M,relace R, spolecne S WHERE R.typ_potomka=M.typ AND R.potomek=M.cislo AND M.uzivatel=? and R.typ_potomka=S.typ and R.potomek=S.cislo" />
 							<entry key="get.authors.with.articles.count"
-								value="select P.cislo, P.numeric1, P.numeric2, P.string1, P.string2, P.data, coalesce(counter,0) as counter, kdy, S.pridal, S.skupina, S.prava from spolecne S, polozka P left join (select R1.potomek as autor, count(P1.cislo) as counter, max(S1.vytvoreno) as kdy from polozka P1, relace R1, vlastnost V1, spolecne S1 where P1.typ=2 and P1.cislo=V1.predek and V1.typ_predka='P' and V1.typ='author' and R1.typ_potomka='P' and V1.hodnota=R1.cislo and S1.typ='P' and P1.cislo=S1.cislo and S1.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19 and S.typ='P' and S.cislo=P.cislo" />
+								value="select P.cislo, P.numeric1, P.boolean1, P.string1, P.string2, P.data, coalesce(counter,0) as counter, kdy, S.pridal, S.skupina, S.prava, R.cislo, CT.boolean2 from relace R join spolecne S on R.typ_potomka=S.typ and R.potomek=S.cislo join polozka P on S.typ='P' and S.cislo=P.cislo left join polozka CT ON CT.cislo=P.numeric2 left join (select R1.potomek as autor, count(P1.cislo) as counter, max(S1.vytvoreno) as kdy from polozka P1, relace R1, vlastnost V1, spolecne S1 where P1.typ=2 and P1.cislo=V1.predek and V1.typ_predka='P' and V1.typ='author' and R1.typ_potomka='P' and V1.hodnota=R1.cislo and S1.typ='P' and P1.cislo=S1.cislo and S1.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19" />
 							<entry key="count.authors.with.articles.count"
-								value="select count(*) from polozka P left join (select R1.potomek as autor, count(P1.cislo) as counter, max(S1.vytvoreno) as kdy from polozka P1, relace R1, vlastnost V1, spolecne S1 where P1.typ=2 and P1.cislo=V1.predek and V1.typ_predka='P' and V1.typ='author' and R1.typ_potomka='P' and V1.hodnota=R1.cislo and S1.typ='P' and P1.cislo=S1.cislo and S1.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19" />
+								value="select count(*) from polozka P left join polozka CT ON CT.cislo=P.numeric2 left join (select R1.potomek as autor, count(P1.cislo) as counter, max(S1.vytvoreno) as kdy from polozka P1, relace R1, vlastnost V1, spolecne S1 where P1.typ=2 and P1.cislo=V1.predek and V1.typ_predka='P' and V1.typ='author' and R1.typ_potomka='P' and V1.hodnota=R1.cislo and S1.typ='P' and P1.cislo=S1.cislo and S1.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19" />
 							<entry key="get.topics"
 								value="select *, date1 IS NULL as isnull from polozka where typ=31 and (numeric1 &lt;&gt; 1 or numeric1 is null)" />
 							<entry key="count.topics"

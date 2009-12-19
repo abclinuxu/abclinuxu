@@ -83,12 +83,14 @@ public class Item extends GenericDataObject {
     public static final int VIDEO = 28;
     /** advertisement (banner) object */
     public static final int ADVERTISEMENT = 29;
-    /** contract with author, respectively its template */
-    public static final int CONTRACT = 30;    
+    /** contract  template */
+    public static final int CONTRACT_TEMPLATE = 30;
+    /** contract with concrete author */
+    public static final int SIGNED_CONTRACT = 31;
     /** topic for author's work */
-    public static final int TOPIC = 31;
-    
-    
+    public static final int TOPIC = 32;
+
+
     public Item() {
         super();
     }
@@ -132,7 +134,8 @@ public class Item extends GenericDataObject {
             case UNPUBLISHED_EVENT:
             case EVENT: sb.append("Event"); break;
             case VIDEO: sb.append("Video"); break;
-            case CONTRACT: sb.append("Contract"); break;
+            case CONTRACT_TEMPLATE: sb.append("Contract template"); break;
+            case SIGNED_CONTRACT: sb.append("Signed contract"); break;
             case TOPIC: sb.append("Topic"); break;
             
             default: sb.append("Unknown Item");
@@ -166,7 +169,7 @@ public class Item extends GenericDataObject {
             case DESKTOP: return Constants.TYPE_SCREENSHOT;
             case EVENT: return Constants.TYPE_EVENT;
             case VIDEO: return Constants.TYPE_VIDEO;
-            case CONTRACT: return Constants.TYPE_CONTRACT;
+            case CONTRACT_TEMPLATE: return Constants.TYPE_CONTRACT;
             case TOPIC: return Constants.TYPE_TOPIC;
             default: return Constants.TYPE_OTHER;
         }

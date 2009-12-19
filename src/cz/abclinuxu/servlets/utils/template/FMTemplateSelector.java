@@ -20,6 +20,7 @@ package cz.abclinuxu.servlets.utils.template;
 
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.servlets.Constants;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -59,12 +60,13 @@ public class FMTemplateSelector extends TemplateSelector {
         String layout = selectTemplate(servletAction,browser,request);
         if (!layoutExists(layout))
             layout = LAYOUT_DEFAULT;
+
         String page = servletAction.getContent();
         storeVariables(data,servletAction.getVariables());
+        data.put(Constants.VAR_LAYOUT, layout);
 
         StringBuffer sb = new StringBuffer("/");
-        sb.append(layout);
-        sb.append(page);
+        sb.append(layout).append(page);
         return sb.toString();
     }
 
@@ -87,10 +89,10 @@ public class FMTemplateSelector extends TemplateSelector {
 
         String page = servletAction.getContent();
         storeVariables(data,servletAction.getVariables());
+        data.put(Constants.VAR_LAYOUT, layout);
 
         StringBuffer sb = new StringBuffer("/");
-        sb.append(layout);
-        sb.append(page);
+        sb.append(layout).append(page);
         return sb.toString();
     }
 
@@ -108,8 +110,7 @@ public class FMTemplateSelector extends TemplateSelector {
             layout = LAYOUT_DEFAULT;
 
         StringBuffer sb = new StringBuffer("/");
-        sb.append(layout);
-        sb.append(page);
+        sb.append(layout).append(page);
         return sb.toString();
     }
 
@@ -148,8 +149,6 @@ public class FMTemplateSelector extends TemplateSelector {
             return true;
         if (LAYOUT_WAP.equalsIgnoreCase(layout))
             return true;
-        if (LAYOUT_DEFAULT.equalsIgnoreCase(layout))
-            return true;
-        return false;
+        return LAYOUT_DEFAULT.equalsIgnoreCase(layout);
     }
 }

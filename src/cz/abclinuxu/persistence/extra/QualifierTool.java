@@ -89,12 +89,14 @@ public class QualifierTool {
                 int where = sb.indexOf("where ");
                 if (where == -1)
                     where = sb.indexOf("WHERE ");
+
                 if (where == -1)
                     sb.append(" WHERE ");
                 else {
                     if (where + 6 < sb.length())
                         sb.append(" AND ");
                 }
+
                 if (qualifier instanceof CompareCondition) {
                     appendCompareCondition(sb, (CompareCondition) qualifier, params, defaultTableNick, fieldMapping);
                 } else if (qualifier instanceof NestedCondition) {
@@ -240,6 +242,15 @@ public class QualifierTool {
         addTableNick(field, fieldMapping, defaultTableNick, sb);
 
         switch (field.getId()) {
+            case BOOLEAN1:
+                sb.append("boolean1");
+                break;
+            case BOOLEAN2:
+                sb.append("boolean2");
+                break;
+            case BOOLEAN3:
+                sb.append("boolean3");
+                break;
             case CHILD:
                 sb.append("potomek");
                 break;
@@ -261,6 +272,9 @@ public class QualifierTool {
             case DATE2:
                 sb.append("date2");
                 break;
+            case DATE3:
+                sb.append("date3");
+                break;
             case DAY:
                 sb.append("den");
                 break;
@@ -273,14 +287,17 @@ public class QualifierTool {
             case LOGIN:
                 sb.append("login");
                 break;
-            case OWNER:
-                sb.append("pridal");
-                break;
             case NUMERIC1:
                 sb.append("numeric1");
                 break;
             case NUMERIC2:
                 sb.append("numeric2");
+                break;
+            case NUMERIC3:
+                sb.append("numeric3");
+                break;
+            case OWNER:
+                sb.append("pridal");
                 break;
             case PARENT:
                 sb.append("predek");
@@ -293,6 +310,9 @@ public class QualifierTool {
                 break;
             case STRING2:
                 sb.append("string2");
+                break;
+            case STRING3:
+                sb.append("string3");
                 break;
             case SUBTYPE:
                 sb.append("podtyp");
@@ -308,9 +328,9 @@ public class QualifierTool {
                 break;
             case UPPER:
                 sb.append("predchozi");
-			break;
-		case WHEN:
-			sb.append("kdy");
+			    break;
+            case WHEN:
+                sb.append("kdy");
 		}
 	}
 }

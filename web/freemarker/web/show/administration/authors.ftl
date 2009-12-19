@@ -8,42 +8,40 @@
 
 <@lib.showMessages/>
 
-<h3>Správa autorů</h3>
+<h1>Správa autorů</h1>
 
-<p>Na této stránce můžete prohlížet a spravovat autory. Autory lze filtrovat podle následujících kritérií:</p>
-
-<ul style="list-style: none">
-	<li>Jméno a příjmení - stačí zadat začátek jména nebo příjmení</li>
-	<li>Smlouva - souhlas autora s autorskou smlouvou a její aktuálnost</li>
-	<li>Aktivní - indikace, zda autor stále tvoří obsah abclinuxu.cz</li>
-	<li>Článků - počet článku napsaný autorem, inkluzivní interval</li>
-	<li>Poslední - stáří posledního článku<li>
-</ul>
+<p>
+    Na této stránce můžete prohlížet a spravovat autory. Sloupeček Smlouva ukazuje, zda uživatel souhlasil
+    s autorskou smlouvou a zda není stará.    
+</p>
 
 <form action="${URL.noPrefix("/sprava/redakce/autori")}" method="POST">
     <table class="siroka list">
 	    <thead>
             <tr>
-                <th>Jméno a Příjmení</th>
+                <th style="text-align: right">Jméno</th>
+                <th style="text-align: left">Příjmení</th>
                 <th>Smlouva</th>
                 <th>Aktivní</th>
                 <th>Článků</th>
-                <th>Poslední</th>
+                <th>Poslední článek</th>
                 <th>&nbsp;</th>
             </tr>
         </thead>
 	    <tbody>
             <tr>
-                <td>
+                <td style="text-align: right">
                     <@lib.filterInput filter=FILTER name="filterAuthorsByName" size="8" />
+                </td>
+                <td style="text-align: left">
                     <@lib.filterInput filter=FILTER name="filterAuthorsBySurname" size="8" />
                 </td>
                 <td>
                     <select name="filterAuthorsByContract">
                         <@lib.filterOption filter=FILTER name="filterAuthorsByContract" value=""></@lib.filterOption>
-                        <@lib.filterOption filter=FILTER name="filterAuthorsByContract" value="old">stará</@lib.filterOption>
-                        <@lib.filterOption filter=FILTER name="filterAuthorsByContract" value="current">aktuální</@lib.filterOption>
-                        <@lib.filterOption filter=FILTER name="filterAuthorsByContract" value="none">žádná</@lib.filterOption>
+                        <@lib.filterOption filter=FILTER name="filterAuthorsByContract" value="1">stará</@lib.filterOption>
+                        <@lib.filterOption filter=FILTER name="filterAuthorsByContract" value="0">aktuální</@lib.filterOption>
+                        <@lib.filterOption filter=FILTER name="filterAuthorsByContract" value="-1">žádná</@lib.filterOption>
                     </select>
                 </td>
                 <td>
@@ -75,14 +73,23 @@
                     	<@lib.filterOption filter=FILTER name="filterAuthorsByRecent" value="1">poslední měsíc</@lib.filterOption>
                     </select>
                 </td>
-                <td><input type="submit" value="Filtruj" /></td>
+                <td style="text-align: left">
+                    <input type="submit" value="Filtruj" />
+                </td>
             </tr>
             <#list FOUND.data as author>
                 <tr>
-                    <td style="text-align: left">
-                        <a href="${URL.make("/redakce/autori/show/?aId=${author.id}&amp;action=show")}">${(author.title)!?html}</a>
+                    <td style="text-align: right">
+                        <#if author.name??>
+                            <a href="${URL.make("/redakce/autori/show/" + author.relationId)}">${(author.name)!?html}</a>
+                        </#if>
                     </td>
-                    <td>&nbsp;</td>
+                    <td style="text-align: left">
+                        <a href="${URL.make("/redakce/autori/show/" + author.relationId)}">${(author.surname)!?html}</a>
+                    </td>
+                    <td>
+                        <#if author.contractStatus = "UNSIGNED">žádná<#elseif author.contractStatus = "OBSOLETE">stará<#else>aktuální</#if>
+                    </td>
                     <td>${(author.active)!?string("ano","ne")}</td>
                     <td>${(author.articleCount)!}</td>
                     <td>
@@ -90,7 +97,7 @@
                             ${DATE.show(author.lastArticleDate, "CZ_DMY")}
                         </#if>
                     </td>
-                    <td style="white-space: nowrap">
+                    <td style="white-space: nowrap; text-align: left">
                         <#if author.email??><a href="mailto:${(author.email)!?html}" title="Poslat email">@</a>&nbsp;</#if>
                         <a href="${URL.make("/redakce/autori/edit/${author.id}?action=edit")}" title="Upravit autora">U</a>&nbsp;
                         <a href="${URL.make("/autori/namety")}" title="Náměty">N</a>&nbsp;

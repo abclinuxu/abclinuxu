@@ -59,7 +59,7 @@ public class PwdNavigator {
 	 * @param env Context environment
 	 * @param pn Page to be navigated
 	 */
-	public PwdNavigator(Map<?, ?> env, PageNavigation pn) {
+	public PwdNavigator(Map env, PageNavigation pn) {
 		this.pn = pn;
 		this.user = (User) env.get(Constants.VAR_USER);
 		this.urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -145,7 +145,7 @@ public class PwdNavigator {
 	 * @return Type of user
 	 */
 	public Discriminator determine() {
-		if (user.isMemberOf(Constants.GROUP_ADMINI) || Tools.permissionsFor(user, Constants.REL_AUTHORS).canModify())
+		if (Tools.permissionsFor(user, Constants.REL_AUTHORS).canModify())
 		    return Discriminator.EDITOR;
 		return Discriminator.AUTHOR;
 	}

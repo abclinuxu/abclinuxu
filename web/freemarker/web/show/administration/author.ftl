@@ -29,12 +29,13 @@
         <td>Přezdívka:</td>
         <td>${AUTHOR.nickname!}</td>
     </tr>
-    <#if AUTHOR.uid?? >
-    <tr>
-        <td>Profil:</td>
-        <td><a href="${URL.noPrefix("/Profile/${AUTHOR.uid}")}">
-            ${AUTHOR.title!?html}</a></td>
-    </tr>
+    <#if AUTHOR.login?? >
+        <tr>
+            <td>Profil:</td>
+            <td>
+                <a href="${URL.noPrefix("/lide/${AUTHOR.login}")}">${AUTHOR.title!?html}</a>
+            </td>
+        </tr>
     </#if>
     <tr>
         <td>Aktivní:</td>

@@ -1,24 +1,17 @@
 package cz.abclinuxu.utils;
 
-//import java.sql.Date;
-
-import java.util.Date;
-
 import org.apache.log4j.Logger;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Node;
 
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.view.Author;
-import cz.abclinuxu.data.view.Contract;
+import cz.abclinuxu.data.view.ContractTemplate;
 import cz.abclinuxu.data.view.Topic;
+import cz.abclinuxu.data.view.SignedContract;
 
 /**
  * Transforms JavaBeans into persistence layer objects
  * 
- * @author kapy
+ * @author kapy Leos
  */
 public class BeanFlusher {
 	private static final Logger log = Logger.getLogger(BeanFlusher.class);
@@ -28,63 +21,55 @@ public class BeanFlusher {
 		throw new AssertionError();
 	}
 
-	public static Item flushContractToItem(Item item, Contract contract) {
-
-		// do not set employee for templates
-		if (contract.getEmployee() != null)
-		    item.setNumeric1(contract.getEmployee().getId());
-
-		item.setDate1(contract.getProposedDate());
-
-		// get/create XML document
+    /**
+     * Converts bean to its representation in persistence. No changes to persistence are made, it is caller's responsability.
+     * @param item item to be serialized to the persistence
+     * @param template bean to be converted
+     * @return modified item
+     */
+	public static Item flushContractTemplate(Item item, ContractTemplate template) {
 		DocumentBuilder db = new DocumentBuilder(item.getData(), "data");
-
-		db.store("/data/employer/name", contract.getEmployerName())
-		        .store("/data/employer/position", contract.getEmployerPosition())
-		        .store("/data/employer/signature", contract.getEmployerSignature())
-		        .store("/data/title", contract.getTitle())
-		        .store("/data/description", contract.getDescription())
-		        .store("/data/template-id", contract.getTemplateId())
-		        .store("/data/content", contract.getContent())
-		        .store("/data/obsolete", contract.isObsolete())
-		        .store("/data/signed-date", (Date) contract.getSignedDate())
-		        .store("/data/version", contract.getVersion());
-
+		db.store("/data/description", template.getDescription())
+          .store("/data/content", template.getContent());
 		item.setData(db.getDocument());
-		debug("Flushed %s, value: %s %s", item, contract, db);
-		return item;
+
+        item.setId(template.getId());
+        item.setDate1(template.getPublished());
+        item.setTitle(template.getTitle());
+        item.setBoolean1(template.isDraft());
+        item.setBoolean2(template.isObsolete());
+
+        debug("Flushed %s, value: %s %s", item, template, db);
+        return item;
 	}
 
-	public static Relation flushContractToRelation(Relation relation, Contract contract) {
+    /**
+     * Converts bean to its representation in persistence. No changes to persistence are made, it is caller's responsability.
+     * Properties dynamically loaded from contract template are ignored.
+     * @param item item to be serialized to the persistence
+     * @param contract bean to be converted
+     * @return modified item
+     */
+	public static Item flushSignedContract(Item item, SignedContract contract) {
+		DocumentBuilder db = new DocumentBuilder(item.getData(), "data");
+		db.store("/data/content", contract.getContent());
+		item.setData(db.getDocument());
 
-		// do not set employee for templates
-		if (contract.getEmployee() != null)
-		    relation.setChild(new Item(contract.getEmployee().getId(), Item.CONTRACT));
+        item.setId(contract.getId());
+        item.setOwner(contract.getUid());
+        item.setCreated(contract.getSigned());
+        item.setNumeric1(contract.getTemplate());
+        item.setNumeric2(contract.getAuthor().getRelationId());
+        item.setString1(contract.getIpAddress());
 
-		// get/create XML document
-		DocumentBuilder db = new DocumentBuilder(relation.getData(), "data");
-
-		db.store("/data/employer/name", contract.getEmployerName())
-		        .store("/data/employer/position", contract.getEmployerPosition())
-		        .store("/data/employer/signature", contract.getEmployerSignature())
-		        .store("/data/title", contract.getTitle())
-		        .store("/data/description", contract.getDescription())
-		        .store("/data/template-id", contract.getTemplateId())
-		        .store("/data/content", contract.getContent())
-		        .store("/data/obsolete", contract.isObsolete())
-		        .store("/data/signed-date", contract.getSignedDate())
-		        .store("/data/proposed-date", contract.getProposedDate())
-		        .store("/data/version", contract.getVersion());
-
-		relation.setData(db.getDocument());
-		debug("Flushed %s, value: %s %s", relation, contract, db);
-		return relation;
+        debug("Flushed %s, value: %s %s", item, contract, db);
+        return item;
 	}
 
-	public static Item flushAuthorToItem(Item item, Author author) {
-
+	public static Item flushAuthor(Item item, Author author) {
 		item.setNumeric1(author.getUid());
-		item.setNumeric2(author.isActive() ? 1 : 0);
+		item.setNumeric2(author.getContractId());
+		item.setBoolean1(author.isActive());
 		item.setString1(Misc.filterDangerousCharacters(author.getName()));
 		item.setString2(Misc.filterDangerousCharacters(author.getSurname()));
 		item.setTitle(author.getTitle());
@@ -109,11 +94,9 @@ public class BeanFlusher {
 		item.setData(db.getDocument());
 		debug("Flushed %s, value: %s %s", item, author, db);
 		return item;
-
 	}
 
-	public static Item flushTopicToItem(Item item, Topic topic) {
-
+	public static Item flushTopic(Item item, Topic topic) {
 		item.setNumeric1(topic.isPublished() ? 1 : 0);
 		item.setNumeric2(topic.isAccepted() ? 1 : 0);
 		item.setDate1(topic.getDeadline());
@@ -140,111 +123,11 @@ public class BeanFlusher {
 
 	/**
 	 * Debug all passed objects
-	 * 
 	 * @param objects
 	 */
-	private static final void debug(String format, Object... args) {
+	private static void debug(String format, Object... args) {
 		if (log.isDebugEnabled()) {
 			log.debug(String.format(format, args));
 		}
-	}
-
-	/**
-	 * Helper for construction of DOM tree
-	 * 
-	 * @author kapy
-	 * 
-	 */
-	public static class DocumentBuilder {
-
-		private Document doc;
-
-		/**
-		 * Constructs new DocumentBuilder using either document root or creating
-		 * its own with provided qname
-		 * 
-		 * @param doc Document element
-		 * @param rootQName Root element qualified name
-		 */
-		public DocumentBuilder(Document doc, String rootQName) {
-			if (doc == null) doc = DocumentHelper.createDocument(DocumentHelper.createElement(rootQName));
-			this.doc = doc;
-		}
-
-		/**
-		 * Appends/updates/detaches element at given path depending on value
-		 * passed
-		 * 
-		 * @param xpath XPath locator in document
-		 * @param value Value passed for DOM modification
-		 * @return Modified instance
-		 */
-		public DocumentBuilder store(String xpath, Object value) {
-			Node node = doc.selectSingleNode(xpath);
-			// node will be detached, no value provided
-			if (node != null && (value == null || Misc.empty(value.toString())))
-				node.detach();
-			// omit empty value
-			else if (value == null || Misc.empty(value.toString()))
-				return this;
-			// change text value
-			else {
-				if (node == null) node = DocumentHelper.makeElement(doc, xpath);
-				node.setText(Misc.filterDangerousCharacters(value.toString()));
-			}
-			return this;
-		}
-
-		/**
-		 * Appends/updates/detaches element at given path depending on value
-		 * passed
-		 * 
-		 * @param xpath XPath locator in document
-		 * @param value Value passed for DOM modification
-		 * @return Modified instance
-		 */
-		public DocumentBuilder store(String xpath, boolean value) {
-			if (value)
-				store(xpath, "true");
-			else
-				store(xpath, "false");
-			return this;
-		}
-
-		/**
-		 * Appends/updates/detaches element at given path depending on value
-		 * passed
-		 * 
-		 * @param xpath XPath locator in document
-		 * @param value Value passed for DOM modification
-		 * @return Modified instance
-		 */
-		public DocumentBuilder store(String xpath, Date value) {
-			if (value != null)
-				store(xpath, Long.toString(value.getTime()));
-			else
-				store(xpath, (Object) null);
-			return this;
-		}
-
-		/**
-		 * Returns document
-		 * 
-		 * @return the document
-		 */
-		public Document getDocument() {
-			return doc;
-		}
-
-		/**
-		 * Returns document flattered to text
-		 * 
-		 * @return XML representation of content
-		 */
-		@Override
-		public String toString() {
-			return doc.toString();
-		}
-
 	}
 }

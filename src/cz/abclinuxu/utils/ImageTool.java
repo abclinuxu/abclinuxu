@@ -44,10 +44,72 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 /**
  * Tools for manipulating images
  */
-public class ImageTool {
+public class ImageTool<T extends Enum<T> & AssignedImage> {
 	private static final Logger log = Logger.getLogger(ImageTool.class);
 
-	/**
+    ImageAssignable<T> object;
+    ImageRestriction restrictions;
+    FileItem imageParam;
+    ImageReader reader;
+    BufferedImage image = null;
+    String fileName, suffix;
+
+    /**
+     * Creates new instance. Used when two-phase check/save operations are needed.
+     * @param imageParam Image to to stored
+     * @param object object which will store the image
+     * @param restrictions image restrictions
+     */
+    public ImageTool (FileItem imageParam, ImageAssignable<T> object, ImageRestriction restrictions) {
+        this.object = object;
+        this.imageParam = imageParam;
+        this.restrictions = restrictions;
+    }
+    
+    public boolean checkImage(Map env, String errorKey) {
+        if (imageParam == null) {
+            ServletUtils.addError(errorKey, restrictions.getErrorMessage(ImageRestriction.EMPTY), env, null);
+            return false;
+        }
+
+        suffix = restrictions.validateExtension(imageParam.getName().toLowerCase());
+        if (suffix == null) {
+            ServletUtils.addError(errorKey, restrictions.getErrorMessage(ImageRestriction.FILETYPE), env, null);
+            return false;
+        }
+
+        try {
+            Iterator<ImageReader> readers = ImageIO.getImageReadersBySuffix(suffix);
+            ImageReader reader = readers.next();
+            ImageInputStream iis = ImageIO.createImageInputStream(imageParam.getInputStream());
+            reader.setInput(iis, false);
+            if (!restrictions.permitAnimation && reader.getNumImages(true) > 1) {
+                ServletUtils.addError(errorKey, restrictions.getErrorMessage(ImageRestriction.ANIMATED), env, null);
+                return false;
+            }
+            image = reader.read(0);
+
+            // check dimensions
+            if (reader.getHeight(0) > restrictions.height || reader.getWidth(0) > restrictions.width) {
+                // resize if permitted, it is able to resize only static images
+                if (restrictions.permitResize && reader.getNumImages(true) == 1) {
+                    image = scaleIfNeeded(image, restrictions.width, restrictions.height);
+                    // create error
+                } else {
+                    ServletUtils.addError(errorKey, restrictions.getErrorMessage(ImageRestriction.MAX_DIM), env, null);
+                    return false;
+                }
+            }
+            
+            return true;
+        } catch (Exception e) {
+            ServletUtils.addError(errorKey, restrictions.getErrorMessage(ImageRestriction.IO_FAILED), env, null);
+            log.warn("Exception during image parsing", e);
+            return false;
+        }
+    }
+    
+    /**
 	 * Stores image in file system and informs object that it has image assigned
 	 * 
 	 * @param image Image to to stored
@@ -59,60 +121,13 @@ public class ImageTool {
 	 * @param <T> Enumeration representing image identification in object
 	 * @return {@code true} if stored successfully, {@code false} otherwise
 	 */
-	public static <T extends Enum<T> & AssignedImage> boolean storeImage(T imageId, FileItem image, ImageAssignable<T> object, ImageRestriction res, Map<?,?> env, String errorKey) {
-		if (image == null) {
-			ServletUtils.addError(errorKey, res.getEMsg(ImageRestriction.EMPTY), env, null);
-			return false;
-		}
-
-		String suffix = res.validateExtension(image.getName().toLowerCase());
-		if (suffix == null) {
-			ServletUtils.addError(errorKey, res.getEMsg(ImageRestriction.FILETYPE), env, null);
-			return false;
-		}
-
-		BufferedImage resized = null;
-		try {
-			Iterator<ImageReader> readers = ImageIO.getImageReadersBySuffix(suffix);
-			ImageReader reader = readers.next();
-			ImageInputStream iis = ImageIO.createImageInputStream(image.getInputStream());
-			reader.setInput(iis, false);
-			if (!res.permitAnimation && reader.getNumImages(true) > 1) {
-				ServletUtils.addError(errorKey, res.getEMsg(ImageRestriction.ANIMATED), env, null);
-				return false;
-			}
-			// check dimensions
-			if (reader.getHeight(0) > res.height || reader.getWidth(0) > res.width) {
-				// resize if permitted, it is able to resize only static images
-				if (res.permitResize && reader.getNumImages(true) == 1) {
-					resized = reader.read(0);
-					resized = scaleIfNeeded(resized, res.width, res.height);
-					// create error
-				}
-				else {
-					ServletUtils.addError(errorKey, res.getEMsg(ImageRestriction.MAX_DIM), env, null);
-					return false;
-				}
-			}
-		}
-		catch (Exception e) {
-			ServletUtils.addError(errorKey, res.getEMsg(ImageRestriction.IO_FAILED), env, null);
-			log.warn("Exception during image parsing", e);
-			return false;
-		}
-
+	public boolean storeImage(T imageId, Map env, String errorKey) {
 		String fileName = object.proposeImageUrl(imageId, suffix);
 		File file = new File(AbcConfig.calculateDeployedPath(fileName));
 		try {
-			// image was not resized
-			if (resized == null)
-				image.write(file);
-			// image was resized, store resized variant
-			else
-				ImageIO.write(resized, suffix, file);
-		}
-		catch (Exception e) {
-			ServletUtils.addError(errorKey, res.getEMsg(ImageRestriction.STORAGE_FAILED), env, null);
+            ImageIO.write(image, suffix, file);
+        } catch (Exception e) {
+			ServletUtils.addError(errorKey, restrictions.getErrorMessage(ImageRestriction.STORAGE_FAILED), env, null);
 			log.error("Není možné uložit obrázek " + file.getAbsolutePath() + " na disk!", e);
 			return false;
 		}
@@ -274,46 +289,58 @@ public class ImageTool {
 
 	// Image restrictions
 
-	public static final ImageRestriction USER_PHOTO_RES = new ImageRestriction() {
+    public static final ImageRestriction USER_PHOTO_RESTRICTIONS = new ImageRestriction() {
 		{
 			this.width = 500;
 			this.height = 500;
-			this.suffixes = Arrays.asList("jpg", "jpeg", "png", "gif");
 			this.permitAnimation = false;
 			this.permitResize = false;
-
-			this.errorMsgs = Arrays.asList("Vyberte soubor s Vaší fotografií!", "Soubor musí být typu JPG, PNG, GIF nebo JPEG!", "Fotografie přesahuje povolené maximální rozměry!", "Nelze načíst obrázek!", "Chyba při zápisu na disk!", "Animované obrázky nejsou povoleny!");
+			this.errorMsgs = Arrays.asList("Vyberte soubor s Vaší fotografií!", ERROR_EXTENSION,
+                    "Fotografie přesahuje povolené maximální rozměry!", ERROR_CANNOT_READ, ERROR_IO, ERROR_ANIMATED_FORBIDDEN);
 
 		}
 	};
 
-	public static final ImageRestriction USER_AVATAR_RES = new ImageRestriction() {
+	public static final ImageRestriction USER_AVATAR_RESTRICTIONS = new ImageRestriction() {
 		{
 			this.width = 50;
 			this.height = 50;
-			this.suffixes = Arrays.asList("jpg", "jpeg", "png", "gif");
 			this.permitAnimation = false;
 			this.permitResize = false;
-
-			this.errorMsgs = Arrays.asList("Vyberte soubor s avatarem!", "Soubor musí být typu JPG, PNG, GIF nebo JPEG!", "Avatar přesahuje povolené maximální rozměry!", "Nelze načíst obrázek!", "Chyba při zápisu na disk!", "Animované obrázky nejsou povoleny!");
+			this.errorMsgs = Arrays.asList("Vyberte soubor s avatarem!", ERROR_EXTENSION,
+                    "Avatar přesahuje povolené maximální rozměry!", ERROR_CANNOT_READ, ERROR_IO, ERROR_ANIMATED_FORBIDDEN);
 		}
 	};
 
-	public static final ImageRestriction AUTHOR_PHOTO_RES = new ImageRestriction() {
+	public static final ImageRestriction AUTHOR_PHOTO_RESTRICTIONS = new ImageRestriction() {
 		{
 			this.width = 150;
 			this.height = 100;
-			this.suffixes = Arrays.asList("jpg", "jpeg", "png", "gif");
 			this.permitAnimation = false;
 			this.permitResize = true;
-
-			this.errorMsgs = Arrays.asList("Vyberte soubor s fotkou autora!", "Soubor musí být typu JPG, PNG, GIF nebo JPEG!", "Obrázek autora přesahuje povolené maximální rozměry!", "Nelze načíst obrázek!", "Chyba při zápisu na disk!", "Animované obrázky nejsou povoleny!");
+			this.errorMsgs = Arrays.asList("Vyberte soubor s fotkou autora!", ERROR_EXTENSION,
+                    "Obrázek autora přesahuje povolené maximální rozměry!", ERROR_CANNOT_READ, ERROR_IO, ERROR_ANIMATED_FORBIDDEN);
 		}
 	};
 
-	static abstract class ImageRestriction {
+	public static final ImageRestriction CONTRACT_IMAGE_RESTRICTIONS = new ImageRestriction() {
+		{
+			this.width = 1024;
+			this.height = 768;
+			this.permitAnimation = false;
+			this.permitResize = false;
+			this.errorMsgs = Arrays.asList("Vyberte soubor s obrázkem!", ERROR_EXTENSION,
+                    "Obrázek přesahuje povolené maximální rozměry (" + width + "x" + height + ")!", ERROR_CANNOT_READ, ERROR_IO, ERROR_ANIMATED_FORBIDDEN);
+        }
+	};
 
-		static final int EMPTY = 0;
+	static abstract class ImageRestriction {
+        static final String ERROR_ANIMATED_FORBIDDEN = "Animované obrázky nejsou povoleny!";
+        static final String ERROR_IO = "Chyba při zápisu na disk!";
+        static final String ERROR_CANNOT_READ = "Nelze načíst obrázek!";
+        static final String ERROR_EXTENSION = "Soubor musí být typu JPEG, PNG nebo GIF!";
+
+        static final int EMPTY = 0;
 		static final int FILETYPE = 1;
 		static final int MAX_DIM = 2;
 		static final int IO_FAILED = 3;
@@ -322,8 +349,8 @@ public class ImageTool {
 
 		int width;
 		int height;
-		List<String> suffixes;
-		boolean permitAnimation;
+		List<String> suffixes = Arrays.asList("jpg","jpeg","png","gif");
+        boolean permitAnimation;
 		boolean permitResize;
 		List<String> errorMsgs;
 
@@ -337,7 +364,7 @@ public class ImageTool {
 		 * @param i Index
 		 * @return Error message to be shown to user
 		 */
-		String getEMsg(int i) {
+		String getErrorMessage(int i) {
 			return errorMsgs.get(i);
 		}
 
@@ -350,10 +377,12 @@ public class ImageTool {
 		String validateExtension(String filename) {
 			int i;
 			String suffix = "";
-			if (filename != null && (i = filename.lastIndexOf('.')) != -1) suffix = filename.substring(i + 1);
+			if (filename != null && (i = filename.lastIndexOf('.')) != -1)
+                suffix = filename.substring(i + 1);
 
-			if (suffixes.contains(suffix)) return suffix;
+			if (suffixes.contains(suffix))
+                return suffix;
 			return null;
 		}
-	}
+    }
 }

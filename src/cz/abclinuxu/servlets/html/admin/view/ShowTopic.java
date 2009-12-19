@@ -150,14 +150,11 @@ public class ShowTopic implements AbcAction, Configurable {
 		if (ServletUtils.pathBeginsWith(request, "/redakce")) {
 			// TODO is there any way how to check invocation with finer granularity within current 
 			// permissions system?
-			SQLTool sqlTool = SQLTool.getInstance();
-			Item item = sqlTool.findAuthorByUserId(user.getId());
-			if (item == null)
-			    return FMTemplateSelector.select("AdministrationAEPortal", "forbidden", env, request);
-
 			// author was found, limit results to current author
-			Author author = BeanFetcher.fetchAuthorFromItem(item, FetchType.LAZY);
-			env.put(VAR_AUTHOR, author);
+			Author author = Tools.getAuthor(user.getId());
+            if (author == null)
+                return FMTemplateSelector.select("AdministrationAEPortal", "forbidden", env, request);
+            env.put(VAR_AUTHOR, author);
 
 			if (ServletUtils.determineAction(params, ACTION_ACCEPT)) {
 				return actionAccept(request, response, env);
@@ -218,7 +215,7 @@ public class ShowTopic implements AbcAction, Configurable {
 		Qualifier[] qualifiers = getQualifiers(preQualifiers, filter, from, count);
 		List<Item> items = sqlTool.getTopics(qualifiers);
 		total = sqlTool.countTopics(QualifierTool.removeOrderQualifiers(qualifiers));
-		found = new Paging(BeanFetcher.fetchTopicsFromItems(items, FetchType.EAGER), from, count, total, qualifiers);
+		found = new Paging(BeanFetcher.fetchTopics(items, FetchType.EAGER), from, count, total, qualifiers);
 
 		env.put(VAR_FILTER, filter);
 		env.put(VAR_FOUND, found);
@@ -353,11 +350,11 @@ public class ShowTopic implements AbcAction, Configurable {
 		persistence.synchronize(item);
 
 		Author author = (Author) env.get(VAR_AUTHOR);
-		Topic topic = BeanFetcher.fetchTopicFromItem(item, FetchType.EAGER);
+		Topic topic = BeanFetcher.fetchTopic(item, FetchType.EAGER);
 		topic.setAccepted(true);
 		topic.setAuthor(author);
 
-		item = BeanFlusher.flushTopicToItem(item, topic);
+		item = BeanFlusher.flushTopic(item, topic);
 		persistence.update(item);
 
 		ServletUtils.addMessage("Námět " + topic.getTitle() + " byl přijat", env, request.getSession());
@@ -431,7 +428,7 @@ public class ShowTopic implements AbcAction, Configurable {
 		        new CompareCondition(Field.ID, new OperationIn(ids.size()), ids)
 		        };
 		// we must process non-atomically for author ids are stored in XML
-		return BeanFetcher.fetchTopicsFromItems(sqlTool.getTopics(qualifiers), FetchType.PROCESS_NONATOMIC);
+		return BeanFetcher.fetchTopics(sqlTool.getTopics(qualifiers), FetchType.PROCESS_NONATOMIC);
 
 	}
 

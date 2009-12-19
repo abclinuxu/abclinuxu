@@ -240,13 +240,14 @@
 <!ELEMENT descriptionShort (#PCDATA)> <!-- short description displayed as a perex and in the list of events -->
 <!ELEMENT icon (#PCDATA)> <!-- optional event logo -->
 
-<!-- Item.CONTRACT -->
-<!ELEMENT data (signatures, content, title) >
-<!ELEMENT signatures (employee, employer) >
-<!ELEMENT title (#PCDATA) > <!-- title of contract -->
+<!-- Item.CONTRACT_TEMPLATE -->
+<!ELEMENT data (content, description) >
 <!ELEMENT content (#PCDATA) > <!-- textual content of contract -->
-<!ELEMENT employee (#PCDATA) > <!-- path to signature of employee -->
-<!ELEMENT employer (#PCDATA) > <!-- path to signature of employer -->
+<!ELEMENT description (#PCDATA)> <!-- template content containing freemarker expressions -->
+
+<!-- Item.SIGNED_CONTRACT -->
+<!ELEMENT data (content) >
+<!ELEMENT description (#PCDATA)> <!-- text of the contract -->
 
 <!-- common -->
 
