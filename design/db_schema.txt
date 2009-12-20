@@ -11,3 +11,10 @@ numeric1: id of user in table uzivatel
 purpose: defines relationship between author and user, cache for easy lookup
 
 
+ITEM.DISCUSSION
+===============
+podtyp: 'question'
+purpose: flag whether this discussion is a question
+
+numeric1: NULL for generic discussions, 0 if question has not been solved, number of solution otherwise
+purpose: to distinguish solved and unsolved questions
