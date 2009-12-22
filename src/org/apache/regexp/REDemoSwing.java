@@ -17,7 +17,6 @@
 package org.apache.regexp;
 
 import javax.swing.*;
-import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.CharArrayWriter;

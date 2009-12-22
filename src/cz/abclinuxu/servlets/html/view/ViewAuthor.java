@@ -18,6 +18,14 @@
  */
 package cz.abclinuxu.servlets.html.view;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
@@ -33,18 +41,10 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.BeanFetcher.FetchType;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Profile of the user
@@ -52,9 +52,13 @@ import java.util.Iterator;
 public class ViewAuthor implements AbcAction {
 
     public static final String PARAM_RELATION_ID = "rid";
-    /** n-th oldest object, where display from */
+    /**
+     * n-th oldest object, where display from
+     */
     public static final String PARAM_FROM = "from";
-    /** how many object to display */
+    /**
+     * how many object to display
+     */
     public static final String PARAM_COUNT = "count";
 
     public static final String VAR_RELATION = "RELATION";
@@ -86,11 +90,9 @@ public class ViewAuthor implements AbcAction {
      */
     public static String processAuthor(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        
-        Item item = (Item) relation.getChild();
-        env.put(VAR_AUTHOR, BeanFetcher.fetchAuthorFromItem(item, FetchType.EAGER));
+        env.put(VAR_AUTHOR, BeanFetcher.fetchAuthor(relation, FetchType.PROCESS_NONATOMIC));
 
-        int from = Misc.parseInt((String)params.get(PARAM_FROM), 0);
+        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int count = Misc.getPageSize(AbcConfig.getAuthorArticlesPageSize(), 50, env, null);
 
         SQLTool sqlTool = SQLTool.getInstance();
@@ -113,9 +115,9 @@ public class ViewAuthor implements AbcAction {
      */
     private String processSection(HttpServletRequest request, Map env) throws Exception {
         SQLTool sqlTool = SQLTool.getInstance();
-        
+
         // sort authors by surname
-        List<Relation> authors = sqlTool.findItemRelationsWithType(Item.AUTHOR, new Qualifier[] { Qualifier.SORT_BY_STRING2});
+        List<Relation> authors = sqlTool.findItemRelationsWithType(Item.AUTHOR, new Qualifier[]{Qualifier.SORT_BY_STRING2});
         Tools.syncList(authors);
         env.put(VAR_AUTHORS, authors);
 
@@ -123,7 +125,7 @@ public class ViewAuthor implements AbcAction {
         Map byAuthor = new HashMap(counts.size() + 1, 1.0f);
         for (Iterator iter = counts.iterator(); iter.hasNext();) {
             Object[] objects = (Object[]) iter.next();
-            byAuthor.put(Misc.parseInt((String)objects[0], -1), objects[1]);
+            byAuthor.put(Misc.parseInt((String) objects[0], -1), objects[1]);
         }
         env.put(VAR_COUNTS, byAuthor);
 

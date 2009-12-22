@@ -237,6 +237,15 @@
 <!ELEMENT descriptionShort (#PCDATA)> <!-- short description displayed as a perex and in the list of events -->
 <!ELEMENT icon (#PCDATA)> <!-- optional event logo -->
 
+<!-- Item.CONTRACT_TEMPLATE -->
+<!ELEMENT data (content, description) >
+<!ELEMENT content (#PCDATA) > <!-- textual content of contract -->
+<!ELEMENT description (#PCDATA)> <!-- template content containing freemarker expressions -->
+
+<!-- Item.SIGNED_CONTRACT -->
+<!ELEMENT data (content) >
+<!ELEMENT description (#PCDATA)> <!-- text of the contract -->
+
 <!-- common -->
 
 <!ELEMENT versioning (title?, properties*, revisions?)> <!-- mandatory element under root that contains versioning specific data -->

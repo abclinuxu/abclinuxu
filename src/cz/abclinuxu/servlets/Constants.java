@@ -75,6 +75,8 @@ public class Constants implements Configurable {
 	public static int CAT_EVENTS;
     public static int CAT_VIDEOS;
     public static int CAT_ADVERTISEMENTS;
+    public static int CAT_CONTRACTS;
+    public static int CAT_TOPICS;
 
     public static int ITEM_DIZ_TODO;
     /** item holding dynamic configuration */
@@ -124,6 +126,8 @@ public class Constants implements Configurable {
 	public static int REL_EVENTS;
     public static int REL_VIDEOS;
     public static int REL_ADVERTISEMENTS;
+    public static int REL_CONTRACTS;
+    public static int REL_TOPICS;
 
     public static List<Integer> SYSTEM_RELATIONS;
 
@@ -168,11 +172,18 @@ public class Constants implements Configurable {
     public static final String TYPE_STORY = "story";
     public static final String TYPE_EVENT = "event";
     public static final String TYPE_VIDEO = "video";
+    public static final String TYPE_CONTRACT_TEMPLATE = "contractTemplate";
+    public static final String TYPE_SIGNED_CONTRACT = "signedContract";
+    public static final String TYPE_TOPIC = "topic";
 
     // template variables
 
     /** holds VariableFetcher */
     public static final String VAR_FETCHER = "VARS";
+    /** string containing skin / version */
+    public static final String VAR_LAYOUT = "LAYOUT";
+    /** string containing template path from template root */
+    public static final String VAR_TEMPLATE = "TEMPLATE";
     /** holds category Rubriky */
     public static final String VAR_RUBRIKY = "RUBRIKY";
     /** holds category Abclinuxu */

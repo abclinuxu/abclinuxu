@@ -40,6 +40,8 @@ import cz.abclinuxu.utils.SolutionTool;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Advertisement;
 import cz.abclinuxu.utils.TagTool;
+import cz.abclinuxu.utils.BeanFetcher;
+import cz.abclinuxu.utils.XmlUtils;
 import cz.abclinuxu.utils.email.monitor.MonitorTool;
 import cz.abclinuxu.utils.forms.RichTextEditor;
 import cz.abclinuxu.scheduler.EnsureWatchedDiscussionsLimit;
@@ -338,6 +340,20 @@ public class Tools implements Configurable {
         if (name != null)
             sb.append(name).append(' ');
         sb.append(root.elementTextTrim("surname"));
+        return sb.toString();
+    }
+
+    /**
+     * Concatenates name and surname of the author.
+     * @param author an author
+     * @return name and surname
+     */
+    public static String getPersonName(Author author) {
+        StringBuilder sb = new StringBuilder();
+        if (author.getName() != null)
+            sb.append(author.getName()).append(" ");
+        if (author.getSurname() != null)
+            sb.append(author.getSurname());
         return sb.toString();
     }
 
@@ -648,7 +664,7 @@ public class Tools implements Configurable {
     }
 
     /**
-     * If there is at least single solution, than
+     * If number of votes for yes is higher than for no, than
      * this question is considered to be solved.
      * @return whether the question is solved
      */
@@ -1187,7 +1203,6 @@ public class Tools implements Configurable {
      * @return counter value for selected GenericObject
      */
     public static int getCounterValue(GenericObject obj, String type) {
-//        throw new RuntimeException();
         return persistence.getCounterValue(obj, type);
     }
 
@@ -1619,6 +1634,32 @@ public class Tools implements Configurable {
         env.put(Constants.VAR_USER, vars.get(Constants.VAR_USER));
         env.put("ASSIGNED_TAGS", vars.get("ASSIGNED_TAGS"));
         return Advertisement.getAdvertisement(position, env);
+    }
+
+    /**
+     * Returns author from user object
+     * @param uid id of user
+     * @return Author object if found or {@code null} if there is no author for
+     *         given object
+     */
+    public static Author getAuthor(int uid) {
+        SQLTool sqlTool = SQLTool.getInstance();
+        Relation relation = sqlTool.findAuthorByUserId(uid);
+        if (relation == null)
+            return null;
+
+        return BeanFetcher.fetchAuthor(relation, BeanFetcher.FetchType.EAGER);
+    }
+
+    /**
+     * Finds if given author is also author.
+     * @param uid id of user
+     * @return true if user has role of author
+     */
+    public static boolean isAuthor(int uid) {
+        SQLTool sqlTool = SQLTool.getInstance();
+        Relation relation = sqlTool.findAuthorByUserId(uid);
+        return (relation != null);
     }
 
     /**

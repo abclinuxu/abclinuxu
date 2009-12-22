@@ -1,5 +1,11 @@
 package cz.abclinuxu.servlets.utils.url;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import cz.abclinuxu.data.AccessControllable;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
@@ -8,10 +14,6 @@ import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.freemarker.Tools;
-import org.apache.log4j.Logger;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Creates links for navigation panel (pwd-box). Checks appropriate rights
@@ -31,22 +33,35 @@ public class PwdNavigator {
     public static enum Discriminator {
         AUTHOR, EDITOR, }
 
-
     private PageNavigation pn;
     private User user;
-
+    private UrlUtils urlUtils;
 
     /**
      * Creates navigation creator for given user.
      *
-     * @param user User to create navigation for
-     * @param pn   Page to be navigated
+     * @param user     User to create navigation for
+     * @param urlUtils URL utilities to be used to create location relative
+     *                 links
+     * @param pn       Page to be navigated
      */
-    public PwdNavigator(User user, PageNavigation pn) {
-
-        // set page navigation
+    public PwdNavigator(User user, UrlUtils urlUtils, PageNavigation pn) {
         this.pn = pn;
         this.user = user;
+        this.urlUtils = urlUtils;
+    }
+
+    /**
+     * Creates navigation for given environment. User and URL context is
+     * fetched from environment
+     *
+     * @param env Context environment
+     * @param pn  Page to be navigated
+     */
+    public PwdNavigator(Map env, PageNavigation pn) {
+        this.pn = pn;
+        this.user = (User) env.get(Constants.VAR_USER);
+        this.urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
     }
 
     /**
@@ -68,7 +83,7 @@ public class PwdNavigator {
     public List<Link> navigate(Link tail) {
         // retrieve link stub
         List<Link> links = new ArrayList<Link>();
-        links = pn.getLinks(user, links);
+        links = pn.getLinks(user, urlUtils, links);
         // append last link if any
         if (tail != null) {
             if (links.isEmpty() || tail.getUrl().startsWith("/"))
@@ -129,7 +144,7 @@ public class PwdNavigator {
      * @return Type of user
      */
     public Discriminator determine() {
-        if (user.isMemberOf(Constants.GROUP_ADMINI) || Tools.permissionsFor(user, Constants.REL_AUTHORS).canModify())
+        if (Tools.permissionsFor(user, Constants.REL_AUTHORS).canModify())
             return Discriminator.EDITOR;
         return Discriminator.AUTHOR;
     }

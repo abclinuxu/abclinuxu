@@ -1,16 +1,17 @@
 package cz.abclinuxu.utils;
 
+import org.apache.log4j.Logger;
+
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.view.Author;
-import org.apache.log4j.Logger;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Node;
+import cz.abclinuxu.data.view.ContractTemplate;
+import cz.abclinuxu.data.view.Topic;
+import cz.abclinuxu.data.view.SignedContract;
 
 /**
  * Transforms JavaBeans into persistence layer objects
  *
- * @author kapy
+ * @author kapy Leos
  */
 public class BeanFlusher {
     private static final Logger log = Logger.getLogger(BeanFlusher.class);
@@ -20,10 +21,56 @@ public class BeanFlusher {
         throw new AssertionError();
     }
 
-    public static Item flushAuthorToItem(Item item, Author author) {
+    /**
+     * Converts bean to its representation in persistence. No changes to persistence are made, it is caller's responsability.
+     *
+     * @param item     item to be serialized to the persistence
+     * @param template bean to be converted
+     * @return modified item
+     */
+    public static Item flushContractTemplate(Item item, ContractTemplate template) {
+        DocumentBuilder db = new DocumentBuilder(item.getData(), "data");
+        db.store("/data/description", template.getDescription()).store("/data/content", template.getContent());
+        item.setData(db.getDocument());
 
+        item.setId(template.getId());
+        item.setDate1(template.getPublished());
+        item.setTitle(template.getTitle());
+        item.setBoolean1(template.isDraft());
+        item.setBoolean2(template.isObsolete());
+
+        debug("Flushed %s, value: %s %s", item, template, db);
+        return item;
+    }
+
+    /**
+     * Converts bean to its representation in persistence. No changes to persistence are made, it is caller's responsability.
+     * Properties dynamically loaded from contract template are ignored.
+     *
+     * @param item     item to be serialized to the persistence
+     * @param contract bean to be converted
+     * @return modified item
+     */
+    public static Item flushSignedContract(Item item, SignedContract contract) {
+        DocumentBuilder db = new DocumentBuilder(item.getData(), "data");
+        db.store("/data/content", contract.getContent());
+        item.setData(db.getDocument());
+
+        item.setId(contract.getId());
+        item.setOwner(contract.getUid());
+        item.setCreated(contract.getSigned());
+        item.setNumeric1(contract.getTemplate());
+        item.setNumeric2(contract.getAuthor().getRelationId());
+        item.setString1(contract.getIpAddress());
+
+        debug("Flushed %s, value: %s %s", item, contract, db);
+        return item;
+    }
+
+    public static Item flushAuthor(Item item, Author author) {
         item.setNumeric1(author.getUid());
-        item.setNumeric2(author.isActive() ? 1 : 0);
+        item.setNumeric2(author.getContractId());
+        item.setBoolean1(author.isActive());
         item.setString1(Misc.filterDangerousCharacters(author.getName()));
         item.setString2(Misc.filterDangerousCharacters(author.getSurname()));
         item.setTitle(author.getTitle());
@@ -34,65 +81,47 @@ public class BeanFlusher {
         item.setPermissions(author.getPermissions());
 
         // get/create XML document
-        Document doc = item.getData();
-        if (doc == null)
-            doc = DocumentHelper.createDocument(DocumentHelper.createElement("data"));
+        DocumentBuilder db = new DocumentBuilder(item.getData(), "data");
+        db.store("/data/about", author.getAbout()).store("/data/accountNumber", author.getAccountNumber()).store("/data/address", author.getAddress()).store("/data/birthNumber", author.getBirthNumber()).store("/data/email", author.getEmail()).store("/data/login", author.getLogin()).store("/data/nickname", author.getNickname()).store("/data/phone", author.getPhone()).store("/data/photourl", author.getPhotoUrl());
 
-        safeStoreNode(doc, "/data/about", author.getAbout());
-        safeStoreNode(doc, "/data/accountNumber", author.getAccountNumber());
-        safeStoreNode(doc, "/data/address", author.getAddress());
-        safeStoreNode(doc, "/data/birthNumber", author.getBirthNumber());
-        safeStoreNode(doc, "/data/email", author.getEmail());
-        safeStoreNode(doc, "/data/login", author.getLogin());
-        safeStoreNode(doc, "/data/nickname", author.getNickname());
-        safeStoreNode(doc, "/data/phone", author.getPhone());
-        safeStoreNode(doc, "/data/photourl", author.getPhotoUrl());
+        item.setData(db.getDocument());
+        debug("Flushed %s, value: %s %s", item, author, db);
+        return item;
+    }
 
-        item.setData(doc);
+    public static Item flushTopic(Item item, Topic topic) {
+        item.setNumeric1(topic.isPublished() ? 1 : 0);
+        item.setNumeric2(topic.isAccepted() ? 1 : 0);
+        item.setDate1(topic.getDeadline());
+        item.setString1(Misc.filterDangerousCharacters(topic.getTitle()));
 
-        if (log.isDebugEnabled()) {
-            log.debug("Flushed:" + authorToString(item));
-        }
+        DocumentBuilder db = new DocumentBuilder(item.getData(), "data");
 
+        if (!topic.isPublic())
+            db.store("/data/author", String.valueOf(topic.getAuthor().getId()));
+        else
+            db.store("/data/author", null);
+        if (topic.hasRoyalty())
+            db.store("/data/royalty", topic.getRoyalty().toString());
+        else
+            db.store("/data/royalty", null);
+
+        db.store("/data/description", topic.getDescription());
+
+        item.setData(db.getDocument());
+        debug("Flushed %s, value: %s %s", item, topic, db);
         return item;
 
     }
 
-    private static void safeStoreNode(Document doc, String xpath, String value) {
-
-        // check for existence of node
-        Node tmp = doc.selectSingleNode(xpath);
-        // check for value passed
-        if (Misc.empty(value)) {
-            // detach node if it will be empty
-            if (tmp != null) {
-                tmp.detach();
-            }
-            return;
-        }
-        // create node if not found
-        if (tmp == null) {
-            tmp = DocumentHelper.makeElement(doc, xpath);
-        }
-
-        tmp.setText(Misc.filterDangerousCharacters(value));
-    }
-
     /**
-     * Helper function to print author
+     * Debug all passed objects
      *
-     * @param author
-     * @return
+     * @param objects
      */
-    private static String authorToString(Item author) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Author:").append(" id:").append(author.getId()).append(" first name:").append(author.getString1());
-        sb.append(" last name:").append(author.getString2()).append(" uid:").append(author.getNumeric1());
-        sb.append(" activity:").append(author.getNumeric2()).append("\n");
-        sb.append("XML:").append(author.getDataAsString());
-
-        return sb.toString();
-
+    private static void debug(String format, Object... args) {
+        if (log.isDebugEnabled()) {
+            log.debug(String.format(format, args));
+        }
     }
 }

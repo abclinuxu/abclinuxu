@@ -901,22 +901,17 @@ public class CreateIndex implements Configurable {
                     continue;
 
                 String parentTitle = Tools.childName(parent), title = null;
-                String urlPrefix = UrlUtils.PREFIX_FORUM;
                 if (parent instanceof Item) {
                     Item parentItem = (Item) parent;
                     if (parentItem.getType() == Item.ARTICLE) {
                         title = "Diskuse k článku " + parentTitle;
-                        urlPrefix = UrlUtils.PREFIX_CLANKY;
                     } else if (parentItem.getType() == Item.BLOG) {
                         title = "Diskuse k blogu " + parentTitle;
-                        urlPrefix = UrlUtils.PREFIX_BLOG;
                     } else if (parentItem.getType() == Item.NEWS) {
                         title = "Diskuse k zprávičce " + parentTitle;
-                        urlPrefix = UrlUtils.PREFIX_NEWS;
                     }
                 } else if (parent instanceof Poll) {
                     title = "Diskuse k anketě " + parentTitle;
-                    urlPrefix = UrlUtils.PREFIX_POLLS;
                 }
 
                 String url = Tools.getUrlForDiscussion(child);

@@ -75,13 +75,20 @@ public class Item extends GenericDataObject {
     public static final int DESKTOP = 24;
     /** generic type for imported data, its content depends on data source */
     public static final int IMPORT = 25;
-	/** an event in the calendar of Linux events */
-	public static final int EVENT = 26;
+    /** an event in the calendar of Linux events */
+    public static final int EVENT = 26;
+    /** unpublished event */
     public static final int UNPUBLISHED_EVENT = 27;
     /** video items, standalone or as attachments */
     public static final int VIDEO = 28;
     /** advertisement (banner) object */
     public static final int ADVERTISEMENT = 29;
+    /** contract  template */
+    public static final int CONTRACT_TEMPLATE = 30;
+    /** contract with concrete author */
+    public static final int SIGNED_CONTRACT = 31;
+    /** topic for author's work */
+    public static final int TOPIC = 32;
 
     public Item() {
         super();
@@ -126,6 +133,10 @@ public class Item extends GenericDataObject {
             case UNPUBLISHED_EVENT:
             case EVENT: sb.append("Event"); break;
             case VIDEO: sb.append("Video"); break;
+            case CONTRACT_TEMPLATE: sb.append("Contract template"); break;
+            case SIGNED_CONTRACT: sb.append("Signed contract"); break;
+            case TOPIC: sb.append("Topic"); break;
+            
             default: sb.append("Unknown Item");
         }
         sb.append(": id=").append(id);
@@ -157,6 +168,9 @@ public class Item extends GenericDataObject {
             case DESKTOP: return Constants.TYPE_SCREENSHOT;
             case EVENT: return Constants.TYPE_EVENT;
             case VIDEO: return Constants.TYPE_VIDEO;
+            case CONTRACT_TEMPLATE: return Constants.TYPE_CONTRACT_TEMPLATE;
+            case SIGNED_CONTRACT: return Constants.TYPE_SIGNED_CONTRACT;
+            case TOPIC: return Constants.TYPE_TOPIC;
             default: return Constants.TYPE_OTHER;
         }
     }

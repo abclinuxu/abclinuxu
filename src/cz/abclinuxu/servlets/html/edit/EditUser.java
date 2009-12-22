@@ -76,6 +76,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.ImageTool;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.XmlUtils;
 import cz.abclinuxu.utils.comparator.NameComparator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
@@ -1807,8 +1808,8 @@ public class EditUser implements AbcAction {
         }
 
         Element tagEmail = DocumentHelper.makeElement(user.getData(), "/data/communication/email");
-        Misc.setAttribute(tagEmail, "valid", "yes");
-        Misc.setAttribute(tagEmail, "verified", "yes"); // TODO
+        XmlUtils.setAttribute(tagEmail, "valid", "yes");
+        XmlUtils.setAttribute(tagEmail, "verified", "yes"); // TODO
         user.setEmail(email);
         return true;
     }
@@ -2610,10 +2611,15 @@ public class EditUser implements AbcAction {
      */
     private boolean setPhoto(Map params, User user, Map env) {
         if (params.containsKey(PARAM_REMOVE_PHOTO)) {
-			return ImageTool.deleteImage(User.USER_PHOTO, user);
-		}
-		FileItem image = (FileItem) params.get(PARAM_PHOTO);
-		return ImageTool.storeImage(User.USER_PHOTO, image, user, ImageTool.USER_PHOTO_RES, env, PARAM_PHOTO);
+            return ImageTool.deleteImage(User.UserImage.PHOTO, user);
+        }
+
+        FileItem image = (FileItem) params.get(PARAM_PHOTO);
+        ImageTool imageTool = new ImageTool(image, user, ImageTool.USER_PHOTO_RESTRICTIONS);
+        if (!imageTool.checkImage(env, PARAM_PHOTO))
+            return false;
+
+        return imageTool.storeImage(User.UserImage.PHOTO, env, PARAM_PHOTO);
     }
 
     private boolean setGPG(Map params, User user, Map env) throws Exception {
@@ -2660,13 +2666,17 @@ public class EditUser implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setAvatar(Map params, User user, Map env) {
-        if (params.containsKey(PARAM_REMOVE_AVATAR)) {
-			return ImageTool.deleteImage(User.USER_AVATAR, user);
-		}
-		FileItem image = (FileItem) params.get(PARAM_AVATAR);
-		return ImageTool.storeImage(User.USER_AVATAR, image, user, ImageTool.USER_AVATAR_RES, env, PARAM_AVATAR);
-    }
+   private boolean setAvatar(Map params, User user, Map env) {
+       if (params.containsKey(PARAM_REMOVE_AVATAR)) {
+           return ImageTool.deleteImage(User.UserImage.AVATAR, user);
+       }
+       FileItem image = (FileItem) params.get(PARAM_AVATAR);
+       ImageTool imageTool = new ImageTool(image, user, ImageTool.USER_AVATAR_RESTRICTIONS);
+       if (!imageTool.checkImage(env, PARAM_AVATAR))
+           return false;
+
+       return imageTool.storeImage(User.UserImage.AVATAR, env, PARAM_AVATAR);
+   }
 
     /**
      * Sets user setting (number).

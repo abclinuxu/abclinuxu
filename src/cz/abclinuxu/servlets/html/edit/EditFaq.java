@@ -179,6 +179,7 @@ public class EditFaq implements AbcAction {
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);
         persistence.create(relation);
+        relation.getParent().addChildRelation(relation);
         TagTool.assignDetectedTags(item, user);
 
         // run monitor

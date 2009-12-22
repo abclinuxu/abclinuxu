@@ -23,6 +23,7 @@ import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.XmlUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.persistence.ldap.LdapUserManager;
 import cz.abclinuxu.persistence.SQLTool;
@@ -191,10 +192,10 @@ public class UserSync extends TimerTask implements Configurable {
             element = DocumentHelper.makeElement(elCommunication, "email");
             value = attrs.get(ATTRIB_EMAIL_BLOCKED);
             boolean flag = "true".equals(value);
-            Misc.setAttribute(element, "valid", (flag) ? "no" : "yes");
+            XmlUtils.setAttribute(element, "valid", (flag) ? "no" : "yes");
             value = attrs.get(ATTRIB_EMAIL_VERIFIED);
             flag = "true".equals(value);
-            Misc.setAttribute(element, "verified", (flag) ? "yes" : "no");
+            XmlUtils.setAttribute(element, "verified", (flag) ? "yes" : "no");
         }
 
         value = attrs.get(ATTRIB_NAME);

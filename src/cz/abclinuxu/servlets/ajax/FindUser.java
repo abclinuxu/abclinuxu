@@ -1,32 +1,37 @@
 package cz.abclinuxu.servlets.ajax;
 
-import cz.abclinuxu.data.User;
-import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.utils.config.impl.AbcConfig;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class FindUser implements AbcAction {
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
+import cz.abclinuxu.utils.freemarker.Tools;
+
+public class FindUser implements AbcAction {
     public static final String PARAM_USER = "uid";
     public static final String PARAM_LOGIN = "login";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_CITY = "city";
     public static final String PARAM_LIST_MODE = "list";
+    public static final String PARAM_FIELD = "field";
 
     public static final String VAR_USERS = "USERS";
     public static final String VAR_TOO_MANY_USERS = "MANY";
     public static final String VAR_ZERO_USERS = "ZERO";
     public static final String VAR_SELECT_MODE = "SELECT_MODE";
+    public static final String VAR_FIELD = "FIELD";
 
     public static final String ACTION_SELECT = "select";
 
@@ -35,6 +40,11 @@ public class FindUser implements AbcAction {
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
 
+        // security check as user fields are retrieved raw
+        User admin = (User) env.get(Constants.VAR_USER);
+        if (admin == null || !Tools.permissionsFor(admin, new Relation(Constants.REL_AUTHORS)).canModify()) {
+            return FMTemplateSelector.select("AdministrationEditorsPortal", "login", env, request);
+        }
 
         // set passed parameters
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -45,7 +55,10 @@ public class FindUser implements AbcAction {
         setEmail(params, searched, env);
         setCity(params, searched, env);
 
-        // set list mode
+        // set searched field
+        String field = (String) params.get(PARAM_FIELD);
+        env.put(VAR_FIELD, field != null ? field : "");
+
         String action = (String) params.get(PARAM_ACTION);
         if (ACTION_SELECT.equals(action))
             env.put(VAR_SELECT_MODE, Boolean.TRUE);
@@ -88,8 +101,8 @@ public class FindUser implements AbcAction {
      * Sets city search field from parameters.
      *
      * @param params map holding request's parameters
-     * @param user   user to be updated
-     * @param env    environment
+     * @param user user to be updated
+     * @param env environment
      */
     private void setCity(Map params, User user, Map env) {
         String city = (String) params.get(PARAM_CITY);
@@ -101,21 +114,24 @@ public class FindUser implements AbcAction {
      * Sets name search field from parameters.
      *
      * @param params map holding request's parameters
-     * @param user   user to be updated
-     * @param env    environment
+     * @param user user to be updated
+     * @param env environment
      */
     private void setName(Map params, User user, Map env) {
         String name = (String) params.get(PARAM_NAME);
-        if (name != null && name.length() > 2)
-            user.setName("%" + name + "%");
+        if (name != null) {
+            name = name.trim();
+            if (name.length() > 2)
+                user.setName("%" + name + "%");
+        }
     }
 
     /**
      * Sets login search field from parameters.
      *
      * @param params map holding request's parameters
-     * @param user   user to be updated
-     * @param env    environment
+     * @param user user to be updated
+     * @param env environment
      */
     private void setLogin(Map params, User user, Map env) {
         String login = (String) params.get(PARAM_LOGIN);
@@ -127,8 +143,8 @@ public class FindUser implements AbcAction {
      * Sets email search field from parameters.
      *
      * @param params map holding request's parameters
-     * @param user   user to be updated
-     * @param env    environment
+     * @param user user to be updated
+     * @param env environment
      */
     private void setEmail(Map params, User user, Map env) {
         String email = (String) params.get(PARAM_EMAIL);
@@ -140,8 +156,8 @@ public class FindUser implements AbcAction {
      * Sets id search field from parameters.
      *
      * @param params map holding request's parameters
-     * @param user   user to be updated
-     * @param env    environment
+     * @param user user to be updated
+     * @param env environment
      */
     private void setId(Map params, User user, Map env) {
         String tmp = (String) params.get(PARAM_USER);
@@ -154,7 +170,8 @@ public class FindUser implements AbcAction {
         try {
             int id = Integer.parseInt(tmp);
             user.setId(id);
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
         }
     }
 

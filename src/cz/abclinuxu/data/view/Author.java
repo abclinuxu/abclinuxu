@@ -2,6 +2,7 @@ package cz.abclinuxu.data.view;
 
 import cz.abclinuxu.data.AccessControllable;
 import cz.abclinuxu.data.ImageAssignable;
+import cz.abclinuxu.utils.freemarker.Tools;
 
 import java.util.Date;
 
@@ -10,13 +11,22 @@ import java.util.Date;
  *
  * @author kapy
  */
-public class Author implements ImageAssignable, AccessControllable {
+public class Author implements Cloneable, ImageAssignable<Author.AuthorImage>, AccessControllable {
+    public enum AuthorImage implements ImageAssignable.AssignedImage {
+        PHOTO
+    }
 
-    public static final int AUTHOR_PHOTO = 1;
+    public enum ContractStatus {
+        UNSIGNED, CURRENT, OBSOLETE
+    }
 
     private int id;
 
     private Integer uid;
+    // identification of relation to this author
+    private int relationId;
+    private Integer contractId;
+    private ContractStatus contractStatus;
 
     private boolean active;
 
@@ -45,6 +55,15 @@ public class Author implements ImageAssignable, AccessControllable {
     }
 
     /**
+     * Creates author with given id
+     *
+     * @param id Identification of author
+     */
+    public Author(int id) {
+        this.id = id;
+    }
+
+    /**
      * @return the id
      */
     public int getId() {
@@ -70,6 +89,39 @@ public class Author implements ImageAssignable, AccessControllable {
      */
     public void setUid(Integer uid) {
         this.uid = uid;
+    }
+
+    /**
+     * @return id of relation to this author
+     */
+    public int getRelationId() {
+        return relationId;
+    }
+
+    public void setRelationId(int relationId) {
+        this.relationId = relationId;
+    }
+
+    /**
+     * @return id of item containing last contract template signed by this author
+     */
+    public Integer getContractId() {
+        return contractId;
+    }
+
+    public void setContractId(Integer contractId) {
+        this.contractId = contractId;
+    }
+
+    /**
+     * @return status of signed contract
+     */
+    public ContractStatus getContractStatus() {
+        return contractStatus;
+    }
+
+    public void setContractStatus(ContractStatus contractStatus) {
+        this.contractStatus = contractStatus;
     }
 
     /**
@@ -274,26 +326,23 @@ public class Author implements ImageAssignable, AccessControllable {
      * @return Full name representation of author
      */
     public String getTitle() {
-        StringBuilder sb = new StringBuilder();
-        if (name != null)
-            sb.append(name).append(" ");
-        if (surname != null)
-            sb.append(surname);
-
-        return sb.toString();
+        return Tools.getPersonName(this);
     }
 
-    public void assignImage(int imageNo, String imageUrl) {
+    @Override
+    public void assignImage(AuthorImage imageId, String imageUrl) {
         this.photoUrl = imageUrl;
     }
 
-    public String detractImage(int imageNo) {
+    @Override
+    public String detractImage(AuthorImage imageId) {
         String url = this.photoUrl;
         this.photoUrl = null;
         return url;
     }
 
-    public String proposeImageUrl(int imageNo, String suffix) {
+    @Override
+    public String proposeImageUrl(AuthorImage imageId, String suffix) {
         StringBuilder sb = new StringBuilder();
         sb.append("images/authors/").append(name).append('-').append(surname);
 
@@ -305,32 +354,57 @@ public class Author implements ImageAssignable, AccessControllable {
         return sb.append('.').append(suffix).toString();
     }
 
+    @Override
     public int getGroup() {
         return this.group;
     }
 
+    @Override
     public int getOwner() {
         return this.owner;
     }
 
+    @Override
     public int getPermissions() {
         return this.permissions;
     }
 
+    @Override
     public void setGroup(int group) {
         this.group = group;
     }
 
+    @Override
     public void setOwner(int owner) {
         this.owner = owner;
     }
 
+    @Override
     public void setPermissions(int permissions) {
         this.permissions = permissions;
     }
 
+    @Override
     public boolean determineOwnership(int owner) {
-	    return this.owner == owner || this.uid == owner;
-	}
+        return this.owner == owner || this.uid == owner;
+    }
 
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Returns a brief description of author, in general his id in system, name
+     * and surname
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Author: ").append(id).append(", ").append(getTitle()).append(active ? "active" : "");
+        return sb.toString();
+    }
 }

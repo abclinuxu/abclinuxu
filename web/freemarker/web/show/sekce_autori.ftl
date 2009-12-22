@@ -6,7 +6,7 @@
 
 <h1>Autoři</h1>
 <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
-    <p><a href="${URL.noPrefix("/autori/edit?action=add")}">Přidat</a></p>
+    <p><a href="${URL.noPrefix("/sprava/redakce/autori/edit?action=add")}">Přidat</a></p>
 </#if>
 
 <p><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Jak se stát autorem</a></p>

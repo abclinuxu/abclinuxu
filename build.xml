@@ -1,7 +1,5 @@
 <project name="AbcLinuxu" default="deploy">
 
-
-
     <property file="conf_deploy.properties"/>
 
     <property name="src" location="src"/>
@@ -32,19 +30,19 @@
     <target name="build" depends="init">
         <javac srcdir="src" destdir="${DEPLOY_ABCLINUXU}/WEB-INF/classes"
             classpathref="project.classpath" debug="${javac.debug}"
-            optimize="${javac.optimize}" source="1.5" />
+            optimize="${javac.optimize}" source="1.6" />
         <javac srcdir="test" destdir="${DEPLOY_ABCLINUXU}/WEB-INF/classes"
             classpathref="project.classpath" debug="${javac.debug}"
-            optimize="${javac.optimize}" source="1.5" />
+            optimize="${javac.optimize}" source="1.6" />
     </target>
 
 
     <target name="deploy" depends="build">
-        <copy todir="${JETTY_HOME}/etc" filtering="true">
+        <!--copy todir="${JETTY_HOME}/etc" filtering="true">
             <fileset dir="conf/jetty">
                 <include name="jetty.xml"/>
             </fileset>
-        </copy>
+        </copy-->
 
         <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF" filtering="true">
             <fileset dir="conf">

@@ -43,6 +43,10 @@ public class QualifierTool {
      * clauses). if defaultTableNick cannot distinguish between two tables,
      * fieldMapping can be used to assign exact tableNick to specific Field from
      * qualifiers.
+     * 
+     * Order in which qualifiers are passed in array is important.
+     * If sorting and sorting direction qualifiers are present, they must be 
+     * present consecutively or in pairs sorting column followed by sorting direction.
      *
      * @param defaultTableNick nick of table to distinguish columns. Default is null.
      * @param qualifiers       list of query conditions and sort order and limit qualifiers.
@@ -63,7 +67,13 @@ public class QualifierTool {
             qualifier = qualifiers[i];
 
             if (qualifier instanceof OrderByQualifier) {
-                sb.append(" ORDER BY ");
+            	// first order by qualifier
+            	if(sb.indexOf(" ORDER BY ")==-1)
+            		sb.append(" ORDER BY ");
+            	// next order by qualifier
+            	else 
+            		sb.append(", ");
+            	
                 OrderByQualifier oq = (OrderByQualifier) qualifier;
                 appendField(oq.getField(), fieldMapping, defaultTableNick, sb);
             } else if (qualifier.equals(Qualifier.ORDER_ASCENDING)) {
@@ -79,12 +89,14 @@ public class QualifierTool {
                 int where = sb.indexOf("where ");
                 if (where == -1)
                     where = sb.indexOf("WHERE ");
+
                 if (where == -1)
                     sb.append(" WHERE ");
                 else {
                     if (where + 6 < sb.length())
                         sb.append(" AND ");
                 }
+
                 if (qualifier instanceof CompareCondition) {
                     appendCompareCondition(sb, (CompareCondition) qualifier, params, defaultTableNick, fieldMapping);
                 } else if (qualifier instanceof NestedCondition) {
@@ -167,11 +179,17 @@ public class QualifierTool {
             sb.append("!=");
         else if (operation == Operation.LIKE)
             sb.append(" LIKE ");
+        else if (operation == Operation.NOT_LIKE)
+        	sb.append(" NOT LIKE ");
         else if (operation instanceof OperationIn)
             sb.append(" IN ").append(Misc.getInCondition(((OperationIn) operation).getCount()));
         else if (operation == Operation.IS_NULL) {
             sb.append(" IS NULL");
             return;
+        }
+        else if (operation == Operation.IS_NOT_NULL) {
+        	sb.append(" IS NOT NULL");
+        	return;
         }
 
         Object value = condition.getValue();
@@ -224,6 +242,15 @@ public class QualifierTool {
         addTableNick(field, fieldMapping, defaultTableNick, sb);
 
         switch (field.getId()) {
+            case BOOLEAN1:
+                sb.append("boolean1");
+                break;
+            case BOOLEAN2:
+                sb.append("boolean2");
+                break;
+            case BOOLEAN3:
+                sb.append("boolean3");
+                break;
             case CHILD:
                 sb.append("potomek");
                 break;
@@ -245,23 +272,32 @@ public class QualifierTool {
             case DATE2:
                 sb.append("date2");
                 break;
+            case DATE3:
+                sb.append("date3");
+                break;
             case DAY:
                 sb.append("den");
                 break;
             case ID:
                 sb.append("cislo");
                 break;
+            case ISNULL:
+            	sb.append("isnull");
+            	break;
             case LOGIN:
                 sb.append("login");
-                break;
-            case OWNER:
-                sb.append("pridal");
                 break;
             case NUMERIC1:
                 sb.append("numeric1");
                 break;
             case NUMERIC2:
                 sb.append("numeric2");
+                break;
+            case NUMERIC3:
+                sb.append("numeric3");
+                break;
+            case OWNER:
+                sb.append("pridal");
                 break;
             case PARENT:
                 sb.append("predek");
@@ -274,6 +310,9 @@ public class QualifierTool {
                 break;
             case STRING2:
                 sb.append("string2");
+                break;
+            case STRING3:
+                sb.append("string3");
                 break;
             case SUBTYPE:
                 sb.append("podtyp");
@@ -289,9 +328,9 @@ public class QualifierTool {
                 break;
             case UPPER:
                 sb.append("predchozi");
-			break;
-		case WHEN:
-			sb.append("kdy");
+			    break;
+            case WHEN:
+                sb.append("kdy");
 		}
 	}
 }

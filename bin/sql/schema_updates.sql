@@ -1,13 +1,30 @@
--- flag indicating that given user has voted for this comment as solution
-CREATE TABLE reseni (
- zaznam INT NOT NULL,                            -- id asociovaneho zaznamu
- komentar INT NOT NULL,                          -- id komentare
- kdo INT(5) NOT NULL,                            -- cislo uzivatele
- kdy DATETIME NOT NULL                           -- cas pridani
-);
-ALTER TABLE reseni ADD UNIQUE INDEX reseni_kdo_komentar (kdo,komentar);
-ALTER TABLE reseni ADD INDEX reseni_zaznam (zaznam);
+alter table kategorie add column numeric3 INT NULL after numeric2;
+alter table kategorie add column boolean1 CHAR(1) NULL after numeric3;
+alter table kategorie add column boolean2 CHAR(1) NULL after boolean1;
+alter table kategorie add column boolean3 CHAR(1) NULL after boolean2;
+alter table kategorie add column string3 VARCHAR(50) NULL after string2;
+alter table kategorie add column date3 DATETIME NULL after date2;
 
-update polozka set numeric1=0 where podtyp='question';
-delete from akce where typ='solved';
-delete from akce where typ='notsolved';
+alter table polozka add column numeric3 INT NULL after numeric2;
+alter table polozka add column boolean1 CHAR(1) NULL after numeric3;
+alter table polozka add column boolean2 CHAR(1) NULL after boolean1;
+alter table polozka add column boolean3 CHAR(1) NULL after boolean2;
+alter table polozka add column string3 VARCHAR(50) NULL after string2;
+alter table polozka add column date3 DATETIME NULL after date2;
+
+alter table zaznam add column numeric3 INT NULL after numeric2;
+alter table zaznam add column boolean1 CHAR(1) NULL after numeric3;
+alter table zaznam add column boolean2 CHAR(1) NULL after boolean1;
+alter table zaznam add column boolean3 CHAR(1) NULL after boolean2;
+alter table zaznam add column string3 VARCHAR(50) NULL after string2;
+alter table zaznam add column date3 DATETIME NULL after date2;
+
+alter table data add column numeric3 INT NULL after numeric2;
+alter table data add column boolean1 CHAR(1) NULL after numeric3;
+alter table data add column boolean2 CHAR(1) NULL after boolean1;
+alter table data add column boolean3 CHAR(1) NULL after boolean2;
+alter table data add column string3 VARCHAR(50) NULL after string2;
+alter table data add column date3 DATETIME NULL after date2;
+
+update polozka set boolean1='1',numeric2=null where typ=19 and (numeric2=1 or numeric2 is null);
+update polozka set boolean1='0',numeric2=null where typ=19 and numeric2=0;

@@ -51,9 +51,10 @@ public abstract class GenericDataObject extends CommonObject {
     /** last update of this object */
     protected Date updated;
     // generic purpose properties
-    protected Integer numeric1, numeric2;
-    protected String string1, string2;
-    protected Date date1, date2;
+    protected Integer numeric1, numeric2, numeric3;
+    protected String string1, string2, string3;
+    protected Boolean boolean1, boolean2, boolean3;
+    protected Date date1, date2, date3;
 
     /**
      * Helper (non-persistant) String for findByExample(),
@@ -225,6 +226,17 @@ public abstract class GenericDataObject extends CommonObject {
     }
 
     /**
+     * @return third generic purpose number property
+     */
+    public Integer getNumeric3() {
+        return numeric3;
+    }
+
+    public void setNumeric3(Integer numeric) {
+        this.numeric3 = numeric;
+    }
+
+    /**
      * @return first generic purpose string property
      */
     public String getString1() {
@@ -247,6 +259,17 @@ public abstract class GenericDataObject extends CommonObject {
     }
 
     /**
+     * @return third generic purpose string property
+     */
+    public String getString3() {
+        return string2;
+    }
+
+    public void setString3(String string) {
+        this.string3 = string;
+    }
+
+    /**
      * @return first generic purpose date property
      */
     public Date getDate1() {
@@ -266,6 +289,50 @@ public abstract class GenericDataObject extends CommonObject {
 
     public void setDate2(Date date2) {
         this.date2 = date2;
+    }
+
+    /**
+     * @return third generic purpose string property
+     */
+    public Date getDate3() {
+        return date2;
+    }
+
+    public void setDate3(Date date3) {
+        this.date3 = date3;
+    }
+
+    /**
+     * @return first generic purpose string property
+     */
+    public Boolean isBoolean1() {
+        return boolean1;
+    }
+
+    public void setBoolean1(Boolean boolean1) {
+        this.boolean1 = boolean1;
+    }
+
+    /**
+     * @return second generic purpose string property
+     */
+    public Boolean isBoolean2() {
+        return boolean2;
+    }
+
+    public void setBoolean2(Boolean boolean2) {
+        this.boolean2 = boolean2;
+    }
+
+    /**
+     * @return third generic purpose string property
+     */
+    public Boolean isBoolean3() {
+        return boolean3;
+    }
+
+    public void setBoolean3(Boolean boolean3) {
+        this.boolean3 = boolean3;
     }
 
     /**
@@ -304,12 +371,18 @@ public abstract class GenericDataObject extends CommonObject {
         updated = b.updated;
         custom = b.custom;
         monitorCount = b.monitorCount;
+        boolean1 = b.boolean1;
+        boolean2 = b.boolean2;
+        boolean3 = b.boolean3;
         date1 = b.date1;
         date2 = b.date2;
+        date3 = b.date3;
         numeric1 = b.numeric1;
         numeric2 = b.numeric2;
+        numeric3 = b.numeric3;
         string1 = b.string1;
         string2 = b.string2;
+        string3 = b.string3;
     }
 
     public Object clone() {
@@ -360,13 +433,25 @@ public abstract class GenericDataObject extends CommonObject {
             return false;
         if ( ! Misc.same(string2, p.string2) )
             return false;
+        if ( ! Misc.same(string3, p.string3) )
+            return false;
         if ( ! Misc.same(numeric1, p.numeric1) )
             return false;
         if ( ! Misc.same(numeric2, p.numeric2) )
             return false;
+        if ( ! Misc.same(numeric3, p.numeric3) )
+            return false;
+        if ( ! Misc.same(boolean1, p.boolean1) )
+            return false;
+        if ( ! Misc.same(boolean2, p.boolean2) )
+            return false;
+        if ( ! Misc.same(boolean3, p.boolean3) )
+            return false;
         if ( ! Misc.same(date1, p.date1) )
             return false;
         if ( ! Misc.same(date2, p.date2) )
+            return false;
+        if ( ! Misc.same(date3, p.date3) )
             return false;
         if ( ! Misc.sameXml(getDataAsString(), p.getDataAsString()) )
             return false;
@@ -395,13 +480,25 @@ public abstract class GenericDataObject extends CommonObject {
             return false;
         if (!Misc.same(string2, p.string2))
             return false;
+        if (!Misc.same(string3, p.string3))
+            return false;
         if (!Misc.same(numeric1, p.numeric1))
             return false;
         if (!Misc.same(numeric2, p.numeric2))
             return false;
+        if (!Misc.same(numeric3, p.numeric3))
+            return false;
+        if (!Misc.same(boolean1, p.boolean1))
+            return false;
+        if (!Misc.same(boolean2, p.boolean2))
+            return false;
+        if (!Misc.same(boolean3, p.boolean3))
+            return false;
         if (!Misc.same(date1, p.date1))
             return false;
         if (!Misc.same(date2, p.date2))
+            return false;
+        if (!Misc.same(date3, p.date3))
             return false;
         return Misc.same(custom, p.custom);
     }

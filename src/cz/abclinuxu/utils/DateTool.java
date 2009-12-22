@@ -96,6 +96,9 @@ public class DateTool implements Configurable {
 
         if ( ISO_FORMAT.equalsIgnoreCase(format) )
             return renderDate(Constants.isoFormat, date);
+        
+        if (ISO_ONLY_DATE.equalsIgnoreCase(format))
+        	return renderDate(Constants.isoFormatShort, date);
 
         if ( ONLY_TIME.equalsIgnoreCase(format) )
             return renderDate(Constants.czTimeOnly, date);

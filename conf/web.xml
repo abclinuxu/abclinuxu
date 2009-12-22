@@ -3,6 +3,12 @@
 <web-app>
     <display-name>portal www.abclinuxu.cz</display-name>
 
+    <listener>
+        <listener-class>
+            org.apache.commons.fileupload.servlet.FileCleanerCleanup
+        </listener-class>
+    </listener>
+
     <filter>
         <filter-name>Compress</filter-name>
         <filter-class>javawebparts.filter.CompressionFilter</filter-class>

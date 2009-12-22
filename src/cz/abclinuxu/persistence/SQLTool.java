@@ -1,20 +1,20 @@
 /*
- *  Copyright (C) 2005 Leos Literak
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; see the file COPYING.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ * Copyright (C) 2005 Leos Literak
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING. If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 package cz.abclinuxu.persistence;
 
@@ -64,6 +64,7 @@ import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -86,6 +87,7 @@ public final class SQLTool implements Configurable {
     public static final String ARTICLES_ON_INDEX_RELATIONS = "relations.article.on.index";
     // todo calculate it dynamically with findqualifier
     public static final String ARTICLE_RELATIONS_WITHIN_PERIOD = "relations.article.within.period";
+    public static final String UNSIGNED_CONTRACT_RELATIONS = "relations.unsigned.contract";
     public static final String NEWS_RELATIONS = "relations.news";
     // todo calculate it dynamically with findqualifier
     public static final String NEWS_RELATIONS_WITHIN_PERIOD = "relations.news.within.period";
@@ -179,7 +181,10 @@ public final class SQLTool implements Configurable {
 
 	public static final String GET_AUTHORS_WITH_ARTICLES_COUNT = "get.authors.with.articles.count";
 	public static final String COUNT_AUTHORS_WITH_ARTICLES_COUNT ="count.authors.with.articles.count";
-    
+
+    public static final String GET_TOPICS = "get.topics";
+    public static final String COUNT_TOPICS = "count.topics";
+
     public static final String MONITOR_INSERT_USER = "insert.monitor";
     public static final String MONITOR_REMOVE_USER = "remove.monitor";
     public static final String MONITOR_REMOVE_ALL = "remove.users.monitors";
@@ -268,7 +273,6 @@ public final class SQLTool implements Configurable {
                 statement.setObject(i++, iter.next());
 
             resultSet = statement.executeQuery();
-            resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Relation relation = new Relation(resultSet.getInt(1));
                 int score = resultSet.getInt(2);
@@ -312,7 +316,7 @@ public final class SQLTool implements Configurable {
             }
             return result;
         } catch (SQLException e) {
-            throw new PersistenceException("Nemohu vykonat SQL příkaz "+sql, e);
+			throw new PersistenceException("Nemohu vykonat SQL příkaz " + sql, e);
         } finally {
             PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
@@ -378,23 +382,23 @@ public final class SQLTool implements Configurable {
             Date date = resultSet.getTimestamp(1);
             return new Date(date.getTime());
         } catch (SQLException e) {
-            throw new PersistenceException("Nemohu vykonat SQL příkaz "+sql, e);
+			throw new PersistenceException("Nemohu vykonat SQL příkaz " + sql, e);
         } finally {
             PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
     }
 
 	/**
-	 * Loads items from database using given SQL command. 
+	 * Loads items from database using given SQL command.
 	 * @param sql Command to execute.
 	 * @param params List of parameters. It must not be null.
 	 * @return List of initialized items.
 	 * @throws PersistenceException If something goes wrong.
 	 */
 	private List<Item> loadItems(String sql, List params)
-			throws PersistenceException {
+	        throws PersistenceException {
 		if (log.isDebugEnabled())
-			log.debug(sql);
+		    log.debug(sql);
 
 		MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistence();
 		Connection con = null;
@@ -456,7 +460,7 @@ public final class SQLTool implements Configurable {
 
             return list;
         } catch (SQLException e) {
-            throw new PersistenceException("Nemohu vykonat SQL příkaz " + sql, e);
+			throw new PersistenceException("Nemohu vykonat SQL příkaz " + sql, e);
         } finally {
             PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
@@ -904,6 +908,29 @@ public final class SQLTool implements Configurable {
         fieldMapping.put(Field.UPPER, "R");
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is a contract template item in active mode (not draft, not obsolete)
+     * and there is no signed contract owned by given user.
+     *
+     * @param uid id of user searched for contracts
+     * @return initialized relation or null
+     * @throws PersistenceException if there is an error with the underlying
+     *                              persistent storage.
+     */
+    public Relation findUnsignedContractRelation(int uid) {
+        StringBuilder sb = new StringBuilder(sql.get(UNSIGNED_CONTRACT_RELATIONS));
+        List params = new ArrayList();
+        params.add(uid);
+        List<Relation> relations = loadRelations(sb.toString(), params);
+        if (!relations.isEmpty()) {
+            Relation relation = relations.get(0);
+            Tools.sync(relation);
+            return relation;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -1531,7 +1558,7 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-	 * Finds items of given type with applied qualifiers 
+	 * Finds items of given type with applied qualifiers
 	 * @param type Type of items to be retrieved
 	 * @param qualifiers Narrowing qualifiers
 	 * @return List of items which fitted conditions
@@ -1543,7 +1570,23 @@ public final class SQLTool implements Configurable {
 		appendQualifiers(sb, qualifiers, params, null, null);
 		return loadItems(sb.toString(), params);
 	}
-    
+
+    /**
+     * Counts items of given type with applied qualifiers
+     *
+     * @param type       Type of items to be retrieved
+     * @param qualifiers Narrowing qualifiers
+     * @return Number of items which fitted conditions
+     */
+    public Integer countItemsWithType(int type, Qualifier[] qualifiers) {
+        StringBuilder sb = new StringBuilder(sql.get(ITEMS_WITH_TYPE));
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(type);
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadNumber(sb.toString(), params);
+    }
+
     /**
      * Finds items of given type ordered by id property in ascending order.
      * Use offset to skip some record .
@@ -1608,7 +1651,7 @@ public final class SQLTool implements Configurable {
             persistance.synchronizeList(result);
             return result;
         } catch (SQLException e) {
-            throw new PersistenceException("Chyba při hledání!", e);
+			throw new PersistenceException("Chyba při hledání!", e);
         } finally {
             PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
@@ -1641,7 +1684,7 @@ public final class SQLTool implements Configurable {
             persistance.synchronizeList(result);
             return result;
         } catch (SQLException e) {
-            throw new PersistenceException("Chyba při hledání!", e);
+			throw new PersistenceException("Chyba při hledání!", e);
         } finally {
             PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
@@ -2644,22 +2687,27 @@ public final class SQLTool implements Configurable {
         }
     }
 
-	/**
-	 * Finds author for given userId, if any 
-	 * @param userId Id of user
-	 * @return Item with author data
-	 */
-	public Item findAuthorByUserId(int userId) {
-		Qualifier[] qualifiers = new Qualifier[] { new CompareCondition(Field.NUMERIC1, Operation.EQUAL, userId) };
-		List<Item> matches = findItemsWithType(Item.AUTHOR, qualifiers);
-		if (!matches.isEmpty()) {
-			return matches.get(0);
-		}
-		return null;
-	}
+    /**
+     * Finds author for given userId or returns null.
+     * @param userId Id of user
+     * @return initialized Relation holding Author Item
+     */
+    public Relation findAuthorByUserId(int userId) {
+        Qualifier[] qualifiers = new Qualifier[]{new CompareCondition(Field.NUMERIC1, Operation.EQUAL, userId)};
+        StringBuilder sb = new StringBuilder(sql.get(ITEM_RELATIONS_BY_TYPE));
+        List params = new ArrayList();
+        params.add(Item.AUTHOR);
+        Map<Field, String> fieldMapping = new HashMap<Field, String>();
+        fieldMapping.put(Field.TYPE, "P");
+        appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
 
-	
-	
+        List<Relation> relations = loadRelations(sb.toString(), params);
+        if (!relations.isEmpty())
+            return (Relation) Tools.sync(relations.get(0));
+
+        return null;
+    }
+
 	/**
      * Gets authors with additional information fetched, such as article count or last article date
      * @param qualifiers Narrowing qualifiers
@@ -2667,7 +2715,6 @@ public final class SQLTool implements Configurable {
      * @see BeanFetcher To transform it to according Author JavaBean
      */
 	public List<Object[]> getAuthorsWithArticlesCount(Qualifier[] qualifiers) {
-		
 		final Map<Field, String> mapping = new HashMap<Field, String>(1) {{
 			put(Field.ID, "P");
 		}};
@@ -2686,7 +2733,6 @@ public final class SQLTool implements Configurable {
      * @return Size of author collection satisfying conditions
      */
 	public Integer countAuthorWithArticlesCount(Qualifier[] qualifiers) {
-		
 		final Map<Field, String> mapping = new HashMap<Field, String>(1) {{
 			put(Field.ID, "P");
 		}};
@@ -2698,6 +2744,36 @@ public final class SQLTool implements Configurable {
 		appendQualifiers(sb, qualifiers, params, null, mapping);
 		return loadNumber(sb.toString(), params);
 	}
+
+    /**
+     * Retrieves topics available for authors
+     *
+     * @param qualifiers Narrowing qualifiers
+     * @return List of items containing data
+     */
+    public List<Item> getTopics(Qualifier[] qualifiers) {
+        if (qualifiers == null)
+            qualifiers = Qualifier.ARRAY_TYPE;
+        StringBuilder sb = new StringBuilder(sql.get(GET_TOPICS));
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadItems(sb.toString(), params);
+    }
+
+    /**
+     * Counts topics available for authors
+     *
+     * @param qualifiers Narrowing qualifiers
+     * @return Size of topics collection satisfying conditions
+     */
+    public Integer countTopics(Qualifier[] qualifiers) {
+        if (qualifiers == null)
+            qualifiers = Qualifier.ARRAY_TYPE;
+        StringBuilder sb = new StringBuilder(sql.get(COUNT_TOPICS));
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadNumber(sb.toString(), params);
+    }
 
     public List<Relation> findServerRelationsInCategory(int cat) {
         String query = sql.get(SERVER_RELATIONS_IN_CATEGORY);
@@ -2754,6 +2830,7 @@ public final class SQLTool implements Configurable {
         store(ARTICLE_RELATIONS, prefs);
         store(ARTICLE_RELATIONS_WITHIN_PERIOD, prefs);
         store(ARTICLES_ON_INDEX_RELATIONS, prefs);
+        store(UNSIGNED_CONTRACT_RELATIONS, prefs);
         store(NEWS_RELATIONS, prefs);
         store(NEWS_RELATIONS_WITHIN_PERIOD, prefs);
         store(NEWS_RELATIONS_BY_USER, prefs);
@@ -2848,6 +2925,8 @@ public final class SQLTool implements Configurable {
         store(SOLUTIONS_INSERT, prefs);
         store(SOLUTIONS_DELETE, prefs);
         store(SOLUTIONS_DELETE_SINGLE, prefs);
+        store(GET_TOPICS, prefs);
+        store(COUNT_TOPICS, prefs);
     }
 
     /**

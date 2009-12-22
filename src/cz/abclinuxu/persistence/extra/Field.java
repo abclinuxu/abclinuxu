@@ -63,16 +63,34 @@ public class Field {
     public static final Field NUMERIC2 = new Field(Id.NUMERIC2, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
+    public static final Field NUMERIC3 = new Field(Id.NUMERIC3, null,
+            new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
+                                           PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
+    public static final Field BOOLEAN1 = new Field(Id.BOOLEAN1, null,
+            new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
+                                           PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
+    public static final Field BOOLEAN2 = new Field(Id.BOOLEAN2, null,
+            new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
+                                           PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
+    public static final Field BOOLEAN3 = new Field(Id.BOOLEAN3, null,
+            new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
+                                           PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
     public static final Field STRING1 = new Field(Id.STRING1, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
     public static final Field STRING2 = new Field(Id.STRING2, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
+    public static final Field STRING3 = new Field(Id.STRING3, null,
+            new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
+                                           PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
     public static final Field DATE1 = new Field(Id.DATE1, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
     public static final Field DATE2 = new Field(Id.DATE2, null,
+            new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
+                                           PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
+    public static final Field DATE3 = new Field(Id.DATE3, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.CATEGORY, PersistenceMapping.Table.ITEM,
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.DATA});
     public static final Field OWNER = new Field(Id.OWNER, "S",
@@ -96,6 +114,7 @@ public class Field {
     public static final Field LOGIN = new Field(Id.LOGIN, null,
             new PersistenceMapping.Table[]{PersistenceMapping.Table.USER});
     public static final Field COUNTER = new Field(Id.COUNTER, null, null);
+    public static final Field ISNULL = new Field(Id.ISNULL, null, null);
 
     private final Id id;
     private Set<PersistenceMapping.Table> compatibility;
@@ -103,16 +122,28 @@ public class Field {
 
     private Field(Id id, String defaultMapping, PersistenceMapping.Table[] tables) {
         this.id = id;
+        this.defaultTableNick = defaultMapping;
+
         if (tables == null) {
             compatibility = Collections.emptySet();
             return;
         }
+
         compatibility = new HashSet<PersistenceMapping.Table>(tables.length, 1.0f);
         for (int i = 0; i < tables.length; i++) {
             PersistenceMapping.Table table = tables[i];
             compatibility.add(table);
         }
-        this.defaultTableNick = defaultMapping;
+    }
+
+    /**
+     * Public constructor to override table nick mapping for selected Field.
+     * @param field existing field
+     * @param tableNick new table nick
+     */
+    public Field(Field field, String tableNick) {
+        this(field.id, tableNick, null);
+        this.compatibility = field.compatibility;
     }
 
     /**
@@ -140,6 +171,9 @@ public class Field {
     }
 
     public enum Id {
+        BOOLEAN1,
+        BOOLEAN2,
+        BOOLEAN3,
         CHILD,
         CHILD_TYPE,
         COUNTER,
@@ -147,16 +181,20 @@ public class Field {
         DATA,
         DATE1,
         DATE2,
+        DATE3,
         DAY,
         ID,
+        ISNULL,
         LOGIN,
         NUMERIC1,
         NUMERIC2,
+        NUMERIC3,
         OWNER,
         PARENT,
         PARENT_TYPE,
         STRING1,
         STRING2,
+        STRING3,
         SUBTYPE,
         TITLE,
         TYPE,

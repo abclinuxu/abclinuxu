@@ -30,10 +30,16 @@ CREATE TABLE kategorie (
  podtyp VARCHAR(50) NULL,                        -- podtyp
  numeric1 INT NULL,                              -- obecne pouzitelny sloupecek
  numeric2 INT NULL,                              -- obecne pouzitelny sloupecek
+ numeric3 INT NULL,                              -- obecne pouzitelny sloupecek
+ boolean1 CHAR(1) NULL,                          -- obecne pouzitelny sloupecek
+ boolean2 CHAR(1) NULL,                          -- obecne pouzitelny sloupecek
+ boolean3 CHAR(1) NULL,                          -- obecne pouzitelny sloupecek
  string1 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
  string2 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
+ string3 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
  date1 DATETIME NULL,                            -- obecne pouzitelny sloupecek
  date2 DATETIME NULL,                            -- obecne pouzitelny sloupecek
+ date3 DATETIME NULL,                            -- obecne pouzitelny sloupecek
  data LONGTEXT NOT NULL                          -- XML s nazvem, ikonou, poznamkou ...
 );
 ALTER TABLE kategorie ADD INDEX in_podtyp (podtyp);
@@ -53,10 +59,16 @@ CREATE TABLE polozka (
  podtyp VARCHAR(50) NULL,                        -- podtyp
  numeric1 INT NULL,                              -- obecne pouzitelny sloupecek
  numeric2 INT NULL,                              -- obecne pouzitelny sloupecek
+ numeric3 INT NULL,                              -- obecne pouzitelny sloupecek
+ boolean1 CHAR(1) NULL,                          -- obecne pouzitelny sloupecek
+ boolean2 CHAR(1) NULL,                          -- obecne pouzitelny sloupecek
+ boolean3 CHAR(1) NULL,                          -- obecne pouzitelny sloupecek
  string1 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
  string2 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
+ string3 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
  date1 DATETIME NULL,                            -- obecne pouzitelny sloupecek
  date2 DATETIME NULL,                            -- obecne pouzitelny sloupecek
+ date3 DATETIME NULL,                            -- obecne pouzitelny sloupecek
  data LONGTEXT NOT NULL                          -- XML s nazvem, ikonou, poznamkou ...
 );
 ALTER TABLE polozka ADD INDEX in_typ (typ);
@@ -77,10 +89,16 @@ CREATE TABLE zaznam (
  podtyp VARCHAR(50) NULL,                        -- podtyp
  numeric1 INT NULL,                              -- obecne pouzitelny sloupecek
  numeric2 INT NULL,                              -- obecne pouzitelny sloupecek
+ numeric3 INT NULL,                              -- obecne pouzitelny sloupecek
+ boolean1 CHAR(1) NULL,                          -- obecne pouzitelny sloupecek
+ boolean2 CHAR(1) NULL,                          -- obecne pouzitelny sloupecek
+ boolean3 CHAR(1) NULL,                          -- obecne pouzitelny sloupecek
  string1 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
  string2 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
+ string3 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
  date1 DATETIME NULL,                            -- obecne pouzitelny sloupecek
  date2 DATETIME NULL,                            -- obecne pouzitelny sloupecek
+ date3 DATETIME NULL,                            -- obecne pouzitelny sloupecek
  data LONGTEXT NOT NULL                          -- XML s nazvem, poznamkou ...
 );
 ALTER TABLE zaznam ADD INDEX in_typ (typ);
@@ -97,10 +115,16 @@ CREATE TABLE data (
  podtyp VARCHAR(50) NULL,                        -- podtyp
  numeric1 INT NULL,                              -- obecne pouzitelny sloupecek
  numeric2 INT NULL,                              -- obecne pouzitelny sloupecek
+ numeric3 INT NULL,                              -- obecne pouzitelny sloupecek
+ boolean1 CHAR(1) NULL,                          -- obecne pouzitelny sloupecek
+ boolean2 CHAR(1) NULL,                          -- obecne pouzitelny sloupecek
+ boolean3 CHAR(1) NULL,                          -- obecne pouzitelny sloupecek
  string1 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
  string2 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
+ string3 VARCHAR(50) NULL,                       -- obecne pouzitelny sloupecek
  date1 DATETIME NULL,                            -- obecne pouzitelny sloupecek
  date2 DATETIME NULL,                            -- obecne pouzitelny sloupecek
+ date3 DATETIME NULL,                            -- obecne pouzitelny sloupecek
  data LONGTEXT NOT NULL                          -- XML s cestou k soboru, nazvem, ikonou, poznamkou ...
 );
 ALTER TABLE data ADD INDEX in_typ (typ);

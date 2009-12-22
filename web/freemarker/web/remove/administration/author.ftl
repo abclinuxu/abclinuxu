@@ -23,7 +23,7 @@
             Opravdu chcete smazat autora <b>${AUTHOR.title}</b>?
             <input type="submit" name="delete" value="Ano, smazat"/>
             <input type="submit" name="leave" value="Ne, nemazat"/>
-            <input type="hidden" name="aId" value="${AUTHOR.id}"/>
+            <input type="hidden" name="rid" value="${RELATION.id}"/>
             <input type="hidden" name="action" value="rm2"/>
         </p>
     <form>

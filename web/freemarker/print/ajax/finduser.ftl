@@ -1,5 +1,5 @@
 <#if SELECT_MODE?? >
-<script type="text/javascript"><!--
+<script type="text/javascript">
     $(document).ready(function() {
     	$('#fua_submit').bind('click', function() {
     	   
@@ -7,6 +7,7 @@
     	    var uid = $('#fua_uid').val();
     	    var email = $('#fua_email').val();
     	    var city = $('#fua_city').val();
+    	    var field = $('#fua_field').val();
     	
     	    var results = $('#findUserResults');
     	    results.empty();
@@ -14,21 +15,20 @@
     	         {'name':name,
     	          'uid':uid,
     	          'email':email,
-    	          'city':city});
+    	          'city':city,
+    	          'field':field});
     	});    		   
     });  
     
-    function passLogin(login) {    	
-        $('#addauthor-login').val(login);
+    function passValue(value) {    	
+        $('#findUserResult-${FIELD}').val(value);
         $('#findUserDialog').dialog().dialog('close');
     } 
-      
-// -->
 </script>
 </#if>
 <body>
     <#if SELECT_MODE?? >    
-    <p>Zde můžete specifikovat další informace o uživateli a vybrat si jeho login.</p>
+    <p>Zde můžete specifikovat další informace o uživateli a vybrat si jeho ${FIELD}.</p>
 	<table class="siroka">
 	    <tr>
 			<td>Osobní číslo:</td>
@@ -48,7 +48,9 @@
 		</tr>
 		<tr> 
 			<td></td>
-			<td><input type="button" id="fua_submit" value="Vyhledat" /></td>
+			<td><input type="hidden" id="fua_field" name="field" value="${FIELD}" />
+			    <input type="button" id="fua_submit" value="Vyhledat" />
+			</td>
 		</tr>
 	</table>
 	</#if>
@@ -60,7 +62,17 @@
 		<p>Nebyl nalezen žádný odpovídající uživatel, prosím zobecněte dotaz.</p>
 	<#else>
 	  <#list USERS as user>
-	  	<a href="javascript:passLogin('${user.login}')">${user.name}</a>&nbsp;
+	  	<#switch FIELD>
+	  		<#case "id">
+	  			<#assign value=user.id />
+	  			<#break />
+	  		<#case "login">
+	  			<#assign value=user.login />
+	  			<#break />	
+	  		<#default>
+	  			<#assign value="">	
+	    </#switch>
+	  	<a href="javascript:passValue('${value}')">${user.name}</a>&nbsp;
 	  </#list>	  
 	</#if>
 	<#if SELECT_MODE?? ></div></#if>

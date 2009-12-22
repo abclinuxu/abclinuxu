@@ -927,8 +927,9 @@ public class MySqlPersistence implements Persistence {
     private void appendCreateParams(GenericObject obj, StringBuffer sb, List conditions ) {
         if (obj instanceof GenericDataObject) {
             GenericDataObject gdo = (GenericDataObject) obj;
-            sb.append("INSERT INTO ").append(getTable(obj)).append(" (cislo,typ,podtyp,numeric1,numeric2,string1,string2,date1,date2,data) " +
-                    "VALUES (?,?,?,?,?,?,?,?,?,?)");
+            sb.append("INSERT INTO ").append(getTable(obj)).append(" (cislo,typ,podtyp,numeric1,numeric2,numeric3," +
+                    "boolean1,boolean2,boolean3,string1,string2,string3,date1,date2,date3,data) " +
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             if ((obj instanceof Item || obj instanceof Record) && gdo.getType() == 0) {
                 log.warn("Type not set! " + obj.toString());
             }
@@ -937,14 +938,23 @@ public class MySqlPersistence implements Persistence {
             conditions.add(gdo.getSubType());
             conditions.add(gdo.getNumeric1());
             conditions.add(gdo.getNumeric2());
+            conditions.add(gdo.getNumeric3());
+            conditions.add(gdo.isBoolean1());
+            conditions.add(gdo.isBoolean2());
+            conditions.add(gdo.isBoolean3());
             conditions.add(gdo.getString1());
             conditions.add(gdo.getString2());
+            conditions.add(gdo.getString3());
             if ((gdo.getDate1() != null))
                 conditions.add(new Timestamp(gdo.getDate1().getTime()));
             else
                 conditions.add(null);
             if ((gdo.getDate2() != null))
                 conditions.add(new Timestamp(gdo.getDate2().getTime()));
+            else
+                conditions.add(null);
+            if ((gdo.getDate3() != null))
+                conditions.add(new Timestamp(gdo.getDate3().getTime()));
             else
                 conditions.add(null);
 
@@ -1217,7 +1227,8 @@ public class MySqlPersistence implements Persistence {
 
     private String getLoadDataObjectQuery(GenericDataObject obj) {
         String tableType = PersistenceMapping.getGenericObjectType(obj);
-        return "SELECT P.cislo,P.typ,P.podtyp,P.numeric1,P.numeric2,P.string1,P.string2,P.date1,P.date2,P.data," +
+        return "SELECT P.cislo,P.typ,P.podtyp,P.numeric1,P.numeric2,P.numeric3,P.boolean1,P.boolean2,P.boolean3," +
+                "P.string1,P.string2,P.string3,P.date1,P.date2,P.date3,P.data," +
                 "S.pridal,S.vytvoreno,S.zmeneno,S.jmeno,S.skupina,S.prava," +
                 "(SELECT count(*) FROM monitor WHERE cislo=P.cislo AND typ='" + tableType + "') as monitors" +
                 " FROM " + getTable(obj) + " P, spolecne S WHERE S.cislo=P.cislo AND S.typ=? AND ";
@@ -1283,32 +1294,52 @@ public class MySqlPersistence implements Persistence {
     private void syncGenericDataObjectFromRS(GenericDataObject item, ResultSet resultSet) throws SQLException {
         item.setType(resultSet.getInt(2));
         item.setSubType(resultSet.getString(3));
+
         Object object = resultSet.getObject(4);
         if (object != null)
             item.setNumeric1(((Number)object).intValue());
         object = resultSet.getObject(5);
         if (object != null)
             item.setNumeric2(((Number) object).intValue());
-        item.setString1(resultSet.getString(6));
-        item.setString2(resultSet.getString(7));
-        Timestamp timestamp = resultSet.getTimestamp(8);
+        object = resultSet.getObject(6);
+        if (object != null)
+            item.setNumeric3(((Number) object).intValue());
+
+        boolean b = resultSet.getBoolean(7);
+        if (! resultSet.wasNull())
+            item.setBoolean1(b);
+        b = resultSet.getBoolean(8);
+        if (!resultSet.wasNull())
+            item.setBoolean2(b);
+        b = resultSet.getBoolean(9);
+        if (!resultSet.wasNull())
+            item.setBoolean3(b);
+
+        item.setString1(resultSet.getString(10));
+        item.setString2(resultSet.getString(11));
+        item.setString3(resultSet.getString(12));
+
+        Timestamp timestamp = resultSet.getTimestamp(13);
         if (timestamp != null)
             item.setDate1(new java.util.Date(timestamp.getTime()));
-        timestamp = resultSet.getTimestamp(9);
+        timestamp = resultSet.getTimestamp(14);
         if (timestamp != null)
             item.setDate2(new java.util.Date(timestamp.getTime()));
+        timestamp = resultSet.getTimestamp(15);
+        if (timestamp != null)
+            item.setDate3(new java.util.Date(timestamp.getTime()));
 
-        String tmp = resultSet.getString(10);
+        String tmp = resultSet.getString(16);
         tmp = insertEncoding(tmp);
         item.setData(tmp);
 
-        item.setOwner(resultSet.getInt(11));
-        item.setCreated(new java.util.Date(resultSet.getTimestamp(12).getTime()));
-        item.setUpdated(new java.util.Date(resultSet.getTimestamp(13).getTime()));
-        item.setTitle(resultSet.getString(14));
-		item.setGroup(resultSet.getInt(15));
-		item.setPermissions(resultSet.getInt(16));
-        item.setMonitorCount(resultSet.getInt(17));
+        item.setOwner(resultSet.getInt(17));
+        item.setCreated(new java.util.Date(resultSet.getTimestamp(18).getTime()));
+        item.setUpdated(new java.util.Date(resultSet.getTimestamp(19).getTime()));
+        item.setTitle(resultSet.getString(20));
+		item.setGroup(resultSet.getInt(21));
+		item.setPermissions(resultSet.getInt(22));
+        item.setMonitorCount(resultSet.getInt(23));
         item.setInitialized(true);
     }
 
@@ -1785,11 +1816,11 @@ public class MySqlPersistence implements Persistence {
             con = getSQLConnection();
             statement = null;
 
-            statement = con.prepareStatement("UPDATE "+getTable(obj)+" SET typ=?,podtyp=?,data=?,numeric1=?,numeric2=?,string1=?,string2=?,date1=?,date2=? WHERE cislo=?");
+            statement = con.prepareStatement("UPDATE "+getTable(obj)+" SET typ=?,podtyp=?,data=?,numeric1=?,numeric2=?,numeric3=?," +
+                    "boolean1=?,boolean2=?,boolean3=?,string1=?,string2=?,string3=?,date1=?,date2=?,date3=? WHERE cislo=?");
             statement.setInt(1,obj.getType());
             statement.setString(2,obj.getSubType());
             statement.setBytes(3,obj.getDataAsString().getBytes());
-            statement.setInt(10,obj.getId());
 
             Integer intgr = obj.getNumeric1();
             if (intgr != null)
@@ -1803,16 +1834,47 @@ public class MySqlPersistence implements Persistence {
             else
                 statement.setString(5,null);
 
-            statement.setString(6,obj.getString1());
-            statement.setString(7,obj.getString2());
+            intgr = obj.getNumeric3();
+            if (intgr != null)
+                statement.setInt(6, intgr);
+            else
+                statement.setString(6, null);
+
+            if (obj.isBoolean1() != null)
+                statement.setBoolean(7, obj.isBoolean1());
+            else
+                statement.setString(7, null);
+
+            if (obj.isBoolean2() != null)
+                statement.setBoolean(8, obj.isBoolean2());
+            else
+                statement.setString(8, null);
+
+            if (obj.isBoolean3() != null)
+                statement.setBoolean(9, obj.isBoolean3());
+            else
+                statement.setString(9, null);
+
+            statement.setString(10, obj.getString1());
+            statement.setString(11, obj.getString2());
+            statement.setString(12, obj.getString3());
+
             if ((obj.getDate1() != null))
-                statement.setTimestamp(8,new Timestamp(obj.getDate1().getTime()));
+                statement.setTimestamp(13, new Timestamp(obj.getDate1().getTime()));
             else
-                statement.setTimestamp(8,null);
+                statement.setTimestamp(13, null);
+
             if ((obj.getDate2() != null))
-                statement.setTimestamp(9,new Timestamp(obj.getDate2().getTime()));
+                statement.setTimestamp(14, new Timestamp(obj.getDate2().getTime()));
             else
-                statement.setTimestamp(9,null);
+                statement.setTimestamp(14, null);
+
+            if ((obj.getDate2() != null))
+                statement.setTimestamp(15, new Timestamp(obj.getDate3().getTime()));
+            else
+                statement.setTimestamp(15, null);
+
+            statement.setInt(16, obj.getId());
 
             int result = statement.executeUpdate();
             if ( result!=1 )

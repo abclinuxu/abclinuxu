@@ -548,16 +548,40 @@
 <#macro showOption5 (value caption condition)>
     <option value="${value}"<#if condition> selected</#if>>${caption}</option>
 </#macro>
-
 <#macro showOption6 (param value caption type condition extra...)>
     <label>
-        <input type="${type}" name="${param}" value="${value}"
-        <#if condition> checked="checked"</#if>
-        <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+        <input type="${type}" name="${param}" value="${value}" <#if condition> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
         ${caption}
     </label>
 </#macro>
 
+<#macro filterOption (filter name value extra...) >
+	<option value="${value}" <#if filter.checked("${name}", "${value}")> selected</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> >
+	<#nested/>
+	</option>
+</#macro>
+
+<#macro filterInput (filter name extra...) >
+	<input type="text" name="${name}" value="${filter.value(name)}" <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+</#macro>
+
+<#macro filterHidden (filter name extra...) >
+	<input type="hidden" name="${name}" value="${filter.value(name)}" <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+</#macro>
+
+<#macro filterRadio (filter name value extra...) >
+	<input type="radio" name="${name}" value="${value}" <#if filter.checked("${name}", "${value}")> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+	<#nested/>
+</#macro>
+
+<#macro filterCheckBox (filter name value extra...) >
+    <input type="checkbox" name="${name}" value="${value}" <#if filter.checked("${name}", "${value}")> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+	<#nested/>
+</#macro>
+
+<#macro filterText (filter name extra...) >
+	<textarea name="${name}" <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> >${filter.value("${name}")}</textarea>
+</#macro>
 
 <#macro advertisement (id)>${TOOL.getAdvertisement(id, .vars)}</#macro>
 
@@ -580,6 +604,8 @@
     <#local user = TOOL.createUser(uid)><#t>
     <@showUser user /><#t>
 </#macro>
+
+<#macro showAuthor author><a href="${URL.make("/redakce/autori/show/" + author.relationId)}">${TOOL.getPersonName(author)}</a></#macro>
 
 <#macro showRevisions relation info = TOOL.getRevisionInfo(relation.child)>
     <p class="documentHistory">

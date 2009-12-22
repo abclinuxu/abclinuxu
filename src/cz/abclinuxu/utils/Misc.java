@@ -38,14 +38,15 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import org.dom4j.Node;
 import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
-import org.dom4j.Attribute;
 import org.htmlparser.lexer.Lexer;
 import org.htmlparser.nodes.TagNode;
 import org.htmlparser.util.ParserException;
+import org.apache.commons.io.FilenameUtils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -54,6 +55,8 @@ import java.io.IOException;
  * Miscallenous utilities.
  */
 public class Misc {
+    static Pattern reWhiteSpaces = Pattern.compile("\\s+");
+
     /**
      * Retrieves description of changes, that current user made.
      * @return changes description, null if none provided or Constants.ERROR if there is an error.
@@ -376,11 +379,7 @@ public class Misc {
     public static String getFileSuffix(String name) {
         if (name == null)
             return "";
-        int i = name.lastIndexOf('.');
-        if (i == -1)
-            return "";
-        else
-            return name.substring(i + 1);
+        return FilenameUtils.getExtension(name);
     }
 
     public static String getWebPath(String absolutePath) {
@@ -489,22 +488,6 @@ public class Misc {
     }
 
     /**
-     * Sets value to existing or creates new attribute.
-     * @param element parent element
-     * @param name attribute name
-     * @param value desired value
-     */
-    public static void setAttribute(Element element, String name, String value) {
-        Attribute attribute = element.attribute(name);
-        if (attribute != null)
-            attribute.setText(value);
-        else {
-            attribute = DocumentHelper.createAttribute(element, name, value);
-            element.add(attribute);
-        }
-    }
-
-    /**
      * Extracts value from element or attribute selected by given xpath starting at element.
      * Purpose of this method is to simplify readability of source code, because it handles
      * situation that xpath matched nothing.
@@ -550,5 +533,16 @@ public class Misc {
         PersistenceFactory.getPersistence().synchronizeList(users, true);
         Collections.sort(users, new UserNameComparator());
         return users;
+    }
+
+    /**
+     * Removes multiple white spaces including nw line characters by single space.
+     * @param input input
+     * @return converted text
+     */
+    public static String normalizeWhiteSpaces(String input) {
+        if (input == null)
+            return null;
+        return reWhiteSpaces.matcher(input).replaceAll(" ");
     }
 }

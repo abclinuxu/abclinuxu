@@ -29,13 +29,16 @@ public class Qualifier {
     public static final Qualifier SORT_BY_ID = new OrderByQualifier("ID", Field.ID);
     public static final Qualifier SORT_BY_STRING1 = new OrderByQualifier("STRING1", Field.STRING1);
     public static final Qualifier SORT_BY_STRING2 = new OrderByQualifier("STRING2", Field.STRING2);
-    
+    public static final Qualifier SORT_BY_DATE1 = new OrderByQualifier("DATE1", Field.DATE1);
+    public static final Qualifier SORT_BY_DATE2 = new OrderByQualifier("DATE2", Field.DATE2);
+    public static final Qualifier SORT_BY_ISNULL = new OrderByQualifier("ISNULL", Field.ISNULL);
+
     public static final Qualifier ORDER_ASCENDING = new Qualifier("ORDER_ASCENDING");
     public static final Qualifier ORDER_DESCENDING = new Qualifier("ORDER_DESCENDING");
 
-    public static final Qualifier[] ARRAY_TYPE = new Qualifier[] {};
-    
-    
+    public static final Qualifier[] ARRAY_TYPE = new Qualifier[]{};
+
+
     protected final String name;
 
     protected Qualifier(String name) {
@@ -48,7 +51,7 @@ public class Qualifier {
 
     public boolean equals(Object obj) {
         if (obj instanceof Qualifier)
-            return ((Qualifier)obj).name.equals(name);
+            return ((Qualifier) obj).name.equals(name);
         return false;
     }
 

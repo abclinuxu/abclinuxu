@@ -37,6 +37,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.TagTool;
+import cz.abclinuxu.utils.XmlUtils;
 import cz.abclinuxu.utils.TagTool.ListOrder;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -1450,6 +1451,8 @@ public class VariableFetcher extends TimerTask implements Configurable {
     		// sort by name
     		Collections.sort(result);
     		freshCloudTags = result;
+    	} catch(IndexOutOfBoundsException e) {
+    		log.warn("Cloud tags: Tags are not cached yet, retrieval returned empty list");
     	} catch(Exception e) {
     		log.error("Selhalo nacitani tag cloud", e);
     	}

@@ -40,49 +40,40 @@ import java.util.Map;
 /**
  * Class containing basic user data
  */
-public class User extends CommonObject implements ImageAssignable {
-    private boolean virtual; // brainstorming
+public class User extends CommonObject implements ImageAssignable<User.UserImage> {
 
-    public static final int USER_PHOTO = 1;
-    public static final int USER_AVATAR = 2;
+    /**
+     * All available images for user
+     * @author kapy
+     *
+     */
+    public enum UserImage implements ImageAssignable.AssignedImage {
+    	PHOTO,
+    	AVATAR
+    }
 
     /**
      * login name of the user
      */
     private String login;
-    /**
-     * openid login
-     */
+    /** openid login */
     private String openId;
-    /**
-     * real name of the user
-     */
+    /** real name of the user */
     private String name;
-    /**
-     * nickname of the user
-     */
+    /** nickname of the user */
     private String nick;
-    /**
-     * email of the user
-     */
+    /** email of the user */
     private String email;
-    /**
-     * (noncrypted) password, not persisted
-     */
+    /** (noncrypted) password, not persisted */
     private String password;
-    /**
-     * time of last synchronization with LDAP (optional)
-     */
+    /** time of last synchronization with LDAP (optional) */
     private Date lastSynced;
 
-    /**
-     * cache of granted user roles
-     */
+    /** cache of granted user roles */
     private Map roles;
-    /**
-     * map where key is discussion id and value is id of last seen comment
-     */
+    /** map where key is discussion id and value is id of last seen comment */
     private Map<Integer, Integer> lastSeenDiscussions;
+
 
     public User() {
         super();
@@ -300,7 +291,7 @@ public class User extends CommonObject implements ImageAssignable {
     public Integer getLastSeenComment(int discussion) {
         if (lastSeenDiscussions == null)
             return null;
-        return (Integer) lastSeenDiscussions.get(discussion);
+        return lastSeenDiscussions.get(discussion);
     }
 
     /**
@@ -319,13 +310,13 @@ public class User extends CommonObject implements ImageAssignable {
         roles = null;
     }
 
-    public void assignImage(int imageNo, String imageUrl) {
-        Element image = null;
-        switch (imageNo) {
-            case USER_AVATAR:
+    public void assignImage(UserImage imageId, String imageUrl) {
+        Element image;
+        switch (imageId) {
+            case AVATAR:
                 image = DocumentHelper.makeElement(getData(), "/data/profile/avatar");
                 break;
-            case USER_PHOTO:
+            case PHOTO:
                 image = DocumentHelper.makeElement(getData(), "/data/profile/photo");
                 break;
             default:
@@ -335,13 +326,13 @@ public class User extends CommonObject implements ImageAssignable {
             image.setText(imageUrl);
     }
 
-    public String detractImage(int imageNo) {
-        Node node = null;
-        switch (imageNo) {
-            case USER_AVATAR:
+    public String detractImage(UserImage imageId) {
+        Node node;
+        switch (imageId) {
+            case AVATAR:
                 node = getData().selectSingleNode("/data/profile/avatar");
                 break;
-            case USER_PHOTO:
+            case PHOTO:
                 node = getData().selectSingleNode("/data/profile/photo");
                 break;
             default:
@@ -356,12 +347,12 @@ public class User extends CommonObject implements ImageAssignable {
         return url;
     }
 
-    public String proposeImageUrl(int imageNo, String suffix) {
+    public String proposeImageUrl(UserImage imageId, String suffix) {
         StringBuilder sb = new StringBuilder();
-        switch (imageNo) {
-            case USER_AVATAR:
+        switch (imageId) {
+            case AVATAR:
                 return sb.append("images/avatars/").append(id).append('.').append(suffix).toString();
-            case USER_PHOTO:
+            case PHOTO:
                 return sb.append("images/faces/").append(id).append('.').append(suffix).toString();
             default:
                 return null;
