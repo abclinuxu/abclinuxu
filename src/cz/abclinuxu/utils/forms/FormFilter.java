@@ -34,14 +34,14 @@ public class FormFilter {
         AUTHORS_BY_NAME("filterAuthorsByName") {
             @Override
             protected FilterQualifier construct(Object value) {
-                return new FilterQualifier(new CompareCondition(Field.STRING1, Operation.LIKE, LIKE_PREFIX + value + LIKE_SUFFIX), value);
+                return new FilterQualifier(new CompareCondition(new Field(Field.STRING1, "P"), Operation.LIKE, LIKE_PREFIX + value + LIKE_SUFFIX), value);
             }
         },
 
         AUTHORS_BY_SURNAME("filterAuthorsBySurname") {
             @Override
             protected FilterQualifier construct(Object value) {
-                return new FilterQualifier(new CompareCondition(Field.STRING2, Operation.LIKE, LIKE_PREFIX + value + LIKE_SUFFIX), value);
+                return new FilterQualifier(new CompareCondition(new Field(Field.STRING2, "P"), Operation.LIKE, LIKE_PREFIX + value + LIKE_SUFFIX), value);
             }
         },
 
@@ -64,7 +64,7 @@ public class FormFilter {
             @Override
             protected FilterQualifier construct(Object value) {
                 int intValue = Misc.parseInt(value.toString(), 0);
-                return new FilterQualifier(nestedQualifer(Field.BOOLEAN1, intValue, Operation.EQUAL, 1, Operation.EQUAL, IsNullCheck.BEFORE_CAP), value);
+                return new FilterQualifier(nestedQualifer(new Field(Field.BOOLEAN1, "P"), intValue, Operation.EQUAL, 1, Operation.EQUAL, IsNullCheck.BEFORE_CAP), value);
             }
         },
 
