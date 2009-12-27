@@ -29,10 +29,9 @@
 <h3>Správa uživatelů</h3>
 
 <ul>
+    <li><a href="${URL.noPrefix("/Group?action=show")}">seznam skupin</a></li>
     <li><a href="${URL.noPrefix("/EditUser?action=grant")}">přiřaď roli</a></li>
     <li><a href="${URL.noPrefix("/EditUser?action=invalidateEmail")}">invaliduj emaily uživatelům</a></li>
-    <li><a href="${URL.noPrefix("/Group?action=show")}">seznam skupin</a></li>
-    <li><a href="${URL.noPrefix("/Group?action=add")}">vytvořit skupinu</a></li>
     <li><a href="${URL.noPrefix("/EditUser?action=removeMerge")}">odstranit či sloučit uživatele</a></li>
     <li>
         <form action="/Admin" method="post">

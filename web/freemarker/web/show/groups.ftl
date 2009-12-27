@@ -1,5 +1,13 @@
 <#include "../header.ftl">
 
+<@lib.showSignPost "Akce">
+<ul>
+    <li>
+        <a href="${URL.noPrefix("/Group?action=add")}">Vytvořit skupinu</a>
+    </li>
+</ul>
+</@lib.showSignPost>
+
 <@lib.showMessages/>
 
 <h2>Administrátorské skupiny</h2>
@@ -9,8 +17,6 @@ na základě společné charakteristiky jejích členů. Mohou existovat
 například skupiny admini, kam patří lidé mající některou administrátorskou
 roli, nebo skupina autoři, kam patří lidé píšící články. Členové těchto
 skupin pak mohou mít například větší práva než ostatní uživatelé.</p>
-
-<p><a href="${URL.noPrefix("/Group?action=add")}">Vytvoření nové skupiny</a></p>
 
 <dl>
 <#list GROUPS as group>

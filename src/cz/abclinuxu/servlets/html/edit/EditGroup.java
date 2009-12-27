@@ -160,7 +160,7 @@ public class EditGroup implements AbcAction {
         AdminLogger.logEvent(user, "vytvoril novou skupinu "+group.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/Group");
+        urlUtils.redirect(response, "/Group?action=members&gid=" + group.getId());
         return null;
     }
 
@@ -212,7 +212,7 @@ public class EditGroup implements AbcAction {
         AdminLogger.logEvent(user, "upravil skupinu "+group.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/Group");
+        urlUtils.redirect(response, "/Group?action=members&gid=" + group.getId());
         return null;
     }
 
