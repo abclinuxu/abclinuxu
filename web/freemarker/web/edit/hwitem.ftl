@@ -99,7 +99,7 @@
                 </div>
                 <@lib.showError key="identification"/>
                 <@lib.showRTEControls "identification"/>
-                <textarea name="identification" class="siroka" rows="15" tabindex="8">${PARAMS.identification!?html}</textarea>
+                <textarea name="identification" id="identification" class="siroka" rows="15" tabindex="8">${PARAMS.identification!?html}</textarea>
             </td>
         </tr>
 
@@ -108,7 +108,7 @@
             <td>
                 <@lib.showError key="params"/>
                 <@lib.showRTEControls "params"/>
-                <textarea name="params" class="siroka" rows="15" tabindex="9">${PARAMS.params!?html}</textarea>
+                <textarea name="params" id="params" class="siroka" rows="15" tabindex="9">${PARAMS.params!?html}</textarea>
             </td>
         </tr>
 
@@ -117,7 +117,7 @@
             <td>
                 <@lib.showError key="setup"/>
                 <@lib.showRTEControls "setup"/>
-                <textarea name="setup" class="siroka" rows="20" tabindex="10">${PARAMS.setup!?html}</textarea>
+                <textarea name="setup" id="setup" class="siroka" rows="20" tabindex="10">${PARAMS.setup!?html}</textarea>
             </td>
         </tr>
 
@@ -126,7 +126,7 @@
             <td>
                 <@lib.showError key="note"/>
                 <@lib.showRTEControls "note"/>
-                <textarea name="note" class="siroka" rows="20" tabindex="11">${PARAMS.note!?html}</textarea>
+                <textarea name="note" id="note" class="siroka" rows="20" tabindex="11">${PARAMS.note!?html}</textarea>
             </td>
         </tr>
 
