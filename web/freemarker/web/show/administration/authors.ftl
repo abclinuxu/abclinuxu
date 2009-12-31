@@ -98,13 +98,9 @@
                         </#if>
                     </td>
                     <td style="white-space: nowrap; text-align: left">
-                        <#if author.email??><a href="mailto:${(author.email)!?html}" title="Poslat email">@</a>&nbsp;</#if>
-                        <a href="${URL.make("/redakce/autori/edit/${author.id}?action=edit")}" title="Upravit autora">U</a>&nbsp;
-                        <a href="${URL.make("/autori/namety")}" title="Náměty">N</a>&nbsp;
-                        <a href="${URL.make("/autori/clanky")}" title="Články">Č</a>&nbsp;
-                        <a href="${URL.make("/autori/honorare")}" title="Honoráře">H</a>&nbsp;
-                        <a href="${URL.make("/autori/smlouvy")}" title="Smlouvy">S</a>&nbsp;
-                        <a href="${URL.make("/redakce/autori/edit/${author.id}?action=rm")}" title="Smazat autora">X</a>
+                        <a href="${URL.make("/autori/namety")}" title="Náměty">náměty</a>&nbsp;
+                        <a href="${URL.make("/autori/clanky")}" title="Články">články</a>&nbsp;
+                        <a href="${URL.make("/autori/honorare")}" title="Honoráře">honoráře</a>&nbsp;
                     </td>
                 </tr>
             </#list>
