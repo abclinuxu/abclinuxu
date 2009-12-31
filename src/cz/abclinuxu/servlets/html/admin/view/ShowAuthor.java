@@ -3,6 +3,7 @@ package cz.abclinuxu.servlets.html.admin.view;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.EditionRole;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.exceptions.InvalidDataException;
@@ -19,7 +20,6 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.PageNavigation;
 import cz.abclinuxu.servlets.utils.url.PwdNavigator;
-import cz.abclinuxu.servlets.utils.url.PwdNavigator.Discriminator;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.BeanFetcher.FetchType;
 import cz.abclinuxu.utils.Misc;
@@ -62,15 +62,19 @@ public class ShowAuthor implements AbcAction {
             return null;
         }
 
+        // check permissions
         if (user == null)
-            return FMTemplateSelector.select("AdministrationAEPortal", "login", env, request);
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
 
-        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_AUTHORS);
-        if (navigator.determine() == Discriminator.EDITOR)
+        EditionRole role = ServletUtils.getEditionRole(user, request);
+        if (role == EditionRole.NONE || role == EditionRole.AUTHOR)
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        boolean editor = (role == EditionRole.EDITOR || role == EditionRole.EDITOR_IN_CHIEF);
+        if (editor)
             env.put(VAR_EDITOR_MODE, Boolean.TRUE);
 
-        if (!navigator.permissionsFor(new Relation(Constants.REL_AUTHORS)).canModify())
-            return FMTemplateSelector.select("AdministrationAEPortal", "forbidden", env, request);
+        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_AUTHORS);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if (relation != null) {

@@ -497,12 +497,10 @@
                             <entry key="get.monitors" value="SELECT uzivatel FROM monitor WHERE typ=? AND cislo=?" />
                             <entry key="find.users.monitors" value="SELECT R.cislo FROM monitor M,relace R, spolecne S WHERE R.typ_potomka=M.typ AND R.potomek=M.cislo AND M.uzivatel=? AND R.typ_potomka=S.typ AND R.potomek=S.cislo" />
                             <entry key="get.solutions" value="SELECT K.id, Q.kdo FROM komentar K, reseni Q, relace R WHERE R.typ_predka='P' AND R.predek=? AND R.typ_potomka='Z' AND R.potomek=Q.zaznam AND K.cislo=Q.komentar ORDER BY K.id"/>
-                            <!--<entry key="get.comment" value="SELECT K.cislo, K.zaznam FROM komentar K, relace R WHERE R.typ_predka='P' AND R.predek=? AND R.typ_potomka='Z' AND R.potomek=K.zaznam AND K.id=?" />-->
-			                <!--<entry key="insert.solution" value="INSERT INTO reseni (zaznam,komentar,kdo,kdy) VALUES (?,?,?, now())" />-->
 			                <entry key="insert.solution" value="INSERT INTO reseni (zaznam,komentar,kdo,kdy) SELECT K.zaznam, K.cislo, ?, now() FROM komentar K, relace R WHERE R.typ_predka='P' AND R.predek=? AND R.typ_potomka='Z' AND R.potomek=K.zaznam AND K.id=?" />
-                                        <entry key="delete.single.solution" value="DELETE Q FROM reseni Q, komentar K, relace R WHERE R.typ_predka='P' AND R.predek=? AND R.typ_potomka='Z' AND R.potomek=K.zaznam AND K.id=? AND Q.kdo=?" />
+                            <entry key="delete.single.solution" value="DELETE Q FROM reseni Q, komentar K, relace R WHERE R.typ_predka='P' AND R.predek=? AND R.typ_potomka='Z' AND R.potomek=K.zaznam AND K.id=? AND Q.kdo=?" />
                             <entry key="delete.solutions" value="DELETE Q FROM reseni Q, komentar K, relace R WHERE R.typ_predka='P' AND R.predek=? AND R.typ_potomka='Z' AND R.potomek=K.zaznam AND K.id=?" />
-                            <entry key="get.authors.with.articles.count" value="select P.cislo, P.numeric1, P.boolean1, P.string1, P.string2, P.data, coalesce(counter,0) as counter, kdy, S.pridal, S.skupina, S.prava, R.cislo, CT.boolean2 from relace R join spolecne S on R.typ_potomka=S.typ and R.potomek=S.cislo join polozka P on S.typ='P' and S.cislo=P.cislo left join polozka CT ON CT.cislo=P.numeric2 left join (select R1.potomek as autor, count(P1.cislo) as counter, max(S1.vytvoreno) as kdy from polozka P1, relace R1, vlastnost V1, spolecne S1 where P1.typ=2 and P1.cislo=V1.predek and V1.typ_predka='P' and V1.typ='author' and R1.typ_potomka='P' and V1.hodnota=R1.cislo and S1.typ='P' and P1.cislo=S1.cislo and S1.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19"/>
+                            <entry key="get.authors.with.articles.count" value="select P.cislo, P.numeric1, P.boolean1, P.string1, P.string2, P.data, coalesce(counter,0) as counter, kdy, R.cislo, CT.boolean2 from relace R join polozka P on R.typ_potomka='P' and R.potomek=P.cislo left join polozka CT ON CT.cislo=P.numeric2 left join (select R1.potomek as autor, count(P1.cislo) as counter, max(S1.vytvoreno) as kdy from polozka P1, relace R1, vlastnost V1, spolecne S1 where P1.typ=2 and P1.cislo=V1.predek and V1.typ_predka='P' and V1.typ='author' and R1.typ_potomka='P' and V1.hodnota=R1.cislo and S1.typ='P' and P1.cislo=S1.cislo and S1.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19"/>
                             <entry key="count.authors.with.articles.count" value="select count(*) from polozka P left join polozka CT ON CT.cislo=P.numeric2 left join (select R1.potomek as autor, count(P1.cislo) as counter, max(S1.vytvoreno) as kdy from polozka P1, relace R1, vlastnost V1, spolecne S1 where P1.typ=2 and P1.cislo=V1.predek and V1.typ_predka='P' and V1.typ='author' and R1.typ_potomka='P' and V1.hodnota=R1.cislo and S1.typ='P' and P1.cislo=S1.cislo and S1.vytvoreno &lt; now() group by autor) A on A.autor=P.cislo where P.typ=19"/>
                             <entry key="get.topics" value="select *, date1 IS NULL as isnull from polozka where typ=31 and (numeric1 &lt;&gt; 1 or numeric1 is null)"/>
                             <entry key="count.topics" value="select count(*) from polozka where typ=31 and (numeric1 &lt;&gt; 1 or numeric1 is null)"/>
@@ -808,6 +806,8 @@
                             <entry key="GROUP_AUTORI" value="11247"/>
                             <entry key="GROUP_STICKFISH" value="12651"/>
                             <entry key="GROUP_TEAM_ABCLINUXU" value="20468"/>
+                            <entry key="GROUP_EDITORS" value="149503"/>
+                            <entry key="GROUP_EDITORS_IN_CHIEF" value="149501"/>
                             <entry key="USER_REDAKCE" value="5473"/>
                         </map>
                     </node>
@@ -938,7 +938,7 @@
                                 <map/>
                                 <node name="ShowTopic">
                                     <map>
-                                        <entry key="authors.conference" value="namety-list@abclinuxu.cz"/>
+                                        <entry key="authors.conference" value="autori@abclinuxu.cz"/>
                                         <entry key="sender" value="robot@abclinuxu.cz"/>
                                     </map>
                                 </node>

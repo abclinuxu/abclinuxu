@@ -301,14 +301,6 @@
             <variable name="TITLE" value="Nej"/>
         </mapping>
         <mapping>
-            <pattern>^/Admin/statistika</pattern>
-            <action>cz.abclinuxu.servlets.html.admin.PageStatistics</action>
-        </mapping>
-        <mapping>
-            <pattern>^/Admin</pattern>
-            <action>cz.abclinuxu.servlets.html.admin.AdminServlet</action>
-        </mapping>
-        <mapping>
             <pattern>^/EditAdvertisement</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditAdvertisement</action>
         </mapping>
@@ -337,33 +329,41 @@
             <action>cz.abclinuxu.servlets.html.edit.EditSubportal</action>
         </mapping>        
         <mapping priority="true">
-        	<pattern>/redakce/namety/edit</pattern>
+        	<pattern>^/sprava/redakce/namety/edit</pattern>
         	<action>cz.abclinuxu.servlets.html.admin.edit.EditTopic</action>
         </mapping>
         <mapping priority="true">
-        	<pattern>/redakce/namety</pattern>
+        	<pattern>^/sprava/redakce/namety</pattern>
         	<action>cz.abclinuxu.servlets.html.admin.view.ShowTopic</action>
         </mapping>
 		<mapping priority="true">
-        	<pattern>/redakce/autori/edit</pattern>
+        	<pattern>^/sprava/redakce/autori/edit</pattern>
         	<action>cz.abclinuxu.servlets.html.admin.edit.EditAuthor</action>
         </mapping>        
-        <mapping priority="true">
-        	<pattern>/redakce/autori</pattern>
+        <mapping>
+        	<pattern>^/sprava/redakce/autori</pattern>
         	<action>cz.abclinuxu.servlets.html.admin.view.ShowAuthor</action>
         </mapping>
         <mapping priority="true">
-        	<pattern>/redakce/smlouvy/edit</pattern>
+        	<pattern>^/sprava/redakce/smlouvy/edit</pattern>
         	<action>cz.abclinuxu.servlets.html.admin.edit.EditContract</action>
         </mapping>
         <mapping priority="true">
-        	<pattern>/redakce/smlouvy</pattern>
+        	<pattern>^/sprava/redakce/smlouvy</pattern>
         	<action>cz.abclinuxu.servlets.html.admin.view.ShowContract</action>
         </mapping>
-        <mapping priority="true">
-        	<pattern>/redakce</pattern>
-        	<action>cz.abclinuxu.servlets.html.admin.view.AEPortal</action>
-        </mapping>        
+        <mapping>
+        	<pattern>^/sprava/redakce</pattern>
+        	<action>cz.abclinuxu.servlets.html.admin.view.EditionPortal</action>
+        </mapping>
+        <mapping>
+            <pattern>^/sprava/statistika</pattern>
+            <action>cz.abclinuxu.servlets.html.admin.PageStatistics</action>
+        </mapping>
+        <mapping>
+            <pattern>^/sprava</pattern>
+            <action>cz.abclinuxu.servlets.html.admin.AdminServlet</action>
+        </mapping>
     </format>
     <format version="wap">
         <mapping>
@@ -391,6 +391,11 @@
             <pattern input="host">palirna</pattern>
             <regexp>.*</regexp>
             <replacement>http://www.abclinuxu.cz/</replacement>
+        </mapping>
+        <mapping>
+            <pattern input="path">^/Admin</pattern>
+            <regexp>/Admin</regexp>
+            <replacement>/sprava</replacement>
         </mapping>
         <mapping>
             <pattern input="path">^/news/</pattern>

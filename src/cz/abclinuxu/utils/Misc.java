@@ -26,6 +26,7 @@ import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.view.Discussion;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.RevisionInfo;
+import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ShowForum;
@@ -544,5 +545,18 @@ public class Misc {
         if (input == null)
             return null;
         return reWhiteSpaces.matcher(input).replaceAll(" ");
+    }
+
+    /**
+     * Extract URL from last link in list
+     * @param links List of links
+     * @return URL from last link with trailing slash
+     */
+    public static String getLastLink(List<Link> links) {
+        if (links.isEmpty())
+            return "/";
+
+        Link lastLink = links.get(links.size() - 1);
+        return lastLink.getUrl() + "/";
     }
 }

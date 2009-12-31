@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 
-import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.EditionRole;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -29,7 +29,6 @@ import cz.abclinuxu.servlets.utils.url.PageNavigation;
 import cz.abclinuxu.servlets.utils.url.PwdNavigator;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.utils.url.PwdNavigator.Discriminator;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.BeanFlusher;
 import cz.abclinuxu.utils.ImageTool;
@@ -82,30 +81,34 @@ public class EditAuthor implements AbcAction {
             return null;
         }
 
+        // check permissions
+        if (user == null)
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+
+        EditionRole role = ServletUtils.getEditionRole(user, request);
+        if (role == EditionRole.NONE)
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
         if (action == null || action.length() == 0)
             throw new MissingArgumentException("Chybí parametr action!");
 
-        // check permissions
-        if (user == null)
-            return FMTemplateSelector.select("AdministrationEditorsPortal", "login", env, request);
 
-        // create navigator and store type of user
-        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_AUTHORS);
-        if (navigator.determine() == Discriminator.EDITOR)
+        boolean editor = (role == EditionRole.EDITOR || role == EditionRole.EDITOR_IN_CHIEF);
+        if (editor)
             env.put(VAR_EDITOR_MODE, Boolean.TRUE);
 
-        // add step 1
+        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_AUTHORS);
+
         if (ACTION_ADD.equals(action)) {
-            if (!navigator.permissionsFor(new Relation(Constants.REL_AUTHORS)).canCreate())
-                return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
+            if (editor)
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
             return actionAddStep1(request, env, navigator);
         }
 
-        // add step 2
         if (ACTION_ADD_STEP2.equals(action)) {
-            if (!navigator.permissionsFor(new Relation(Constants.REL_AUTHORS)).canCreate())
-                return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
+            if (! editor)
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
             ActionProtector.ensureContract(request, EditAuthor.class, true, true, true, false);
             return actionAddStep2(request, response, env, navigator);
@@ -120,17 +123,23 @@ public class EditAuthor implements AbcAction {
         Author author = BeanFetcher.fetchAuthor(relation, FetchType.PROCESS_NONATOMIC);
         env.put(VAR_AUTHOR, author);
 
-        // check edit permissions
-        if (!navigator.permissionsFor(author).canModify())
-            return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
+        if (ACTION_EDIT_SELF.equals(action)) {
+            if (author.getUid() != user.getId())
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        if (ACTION_EDIT_SELF.equals(action))
             return actionEditSelfStep1(request, env, navigator);
+        }
 
         if (ACTION_EDIT_SELF_STEP2.equals(action)) {
+            if (author.getUid() != user.getId())
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
             ActionProtector.ensureContract(request, EditAuthor.class, true, true, true, false);
             return actionEditSelfStep2(request, response, env, navigator);
         }
+
+        if (!editor)
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (ACTION_EDIT.equals(action))
             return actionEditStep1(request, env, navigator);
@@ -141,14 +150,10 @@ public class EditAuthor implements AbcAction {
         }
 
         if (ACTION_REMOVE.equals(action)) {
-            if (!navigator.permissionsFor(author).canDelete())
-                return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
             return actionRemoveStep1(request, env, navigator);
         }
 
         if (ACTION_REMOVE_STEP2.equals(action)) {
-            if (!navigator.permissionsFor(author).canDelete())
-                return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
             return actionRemoveStep2(request, response, env);
         }
 
@@ -182,16 +187,13 @@ public class EditAuthor implements AbcAction {
         Relation parent = new Relation(Constants.REL_AUTHORS);
         persistence.synchronize(parent);
         persistence.synchronize(parent.getChild());
-        author.setOwner(user.getId());
-        Category cat = (Category) parent.getChild();
-        author.setGroup(cat.getGroup());
-        author.setPermissions(cat.getPermissions());
 
         Item item = new Item(0, Item.AUTHOR);
 
         // refresh item content
         item = BeanFlusher.flushAuthor(item, author);
         item.setTitle(Tools.getPersonName(item));
+        item.setOwner(user.getId());
         persistence.create(item);
 
         // set url

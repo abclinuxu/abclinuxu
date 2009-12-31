@@ -38,7 +38,7 @@ public enum PageNavigation {
         @Override
         public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
             if (user.isMemberOf(Constants.GROUP_ADMINI))
-                links.add(new Link("Správa", urlUtils.noPrefix(UrlUtils.PREFIX_ADMINISTRATION), "Portál správy abclinuxu.cz"));
+                links.add(new Link("Správa", urlUtils.noPrefix(UrlUtils.PREFIX_ADMINISTRATION), "Administrační rozhraní"));
             return links;
         }
     },
@@ -50,7 +50,7 @@ public enum PageNavigation {
         @Override
         public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
             links = ADMINISTRATION.getLinks(user, urlUtils, links);
-            links.add(new Link("Redakce", urlUtils.make("/redakce"), "Redakční systém"));
+            links.add(new Link("Redakce", urlUtils.make("/redakce", UrlUtils.PREFIX_ADMINISTRATION), "Redakční systém"));
             return links;
         }
     },
@@ -62,7 +62,7 @@ public enum PageNavigation {
         @Override
         public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
             links = AUTHORS_EDITORS_PORTAL.getLinks(user, urlUtils, links);
-            links.add(new Link("Správa autorů", Util.prefix(links) + "autori", "Správa autorů"));
+            links.add(new Link("Správa autorů", urlUtils.make("/redakce/autori", UrlUtils.PREFIX_ADMINISTRATION), "Správa autorů"));
             return links;
         }
     },
@@ -74,7 +74,7 @@ public enum PageNavigation {
         @Override
         public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
             links = AUTHORS_EDITORS_PORTAL.getLinks(user, urlUtils, links);
-            links.add(new Link("Náměty", Util.prefix(links) + "namety", "Správa námětů"));
+            links.add(new Link("Náměty", urlUtils.make("/redakce/namety", UrlUtils.PREFIX_ADMINISTRATION), "Správa námětů"));
             return links;
         }
     },
@@ -86,25 +86,10 @@ public enum PageNavigation {
         @Override
         public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
             links = AUTHORS_EDITORS_PORTAL.getLinks(user, urlUtils, links);
-            links.add(new Link("Smlouvy", Util.prefix(links) + "smlouvy", "Smlouvy"));
+            links.add(new Link("Smlouvy", urlUtils.make("/redakce/smlouvy", UrlUtils.PREFIX_ADMINISTRATION), "Smlouvy"));
             return links;
         }
     };
 
     public abstract List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links);
-}
-
-class Util {
-
-    /**
-     * Extract URL prefix from last link in list
-     *
-     * @param links List of links
-     * @return Prefix from last link
-     */
-    static String prefix(List<Link> links) {
-        if (links.isEmpty())
-            return "/";
-        return links.get(links.size() - 1).getUrl() + "/";
-    }
 }

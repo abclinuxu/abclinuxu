@@ -95,7 +95,7 @@
 <li><a href="/">Portál</a>
   <ul>
     <#if USER?? && USER.hasRole("root")>
-        <li><a href="/Admin">Administrace portálu</a></li>
+        <li><a href="/sprava">Správa portálu</a></li>
         <li><a href="/system">Sekce Systém</a></li>
     </#if>
     <li><a href="/nej">Žebříčky a statistiky</a></li>

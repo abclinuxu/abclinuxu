@@ -1,6 +1,5 @@
 package cz.abclinuxu.data.view;
 
-import cz.abclinuxu.data.AccessControllable;
 import cz.abclinuxu.data.ImageAssignable;
 import cz.abclinuxu.utils.freemarker.Tools;
 
@@ -11,7 +10,7 @@ import java.util.Date;
  *
  * @author kapy
  */
-public class Author implements Cloneable, ImageAssignable<Author.AuthorImage>, AccessControllable {
+public class Author implements Cloneable, ImageAssignable<Author.AuthorImage> {
     public enum AuthorImage implements ImageAssignable.AssignedImage {
         PHOTO
     }
@@ -45,8 +44,6 @@ public class Author implements Cloneable, ImageAssignable<Author.AuthorImage>, A
     private int articleCount;
 
     private Date lastArticleDate;
-
-    private int permissions, group, owner;
 
     /**
      * Creates empty author
@@ -355,38 +352,10 @@ public class Author implements Cloneable, ImageAssignable<Author.AuthorImage>, A
     }
 
     @Override
-    public int getGroup() {
-        return this.group;
-    }
-
-    @Override
-    public int getOwner() {
-        return this.owner;
-    }
-
-    @Override
-    public int getPermissions() {
-        return this.permissions;
-    }
-
-    @Override
-    public void setGroup(int group) {
-        this.group = group;
-    }
-
-    @Override
-    public void setOwner(int owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public void setPermissions(int permissions) {
-        this.permissions = permissions;
-    }
-
-    @Override
-    public boolean determineOwnership(int owner) {
-        return this.owner == owner || this.uid == owner;
+    public boolean equals(Object obj) {
+        if (! (obj instanceof Author))
+            return false;
+        return id == ((Author) obj).getId();
     }
 
     public Object clone() {

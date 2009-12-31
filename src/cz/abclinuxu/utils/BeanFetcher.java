@@ -74,11 +74,6 @@ public class BeanFetcher {
         author.setName(item.getString1());
         author.setSurname(item.getString2());
 
-        // rights
-        author.setOwner(item.getOwner());
-        author.setPermissions(item.getPermissions());
-        author.setGroup(item.getGroup());
-
         switch (ft) {
             case LAZY:
                 break;
@@ -103,9 +98,6 @@ public class BeanFetcher {
      * <li>data</li>
      * <li>articleCount</li>
      * <li>lastArticleDate</li>
-     * <li>owner</li>
-     * <li>group</li>
-     * <li>permissions</li>
      * <li>relation.cislo</li>
      * <li>contractTemplate.boolean2</li>
      * </ol>
@@ -116,7 +108,7 @@ public class BeanFetcher {
      */
     public static Author fetchAuthorFromObjects(Object[] objects, FetchType ft) {
         // ! exact object length must be passed !
-        if (objects == null || objects.length != 13)
+        if (objects == null || objects.length != 10)
             throw new InvalidDataException("Illegal argument passed");
 
         Author author = new Author();
@@ -132,14 +124,11 @@ public class BeanFetcher {
             if (date != null)
                 author.setLastArticleDate(new Date(date.getTime()));
 
-            author.setOwner((Integer) objects[8]);
-            author.setGroup((Integer) objects[9]);
-            author.setPermissions((Integer) objects[10]);
-            author.setRelationId((Integer) objects[11]);
+            author.setRelationId((Integer) objects[8]);
 
-            if (objects[12] == null)
+            if (objects[9] == null)
                 author.setContractStatus(Author.ContractStatus.UNSIGNED);
-            else if (objects[12].equals("1"))
+            else if (objects[9].equals("1"))
                 author.setContractStatus(Author.ContractStatus.OBSOLETE);
             else
                 author.setContractStatus(Author.ContractStatus.CURRENT);

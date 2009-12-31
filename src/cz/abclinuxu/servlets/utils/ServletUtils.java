@@ -50,6 +50,7 @@ import org.dom4j.Node;
 
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.EditionRole;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -62,6 +63,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -291,6 +293,33 @@ public class ServletUtils implements Configurable {
 
         session.setAttribute(Constants.VAR_USER, user);
         env.put(Constants.VAR_USER, user);
+    }
+
+    /**
+     * Finds role in edition administration for given user. If the role has been already set (in session),
+     * it will be reused, otherwise user's participation in predefined groups is searched and result is stored
+     * in the session.
+     * @param user existing and initialized user instance
+     * @param request current http request
+     * @return enum describing user's role
+     */
+    public static EditionRole getEditionRole(User user, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        EditionRole role = (EditionRole) session.getAttribute(Constants.VAR_EDITION_ROLE);
+        if (role != null)
+            return role;
+
+        if (user.isMemberOf(Constants.GROUP_EDITORS_IN_CHIEF))
+            role = EditionRole.EDITOR_IN_CHIEF;
+        else if (user.isMemberOf(Constants.GROUP_EDITORS))
+            role = EditionRole.EDITOR;
+        else if (Tools.isAuthor(user.getId()))
+            role = EditionRole.AUTHOR;
+        else
+            role = EditionRole.NONE;
+
+        session.setAttribute(Constants.VAR_EDITION_ROLE, role);
+        return role;
     }
 
     /**

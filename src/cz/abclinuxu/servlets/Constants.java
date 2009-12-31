@@ -135,6 +135,8 @@ public class Constants implements Configurable {
     public static int GROUP_AUTORI;
     public static int GROUP_STICKFISH;
     public static int GROUP_TEAM_ABCLINUXU;
+    public static int GROUP_EDITORS;
+    public static int GROUP_EDITORS_IN_CHIEF;
 
     // types for Tools.groupByType()
     public static final String TYPE_MAKE = "make";
@@ -194,6 +196,8 @@ public class Constants implements Configurable {
     public static final String VAR_LINKS = "LINKS";
     /** holds current user instance */
     public static final String VAR_USER = "USER";
+    /** holds EditionRole enum */
+    public static final String VAR_EDITION_ROLE = "EDITION_ROLE";
     /** holds request's parameters */
     public static final String VAR_PARAMS = "PARAMS";
     /** holds url manipulation tool */

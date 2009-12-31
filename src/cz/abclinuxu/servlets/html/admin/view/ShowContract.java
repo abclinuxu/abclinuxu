@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.EditionRole;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.ContractTemplate;
 import cz.abclinuxu.data.view.Link;
@@ -27,7 +28,6 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.PageNavigation;
 import cz.abclinuxu.servlets.utils.url.PwdNavigator;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.utils.url.PwdNavigator.Discriminator;
 import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.comparator.SignedContractComparator;
@@ -65,19 +65,22 @@ public class ShowContract implements AbcAction {
 			return null;
 		}
 
-		if (user == null)
-		    return FMTemplateSelector.select("AdministrationAEPortal", "login", env, request);
+        // check permissions
+        if (user == null)
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+
+        EditionRole role = ServletUtils.getEditionRole(user, request);
+        if (role == EditionRole.NONE)
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        boolean editor = (role == EditionRole.EDITOR || role == EditionRole.EDITOR_IN_CHIEF);
+        if (editor)
+            env.put(VAR_EDITOR, Boolean.TRUE);
+
+        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_CONTRACTS);
 
         SignedContract contract = null;
         ContractTemplate template = null;
-        boolean editor = false;
-
-        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_CONTRACTS);
-        if (navigator.determine() == Discriminator.EDITOR) {
-            editor = true;
-            env.put(VAR_EDITOR, Boolean.TRUE);
-        }
-
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if (relation != null) {
             Tools.sync(relation);
@@ -96,18 +99,11 @@ public class ShowContract implements AbcAction {
         }
 
 		Author author = Tools.getAuthor(user.getId());
-		if (author == null) {
-            return FMTemplateSelector.select("AdministrationAEPortal", "forbidden", env, request);
-        } else
-            env.put(VAR_AUTHOR, author);
+        env.put(VAR_AUTHOR, author);
 
-        if (!navigator.permissionsFor(author).canModify()) {
-			return FMTemplateSelector.select("AdministrationAEPortal", "forbidden", env, request);
-		}
-
-		// administration actions
-		if (ServletUtils.pathBeginsWith(request, UrlUtils.PREFIX_ADMINISTRATION) && editor) {
-			if (ServletUtils.determineAction(params, ACTION_SIGNED_CONTRACTS))
+		if (editor) {
+            // administration actions
+            if (ServletUtils.determineAction(params, ACTION_SIGNED_CONTRACTS))
 				return actionShowSignedContracts(request, template, env, navigator);
             if (template != null)
                 return actionShowTemplate(request, template, env, navigator);
@@ -117,8 +113,12 @@ public class ShowContract implements AbcAction {
             return actionShowTemplates(request, env, navigator);
         } else {
             // author actions
-            if (contract != null)
+            if (contract != null) {
+                if (! contract.getAuthor().equals(author))
+                    return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
                 return actionShowAuthorContract(request, contract, env, navigator);
+            }
 
             return actionAuthorContractList(request, env, navigator);
 		}

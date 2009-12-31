@@ -3,24 +3,12 @@
 
 	<servlet name="Admin">
 		<action name="show" content="/misc/admin.ftl">
-			<var name="TITLE" value="Administrace portálu" />
+			<var name="TITLE" value="Správa portálu" />
 		</action>
 		<action name="check" template="print" content="/misc/admin_check.ftl">
 			<var name="TITLE" value="Kontrola portálu" />
 		</action>
 	</servlet>
-
-    <servlet name="AdministrationAEPortal">
-        <action name="ae-portal" content="/show/administration/ae_portal.ftl">
-            <var name="TITLE" value="Správa redakce pro redaktory"/>
-        </action>
-        <action name="login" content="/show/login.ftl">
-            <var name="TITLE" value="Přihlášení do systému"/>
-        </action>
-        <action name="forbidden" content="/misc/forbidden.ftl">
-            <var name="TITLE" value="Přístup odepřen"/>
-        </action>
-    </servlet>
 
     <servlet name="AdministrationEditAuthor">
         <action name="add" content="/add/administration/author.ftl">
@@ -373,7 +361,19 @@
 		</action>
 	</servlet>
 
-	<servlet name="EditNews">
+    <servlet name="EditionPortal">
+        <action name="authorsDashboard" content="/show/administration/author_dashboard.ftl">
+            <var name="TITLE" value="Redakční systém"/>
+        </action>
+        <action name="editorsDashboard" content="/show/administration/editor_dashboard.ftl">
+            <var name="TITLE" value="Správa redakce"/>
+        </action>
+        <action name="switchRole" content="/misc/edition/switch_role.ftl">
+            <var name="TITLE" value="Změň roli"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditNews">
 		<action name="add" content="/add/zpravicka.ftl">
 			<var name="TITLE" value="Vytvoř zprávičku" />
 		</action>

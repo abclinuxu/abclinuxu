@@ -65,7 +65,7 @@ public class UrlUtils {
 
     static List prefixes = null;
     static {
-        prefixes = new ArrayList(18);
+        prefixes = new ArrayList(20);
         prefixes.add(PREFIX_ADMINISTRATION);
         prefixes.add(PREFIX_AUTHORS);
         prefixes.add(PREFIX_BAZAAR);
@@ -111,7 +111,8 @@ public class UrlUtils {
      */
     public String make(String url, String prefix) {
         String out;
-        if ( prefix==null ) prefix = this.prefix;
+        if (prefix == null)
+            prefix = this.prefix;
         if (! PREFIX_NONE.equals(getPrefix(url)))
             out = url;
         else

@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.EditionRole;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.data.view.Topic;
@@ -63,7 +63,6 @@ public class EditTopic implements AbcAction {
 	public static final String ACTION_REMOVE_STEP2 = "rm2";
 
 	public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
 		User user = (User) env.get(Constants.VAR_USER);
 		String action = (String) params.get(PARAM_ACTION);
@@ -73,29 +72,28 @@ public class EditTopic implements AbcAction {
 			return null;
 		}
 
-		if (action == null || action.length() == 0)
+        // check permissions
+        if (user == null)
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+
+        EditionRole role = ServletUtils.getEditionRole(user, request);
+        boolean editor = (role == EditionRole.EDITOR || role == EditionRole.EDITOR_IN_CHIEF);
+        if (! editor)
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        if (action == null || action.length() == 0)
 		    throw new MissingArgumentException("Chybí parametr action!");
 
-		// check permissions
-		if (user == null)
-		    return FMTemplateSelector.select("AdministrationEditorsPortal", "login", env, request);
-
-		// create navigator and store type of user
+        // create navigator and store type of user
 		PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_TOPICS);
 
 		// add step 1
 		if (ACTION_ADD.equals(action)) {
-			if (!navigator.permissionsFor(new Relation(Constants.REL_AUTHORS)).canCreate())
-			    return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
-
-			return actionAddStep1(request, response, env, navigator);
+			return actionAddStep1(request, env, navigator);
 		}
 
 		// add step 2
 		if (ACTION_ADD_STEP2.equals(action)) {
-			if (!navigator.permissionsFor(new Relation(Constants.REL_AUTHORS)).canCreate())
-			    return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
-
 			ActionProtector.ensureContract(request, EditTopic.class, true, true, true, false);
 			return actionAddStep2(request, response, env, navigator);
 		}
@@ -111,42 +109,30 @@ public class EditTopic implements AbcAction {
 
 		// edit step 1
 		if (ACTION_EDIT.equals(action)) {
-			if (!navigator.permissionsFor(new Relation(Constants.REL_AUTHORS)).canModify())
-			    return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
-
-			return actionEditStep1(request, response, env, navigator);
+			return actionEditStep1(request, env, navigator);
 		}
 
 		// edit step 2
 		if (ACTION_EDIT_STEP2.equals(action)) {
-			if (!navigator.permissionsFor(new Relation(Constants.REL_AUTHORS)).canModify())
-			    return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
-
 			ActionProtector.ensureContract(request, EditTopic.class, true, true, true, false);
 			return actionEditStep2(request, response, env, navigator);
 		}
 
 		// remove step 1
 		if (ACTION_REMOVE.equals(action)) {
-			if (!navigator.permissionsFor(new Relation(Constants.REL_AUTHORS)).canDelete())
-			    return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
-
-			return actionRemoveStep(request, response, env, navigator);
+			return actionRemoveStep(request, env, navigator);
 		}
 
 		// remove step 2
 		if (ACTION_REMOVE_STEP2.equals(action)) {
-			if (!navigator.permissionsFor(new Relation(Constants.REL_AUTHORS)).canDelete())
-			    return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
-
-			return actionRemoveStep2(request, response, env, navigator);
+			return actionRemoveStep2(request, response, env);
 		}
 
 		throw new MissingArgumentException("Chybí parametr action!");
 	}
 
 	// first step of topic creation
-	private String actionAddStep1(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) throws Exception {
+	private String actionAddStep1(HttpServletRequest request, Map env, PwdNavigator navigator) throws Exception {
 
 		Link tail = new Link("Nový námět", "edit?action=add", "Vytvořit nový námět");
 		env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
@@ -194,7 +180,7 @@ public class EditTopic implements AbcAction {
 		}
 	}
 
-	private String actionEditStep1(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) {
+	private String actionEditStep1(HttpServletRequest request, Map env, PwdNavigator navigator) {
 		Topic topic = (Topic) env.get(VAR_TOPIC);
 
 		Link tail = new Link(topic.getTitle(), "edit/" + topic.getId() + "?action=edit", "Editace námětu: " + topic.getTitle());
@@ -231,7 +217,7 @@ public class EditTopic implements AbcAction {
 		return null;
 	}
 
-	private String actionRemoveStep(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) {
+	private String actionRemoveStep(HttpServletRequest request, Map env, PwdNavigator navigator) {
 		Topic topic = (Topic) env.get(VAR_TOPIC);
 		Link tail = new Link(topic.getTitle(), "edit/" + topic.getId() + "?action=rm", "Smazání námětu, krok 1");
 		env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
@@ -239,7 +225,7 @@ public class EditTopic implements AbcAction {
 		return FMTemplateSelector.select("AdministrationEditTopic", "remove", env, request);
 	}
 
-	private String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) throws Exception {
+	private String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 		Persistence persistence = PersistenceFactory.getPersistence();
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
 
@@ -273,7 +259,7 @@ public class EditTopic implements AbcAction {
 			// store available authors
 			SQLTool sqlTool = SQLTool.getInstance();
 			Qualifier[] qualifiers = new Qualifier[] {
-			        new CompareCondition(Field.NUMERIC2, Operation.EQUAL, 1),
+			        new CompareCondition(new Field(Field.BOOLEAN1, "P"), Operation.EQUAL, 1),
 			        Qualifier.SORT_BY_STRING2
 			        };
 			List<Object[]> objects = sqlTool.getAuthorsWithArticlesCount(qualifiers);
@@ -284,8 +270,7 @@ public class EditTopic implements AbcAction {
 
 	public static void redirect(HttpServletResponse response, Map env) throws Exception {
 		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-		// redirect to topics in administration system
-		urlUtils.redirect(response, urlUtils.make("/redakce/namety/show?action=list"));
+		urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/namety/show?action=list"));
 	}
 
 	/**

@@ -75,11 +75,6 @@ public class BeanFlusher {
         item.setString2(Misc.filterDangerousCharacters(author.getSurname()));
         item.setTitle(author.getTitle());
 
-        // rights
-        item.setOwner(author.getOwner());
-        item.setGroup(author.getGroup());
-        item.setPermissions(author.getPermissions());
-
         // get/create XML document
         DocumentBuilder db = new DocumentBuilder(item.getData(), "data");
         db.store("/data/about", author.getAbout()).store("/data/accountNumber", author.getAccountNumber()).store("/data/address", author.getAddress()).store("/data/birthNumber", author.getBirthNumber()).store("/data/email", author.getEmail()).store("/data/login", author.getLogin()).store("/data/nickname", author.getNickname()).store("/data/phone", author.getPhone()).store("/data/photourl", author.getPhotoUrl());

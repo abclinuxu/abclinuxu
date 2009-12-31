@@ -4,6 +4,7 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.EditionRole;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.ContractTemplate;
 import cz.abclinuxu.data.view.Link;
@@ -82,39 +83,39 @@ public class EditContract implements AbcAction {
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
-		User user = (User) env.get(Constants.VAR_USER);
-		String action = (String) params.get(PARAM_ACTION);
-
-        // create navigator and store type of user
-        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_CONTRACTS);
-        boolean inAdminRole = navigator.permissionsFor(new Relation(Constants.REL_AUTHORS)).canModify();
+        String action = (String) params.get(PARAM_ACTION);
+        User user = (User) env.get(Constants.VAR_USER);
 
         if (ServletUtils.handleMaintainance(request, env)) {
 			response.sendRedirect(response.encodeRedirectURL("/"));
 			return null;
 		}
 
-		if (action == null || action.length() == 0)
+        // check permissions
+        if (user == null)
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+
+        EditionRole role = ServletUtils.getEditionRole(user, request);
+        if (role == EditionRole.NONE)
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        boolean editor = (role == EditionRole.EDITOR || role == EditionRole.EDITOR_IN_CHIEF);
+
+        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_CONTRACTS);
+
+        if (action == null || action.length() == 0)
 		    throw new MissingArgumentException("Chybí parametr action!");
 
-		// check permissions
-		if (user == null)
-		    return FMTemplateSelector.select("AdministrationEditorsPortal", "login", env, request);
-
-        if (! Tools.isAuthor(user.getId())) {
-            return FMTemplateSelector.select("AdministrationAEPortal", "forbidden", env, request);
-        }
-
         if (ACTION_ADD.equals(action)) {
-            if (!inAdminRole)
-                return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
+            if (! editor)
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
             return actionAddStep1(request, env, navigator);
 		}
 
 		if (ACTION_ADD_STEP2.equals(action)) {
-            if (!inAdminRole)
-                return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
+            if (! editor)
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
             ActionProtector.ensureContract(request, EditContract.class, true, true, true, false);
 			return actionAddStep2(request, response, env, navigator);
@@ -135,8 +136,8 @@ public class EditContract implements AbcAction {
             return actionSignContract(request, response, env);
         }
 
-        if (!inAdminRole)
-            return FMTemplateSelector.select("AdministrationEditorsPortal", "forbidden", env, request);
+        if (! editor)
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (ACTION_EDIT.equals(action)) {
 			return actionEditStep1(request, env, navigator);
@@ -189,7 +190,7 @@ public class EditContract implements AbcAction {
         } catch (Exception e) {
             log.error("Chyba v šabloně smlouvy " + template.getTitle() + " (relace = " + template.getRelationId() + ", author = " + author.getId() + ")", e);
             ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale ve smlouvě je chyba, informujte prosím šefredaktora.", env, request.getSession());
-            urlUtils.redirect(response, urlUtils.make("/redakce/smlouvy/"));
+            urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/smlouvy/"));
             return null;
         }
 
@@ -206,7 +207,7 @@ public class EditContract implements AbcAction {
         persistence.update(authorItem);
 
         ServletUtils.addMessage("Váš souhlas s touto smlouvou byl zaznamenán. Děkujeme.", env, request.getSession());
-        urlUtils.redirect(response, urlUtils.make("/redakce/smlouvy/show/" + relation.getId()));
+        urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/smlouvy/show/" + relation.getId()));
         return null;
     }
 

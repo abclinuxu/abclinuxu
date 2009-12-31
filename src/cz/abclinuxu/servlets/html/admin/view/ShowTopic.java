@@ -19,8 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.EditionRole;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Topic;
 import cz.abclinuxu.exceptions.InvalidDataException;
@@ -69,10 +69,12 @@ public class ShowTopic implements AbcAction, Configurable {
 		configurator.configureAndRememberMe(new ShowTopic());
 	}
 
-	public static final String DEFAULT_AUTHORS_CONFERENCE = "namety-list@abclinuxu.cz";
+	public static final String DEFAULT_AUTHORS_CONFERENCE = "autori@abclinuxu.cz";
 	public static final String DEFAULT_SENDER = "robot@abclinuxu.cz";
+
 	public static final String PREF_CONFERENCE = "authors.conference";
 	public static final String PREF_SENDER = "sender";
+
 	public static String authorsConference;
 	public static String sender;
 
@@ -131,7 +133,6 @@ public class ShowTopic implements AbcAction, Configurable {
 
 	@Override
 	public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
 		User user = (User) env.get(Constants.VAR_USER);
 		String action = (String) params.get(PARAM_ACTION);
@@ -141,19 +142,21 @@ public class ShowTopic implements AbcAction, Configurable {
 			return null;
 		}
 
-		if (user == null)
-		    return FMTemplateSelector.select("AdministrationAEPortal", "login", env, request);
+        // check permissions
+        if (user == null)
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
 
-		PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_TOPICS);
+        EditionRole role = ServletUtils.getEditionRole(user, request);
+        if (role == EditionRole.NONE)
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        boolean editor = (role == EditionRole.EDITOR || role == EditionRole.EDITOR_IN_CHIEF);
+
+        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_TOPICS);
 
 		// check invocation by author
-		if (ServletUtils.pathBeginsWith(request, "/redakce")) {
-			// TODO is there any way how to check invocation with finer granularity within current 
-			// permissions system?
-			// author was found, limit results to current author
+		if (role == EditionRole.AUTHOR) {
 			Author author = Tools.getAuthor(user.getId());
-            if (author == null)
-                return FMTemplateSelector.select("AdministrationAEPortal", "forbidden", env, request);
             env.put(VAR_AUTHOR, author);
 
 			if (ServletUtils.determineAction(params, ACTION_ACCEPT)) {
@@ -171,8 +174,8 @@ public class ShowTopic implements AbcAction, Configurable {
 		}
 
 		// check permissions
-		if (!navigator.permissionsFor(new Relation(Constants.REL_TOPICS)).canCreate()) {
-			return FMTemplateSelector.select("AdministrationAEPortal", "forbidden", env, request);
+		if (! editor) {
+			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 		}
 
 		// prepare notify page
@@ -194,7 +197,6 @@ public class ShowTopic implements AbcAction, Configurable {
 	}
 
 	private void actionList(HttpServletRequest request, Map env, PwdNavigator navigator, List<Qualifier> preQualifiers) {
-
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
 		int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
 		int count = Misc.getPageSize(50, 50, env, null);
