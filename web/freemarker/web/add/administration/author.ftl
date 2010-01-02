@@ -20,28 +20,23 @@ $(document).ready(function() {
 <@lib.showMessages/>
 
 <#if EDIT_MODE?? >
-    <h1>Upravit údaje autora</h1>
-
-    <p>
-        Tento formulář slouží pro editaci autora. Foto by mělo mít rozměr přibližně 100x100 pixelů, pokud
-        bude některý z rozměrů přesahovat tuto mez, obrázek bude automaticky zmenšen. Text o autorovi se
-        zobrazí na jeho stránce. Neaktivní autor se nezobrazuje ve výběrech autorů, je to vhodné nastavit
-        například pro příjemce jednorázové odměny.
-    </p>
+    <h1>Úprava autora</h1>
 <#else>
-        <h1>Vytvoření autora</h1>
-
-        <p>
-            Tento formulář slouží pro vytvoření nového autora. Autor, který není přiřazen k žádnému uživateli,
-            nemůže používat redakční systém. Foto by mělo mít rozměr přibližně 100x100 pixelů. Text o autorovi
-            se zobrazí na jeho stránce.
-        </p>
+    <h1>Vytvoření autora</h1>
 </#if>
+
+<p>
+    Autor, který není přiřazen k žádnému uživateli, nemůže používat redakční systém. Autor si sám může
+    upravit email, telefon, adresu a číslo účtu. Pro souhlas s autorskou smlouvu je potřeba rodné číslo,
+    adresa a bankovní spojení. Text o autorovi se zobrazí na jeho stránce. Foto by mělo mít rozměr
+    přibližně 100x100 pixelů, pokud bude některý z rozměrů přesahovat tuto mez, obrázek bude automaticky
+    zmenšen. Neaktivní autor se nezobrazuje ve výběrech autorů. 
+</p>
 
 <form action="${URL.noPrefix("/sprava/redakce/autori/edit")}" method="POST" enctype="multipart/form-data">
     <table class="siroka">
         <tr>
-            <td>Jméno:</td>
+            <td class="required">Jméno:</td>
             <td>
                 <input type="text" id="addauthor-name" name="name" value="${(AUTHOR.name)!?html}" size="60" class="siroka"/>
                 <div class="error">${ERRORS.name!}</div>

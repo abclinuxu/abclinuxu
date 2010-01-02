@@ -101,7 +101,7 @@ public class ShowTopic implements AbcAction {
         if (editor)
             env.put(VAR_EDITOR, Boolean.TRUE);
 
-        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_TOPICS);
+        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.EDITION_TOPICS);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if (relation != null) {
             Tools.sync(relation);

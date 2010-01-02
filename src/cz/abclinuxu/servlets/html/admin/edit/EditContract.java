@@ -101,7 +101,7 @@ public class EditContract implements AbcAction {
 
         boolean editor = (role == EditionRole.EDITOR || role == EditionRole.EDITOR_IN_CHIEF);
 
-        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_CONTRACTS);
+        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.EDITION_CONTRACTS);
 
         if (action == null || action.length() == 0)
 		    throw new MissingArgumentException("Chybí parametr action!");

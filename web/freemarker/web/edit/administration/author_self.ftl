@@ -4,7 +4,10 @@
 
 <h2>Osobní údaje</h2>
 
-<p>Zadejte prosím své osobní kontaktní a bankovní údaje</p>
+<p>
+    Zadejte prosím své osobní, kontaktní a bankovní údaje. Potřebujeme je pro autorskou smlouvu
+    a vyplácení honorářů.
+</p>
 
 <form action="${URL.noPrefix("/sprava/redakce/autori/edit")}" method="POST">
     <table class="siroka">

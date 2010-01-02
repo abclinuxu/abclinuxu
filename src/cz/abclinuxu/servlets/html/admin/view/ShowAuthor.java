@@ -74,7 +74,7 @@ public class ShowAuthor implements AbcAction {
         if (editor)
             env.put(VAR_EDITOR_MODE, Boolean.TRUE);
 
-        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_AUTHORS);
+        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.EDITION_AUTHORS);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if (relation != null) {

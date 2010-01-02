@@ -614,7 +614,7 @@
     <@showUser user /><#t>
 </#macro>
 
-<#macro showAuthor author><a href="${URL.make("/sprava/redakce/autori/show/" + author.relationId)}">${TOOL.getPersonName(author)}</a></#macro>
+<#macro showAuthor author><a href="${URL.make("/sprava/redakce/autori/show/" + author.relationId)}">${author.title}</a></#macro>
 
 <#macro showRevisions relation info = TOOL.getRevisionInfo(relation.child)>
     <p class="documentHistory">

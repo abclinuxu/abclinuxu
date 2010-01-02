@@ -20,29 +20,19 @@ public class Author implements Cloneable, ImageAssignable<Author.AuthorImage> {
     }
 
     private int id;
-
     private Integer uid;
     // identification of relation to this author
     private int relationId;
     private Integer contractId;
     private ContractStatus contractStatus;
-
     private boolean active;
-
     private String name, surname, login, nickname;
-
     private String birthNumber, accountNumber;
-
     private String address;
-
     private String email, phone;
-
     private String photoUrl;
-
     private String about;
-
     private int articleCount;
-
     private Date lastArticleDate;
 
     /**

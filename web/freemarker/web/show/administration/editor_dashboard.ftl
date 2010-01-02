@@ -16,7 +16,7 @@
 
 <table>
     <tr>
-        <td>
+        <td style="vertical-align: top">
             <ul>
                 <li><a href="/sprava/redakce/clanky">Články</a> N/A</li>
                 <li><a href="/sprava/redakce/namety">Náměty</a></li>
@@ -24,15 +24,17 @@
                 <li><a href="/sprava/redakce/klicova-slova">Klíčová slova</a> N/A</li>
             </ul>
         </td>
-        <td>
+        <td style="vertical-align: top">
             <ul>
-                <li><a href="/sprava/redakce/honorare">Honoráře</a> N/A</li>
+                <#if ROLE=="EDITOR_IN_CHIEF">
+                    <li><a href="/sprava/redakce/honorare">Honoráře</a> N/A</li>
+                </#if>
                 <li><a href="/sprava/redakce/autori">Autoři</a></li>
                 <li><a href="/sprava/redakce/smlouvy">Smlouvy</a></li>
                 <li><a href="/sprava/redakce/statistiky">Statistiky</a> N/A</li>
             </ul>
         </td>
-        <td>
+        <td style="vertical-align: top">
             <ul>
                 <li><a href="/sprava/redakce/zpravicky">Zprávičky</a> N/A</li>
                 <li><a href="/sprava/redakce/ankety">Ankety</a> N/A</li>

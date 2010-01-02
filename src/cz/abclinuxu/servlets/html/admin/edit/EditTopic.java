@@ -101,7 +101,7 @@ public class EditTopic implements AbcAction {
 		    throw new MissingArgumentException("Chybí parametr action!");
 
         // create navigator and store type of user
-		PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_TOPICS);
+		PwdNavigator navigator = new PwdNavigator(env, PageNavigation.EDITION_TOPICS);
 
         // add step 1
 		if (ACTION_ADD.equals(action)) {

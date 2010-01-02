@@ -24,7 +24,7 @@
     <li><a href="/sprava/redakce/clanky">Mé články</a> N/A</li>
     <li><a href="/sprava/redakce/namety">Náměty</a></li>
     <li><a href="/sprava/redakce/honorare"">Mé honoráře</a> N/A</li>
-    <li><a href="/sprava/redakce/autori/edit/${AUTHOR.id}?action=edit">Osobní údaje</a></li>
+    <li><a href="/sprava/redakce/autori/edit/${AUTHOR.relationId}?action=editSelf">Osobní údaje</a></li>
     <li>
         <a href="/sprava/redakce/smlouvy">Autorské smlouvy</a>
         <#if UNSIGNED_CONTRACT> – <b>nová smlouva čeká na schválení</b></#if>

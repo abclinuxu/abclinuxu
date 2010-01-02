@@ -46,7 +46,7 @@ public enum PageNavigation {
     /**
      * Author or editor main portal
      */
-    AUTHORS_EDITORS_PORTAL {
+    EDITION_PORTAL {
         @Override
         public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
             links = ADMINISTRATION.getLinks(user, urlUtils, links);
@@ -58,11 +58,11 @@ public enum PageNavigation {
     /**
      * Authors administration link. It is shown only when user can modify Authors
      */
-    ADMIN_AUTHORS {
+    EDITION_AUTHORS {
         @Override
         public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
-            links = AUTHORS_EDITORS_PORTAL.getLinks(user, urlUtils, links);
-            links.add(new Link("Správa autorů", urlUtils.make("/redakce/autori", UrlUtils.PREFIX_ADMINISTRATION), "Správa autorů"));
+            links = EDITION_PORTAL.getLinks(user, urlUtils, links);
+            links.add(new Link("Autoři", urlUtils.make("/redakce/autori", UrlUtils.PREFIX_ADMINISTRATION), "Správa autorů"));
             return links;
         }
     },
@@ -70,10 +70,10 @@ public enum PageNavigation {
     /**
      * Topics administration link.
      */
-    ADMIN_TOPICS {
+    EDITION_TOPICS {
         @Override
         public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
-            links = AUTHORS_EDITORS_PORTAL.getLinks(user, urlUtils, links);
+            links = EDITION_PORTAL.getLinks(user, urlUtils, links);
             links.add(new Link("Náměty", urlUtils.make("/redakce/namety", UrlUtils.PREFIX_ADMINISTRATION), "Správa námětů"));
             return links;
         }
@@ -82,10 +82,10 @@ public enum PageNavigation {
     /**
      * Contracts administration link.
      */
-    ADMIN_CONTRACTS {
+    EDITION_CONTRACTS {
         @Override
         public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
-            links = AUTHORS_EDITORS_PORTAL.getLinks(user, urlUtils, links);
+            links = EDITION_PORTAL.getLinks(user, urlUtils, links);
             links.add(new Link("Smlouvy", urlUtils.make("/redakce/smlouvy", UrlUtils.PREFIX_ADMINISTRATION), "Smlouvy"));
             return links;
         }

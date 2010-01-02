@@ -62,13 +62,10 @@ public class EditionPortal implements AbcAction {
         if (role == EditionRole.NONE)
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.AUTHORS_EDITORS_PORTAL);
+        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.EDITION_PORTAL);
 
         Author author = Tools.getAuthor(user.getId());
         env.put(VAR_AUTHOR, author);
-
-        env.put(VAR_IS_EDITOR, user.isMemberOf(Constants.GROUP_EDITORS));
-        env.put(VAR_IS_EDITOR_IN_CHIEF, user.isMemberOf(Constants.GROUP_EDITORS_IN_CHIEF));
 
         if (ACTION_SWITCH_ROLE.equals(action))
             return actionSwitchRole(request, env, navigator);
@@ -120,6 +117,9 @@ public class EditionPortal implements AbcAction {
     }
 
     private String actionSwitchRole(HttpServletRequest request, Map env, PwdNavigator navigator) {
+        User user = (User) env.get(Constants.VAR_USER);
+        env.put(VAR_IS_EDITOR, user.isMemberOf(Constants.GROUP_EDITORS));
+        env.put(VAR_IS_EDITOR_IN_CHIEF, user.isMemberOf(Constants.GROUP_EDITORS_IN_CHIEF));
         List<Link> parents = navigator.navigate();
         env.put(Constants.VAR_PARENTS, parents);
 
@@ -134,7 +134,7 @@ public class EditionPortal implements AbcAction {
         String desiredRole = (String) params.get(PARAM_DESIRED_ROLE);
 
         if ("editor".equals(desiredRole)) {
-            if (! user.isMemberOf(Constants.GROUP_EDITORS))
+            if (! user.isMemberOf(Constants.GROUP_EDITORS) && ! user.isMemberOf(Constants.GROUP_EDITORS_IN_CHIEF))
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
             role = EditionRole.EDITOR;

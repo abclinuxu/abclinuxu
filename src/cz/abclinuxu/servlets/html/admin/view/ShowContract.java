@@ -77,7 +77,7 @@ public class ShowContract implements AbcAction {
         if (editor)
             env.put(VAR_EDITOR, Boolean.TRUE);
 
-        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_CONTRACTS);
+        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.EDITION_CONTRACTS);
 
         SignedContract contract = null;
         ContractTemplate template = null;
@@ -195,12 +195,6 @@ public class ShowContract implements AbcAction {
                 if (! authorVerified)
                     sb.append(" a ");
                 sb.append("číslo účtu");
-                authorVerified = false;
-            }
-            if (author.getBirthNumber() == null) {
-                if (! authorVerified)
-                    sb.append(" a ");
-                sb.append("rodné číslo");
                 authorVerified = false;
             }
             sb.append('.');

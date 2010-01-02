@@ -13,6 +13,7 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.EditionRole;
+import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -93,11 +94,13 @@ public class EditAuthor implements AbcAction {
             throw new MissingArgumentException("Chybí parametr action!");
 
 
+        PwdNavigator navigator;
         boolean editor = (role == EditionRole.EDITOR || role == EditionRole.EDITOR_IN_CHIEF);
-        if (editor)
+        if (editor) {
             env.put(VAR_EDITOR_MODE, Boolean.TRUE);
-
-        PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_AUTHORS);
+            navigator = new PwdNavigator(env, PageNavigation.EDITION_AUTHORS);
+        } else
+            navigator = new PwdNavigator(env, PageNavigation.EDITION_PORTAL);
 
         if (ACTION_ADD.equals(action)) {
             if (editor)
@@ -160,47 +163,30 @@ public class EditAuthor implements AbcAction {
         throw new MissingArgumentException("Chybí parametr action!");
     }
 
-    // first step of author creation
     public String actionAddStep1(HttpServletRequest request, Map env, PwdNavigator navigator) throws Exception {
-        Link tail = new Link("Nový autor", "edit?action=add", "Vytvořit nového autora, krok 1");
+        Link tail = new Link("Nový autor", "edit?action=add", "Vytvořit nového autora");
         env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
         return FMTemplateSelector.select("AdministrationEditAuthor", "add", env, request);
     }
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) throws Exception {
-
         Persistence persistence = PersistenceFactory.getPersistence();
         User user = (User) env.get(Constants.VAR_USER);
 
-        Link tail = new Link("Nový autor", "edit?action=add2", "Vytvořit nového autora, krok 2");
-        env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
-
-        // create author in persistence storage
-        // if author is set, change owner of object
         Author author = new Author();
         boolean canContinue = fillAuthor(env, author);
-        if (!canContinue) {
-            return FMTemplateSelector.select("AdministrationEditAuthor", "add", env, request);
-        }
-
-        // set rights
-        Relation parent = new Relation(Constants.REL_AUTHORS);
-        persistence.synchronize(parent);
-        persistence.synchronize(parent.getChild());
+        if (!canContinue)
+            return actionAddStep1(request, env, navigator);
 
         Item item = new Item(0, Item.AUTHOR);
-
-        // refresh item content
         item = BeanFlusher.flushAuthor(item, author);
-        item.setTitle(Tools.getPersonName(item));
         item.setOwner(user.getId());
         persistence.create(item);
 
-        // set url
         String url = proposeAuthorsUrl(author);
         url = URLManager.protectFromDuplicates(url);
 
-        Relation relation = new Relation(parent.getChild(), item, parent.getId());
+        Relation relation = new Relation(new Category(Constants.CAT_AUTHORS), item, Constants.REL_AUTHORS);
         relation.setUrl(url);
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
@@ -210,64 +196,35 @@ public class EditAuthor implements AbcAction {
         return null;
     }
 
-    //todo
     protected String actionEditSelfStep1(HttpServletRequest request, Map env, PwdNavigator navigator) throws Exception {
         Author author = (Author) env.get(VAR_AUTHOR);
-        Boolean isEditor = (Boolean) env.get(VAR_EDITOR_MODE);
-
-        Link tail;
-        if (isEditor == Boolean.TRUE)
-            tail = new Link(author.getTitle(), "edit/" + author.getId() + "?action=edit", "Editace autora, krok 1");
-        else
-            tail = new Link("Osobní údaje", "/sprava/redakce/autori/edit/" + author.getId() + "?action=edit", "Osobní údaje");
+        Link tail = new Link("Osobní údaje", "/sprava/redakce/autori/edit/" + author.getRelationId() +
+                "?action=" + ACTION_EDIT_SELF, "Osobní údaje");
         env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
-
-        env.put(VAR_EDIT_MODE, Boolean.TRUE);
-
         return FMTemplateSelector.select("AdministrationEditAuthor", "editSelf", env, request);
     }
 
-    //todo
     protected String actionEditSelfStep2(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-        SQLTool sqlTool = SQLTool.getInstance();
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Author author = (Author) env.get(VAR_AUTHOR);
-        Boolean isEditor = (Boolean) env.get(VAR_EDITOR_MODE);
 
         boolean canContinue = fillAuthor(env, author);
-        if (!canContinue) {
-            Link tail;
-            if (isEditor == Boolean.TRUE)
-                tail = new Link(author.getTitle(), "edit/" + author.getId() + "?action=edit", "Editace autora, krok 1");
-            else
-                tail = new Link("Osobní údaje", "/sprava/redakce/autori/edit/" + author.getId() + "?action=edit", "Osobní údaje");
-            env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
+        if (!canContinue)
+            return actionEditSelfStep1(request, env, navigator);
 
-            return FMTemplateSelector.select("AdministrationEditAuthor", "editSelf", env, request);
-        }
-
-        // refresh item content
         Item item = (Item) persistence.findById(new Item(author.getId()));
         item = BeanFlusher.flushAuthor(item, author);
         persistence.update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-//        urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/autori/show/" + relation.getId()));
+        urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/"));
         return null;
     }
 
     protected String actionEditStep1(HttpServletRequest request, Map env, PwdNavigator navigator) throws Exception {
         Author author = (Author) env.get(VAR_AUTHOR);
-        Boolean isEditor = (Boolean) env.get(VAR_EDITOR_MODE);
-
-        Link tail;
-        if (isEditor == Boolean.TRUE)
-            tail = new Link(author.getTitle(), "edit/" + author.getId() + "?action=edit", "Editace autora, krok 1");
-        else
-            tail = new Link("Osobní údaje", "/sprava/redakce/autori/edit/" + author.getId() + "?action=edit", "Osobní údaje");
+        Link tail = new Link(author.getTitle(), "edit/" + author.getRelationId() + "?action=" + ACTION_EDIT, author.getTitle());
         env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
-
         env.put(VAR_EDIT_MODE, Boolean.TRUE);
 
         return FMTemplateSelector.select("AdministrationEditAuthor", "edit", env, request);
@@ -278,21 +235,10 @@ public class EditAuthor implements AbcAction {
         SQLTool sqlTool = SQLTool.getInstance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Author author = (Author) env.get(VAR_AUTHOR);
-        Boolean isEditor = (Boolean) env.get(VAR_EDITOR_MODE);
 
         boolean canContinue = fillAuthor(env, author);
-        if (!canContinue) {
-            Link tail;
-            if (isEditor == Boolean.TRUE)
-                tail = new Link(author.getTitle(), "edit/" + author.getId() + "?action=edit", "Editace autora, krok 1");
-            else
-                tail = new Link("Osobní údaje", "/sprava/redakce/autori/edit/" + author.getId() + "?action=edit", "Osobní údaje");
-            env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
-
-            env.put(VAR_EDIT_MODE, Boolean.TRUE);
-            return FMTemplateSelector.select("AdministrationEditAuthor", "edit", env, request);
-        }
-
+        if (!canContinue)
+            return actionEditStep1(request, env, navigator);
 
         Item item = (Item) persistence.findById(new Item(author.getId()));
         Relation relation = RelationUtil.findParent(item);
@@ -301,7 +247,6 @@ public class EditAuthor implements AbcAction {
         if (author.getUid() != null)
             item.setOwner(author.getUid());
 
-        // refresh item content
         item = BeanFlusher.flushAuthor(item, author);
         persistence.update(item);
 
@@ -313,13 +258,9 @@ public class EditAuthor implements AbcAction {
             persistence.update(relation);
         }
 
-        env.put(VAR_AUTHOR, author);
-
         // just photo was deleted
-        if (!Misc.empty((String) params.get(PARAM_REMOVE_PHOTO))) {
-            env.put(VAR_EDIT_MODE, Boolean.TRUE);
-            return FMTemplateSelector.select("AdministrationEditAuthor", "edit", env, request);
-        }
+        if (!Misc.empty((String) params.get(PARAM_REMOVE_PHOTO)))
+            return actionEditStep1(request, env, navigator);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/autori/show/" + relation.getId()));
@@ -328,15 +269,12 @@ public class EditAuthor implements AbcAction {
 
     protected String actionRemoveStep1(HttpServletRequest request, Map env, PwdNavigator navigator) throws Exception {
         SQLTool sqlTool = SQLTool.getInstance();
-
         Author author = (Author) env.get(VAR_AUTHOR);
 
-        Link tail = new Link(author.getTitle(), "edit/" + author.getId() + "?action=rm", "Smazání autora, krok 1");
+        Link tail = new Link(author.getTitle(), "edit/" + author.getId() + "?action=rm", "Smazání autora");
         env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
 
-        // count articles written by author
-        Relation authorRel = RelationUtil.findParent(new Item(author.getId()));
-        int articles = sqlTool.countArticleRelationsByAuthor(authorRel.getId());
+        int articles = sqlTool.countArticleRelationsByAuthor(author.getRelationId());
         if (articles > 0)
             env.put(VAR_UNDELETABLE, Boolean.TRUE);
 
@@ -346,19 +284,16 @@ public class EditAuthor implements AbcAction {
     protected String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Author author = (Author) env.get(VAR_AUTHOR);
 
-        // delete author
         String delete = (String) params.get(PARAM_DELETE);
         if (!Misc.empty(delete)) {
-            Author author = (Author) env.get(VAR_AUTHOR);
             ImageTool.deleteImage(Author.AuthorImage.PHOTO, author);
-            persistence.remove(RelationUtil.findParent(new Item(author.getId())));
-            persistence.remove(new Item(author.getId()));
+            persistence.remove(relation);
             ServletUtils.addMessage("Autor " + author.getTitle() + " byl smazán!", env, request.getSession());
-            persistence.clearCache();
         }
 
-        // redirect to author list
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/autori"));
         return null;
@@ -368,13 +303,7 @@ public class EditAuthor implements AbcAction {
      * @return absolute url for this author
      */
     private String proposeAuthorsUrl(Author author) {
-        StringBuilder sb = new StringBuilder();
-        if (author.getName() != null)
-            sb.append(author.getName()).append(" ");
-        if (author.getSurname() != null)
-            sb.append(author.getSurname());
-
-        return UrlUtils.PREFIX_AUTHORS + "/" + URLManager.enforceRelativeURL(sb.toString());
+        return UrlUtils.PREFIX_AUTHORS + "/" + URLManager.enforceRelativeURL(author.getTitle());
     }
 
     /**
@@ -388,42 +317,49 @@ public class EditAuthor implements AbcAction {
     private boolean fillAuthor(Map env, Author author) {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Boolean isEditor = (Boolean) env.get(VAR_EDITOR_MODE);
-
+        boolean editor = isEditor != null && isEditor;
         boolean result = true;
         String tmp;
 
-        if (isEditor == Boolean.TRUE) {
-            // set surname
-            String surname = (String) params.get(PARAM_SURNAME);
-            author.setSurname(surname);
-            if (Misc.empty(surname)) {
+        if (editor) {
+            tmp = (String) params.get(PARAM_SURNAME);
+            if (Misc.empty(tmp)) {
                 ServletUtils.addError(PARAM_SURNAME, "Zadejte příjmení!", env, null);
                 result = false;
-            }
+            } else
+                author.setSurname(tmp);
+
+            tmp = (String) params.get(PARAM_NAME);
+            if (Misc.empty(tmp)) {
+                ServletUtils.addError(PARAM_NAME, "Zadejte jméno!", env, null);
+                result = false;
+            } else
+                author.setName(tmp);
 
             // will set both uid and login
-            String login = (String) params.get(PARAM_LOGIN);
-            if (Misc.empty(login)) {
+            tmp = (String) params.get(PARAM_LOGIN);
+            if (Misc.empty(tmp)) {
                 author.setUid(null);
-                author.setLogin(login);
+                author.setLogin(tmp);
             } else {
-                Integer uid = SQLTool.getInstance().getUserByLogin(login);
+                Integer uid = SQLTool.getInstance().getUserByLogin(tmp);
                 if (uid == null) {
                     ServletUtils.addError(PARAM_LOGIN, "Zadejte platný login!", env, null);
                     result = false;
                 }
                 author.setUid(uid);
-                author.setLogin(login);
+                author.setLogin(tmp);
             }
 
-            tmp = (String) params.get(PARAM_NAME);
-            author.setName(tmp);
             tmp = (String) params.get(PARAM_NICKNAME);
             author.setNickname(tmp);
+
             tmp = (String) params.get(PARAM_BIRTH_NUMBER);
             author.setBirthNumber(tmp);
+
             tmp = (String) params.get(PARAM_ACTIVE);
             author.setActive("1".equalsIgnoreCase(tmp));
+
             tmp = (String) params.get(PARAM_ABOUT);
             author.setAbout(tmp);
 
@@ -444,15 +380,30 @@ public class EditAuthor implements AbcAction {
             }
         }
 
-        // author field available both for editor and author
+        // author fields available both for editor and author, mandatory only for author
         tmp = (String) params.get(PARAM_ACCOUNT_NUMBER);
-        author.setAccountNumber(tmp);
+        if (!editor && Misc.empty(tmp)) {
+            ServletUtils.addError(PARAM_ACCOUNT_NUMBER, "Zadejte bankovní spojení!", env, null);
+            result = false;
+        } else
+            author.setAccountNumber(tmp);
+
         tmp = (String) params.get(PARAM_EMAIL);
-        author.setEmail(tmp);
+        if (!editor && Misc.empty(tmp)) {
+            ServletUtils.addError(PARAM_EMAIL, "Zadejte email!", env, null);
+            result = false;
+        } else
+            author.setEmail(tmp);
+
         tmp = (String) params.get(PARAM_PHONE);
         author.setPhone(tmp);
+
         tmp = (String) params.get(PARAM_ADDRESS);
-        author.setAddress(tmp);
+        if (!editor && Misc.empty(tmp)) {
+            ServletUtils.addError(PARAM_ADDRESS, "Zadejte svou adresu!", env, null);
+            result = false;
+        } else
+            author.setAddress(tmp);
 
         return result;
     }
