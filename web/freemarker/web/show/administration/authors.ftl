@@ -98,7 +98,7 @@
                         </#if>
                     </td>
                     <td style="white-space: nowrap; text-align: left">
-                        <a href="${URL.make("/autori/namety")}" title="Náměty">náměty</a>&nbsp;
+                        <a href="${URL.make("/autori/namety?filterTopicsByAuthor" + author.relationId)}" title="Náměty">náměty</a>&nbsp;
                         <a href="${URL.make("/autori/clanky")}" title="Články">články</a>&nbsp;
                         <a href="${URL.make("/autori/honorare")}" title="Honoráře">honoráře</a>&nbsp;
                     </td>

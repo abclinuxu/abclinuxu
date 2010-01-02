@@ -30,22 +30,35 @@ import cz.abclinuxu.utils.Misc;
 public class FormFilter {
     private static final Logger log = Logger.getLogger(FormFilter.class);
 
+    public static final String PARAM_FILTER_AUTHORS_BY_NAME = "filterAuthorsByName";
+    public static final String PARAM_FILTER_TOPICS_BY_ROYALTY = "filterTopicsByRoyalty";
+    public static final String PARAM_FILTER_TOPICS_BY_STATE = "filterTopicsByState";
+    public static final String PARAM_FILTER_TOPICS_BY_DEADLINE = "filterTopicsByDeadline";
+    public static final String PARAM_FILTER_TOPICS_BY_AUTHOR = "filterTopicsByAuthor";
+    public static final String PARAM_FILTER_TOPICS_BY_PUBLIC = "filterTopicsByPublic";
+    public static final String PARAM_FILTER_TOPICS_BY_TITLE = "filterTopicsByTitle";
+    public static final String PARAM_FILTER_AUTHORS_BY_RECENT = "filterAuthorsByRecent";
+    public static final String PARAM_FILTER_AUTHORS_BY_ARTICLES = "filterAuthorsByArticles";
+    public static final String PARAM_FILTER_AUTHORS_BY_ACTIVE = "filterAuthorsByActive";
+    public static final String PARAM_FILTER_AUTHORS_BY_CONTRACT = "filterAuthorsByContract";
+    public static final String PARAM_FILTER_AUTHORS_BY_SURNAME = "filterAuthorsBySurname";
+
     public static enum Filter {
-        AUTHORS_BY_NAME("filterAuthorsByName") {
+        AUTHORS_BY_NAME(PARAM_FILTER_AUTHORS_BY_NAME) {
             @Override
             protected FilterQualifier construct(Object value) {
                 return new FilterQualifier(new CompareCondition(new Field(Field.STRING1, "P"), Operation.LIKE, LIKE_PREFIX + value + LIKE_SUFFIX), value);
             }
         },
 
-        AUTHORS_BY_SURNAME("filterAuthorsBySurname") {
+        AUTHORS_BY_SURNAME(PARAM_FILTER_AUTHORS_BY_SURNAME) {
             @Override
             protected FilterQualifier construct(Object value) {
                 return new FilterQualifier(new CompareCondition(new Field(Field.STRING2, "P"), Operation.LIKE, LIKE_PREFIX + value + LIKE_SUFFIX), value);
             }
         },
 
-        AUTHORS_BY_CONTRACT("filterAuthorsByContract") {
+        AUTHORS_BY_CONTRACT(PARAM_FILTER_AUTHORS_BY_CONTRACT) {
             @Override
             protected FilterQualifier construct(Object value) {
                 int intValue = Misc.parseInt(value.toString(), 0);
@@ -60,7 +73,7 @@ public class FormFilter {
             }
         },
 
-        AUTHORS_BY_ACTIVE("filterAuthorsByActive") {
+        AUTHORS_BY_ACTIVE(PARAM_FILTER_AUTHORS_BY_ACTIVE) {
             @Override
             protected FilterQualifier construct(Object value) {
                 int intValue = Misc.parseInt(value.toString(), 0);
@@ -68,7 +81,7 @@ public class FormFilter {
             }
         },
 
-        AUTHORS_BY_ARTICLES("filterAuthorsByArticles") {
+        AUTHORS_BY_ARTICLES(PARAM_FILTER_AUTHORS_BY_ARTICLES) {
             @Override
             protected FilterQualifier construct(Object value) {
                 Pair pair = new Pair(value.toString());
@@ -89,7 +102,7 @@ public class FormFilter {
             }
         },
 
-        AUTHORS_BY_RECENT("filterAuthorsByRecent") {
+        AUTHORS_BY_RECENT(PARAM_FILTER_AUTHORS_BY_RECENT) {
             @Override
             protected FilterQualifier construct(Object value) {
                 Calendar cal = Calendar.getInstance();
@@ -111,81 +124,84 @@ public class FormFilter {
             }
         },
 
-        TOPICS_BY_TITLE("filterTopicsByTitle") {
+        TOPICS_BY_TITLE(PARAM_FILTER_TOPICS_BY_TITLE) {
             @Override
             public FilterQualifier construct(Object value) {
-                return new FilterQualifier(new CompareCondition(Field.STRING1, Operation.LIKE, LIKE_PREFIX + value + LIKE_SUFFIX), value);
+                return new FilterQualifier(new CompareCondition(Field.TITLE, Operation.LIKE, LIKE_PREFIX + value + LIKE_SUFFIX), value);
             }
         },
 
-        TOPICS_BY_OPENED("filterTopicsByOpened") {
+        TOPICS_BY_PUBLIC(PARAM_FILTER_TOPICS_BY_PUBLIC) {
             @Override
             public FilterQualifier construct(Object value) {
-                if (asBoolean(value)) {
-                    return new FilterQualifier(new CompareCondition(Field.DATA, Operation.NOT_LIKE, "%<author>%</author>%"), value);
-                }
-                return new FilterQualifier(new CompareCondition(Field.DATA, Operation.LIKE, "%<author>%</author>%"), value);
+                if (asBoolean(value))
+                    return new FilterQualifier(new CompareCondition(new Field(Field.NUMERIC1, "P"), Operation.IS_NULL, null), value);
+                else
+                    return new FilterQualifier(new CompareCondition(new Field(Field.NUMERIC1, "P"), Operation.IS_NOT_NULL, null), value);
             }
         },
 
-        TOPICS_BY_AUTHOR("filterTopicsByAuthor") {
+        TOPICS_BY_AUTHOR(PARAM_FILTER_TOPICS_BY_AUTHOR) {
             @Override
             public FilterQualifier construct(Object value) {
                 int intValue = Misc.parseInt(value.toString(), 0);
-                return new FilterQualifier(new CompareCondition(Field.DATA, Operation.LIKE, "%<author>" + intValue + "</author>%"), value);
+                return new FilterQualifier(new CompareCondition(new Field(Field.NUMERIC1, "P"), Operation.EQUAL, intValue), value);
             }
         },
 
-        TOPICS_BY_TERM("filterTopicsByTerm") {
+        TOPICS_BY_DEADLINE(PARAM_FILTER_TOPICS_BY_DEADLINE) {
             @Override
             public FilterQualifier construct(Object value) {
                 Pair pair = new Pair(value.toString());
-                final Integer zero = 0;
-                // get articles in delay
-                if (zero.equals(pair.single)) {
-                    return new FilterQualifier(new CompareCondition(Field.DATE1, Operation.SMALLER_OR_EQUAL, SpecialValue.NOW), value);
-                }
-                // get articles in next month
-                else if (pair.right != null) {
-                    Calendar left = Calendar.getInstance();
-                    Calendar right = (Calendar) left.clone();
-                    left.set(Calendar.MONTH, left.get(Calendar.MONTH) + pair.left);
-                    left = monthBeginning(left);
-                    right.set(Calendar.MONTH, right.get(Calendar.MONTH) + pair.right);
-                    right = monthBeginning(right);
+                if (pair.isSingleValue()) {
+                    if (pair.single == 0) // delayed
+                        return new FilterQualifier(new CompareCondition(new Field(Field.DATE1, "P"), Operation.SMALLER_OR_EQUAL, SpecialValue.NOW), value);
+                    else if (pair.single == 1) // no deadline
+                        return new FilterQualifier(new CompareCondition(new Field(Field.DATE1, "P"), Operation.IS_NULL, null), value);
+                } else
+                    if (pair.right != null) {
+                        Calendar left = Calendar.getInstance();
+                        Calendar right = (Calendar) left.clone();
+                        left.set(Calendar.MONTH, left.get(Calendar.MONTH) + pair.left);
+                        left = getMonthStart(left);
+                        right.set(Calendar.MONTH, right.get(Calendar.MONTH) + pair.right);
+                        right = getMonthStart(right);
 
-                    if (log.isDebugEnabled()) {
-                        log.debug("Left date: " + (new java.sql.Date(left.getTimeInMillis())).getTime());
-                        log.debug("Right date: " + (new java.sql.Date(right.getTimeInMillis())).getTime());
+                        Qualifier[] list = {
+                                new CompareCondition(new Field(Field.DATE1, "P"), Operation.GREATER_OR_EQUAL, new java.sql.Date(left.getTimeInMillis())),
+                                new CompareCondition(new Field(Field.DATE1, "P"), Operation.SMALLER_OR_EQUAL, new java.sql.Date(right.getTimeInMillis()))
+                        };
+                        return new FilterQualifier(new NestedCondition(list, LogicalOperation.AND), value);
                     }
-
-                    Qualifier[] list = {
-                            new CompareCondition(Field.DATE1, Operation.GREATER_OR_EQUAL, new java.sql.Date(left.getTimeInMillis())),
-                            new CompareCondition(Field.DATE1, Operation.SMALLER_OR_EQUAL, new java.sql.Date(right.getTimeInMillis()))
-                    };
-                    return new FilterQualifier(new NestedCondition(list, LogicalOperation.AND), value);
-                }
 
                 log.warn("Unable to determine topics deadline date from value " + value);
                 return new FilterQualifier(null, value);
             }
         },
 
-        TOPICS_BY_ACCEPTED("filterTopicsByAccepted") {
+        TOPICS_BY_STATE(PARAM_FILTER_TOPICS_BY_STATE) {
             @Override
             public FilterQualifier construct(Object value) {
                 int intValue = Misc.parseInt(value.toString(), 0);
-                return new FilterQualifier(nestedQualifer(Field.NUMERIC2, intValue, Operation.EQUAL, 1, Operation.EQUAL, IsNullCheck.BEFORE_CAP), value);
+                Qualifier qualifier;
+                if (intValue == -1) {
+                    qualifier = new NestedCondition(new Qualifier[] {
+                                    new CompareCondition(new Field(Field.NUMERIC1, "A"), Operation.NOT_EQUAL, 0),
+                                    new CompareCondition(new Field(Field.NUMERIC1, "A"), Operation.IS_NULL, null)
+                    }, LogicalOperation.OR);
+                } else
+                    qualifier = new CompareCondition(new Field(Field.NUMERIC1, "A"), Operation.EQUAL, intValue);
+                return new FilterQualifier(qualifier, value);
             }
         },
 
-        TOPICS_BY_ROYALTY("filterTopicsByRoyalty") {
+        TOPICS_BY_ROYALTY(PARAM_FILTER_TOPICS_BY_ROYALTY) {
             @Override
             public FilterQualifier construct(Object value) {
-                if (asBoolean(value)) {
-                    return new FilterQualifier(new CompareCondition(Field.DATA, Operation.LIKE, "%<royalty>%</royalty>%"), value);
-                }
-                return new FilterQualifier(new CompareCondition(Field.DATA, Operation.NOT_LIKE, "%<royalty>%</royalty>%"), value);
+                if (asBoolean(value))
+                    return new FilterQualifier(new CompareCondition(new Field(Field.NUMERIC2, "P"), Operation.IS_NOT_NULL, null), value);
+                else
+                    return new FilterQualifier(new CompareCondition(new Field(Field.NUMERIC2, "P"), Operation.IS_NULL, null), value);
             }
         };
 
@@ -225,7 +241,7 @@ public class FormFilter {
             return ("1".equals(text) || "true".equalsIgnoreCase(text) || "ano".equalsIgnoreCase(text));
         }
 
-        protected Calendar monthBeginning(Calendar cal) {
+        protected Calendar getMonthStart(Calendar cal) {
             cal.set(Calendar.DAY_OF_MONTH, 1);
             cal.set(Calendar.HOUR_OF_DAY, 0);
             cal.set(Calendar.MINUTE, 0);
@@ -286,7 +302,7 @@ public class FormFilter {
     }
 
     // This is string prefix for LIKE CompareConditions
-    private static final String LIKE_PREFIX = "";
+    private static final String LIKE_PREFIX = "%";
 
     // This is string suffix for LIKE CompareConditions
     private static final String LIKE_SUFFIX = "%";
@@ -301,7 +317,6 @@ public class FormFilter {
      * @param filters Which filters are applied
      */
     public FormFilter(Map params, Filter... filters) {
-
         this.filters = new HashMap<String, FilterQualifier>();
         for (Filter filter : filters) {
             // skip parameter recognition if empty
@@ -351,12 +366,30 @@ public class FormFilter {
     }
 
     /**
+     * Tests whether there were specified some of filters in parameters.
+     * @return true if no filters were passed
+     */
+    public boolean isEmpty() {
+        return filters.isEmpty();
+    }
+
+    /**
+     * Tests for presence of parameter for given filter
+     * @param filter some filter
+     * @return true if the filter parameter was passed in parameters
+     */
+    public boolean isSet(Filter filter) {
+        return filters.containsKey(filter.name);
+    }
+
+    /**
      * Gets qualifiers stored in this filter as array
      *
      * @return Array of used qualifiers
      */
     public Qualifier[] getQualifiersAsArray() {
-        return getQualifiers().toArray(Qualifier.ARRAY_TYPE);
+        List<Qualifier> qualifiers = getQualifiers();
+        return qualifiers.toArray(new Qualifier[qualifiers.size()]);
     }
 
     /**
@@ -495,6 +528,10 @@ public class FormFilter {
             } catch (NumberFormatException e) {
                 log.error("Failed to convert '" + string + "' to numbers", e);
             }
+        }
+
+        public boolean isSingleValue() {
+            return single != null;
         }
     }
 

@@ -1,43 +1,35 @@
 package cz.abclinuxu.servlets.html.admin.view;
 
-import static cz.abclinuxu.utils.forms.FormFilter.Filter.TOPICS_BY_ACCEPTED;
+import static cz.abclinuxu.utils.forms.FormFilter.Filter.TOPICS_BY_STATE;
 import static cz.abclinuxu.utils.forms.FormFilter.Filter.TOPICS_BY_AUTHOR;
-import static cz.abclinuxu.utils.forms.FormFilter.Filter.TOPICS_BY_OPENED;
+import static cz.abclinuxu.utils.forms.FormFilter.Filter.TOPICS_BY_PUBLIC;
 import static cz.abclinuxu.utils.forms.FormFilter.Filter.TOPICS_BY_ROYALTY;
-import static cz.abclinuxu.utils.forms.FormFilter.Filter.TOPICS_BY_TERM;
+import static cz.abclinuxu.utils.forms.FormFilter.Filter.TOPICS_BY_DEADLINE;
 import static cz.abclinuxu.utils.forms.FormFilter.Filter.TOPICS_BY_TITLE;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
-import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.EditionRole;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Topic;
-import cz.abclinuxu.exceptions.InvalidDataException;
-import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
-import cz.abclinuxu.persistence.extra.LogicalOperation;
-import cz.abclinuxu.persistence.extra.NestedCondition;
 import cz.abclinuxu.persistence.extra.Operation;
-import cz.abclinuxu.persistence.extra.OperationIn;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.extra.QualifierTool;
+import cz.abclinuxu.persistence.extra.OrderByQualifier;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.admin.edit.EditTopic;
@@ -45,93 +37,48 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.PageNavigation;
 import cz.abclinuxu.servlets.utils.url.PwdNavigator;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.BeanFetcher;
-import cz.abclinuxu.utils.BeanFlusher;
 import cz.abclinuxu.utils.DateTool;
-import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.BeanFetcher.FetchType;
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.config.Configurator;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.forms.FormFilter;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
 
-public class ShowTopic implements AbcAction, Configurable {
-	private static final Logger log = Logger.getLogger(ShowTopic.class);
+public class ShowTopic implements AbcAction {
 
-	// force configuration of topics mailing list
-	static {
-		Configurator configurator = ConfigurationManager.getConfigurator();
-		configurator.configureAndRememberMe(new ShowTopic());
-	}
-
-	public static final String DEFAULT_AUTHORS_CONFERENCE = "autori@abclinuxu.cz";
-	public static final String DEFAULT_SENDER = "robot@abclinuxu.cz";
-
-	public static final String PREF_CONFERENCE = "authors.conference";
-	public static final String PREF_SENDER = "sender";
-
-	public static String authorsConference;
-	public static String sender;
-
-	/**
-	 * list of found topics that matched the conditions
-	 */
 	public static final String VAR_FOUND = "FOUND";
-
-	/**
-	 * list of active authors
-	 */
 	public static final String VAR_AUTHORS = "AUTHORS";
-
-	/**
-	 * Active author
-	 */
 	public static final String VAR_AUTHOR = "AUTHOR";
-
-	/**
-	 * distinct topic to be shown
-	 */
 	public static final String VAR_TOPIC = "TOPIC";
-
-	/**
-	 * form filtering
-	 */
 	public static final String VAR_FILTER = "FILTER";
-
-	/**
-	 * Starting part of URL, until value of from parameter
-	 */
 	public static final String VAR_URL_BEFORE_FROM = "URL_BEFORE_FROM";
-	/**
-	 * Final part of URL, after value of from parameter
-	 */
 	public static final String VAR_URL_AFTER_FROM = "URL_AFTER_FROM";
+    public static final String VAR_EDITOR = "EDITOR";
 
-	public static final String PARAM_FROM = "from";
-
+    public static final String PARAM_RELATION = "rid";
+    public static final String PARAM_RELATION2 = "trid";
+    public static final String PARAM_FROM = "from";
 	public static final String PARAM_SINGLE_AUTHOR = "authorId";
 	public static final String PARAM_DESTINATION = "dest";
-	public static final String PARAM_TOPIC_ID = "topicId";
 	public static final String PARAM_DESCRIPTION = "description";
 	public static final String PARAM_EMAIL = "email";
 
-	public static final String DEST_AUTHOR = "author";
-	public static final String DEST_CONFERENCE = "conference";
-	public static final String DEST_DIRECT = "direct";
+	public static final String VALUE_DESTINATION_AUTHOR = "author";
+	public static final String VALUE_DESTINATION_MAILING_LIST = "conference";
+	public static final String VALUE_DESTINATION_DIRECT = "direct";
 
 	public static final String ACTION_LIST = "list";
 	public static final String ACTION_SHOW = "show";
-	public static final String ACTION_MAIL = "mail";
-	public static final String ACTION_PREPARE = "notify";
-	public static final String ACTION_BACK = "back";
-	public static final String ACTION_ACCEPT = "accept";
+	public static final String ACTION_NOTIFY = "notify";
+    public static final String ACTION_NOTIFY_STEP2 = "notify2";
+    public static final String ACTION_BACK = "back";
 
-	@Override
+    @Override
 	public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
 		User user = (User) env.get(Constants.VAR_USER);
@@ -151,224 +98,199 @@ public class ShowTopic implements AbcAction, Configurable {
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         boolean editor = (role == EditionRole.EDITOR || role == EditionRole.EDITOR_IN_CHIEF);
+        if (editor)
+            env.put(VAR_EDITOR, Boolean.TRUE);
 
         PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_TOPICS);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
+        if (relation != null) {
+            Tools.sync(relation);
+            if (relation.getChild() instanceof Item && ((Item)relation.getChild()).getType() == Item.TOPIC) {
+                Topic topic = BeanFetcher.fetchTopic(relation, FetchType.EAGER);
+                env.put(VAR_TOPIC, topic);
+                return actionShowTopic(request, env, navigator);
+            }
+        }
 
-		// check invocation by author
-		if (role == EditionRole.AUTHOR) {
-			Author author = Tools.getAuthor(user.getId());
-            env.put(VAR_AUTHOR, author);
+        if (role == EditionRole.AUTHOR)
+			return actionListTopicForAuthor(request, env, navigator);
 
-			if (ServletUtils.determineAction(params, ACTION_ACCEPT)) {
-				return actionAccept(request, response, env);
-			}
-
-			List<Qualifier> preQualifiers = new ArrayList<Qualifier>();
-			preQualifiers.add(new NestedCondition(new Qualifier[] {
-			        new CompareCondition(Field.DATA, Operation.LIKE, "%<author>" + author.getId() + "</author>%"),
-			        new CompareCondition(Field.DATA, Operation.NOT_LIKE, "%<author>%</author>%")
-			        }, LogicalOperation.OR));
-			preQualifiers.add(new CompareCondition(Field.NUMERIC2, Operation.EQUAL, 0));
-			actionList(request, env, navigator, preQualifiers);
-			return FMTemplateSelector.select("AdministrationShowTopic", "author-list", env, request);
-		}
-
-		// check permissions
-		if (! editor) {
+		if (! editor)
 			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-		}
 
-		// prepare notify page
-		if (ServletUtils.determineAction(params, ACTION_PREPARE)) {
+        boolean back = ServletUtils.determineAction(params, ACTION_BACK);
+        if (! back && ServletUtils.determineAction(params, ACTION_NOTIFY))
 			return actionNotify(request, env, navigator);
-		}
-		// mail topics
-		else if (ServletUtils.determineAction(params, ACTION_MAIL)) {
-			return actionMail(request, response, env);
-		}
-		// list topics
-		else if (ServletUtils.determineAction(params, ACTION_LIST) || ServletUtils.determineAction(params, ACTION_BACK) || Misc.empty(action)) {
-			actionList(request, env, navigator, null);
-			return FMTemplateSelector.select("AdministrationShowTopic", "list", env, request);
-		}
+		if (ServletUtils.determineAction(params, ACTION_NOTIFY_STEP2))
+			return actionNotifyStep2(request, response, env);
+        if (ServletUtils.determineAction(params, ACTION_LIST) || back || Misc.empty(action))
+			return actionListTopicsForEditor(request, env, navigator);
+
 
 		throw new MissingArgumentException("Chybí parametr action!");
-
 	}
 
-	private void actionList(HttpServletRequest request, Map env, PwdNavigator navigator, List<Qualifier> preQualifiers) {
-		Map params = (Map) env.get(Constants.VAR_PARAMS);
-		int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
+	private String actionShowTopic(HttpServletRequest request, Map env, PwdNavigator navigator) {
+        env.put(Constants.VAR_PARENTS, navigator.navigate());
+        return FMTemplateSelector.select("ShowTopic", "detail", env, request);
+    }
+
+	private String actionListTopicForAuthor(HttpServletRequest request, Map env, PwdNavigator navigator) {
+        SQLTool sqlTool = SQLTool.getInstance();
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user = (User) env.get(Constants.VAR_USER);
+        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
 		int count = Misc.getPageSize(50, 50, env, null);
 
-		// store navigation structure
 		env.put(Constants.VAR_PARENTS, navigator.navigate());
 
-		// store authors
-		env.put(VAR_AUTHORS, EditTopic.getActiveAuthors(env));
+        Author author = Tools.getAuthor(user.getId());
+        env.put(VAR_AUTHOR, author);
 
-		// create filters
-		FormFilter filter = createFilter(params);
 
-		Paging found = null;
-		int total = 0;
+        FormFilter filter = createFilter(params);
+        // hide topics with published articles by default
+        filter.appendFilterQualifier(TOPICS_BY_STATE.getName(), null, "-1");
 
-		SQLTool sqlTool = SQLTool.getInstance();
-		Qualifier[] qualifiers = getQualifiers(preQualifiers, filter, from, count);
-		List<Item> items = sqlTool.getTopics(qualifiers);
-		total = sqlTool.countTopics(QualifierTool.removeOrderQualifiers(qualifiers));
-		found = new Paging(BeanFetcher.fetchTopics(items, FetchType.EAGER), from, count, total, qualifiers);
+        List<Qualifier> preQualifiers = new ArrayList<Qualifier>();
+        preQualifiers.add(new CompareCondition(new Field(Field.NUMERIC1, "P"), Operation.IS_NULL, null));
+        Qualifier[] qualifiers = getQualifiers(preQualifiers, filter, from, count);
+		List<Relation> relations = sqlTool.getTopics(qualifiers);
+        Tools.syncList(relations);
+
+		int total = sqlTool.countTopics(QualifierTool.removeOrderQualifiers(qualifiers));
+		Paging found = new Paging(BeanFetcher.fetchTopics(relations, FetchType.EAGER), from, count, total, qualifiers);
 
 		env.put(VAR_FILTER, filter);
 		env.put(VAR_FOUND, found);
 
-		// store url links
 		env.put(VAR_URL_BEFORE_FROM, "/sprava/redakce/namety/?from=");
 		env.put(VAR_URL_AFTER_FROM, filter.encodeAsURL());
-	}
+        return FMTemplateSelector.select("ShowTopic", "listForAuthor", env, request);
+    }
+
+	private String actionListTopicsForEditor(HttpServletRequest request, Map env, PwdNavigator navigator) {
+		Map params = (Map) env.get(Constants.VAR_PARAMS);
+		int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
+		int count = Misc.getPageSize(50, 50, env, null);
+
+		env.put(Constants.VAR_PARENTS, navigator.navigate());
+        env.put(VAR_AUTHORS, EditTopic.getActiveAuthors(env));
+
+        if (!params.containsKey(FormFilter.PARAM_FILTER_TOPICS_BY_STATE)) {
+            // hide topics with published articles by default
+            params.put(FormFilter.PARAM_FILTER_TOPICS_BY_STATE, "-1");
+        }
+        FormFilter filter = createFilter(params);
+
+		SQLTool sqlTool = SQLTool.getInstance();
+		Qualifier[] qualifiers = getQualifiers(null, filter, from, count);
+		List<Relation> relations = sqlTool.getTopics(qualifiers);
+        Tools.syncList(relations);
+
+		int total = sqlTool.countTopics(QualifierTool.removeOrderQualifiers(qualifiers));
+		Paging found = new Paging(BeanFetcher.fetchTopics(relations, FetchType.EAGER), from, count, total, qualifiers);
+
+		env.put(VAR_FILTER, filter);
+		env.put(VAR_FOUND, found);
+
+		env.put(VAR_URL_BEFORE_FROM, "/sprava/redakce/namety/?from=");
+		env.put(VAR_URL_AFTER_FROM, filter.encodeAsURL());
+
+        return FMTemplateSelector.select("ShowTopic", "list", env, request);
+    }
 
 	private String actionNotify(HttpServletRequest request, Map env, PwdNavigator navigator) {
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
 
-		// there is no tail link, authors are necessary
 		env.put(Constants.VAR_PARENTS, navigator.navigate());
 		env.put(VAR_AUTHORS, EditTopic.getActiveAuthors(env));
 
-		// get filter because it must be stored
-		FormFilter filter = createFilter(params);
-
-		// determine if topics share same author
 		Integer authorId = null;
-		boolean authorAssigned = false;
+        boolean publicTopic = false;
 
-		List<Topic> topics = getTopics(params);
-		StringBuilder sb = new StringBuilder("Náměty\n\n");
-
-		for (Topic topic : topics) {
-			sb.append(topic.getTitle()).append("\n");
-			// append topics deadline if any
+        DateTool dateTool = new DateTool();
+        StringBuilder sb = new StringBuilder("Náměty\n------\n\n");
+        List<Topic> topics = getTopics(params);
+        for (Topic topic : topics) {
+			sb.append("Téma: ").append(topic.getTitle()).append("\n");
 			if (topic.getDeadline() != null) {
-				DateTool dateTool = new DateTool();
-				sb.append("Termín: ").append(dateTool.show(topic.getDeadline(), DateTool.CZ_DAY_MONTH_YEAR)).append("\n");
+                String deadline = dateTool.show(topic.getDeadline(), DateTool.CZ_DAY_MONTH_YEAR);
+                sb.append("Termín: ").append(deadline).append("\n");
 			}
-			// append topics royalty
-			sb.append("Honorář: ");
+
+            sb.append("Honorář: ");
 			if (topic.hasRoyalty())
 				sb.append(topic.getRoyalty().intValue()).append("\n");
 			else
 				sb.append("běžný").append("\n");
-			// append topics description
-			if (topic.getDescription() != null)
-			    sb.append("Popis: ").append(topic.getDescription()).append("\n\n");
 
-			// assign first author available 
-			if (authorAssigned == false && !topic.isPublic()) {
-				authorId = topic.getAuthor().getId();
-				authorAssigned = true;
-			}
-			// check if assigned to author or public
-			else if (authorId != null && authorAssigned == true && !topic.isPublic()) {
-				if (!authorId.equals(topic.getAuthor().getId())) {
-					authorId = null;
-				}
-			}
+            sb.append(AbcConfig.getAbsoluteUrl()).append(UrlUtils.PREFIX_ADMINISTRATION).append("/redakce/namety/")
+                    .append(topic.getRelationId()).append("\n\n");
+
+            if (! publicTopic) {
+                if (topic.isPublic())
+                    publicTopic = true;
+                else {
+                    if (authorId == null)
+                        authorId = topic.getAuthor().getRelationId();
+                    else {
+                        if (!authorId.equals(topic.getAuthor().getRelationId()))
+                            publicTopic = true;
+                    }
+                }
+            }
 		}
 
 		// store computed results
-		if (authorId != null) {
-			filter.appendFilterQualifier(PARAM_DESTINATION, null, DEST_AUTHOR);
+        FormFilter filter = createFilter(params);
+        if (! publicTopic && authorId != null) {
+			filter.appendFilterQualifier(PARAM_DESTINATION, null, VALUE_DESTINATION_AUTHOR);
 			filter.appendFilterQualifier(PARAM_SINGLE_AUTHOR, null, authorId.toString());
-		}
-		// by default, store destination to conference
-		else {
-			filter.appendFilterQualifier(PARAM_DESTINATION, null, DEST_CONFERENCE);
+		} else {
+            // by default, store destination to conference
+            filter.appendFilterQualifier(PARAM_DESTINATION, null, VALUE_DESTINATION_MAILING_LIST);
 		}
 
-		// add description
 		filter.appendFilterQualifier(PARAM_DESCRIPTION, null, sb.toString());
-		// filter add selected topic ids
-		@SuppressWarnings("unchecked")
-		List<String> strings = (List<String>) Tools.asList(params.get(PARAM_TOPIC_ID));
-		filter.appendFilterQualifier(PARAM_TOPIC_ID, null, strings);
-
 		env.put(VAR_FILTER, filter);
 
-		return FMTemplateSelector.select("AdministrationShowTopic", "notify", env, request);
+		return FMTemplateSelector.select("ShowTopic", "notify", env, request);
 	}
 
-	private String actionMail(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+	private String actionNotifyStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user = (User) env.get(Constants.VAR_USER);
 
-		// determine and set mail destination
-		String dest = (String) params.get(PARAM_DESTINATION);
-		String destEmail = authorsConference;
-		if (DEST_AUTHOR.equals(dest)) {
-			SQLTool sqlTool = SQLTool.getInstance();
-			// find author
-			Integer aId = null;
-			try {
-				aId = Misc.parsePossiblyWrongInt((String) params.get(PARAM_SINGLE_AUTHOR));
-			}
-			catch (InvalidInputException iie) {
-				throw new MissingArgumentException("Chybí parametr authorId!");
-			}
-
-			Qualifier[] qualifiers = { new CompareCondition(Field.ID, Operation.EQUAL, aId) };
-			List<Object[]> authorObjects = sqlTool.getAuthorsWithArticlesCount(qualifiers);
-			if (authorObjects.isEmpty()) {
-				throw new InvalidDataException("Nepodařilo se najít rodičovskou relaci pro autora" + aId + "!");
-			}
-
-			Author author = BeanFetcher.fetchAuthorFromObjects(authorObjects.get(0), FetchType.PROCESS_NONATOMIC);
+        String destEmail = AbcConfig.getAuthorsEmail();
+        String dest = (String) params.get(PARAM_DESTINATION);
+        if (VALUE_DESTINATION_AUTHOR.equals(dest)) {
+			Integer authorRelationId = Misc.parseInt((String) params.get(PARAM_SINGLE_AUTHOR), -1);
+            Relation relation = new Relation(authorRelationId);
+            Tools.sync(relation);
+			Author author = BeanFetcher.fetchAuthor(relation, FetchType.PROCESS_NONATOMIC);
 			destEmail = author.getEmail();
-		}
-		else if (DEST_DIRECT.equals(dest)) {
-			destEmail = (String) params.get(PARAM_EMAIL);
-		}
+		} else if (VALUE_DESTINATION_DIRECT.equals(dest))
+            destEmail = (String) params.get(PARAM_EMAIL);
+
 
 		String body = (String) params.get(PARAM_DESCRIPTION);
-
-		// send message
-		boolean sent = EmailSender.sendEmail(sender, destEmail, "Náměty pro články na abclinuxu.cz", body);
+		boolean sent = EmailSender.sendEmail(user.getEmail(), destEmail, "Nové náměty", body);
 
 		if (sent)
-			ServletUtils.addMessage("Zpráva byla zaslaná na " + destEmail, env, request.getSession());
+			ServletUtils.addMessage("Zpráva byla zaslána na adresu " + destEmail, env, request.getSession());
 		else
-			ServletUtils.addError("generic", "Nepodařilo se zaslat email na " + destEmail, env, request.getSession());
+			ServletUtils.addError("generic", "Nepodařilo se zaslat email na adresu " + destEmail, env, request.getSession());
 
-		EditTopic.redirect(response, env);
-		return null;
-
-	}
-
-	private String actionAccept(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-		Map params = (Map) env.get(Constants.VAR_PARAMS);
-
-		// determine given topic by id
-		Persistence persistence = PersistenceFactory.getPersistence();
-		Item item = (Item) InstanceUtils.instantiateParam(PARAM_TOPIC_ID, Item.class, params, request);
-		if (item == null)
-		    throw new MissingArgumentException("Chybí parametr topicId!");
-		persistence.synchronize(item);
-
-		Author author = (Author) env.get(VAR_AUTHOR);
-		Topic topic = BeanFetcher.fetchTopic(item, FetchType.EAGER);
-		topic.setAccepted(true);
-		topic.setAuthor(author);
-
-		item = BeanFlusher.flushTopic(item, topic);
-		persistence.update(item);
-
-		ServletUtils.addMessage("Námět " + topic.getTitle() + " byl přijat", env, request.getSession());
-		EditTopic.redirect(response, env);
-		return null;
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/namety/"));
+        return null;
 
 	}
 
 	/**
 	 * Constructs qualifiers from input passed in form. Allows initial argument
 	 * to be passed by the first argument
-	 * 
 	 * @param preQualifiers Qualifiers applied before filtering
 	 * @param filter Filter object constructed from HTTP parameters
 	 * @param from From parameter for paging results
@@ -376,18 +298,17 @@ public class ShowTopic implements AbcAction, Configurable {
 	 * @return Array of qualifiers
 	 */
 	private Qualifier[] getQualifiers(List<Qualifier> preQualifiers, FormFilter filter, int from, int count) {
-
 		List<Qualifier> qualifiers = preQualifiers == null ? new ArrayList<Qualifier>() : new ArrayList<Qualifier>(preQualifiers);
 		qualifiers.addAll(filter.getQualifiers());
 		// sort by surname in ascending order
 		qualifiers.add(Qualifier.SORT_BY_ISNULL);
 		qualifiers.add(Qualifier.ORDER_ASCENDING);
-		qualifiers.add(Qualifier.SORT_BY_DATE1);
-		qualifiers.add(Qualifier.SORT_BY_STRING1);
+		qualifiers.add(new OrderByQualifier(Qualifier.SORT_BY_DATE1, "P"));
+		qualifiers.add(Qualifier.SORT_BY_TITLE);
 		qualifiers.add(Qualifier.ORDER_ASCENDING);
 		qualifiers.add(new LimitQualifier(from, count));
 
-		return qualifiers.toArray(Qualifier.ARRAY_TYPE);
+		return qualifiers.toArray(new Qualifier[qualifiers.size()]);
 	}
 
 	/**
@@ -398,49 +319,23 @@ public class ShowTopic implements AbcAction, Configurable {
 	 *         items.
 	 */
 	private FormFilter createFilter(Map params) {
-		FormFilter filter = new FormFilter(params, TOPICS_BY_TITLE, TOPICS_BY_AUTHOR, TOPICS_BY_ACCEPTED, TOPICS_BY_OPENED, TOPICS_BY_ROYALTY, TOPICS_BY_TERM);
-		return filter.appendFilterQualifier(PARAM_TOPIC_ID, null, Tools.asList(params.get(PARAM_TOPIC_ID)));
+		return new FormFilter(params, TOPICS_BY_TITLE, TOPICS_BY_AUTHOR, TOPICS_BY_STATE, TOPICS_BY_PUBLIC,
+                TOPICS_BY_ROYALTY, TOPICS_BY_DEADLINE);
 	}
 
 	private List<Topic> getTopics(Map params) {
-		@SuppressWarnings("unchecked")
-		List<String> strings = (List<String>) Tools.asList(params.get(PARAM_TOPIC_ID));
-
-		if (Misc.empty(strings)) {
+        // param rid cannot be used in view pages, as it is overriden during processing
+		List<String> strings = (List<String>) Tools.asList(params.get(PARAM_RELATION2));
+		if (Misc.empty(strings))
 			return Collections.emptyList();
+
+		List<Relation> relations = new ArrayList<Relation>(strings.size());
+		for (String s : strings) {
+            int rid = Misc.parseInt(s, -1);
+            relations.add(new Relation(rid));
 		}
+        Tools.syncList(relations);
 
-		List<Integer> ids = new ArrayList<Integer>(strings.size());
-		for (String topicId : strings) {
-			try {
-				ids.add(Integer.parseInt(topicId));
-			}
-			catch (NumberFormatException e) {
-				log.warn("Passed invalid topic identification: " + topicId);
-			}
-		}
-
-		if (Misc.empty(ids)) {
-			return Collections.emptyList();
-		}
-
-		SQLTool sqlTool = SQLTool.getInstance();
-
-		Qualifier[] qualifiers = new Qualifier[] {
-		        new CompareCondition(Field.ID, new OperationIn(ids.size()), ids)
-		        };
-		// we must process non-atomically for author ids are stored in XML
-		return BeanFetcher.fetchTopics(sqlTool.getTopics(qualifiers), FetchType.PROCESS_NONATOMIC);
-
+		return BeanFetcher.fetchTopics(relations, FetchType.EAGER);
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void configure(Preferences prefs) throws ConfigurationException {
-		authorsConference = prefs.get(PREF_CONFERENCE, DEFAULT_AUTHORS_CONFERENCE);
-		sender = prefs.get(PREF_SENDER, DEFAULT_SENDER);
-	}
-
 }

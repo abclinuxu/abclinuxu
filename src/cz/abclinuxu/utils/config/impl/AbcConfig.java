@@ -55,12 +55,14 @@ public class AbcConfig implements Configurable {
     public static final String PREF_WATCHED_DISCUSSION_LIMIT = "watched.discussions.limit";
     public static final String PREF_MAINTAINANCE_MODE = "maintainance.mode";
     public static final String PREF_TICKET_LENGTH = "user.ticket.length";
-    public static final String PREF_MAILING_LIST_ADMINS = "mailing.list.admini";
+    public static final String PREF_MAILING_LIST_ADMINS = "mailing.list.admins";
+    public static final String PREF_MAILING_LIST_AUTHORS = "mailing.list.authors";
+    public static final String PREF_MAILING_LIST_EDITORS = "mailing.list.editors";
     public static final String PREF_WARN_OLD_DISCUSSION_CREATED = "warn.old.diz.created.days";
     public static final String PREF_WARN_OLD_DISCUSSION_COMMENTED = "warn.old.diz.commented.days";
     public static final String PREF_LOGIN_USE_HTTPS = "login.use.https";
 
-    static String deployPath, domain, hostname, adminsEmail;
+    static String deployPath, domain, hostname, adminsEmail, authorsEmail, editorsEmail;
     static int defaultPageSize, viewUserPageSize, sectionArticleCount, seriesArticleCount, bazaarPageSize;
     static int articleSectionArticlesCount, authorArticlesPageSize, searchResultsCount, faqSectionCount;
     static int maxWatchedDiscussions, ticketLength, oldDiscussionAge, oldDiscussionSleep;
@@ -92,6 +94,8 @@ public class AbcConfig implements Configurable {
         indexCompleteArticles = prefs.getInt(PREF_INDEX_COMPLETE_ARTICLES, 6);
         maintainanceMode = prefs.getBoolean(PREF_MAINTAINANCE_MODE, false);
         adminsEmail = prefs.get(PREF_MAILING_LIST_ADMINS, null);
+        authorsEmail = prefs.get(PREF_MAILING_LIST_AUTHORS, null);
+        editorsEmail = prefs.get(PREF_MAILING_LIST_EDITORS, null);
         loginUseHttps = prefs.getBoolean(PREF_LOGIN_USE_HTTPS, false);
     }
 
@@ -147,6 +151,20 @@ public class AbcConfig implements Configurable {
      */
     public static String getAdminsEmail() {
         return adminsEmail;
+    }
+
+    /**
+     * @return email address of authors mailing list
+     */
+    public static String getAuthorsEmail() {
+        return authorsEmail;
+    }
+
+    /**
+     * @return email address of editors mailing list
+     */
+    public static String getEditorsEmail() {
+        return editorsEmail;
     }
 
     /**

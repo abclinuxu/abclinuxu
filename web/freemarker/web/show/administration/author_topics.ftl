@@ -2,71 +2,59 @@
 
 <@lib.showMessages/>
 
-<h3>Aktuální náměty</h3>
-<ul style="list-style: none">
-	<li>Název - část názvu námětu</li>
-	<li>Veřejný - indikace, zda je námět dostupný pro autory</li>
-	<li>Termín - do kdy má být námět zpracován</li>
-	<li>Honorář - výše honoráře za námět<li>
-</ul>
+<h3>Volné náměty</h3>
+
+<p>
+    Na této stránce najdete všechny náměty, které si ještě nikdo nerezervoval.
+</p>
+
 <table class="siroka list">
 	<thead>
         <tr>
-            <th>Název</th>
-            <th>Veřejný</th>
-            <th>Termín</th>
+            <th style="text-align: left">Název</th>
+            <th style="text-align: right;">Termín odevzdání</th>
             <th>Honorář</th>
-            <th>Popis</th>
         </tr>
     </thead>
 	<tbody>
-	<form action="${URL.make("/redakce/namety")}" method="POST">	    
+	<form action="${URL.make("/sprava/redakce/namety")}" method="POST">
         <tr>     
-            <td><@lib.filterInput filter=FILTER name="filterTopicsByTitle" size="8" tabindex="1"/></td>
-            <td><select name="filterTopicsByOpened" tabindex="2">
-            		<@lib.filterOption filter=FILTER name="filterTopicsByOpened" value=""></@lib.filterOption>
-            		<@lib.filterOption filter=FILTER name="filterTopicsByOpened" value="1">ano</@lib.filterOption>
-            		<@lib.filterOption filter=FILTER name="filterTopicsByOpened" value="0">ne</@lib.filterOption>
-              	</select>
+            <td style="text-align: left">
+                <@lib.filterInput filter=FILTER name="filterTopicsByTitle" size="25"/>
+            </td>
+            <td style="text-align: right;">
+                <select name="filterTopicsByDeadline">
+                    <@lib.filterOption filter=FILTER name="filterTopicsByDeadline" value=""></@lib.filterOption>
+                    <@lib.filterOption filter=FILTER name="filterTopicsByDeadline" value="-1">žádný</@lib.filterOption>
+                    <@lib.filterOption filter=FILTER name="filterTopicsByDeadline" value="0">v prodlení</@lib.filterOption>
+                    <@lib.filterOption filter=FILTER name="filterTopicsByDeadline" value="0-1">tento měsíc</@lib.filterOption>
+                    <@lib.filterOption filter=FILTER name="filterTopicsByDeadline" value="1-2">příští měsíc</@lib.filterOption>
+                </select>
             </td>
             <td>
-                 <select name="filterTopicsByTerm" tabindex="3">
-                	 <@lib.filterOption filter=FILTER name="filterTopicsByTerm" value=""></@lib.filterOption>
-                	 <@lib.filterOption filter=FILTER name="filterTopicsByTerm" value="0">v prodlení</@lib.filterOption>
-                	 <@lib.filterOption filter=FILTER name="filterTopicsByTerm" value="0-1">tento měsíc</@lib.filterOption>
-                	 <@lib.filterOption filter=FILTER name="filterTopicsByTerm" value="1-2">příští měsíc</@lib.filterOption>
-                 </select>
+                <select name="filterTopicsByRoyalty">
+                    <@lib.filterOption filter=FILTER name="filterTopicsByRoyalty" value=""></@lib.filterOption>
+                    <@lib.filterOption filter=FILTER name="filterTopicsByRoyalty" value="0">běžný</@lib.filterOption>
+                    <@lib.filterOption filter=FILTER name="filterTopicsByRoyalty" value="1">jiný</@lib.filterOption>
+                </select>
             </td>
-            <td>
-                 <select name="filterTopicsByRoyalty" tabindex="4">
-                 	 <@lib.filterOption filter=FILTER name="filterTopicsByRoyalty" value=""></@lib.filterOption>
-                 	 <@lib.filterOption filter=FILTER name="filterTopicsByRoyalty" value="0">běžný</@lib.filterOption>
-                 	 <@lib.filterOption filter=FILTER name="filterTopicsByRoyalty" value="1">jiný</@lib.filterOption>
-                 </select>
+            <td style="text-align: left">
+                <input type="submit" name="list" value="Filtruj"/>
             </td>
-            <td style="text-align: left"><input type="submit" name="list" value="Filtruj" tabindex="5" /></td>
         </tr>         
         <#list FOUND.data as topic>
-            <tr>
-                <td style="text-align: left; vertical-align: top;">
-                	${(topic.title)!?html}
-                	<form method="POST">
-                		<input type="hidden" name="topicId" value="${topic.id}" />
-                		<input type="submit" name="accept" value="Přijmout námět" />
-                	</form>
+            <tr style="vertical-align: top;">
+                <td style="text-align: left;">
+                	<a href="${URL.make("/sprava/redakce/namety/" + topic.relationId)}">${(topic.title)!?html}</a>
                 </td>
-                <td style="vertical-align: top;">${(topic.isPublic())!?string("ano","ne")}</td>
-                <td style="vertical-align: top;"><#if (topic.deadline)??>
-                  		<#if topic.isInDelay() ><span style="color: red"></#if>
-                        ${DATE.show(topic.deadline, "CZ_DMY")}
-                        <#if topic.isInDelay()></span></#if>
+                <td style="text-align: right;">
+                    <#if (topic.deadline)??>
+                        <#assign deadlineStyle=""><#if topic.delayed><#assign deadlineStyle="style=\"color: red\""></#if>
+                        <span ${deadlineStyle!}>${DATE.show(topic.deadline, "CZ_DMY")}</span>
                     </#if>
                 </td>
-                <td style="vertical-align: top;">${(topic.royalty)!"běžný"}</td>
-                <td>
-                	<textarea rows="5" cols="40" style="font-family: inherit; border: none; background: inherit;">${(topic.description)!?html}</textarea>     
-                </td>
-            </tr>                
+                <td>${(topic.royalty)!"běžný"}</td>
+            </tr>
         </#list>        
     </tbody>
 </table>

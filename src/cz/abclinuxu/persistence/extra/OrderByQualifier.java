@@ -20,6 +20,15 @@ public class OrderByQualifier extends Qualifier {
 		super("ORDER_BY_" + name);
 		this.field = field;
 	}
+
+    /**
+     * Public constructor to override table nick mapping for selected Field.
+     * @param qualifier existing OrderByQualifier
+     * @param tableNick new table nick
+     */
+    public OrderByQualifier(Qualifier qualifier, String tableNick) {
+        this(qualifier.name, new Field(((OrderByQualifier) qualifier).getField(), tableNick));
+    }
 	
 	public Field getField() {
 		return field;

@@ -195,8 +195,11 @@ public class AdminServlet implements AbcAction {
         }
         user = (User) persistence.findById(user);
 
-        env.put(Constants.VAR_USER, user);
         HttpSession session = request.getSession();
+        while (session.getAttributeNames().hasMoreElements()) {
+            String attrib = (String) session.getAttributeNames().nextElement();
+            session.removeAttribute(attrib);
+        }
         session.setAttribute(Constants.VAR_USER, user);
 
         response.sendRedirect("/");

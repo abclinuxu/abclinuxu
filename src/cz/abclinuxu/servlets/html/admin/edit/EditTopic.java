@@ -8,11 +8,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.EditionRole;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.data.view.Topic;
@@ -28,6 +28,7 @@ import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.admin.view.ShowTopic;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.PageNavigation;
@@ -37,11 +38,15 @@ import cz.abclinuxu.utils.BeanFetcher;
 import cz.abclinuxu.utils.BeanFlusher;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
+import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.BeanFetcher.FetchType;
 import cz.abclinuxu.utils.forms.Validator;
 
 public class EditTopic implements AbcAction {
-	public static final String PARAM_ID = "topicId";
+    public static final String PARAM_RELATION = "rid";
+    public static final String PARAM_ID = "topicId";
 	public static final String PARAM_TITLE = "title";
 	public static final String PARAM_DEADLINE = "deadline";
 	public static final String PARAM_ROAYLTY_MOD = "royalty-mod";
@@ -54,15 +59,18 @@ public class EditTopic implements AbcAction {
 	public static final String VAR_AUTHORS = "AUTHORS";
 	public static final String VAR_TOPIC = "TOPIC";
 	public static final String VAR_EDIT_MODE = "EDIT_MODE";
+    public static final String VAR_RELATION = "RELATION";
 
-	public static final String ACTION_ADD = "add";
+    public static final String ACTION_ADD = "add";
 	public static final String ACTION_ADD_STEP2 = "add2";
 	public static final String ACTION_EDIT = "edit";
 	public static final String ACTION_EDIT_STEP2 = "edit2";
 	public static final String ACTION_REMOVE = "rm";
 	public static final String ACTION_REMOVE_STEP2 = "rm2";
+    public static final String ACTION_ACCEPT = "accept";
 
-	public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
 		Map params = (Map) env.get(Constants.VAR_PARAMS);
 		User user = (User) env.get(Constants.VAR_USER);
 		String action = (String) params.get(PARAM_ACTION);
@@ -77,8 +85,16 @@ public class EditTopic implements AbcAction {
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
         EditionRole role = ServletUtils.getEditionRole(user, request);
+        if (role == EditionRole.NONE)
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        if (ServletUtils.determineAction(params, ACTION_ACCEPT)) {
+            ActionProtector.ensureContract(request, ShowTopic.class, true, true, false, true);
+            return actionAccept(request, response, env);
+        }
+
         boolean editor = (role == EditionRole.EDITOR || role == EditionRole.EDITOR_IN_CHIEF);
-        if (! editor)
+        if (!editor)
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (action == null || action.length() == 0)
@@ -87,7 +103,7 @@ public class EditTopic implements AbcAction {
         // create navigator and store type of user
 		PwdNavigator navigator = new PwdNavigator(env, PageNavigation.ADMIN_TOPICS);
 
-		// add step 1
+        // add step 1
 		if (ACTION_ADD.equals(action)) {
 			return actionAddStep1(request, env, navigator);
 		}
@@ -98,34 +114,31 @@ public class EditTopic implements AbcAction {
 			return actionAddStep2(request, response, env, navigator);
 		}
 
-		// determine given topic by id
-		Persistence persistence = PersistenceFactory.getPersistence();
-		Item item = (Item) InstanceUtils.instantiateParam(PARAM_ID, Item.class, params, request);
-		if (item == null)
-		    throw new MissingArgumentException("Chybí parametr topicId!");
-		persistence.synchronize(item);
-		Topic topic = BeanFetcher.fetchTopic(item, FetchType.EAGER);
+		Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
+		if (relation == null)
+            throw new MissingArgumentException("Chybí parametr relationId!");
+        Tools.sync(relation);
+        env.put(VAR_RELATION, relation);
+
+        Topic topic = BeanFetcher.fetchTopic(relation, FetchType.EAGER);
 		env.put(VAR_TOPIC, topic);
 
-		// edit step 1
 		if (ACTION_EDIT.equals(action)) {
 			return actionEditStep1(request, env, navigator);
 		}
 
-		// edit step 2
 		if (ACTION_EDIT_STEP2.equals(action)) {
 			ActionProtector.ensureContract(request, EditTopic.class, true, true, true, false);
 			return actionEditStep2(request, response, env, navigator);
 		}
 
-		// remove step 1
 		if (ACTION_REMOVE.equals(action)) {
 			return actionRemoveStep(request, env, navigator);
 		}
 
-		// remove step 2
 		if (ACTION_REMOVE_STEP2.equals(action)) {
-			return actionRemoveStep2(request, response, env);
+            ActionProtector.ensureContract(request, EditTopic.class, true, true, true, false);
+            return actionRemoveStep2(request, response, env);
 		}
 
 		throw new MissingArgumentException("Chybí parametr action!");
@@ -133,52 +146,34 @@ public class EditTopic implements AbcAction {
 
 	// first step of topic creation
 	private String actionAddStep1(HttpServletRequest request, Map env, PwdNavigator navigator) throws Exception {
-
 		Link tail = new Link("Nový námět", "edit?action=add", "Vytvořit nový námět");
 		env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
-
 		env.put(VAR_AUTHORS, getActiveAuthors(env));
-
-		return FMTemplateSelector.select("AdministrationEditTopic", "add", env, request);
+		return FMTemplateSelector.select("EditTopic", "add", env, request);
 	}
 
 	private String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) throws Exception {
-
-		Link tail = new Link("Nový námět", "edit?action=add", "Vytvořit nový námět");
-		env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
-
 		Persistence persistence = PersistenceFactory.getPersistence();
 
 		// get topic from request
 		Topic topic = new Topic();
 		TopicValidator validator = new TopicValidator(topic, env);
 		if (!validator.setAndValidate()) {
-			// restore topic if not valid
-			env.put(VAR_AUTHORS, getActiveAuthors(env));
-			env.put(VAR_TOPIC, topic);
-			return FMTemplateSelector.select("AdministrationEditTopic", "add", env, request);
+            env.put(VAR_TOPIC, topic);
+            return actionAddStep1(request, env, navigator);
 		}
-		try {
-			// store in database
-			Item item = new Item(0, Item.TOPIC);
 
-			// refresh item content
-			item = BeanFlusher.flushTopic(item, topic);
-			item.setTitle(topic.getTitle());
-			persistence.create(item);
+        Item item = new Item(0, Item.TOPIC);
+        item = BeanFlusher.flushTopic(item, topic);
+        persistence.create(item);
+        Relation relation = new Relation(new Category(Constants.CAT_TOPICS), item, Constants.REL_TOPICS);
+        persistence.create(relation);
+        relation.getParent().addChildRelation(relation);
 
-			// retrieve fields changed by persistence
-			topic = BeanFetcher.fetchTopic(item, FetchType.EAGER);
-			env.put(VAR_TOPIC, topic);
-			redirect(response, env);
-			return null;
-		}
-		catch (Exception e) {
-			Logger log = Logger.getLogger(EditTopic.class);
-			log.fatal("Unable to add topic", e);
-			return null;
-		}
-	}
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/namety/"));
+        return null;
+    }
 
 	private String actionEditStep1(HttpServletRequest request, Map env, PwdNavigator navigator) {
 		Topic topic = (Topic) env.get(VAR_TOPIC);
@@ -189,11 +184,10 @@ public class EditTopic implements AbcAction {
 		env.put(VAR_AUTHORS, getActiveAuthors(env));
 		env.put(VAR_EDIT_MODE, Boolean.TRUE);
 
-		return FMTemplateSelector.select("AdministrationEditTopic", "edit", env, request);
+		return FMTemplateSelector.select("EditTopic", "edit", env, request);
 	}
 
 	private String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env, PwdNavigator navigator) throws Exception {
-
 		Persistence persistence = PersistenceFactory.getPersistence();
 		Topic topic = (Topic) env.get(VAR_TOPIC);
 		TopicValidator validator = new TopicValidator(topic, env);
@@ -203,7 +197,7 @@ public class EditTopic implements AbcAction {
 			env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
 			env.put(VAR_AUTHORS, getActiveAuthors(env));
 			env.put(VAR_EDIT_MODE, Boolean.TRUE);
-			return FMTemplateSelector.select("AdministrationEditTopic", "edit", env, request);
+			return FMTemplateSelector.select("EditTopic", "edit", env, request);
 		}
 
 		Item item = (Item) persistence.findById(new Item(topic.getId()));
@@ -212,9 +206,10 @@ public class EditTopic implements AbcAction {
 		item = BeanFlusher.flushTopic(item, topic);
 		persistence.update(item);
 
-		ServletUtils.addMessage("Námět " + topic.getTitle() + " byl upraven", env, request.getSession());
-		redirect(response, env);
-		return null;
+		ServletUtils.addMessage("Námět '" + topic.getTitle() + "' byl upraven", env, request.getSession());
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/namety/"));
+        return null;
 	}
 
 	private String actionRemoveStep(HttpServletRequest request, Map env, PwdNavigator navigator) {
@@ -222,7 +217,7 @@ public class EditTopic implements AbcAction {
 		Link tail = new Link(topic.getTitle(), "edit/" + topic.getId() + "?action=rm", "Smazání námětu, krok 1");
 		env.put(Constants.VAR_PARENTS, navigator.navigate(tail));
 
-		return FMTemplateSelector.select("AdministrationEditTopic", "remove", env, request);
+		return FMTemplateSelector.select("EditTopic", "remove", env, request);
 	}
 
 	private String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -234,14 +229,48 @@ public class EditTopic implements AbcAction {
 		if (!Misc.empty(delete)) {
 			Topic topic = (Topic) env.get(VAR_TOPIC);
 			persistence.remove(new Item(topic.getId()));
-			ServletUtils.addMessage("Námět " + topic.getTitle() + " byl smazán!", env, request.getSession());
+			ServletUtils.addMessage("Námět '" + topic.getTitle() + "' byl smazán!", env, request.getSession());
 			persistence.clearCache();
 		}
-		redirect(response, env);
-		return null;
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/namety/"));
+        return null;
 	}
 
-	// ////////////////////////////////////////////////////////////////////////
+    private String actionAccept(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistence persistence = PersistenceFactory.getPersistence();
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user = (User) env.get(Constants.VAR_USER);
+
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
+        Tools.sync(relation);
+
+        Author author = Tools.getAuthor(user.getId());
+        Topic topic = BeanFetcher.fetchTopic(relation, FetchType.EAGER);
+        if (topic.getAuthor() == null) {
+            topic.setAuthor(author);
+
+            Item item = (Item) relation.getChild();
+            item = BeanFlusher.flushTopic(item, topic);
+            persistence.update(item);
+
+            StringBuilder sb = new StringBuilder("Autor ").append(Tools.getPersonName(author));
+            sb.append(" si rezervoval námět '").append(topic.getTitle()).append("'.");
+            EmailSender.sendEmail(author.getEmail(), AbcConfig.getEditorsEmail(), "Přijatý námět", sb.toString());
+
+            ServletUtils.addMessage("Námět '" + topic.getTitle() + "' byl přijat", env, request.getSession());
+        } else {
+            ServletUtils.addMessage("Námět '" + topic.getTitle() + "' je již rezervován.", env, request.getSession());
+        }
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/namety/"));
+        return null;
+
+    }
+
+    // ////////////////////////////////////////////////////////////////////////
 	// helpers
 
 	/**
@@ -266,11 +295,6 @@ public class EditTopic implements AbcAction {
 			authors = BeanFetcher.fetchAuthorsFromObjects(objects, FetchType.LAZY);
 		}
 		return authors;
-	}
-
-	public static void redirect(HttpServletResponse response, Map env) throws Exception {
-		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-		urlUtils.redirect(response, urlUtils.make(UrlUtils.PREFIX_ADMINISTRATION + "/redakce/namety/show?action=list"));
 	}
 
 	/**
@@ -308,18 +332,15 @@ public class EditTopic implements AbcAction {
 			// date is not mandatory
 			setBeanField(Date.class, PARAM_DEADLINE, (String) params.get(PARAM_DEADLINE), "Zadejte termín!");
 			// author
-			if (!transform(Boolean.class, PARAM_PUBLIC, (String) params.get(PARAM_PUBLIC), "Námět musí být veřejný nebo přiřazen")) {
+			if (!transform(Boolean.class, PARAM_PUBLIC, (String) params.get(PARAM_PUBLIC))) {
 				result &= validateNotEmptyAndSet(Author.class, PARAM_AUTHOR, "Vyberte přiřazeného autora!");
-			}
-			else {
+			} else {
 				validee.setAuthor(null);
-				validee.setAccepted(false);
 			}
 			// royalty
-			if (!transform(Boolean.class, PARAM_ROAYLTY_MOD, (String) params.get(PARAM_ROAYLTY_MOD), "Honorář musí být běžný nebo přiřazen")) {
-				result &= validateNotEmptyAndSet(Double.class, PARAM_ROYALTY, "Zadejte hodnotu honoráře!");
-			}
-			else {
+			if (!transform(Boolean.class, PARAM_ROAYLTY_MOD, (String) params.get(PARAM_ROAYLTY_MOD))) {
+				result &= validateNotEmptyAndSet(Integer.class, PARAM_ROYALTY, "Zadejte hodnotu honoráře!");
+			} else {
 				validee.setRoyalty(null);
 			}
 

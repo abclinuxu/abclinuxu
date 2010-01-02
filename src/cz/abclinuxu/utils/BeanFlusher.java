@@ -84,26 +84,32 @@ public class BeanFlusher {
         return item;
     }
 
+    /**
+     * Converts bean to its representation in persistence. No changes to persistence are made, it is caller's responsability.
+     * @param item     item to be serialized to the persistence
+     * @param topic bean to be converted
+     * @return modified item
+     */
     public static Item flushTopic(Item item, Topic topic) {
-        item.setNumeric1(topic.isPublished() ? 1 : 0);
-        item.setNumeric2(topic.isAccepted() ? 1 : 0);
+        item.setTitle(Misc.filterDangerousCharacters(topic.getTitle()));
         item.setDate1(topic.getDeadline());
-        item.setString1(Misc.filterDangerousCharacters(topic.getTitle()));
+
+        if (topic.getAuthor() != null)
+            item.setNumeric1(topic.getAuthor().getRelationId());
+        else
+            item.setNumeric1(null);
+
+        item.setNumeric2(topic.getRoyalty());
+
+        if (topic.getArticle() != null)
+            item.setNumeric3(topic.getArticle().getId());
+        else
+            item.setNumeric3(null);
 
         DocumentBuilder db = new DocumentBuilder(item.getData(), "data");
-
-        if (!topic.isPublic())
-            db.store("/data/author", String.valueOf(topic.getAuthor().getId()));
-        else
-            db.store("/data/author", null);
-        if (topic.hasRoyalty())
-            db.store("/data/royalty", topic.getRoyalty().toString());
-        else
-            db.store("/data/royalty", null);
-
         db.store("/data/description", topic.getDescription());
-
         item.setData(db.getDocument());
+
         debug("Flushed %s, value: %s %s", item, topic, db);
         return item;
 

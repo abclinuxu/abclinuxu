@@ -229,7 +229,7 @@ public class EmailSender implements Configurable {
 
             for ( Iterator iter = users.iterator(); iter.hasNext(); ) {
                 try {
-                    user.setId(((Integer) iter.next()).intValue());
+                    user.setId((Integer) iter.next());
                     user = (User) persistence.findById(user);
 
                     // check, that user has valid email

@@ -173,15 +173,19 @@ public class ShowContract implements AbcAction {
 	}
 
 	private String actionAuthorContractList(HttpServletRequest request, Map env, PwdNavigator navigator) {
+        SQLTool sqlTool = SQLTool.getInstance();
         Author author = (Author) env.get(VAR_AUTHOR);
 		env.put(Constants.VAR_PARENTS, navigator.navigate());
 
         List<SignedContract> contracts = getContracts(author);
         env.put(VAR_CONTRACTS, contracts);
-        ContractTemplate template = getUnsignedContractTemplate(author);
+
+        Relation relation = sqlTool.findUnsignedContractRelation(author.getUid());
+        ContractTemplate template = BeanFetcher.fetchContractTemplate(relation, FetchType.PROCESS_NONATOMIC);
+
         if (template != null) {
             boolean authorVerified = true;
-            StringBuilder sb = new StringBuilder("Prosím ").append(" <a href=\"/redakce/autori/edit/").
+            StringBuilder sb = new StringBuilder("Prosím ").append(" <a href=\"/sprava/redakce/autori/edit/").
                     append(author.getRelationId()).append("?action=edit\">zadejte</a> ");
             if (author.getAddress() == null) {
                 sb.append("svou adresu");
@@ -191,6 +195,12 @@ public class ShowContract implements AbcAction {
                 if (! authorVerified)
                     sb.append(" a ");
                 sb.append("číslo účtu");
+                authorVerified = false;
+            }
+            if (author.getBirthNumber() == null) {
+                if (! authorVerified)
+                    sb.append(" a ");
+                sb.append("rodné číslo");
                 authorVerified = false;
             }
             sb.append('.');
@@ -220,10 +230,4 @@ public class ShowContract implements AbcAction {
         Tools.syncList(relations);
         return BeanFetcher.fetchSignedContracts(relations, FetchType.PROCESS_NONATOMIC);
 	}
-
-    private ContractTemplate getUnsignedContractTemplate(Author author) {
-        SQLTool sqlTool = SQLTool.getInstance();
-        Relation relation = sqlTool.findUnsignedContractRelation(author.getUid());
-        return BeanFetcher.fetchContractTemplate(relation, FetchType.PROCESS_NONATOMIC);
-    }
 }

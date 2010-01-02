@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.EditionRole;
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.view.Author;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.data.view.Topic;
@@ -17,6 +18,7 @@ import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.OrderByQualifier;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -40,6 +42,7 @@ public class EditionPortal implements AbcAction {
     public static final String VAR_ROLE = "ROLE";
     public static final String VAR_IS_EDITOR = "IS_EDITOR";
     public static final String VAR_IS_EDITOR_IN_CHIEF = "IS_EDITOR_IN_CHIEF";
+    public static final String VAR_UNSIGNED_CONTRACT = "UNSIGNED_CONTRACT";
 
     public static final String PARAM_DESIRED_ROLE = "desiredRole";
 
@@ -91,15 +94,20 @@ public class EditionPortal implements AbcAction {
 
         SQLTool sqlTool = SQLTool.getInstance();
         Author author = (Author) env.get(VAR_AUTHOR);
-        Qualifier[] qualifiers = new Qualifier[]{ new CompareCondition(Field.DATA, Operation.LIKE,
-                "%<author>" + author.getId() + "</author>%"),
-                new CompareCondition(Field.DATE1, Operation.IS_NOT_NULL, null),
-                new CompareCondition(Field.NUMERIC2, Operation.EQUAL, 1),
-                Qualifier.SORT_BY_DATE1, Qualifier.ORDER_ASCENDING};
+        Qualifier[] qualifiers = new Qualifier[] {
+                new CompareCondition(new Field(Field.NUMERIC1, "P"), Operation.EQUAL, author.getRelationId()),
+                new CompareCondition(new Field(Field.DATE1, "P"), Operation.IS_NOT_NULL, null),
+                new CompareCondition(new Field(Field.NUMERIC3, "P"), Operation.IS_NULL, null),
+                new OrderByQualifier(Qualifier.SORT_BY_DATE1, "P"), Qualifier.ORDER_ASCENDING};
 
-        List<Topic> topics = BeanFetcher.fetchTopics(sqlTool.getTopics(qualifiers), FetchType.EAGER);
+        List<Relation> relations = sqlTool.getTopics(qualifiers);
+        Tools.syncList(relations);
+        List<Topic> topics = BeanFetcher.fetchTopics(relations, FetchType.EAGER);
         if (!Misc.empty(topics))
             env.put(VAR_TOPICS, topics);
+
+        Relation relation = sqlTool.findUnsignedContractRelation(author.getUid());
+        env.put(VAR_UNSIGNED_CONTRACT, relation != null);
 
         return FMTemplateSelector.select("EditionPortal", "authorsDashboard", env, request);
     }

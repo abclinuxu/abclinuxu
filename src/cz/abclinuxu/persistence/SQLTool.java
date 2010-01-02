@@ -2747,17 +2747,16 @@ public final class SQLTool implements Configurable {
 
     /**
      * Retrieves topics available for authors
-     *
      * @param qualifiers Narrowing qualifiers
-     * @return List of items containing data
+     * @return List of relations
      */
-    public List<Item> getTopics(Qualifier[] qualifiers) {
+    public List<Relation> getTopics(Qualifier[] qualifiers) {
         if (qualifiers == null)
             qualifiers = Qualifier.ARRAY_TYPE;
         StringBuilder sb = new StringBuilder(sql.get(GET_TOPICS));
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
-        return loadItems(sb.toString(), params);
+        return loadRelations(sb.toString(), params);
     }
 
     /**

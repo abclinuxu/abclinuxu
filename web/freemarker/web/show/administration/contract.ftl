@@ -4,7 +4,7 @@
     <@lib.showSignPost "Rozcestník">
     <ul>
        <li>
-           <a href="${URL.make("/redakce/smlouvy/show/" + CONTRACT.relationId + "?varianta=print")}">Verze pro tisk</a>
+           <a href="${URL.make("/sprava/redakce/smlouvy/show/" + CONTRACT.relationId + "?varianta=print")}">Verze pro tisk</a>
        </li>
     </ul>
     </@lib.showSignPost>
@@ -21,7 +21,7 @@
         <tr>
             <td>Autor</td>
             <td>
-                <a href="${URL.make("/redakce/autori/show/" + AUTHOR.id)}">${(AUTHOR.title)!?html}</a>
+                <@lib.showAuthor topic.author />
             </td>
         </tr>
         <tr>

@@ -12,20 +12,26 @@
     <table border="0">
         <tr>
             <td>
-                <input type="radio" name="desiredRole" value="author">
-                Autor - píše články, přijímá náměty
+                <label>
+                    <input type="radio" name="desiredRole" value="author">
+                    Autor - píše články, přijímá náměty
+                </label>
             </td>
         </tr>
         <tr>
             <td>
-                <input type="radio" name="desiredRole" value="editor">
-                Redaktor – spravuje autory a obsah, nemá právo vidět nebo upravovat finance
+                <label>
+                    <input type="radio" name="desiredRole" value="editor">
+                    Redaktor – spravuje autory a obsah, nemá právo vidět nebo upravovat finance
+                </label>
             </td>
         </tr>
         <tr>
             <td>
-                <input type="radio" name="desiredRole" value="editorInChief">
-                Šéfredaktor – spravuje veškerý obsah
+                <label>
+                    <input type="radio" name="desiredRole" value="editorInChief">
+                    Šéfredaktor – spravuje veškerý obsah
+                </label>
             </td>
         </tr>
         <tr>

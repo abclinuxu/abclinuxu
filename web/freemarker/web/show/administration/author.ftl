@@ -2,15 +2,29 @@
 
 <@lib.showSignPost "Rozcestník">
 <ul>
-    <li><a href="${URL.noPrefix("/redakce/autori/edit/${AUTHOR.id}?action=edit")}" title="Upravit autora">Upravit</a></li>
+    <li>
+        <a href="${URL.noPrefix("/sprava/redakce/autori/edit/${AUTHOR.relationId}?action=edit")}" title="Upravit autora">Upravit</a>
+    </li>
     <#if EDITOR_MODE?? >
-    <li><a href="${URL.noPrefix("/redakce/autori/edit/${AUTHOR.id}?action=rm")}" title="Smazat autora">Smazat</a></li>
+        <li>
+            <a href="${URL.noPrefix("/sprava/redakce/autori/edit/${AUTHOR.relationId}?action=rm")}" title="Smazat autora">Smazat</a>
+        </li>
     </#if>
-    <li><a href="${URL.make("/autori/honorare")}" title="Honoráře">Honoráře</a></li>
-    <li><a href="${URL.make("/autori/clanky")}" title="Články">Články</a></li>
-    <li><a href="${URL.make("/autori/zpravicky")}" title="Zprávičky">Zprávičky</a></li>
-    <li><a href="${URL.noPrefix("/redakce/namety")}" title="Náměty">Náměty</a></li>
-    <li><a href="${URL.noPrefix("/redakce/smlouvy")}" title="Smlouvy">Smlouvy</a></li>
+    <li>
+        <a href="${URL.make("/sprava/redakce/autori/honorare")}" title="Honoráře">Honoráře</a>
+    </li>
+    <li>
+        <a href="${URL.make("/sprava/redakce/autori/clanky")}" title="Články">Články</a>
+    </li>
+    <li>
+        <a href="${URL.make("/sprava/redakce/autori/zpravicky")}" title="Zprávičky">Zprávičky</a>
+    </li>
+    <li>
+        <a href="${URL.noPrefix("/sprava/redakce/namety?filterTopicsByAuthor" + AUTHOR.relationId)}" title="Náměty">Náměty</a>
+    </li>
+    <li>
+        <a href="${URL.noPrefix("/sprava/redakce/smlouvy")}" title="Smlouvy">Smlouvy</a>
+    </li>
 </ul>
 </@lib.showSignPost>
 

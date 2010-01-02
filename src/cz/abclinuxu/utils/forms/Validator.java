@@ -127,42 +127,32 @@ public abstract class Validator<T> {
 			field.setAccessible(true);
 
 			// set field value 
-			C fieldValue = transform(paramType, paramName, value, errorMessage);
+			C fieldValue = transform(paramType, paramName, value);
 			field.set(validee, fieldValue);
 			return fieldValue != null;
-		}
-		catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			log.warn("Trying to validate returned primitive object, assignment failed", e);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new InternalException("Unable to set a field during validation of object", e);
 		}
 		return false;
 	}
 
 	/**
-	 * Transforms value into instance of given class, if anything goes wrong
-	 * fills
-	 * error message for according paramName
-	 * 
-	 * @param <C> Type of class to be returned
+	 * Transforms value into instance of given class.
 	 * @param clazz Type of class to be returned
 	 * @param paramName Name of parameter in context
 	 * @param value String value of parameter
-	 * @param errorMessage Error message to be assigned to paramName in case of
-	 *            problem
 	 * @return Transformed value in case of success, {@code null} if anything
 	 *         goes wrong
 	 */
-	protected <C> C transform(Class<C> clazz, String paramName, String value, String errorMessage) {
-		if (value == null) return null;
+	protected <C> C transform(Class<C> clazz, String paramName, String value) {
+		if (value == null)
+            return null;
 
-		// string
 		if (String.class.equals(clazz)) {
 			return clazz.cast(value);
-		}
-		// boolean
-		else if (Boolean.class.equals(clazz)) {
+		} else if (Boolean.class.equals(clazz)) {
 			if ("1".equals(value) || "true".equalsIgnoreCase(value) || "ano".equalsIgnoreCase(value))
 				return clazz.cast(Boolean.TRUE);
 			else if ("0".equals(value) || "false".equalsIgnoreCase(value) || "ne".equalsIgnoreCase(value))
@@ -171,59 +161,52 @@ public abstract class Validator<T> {
 				ServletUtils.addError(paramName, "Chybný formát hodnoty boolean", env, session);
 				return null;
 			}
-		}
-		// double
-		else if (Double.class.equals(clazz)) {
+		} else if (Double.class.equals(clazz)) {
 			try {
 				double val = Double.valueOf(value);
 				return clazz.cast(val);
-			}
-			catch (NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				ServletUtils.addError(paramName, "Číslo je ve špatném formátu", env, session);
 				return null;
 			}
-		}
-		// date in iso format
-		// there must be explicit synchronization on SimpleDataFormat
-		else if (Date.class.equals(clazz)) {
+		} else if (Integer.class.equals(clazz)) {
 			try {
-				synchronized (Constants.isoFormatShort) {
-					return clazz.cast(Constants.isoFormatShort.parse(value));
-				}
-			}
-			catch (ParseException e) {
-				ServletUtils.addError(paramName, "Chybný formát data!", env, session);
+				int val = Integer.valueOf(value);
+				return clazz.cast(val);
+			} catch (NumberFormatException e) {
+				ServletUtils.addError(paramName, "Číslo je ve špatném formátu", env, session);
 				return null;
 			}
-		}
-		// author
-		else if (Author.class.equals(clazz)) {
+		} else if (Date.class.equals(clazz)) {
+			try {
+                // date in iso format
+                synchronized (Constants.isoFormatShort) {
+					return clazz.cast(Constants.isoFormatShort.parse(value));
+				}
+			} catch (ParseException e) {
+				ServletUtils.addError(paramName, "Chybný formát datumu!", env, session);
+				return null;
+			}
+		} else if (Author.class.equals(clazz)) {
 			try {
 				int intVal = Integer.valueOf(value);
 				Author tmp = new Author();
-				tmp.setId(intVal);
+				tmp.setRelationId(intVal);
 				return clazz.cast(tmp);
-			}
-			catch (NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				ServletUtils.addError(paramName, "Chybný formát identifikace autora", env, session);
 				return null;
 			}
-		}
-		// user
-		else if (User.class.equals(clazz)) {
+		} else if (User.class.equals(clazz)) {
 			try {
 				int intVal = Integer.valueOf(value);
 				User tmp = new User(intVal);
 				return clazz.cast(tmp);
-			}
-			catch (NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				ServletUtils.addError(paramName, "Chybný formát identifikace uživatele", env, session);
 				return null;
 			}
-		}
-		else {
+		} else
 			throw new InvalidDataException("Unable to convert string value " + value + " to class of " + clazz.getCanonicalName());
-		}
-
 	}
 }

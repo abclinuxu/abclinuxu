@@ -1,31 +1,28 @@
 package cz.abclinuxu.data.view;
 
+import cz.abclinuxu.data.Relation;
+
 import java.util.Date;
 
+/**
+ * Bean for topic in redaction system.
+ */
 public class Topic {
-
-	// identification of topic
 	private int id;
-
-	// title of topic
+    private int relationId;
 	private String title;
-	// date when topic should be done
+    private String description;
+    // date when topic should be delivered in article
 	private Date deadline;
-
-	// author which is assigned to this topic 
+	// author assigned to this topic, null for public topics
 	private Author author;
-	// flag to mark topic as accepted
-	private boolean accepted;
-	// flag to mark topic's work as published
-	private boolean published;
+    // royalty offered, null for default royalty
+    private Integer royalty;
+    // initialized relation to article associated with this article
+	private Relation article;
+    private ArticleState articleState;
 
-	// royalty offered, if empty standard royalty
-	private Double royalty;
-
-	// description of topic
-	private String description;
-
-	/**
+    /**
 	 * @return the id
 	 */
 	public int getId() {
@@ -39,7 +36,18 @@ public class Topic {
 		this.id = id;
 	}
 
-	/**
+    /**
+     * @return id of relation to this topic
+     */
+    public int getRelationId() {
+        return relationId;
+    }
+
+    public void setRelationId(int relationId) {
+        this.relationId = relationId;
+    }
+
+    /**
 	 * @return the title
 	 */
 	public String getTitle() {
@@ -81,45 +89,28 @@ public class Topic {
 		this.author = author;
 	}
 
-	/**
-	 * @return the accepted
-	 */
-	public boolean isAccepted() {
-		return accepted;
-	}
+    /**
+     * @return initialized relation to associated article
+     */
+    public Relation getArticle() {
+        return article;
+    }
 
-	/**
-	 * @param accepted the accepted to set
-	 */
-	public void setAccepted(boolean accepted) {
-		this.accepted = accepted;
-	}
+    public void setArticle(Relation article) {
+        this.article = article;
+    }
 
-	/**
-	 * @return the published
-	 */
-	public boolean isPublished() {
-		return published;
-	}
-
-	/**
-	 * @param published the published to set
-	 */
-	public void setPublished(boolean published) {
-		this.published = published;
-	}
-
-	/**
+    /**
 	 * @return the royalty
 	 */
-	public Double getRoyalty() {
+	public Integer getRoyalty() {
 		return royalty;
 	}
 
 	/**
 	 * @param royalty the royalty to set
 	 */
-	public void setRoyalty(Double royalty) {
+	public void setRoyalty(Integer royalty) {
 		this.royalty = royalty;
 	}
 
@@ -137,7 +128,18 @@ public class Topic {
 		this.description = description;
 	}
 
-	/**
+    /**
+     * @return state of associated article
+     */
+    public ArticleState getArticleState() {
+        return articleState;
+    }
+
+    public void setArticleState(ArticleState articleState) {
+        this.articleState = articleState;
+    }
+
+    /**
 	 * Checks availability of topic to authors 
 	 * @return {@code true} if this topic can be accepted by any author,
 	 * {@code false} otherwise
@@ -159,7 +161,49 @@ public class Topic {
 	 * Checks whether this article is in delay
 	 * @return {@code true} if the topic in in delay, {@code false} otherwise
 	 */
-	public boolean isInDelay() {
+	public boolean isDelayed() {
 		return (new Date()).after(deadline);
 	}
+
+    /**
+     * Constants for states in which an article can be
+     */
+    public enum ArticleState {
+        /** there is no article */
+        NONE,
+        /** article is being written */
+        DRAFT,
+        /** author finished an article and submitted it to editor */
+        SUBMITTED,
+        /** editor is satisfied with article and accepts it */
+        ACCEPTED,
+        /** editor finished his changes and scheduled an article */
+        READY,
+        /** article was published, visitors can read it */
+        PUBLISHED;
+
+        /**
+         * Finds constant for integer representation
+         * @param state state, null or 0-4
+         * @return enum or null for unsupported values
+         */
+        public static ArticleState get(Integer state) {
+            if (state == null)
+                return PUBLISHED; // legacy data
+            switch (state) {
+                case 0:
+                    return PUBLISHED;
+                case 1:
+                    return DRAFT;
+                case 2:
+                    return READY;
+                case 3:
+                    return ACCEPTED;
+                case 4:
+                    return SUBMITTED;
+                default:
+                    return null;
+            }
+        }
+    }
 }

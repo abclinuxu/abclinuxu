@@ -76,6 +76,6 @@ public class ShowNews implements AbcAction {
         if ( rowCount>0 )
             qualifiers.add(new LimitQualifier(fromRow, rowCount));
 
-        return (Qualifier[]) qualifiers.toArray(Qualifier.ARRAY_TYPE);
+        return (Qualifier[]) qualifiers.toArray(new Qualifier[qualifiers.size()]);
     }
 }

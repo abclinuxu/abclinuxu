@@ -298,6 +298,6 @@ public class History implements AbcAction {
         if (limit != null)
             qualifiers.add(limit);
 
-        return (Qualifier[]) qualifiers.toArray(Qualifier.ARRAY_TYPE);
+        return (Qualifier[]) qualifiers.toArray(new Qualifier[qualifiers.size()]);
     }
 }

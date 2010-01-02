@@ -146,6 +146,6 @@ public class ShowAuthor implements AbcAction {
         qualifiers.add(Qualifier.ORDER_ASCENDING);
         qualifiers.add(new LimitQualifier(from, count));
 
-        return qualifiers.toArray(Qualifier.ARRAY_TYPE);
+        return qualifiers.toArray(new Qualifier[3]);
     }
 }

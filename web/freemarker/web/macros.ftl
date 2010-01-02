@@ -542,12 +542,17 @@
 </#macro>
 
 <#macro showOption4 (value caption values)>
-    <option value="${value}"<#if TOOL.isWithin(values, value)> selected</#if>>${caption}</option>
+    <label>
+        <option value="${value}"<#if TOOL.isWithin(values, value)> selected</#if>>${caption}</option>
+    </label>
 </#macro>
 
 <#macro showOption5 (value caption condition)>
-    <option value="${value}"<#if condition> selected</#if>>${caption}</option>
+    <label>
+        <option value="${value}"<#if condition> selected</#if>>${caption}</option>
+    </label>
 </#macro>
+
 <#macro showOption6 (param value caption type condition extra...)>
     <label>
         <input type="${type}" name="${param}" value="${value}" <#if condition> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
@@ -570,13 +575,17 @@
 </#macro>
 
 <#macro filterRadio (filter name value extra...) >
-	<input type="radio" name="${name}" value="${value}" <#if filter.checked("${name}", "${value}")> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
-	<#nested/>
+    <label>
+    	<input type="radio" name="${name}" value="${value}" <#if filter.checked("${name}", "${value}")> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+        <#nested/>
+    </label>
 </#macro>
 
 <#macro filterCheckBox (filter name value extra...) >
-    <input type="checkbox" name="${name}" value="${value}" <#if filter.checked("${name}", "${value}")> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
-	<#nested/>
+    <label>
+        <input type="checkbox" name="${name}" value="${value}" <#if filter.checked("${name}", "${value}")> checked="checked"</#if> <#list extra?keys as attr> ${attr}="${extra[attr]?html}"</#list> />
+        <#nested/>
+    </label>
 </#macro>
 
 <#macro filterText (filter name extra...) >
@@ -605,7 +614,7 @@
     <@showUser user /><#t>
 </#macro>
 
-<#macro showAuthor author><a href="${URL.make("/redakce/autori/show/" + author.relationId)}">${TOOL.getPersonName(author)}</a></#macro>
+<#macro showAuthor author><a href="${URL.make("/sprava/redakce/autori/show/" + author.relationId)}">${TOOL.getPersonName(author)}</a></#macro>
 
 <#macro showRevisions relation info = TOOL.getRevisionInfo(relation.child)>
     <p class="documentHistory">

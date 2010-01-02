@@ -173,7 +173,6 @@ public class BeanFetcher {
 
     /**
      * Creates contract template JavaBean from persistence layer's object
-     *
      * @param relation initialized relation to Item to be converted to the bean
      * @param ft       Fetch type
      * @return ContractTemplate object
@@ -220,8 +219,7 @@ public class BeanFetcher {
 
     /**
      * Creates signed contract JavaBean from persistence layer's object
-     *
-     * @param item initialized Item to be converted to the bean
+     * @param relation initialized relation to Item to be converted to the bean
      * @param ft   Fetch type
      * @return SignedContract object
      */
@@ -275,21 +273,22 @@ public class BeanFetcher {
 
     /**
      * Creates Topic JavaBeans from persistence object
-     *
-     * @param item Persistence object to fill topic
+     * @param relation initialized relation to Item to be converted to the bean
      * @param ft   Fetch type
      * @return Topic object
      */
-    public static Topic fetchTopic(Item item, FetchType ft) {
-        if (item == null)
+    public static Topic fetchTopic(Relation relation, FetchType ft) {
+        if (relation == null)
             return null;
+        Item item = (Item) relation.getChild();
 
         Topic topic = new Topic();
         topic.setId(item.getId());
-        topic.setPublished(XmlUtils.booleanValue(item.getNumeric1()));
-        topic.setAccepted(XmlUtils.booleanValue(item.getNumeric2()));
+        topic.setRelationId(relation.getId());
+        topic.setTitle(item.getTitle());
         topic.setDeadline(item.getDate1());
-        topic.setTitle(item.getString1());
+        topic.setRoyalty(item.getNumeric2());
+        topic.setArticleState(Topic.ArticleState.NONE);
 
         switch (ft) {
             // non-atomic must be processed here at least partially
@@ -301,28 +300,34 @@ public class BeanFetcher {
                 topic = fillXMLProperties(topic, root);
         }
 
-        // do additional query to fetch author
-        if (ft == FetchType.EAGER && topic.getAuthor() != null) {
-            Author author = Tools.getAuthor(topic.getAuthor().getId());
-            topic.setAuthor(author);
+        // do additional query to fetch author and article
+        if (ft == FetchType.EAGER) {
+            if (item.getNumeric1() != null) {
+                Relation authorRelation = (Relation) Tools.sync(new Relation(item.getNumeric1()));
+                Author author = fetchAuthor(authorRelation, FetchType.LAZY);
+                topic.setAuthor(author);
+            }
+
+            if (item.getNumeric3() != null) {
+                Relation article = (Relation) Tools.sync(new Relation(item.getNumeric3()));
+                topic.setArticle(article);
+                Topic.ArticleState state = Topic.ArticleState.get(((Item) article.getChild()).getNumeric1());
+                topic.setArticleState(state);
+            }
         }
 
         return topic;
     }
 
-    public static List<Topic> fetchTopics(List<Item> items, FetchType ft) {
-        List<Topic> topics = new ArrayList<Topic>(items.size());
-        for (Item item : items) {
-            topics.add(fetchTopic(item, ft));
+    public static List<Topic> fetchTopics(List<Relation> relations, FetchType ft) {
+        List<Topic> topics = new ArrayList<Topic>(relations.size());
+        for (Relation relation : relations) {
+            topics.add(fetchTopic(relation, ft));
         }
         return topics;
     }
 
     private static Topic fillXMLProperties(Topic topic, Element root) {
-        Author author = new Author();
-        author.setId(XmlUtils.getNodeInt(root, "/data/author"));
-        topic.setAuthor(author);
-        topic.setRoyalty(XmlUtils.getNodeDouble(root, "/data/royalty"));
         topic.setDescription(XmlUtils.getNodeText(root, "/data/description"));
         return topic;
     }

@@ -4,18 +4,18 @@
 <ul>
     <#if CONTRACT_TEMPLATE.draft>
         <li>
-            <a href="${URL.make("/redakce/smlouvy/edit/"+CONTRACT_TEMPLATE.relationId)+"?action=publish"+TOOL.ticket(USER, false)}">Publikovat</a>
+            <a href="${URL.make("/sprava/redakce/smlouvy/edit/"+CONTRACT_TEMPLATE.relationId)+"?action=publish"+TOOL.ticket(USER, false)}">Publikovat</a>
         </li>
     </#if>
     <li>
-        <a href="${URL.make("/redakce/smlouvy/edit/"+CONTRACT_TEMPLATE.relationId)+"?action=edit"}">Upravit</a>
+        <a href="${URL.make("/sprava/redakce/smlouvy/edit/"+CONTRACT_TEMPLATE.relationId)+"?action=edit"}">Upravit</a>
     </li>
     <li>
-        <a href="${URL.make("/redakce/smlouvy/edit/"+CONTRACT_TEMPLATE.relationId)+"?action=clone"}">Duplikovat</a>
+        <a href="${URL.make("/sprava/redakce/smlouvy/edit/"+CONTRACT_TEMPLATE.relationId)+"?action=clone"}">Duplikovat</a>
     </li>
     <#if (CONTRACT_TEMPLATE.signedContracts = 0)>
         <li>
-            <a href="${URL.make("/redakce/smlouvy/edit/"+CONTRACT_TEMPLATE.relationId)+"?action=rm"}">Smazat</a>
+            <a href="${URL.make("/sprava/redakce/smlouvy/edit/"+CONTRACT_TEMPLATE.relationId)+"?action=rm"}">Smazat</a>
         </li>
     </#if>
 </ul>
@@ -43,7 +43,7 @@
         <td>Podpisy</td>
         <td>
             <#if ! CONTRACT_TEMPLATE.draft>
-                <a href="${URL.make("/redakce/smlouvy/show/"+CONTRACT_TEMPLATE.relationId)+"?action=contracts"}">${CONTRACT_TEMPLATE.signedContracts}</a>
+                <a href="${URL.make("/sprava/redakce/smlouvy/show/"+CONTRACT_TEMPLATE.relationId)+"?action=contracts"}">${CONTRACT_TEMPLATE.signedContracts}</a>
             <#else>
                 N/A
             </#if>
