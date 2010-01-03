@@ -26,8 +26,9 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.security.ActionCheck;
 import cz.abclinuxu.security.ActionProtector;
-import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.AbcAutoAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -46,95 +47,20 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author lubos
  */
-public class EditServers implements AbcAction {
+public class EditServers extends AbcAutoAction {
     public static final String PARAM_RELATION = "rid";
     public static final String PARAM_SERVER = "server";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_RSS_URL = "rssUrl";
     public static final String PARAM_URL = "url";
     public static final String PARAM_CONTACT = "contact";
-
-    public static final String ACTION_LIST = "list";
-    public static final String ACTION_EDIT = "edit";
-    public static final String ACTION_EDIT_STEP2 = "edit2";
-    public static final String ACTION_ADD = "add";
-    public static final String ACTION_ADD_STEP2 = "add2";
-    public static final String ACTION_REMOVE = "remove";
-
+    
     public static final String VAR_SERVERS = "SERVERS";
 
-    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
-        String action = (String) params.get(PARAM_ACTION);
+    public static final String DEFAULT_ACTION = "list";
 
-        if (ServletUtils.handleMaintainance(request, env)) {
-            response.sendRedirect(response.encodeRedirectURL("/"));
-            return null;
-        }
-
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
-        if (relation != null) {
-            Tools.sync(relation);
-            env.put(ShowObject.VAR_RELATION, relation);
-        } else
-            throw new MissingArgumentException("Chybí číslo relace!");
-
-        if (user == null)
-            return FMTemplateSelector.select("ViewUser", "login", env, request);
-
-        if (ACTION_EDIT.equals(action)) {
-            Relation parentRelation = new Relation(relation.getUpper());
-            Tools.sync(parentRelation);
-
-            if (!Tools.permissionsFor(user, parentRelation).canModify())
-                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            return actionEditStep1(request, response, env);
-        }
-        if (ACTION_EDIT_STEP2.equals(action)) {
-            ActionProtector.ensureContract(request, EditServers.class, true, true, true, false);
-
-            Relation parentRelation = new Relation(relation.getUpper());
-            Tools.sync(parentRelation);
-
-            if (!Tools.permissionsFor(user, parentRelation).canModify())
-                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            return actionEditStep2(request, response, env, parentRelation);
-        }
-
-        if (Misc.empty(action) || ACTION_LIST.equals(action)) {
-            if (!Tools.permissionsFor(user, relation).canModify())
-                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            return processSection(request, env, relation);
-        }
-
-        if (ACTION_ADD.equals(action)) {
-            if (!Tools.permissionsFor(user, relation).canCreate())
-                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-            return FMTemplateSelector.select("EditServers", "add", env, request);
-        }
-
-        if (ACTION_ADD_STEP2.equals(action)) {
-            ActionProtector.ensureContract(request, EditServers.class, true, true, true, false);
-
-            if (!Tools.permissionsFor(user, relation).canCreate())
-                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-            return actionAddStep2(request, response, env);
-        }
-
-        if (ACTION_REMOVE.equals(action)) {
-            if (!Tools.permissionsFor(user, relation).canDelete())
-                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-            return actionRemove(request, response, env);
-        }
-
-        return null;
-    }
-
-    public static String processSection(HttpServletRequest request, Map env, Relation relation) {
+    @ActionCheck(requireModifyRight = true)
+    public String actionList(HttpServletRequest request, Map env, Relation relation) {
         SQLTool sqlTool = SQLTool.getInstance();
 
         List servers = sqlTool.findServerRelationsInCategory(relation.getChild().getId());
@@ -144,9 +70,9 @@ public class EditServers implements AbcAction {
         return FMTemplateSelector.select("EditServers", "list", env, request);
     }
 
-    public String actionRemove(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+    @ActionCheck(requireDeleteRight = true, checkReferer = true, checkPost = true)
+    public String actionRemove() throws Exception {
+        
         Persistence persistence = PersistenceFactory.getPersistence();
         List servers = Tools.asList(params.get(PARAM_SERVER));
 
@@ -163,9 +89,8 @@ public class EditServers implements AbcAction {
         return null;
     }
 
-    public String actionEditStep1(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+    @ActionCheck(requireModifyRight = true)
+    public String actionEdit() throws Exception {
         Server server = (Server) relation.getChild();
 
         params.put(PARAM_NAME, server.getName());
@@ -176,11 +101,13 @@ public class EditServers implements AbcAction {
         return FMTemplateSelector.select("EditServers", "edit", env, request);
     }
 
-    public String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env, Relation parentRelation) throws Exception {
-        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+    @ActionCheck(requireModifyRight = true, checkReferer = true, checkPost = true)
+    public String actionEdit2() throws Exception {
         Server server = (Server) relation.getChild().clone();
         Persistence persistence = PersistenceFactory.getPersistence();
+
+        Relation parentRelation = new Relation(relation.getUpper());
+        Tools.sync(parentRelation);
 
         boolean canContinue;
         canContinue = setName(params, server, env);
@@ -198,9 +125,13 @@ public class EditServers implements AbcAction {
         return null;
     }
 
-    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Relation parentRelation = (Relation) env.get(ShowObject.VAR_RELATION);
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+    @ActionCheck(requireCreateRight = true)
+    public String actionAdd() {
+        return FMTemplateSelector.select("EditServers", "add", env, request);
+    }
+
+    @ActionCheck(requireCreateRight = true, checkReferer = true, checkPost = true)
+    public String actionAdd2() throws Exception {
         Server server = new Server();
         Persistence persistence = PersistenceFactory.getPersistence();
 
@@ -213,16 +144,16 @@ public class EditServers implements AbcAction {
         if (!canContinue)
             return FMTemplateSelector.select("EditServers", "edit", env, request);
 
-        Relation relation = new Relation(parentRelation.getChild(), server, parentRelation.getId());
+        Relation newRelation = new Relation(relation.getChild(), server, relation.getId());
 
         persistence.create(server);
-        persistence.create(relation);
-        relation.getParent().addChildRelation(relation);
+        persistence.create(newRelation);
+        newRelation.getParent().addChildRelation(newRelation);
 
         ServletUtils.addMessage("Server přidán, bude načten při dalším cyklu.", env, request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/EditServers/"+parentRelation.getId());
+        urlUtils.redirect(response, "/EditServers/"+relation.getId());
         return null;
     }
 

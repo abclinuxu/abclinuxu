@@ -21,38 +21,13 @@
     nejdříve zpracovat.
 </p>
 
+<@lib.addForm URL.noPrefix("/EditAdvertisement"), "name='form'">
+    <@lib.addInput true, "name", "Jméno", 60 />
+    <@lib.addInput true, "newIdentifier", "Identifikátor", 60 />
+    <@lib.addTextArea false, "desc", "Popis", 3, "class='siroka'" />
+    <@lib.addSubmit "Dokonči", "finish" />
 
-<form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
-    <table class="siroka" border="0" cellpadding="5">
-        <tr>
-            <td width="90" class="required">Jméno</td>
-            <td>
-                <input type="text" name="name" value="${PARAMS.name!?html}" size="60" tabindex="1">
-                <div class="error">${ERRORS.name!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="90" class="required">Identifikátor</td>
-            <td>
-                <input type="text" name="newIdentifier" value="${PARAMS.newIdentifier!?html}" size="60" tabindex="2">
-                <div class="error">${ERRORS.newIdentifier!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="90">Popis</td>
-            <td>
-                <textarea name="desc" rows="3" class="siroka" tabindex="3">${PARAMS.desc!?html}</textarea>
-                <div class="error">${ERRORS.desc!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="90">&nbsp;</td>
-            <td>
-                <input tabindex="6" type="submit" name="finish" value="Dokonči">
-            </td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="addPosition2">
-</form>
+    <@lib.addHidden "action", "addPosition2" />
+</@lib.addForm>
 
 <#include "../footer.ftl">

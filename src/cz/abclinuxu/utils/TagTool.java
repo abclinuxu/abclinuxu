@@ -51,7 +51,6 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.comparator.TagTitleComparator;
 import cz.abclinuxu.misc.DocumentParser;
-import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 /**
  * Main class to work with tags to be used by the application developer.
@@ -227,7 +226,7 @@ public class TagTool implements Configurable {
      * @throws InvalidInputException if title contains illegal characters
      */
     public static String getNormalizedId(String title) throws InvalidInputException {
-        String id = DiacriticRemover.getInstance().removeDiacritics(title.toLowerCase());
+        String id = Misc.removeDiacritics(title.toLowerCase());
         Matcher matcher = reInvalidTitle.matcher(id);
         if (matcher.find())
             throw new InvalidInputException("Název štítku obsahuje nepovolené znaky!");
@@ -246,11 +245,10 @@ public class TagTool implements Configurable {
      * @return set of detected tags
      */
     public static Set<String> detectTags(ParsedDocument doc) {
-        DiacriticRemover diacriticsTool = DiacriticRemover.getInstance();
         List<Tag> all = cache.list(0, -1, ListOrder.BY_USAGE, false);
         Map<String, String> tags = new HashMap<String, String>(all.size() + 1, 1.0f);
         for (Tag tag : all) {
-            tags.put(diacriticsTool.removeDiacritics(tag.getTitle().toLowerCase()), tag.getId().toLowerCase());
+            tags.put(Misc.removeDiacritics(tag.getTitle().toLowerCase()), tag.getId().toLowerCase());
         }
 
         StringTokenizer stk = new StringTokenizer(doc.getContent(), " ,.;!\t\n\r");
@@ -258,7 +256,7 @@ public class TagTool implements Configurable {
         String token, tag;
         while (stk.hasMoreTokens()) {
             token = stk.nextToken();
-            token = diacriticsTool.removeDiacritics(token.toLowerCase());
+            token = Misc.removeDiacritics(token.toLowerCase());
             tag = tags.get(token);
             if (tag != null && ! forbiddenTags.contains(tag))
                 detectedTags.add(tag);

@@ -28,7 +28,7 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.versioning.Versioning;
 import cz.abclinuxu.persistence.versioning.VersioningFactory;
-import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.security.ActionCheck;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -50,6 +50,7 @@ import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.parser.clean.HtmlChecker;
 import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.security.ActionProtector;
+import cz.abclinuxu.servlets.AbcAutoAction;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -71,7 +72,7 @@ import java.util.Set;
  * This class is responsible for adding and
  * editing of software items and records.
  */
-public class EditSoftware implements AbcAction, Configurable {
+public class EditSoftware extends AbcAutoAction implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditSoftware.class);
 
     public static final String PREF_MAX_INTRO_LENGTH = "max.intro.length";
@@ -95,68 +96,8 @@ public class EditSoftware implements AbcAction, Configurable {
     public static final String VAR_PREVIEW = "PREVIEW";
     public static final String VAR_EDIT_MODE = "EDIT_MODE";
 
-    public static final String ACTION_ADD = "add";
-    public static final String ACTION_ADD_STEP2 = "add2";
-    public static final String ACTION_EDIT = "edit";
-    public static final String ACTION_EDIT_STEP2 = "edit2";
-    public static final String ACTION_I_USE = "user_of";
-
-    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
-        String action = (String) params.get(PARAM_ACTION);
-
-        if (ServletUtils.handleMaintainance(request, env)) {
-            response.sendRedirect(response.encodeRedirectURL("/"));
-            return null;
-        }
-
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
-        if (relation != null) {
-            Tools.sync(relation);
-            env.put(VAR_RELATION, relation);
-        } else
-            throw new MissingArgumentException("Chybí parametr relationId!");
-
-        // check permissions
-        if (user == null)
-            return FMTemplateSelector.select("ViewUser", "login", env, request);
-
-        if (ACTION_ADD.equals(action)) {
-			if (!Tools.permissionsFor(user, relation).canCreate())
-				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-            return actionAddStep1(request, response, env);
-		}
-
-        if (ACTION_ADD_STEP2.equals(action)) {
-			if (!Tools.permissionsFor(user, relation).canCreate())
-				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-            ActionProtector.ensureContract(request, EditSoftware.class, true, true, true, false);
-            return actionAddStep2(request, response, env, true);
-        }
-
-		if (ACTION_I_USE.equals(action)) {
-            ActionProtector.ensureContract(request, EditSoftware.class, true, false, false, true);
-            return actionIUse(request, response, env);
-        }
-
-		if (!Tools.permissionsFor(user, relation).canModify())
-			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-        if (ACTION_EDIT.equals(action))
-            return actionEditStep1(request, env);
-
-        if (ACTION_EDIT_STEP2.equals(action)) {
-            ActionProtector.ensureContract(request, EditSoftware.class, true, true, true, false);
-            return actionEditStep2(request, response, env);
-        }
-
-        throw new MissingArgumentException("Chybí parametr action!");
-    }
-
-    public String actionAddStep1(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    @ActionCheck(userRequired = true, relationRequired = true, requireCreateRight = true)
+    public String actionAdd() throws Exception {
         Relation upper = (Relation) env.get(VAR_RELATION);
         if (upper.getUrl() == null) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Chyba - sekce nemá textové URL. Kontaktujte prosím administrátora.",
@@ -168,13 +109,11 @@ public class EditSoftware implements AbcAction, Configurable {
         return FMTemplateSelector.select("EditSoftware", "add", env, request);
     }
 
-    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+    @ActionCheck(userRequired = true, relationRequired = true, requireCreateRight = true, checkPost = true, checkReferer = true)
+    public String actionAdd2() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Relation upper = (Relation) env.get(VAR_RELATION);
-        User user = (User) env.get(Constants.VAR_USER);
 
-		Tools.sync(upper);
+		Tools.sync(relation);
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
@@ -182,7 +121,7 @@ public class EditSoftware implements AbcAction, Configurable {
         item.setData(document);
         item.setOwner(user.getId());
 
-		Category cat = (Category) upper.getChild();
+		Category cat = (Category) relation.getChild();
 		item.setGroup(cat.getGroup());
 		item.setPermissions(cat.getPermissions());
 
@@ -209,40 +148,37 @@ public class EditSoftware implements AbcAction, Configurable {
         persistence.create(item);
         versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
 
-        Relation relation = new Relation(upper.getChild(), item, upper.getId());
+        Relation newRelation = new Relation(relation.getChild(), item, relation.getId());
         String name = item.getTitle();
-        String url = upper.getUrl() + "/" + URLManager.enforceRelativeURL(name);
+        String url = relation.getUrl() + "/" + URLManager.enforceRelativeURL(name);
         url = URLManager.protectFromDuplicates(url);
         if (url != null)
-            relation.setUrl(url);
+            newRelation.setUrl(url);
 
-        persistence.create(relation);
-        relation.getParent().addChildRelation(relation);
+        persistence.create(newRelation);
+        newRelation.getParent().addChildRelation(newRelation);
         TagTool.assignDetectedTags(item, user);
 
         // todo prvni revize nebude obsahovat RSS v tabulce verze
-        setRssUrl(params, item, relation.getId());
+        setRssUrl(params, item, newRelation.getId());
         persistence.update(item);
 
         // run monitor
-        String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
-        MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.SOFTWARE, relation, absoluteUrl);
+        String absoluteUrl = "http://www.abclinuxu.cz" + newRelation.getUrl();
+        MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.SOFTWARE, newRelation, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 
         // refresh RSS
         FeedGenerator.updateSoftware();
 
-        if (redirect) {
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
-        } else
-            env.put(VAR_RELATION, relation);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(newRelation));
+
         return null;
     }
 
-    protected String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) env.get(VAR_RELATION);
+    @ActionCheck(userRequired = true, itemType = Item.SOFTWARE, requireModifyRight = true)
+    public String actionEdit() throws Exception {
         Item item = (Item) relation.getChild();
         Element root = item.getData().getRootElement();
 
@@ -268,11 +204,9 @@ public class EditSoftware implements AbcAction, Configurable {
         return FMTemplateSelector.select("EditSoftware", "edit", env, request);
     }
 
-    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+    @ActionCheck(userRequired = true, itemType = Item.SOFTWARE, requireModifyRight = true, checkPost = true, checkReferer = true)
+    public String actionEdit2() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        User user = (User) env.get(Constants.VAR_USER);
         env.put(VAR_EDIT_MODE, Boolean.TRUE);
 
         Item item = (Item) relation.getChild().clone();
@@ -321,10 +255,9 @@ public class EditSoftware implements AbcAction, Configurable {
         return null;
     }
 
-    public String actionIUse(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Relation relation = (Relation) env.get(VAR_RELATION);
+    @ActionCheck(itemType = Item.SOFTWARE, checkTicket = true)
+    public String actionUser_of() throws Exception {
         Item item = (Item) relation.getChild();
-        User user = (User) env.get(Constants.VAR_USER);
         Persistence persistence = PersistenceFactory.getPersistence();
         Set<String> users = item.getProperty(Constants.PROPERTY_USED_BY);
 

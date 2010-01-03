@@ -12,6 +12,23 @@ a 200 pixelů na výšku. Maximální velikost souboru je
 50&nbsp;kB.
 </p>
 
+<@lib.addForm URL.noPrefix("/EditUser"), "", true>
+    <@lib.addPassword true, "PASSWORD", "Heslo" />
+
+    <#assign photo = TOOL.xpath(MANAGED,"/data/profile/photo")?default("UNDEFINED")>
+    <#if photo != "UNDEFINED">
+        <@lib.addFormField false, "Současná fotografie">
+            <img src="${photo}" alt="fotka">
+            <@lib.addSubmitBare "Odstraň foto", "remove_photo" />
+        </@lib.addFormField>
+    </#if>
+
+    <@lib.addFile true, "photo", "Fotografie" />
+    <@lib.addSubmit "Dokonči" />
+    <@lib.addHidden "action", "uploadPhoto2" />
+    <@lib.addHidden "uid", MANAGED.id />
+</@lib.addForm>
+
 <form action="${URL.noPrefix("/EditUser")}" method="POST" enctype="multipart/form-data">
     <table width="100%" border=0 cellpadding=5>
         <tr>

@@ -18,6 +18,7 @@
  */
 package cz.abclinuxu.scheduler;
 
+import cz.abclinuxu.utils.Misc;
 import org.apache.log4j.Logger;
 
 import java.util.TimerTask;
@@ -30,7 +31,6 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import javax.mail.Session;
 import javax.mail.Store;
@@ -59,7 +59,6 @@ public class InvalidateEmails extends TimerTask implements Configurable {
     String server, mailServerType, folderName, user, password;
     Pattern reRetry, reVacation, reAntispam;
     static boolean debugSMTP;
-    private final DiacriticRemover diacriticRemover = DiacriticRemover.getInstance();
 
     public InvalidateEmails() {
         ConfigurationManager.getConfigurator().configureAndRememberMe(this);
@@ -102,7 +101,7 @@ public class InvalidateEmails extends TimerTask implements Configurable {
         String subject = message.getSubject();
         if (subject == null)
             subject = "";
-        subject = diacriticRemover.removeDiacritics(subject);
+        subject = Misc.removeDiacritics(subject);
         if (reVacation.matcher(subject).find()) {
             message.setFlag(Flags.Flag.DELETED, true);
             return;

@@ -18,6 +18,7 @@
  */
 package cz.finesoft.socd.analyzer;
 
+import cz.abclinuxu.utils.Misc;
 import java.io.FilterReader;
 import java.io.Reader;
 import java.io.IOException;
@@ -28,7 +29,6 @@ import java.io.IOException;
  * from its data.
  */
 public class RemoveDiacriticsReader extends FilterReader {
-    static final DiacriticRemover remover = DiacriticRemover.getInstance();
 
     /**
      * Constructs new RemoveDiacriticsReader.
@@ -48,7 +48,7 @@ public class RemoveDiacriticsReader extends FilterReader {
             int c = super.read();
             if ( c==-1)
                 return -1;
-            return remover.removeDiacritics((char)c);
+            return Misc.removeDiacritics(Character.toString((char) c)).charAt(0);
         }
     }
 
@@ -72,7 +72,7 @@ public class RemoveDiacriticsReader extends FilterReader {
                 if ( c==-1 )
                     return ( copied==0 )? -1 : copied;
 
-                cbuf[off+copied] = remover.removeDiacritics((char) c);
+                cbuf[off+copied] = Misc.removeDiacritics(Character.toString((char) c)).charAt(0);
                 copied++; len--;
             }
             return copied;

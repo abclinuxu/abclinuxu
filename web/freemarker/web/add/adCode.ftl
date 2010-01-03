@@ -26,53 +26,22 @@
     z eshopu 64bit.cz.
 </p>
 
-<form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
-    <table class="siroka" border="0" cellpadding="5">
-        <tr>
-            <td width="90" class="required">Název</td>
-            <td>
-                <input type="text" name="name" value="${PARAMS.name!?html}" size="60" tabindex="0">
-                <div class="error">${ERRORS.name!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="90" class="required">Regulární výraz</td>
-            <td>
-                <select id="regexp-select" onchange="changeRegexp(this)"></select>
-                <input type="text" name="regexp" id="regexp" value="${PARAMS.regexp!?html}" size="60" tabindex="1">
-                <div class="error">${ERRORS.regexp!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="90">Popis</td>
-            <td>
-                <textarea name="desc" rows="3" class="siroka" tabindex="2">${PARAMS.desc!?html}</textarea>
-                <div class="error">${ERRORS.desc!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="90">Výchozí reklamní kód</td>
-            <td>
-                <textarea name="htmlCode" rows="15" class="siroka" tabindex="3">${PARAMS.htmlCode!?html}</textarea>
-                <div class="error">${ERRORS.htmlCode!}</div>
-            </td>
-        </tr>
-                <tr>
-            <td width="90">Dynamický kód</td>
-            <td>
-                <input type="checkbox" name="dynamic"<#if PARAMS.dynamic!>checked</#if> tabindex="4">
-            </td>
-        </tr>
-        <tr>
-            <td width="90">&nbsp;</td>
-            <td>
-                <input tabindex="5" type="submit" name="finish" value="Dokonči">
-            </td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="addCode2">
-    <input type="hidden" name="rid" value="${PARAMS.rid}">
-</form>
+<@lib.addForm URL.noPrefix("/EditAdvertisement"), "name='form'">
+    <@lib.addInput true, "name", "Název", 60 />
+    <@lib.addFormField true, "Regulární výraz">
+        <select id="regexp-select" onchange="changeRegexp(this)"></select>
+        <@lib.addInputBare "regexp", 60 />
+    </@lib.addFormField>
+    <@lib.addTextArea false, "desc", "Popis", 3, "class='siroka'" />
+
+    <@lib.addTextArea true, "htmlCode", "Výchozí reklamní kód", 15, "class='siroka'" />
+    <@lib.addCheckbox "dynamic", "Dynamický kód" />
+
+    <@lib.addSubmit "Dokonči", "finish" />
+
+    <@lib.addHidden "action", "addCode2" />
+    <@lib.addHidden "rid", PARAMS.rid />
+</@lib.addForm>
 
 <script type="text/javascript"><!--
 regexps = new Array();

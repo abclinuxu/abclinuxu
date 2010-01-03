@@ -43,7 +43,6 @@ import cz.abclinuxu.utils.parser.clean.HtmlChecker;
 import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
-import cz.finesoft.socd.analyzer.DiacriticRemover;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -304,7 +303,7 @@ public class EditPersonality implements AbcAction {
             return false;
         }
 
-        String normalizedName = DiacriticRemover.getInstance().removeDiacritics(name);
+        String normalizedName = Misc.removeDiacritics(name);
 
         char first = Character.toLowerCase(normalizedName.charAt(0));
         if (first < 'a' || first > 'z') {
@@ -333,7 +332,7 @@ public class EditPersonality implements AbcAction {
             return false;
         }
 
-        String normalizedSurname = DiacriticRemover.getInstance().removeDiacritics(surname);
+        String normalizedSurname = Misc.removeDiacritics(surname);
         if (normalizedSurname.length() == 0) {
             ServletUtils.addError(PARAM_SURNAME, "Příjmení musí začínat písmenem.", env, null);
             return false;

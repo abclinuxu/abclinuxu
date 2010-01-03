@@ -19,46 +19,22 @@ Vytvořená varianta bude neaktivní a musíte ji ručně aktivovat. Platí podm
 varianta se stejnými parametry.
 </p>
 
-<form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
-    <table class="siroka" border="0" cellpadding="5">
-        <tr>
-            <td width="90">Popis</td>
-            <td>
-                <textarea name="desc" rows="3" class="siroka" tabindex="1">${PARAMS.desc!?html}</textarea>
-                <div class="error">${ERRORS.desc!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="90" class="required">Štítky</td>
-            <td id="tagpicker">
-                <input type="text" name="tags" id="tags" value="${PARAMS.tags!?html}" size="60" tabindex="2">
-                <div class="error">${ERRORS.tags!}</div>
-            </td>
+<@lib.addForm URL.noPrefix("/EditAdvertisement"), "name='form'">
+    <@lib.addTextArea false, "desc", "Popis", 3 />
+    <@lib.addFormField true, "Štítky">
+        <div id="tagpicker">
+            <@lib.addInputBare "tags", 60 />
             <script type="text/javascript">new StitkyAdvertLink();</script>
-        </tr>
-        <tr>
-            <td width="90" class="required">Kód</td>
-            <td>
-                <textarea name="htmlCode" rows="20" class="siroka" tabindex="3">${PARAMS.htmlCode!?html}</textarea>
-                <div class="error">${ERRORS.htmlCode!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="90">&nbsp;</td>
-            <td>
-                <label><input type="checkbox" name="dynamic" value="yes" tabindex="4">Dynamický kód</label>
-            </td>
-        </tr>
-        <tr>
-            <td width="90">&nbsp;</td>
-            <td>
-                <input tabindex="5" type="submit" name="finish" value="Dokonči">
-            </td>
-        </tr>
-    </table>
-    <input type="hidden" name="code" value="${PARAMS.code}">
-    <input type="hidden" name="rid" value="${PARAMS.rid}">
-    <input type="hidden" name="action" value="addVariant2">
-</form>
+        </div>
+    </@lib.addFormField>
+
+    <@lib.addTextArea true, "htmlCode", "Kód", 15, "class='siroka'" />
+    <@lib.addCheckbox "dynamic", "Dynamický kód" />
+
+    <@lib.addSubmit "Dokonči", "finish" />
+    <@lib.addHidden "code", PARAMS.code />
+    <@lib.addHidden "rid", PARAMS.rid />
+    <@lib.addHidden "action", "addVariant2" />
+</@lib.addForm>
 
 <#include "../footer.ftl">

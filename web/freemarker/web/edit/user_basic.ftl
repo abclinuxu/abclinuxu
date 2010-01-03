@@ -13,45 +13,14 @@
     zasílat jen ty informace, které si sami objednáte.
 </p>
 
-<form action="${URL.noPrefix("/EditUser")}" method="POST">
-    <table width="100%" border=0 cellpadding=5>
-        <tr>
-            <td class="required" width="60">Heslo</td>
-            <td>
-                <input type="password" name="PASSWORD" size="16" tabindex="1">
-                <div class="error">${ERRORS.PASSWORD!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td class="required" width="60">Jméno</td>
-            <td>
-                <input type="text" name="name" value="${PARAMS.name!}" size="24" tabindex="2">
-                <div class="error">${ERRORS.name!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td class="required" width="60">Přezdívka</td>
-            <td>
-                <input type="text" name="nick" id="nick" value="${PARAMS.nick!}" size="24" tabindex="3"
-                onChange="new Ajax.Updater('nickError', '/ajax/checkNick', {parameters: { value : $F('nick')}})">
-                <div class="error" id="nickError">${ERRORS.nick!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="60">Email</td>
-            <td>
-                <input type="text" name="email" value="${PARAMS.email!}" size="24" tabindex="4">
-                <div class="error">${ERRORS.email!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="60">&nbsp;</td>
-            <td><input type="submit" value="Dokonči" tabindex="5"></td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="editBasic2">
-    <input type="hidden" name="uid" value="${MANAGED.id}">
-</form>
-
+<@lib.addForm URL.noPrefix("/EditUser")>
+    <@lib.addPassword true, "PASSWORD", "Heslo" />
+    <@lib.addInput true, "name", "Jméno", 24 />
+    <@lib.addInput true, "nick", "Přezdívka", 24, "onChange=\"new Ajax.Updater('nickError', '/ajax/checkNick', {parameters: { value : $F('nick')}})\"" />
+    <@lib.addInput false, "email", "E-mail", 24 />
+    <@lib.addSubmit "Dokonči" />
+    <@lib.addHidden "action", "editBasic2" />
+    <@lib.addHidden "uid", MANAGED.id />
+</@lib.addForm>
 
 <#include "../footer.ftl">

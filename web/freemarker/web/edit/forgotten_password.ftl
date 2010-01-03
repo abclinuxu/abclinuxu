@@ -10,24 +10,11 @@ Pokud existuje a má přiřazenou e-mailovou adresu, bude vám
 zaslán odkaz, přes který si můžete nastavit heslo nové.
 </p>
 
-<form action="${URL.noPrefix("/EditUser")}" method="POST">
-
-<table border="0" cellpadding="5">
-    <tr>
-        <td>Login:</td>
-        <td>
-            <input type="text" name="login" size="8" value="${PARAMS.login!}">
-            <div class="error">${ERRORS.login!}</div>
-        </td>
-    </tr>
-    <tr>
-        <td>&nbsp;</td>
-        <td><input type="submit" value="Odeslat"></td>
-    </tr>
-</table>
-
-<input type="hidden" name="action" value="forgottenPassword2">
-</form>
+<@lib.addForm URL.noPrefix("/EditUser")>
+    <@lib.addInput true, "login", "Login", 8 />
+    <@lib.addSubmit "Odeslat" />
+    <@lib.addHidden "action", "forgottenPassword2" />
+</@lib.addForm>
 
 <#include "../footer.ftl">
 

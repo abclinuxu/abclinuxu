@@ -19,7 +19,6 @@
 package cz.abclinuxu.servlets.html.edit;
 
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.html.view.SendEmail;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
@@ -32,29 +31,24 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.view.NewsCategories;
-import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
-import cz.abclinuxu.security.ActionProtector;
-import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
-import cz.abclinuxu.utils.parser.clean.HtmlChecker;
 import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import cz.abclinuxu.security.ActionCheck;
+import cz.abclinuxu.servlets.AbcAutoAction;
+import cz.abclinuxu.servlets.utils.ParameterChecker;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Date;
-import java.text.ParseException;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -63,30 +57,16 @@ import org.dom4j.Document;
 /**
  * This servlet manipulates with News.
  */
-public class EditNews implements AbcAction {
+public class EditNews extends AbcAutoAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditNews.class);
-
-    public static final String ACTION_ADD = "add";
-    public static final String ACTION_ADD_STEP2 = "add2";
-    public static final String ACTION_EDIT = "edit";
-    public static final String ACTION_EDIT_STEP2 = "edit2";
-    public static final String ACTION_APPROVE = "approve";
-    public static final String ACTION_REMOVE = "remove";
-    public static final String ACTION_REMOVE_STEP2 = "remove2";
-    public static final String ACTION_SEND_EMAIL = "mail";
-    public static final String ACTION_LOCK = "lock";
-    public static final String ACTION_UNLOCK = "unlock";
 
     public static final String VAR_CATEGORIES = "CATEGORIES";
     public static final String VAR_CATEGORY = "CATEGORY";
-    public static final String VAR_RELATION = "RELATION";
     public static final String VAR_MESSAGE = "MESSAGE";
     public static final String VAR_AUTHOR = "AUTHOR";
     public static final String VAR_ADMIN = "ADMIN";
     public static final String VAR_WAITING_NEWS = "WAITING_NEWS";
 
-    public static final String PARAM_RELATION = "relationId";
-    public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_CATEGORY = "category";
     public static final String PARAM_CONTENT = "content";
     public static final String PARAM_APPROVE = "approve";
@@ -96,82 +76,9 @@ public class EditNews implements AbcAction {
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_FORBID_DISCUSSIONS = "forbidDiscussions";
     public static final String PARAM_UID = "uid";
-
-
-    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
-        String action = (String) params.get(PARAM_ACTION);
-
-        if (ServletUtils.handleMaintainance(request, env)) {
-            response.sendRedirect(response.encodeRedirectURL("/"));
-            return null;
-        }
-
-        // check permissions
-        if ( user==null )
-            return FMTemplateSelector.select("ViewUser", "login", env, request);
-
-        if ( ACTION_ADD.equals(action) )
-            return actionAddStep1(request, env);
-
-        if ( ACTION_ADD_STEP2.equals(action) ) {
-            ActionProtector.ensureContract(request, EditNews.class, true, true, true, false);
-            return actionAddStep2(request, response, env, true);
-        }
-
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
-        if ( relation==null )
-            throw new MissingArgumentException("Chybí parametr relationId!");
-        Tools.sync(relation);
-        env.put(VAR_RELATION, relation);
-
-        // check permissions
-        if ( !(user.hasRole(Roles.NEWS_ADMIN) || relation.getUpper()==Constants.REL_NEWS_POOL))
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-        if ( ACTION_EDIT.equals(action) )
-            return actionEditStep1(request, env);
-
-        if ( ACTION_EDIT_STEP2.equals(action) ) {
-            ActionProtector.ensureContract(request, EditNews.class, true, true, true, false);
-            return actionEditStep2(request, response, env);
-        }
-
-        // check permissions
-        if ( !user.hasRole(Roles.NEWS_ADMIN) )
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-        if ( ACTION_APPROVE.equals(action) ) {
-            ActionProtector.ensureContract(request, EditNews.class, true, false, false, true);
-            return actionApprove(request, response, env);
-        }
-
-        if ( ACTION_REMOVE.equals(action) )
-            return FMTemplateSelector.select("EditNews", "remove", env, request);
-
-        if ( ACTION_REMOVE_STEP2.equals(action) ) {
-            ActionProtector.ensureContract(request, EditNews.class, true, true, true, false);
-            return actionRemoveStep2(response, env);
-        }
-
-        if ( ACTION_SEND_EMAIL.equals(action) )
-            return actionSendEmail(request, response, env);
-
-        if ( ACTION_LOCK.equals(action) ) {
-            ActionProtector.ensureContract(request, EditNews.class, true, false, false, true);
-            return actionLock(response, env);
-        }
-
-        if ( ACTION_UNLOCK.equals(action) ) {
-            ActionProtector.ensureContract(request, EditNews.class, true, false, false, true);
-            return actionUnlock(response, env);
-        }
-
-        throw new MissingArgumentException("Chybí parametr action!");
-    }
-
-    private String actionAddStep1(HttpServletRequest request, Map env) throws Exception {
+    
+    @ActionCheck(userRequired = true)
+    public String actionAdd() throws Exception {
         env.put(VAR_CATEGORIES, NewsCategories.getAllCategories());
 
         Category catWaitingNews = new Category(Constants.CAT_NEWS_POOL);
@@ -183,52 +90,48 @@ public class EditNews implements AbcAction {
         return FMTemplateSelector.select("EditNews", "add", env, request);
     }
 
-    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
+    @ActionCheck(userRequired = true, checkReferer = true, checkPost = true)
+    public String actionAdd2() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
+        ParameterChecker ch = new ParameterChecker(env);
 
         Item item = new Item(0, Item.NEWS);
         item.setData(DocumentHelper.createDocument());
         item.setOwner(user.getId());
 
-        boolean canContinue = setTitle(params, item, env);
-        canContinue &= setContent(params, item, env);
-        canContinue &= setCategory(params, item);
+        item.setTitle(ch.getString(PARAM_TITLE));
+        setContent(item, ch);
+        setCategory(item, ch);
 
-        if (user.hasRole(Roles.NEWS_ADMIN) && canContinue) {
-            canContinue = setOwner(params, item, env);
-            canContinue &= setForbidDiscussions(params, item);
-            canContinue &= setPublishDate(params, item, env);
+        if (user.hasRole(Roles.NEWS_ADMIN)) {
+            setOwner(item, ch);
+            setForbidDiscussions(item, ch);
+
+            Date date = ch.getDate(PARAM_PUBLISH_DATE, true);
+            if (date != null)
+                item.setCreated(date);
         }
 
-        if ( !canContinue) {
-            params.remove(PARAM_PREVIEW);
-            return actionAddStep1(request,env);
-        }
-
-        if (params.get(PARAM_PREVIEW) != null) {
-            Relation relation = new Relation(null,item,0);
+        if ( ch.isFailed() || params.get(PARAM_PREVIEW)!=null) {
+            Relation emptyRelation = new Relation(null,item,0);
             item.setInitialized(true);
             item.setCreated(new Date());
-            env.put(VAR_RELATION, relation);
-            return actionAddStep1(request,env);
+            env.put(VAR_RELATION, emptyRelation);
+            return actionAdd();
         }
+
 
         persistence.create(item);
 
-        Relation relation = new Relation(new Category(Constants.CAT_NEWS_POOL),item,Constants.REL_NEWS_POOL);
-        persistence.create(relation);
-        relation.getParent().addChildRelation(relation);
+        Relation newRelation = new Relation(new Category(Constants.CAT_NEWS_POOL),item,Constants.REL_NEWS_POOL);
+        persistence.create(newRelation);
+        newRelation.getParent().addChildRelation(newRelation);
 
         if (!user.hasRole(Roles.NEWS_ADMIN) || params.get(PARAM_FORBID_DISCUSSIONS) == null)
-            EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+            EditDiscussion.createEmptyDiscussion(newRelation, user, persistence);
 
-        if (redirect) {
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, UrlUtils.PREFIX_NEWS + "/show/"+relation.getId());
-        } else
-            env.put(VAR_RELATION, relation);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, UrlUtils.PREFIX_NEWS + "/show/"+newRelation.getId());
 
         return null;
     }
@@ -236,14 +139,15 @@ public class EditNews implements AbcAction {
     /**
      * Adds admini mailing list to session and redirects to send email screen.
      */
-    private String actionSendEmail(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+
+    @ActionCheck(permittedRoles = {Roles.NEWS_ADMIN})
+    public String actionMail() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         HttpSession session = request.getSession();
-        Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
-        User user = (User) persistence.findById(new User(item.getOwner()));
+        User author = (User) persistence.findById(new User(item.getOwner()));
 
-        session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_TO, user.getEmail());
+        session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_TO, author.getEmail());
         session.setAttribute(SendEmail.PREFIX+SendEmail.PARAM_DISABLE_CODE, Boolean.TRUE);
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_SUBJECT, item.getTitle());
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_BODY, "http://www.abclinuxu.cz/zpravicky/edit?action=edit&rid="+relation.getId());
@@ -254,10 +158,12 @@ public class EditNews implements AbcAction {
         return null;
     }
 
-    private String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) env.get(VAR_RELATION);
+    @ActionCheck(itemOwnerOrRole = Roles.NEWS_ADMIN, itemType = Item.NEWS)
+    public String actionEdit() throws Exception {
         Item item = (Item) relation.getChild();
+
+        if (!user.hasRole(Roles.NEWS_ADMIN) && relation.getUpper() != Constants.REL_NEWS_POOL)
+            return returnForbidden();
 
         params.put(PARAM_TITLE, item.getTitle());
         Element element = (Element) item.getData().selectSingleNode("/data/content");
@@ -273,24 +179,29 @@ public class EditNews implements AbcAction {
         return FMTemplateSelector.select("EditNews", "edit", env, request);
     }
 
-    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    @ActionCheck(itemOwnerOrRole = Roles.NEWS_ADMIN, checkReferer = true, checkPost = true, itemType = Item.NEWS)
+    public String actionEdit2() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        Item item = (Item) relation.getChild();
-        User user = (User) env.get(Constants.VAR_USER);
+        Item item = (Item) relation.getChild().clone();
+        ParameterChecker ch = new ParameterChecker(env);
 
-        boolean canContinue = setTitle(params, item, env);
-        canContinue &= setContent(params, item, env);
-        canContinue &= setCategory(params, item);
+        if (!user.hasRole(Roles.NEWS_ADMIN) && relation.getUpper() != Constants.REL_NEWS_POOL)
+            return returnForbidden();
 
-        if (user.hasRole(Roles.NEWS_ADMIN) && canContinue) {
-            canContinue = setOwner(params, item, env);
-            canContinue &= setForbidDiscussions(params, item);
-            canContinue &= setPublishDate(params, item, env);
+        item.setTitle(ch.getString(PARAM_TITLE));
+        setContent(item, ch);
+        setCategory(item, ch);
+
+        if (user.hasRole(Roles.NEWS_ADMIN)) {
+            setOwner(item, ch);
+            setForbidDiscussions(item, ch);
+
+            Date date = ch.getDate(PARAM_PUBLISH_DATE, true);
+            if (date != null)
+                item.setCreated(date);
         }
 
-        if ( !canContinue || params.get(PARAM_PREVIEW)!=null) {
+        if ( ch.isFailed() || params.get(PARAM_PREVIEW)!=null) {
             env.put(VAR_RELATION, relation);
             env.put(VAR_CATEGORIES, NewsCategories.getAllCategories());
             return FMTemplateSelector.select("EditNews", "edit", env, request);
@@ -307,10 +218,10 @@ public class EditNews implements AbcAction {
         return null;
     }
 
-    public String actionApprove(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    @ActionCheck(permittedRoles = {Roles.NEWS_ADMIN}, checkTicket = true, itemType = Item.NEWS)
+    public String actionApprove() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        Relation relation = (Relation) env.get(VAR_RELATION);
 
         if (relation.getParent().getId() != Constants.CAT_NEWS_POOL) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Zprávička již byla schválena!", env, request.getSession());
@@ -326,7 +237,6 @@ public class EditNews implements AbcAction {
             return null;
         }
 
-        User user = (User) env.get(Constants.VAR_USER);
         boolean pooled = item.getCreated().getTime() >= System.currentTimeMillis();
         if (! pooled)
             item.setCreated(new Date());
@@ -344,7 +254,7 @@ public class EditNews implements AbcAction {
         Map<String,List<Relation>> children = Tools.groupByType(item.getChildren());
 
         if (children.containsKey(Constants.TYPE_DISCUSSION)) {
-            Relation disc = children.get(Constants.TYPE_DISCUSSION).get(0);
+            Relation disc = (Relation) children.get(Constants.TYPE_DISCUSSION).get(0);
 
             String urldisc = url + "/diskuse";
             urldisc = URLManager.protectFromDuplicates(urldisc);
@@ -372,15 +282,18 @@ public class EditNews implements AbcAction {
         return null;
     }
 
-    protected String actionRemoveStep2(HttpServletResponse response, Map env) throws Exception {
+    @ActionCheck(permittedRoles = {Roles.NEWS_ADMIN}, itemType = Item.NEWS)
+    public String actionRemove() {
+        return FMTemplateSelector.select("EditNews", "remove", env, request);
+    }
+
+    @ActionCheck(permittedRoles = {Roles.NEWS_ADMIN}, itemType = Item.NEWS, checkPost = true, checkReferer = true)
+    public String actionRemove2() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        User user = (User) env.get(Constants.VAR_USER);
         Item item = (Item) relation.getChild();
         User author = (User) persistence.findById(new User(item.getOwner()));
 
-        Map map = new HashMap();
+        Map<String,Object> map = new HashMap<String,Object>();
         map.put(VAR_RELATION, relation);
         map.put(VAR_AUTHOR, author);
         map.put(VAR_ADMIN, user);
@@ -413,13 +326,12 @@ public class EditNews implements AbcAction {
         return null;
     }
 
-    protected String actionLock(HttpServletResponse response, Map env) throws Exception {
+    @ActionCheck(permittedRoles = {Roles.NEWS_ADMIN}, itemType = Item.NEWS, checkTicket = true)
+    public String actionLock() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
 
         Element element = DocumentHelper.makeElement(item.getData(), "/data/locked_by");
-        User user = (User) env.get(Constants.VAR_USER);
         element.setText(Integer.toString(user.getId()));
 
         persistence.update(item);
@@ -430,16 +342,15 @@ public class EditNews implements AbcAction {
         return null;
     }
 
-    protected String actionUnlock(HttpServletResponse response, Map env) throws Exception {
+    @ActionCheck(permittedRoles = {Roles.NEWS_ADMIN}, itemType = Item.NEWS, checkTicket = true)
+    public String actionUnlock() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
 
         Element element = (Element) item.getData().selectSingleNode("/data/locked_by");
         element.detach();
         persistence.update(item);
 
-        User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "  unlock | news "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -451,102 +362,40 @@ public class EditNews implements AbcAction {
 
     /**
      * Updates news' content from parameters. Changes are not synchronized with persistence.
-     * @param params map holding request's parameters
      * @param item news to be updated
-     * @param env environment
-     * @return false, if there is a major error.
+     * @param text News text
      */
-    private boolean setContent(Map params, Item item, Map env) {
-        String text = (String) params.get(PARAM_CONTENT);
-        text = Misc.filterDangerousCharacters(text);
-        if (text == null || text.trim().length() == 0) {
-            ServletUtils.addError(PARAM_CONTENT, "Vyplňte obsah zprávičky", env, null);
-            return false;
-        }
-
+    private void setContent(Item item, ParameterChecker ch) {
         Document doc = item.getData();
-        try {
-            text = HtmlPurifier.clean(text);
-            HtmlChecker.check(Rules.NEWS, text);
+        Element element = DocumentHelper.makeElement(doc, "/data/content");
+        String text = ch.getHtml(PARAM_CONTENT, false, Rules.NEWS);
+        
+        element.setText(text);
 
-            Element element = DocumentHelper.makeElement(doc, "/data/content");
-            element.setText(text);
-
-            String perex = Tools.limitNewsLength(text);
-            if (perex == null) {
-                element = doc.getRootElement().element("perex");
-                if (element != null)
-                    element.detach();
-            } else {
-                DocumentHelper.makeElement(doc, "/data/perex").setText(perex);
-            }
-            return true;
-        } catch (Exception e) {
-            ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
-            return false;
+        String perex = Tools.limitNewsLength(text);
+        if (perex == null) {
+            element = doc.getRootElement().element("perex");
+            if (element != null)
+                element.detach();
+        } else {
+            DocumentHelper.makeElement(doc, "/data/perex").setText(perex);
         }
     }
 
     /**
      * Updates news' content from parameters. Changes are not synchronized with persistence.
-     * @param params map holding request's parameters
      * @param item news to be updated
-     * @return false, if there is a major error.
+     * @param ch A ParameterChecker instance
      */
-    private boolean setCategory(Map params, Item item) {
-        String text = (String) params.get(PARAM_CATEGORY);
-        if (text==null || text.length()==0)
-            return true;
-
-        List categories = NewsCategories.listKeys();
-        if ( categories.contains(text) ) {
-            item.setSubType(text);
-        } else {
-            log.warn("Nalezena neznama kategorie zpravicek '"+text+"'!");
-        }
-
-        return true;
-    }
-
-    /**
-     * Updates news' title from parameters. Changes are not synchronized with persistence.
-     * @param params map holding request's parameters
-     * @param item news to be updated
-     * @return false, if there is a major error.
-     */
-    private boolean setTitle(Map params, Item item, Map env) {
-        String text = (String) params.get(PARAM_TITLE);
-        text = Misc.filterDangerousCharacters(text);
-        if (text==null || text.length()==0) {
-            ServletUtils.addError(PARAM_TITLE, "Zadejte titulek zprávičky", env, null);
-            return false;
-        }
-
-        item.setTitle(text);
-        return true;
-    }
-
-    /**
-     * Updates news from parameters. Changes are not synchronized with persistence.
-     *
-     * @param params map holding request's parameters
-     * @param item   news to be updated
-     * @return false, if there is a major error.
-     */
-    private boolean setPublishDate(Map params, Item item, Map env) {
-        String tmp = (String) params.get(PARAM_PUBLISH_DATE);
-        if (tmp==null || tmp.length()==0)
-            return true;
-        try {
-            Date date;
-            synchronized (Constants.isoFormat) {
-                date = Constants.isoFormat.parse(tmp);
+    private void setCategory(Item item, ParameterChecker ch) {
+        String text = ch.getString(PARAM_CATEGORY, true);
+        if (!Misc.empty(text)) {
+            List categories = NewsCategories.listKeys();
+            if ( categories.contains(text) ) {
+                item.setSubType(text);
+            } else {
+                log.warn("Nalezena neznama kategorie zpravicek '"+text+"'!");
             }
-            item.setCreated(date);
-            return true;
-        } catch (ParseException e) {
-            ServletUtils.addError(PARAM_PUBLISH_DATE, "Chybný formát datumu!", env, null);
-            return false;
         }
     }
 
@@ -557,33 +406,29 @@ public class EditNews implements AbcAction {
     * @param item   news to be updated
     * @return false, if there is a major error.
     */
-    private boolean setOwner(Map params, Item item, Map env) {
-        String suid = (String) params.get(PARAM_UID);
+    private void setOwner(Item item, ParameterChecker ch) {
+        int suid = ch.getInteger(PARAM_UID, true);
 
-        if (!Misc.empty(suid)) {
+        if (suid != 0) {
             try {
                 User owner = Tools.createUser(suid);
                 item.setOwner(owner.getId());
             } catch (Exception e) {
-                ServletUtils.addError(PARAM_UID, "Neplatné UID uživatele!", env, null);
-                return false;
+                ch.addError(PARAM_UID, "Neplatné UID uživatele!");
             }
         }
-        return true;
     }
 
 
-    private boolean setForbidDiscussions(Map params, Item item) {
-        String content = (String) params.get(PARAM_FORBID_DISCUSSIONS);
+    private void setForbidDiscussions(Item item, ParameterChecker ch) {
+        String content = ch.getString(PARAM_FORBID_DISCUSSIONS, true);
         Element element = (Element) item.getData().selectSingleNode("/data/forbid_discussions");
         if ( element!=null )
             element.detach();
 
-        if ( content==null || content.length()==0 )
-            return true;
-
-        element = DocumentHelper.makeElement(item.getData(), "/data/forbid_discussions");
-        element.setText(content);
-        return true;
+        if ( !content.isEmpty() ) {
+            element = DocumentHelper.makeElement(item.getData(), "/data/forbid_discussions");
+            element.setText(content);
+        }
     }
 }

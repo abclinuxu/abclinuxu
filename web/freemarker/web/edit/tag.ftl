@@ -12,34 +12,12 @@
     java&nbsp;-&nbsp;programování.
 </p>
 
-<form action="${URL.make("/stitky/edit")}" method="POST" name="form">
-    <table cellpadding="5" class="siroka">
-        <tr>
-            <td class="required">Titulek</td>
-            <td>
-                <input tabindex="1" type="text" name="title" size="30" value="${PARAMS.title!?html}">
-                <@lib.showError key="title" />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Nadřazený štítek
-                <@lib.showHelp>Id štítku, například programovani z URL /stitky/programovani</@lib.showHelp>
-            </td>
-            <td>
-                <input type="text" name="parent" value="${PARAMS.parent!}" tabindex="2">
-                <@lib.showError key="parent" />
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <input tabindex="3" type="submit" name="submit" value="Dokonči">
-            </td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="edit2">
-    <input type="hidden" name="id" value="${PARAMS.id}">
-</form>
+<@lib.addForm URL.make("/stitky/edit")>
+    <@lib.addInput true, "title", "Titulek", 30 />
+    <@lib.addFormField false, "Nadřazený štítek", "Id štítku, například programovani z URL /stitky/programovani">
+        <@lib.addInputBare "parent" />
+    </@lib.addFormField>
+    <@lib.addSubmit "Dokonči" />
+</@lib.addForm>
 
 <#include "../footer.ftl">

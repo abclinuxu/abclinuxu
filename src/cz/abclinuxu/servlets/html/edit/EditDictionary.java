@@ -42,7 +42,6 @@ import cz.abclinuxu.utils.parser.clean.HtmlChecker;
 import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.ActionProtector;
-import cz.finesoft.socd.analyzer.DiacriticRemover;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -252,7 +251,7 @@ public class EditDictionary implements AbcAction {
 
         item.setTitle(name);
 
-        String normalizedName = DiacriticRemover.getInstance().removeDiacritics(name);
+        String normalizedName = Misc.removeDiacritics(name);
         normalizedName = normalizedName.toLowerCase();
         item.setSubType(normalizedName); // used for SQL queries
         return true;

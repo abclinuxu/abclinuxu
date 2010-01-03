@@ -32,30 +32,13 @@ oblíbených odkazů. Oblíbené odkazy jsou blogy
 <#else>
 </#if>
 
-<form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST" name="form">
 <h3>Vložit nový odkaz</h3>
-<table border="0">
-    <tr>
-        <td class="required">URL</td>
-        <td>
-            <input type="text" name="url" title="URL odkazu" value="${PARAMS.url!}" size="30">
-            <div class="error">${ERRORS.url!}</div>
-        </td>
-    </tr>
-    <tr>
-        <td class="required">Popis</td>
-        <td>
-            <input type="text" name="title" title="Popis odkazu" value="${PARAMS.title!}" size="30">
-            <div class="error">${ERRORS.title!}</div>
-        </td>
-    </tr>
-    <tr>
-        <td><input type="submit" name="finish" value="Vytvořit"></td>
-        <td></td>
-    </tr>
-</table>
-<input type="hidden" name="action" value="addLink">
-</form>
 
+<@lib.addForm URL.make("/blog/edit/"+REL_BLOG.id)>
+    <@lib.addInput true, "url", "URL" />
+    <@lib.addInput true, "title", "Popis" />
+    <@lib.addSubmit "Vytvořit", "finish" />
+    <@lib.addHidden "action", "addLink" />
+</@lib.addForm>
 
 <#include "../footer.ftl">

@@ -10,22 +10,10 @@
     buď absolutní (včetně jména serveru), nebo relativní začínající lomítkem.
 </p>
 
-<form action="${URL.noPrefix("/serialy/edit/"+RELATION.id)}" method="POST">
-    <table width="100%" border=0 cellpadding=5>
-        <tr>
-            <td class="required" width="60">Jméno</td>
-            <td>
-                <textarea name="url" class="siroka" rows="20" tabindex="1">${PARAMS.url!?html}</textarea>
-                <div class="error">${ERRORS.url!}<div>
-            </td>
-        </tr>
-
-        <tr>
-            <td width="60">&nbsp;</td>
-            <td><input type="submit" value="Dokonči" tabindex="2"></td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="addArticlesUrls2">
-</form>
+<@lib.addForm URL.noPrefix("/serialy/edit/"+RELATION.id)>
+    <@lib.addTextArea true, "url", "URL", 20 />
+    <@lib.addSubmit "Dokonči" />
+    <@lib.addHidden "action", "addArticlesUrls2" />
+</@lib.addForm>
 
 <#include "../footer.ftl">

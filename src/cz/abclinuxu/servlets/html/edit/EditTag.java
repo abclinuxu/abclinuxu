@@ -23,9 +23,10 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.security.ActionCheck;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.security.Roles;
-import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.AbcAutoAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ViewTag;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -42,64 +43,17 @@ import java.util.Map;
  * @author literakl
  * @since 5.1.2008
  */
-public class EditTag implements AbcAction {
+public class EditTag extends AbcAutoAction {
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_ID = "id";
     public static final String PARAM_PARENT = "parent";
 
-    public static final String ACTION_ADD = "add";
-    public static final String ACTION_ADD_STEP2 = "add2";
-    public static final String ACTION_EDIT = "edit";
-    public static final String ACTION_EDIT_STEP2 = "edit2";
-    public static final String ACTION_REMOVE_STEP2 = "rm2";
-
-    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
-        String action = (String) params.get(PARAM_ACTION);
-
-        if (ServletUtils.handleMaintainance(request, env)) {
-            response.sendRedirect(response.encodeRedirectURL("/"));
-            return null;
-        }
-
-        if (ACTION_ADD.equals(action))
-            return actionAddStep1(request, env);
-
-        if (ACTION_ADD_STEP2.equals(action)) {
-            ActionProtector.ensureContract(request, EditTag.class, false, true, true, false);
-            return actionAddStep2(request, response, env, true);
-        }
-
-        // check permissions
-        if (user == null)
-            return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if (! user.hasRole(Roles.TAG_ADMIN))
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-        if (ACTION_EDIT.equals(action))
-            return actionEdit(request, env);
-
-        if (ACTION_EDIT_STEP2.equals(action)) {
-            ActionProtector.ensureContract(request, EditTag.class, true, true, true, false);
-            return actionEditStep2(request, response, env);
-        }
-
-        if (ACTION_REMOVE_STEP2.equals(action)) {
-            ActionProtector.ensureContract(request, ViewTag.class, true, true, false, true);
-            return actionRemoveStep2(request, response, env);
-        }
-
-        throw new MissingArgumentException("Chybí parametr action!");
-    }
-
-    private String actionAddStep1(HttpServletRequest request, Map env) throws Exception {
+    public String actionAdd() throws Exception {
         return FMTemplateSelector.select("Tags", "add", env, request);
     }
 
-    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
+    @ActionCheck(checkReferer = true, checkPost = true)
+    public String actionAdd2() throws Exception {
         String ipAddress = ServletUtils.getClientIPAddress(request);
 
         Tag tag = new Tag();
@@ -116,8 +70,8 @@ public class EditTag implements AbcAction {
         return null;
     }
 
+    @ActionCheck(permittedRoles = {Roles.TAG_ADMIN})
     protected String actionEdit(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         String id = (String) params.get(PARAM_ID);
         Tag tag = TagTool.getById(id);
         if (tag == null)
@@ -128,9 +82,8 @@ public class EditTag implements AbcAction {
         return FMTemplateSelector.select("Tags", "edit", env, request);
     }
 
-    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
+    @ActionCheck(permittedRoles = {Roles.TAG_ADMIN}, checkReferer = true, checkPost = true)
+    protected String actionEdit2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         String ipAddress = ServletUtils.getClientIPAddress(request);
 
         String id = (String) params.get(PARAM_ID);
@@ -156,9 +109,8 @@ public class EditTag implements AbcAction {
      * Validates input values and if it is OK, that it updates the driver and displays it.
      * @return page to be rendered
      */
-    protected String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
+    @ActionCheck(permittedRoles = {Roles.TAG_ADMIN}, checkReferer = true, checkTicket = true)
+    protected String actionRm2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         String ipAddress = ServletUtils.getClientIPAddress(request);
 
         String id = (String) params.get(PARAM_ID);

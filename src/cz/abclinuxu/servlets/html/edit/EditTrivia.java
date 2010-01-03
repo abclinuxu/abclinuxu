@@ -19,28 +19,24 @@
 package cz.abclinuxu.servlets.html.edit;
 
 import cz.abclinuxu.data.Category;
-import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.parser.clean.HtmlChecker;
 import cz.abclinuxu.utils.parser.clean.Rules;
-import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.versioning.Versioning;
 import cz.abclinuxu.persistence.versioning.VersioningFactory;
 
+import cz.abclinuxu.security.ActionCheck;
+import cz.abclinuxu.servlets.AbcAutoAction;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -59,7 +55,7 @@ import org.dom4j.Attribute;
  * @author literakl
  * @since 6.11.2006
  */
-public class EditTrivia implements AbcAction {
+public class EditTrivia extends AbcAutoAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditTrivia.class);
 
     public static final String PARAM_TITLE = "title";
@@ -76,63 +72,24 @@ public class EditTrivia implements AbcAction {
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
 
-    public static final String VAR_RELATION = "RELATION";
-
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
-        String action = (String) params.get(PARAM_ACTION);
-		Relation parent = new Relation(Constants.REL_TRIVIA);
+        init(request, response, env);
 
-        if (ServletUtils.handleMaintainance(request, env)) {
-            response.sendRedirect(response.encodeRedirectURL("/"));
-            return null;
-        }
+        if (relation == null)
+            relation = new Relation(Constants.REL_TRIVIA);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
-        if (relation != null) {
-            Tools.sync(relation);
-            env.put(VAR_RELATION, relation);
-        }
-
-        // check permissions
-        if (user == null)
-            return FMTemplateSelector.select("ViewUser", "login", env, request);
-
-        if (ACTION_ADD.equals(action)) {
-			if (!Tools.permissionsFor(user, parent).canCreate())
-				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-            return FMTemplateSelector.select("EditTrivia", "add", env, request);
-		}
-
-        if (ACTION_ADD_STEP2.equals(action)) {
-			if (!Tools.permissionsFor(user, parent).canCreate())
-				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-            ActionProtector.ensureContract(request, EditTrivia.class, true, true, true, false);
-            return actionAddStep2(request, response, env, true);
-        }
-
-		if (!Tools.permissionsFor(user, relation).canCreate())
-				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-        if (ACTION_EDIT.equals(action))
-            return actionEditStep1(request, env);
-
-        if (ACTION_EDIT_STEP2.equals(action)) {
-            ActionProtector.ensureContract(request, EditTrivia.class, true, true, true, false);
-            return actionEditStep2(request, response, env);
-        }
-
-        throw new MissingArgumentException("Chybí parametr action!");
+        return invokeAction();
     }
 
-    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+    @ActionCheck(requireCreateRight = true)
+    public String actionAdd() {
+        return FMTemplateSelector.select("EditTrivia", "add", env, request);
+    }
+
+    @ActionCheck(requireCreateRight = true, checkReferer = true, checkPost = true)
+    public String actionAdd2() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation upper = (Relation) persistence.findById(new Relation(Constants.REL_TRIVIA));
-        User user = (User) env.get(Constants.VAR_USER);
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
@@ -161,29 +118,27 @@ public class EditTrivia implements AbcAction {
         persistence.create(item);
         versioning.commit(item, user.getId(), "Počáteční revize dokumentu");
 
-        Relation relation = new Relation(upper.getChild(), item, upper.getId());
+        Relation newRelation = new Relation(upper.getChild(), item, upper.getId());
         String name = item.getTitle();
         String url = upper.getUrl() + "/" + URLManager.enforceRelativeURL(name);
         url = URLManager.protectFromDuplicates(url);
         if (url != null)
-            relation.setUrl(url);
+            newRelation.setUrl(url);
 
-        persistence.create(relation);
-        relation.getParent().addChildRelation(relation);
+        persistence.create(newRelation);
+        newRelation.getParent().addChildRelation(newRelation);
 
-        EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+        EditDiscussion.createEmptyDiscussion(newRelation, user, persistence);
 
-        if (redirect) {
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, upper.getUrl());
-        } else
-            env.put(VAR_RELATION, relation);
+        
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, upper.getUrl());
+        
         return null;
     }
 
-    protected String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) env.get(VAR_RELATION);
+    @ActionCheck(requireModifyRight = true, itemType = Item.TRIVIA)
+    public String actionEdit1() throws Exception {
         Item item = (Item) relation.getChild();
         Element root = item.getData().getRootElement();
 
@@ -221,12 +176,10 @@ public class EditTrivia implements AbcAction {
         return FMTemplateSelector.select("EditTrivia", "edit", env, request);
     }
 
-    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+    @ActionCheck(requireModifyRight = true, itemType = Item.TRIVIA, checkReferer = true, checkPost = true)
+    public String actionEdit2() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation upper = (Relation) persistence.findById(new Relation(Constants.REL_TRIVIA));
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        User user = (User) env.get(Constants.VAR_USER);
 
         Item item = (Item) relation.getChild().clone();
         item.setOwner(user.getId());

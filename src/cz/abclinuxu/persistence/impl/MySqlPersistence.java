@@ -99,7 +99,7 @@ public class MySqlPersistence implements Persistence {
                 List conditions = new ArrayList();
                 StringBuffer sb = new StringBuffer();
                 appendCreateParams(obj,sb,conditions);
-                statement = con.prepareStatement(sb.toString());
+                statement = con.prepareStatement(sb.toString(), Statement.RETURN_GENERATED_KEYS);
                 for (int i = 0; i < conditions.size(); i++) {
                     Object o = conditions.get(i);
                     statement.setObject(i + 1, o);
@@ -109,8 +109,14 @@ public class MySqlPersistence implements Persistence {
                 if (result == 0)
                     throw new PersistenceException("Nepodařilo se vložit "+obj+" do databáze!");
 
-                if (obj.getId() == 0)
-                    obj.setId(getAutoId(statement));
+                if (obj.getId() == 0) {
+                    ResultSet rs = statement.getGeneratedKeys();
+                    boolean hasNext = rs.next();
+                    assert hasNext;
+
+                    obj.setId(rs.getInt(1));
+                    rs.close();
+                }
 
                 if (obj instanceof CommonObject) {
                     CommonObject commonObj = (CommonObject) obj;
@@ -140,7 +146,7 @@ public class MySqlPersistence implements Persistence {
 
             if (obj instanceof Record && ((Record) obj).getType() == Record.DISCUSSION) {
                 statement.close();
-                statement = con.prepareStatement("INSERT INTO komentar (cislo,zaznam,id,nadrazeny,vytvoreno,autor,data) VALUES (NULL,?,?,?,?,?,?)");
+                statement = con.prepareStatement("INSERT INTO komentar (cislo,zaznam,id,nadrazeny,vytvoreno,autor,data) VALUES (NULL,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 
                 DiscussionRecord diz = (DiscussionRecord) ((Record)obj).getCustom();
                 if (diz != null) {
@@ -190,8 +196,13 @@ public class MySqlPersistence implements Persistence {
             int result = statement.executeUpdate();
             if (result == 0)
                 throw new PersistenceException("Nepodařilo se vložit " + comment + " do databáze!");
-            int autoId = getAutoId(statement);
-            comment.setRowId(autoId);
+            //int autoId = getAutoId(statement);
+            ResultSet keys = statement.getGeneratedKeys();
+            boolean hasNext = keys.next();
+            assert hasNext;
+
+            comment.setRowId(keys.getInt(1));
+            keys.close();
         }
 
         for (Iterator iter = comment.getChildren().iterator(); iter.hasNext();) {
@@ -1935,7 +1946,7 @@ public class MySqlPersistence implements Persistence {
 
                 if (comment.getRowId() == 0) {
                     if (statement2 == null)
-                        statement2 = con.prepareStatement("INSERT INTO komentar (cislo,zaznam,id,nadrazeny,vytvoreno,autor,data) VALUES (NULL,?,?,?,?,?,?)");
+                        statement2 = con.prepareStatement("INSERT INTO komentar (cislo,zaznam,id,nadrazeny,vytvoreno,autor,data) VALUES (NULL,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
                     storeComment(comment, statement2);
                 } else if (comment.is_dirty()) {
                     if (statement3 == null)
@@ -2466,6 +2477,7 @@ public class MySqlPersistence implements Persistence {
     /**
      * @return id of last inserted row
      */
+    @Deprecated
     private int getAutoId(Statement statement) throws AbcException {
         if ( ! (statement instanceof com.mysql.jdbc.Statement) )
             try {

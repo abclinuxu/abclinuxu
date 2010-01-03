@@ -15,43 +15,19 @@ nastavíte <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}"
 přidat obrázek, odkazy na své přátelé nebo blogy, které čtete.
 </p>
 
-<form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST" name="form">
- <table cellpadding="5" class="siroka">
-  <tr>
-   <td class="required">Titulek stránky
-       <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek celé stránky</span></a>
-   </td>
-   <td>
-    <input type="text" name="htitle" size="40" maxlength="70" value="${PARAMS.htitle!?html}">
-    <div class="error">${ERRORS.htitle!}</div>
-   </td>
-  </tr>
-  <tr>
-   <td>Titulek blogu
-       <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek celé stránky</span></a>
-   </td>
-   <td>
-    <input type="text" name="title" size="40" maxlength="70" value="${PARAMS.title!?html}">
-    <div class="error">${ERRORS.title!}</div>
-   </td>
-  </tr>
-    <tr>
-        <td>Popis blogu</td>
-        <td>
-            <@lib.showError key="intro"/>
-            <@lib.showRTEControls "intro"/>
-            <textarea name="intro" class="siroka" rows="20">${PARAMS.intro!?html}</textarea>
-        </td>
-    </tr>
-  <tr>
-   <td>&nbsp;</td>
-   <td>
-    <input type="submit" name="finish" value="Dokonči">
-   </td>
-  </tr>
- </table>
- <input type="hidden" name="action" value="custom2">
-</form>
+<@lib.addForm URL.make("/blog/edit/"+REL_BLOG.id), "name='form'">
+    <@lib.addFormField true, "Titulek stránky", "Zde nastavíte titulek celé stránky">
+        <@lib.addInputBare "htitle", 40 />
+    </@lib.addFormField>
+    <@lib.addFormField false, "Titulek blogu", "Zde nastavíte titulek celé stránky">
+        <@lib.addInputBare "title", 40 />
+    </@lib.addFormField>
+    <@lib.addTextArea false, "intro", "Popis blogu", 20">
+        <@lib.showRTEControls "intro"/>
+    </@lib.addTextArea>
 
+    <@lib.addSubmit "Dokonči", "finish" />
+    <@lib.addHidden "action", "custom2" />
+</@lib.addForm>
 
 <#include "../footer.ftl">

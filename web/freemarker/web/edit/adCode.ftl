@@ -17,41 +17,19 @@
     programovací instrukce jazyku Freemarker a musí se nejdříve zpracovat.
 </p>
 
-<form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
-    <table class="siroka" border="0" cellpadding="5">
-        <tr>
-            <td width="90" class="required">Název</td>
-            <td>
-                <input type="text" name="name" value="${PARAMS.name!?html}" size="60" tabindex="0">
-                <div class="error">${ERRORS.name!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="90" class="required">Regulární výraz</td>
-            <td>
-                <select id="regexp-select" onchange="changeRegexp(this)"></select>
-                <input type="text" name="regexp" id="regexp" value="${PARAMS.regexp!?html}" size="60" tabindex="1">
-                <div class="error">${ERRORS.regexp!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="90">Popis</td>
-            <td>
-                <textarea name="desc" rows="3" class="siroka" tabindex="2">${PARAMS.desc!?html}</textarea>
-                <div class="error">${ERRORS.desc!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="90">&nbsp;</td>
-            <td>
-                <input tabindex="5" type="submit" name="finish" value="Dokonči">
-            </td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="editCode2">
-    <input type="hidden" name="code" value="${PARAMS.code}">
-    <input type="hidden" name="rid" value="${PARAMS.rid}">
-</form>
+<@lib.addForm URL.noPrefix("/EditAdvertisement"), "name='form'">
+    <@lib.addInput true, "name", "Název", 60 />
+    <@lib.addFormField true, "Regulární výraz">
+        <select id="regexp-select" onchange="changeRegexp(this)"></select>
+        <@lib.addInputBare "regexp", 60 />
+    </@lib.addFormField>
+    <@lib.addTextArea false, "desc", "Popis", 3, "class='siroka'" />
+    <@lib.addSubmit "Dokonči", "finish" />
+
+    <@lib.addHidden "action", "editCode2" />
+    <@lib.addHidden "code", PARAMS.code />
+    <@lib.addHidden "rid", PARAMS.rid />
+</@lib.addForm>
 
 <script type="text/javascript"><!--
 regexps = new Array();

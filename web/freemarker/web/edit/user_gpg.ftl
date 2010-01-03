@@ -8,6 +8,14 @@
     šifrované e-maily.
 </p>
 
+<@lib.addForm URL.noPrefix("/EditUser"), "", true>
+    <@lib.addPassword true, "PASSWORD", "Heslo" />
+    <@lib.addTextArea true, "key", "Veřejný klíč", 20, "cols='50'" />
+    <@lib.addSubmit "Nastav GPG klíč" />
+    <@lib.addHidden "action", "editGPG2" />
+    <@lib.addHidden "uid", MANAGED.id />
+</@lib.addForm>
+
 <form action="${URL.noPrefix("/EditUser")}" method="POST" enctype="multipart/form-data">
     <table class="siroka" border="0" cellpadding="5">
         <tr>

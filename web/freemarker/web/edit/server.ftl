@@ -8,46 +8,20 @@
 <h1>Úprava serveru rozcestníku</h1>
 </#if>
 
-<form method="post" action="${URL.make("/EditServers")}">
+<@lib.addForm URL.make("/EditServers")>
+    <@lib.addInput true, "name", "Název serveru", 40 />
+    <@lib.addInput true, "rssUrl", "URL RSS kanálu", 40 />
+    <@lib.addInput true, "url", "URL webu", 40 />
+    <@lib.addInput false, "contact", "Kontakt na správce RSS kanálu", 40 />
 
-<table class="siroka">
-    <tr>
-        <td class="required">Název serveru</td>
-        <td>
-            <input type="text" name="name" value="${PARAMS.name!}" size="40">
-            <div class="error">${ERRORS.name!}</div>
-        </td>
-    </tr>
-    <tr>
-        <td class="required">URL RSS kanálu</td>
-        <td>
-            <input type="text" name="rssUrl" value="${PARAMS.rssUrl!}" size="40">
-            <div class="error">${ERRORS.rssUrl!}</div>
-        </td>
-    </tr>
-    <tr>
-        <td class="required">URL webu</td>
-        <td>
-            <input type="text" name="url" value="${PARAMS.url!}" size="40">
-            <div class="error">${ERRORS.url!}</div>
-        </td>
-    </tr>
-    <tr>
-        <td>Kontakt na správce RSS kanálu</td>
-        <td>
-            <input type="text" name="contact" value="${PARAMS.contact!}" size="40">
-            <div class="error">${ERRORS.contact!}</div>
-        </td>
-    </tr>
-</table>
+    <#if PARAMS.action=="add" || PARAMS.action="add2" >
+        <@lib.addHidden "action", "add2" />
+    <#else>
+        <@lib.addHidden "action", "edit2" />
+    </#if>
 
- <#if PARAMS.action=="add" || PARAMS.action="add2" >
-  <input type="hidden" name="action" value="add2">
-  <#else>
-  <input type="hidden" name="action" value="edit2">
- </#if>
- <input type="hidden" name="rid" value="${RELATION.id}">
- <input type="submit" value="Dokončit">
-</form>
+    <@lib.addHidden "rid", RELATION.id />
+    <@lib.addSubmit "Dokončit" />
+</@lib.addForm>
 
 <#include "../footer.ftl">

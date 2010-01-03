@@ -19,57 +19,33 @@
  <a href="${URL.noPrefix("/EditUser?action=add")}">zaregistrujte&nbsp;se</a>. </p>
 </#if>
 
-<form action="${URL.make("/EditDiscussion")}" method="POST" name="form" enctype="multipart/form-data">
-    <table class="siroka" cellpadding="5">
-        <#if ! USER??>
-            <tr>
-                <td class="required">Zadejte vaše jméno</td>
-                <td>
-                    <input tabindex="4" type="text" size="30" name="author" value="${PARAMS.author!?html}">
-                </td>
-                <td>
-                    nebo <a href="/Profile?action=login">se přihlašte</a>.
-                </td>
-            </tr>
-            <#if ! USER_VERIFIED!false>
-                <tr>
-                    <td class="required">Aktuální rok</td>
-                    <td>
-                        <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}" tabindex="4">
-                        <a class="info" href="#">?<span class="tooltip">Vložte aktuální rok. Jedná se o ochranu
-                        před spamboty. Po úspěšném ověření se uloží cookie (včetně vašeho jména) a tato kontrola
-                        přestane být prováděna.</span></a>
-                    </td>
-                </tr>
-            </#if>
+<@lib.addForm URL.make("/EditDiscussion"), "name='form'", true>
+    <#if ! USER??>
+        <@lib.addInput true, "author", "Zadejte vaše jméno", 30>
+            <br/> nebo <a href="/Profile?action=login">se přihlašte</a>.
+        </@lib.addInput>
+
+        <#if ! USER_VERIFIED!false>
+            <@lib.addFormField true, "Zadejte aktuální rok", "Vložte aktuální rok. Jedná se o ochranu před spamboty. Po úspěšném ověření "+
+                "se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.">
+                    <@lib.addInputBare "antispam", 4 />
+            </@lib.addFormField>
         </#if>
-        <tr>
-            <td class="required">Titulek</td>
-            <td><input tabindex="4" type="text" name="title" size="40" maxlength="70"></td>
-        </tr>
-        <tr>
-            <td class="required">Dotaz</td>
-            <td>
-                <@lib.showError key="text"/>
-                <@lib.showRTEControls "text"/>
-                <textarea tabindex="5" name="text" id="text" class="siroka" rows="20"></textarea>
-            </td>
-        </tr>
-        <tr>
-            <td>Příloha</td>
-            <td>
-                Vložení přílohy: <input type="file" name="attachment" tabindex="6">
-                <@lib.showHelp>Například výpis logu, konfigurační soubor, snímek obrazovky a podobně.</@lib.showHelp>
-            </td>
-        </tr>
-        <tr>
-            <td>&nbsp;</td>
-            <td><input tabindex="7" type="submit" name="preview" value="Náhled dotazu"></td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="addQuez2">
-    <input type="hidden" name="rid" value="${PARAMS.rid}">
-</form>
+    </#if>
+
+    <@lib.addInput true, "title", "Titulek", 60 />
+    <@lib.addTextArea true, "text", "Váš komentář", 20, "class='siroka'">
+        <@lib.showRTEControls "text"/>
+    </@lib.addTextArea>
+
+    <@lib.addFormField true, "Vložení přílohy", "Například výpis logu, konfigurační soubor, snímek obrazovky a podobně.">
+        <@lib.addFileBare "attachment" />
+    </@lib.addFormField>
+
+    <@lib.addSubmit "Náhled dotazu", "preview" />
+    <@lib.addHidden "action", "addQuez2" />
+    <@lib.addHidden "rid", PARAMS.rid />
+</@lib.addForm>
 
 <#include "/include/napoveda-k-auto-formatovani.txt">
 

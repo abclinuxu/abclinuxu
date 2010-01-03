@@ -38,64 +38,27 @@
     Pro vaši ochranu nejdříve zadejte současné heslo.
 </p>
 
-<form action="${URL.noPrefix("/EditUser")}" method="POST">
-    <table width="100%" border=0 cellpadding=5>
-        <tr>
-            <td class="required" width="60">Heslo</td>
-            <td>
-                <input type="password" name="PASSWORD" size="16" tabindex="1">
-
-                <div class="error">${ERRORS.PASSWORD!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td width="60">Týdenní souhrn</td>
-            <td>
-                <select name="weekly" tabindex="2">
-                    <#assign weekly=PARAMS.weekly!>
-                    <option value="yes" <#if weekly=="yes">SELECTED</#if>>ano</option>
-                    <option value="no" <#if weekly=="no">SELECTED</#if>>ne</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td width="60">Měsíční zpravodaj</td>
-            <td>
-                <select name="monthly" tabindex="3">
-                    <#assign monthly=PARAMS.monthly!"no">
-                    <option value="yes" <#if monthly=="yes">SELECTED</#if>>ano</option>
-                    <option value="no" <#if monthly=="no">SELECTED</#if>>ne</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td width="60">Reklamní email</td>
-            <td>
-                <select name="ad" tabindex="3">
-                    <#assign advertisement=PARAMS.ad!"no">
-                    <option value="yes" <#if advertisement=="yes">SELECTED</#if>>ano</option>
-                    <option value="no" <#if advertisement=="no">SELECTED</#if>>ne</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td width="60">Diskusní fórum</td>
-            <td>
-                <select name="forum" tabindex="4">
-                    <#assign forum=PARAMS.forum!"no">
-                    <option value="yes" <#if forum=="yes">SELECTED</#if>>ano</option>
-                    <option value="no" <#if forum=="no">SELECTED</#if>>ne</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td width="60">&nbsp;</td>
-            <td><input type="submit" value="Dokonči" tabindex="5"></td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="subscribe2">
-    <input type="hidden" name="uid" value="${MANAGED.id}">
-</form>
-
+<@lib.addForm URL.noPrefix("/EditUser")>
+    <@lib.addPassword true, "PASSWORD", "Heslo" />
+    <@lib.addSelect true, "weekly", "Týdenní souhrn">
+        <@lib.addOption "weekly", "ano", "yes" />
+        <@lib.addOption "weekly", "ne", "no" />
+    </@lib.addSelect>
+    <@lib.addSelect true, "monthly", "Měsíční zpravodaj">
+        <@lib.addOption "monthly", "ano", "yes" />
+        <@lib.addOption "monthly", "ne", "no" />
+    </@lib.addSelect>
+    <@lib.addSelect true, "ad", "Reklamní email">
+        <@lib.addOption "ad", "ano", "yes" />
+        <@lib.addOption "ad", "ne", "no" />
+    </@lib.addSelect>
+    <@lib.addSelect true, "forum", "Diskusní fórum">
+        <@lib.addOption "forum", "ano", "yes" />
+        <@lib.addOption "forum", "ne", "no" />
+    </@lib.addSelect>
+    <@lib.addSubmit "Dokonči" />
+    <@lib.addHidden "action", "subscribe2" />
+    <@lib.addHidden "uid", MANAGED.id />
+</@lib.addForm>
 
 <#include "../footer.ftl">

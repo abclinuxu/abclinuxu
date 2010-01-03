@@ -3,8 +3,6 @@
 
 <@lib.showMessages/>
 
-<form action="${URL.make("/editContent")}" method="POST" name="form">
-
 <h1>Úprava dokumentu</h1>
 
 <p>Pokud chcete vylepšit obsah dokumentu nebo opravit chybu, jste na
@@ -19,47 +17,30 @@ změny zpět.</p>
     </fieldset>
 </#if>
 
- <table class="siroka" border="0" cellpadding="5">
-  <tr>
-   <td width="90" class="required">Titulek stránky</td>
-   <td>
-    <input type="text" name="title" value="${PARAMS.title!}" size=60 tabindex=1>
-    <div class="error">${ERRORS.title!}</div>
-   </td>
-  </tr>
-  <tr>
-   <td width="90" class="required">Obsah stránky</td>
-   <td>
-    <p>Všechna URL na články, obrázky a soubory z našeho serveru musí být relativní!</p>
-    <@lib.showRTEControls "content"/>
-    <textarea name="content" id="content" class="siroka" rows="30" tabindex="2">${PARAMS.content!?html}</textarea>
-    <@lib.showError key="content"/>
-   </td>
-  </tr>
-  <tr>
-    <td>
-        Popis změny
-        <a class="info" href="#">?<span class="tooltip">Text bude zobrazen v historii dokumentu</span></a>
-    </td>
-   <td>
-    <input tabindex="3" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr!?html}">
-    <div class="error">${ERRORS.rev_descr!}</div>
-   </td>
-  </tr>
-  <tr>
-   <td width="90">&nbsp;</td>
-   <td>
-     <input tabindex="4" type="submit" name="preview" value="<#if PREVIEW??>Zopakuj náhled<#else>Náhled</#if>">
-     <input tabindex="5" type="submit" name="finish" value="Dokonči">
-   </td>
-  </tr>
- </table>
+<@lib.addForm URL.make("/editContent"), "name='form'">
+    <@lib.addInput true, "title", "Titulek stránky" />
+    <@lib.addTextArea true, "content", "Obsah stránky", 30>
+        <p>Všechna URL na články, obrázky a soubory z našeho serveru musí být relativní!</p>
+        <@lib.showRTEControls "content"/>
+    </@lib.addTextArea>
 
- <input type="hidden" name="action" value="editPublicContent2">
- <input type="hidden" name="rid" value="${PARAMS.rid!}">
-  <#if PARAMS.startTime??><#assign value=PARAMS.startTime><#else><#assign value=START_TIME?c></#if>
-  <input type="hidden" name="startTime" value="${value}">
-</form>
+    <@lib.addFormField false, "Popis změny", "Text bude zobrazen v historii dokumentu">
+        <@lib.addInputBare "rev_descr" />
+    </@lib.addFormField>
+    <@lib.addFormField>
+        <#if PREVIEW??>
+            <@lib.addSubmitBare "Zopakuj náhled", "preview" />
+        <#else>
+            <@lib.addSubmitBare "Náhled", "preview" />
+        </#if>
+        <@lib.addSubmitBare "Dokonči", "finish" />
+    </@lib.addFormField>
+
+    <@lib.addHidden "action", "editPublicContent2" />
+    <@lib.addHidden "rid", PARAMS.rid!"" />
+    <#if PARAMS.startTime??><#assign value=PARAMS.startTime><#else><#assign value=START_TIME?c></#if>
+    <@lib.addHidden "startTime", value />
+</@lib.addForm>
 
 <#include "/include/napoveda-k-html-formatovani.txt">
 

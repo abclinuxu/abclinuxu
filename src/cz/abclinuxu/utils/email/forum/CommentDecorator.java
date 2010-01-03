@@ -32,8 +32,8 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.servlets.Constants;
-import cz.finesoft.socd.analyzer.DiacriticRemover;
 
+import cz.abclinuxu.utils.Misc;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.prefs.Preferences;
@@ -102,7 +102,7 @@ public class CommentDecorator implements Configurable {
             if (authorName == null)
                 authorName = user.getName();
         }
-        authorName = DiacriticRemover.getInstance().removeDiacritics(authorName);
+        authorName = Misc.removeDiacritics(authorName);
 
         env.put(VAR_CONTENT, text);
         env.put(VAR_RELATION_ID, Integer.toString(comment.relationId));

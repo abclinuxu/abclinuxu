@@ -72,9 +72,9 @@ public final class NewsCategories implements Configurable {
     /**
      * @return All existing categories.
      */
-    public static final Collection getAllCategories() {
-        Collection collection = singleton.map.values();
-        List list = new ArrayList(collection);
+    public static final Collection<NewsCategory> getAllCategories() {
+        Collection<NewsCategory> collection = singleton.map.values();
+        List<NewsCategory> list = new ArrayList<NewsCategory>(collection);
         return list;
     }
 
@@ -82,9 +82,9 @@ public final class NewsCategories implements Configurable {
      * Gets list of keys of all available categories.
      * @return list of keys
      */
-    public static final List listKeys() {
-        Set set = singleton.map.keySet();
-        return new ArrayList(set);
+    public static final List<String> listKeys() {
+        Set<String> set = singleton.map.keySet();
+        return new ArrayList<String>(set);
     }
     
     /**

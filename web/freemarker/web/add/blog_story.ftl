@@ -1,4 +1,5 @@
 <@lib.addRTE textAreaId="content" formId="form" menu="blog" />
+
 <#assign html_header>
     <link rel="stylesheet" type="text/css" media="all" href="/data/site/calendar/calendar-system.css" />
     <script type="text/javascript" src="/data/site/calendar/calendar.js"></script>
@@ -50,72 +51,50 @@ v pravém sloupci v části nadepsané <b>Správa zápisku</b>.</p>
 
 <h2>Zde můžete provést své úpravy</h2>
 
-<form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST" name="form" enctype="multipart/form-data">
-<table class="siroka" cellpadding="5">
-    <tr>
-        <td>
-            <span class="required">Titulek zápisu</span>
-            <input tabindex="1" type="text" name="title" size="60" value="${PARAMS.title!?html}">&nbsp;
-            <@lib.showHelp>Zde nastavíte titulek vašeho zápisu. Je důležitý pro RSS.</@lib.showHelp>
-            <@lib.showError key="title" />
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <#if (CATEGORIES?size>0)>
-                Kategorie zápisu:
-                <select name="cid">
-                    <#list CATEGORIES as category>
-                        <option value="${category.id}"<#if category.id==PARAMS.cid!"UNDEF"> selected</#if>>${category.name}</option>
-                    </#list>
-                </select>&nbsp;
-                <@lib.showHelp>Zde nastavíte kategorii vašeho zápisu. Můžete tak členit zápisy do různých kategorií.</@lib.showHelp>
-            </#if>
-            <label>
-                Aktivovat sledování diskuse
-                <input type="checkbox" name="watchDiz" value="yes"<#if PARAMS.watchDiz??> checked</#if>>
-            </label>
-	        <@lib.showHelp>Zde můžete aktivovat sledování diskuse k tomuto zápisu. Komentáře čtenářů vám budou chodit emailem.</@lib.showHelp>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Datum zveřejnění
-            <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish!}">
-            <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
-            Formát 2005-01-25 07:12
-            <@lib.showError key="publish" />
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <span class="required">Obsah zápisu</span>
-            <div>
-                Ze souboru
-                <input type="file" name="contentFile" size="20" tabindex="3">
-                <input tabindex="4" type="submit" name="upload" value="Načti">
-            </div>
-            <@lib.showError key="contentFile" />
-            <@lib.showRTEControls "content"/>
-            <@lib.showError key="content" />
-            <textarea tabindex="2" name="content" id="content" class="siroka" rows="30">${PARAMS.content!"<p></p>"?html}</textarea>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <#if PREVIEW??>
-                <input tabindex="5" type="submit" name="preview" value="Zopakuj náhled">
-                <input tabindex="6" type="submit" name="finish" value="Publikuj">
-                <input tabindex="7" type="submit" name="delay" value="Do konceptů">
-            <#else>
-                <input tabindex="5" type="submit" name="preview" value="Náhled">
-                <input tabindex="6" type="submit" name="delay" value="Do konceptů">
-            </#if>
-        </td>
-    </tr>
-</table>
-<input type="hidden" name="action" value="add2">
-</form>
+<@lib.addForm URL.make("/blog/edit/"+REL_BLOG.id), "name='form'", true>
+    <@lib.addFormField true, "Titulek zápisu", "Zde nastavíte titulek vašeho zápisu. Je důležitý pro RSS.">
+        <@lib.addInputBare "title", 60 />
+    </@lib.addFormField>
+
+    <#if (CATEGORIES?size>0)>
+        <@lib.addFormField false, "Kategorie zápisu", "Zde nastavíte kategorii vašeho zápisu. Můžete tak členit zápisy do různých kategorií.">
+            <@lib.addSelectBare "cid">
+                <@lib.addOption "cid", category.name, category.id />
+            </@lib.addSelectBare>
+        </@lib.addFormField>
+    </#if>
+
+    <@lib.addFormField false, "Aktivovat sledování diskuse", "Zde můžete aktivovat sledování diskuse k tomuto zápisu. Komentáře čtenářů vám budou chodit emailem.">
+        <@lib.addCheckboxBare "watchDiz" />
+    </@lib.addFormField>
+    <@lib.addInput false, "publish", "Datum zveřejnění", 16>
+        <input type="button" id="datetime_btn" value="...">
+        <script type="text/javascript">
+            Calendar.setup({inputField:"publish",ifFormat:"%Y-%m-%d %H:%M",showsTime:true,button:"datetime_btn",singleClick:false,step:1,firstDay:1});
+        </script>
+        Formát 2005-01-25 07:12
+    </@lib.addInput>
+
+    <@lib.addFormField true, "Obsah zápisku">
+        Ze souboru <@lib.addFileBare "contentFile" /><@lib.addSubmitBare "Načti", "upload" />
+
+        <@lib.addTextAreaBare "content", 30, "class='siroka'">
+                <@lib.showRTEControls "content"/>
+        </@lib.addTextAreaBare>
+    </@lib.addFormField>
+
+    <@lib.addFormField>
+        <#if PREVIEW??>
+            <@lib.addSubmitBare "Zopakuj náhled", "preview" />
+            <@lib.addSubmitBare "Publikuj", "finish" />
+            <@lib.addSubmitBare "Do konceptů, "delay" />
+        <#else>
+            <@lib.addSubmitBare "Náhled", "preview" />
+            <@lib.addSubmitBare "Do konceptů", "delay" />
+        </#if>
+    </@lib.addFormField>
+    <@lib.addHidden "action", "add2" />
+</@lib.addForm>
 
 <#include "/include/napoveda-k-auto-formatovani.txt">
 <p>

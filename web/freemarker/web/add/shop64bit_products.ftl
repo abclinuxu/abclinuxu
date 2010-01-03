@@ -10,22 +10,9 @@
     zvoleného produktu. Každou adresu dávejte na samostatný řádek.
 </p>
 
+<@lib.addForm URL.noPrefix("/EditAdvertisement")>
+    <@lib.addTextArea true, "urls", "Adresy", 30, "class='siroka'" />
+    <@lib.addSubmit "Dokonči", "finish" />
+    <@lib.addHidden "action", "set64Bit2" />
+</@lib.addForm>
 
-<form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
-    <table class="siroka" border="0" cellpadding="5">
-        <tr>
-            <td width="90">Adresy</td>
-            <td>
-                <@lib.showError key="urls"/>
-                <textarea name="urls" rows="30" class="siroka" tabindex="1">${PARAMS.urls!?html}</textarea>
-            </td>
-        </tr>
-        <tr>
-            <td width="90">&nbsp;</td>
-            <td>
-                <input tabindex="2" type="submit" name="finish" value="Dokonči">
-            </td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="set64Bit2">
-</form>

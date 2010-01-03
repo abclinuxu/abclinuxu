@@ -40,30 +40,16 @@ do kterých budete zařazovat své příspěvky. Například
 
 <br />
 
-<form action="${URL.noPrefix("/blog/edit/"+USER.id)}" method="POST">
- <table border="0">
-    <tr>
-        <td class="required">Jméno blogu</td>
-        <td>
-            <input type="text" name="blogName" value="${PARAMS.blogName!}" size="32" tabindex="1" class="pole">
-            <div class="error">${ERRORS.blogName!}</div>
-        </td>
-    </tr>
-    <tr>
-        <td>Kategorie</td>
-        <td>
-            <input type="text" name="category1" value="${PARAMS.category1!}" size="32" tabindex="2" class="pole"><br>
-            <input type="text" name="category2" value="${PARAMS.category2!}" size="32" tabindex="3" class="pole"><br>
-            <input type="text" name="category3" value="${PARAMS.category3!}" size="32" tabindex="4" class="pole"><br>
-        </td>
-    </tr>
-    <tr>
-        <td>&nbsp;</td>
-        <td><input type="submit" value="Dokonči" tabindex="5" class="buton"></td>
-    </tr>
- </table>
- <input type="hidden" name="action" value="addBlog2">
-</form>
+<@lib.addForm URL.noPrefix("/blog/edit/"+USER.id)>
+    <@lib.addInput true, "blogName", "Jméno blogu", 32 />
+    <@lib.addFormField false, "Kategorie">
+        <@lib.addInputBare "category1", 32 />
+        <@lib.addInputBare "category2", 32 />
+        <@lib.addInputBare "category3", 32 />
+    </@lib.addFormField>
+    <@lib.addSubmit "Dokonči" />
+    <@lib.addHidden "action", "addBlog2" />
+</@lib.addForm>
 
 
 <#include "../footer.ftl">

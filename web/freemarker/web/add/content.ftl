@@ -3,8 +3,6 @@
 
 <@lib.showMessages/>
 
-<form action="${URL.make("/editContent")}" method="POST" name="form">
-
 <h1>Vkládání dokumentu</h1>
 
 <p>Tento formulář slouží pro vkládání obsahu. Obvykle jde jen

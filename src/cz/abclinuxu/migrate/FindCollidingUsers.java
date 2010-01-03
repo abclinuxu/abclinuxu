@@ -6,12 +6,11 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.impl.MySqlPersistence;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.exceptions.PersistenceException;
-import cz.finesoft.socd.analyzer.DiacriticRemover;
 
+import cz.abclinuxu.utils.Misc;
 import java.util.*;
 import java.text.ParseException;
 import java.sql.Connection;
@@ -28,7 +27,6 @@ import org.dom4j.Element;
  * Date: 18.2.2007
  */
 public class FindCollidingUsers {
-    static DiacriticRemover diacriticTool = DiacriticRemover.getInstance();
     static RE reLoginInvalid = new RE("[^a-zA-Z0-9_.\\-]");
     static SQLTool sqlTool = SQLTool.getInstance();
     static Persistence persistence = PersistenceFactory.getPersistence();
@@ -59,7 +57,7 @@ public class FindCollidingUsers {
             }
 
             String login = user.getLogin().toLowerCase();
-            login = diacriticTool.removeDiacritics(login);
+            login = Misc.removeDiacritics(login);
             List<UserInfo> list = logins.get(login);
             if (list == null) {
                 list = new ArrayList<UserInfo>(3);
@@ -70,7 +68,7 @@ public class FindCollidingUsers {
             String nick = user.getNick();
             if (nick != null) {
                 nick = nick.toLowerCase();
-                nick = diacriticTool.removeDiacritics(nick);
+                nick = Misc.removeDiacritics(nick);
                 list = nicknames.get(nick);
                 if (list == null) {
                     list = new ArrayList<UserInfo>(3);
@@ -185,7 +183,7 @@ public class FindCollidingUsers {
         for (UserInfo user : logins) {
             String newLogin = null;
             if (user.isIllegalLogin()) {
-                newLogin = diacriticTool.removeDiacritics(user.getLogin());
+                newLogin = Misc.removeDiacritics(user.getLogin());
                 newLogin = reLoginInvalid.subst(newLogin, "");
                 if (newLogin.length() == 2)
                     newLogin += i++;

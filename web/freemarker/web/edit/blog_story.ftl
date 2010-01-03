@@ -50,62 +50,43 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
 
 <h2>Zde můžete provést své úpravy</h2>
 
-<form action="${URL.make("/blog/edit/"+STORY.id)}" method="POST" name="form">
-<table class="siroka" cellpadding="5">
-    <tr>
-        <td>
-            <span class="required">Titulek zápisu</span>
-            <@lib.showHelp>Zde nastavíte titulek vašeho zápisu. Je důležitý pro RSS.</@lib.showHelp>
-            <input type="text" name="title" size="60" value="${PARAMS.title!?html}">
-            <@lib.showError key="title" />
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <#if (CATEGORIES?size>0)>
-                Kategorie zápisu:
-                <select name="cid">
-                    <#list CATEGORIES as category>
-                        <option value="${category.id}"<#if category.id==PARAMS.cid!"UNDEF"> selected</#if>>${category.name}</option>
-                    </#list>
-                </select>&nbsp;
-                <@lib.showHelp>Zde nastavíte kategorii vašeho zápisu. Můžete tak členit zápisy do různých kategorií.</@lib.showHelp>
-            </#if>
-        </td>
-    </tr>
-    <#if STORY.child.type==15 || PARAMS.publish??>
-        <tr>
-            <td>
-                Datum zveřejnění:
-                <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish!}">
-                <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
-                Formát 2005-01-25 07:12
-                <@lib.showError key="publish" />
-            </td>
-        </tr>
+<@lib.addForm URL.make("/blog/edit/"+STORY.id), "name='form'">
+    <@lib.addFormField true, "Titulek zápisu", "Zde nastavíte titulek vašeho zápisu. Je důležitý pro RSS.">
+        <@lib.addInputBare "title", 60 />
+    </@lib.addFormField>
+
+    <#if (CATEGORIES?size>0)>
+    <@lib.addFormField true, "Kategorie zápisku", "Zde nastavíte kategorii vašeho zápisu. Můžete tak členit zápisy do různých kategorií.">
+        <@lib.addSelectBare "cid">
+            <#list CATEGORIES as category>
+                <@lib.addOption "cid", category.name, category.id />
+            </#list>
+        </@lib.addSelect>
     </#if>
-    <tr>
-        <td>
-            <p class="required">Obsah zápisu</p>
-            <@lib.showRTEControls "content"/>
-            <@lib.showError key="content" />
-            <textarea tabindex="2" name="content" id="content" class="siroka" rows="30">${PARAMS.content!?html}</textarea>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <input type="submit" name="preview" value="Náhled">
-            <#if DELAYED>
-                <input tabindex="3" type="submit" name="delay" value="Ulož">
-                <input tabindex="4" type="submit" name="finish" value="Publikuj">
-            <#else>
-                <input tabindex="3" type="submit" name="finish" value="Dokonči">
-            </#if>
-        </td>
-    </tr>
-</table>
-<input type="hidden" name="action" value="edit2">
-</form>
+
+    <#if STORY.child.type==15 || PARAMS.publish??>
+        <@lib.addInput "publish", "Datum zveřejnění", 16>
+            <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
+            Formát 2005-01-25 07:12
+        </@lib.addInput>
+    </#if>
+
+    <@lib.addTextArea true, "content", "Obsah zápisu", 30, "class='siroka'">
+        <@lib.showRTEControls "content"/>
+    </@lib.addTextArea>
+
+    <@lib.addFormField>
+        <@lib.addSubmitBare "Náhled", "preview" />
+        <#if DELAYED>
+            <@lib.addSubmitBare "Ulož", "delay" />
+            <@lib.addSubmitBare "Publikuj", "finish" />
+        <#else>
+            <@lib.addSubmitBare "Dokonči", "finish" />
+        </#if>
+    </@lib.addFormField>
+
+    <@lib.addHidden "action", "edit2" />
+</@lib.addForm>
 
 <#include "/include/napoveda-k-auto-formatovani.txt">
 <p>

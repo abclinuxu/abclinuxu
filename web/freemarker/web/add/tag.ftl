@@ -15,35 +15,16 @@
     </#if>
 </p>
 
-<form action="${URL.make("/stitky/edit")}" method="POST" name="form">
-    <table cellpadding="5" class="siroka">
-        <tr>
-            <td class="required">Titulek</td>
-            <td>
-                <input tabindex="1" type="text" name="title" size="30" value="${PARAMS.title!?html}">
-                <@lib.showError key="title" />
-            </td>
-        </tr>
-        <#if USER?? && USER.hasRole("tag admin")>
-            <tr>
-                <td>
-                    Nadřazený štítek
-                    <@lib.showHelp>Id štítku, například programovani z URL /stitky/programovani</@lib.showHelp>
-                </td>
-                <td>
-                    <input type="text" name="parent" value="${PARAMS.parent!}" tabindex="2">
-                    <@lib.showError key="parent" />
-                </td>
-            </tr>
-        </#if>
-        <tr>
-            <td></td>
-            <td>
-                <input tabindex="3" type="submit" name="submit" value="Dokonči">
-            </td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="add2">
-</form>
+<@lib.addForm URL.make("/stitky/edit")>
+    <@lib.addInput true, "title", "Titulek" />
+    <#if USER?? && USER.hasRole("tag admin")>
+        <@lib.addFormField false, "Nadřazený štítek", "ID štítku, například programovani z URL /stitky/programovani">
+            <@lib.addInputBare "parent" />
+        </@lib.addFormField>
+    </#if>
+
+    <@lib.addSubmit "Dokonči", "submit" />
+    <@lib.addHidden "action", "add2" />
+</@lib.addForm>
 
 <#include "../footer.ftl">

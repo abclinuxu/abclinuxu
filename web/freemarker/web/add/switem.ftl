@@ -35,165 +35,112 @@
     <a href="#formatovani">najdete</a> pod formulářem.
 </p>
 
-<form action="${URL.make("/edit")}" method="POST" name="softForm">
-    <table class="siroka" border="0" cellpadding="5">
-        <tr>
-            <td class="required">Jméno</td>
-            <td>
-                <input type="text" name="name" value="${PARAMS.name!}" size="40" tabindex="1">
-                <div class="error">${ERRORS.name!}</div>
-            </td>
-        </tr>
+<@lib.addForm URL.make("/edit"), "name='softForm'">
+    <@lib.addInput true, "name", "Jméno", 0 />
+    <@lib.addTextArea true, "description", "Popis", 20>
+        <@lib.showRTEControls "description"/>
+    </@lib.addTextArea>
 
-        <tr>
-            <td class="required">Popis</td>
-            <td>
-                <@lib.showError key="description"/>
-                <@lib.showRTEControls "description"/>
-                <textarea name="description" rows="20" tabindex="2" class="siroka">${PARAMS.description!?html}</textarea>
-            </td>
-        </tr>
+    <@lib.addInput false, "homeUrl", "Adresa domovské stránky", 60 />
+    <@lib.addInput false, "downloadUrl", "Adresa stránky pro stažení", 60 />
+    <@lib.addInput false, "rssUrl", "Adresa RSS s novinkami", 60 />
 
-        <tr>
-            <td>Adresa domovské stránky</td>
-            <td>
-                <input type="text" name="homeUrl" value="${PARAMS.homeUrl!}" size="60" tabindex="3">
-                <div class="error">${ERRORS.homeUrl!}</div>
-            </td>
-        </tr>
+    <@lib.addFormField false, "Je alternativou pro<br/> tyto programy z Windows">
+        <#if PARAMS.alternative??>
+            <#list TOOL.asList(PARAMS.alternative) as alternative>
+                    <input type="text" name="alternative" value="${alternative}" size="40" tabindex="6"><br/>
+            </#list>
+        </#if>
+        <input type="text" name="alternative" value="" size="40" tabindex="6"><br/>
+        <input type="text" name="alternative" value="" size="40" tabindex="6"><br/>
+        <input type="text" name="alternative" value="" size="40" tabindex="6">
+    </@lib.addFormField>
 
-        <tr>
-            <td>Adresa stránky pro stažení</td>
-            <td>
-                <input type="text" name="downloadUrl" value="${PARAMS.downloadUrl!}" size="60" tabindex="4">
-                <div class="error">${ERRORS.downloadUrl!}</div>
-            </td>
-        </tr>
-
-        <tr>
-            <td>Adresa RSS s novinkami</td>
-            <td>
-                <input type="text" name="rssUrl" value="${PARAMS.rssUrl!}" size="60" tabindex="5">
-                <div class="error">${ERRORS.rssUrl!}</div>
-            </td>
-        </tr>
-
-        <tr>
-            <td>
-                Je alternativou pro<br> tyto programy z Windows
-            </td>
-            <td>
-                <#if PARAMS.alternative??>
-                    <#list TOOL.asList(PARAMS.alternative) as alternative>
-                            <input type="text" name="alternative" value="${alternative}" size="40" tabindex="6"><br/>
-                    </#list>
-                </#if>
-                <input type="text" name="alternative" value="" size="40" tabindex="6"><br/>
-                <input type="text" name="alternative" value="" size="40" tabindex="6"><br/>
-                <input type="text" name="alternative" value="" size="40" tabindex="6">
-                <div class="error">${ERRORS.alternative!}</div>
-            </td>
-        </tr>
-
-    	<tr>
-            <td class="required">Uživatelské prostředí</td>
-            <td>
-                <div class="sw-strom" id="strom">
+    <@lib.addFormField true, "Uživatelské prostředí">
+        <div class="sw-strom" id="strom">
+            <div>
+                <@lib.showOption "ui", "xwindows", UI_PROPERTY["xwindows"], "checkbox" />
+                <div>
+                    <@lib.showOption "ui", "qt", UI_PROPERTY["qt"], "checkbox", " onclick=\"startCheckParent(event);\"" />
                     <div>
-                        <@lib.showOption "ui", "xwindows", UI_PROPERTY["xwindows"], "checkbox" />
-                        <div>
-                            <@lib.showOption "ui", "qt", UI_PROPERTY["qt"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-                            <div>
-                                <@lib.showOption "ui", "kde", UI_PROPERTY["kde"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-                            </div>
-                        </div>
-                        <div>
-                            <@lib.showOption "ui", "gtk", UI_PROPERTY["gtk"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-                            <div>
-                                <@lib.showOption "ui", "gnome", UI_PROPERTY["gnome"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-                            </div>
-                        </div>
-                        <div>
-                            <@lib.showOption "ui", "motif", UI_PROPERTY["motif"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-                        </div>
-                        <div>
-                            <@lib.showOption "ui", "java", UI_PROPERTY["java"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-                        </div>
-                        <div>
-                            <@lib.showOption "ui", "tk", UI_PROPERTY["tk"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-                        </div>
-                    </div>
-                    <div>
-                        <@lib.showOption "ui", "console", UI_PROPERTY["console"], "checkbox" />
-                        <div>
-                            <@lib.showOption "ui", "cli", UI_PROPERTY["cli"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-                        </div>
-                        <div>
-                            <@lib.showOption "ui", "tui", UI_PROPERTY["tui"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-                        </div>
-                        <div>
-                            <@lib.showOption "ui", "grconsole", UI_PROPERTY["grconsole"], "checkbox", "onclick=\"startCheckParent(event);\"" />
-                        </div>
-                    </div>
-                    <div>
-                        <@lib.showOption "ui", "web", UI_PROPERTY["web"], "checkbox" />
+                        <@lib.showOption "ui", "kde", UI_PROPERTY["kde"], "checkbox", " onclick=\"startCheckParent(event);\"" />
                     </div>
                 </div>
-            </td>
-        </tr>
+                <div>
+                    <@lib.showOption "ui", "gtk", UI_PROPERTY["gtk"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                    <div>
+                        <@lib.showOption "ui", "gnome", UI_PROPERTY["gnome"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                    </div>
+                </div>
+                <div>
+                    <@lib.showOption "ui", "motif", UI_PROPERTY["motif"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                </div>
+                <div>
+                    <@lib.showOption "ui", "java", UI_PROPERTY["java"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                </div>
+                <div>
+                    <@lib.showOption "ui", "tk", UI_PROPERTY["tk"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                </div>
+            </div>
+            <div>
+                <@lib.showOption "ui", "console", UI_PROPERTY["console"], "checkbox" />
+                <div>
+                    <@lib.showOption "ui", "cli", UI_PROPERTY["cli"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                </div>
+                <div>
+                    <@lib.showOption "ui", "tui", UI_PROPERTY["tui"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                </div>
+                <div>
+                    <@lib.showOption "ui", "grconsole", UI_PROPERTY["grconsole"], "checkbox", "onclick=\"startCheckParent(event);\"" />
+                </div>
+            </div>
+            <div>
+                <@lib.showOption "ui", "web", UI_PROPERTY["web"], "checkbox" />
+            </div>
+        </div>
+    </@lib.addFormField>
 
-        <tr>
-            <td>Licence</td>
-            <td>
-                <@lib.showOption "license", "gpl", LICENSE_PROPERTY["gpl"], "checkbox" />
-                <@lib.showOption "license", "lgpl", LICENSE_PROPERTY["lgpl"], "checkbox" />
-                <@lib.showOption "license", "bsd", LICENSE_PROPERTY["bsd"], "checkbox" />
-                <@lib.showOption "license", "mpl", LICENSE_PROPERTY["mpl"], "checkbox" />
-                <@lib.showOption "license", "apl", LICENSE_PROPERTY["apl"], "checkbox" />
-                <@lib.showOption "license", "oss", LICENSE_PROPERTY["oss"], "checkbox" />
-                <br>
-                <@lib.showOption "license", "freeware", LICENSE_PROPERTY["freeware"], "checkbox" />
-                <@lib.showOption "license", "commercial", LICENSE_PROPERTY["commercial"], "checkbox" />
-                <@lib.showOption "license", "other", LICENSE_PROPERTY["other"], "checkbox" />
-            </td>
-        </tr>
+    <@lib.addFormField false, "Licence">
+        <@lib.showOption "license", "gpl", LICENSE_PROPERTY["gpl"], "checkbox" />
+        <@lib.showOption "license", "lgpl", LICENSE_PROPERTY["lgpl"], "checkbox" />
+        <@lib.showOption "license", "bsd", LICENSE_PROPERTY["bsd"], "checkbox" />
+        <@lib.showOption "license", "mpl", LICENSE_PROPERTY["mpl"], "checkbox" />
+        <@lib.showOption "license", "apl", LICENSE_PROPERTY["apl"], "checkbox" />
+        <@lib.showOption "license", "oss", LICENSE_PROPERTY["oss"], "checkbox" />
+        <br/>
+        <@lib.showOption "license", "freeware", LICENSE_PROPERTY["freeware"], "checkbox" />
+        <@lib.showOption "license", "commercial", LICENSE_PROPERTY["commercial"], "checkbox" />
+        <@lib.showOption "license", "other", LICENSE_PROPERTY["other"], "checkbox" />
+    </@lib.addFormField>
 
-        <#if PARAMS.action=="edit" || PARAMS.action="edit2" >
-            <tr>
-                <td>
-                    Popis změny
-                    <a class="info" href="#">?<span class="tooltip">Text bude zobrazen v historii dokumentu</span></a>
-                </td>
-                <td>
-                    <input tabindex="7" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr!?html}">
-                    <div class="error">${ERRORS.rev_descr!}</div>
-                </td>
-            </tr>
-        </#if>
-
-        <tr>
-            <td width="120">&nbsp;</td>
-            <td>
-                <#if PREVIEW??>
-                    <input type="submit" name="preview" value="Zopakuj náhled">
-                    <input type="submit" name="finish" value="Dokonči">
-                <#else>
-                    <input type="submit" name="preview" value="Náhled">
-                    <#if EDIT_MODE!false>
-                        <input type="submit" name="finish" value="Dokonči">
-                    </#if>
-                </#if>
-            </td>
-        </tr>
-    </table>
-
-    <input type="hidden" name="rid" value="${RELATION.id}">
-    <#if EDIT_MODE!false>
-        <input type="hidden" name="action" value="edit2">
-    <#else>
-        <input type="hidden" name="action" value="add2">
+    <#if PARAMS.action=="edit" || PARAMS.action="edit2" >
+        <@lib.addFormField false, "Popis změny", "Text bude zobrazen v historii dokumentu">
+            <@lib.addInputBare "rev_descr" />
+        </@lib.addFormField>
     </#if>
-</form>
+
+    <@lib.addFormField>
+        <#if PREVIEW??>
+            <@lib.addSubmitBare "Zopakuj náhled", "preview" />
+            <@lib.addSubmitBare "Dokonči", "finish" />
+        <#else>
+            <@lib.addSubmitBare "Náhled", "preview" />
+            <#if EDIT_MODE!false>
+                <@lib.addSubmitBare "Dokonči", "finish" />
+            </#if>
+        </#if>
+    </@lib.addFormField>
+
+    <#if RELATION??>
+        <@lib.addHidden "rid", RELATION.id />
+    </#if>
+
+    <#if EDIT_MODE!false>
+        <@lib.addHidden "action", "edit2" />
+    <#else>
+        <@lib.addHidden "action", "add2" />
+    </#if>
+</@lib.addForm>
 
 <#include "/include/napoveda-k-auto-formatovani.txt">
 

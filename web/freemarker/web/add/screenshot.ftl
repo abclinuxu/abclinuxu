@@ -11,14 +11,10 @@
     jeho miniatura.
 </p>
 
-<form action="${URL.make("/inset/"+RELATION.id)}" method="POST" enctype="multipart/form-data">
-    <p>
-        <span class="required">Jméno souboru</span><br/>
-        <input type="file" name="screenshot" size="40" tabindex="1">
-        <div class="error">${ERRORS.screenshot!}</div>
-        <input tabindex="2" type="submit" name="finish" value="Nahrát" class="button">
-        <input type="hidden" name="action" value="addScreenshot2">
-    </p>
-</form>
+<@lib.addForm URL.make("/inset/"+RELATION.id), "", true>
+    <@lib.addFile true, "screenshot", "Jméno souboru" />
+    <@lib.addSubmit "Nahrát", "finish" />
+    <@lib.addHidden "action", "addScreenshot2" />
+</@lib.addForm>
 
 <#include "../footer.ftl">

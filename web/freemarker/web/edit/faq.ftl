@@ -21,43 +21,23 @@ vrátit zpět.</p>
 </#if>
 <br />
 
-<form action="${URL.make("/faq/edit")}" method="POST" name="form">
-    <table class="siroka" cellpadding="5">
-        <tr>
-            <td class="required">Otázka</td>
-            <td>
-                <input tabindex="1" type="text" name="title" size="80" value="${PARAMS.title!?html}">
-                <div class="error">${ERRORS.title!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td class="required">Odpověď</td>
-            <td>
-                <@lib.showError key="text"/>
-                <@lib.showRTEControls "text"/>
-                <textarea tabindex="2" name="text" id="text" class="siroka" rows="20">${PARAMS.text!?html}</textarea><br>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Popis změny
-                <a class="info" href="#">?<span class="tooltip">Text bude zobrazen v historii dokumentu</span></a>
-            </td>
-            <td>
-                <input tabindex="3" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr!?html}">
-                <div class="error">${ERRORS.rev_descr!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" align="center">
-                <input tabindex="4" type="submit" name="preview" value="Náhled">
-                <input tabindex="5" type="submit" name="submit" value="Dokonči">
-            </td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="edit2">
-    <input type="hidden" name="rid" value="${RELATION.id}">
-</form>
+<@lib.addForm URL.make("/faq/edit"), "name='form'">
+    <@lib.addInput true, "title", "Otázka", 80 />
+    <@lib.addTextArea true, "text", "Odpověď", 20>
+        <@lib.showRTEControls "text"/>
+    </@lib.addTextArea>
+    <@lib.addFormField false, "Popis změny", "Text bude zobrazen v historii dokumentu">
+        <@lib.addInputBare "rev_descr" />
+    </@lib.addFormField>
+
+    <@lib.addFormField>
+        <@lib.addSubmitBare "Náhled", "preview" />
+        <@lib.addSubmitBare "Dokonči", "finish" />
+    </@lib.addFormField>
+
+    <@lib.addHidden "action", "edit2" />
+    <@lib.addHidden "rid", RELATION.id />
+</@lib.addForm>
 
 <#include "/include/napoveda-k-auto-formatovani.txt">
 

@@ -14,52 +14,24 @@
     nejsou cizí komentáře.
 </p>
 
-<form action="${URL.make("/desktopy/edit")}" method="POST" enctype="multipart/form-data" name="form">
-    <table cellpadding="0" border="0" class="siroka">
-        <tr>
-            <td class="required">Titulek</td>
-            <td>
-                <input type="text" name="name" value="${PARAMS.name!}" size="40" tabindex="1">
-                <@lib.showError key="name"/>
-            </td>
-        </tr>
-        <tr>
-            <td class="required">
-                Obrázek
-                <@lib.showHelp>Maximální velikost obrázku je omezena na 1&nbsp;megabajt, minimální rozměry jsou 640x480.
-                Nejvhodnější formát je obvykle PNG, můžete použít i JPG či GIF.</@lib.showHelp>
-            </td>
-            <td>
-                <input type="file" name="screenshot" size="40" tabindex="2">
-                <@lib.showError key="screenshot"/>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                URL tématu
-                <@lib.showHelp>Adresa tématu nebo pozadí použitého v desktopu.</@lib.showHelp>
+<@lib.addForm URL.make("/desktopy/edit"), "name='form'", true>
+    <@lib.addInput true, "name", "Titulek", 40 />
+    <@lib.addFormField true, "Obrázek", "Maximální velikost obrázku je omezena na 1&nbsp;megabajt, minimální rozměry jsou 640x480."+
+                " Nejvhodnější formát je obvykle PNG, můžete použít i JPG či GIF.">
 
-            </td>
-            <td>
-                <input type="text" name="theme" value="${PARAMS.theme!}" size="40" tabindex="3">
-                <@lib.showError key="theme"/>
-            </td>
-        </tr>
-        <tr>
-            <td>Popis</td>
-            <td>
-                <@lib.showError key="desc"/>
-                <@lib.showRTEControls "desc"/>
-                <textarea name="desc" class="siroka" rows="20" tabindex="4">${PARAMS.desc!?html}</textarea>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <input type="submit" name="submit" value="Dokonči" tabindex="5" class="button">
-            </td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="add2">
-</form>
+        <@lib.addFileBare "screenshot" />
+    </@lib.addFormField>
+
+    <@lib.addFormField false, "URL tématu", "Adresa tématu nebo pozadí použitého v desktopu.">
+        <@lib.addInputBare "theme", 40 />
+    </@lib.addFormField>
+
+    <@lib.addTextArea false, "desc", "Popis", 20>
+        <@lib.showRTEControls "desc"/>
+    </@lib.addTextArea>
+
+    <@lib.addSubmit "Dokonči" />
+    <@lib.addHidden "action", "add2" />
+</@lib.addForm>
 
 <#include "../footer.ftl">

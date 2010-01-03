@@ -34,94 +34,46 @@
     <a href="#formatovani">najdete</a> pod formulářem.
 </p>
 
-<form action="${URL.make("/edit")}" method="POST" name="persForm">
-    <table cellpadding="0" border="0" width="100%">
-        <tr>
-            <td class="required">Jméno</td>
-            <td>
-                <input tabindex="1" type="text" name="firstname" value="${PARAMS.firstname!}" size="30" maxlength="30">
-                <div class="error">${ERRORS.firstname!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td class="required">Příjmení</td>
-            <td>
-                <input tabindex="2" type="text" name="surname" value="${PARAMS.surname!}" size="30" maxlength="30">
-                <div class="error">${ERRORS.surname!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td class="required">Popis</td>
-            <td>
-                <@lib.showError key="desc"/>
-                <@lib.showRTEControls "desc"/>
-                <textarea tabindex="3" name="desc" class="siroka" rows="20" tabindex="2">${PARAMS.desc!?html}</textarea>
-            </td>
-        </tr>
-        <tr>
-            <td>Datum narození</td>
-            <td>
-                <input tabindex="4" type="text" name="birthDate" value="${PARAMS.birthDate!}" size="30" maxlength="30">
-                <div class="error">${ERRORS.birthDate!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td>Datum úmrtí</td>
-            <td>
-                <input tabindex="5" type="text" name="deathDate" value="${PARAMS.deathDate!}" size="30" maxlength="30">
-                <div class="error">${ERRORS.deathDate!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td>Webová stránka</td>
-            <td>
-                <input tabindex="6" type="text" name="webUrl" value="${PARAMS.webUrl!}" size="40">
-                <div class="error">${ERRORS.webUrl!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td>Adresa RSS</td>
-            <td>
-                <input tabindex="7" type="text" name="rssUrl" value="${PARAMS.rssUrl!}" size="40">
-                <div class="error">${ERRORS.rssUrl!}</div>
-            </td>
-        </tr>
-        <#if PARAMS.action=="edit" || PARAMS.action="edit2" >
-            <tr>
-                <td>
-                    Popis změny
-                    <a class="info" href="#">?<span class="tooltip">Text bude zobrazen v historii dokumentu</span></a>
-                </td>
-                <td>
-                    <input tabindex="8" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr!?html}">
-                    <div class="error">${ERRORS.rev_descr!}</div>
-                </td>
-            </tr>
+<@lib.addForm URL.make("/edit"), "name='persForm'">
+    <@lib.addInput true, "firstname", "Jméno" />
+    <@lib.addInput true, "surname", "Příjmení" />
+
+    <@lib.addTextArea true, "desc", "Popis", 20, "class='siroka'">
+        <@lib.showRTEControls "desc"/>
+    </@lib.addTextArea>
+
+    <@lib.addInput false, "birthDate", "Datum narození" />
+    <@lib.addInput false, "deathDate", "Datum úmrtí" />
+    <@lib.addInput false, "webUrl", "Webová stránka" />
+    <@lib.addInput false, "rssUrl", "Adresa RSS" />
+
+    <#if PARAMS.action=="edit" || PARAMS.action="edit2" >
+        <@lib.addFormField false, "Popis změny", "Text bude zobrazen v historii dokumentu">
+            <@lib.addInputBare "rev_descr" />
+        </@lib.addFormField>
+    </#if>
+
+    <@lib.addFormField>
+        <#if PREVIEW??>
+            <@lib.addSubmitBare "Zopakuj náhled", "preview" />
+            <@lib.addSubmitBare "Dokonči", "finish" />
+        <#else>
+            <@lib.addSubmitBare "Náhled", "preview" />
+            <#if EDIT_MODE!false>
+                <@lib.addSubmitBare "Dokonči", "finish" />
+            </#if>
         </#if>
-        <tr>
-            <td width="120">&nbsp;</td>
-            <td>
-                <#if PREVIEW??>
-                    <input type="submit" name="preview" value="Zopakuj náhled">
-                    <input type="submit" name="finish" value="Dokonči">
-                <#else>
-                    <input type="submit" name="preview" value="Náhled">
-                    <#if EDIT_MODE!false>
-                        <input type="submit" name="finish" value="Dokonči">
-                    </#if>
-                </#if>
-            </td>
-        </tr>
-    </table>
+    </@lib.addFormField>
+
     <#if RELATION??>
-        <input type="hidden" name="rid" value="${RELATION.id}">
+        <@lib.addHidden "rid", RELATION.id />
     </#if>
     <#if EDIT_MODE!false>
-        <input type="hidden" name="action" value="edit2">
+        <@lib.addHidden "action", "edit2" />
     <#else>
-        <input type="hidden" name="action" value="add2">
+        <@lib.addHidden "action", "add2" />
     </#if>
-</form>
+</@lib.addForm>
 
 <#include "/include/napoveda-k-auto-formatovani.txt">
 

@@ -37,6 +37,59 @@
     <a href="#formatovani">najdete</a> pod formulářem.
 </p>
 
+<@lib.addForm URL.make("/edit"), "name='form'">
+    <@lib.addInput true, "name", "Jméno", 40 />
+    <@lib.addSelect true, "support", "Podpora pod Linuxem">
+        <@lib.addOption "support", "kompletní", "complete" />
+        <@lib.addOption "support", "částečná", "partial" />
+        <@lib.addOption "support", "žádná", "none" />
+    </@lib.addSelect>
+    <@lib.addSelect true, "driver", "Ovladač je dodáván">
+        <@lib.addOption "driver", "v jádře", "kernel" />
+        <@lib.addOption "driver", "v X.Org/XFree86", "xfree" />
+        <@lib.addOption "driver", "výrobcem", "maker" />
+        <@lib.addOption "driver", "někým jiným", "other" />
+        <@lib.addOption "driver", "neexistuje", "none" />
+    </@lib.addSelect>
+    <@lib.addInput false, "driverUrl", "Adresa ovladače", 60 />
+    <@lib.addFormField false, "Zastaralý">
+        <@lib.addRadioChoice "outdated", "ano", "yes" />
+        <@lib.addRadioChoice "outdated", "no", "", true />
+    </@lib.addFormField>
+
+    <@lib.addTextArea false, "identification", "Identifikace pod Linuxem", 15>
+        <div>
+            Identifikaci zařízení pod Linuxem se věnuje <a href="/faq/hardware/jak-zjistim-co-mam-za-hardware">FAQ</a>.
+            Zadejte jen skutečně relevantní údaje, buďte struční.
+        </div>
+        <@lib.showRTEControls "identification"/>
+    </@lib.addTextArea>
+
+    <@lib.addTextArea false, "params", "Technické parametry", 15>
+        <@lib.showRTEControls "params"/>
+    </@lib.addTextArea>
+
+    <@lib.addTextArea false, "setup", "Postup zprovoznění", 15>
+        <@lib.showRTEControls "setup"/>
+    </@lib.addTextArea>
+
+    <@lib.addTextArea false, "note", "Poznámka", 15>
+        <@lib.showRTEControls "note"/>
+    </@lib.addTextArea>
+
+    <@lib.addFormField>
+        <#if PREVIEW??>
+            <@lib.addSubmitBare "Zopakuj náhled", "preview" />
+        <#else>
+            <@lib.addSubmitBare "Náhled", "preview" />
+        </#if>
+        <@lib.addSubmitBare "Dokonči", "finish" />
+    </@lib.addFormField>
+
+    <@lib.addHidden "rid", RELATION.id />
+    <@lib.addHidden "action", "edit2" />
+</@lib.addForm>
+
 <form action="${URL.make("/edit")}" method="POST" name="form">
     <table class="siroka" border="0" cellpadding="5">
         <tr>
@@ -98,8 +151,8 @@
                     Zadejte jen skutečně relevantní údaje, buďte struční.
                 </div>
                 <@lib.showError key="identification"/>
-                <@lib.showRTEControls "identification"/>
-                <textarea name="identification" id="identification" class="siroka" rows="15" tabindex="8">${PARAMS.identification!?html}</textarea>
+                <@rte.showFallback "identification"/>
+                <textarea name="identification" class="siroka" rows="15" tabindex="8">${PARAMS.identification!?html}</textarea>
             </td>
         </tr>
 
@@ -107,8 +160,8 @@
             <td>Technické parametry</td>
             <td>
                 <@lib.showError key="params"/>
-                <@lib.showRTEControls "params"/>
-                <textarea name="params" id="params" class="siroka" rows="15" tabindex="9">${PARAMS.params!?html}</textarea>
+                <@rte.showFallback "params"/>
+                <textarea name="params" class="siroka" rows="15" tabindex="9">${PARAMS.params!?html}</textarea>
             </td>
         </tr>
 
@@ -116,8 +169,8 @@
             <td>Postup zprovoznění</td>
             <td>
                 <@lib.showError key="setup"/>
-                <@lib.showRTEControls "setup"/>
-                <textarea name="setup" id="setup" class="siroka" rows="20" tabindex="10">${PARAMS.setup!?html}</textarea>
+                <@rte.showFallback "setup"/>
+                <textarea name="setup" class="siroka" rows="20" tabindex="10">${PARAMS.setup!?html}</textarea>
             </td>
         </tr>
 
@@ -125,8 +178,8 @@
             <td>Poznámka</td>
             <td>
                 <@lib.showError key="note"/>
-                <@lib.showRTEControls "note"/>
-                <textarea name="note" id="note" class="siroka" rows="20" tabindex="11">${PARAMS.note!?html}</textarea>
+                <@rte.showFallback "note"/>
+                <textarea name="note" class="siroka" rows="20" tabindex="11">${PARAMS.note!?html}</textarea>
             </td>
         </tr>
 

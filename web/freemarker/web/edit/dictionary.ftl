@@ -31,43 +31,23 @@
     </fieldset>
 </#if>
 
-<form action="${URL.make("/edit")}" method="POST" name="dictForm">
-    <table cellpadding="0" border="0" class="siroka">
-        <tr>
-            <td class="required">Pojem</td>
-            <td>
-                <input tabindex="1" type="text" name="name" value="${PARAMS.name!}" size="30" maxlength="30" tabindex="1">
-                <div class="error">${ERRORS.name!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td class="required">Popis</td>
-            <td>
-                <@lib.showError key="desc"/>
-                <@lib.showRTEControls "desc"/>
-                <textarea tabindex="2" name="desc" class="siroka" rows="20" tabindex="2">${PARAMS.desc!?html}</textarea>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Popis změny
-                <a class="info" href="#">?<span class="tooltip">Text bude zobrazen v historii dokumentu</span></a>
-            </td>
-            <td>
-               <input tabindex="3" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr!?html}">
-               <div class="error">${ERRORS.rev_descr!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <input tabindex="4" type="submit" name="preview" value="Náhled">
-                <input tabindex="5" type="submit" name="submit" value="Dokonči">
-            </td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="edit2">
-    <input type="hidden" name="rid" value="${RELATION.id}">
-</form>
+<@lib.addForm URL.make("/edit"), "name='dictForm'">
+    <@lib.addInput true, "name", "Pojem" />
+    <@lib.addTextArea true, "desc", "Popis", 20>
+        <@lib.showRTEControls "desc"/>
+    </@lib.addTextArea>
+
+    <@lib.addFormField false, "Popis změny", "Text bude zobrazen v historii dokumentu">
+        <@lib.addInputBare "rev_descr" />
+    </@lib.addFormField>
+
+    <@lib.addFormField>
+        <@lib.addSubmitBare "Náhled", "preview" />
+        <@lib.addSubmitBare "Dokonči", "finish" />
+    </@lib.addFormField>
+
+    <@lib.addHidden "action", "edit2" />
+    <@lib.addHidden "rid", RELATION.id />
+</@lib.addForm>
 
 <#include "../footer.ftl">

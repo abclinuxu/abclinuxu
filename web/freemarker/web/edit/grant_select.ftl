@@ -4,22 +4,11 @@
 
 <h2>Role uživatelů</h2>
 
-<form action="${URL.noPrefix("/EditUser")}" method="POST">
- <table width="100%" border=0 cellpadding=5>
-  <tr>
-   <td class="required" width="100">Číslo uživatele</td>
-   <td>
-    <input type="text" name="uid" value="${PARAMS.uid!}" size="6" tabindex="1">
-    <div class="error">${ERRORS.uid!}</div>
-   </td>
-  </tr>
-  <tr>
-   <td width="100">&nbsp;</td>
-   <td><input type="submit" value="Zobraz" tabindex="2"></td>
-  </tr>
- </table>
- <input type="hidden" name="action" value="grant2">
-</form>
+<@lib.addForm URL.noPrefix("/EditUser")>
+    <@lib.addInput true, "uid", "Číslo uživatele", 6 />
+    <@lib.addSubmit "Zobraz" />
+    <@lib.addHidden "action", "grant2" />
+</@lib.addForm>
 
 <p>Uživatelé s definovanými rolemi:</p>
 

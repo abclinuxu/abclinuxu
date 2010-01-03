@@ -25,7 +25,6 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.exceptions.InternalException;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.servlets.html.edit.EditArticle;
-import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,7 +61,7 @@ public class PathGeneratorImpl implements PathGenerator {
         if (prefix == null)
             prefix = "";
         else {
-            prefix = DiacriticRemover.getInstance().removeDiacritics(prefix);
+            prefix = Misc.removeDiacritics(prefix);
             prefix = prefix.toLowerCase();
             Matcher matcher = reInvalidChars.matcher(prefix);
             prefix = matcher.replaceAll("-");

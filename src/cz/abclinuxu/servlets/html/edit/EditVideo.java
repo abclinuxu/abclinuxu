@@ -23,24 +23,20 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.video.Thumbnailer;
 import cz.abclinuxu.data.view.VideoServer;
-import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.scheduler.VariableFetcher;
-import cz.abclinuxu.security.ActionProtector;
-import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.security.ActionCheck;
+import cz.abclinuxu.servlets.AbcAutoAction;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.ImageTool;
-import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.config.Configurable;
@@ -60,8 +56,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.regexp.RE;
 import org.apache.regexp.RECompiler;
 import org.dom4j.Document;
@@ -73,116 +67,48 @@ import org.dom4j.Node;
  *
  * @author lubos
  */
-public class EditVideo implements AbcAction, Configurable {
+public class EditVideo extends AbcAutoAction implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditVideo.class);
     
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_URL = "url";
     public static final String PARAM_DESCRIPTION = "description";
     public static final String PARAM_REDIRECT = "redirect";
-    
-    public static final String ACTION_ADD = "add";
-    public static final String ACTION_ADD_STEP2 = "add2";
-    public static final String ACTION_EDIT = "edit";
-    public static final String ACTION_EDIT_STEP2 = "edit2";
-    public static final String ACTION_REMOVE = "remove";
-    public static final String ACTION_REMOVE_STEP2 = "remove2";
-    public static final String ACTION_I_LIKE = "favourite";
-    
+
     public static final String PREF_URLS = "urls";
     public static final String PREF_PLAYERS = "players";
     
     public static Map<String,VideoServer> videoServers;
-    
+
     static {
         EditVideo instance = new EditVideo();
         ConfigurationManager.getConfigurator().configureAndRememberMe(instance);
     }
 
-    /*
-        http://www.vimeo.com/2010210
-        http://www.vimeo.com/moogaloop/load/clip:2010210/ - neobsahuje maly nahled
-     */
-    
-    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
-        String action = (String) params.get(PARAM_ACTION);
-        Relation relation = (Relation) InstanceUtils.instantiateParam(Constants.PARAM_RELATION, Relation.class, params, request);
-        if (relation == null)
-            throw new MissingArgumentException("Chybí parametr relationId!");
-        
-        if (user == null)
-            return FMTemplateSelector.select("ViewUser", "login", env, request);
-        
-        Tools.sync(relation);
-        env.put(ShowObject.VAR_RELATION, relation);
-        
-        if (ACTION_I_LIKE.equals(action)) {
-            ActionProtector.ensureContract(request, EditVideo.class, true, false, false, true);
-            return actionILike(request, response, env);
-        }
-        
-        boolean isBlogOwner = false;
-        if (relation.getChild() instanceof Item) {
-            Item item = (Item) relation.getChild();
-            if (item.getType() == Item.BLOG && item.getOwner() == user.getId())
-                isBlogOwner = true;
-        }
-        
-        if (ACTION_ADD.equals(action)) {   
-            if (!Tools.permissionsFor(user, relation).canCreate() && !isBlogOwner)
-                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            return FMTemplateSelector.select("EditVideo", "add", env, request);
-        }
-        
-        if (ACTION_ADD_STEP2.equals(action)) {
-            if (!Tools.permissionsFor(user, relation).canCreate() && !isBlogOwner)
-                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            ActionProtector.ensureContract(request, EditVideo.class, true, true, true, false);
-            return actionAddStep2(request, response, env, relation);
-        }
-        
-        Item item = (Item) relation.getChild();
-        if (!Tools.permissionsFor(user, relation).canModify() && item.getOwner() != user.getId())
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-        
-        if (ACTION_EDIT.equals(action))
-            return actionEditStep1(request, response, env, relation);
-        
-        if (ACTION_EDIT_STEP2.equals(action)) {
-            ActionProtector.ensureContract(request, EditVideo.class, true, true, true, false);
-            return actionEditStep2(request, response, env, relation);
-        }
-        
-        isBlogOwner = false;
+   private boolean isBlogOwner(boolean checkParent) {
         if (relation.getParent() instanceof Item) {
-            item = (Item) relation.getParent();
+            Item item = (Item) ((checkParent) ? relation.getParent() : relation.getChild());
             if (item.getType() == Item.BLOG && item.getOwner() == user.getId())
-                isBlogOwner = true;
+                return true;
         }
-        
-        if (ACTION_REMOVE.equals(action) || ACTION_REMOVE_STEP2.equals(action)) {
-            if (!Tools.permissionsFor(user, relation).canDelete() && !isBlogOwner)
-                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            
-            if (ACTION_REMOVE_STEP2.equals(action)) {
-                ActionProtector.ensureContract(request, EditVideo.class, true, true, true, false);
-                return actionRemove(request, response, env, relation);
-            } else {
-                return FMTemplateSelector.select("EditVideo", "remove", env, request);
-            }
-        }
-        
-        throw new MissingArgumentException("Chybí argument action!");
+        return false;
     }
-    
-    private static String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, Relation upperRelation) throws Exception {
-        User user = (User) env.get(Constants.VAR_USER);
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+
+    @ActionCheck(relationRequired = true, userRequired = true)
+    public String actionAdd() throws Exception {
+        if (!Tools.permissionsFor(user, relation).canCreate() && !isBlogOwner(false))
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+        return FMTemplateSelector.select("EditVideo", "add", env, request);
+    }
+
+    @ActionCheck(relationRequired = true, userRequired = true)
+    public String actionAdd2() throws Exception {
+        if (!Tools.permissionsFor(user, relation).canCreate() && !isBlogOwner(false))
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
         Persistence persistence = PersistenceFactory.getPersistence();
         String urlRedirect = (String) params.get(PARAM_REDIRECT);
-        
+
         Document documentItem = DocumentHelper.createDocument();
         Element root = documentItem.addElement("data");
         
@@ -190,36 +116,36 @@ public class EditVideo implements AbcAction, Configurable {
         item.setData(documentItem);
         item.setOwner(user.getId());
         
-        if (upperRelation.getChild() instanceof GenericDataObject) {
-            GenericDataObject gdo = (GenericDataObject) upperRelation.getChild();
+        if (relation.getChild() instanceof GenericDataObject) {
+            GenericDataObject gdo = (GenericDataObject) relation.getChild();
             item.setGroup(gdo.getGroup());
         }
         
-        Relation relation = new Relation(upperRelation.getChild(), item, upperRelation.getId());
+        Relation newRelation = new Relation(relation.getChild(), item, relation.getId());
         
         boolean canContinue;
         canContinue = setTitle(item, params, env);
         canContinue &= setUrl(item, root, params, env);
         canContinue &= setDescription(root, params, env);
         
-        if (upperRelation.getChild() instanceof Category)
-            canContinue &= setItemUrl(relation, item, persistence);
+        if (relation.getChild() instanceof Category)
+            canContinue &= setItemUrl(newRelation, item, persistence);
         
         if (!canContinue)
             return FMTemplateSelector.select("EditVideo", "add", env, request);
         
         persistence.create(item);
-        persistence.create(relation);
-        relation.getParent().addChildRelation(relation);
+        persistence.create(newRelation);
+        newRelation.getParent().addChildRelation(newRelation);
         
-        if (upperRelation.getChild() instanceof Category) {
-            if (!setThumbnail(relation, item, root, params))
+        if (relation.getChild() instanceof Category) {
+            if (!setThumbnail(newRelation, item, root, params))
                 ServletUtils.addError(Constants.ERROR_GENERIC, "Nepodařilo se získat náhled videa", env, request.getSession());
             else
                 persistence.update(item);
             
             VariableFetcher.getInstance().refreshVideos();
-            EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+            EditDiscussion.createEmptyDiscussion(newRelation, user, persistence);
         }
         
         TagTool.assignDetectedTags(item, user);
@@ -227,17 +153,20 @@ public class EditVideo implements AbcAction, Configurable {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         
         if (Misc.empty(urlRedirect))
-            urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+            urlUtils.redirect(response, urlUtils.getRelationUrl(newRelation));
         else
             urlUtils.redirect(response, urlRedirect);
         
         return null;
     }
-    
-    private static String actionEditStep1(HttpServletRequest request, HttpServletResponse response, Map env, Relation relation) throws Exception {
+
+    @ActionCheck(userRequired = true, itemType = Item.VIDEO)
+    public String actionEdit() throws Exception {
         Item item = (Item) relation.getChild();
+        if (!Tools.permissionsFor(user, relation).canModify() && item.getOwner() != user.getId())
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+        
         Element root = item.getData().getRootElement();
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         
         params.put(PARAM_TITLE, item.getTitle());
         Element elem = (Element) root.selectSingleNode("url");
@@ -251,12 +180,15 @@ public class EditVideo implements AbcAction, Configurable {
         
         return FMTemplateSelector.select("EditVideo", "edit", env, request);
     }
-    
-    private static String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env, Relation relation) throws Exception {
-        Item item = (Item) relation.getChild();
+
+    @ActionCheck(itemType = Item.VIDEO, userRequired = true, checkReferer = true, checkPost = true)
+    public String actionEdit2() throws Exception {
+        Item item = (Item) relation.getChild().clone();
         Element root = item.getData().getRootElement();
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
+
+        if (!Tools.permissionsFor(user, relation).canModify() && item.getOwner() != user.getId())
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
         
         boolean canContinue;
         canContinue = setTitle(item, params, env);
@@ -278,8 +210,12 @@ public class EditVideo implements AbcAction, Configurable {
         
         return null;
     }
-    
-    private static String actionRemove(HttpServletRequest request, HttpServletResponse response, Map env, Relation relation) throws Exception {
+
+    @ActionCheck(userRequired = true, itemType = Item.VIDEO)
+    public String actionRemove() throws Exception {
+        if (!Tools.permissionsFor(user, relation).canDelete() && !isBlogOwner(true))
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
         Relation upperRel = new Relation(relation.getUpper());
         Tools.sync(upperRel);
         Persistence persistence = PersistenceFactory.getPersistence();
@@ -291,11 +227,10 @@ public class EditVideo implements AbcAction, Configurable {
         
         return null;
     }
-    
-    public String actionILike(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
+
+    @ActionCheck(userRequired = true, itemType = Item.VIDEO)
+    public String actionFavourite() throws Exception {
         Item item = (Item) relation.getChild();
-        User user = (User) env.get(Constants.VAR_USER);
         Persistence persistence = PersistenceFactory.getPersistence();
         Set<String> users = item.getProperty(Constants.PROPERTY_FAVOURITED_BY);
 

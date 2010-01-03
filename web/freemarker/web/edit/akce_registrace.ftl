@@ -11,38 +11,16 @@ Na zadanou e-mailovou adresu vám v předstihu přijde upozornění, že se
 blíží datum konání akce.
 </p>
 
-<form action="/akce/edit" method="post">
+<@lib.addForm "/akce/edit">
+    <@lib.addFormField false, "Akce">
+        <a href="${RELATION.url!"/akce/"+RELATION.id}">${TOOL.childName(RELATION)}</a>
+    </@lib.addFormField>
 
-    <table class="siroka" border="0" cellpadding="5">
-    <tr>
-        <td>Akce</td>
-        <td><a href="${RELATION.url?default("/akce/"+RELATION.id)}">${TOOL.childName(RELATION)}</a></td>
-    </tr>
-    <tr>
-        <td>Vaše jméno</td>
-        <td>
-            <input type="text" name="name" value="${PARAMS.name!}">
-            <div class="error">${ERRORS.name!}</div>
-        </td>
-    </tr>
-    <tr>
-        <td>E-mail</td>
-        <td>
-            <input type="text" name="email" value="${PARAMS.email!}">
-            <div class="error">${ERRORS.email!}</div>
-        </td>
-    </tr>
-    <tr>
-        <td>&nbsp;</td>
-        <td>
-            <input type="submit" value="Dokonči">
-        </td>
-    </tr>
-    </table>
-
-<input type="hidden" name="action" value="register2">
-<input type="hidden" name="rid" value="${RELATION.id}">
-
-</form>
+    <@lib.addInput true, "name", "Vaše jméno" />
+    <@lib.addInput true, "email", "E-mail" />
+    <@lib.addSubmit "Dokonči" />
+    <@lib.addHidden "action", "register2" />
+    <@lib.addHidden "rid", RELATION.id />
+</@lib.addForm>
 
 <#include "../footer.ftl">

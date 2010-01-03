@@ -41,74 +41,30 @@
 
 <h2>Zde zadejte své úpravy</h2>
 
-<form action="${URL.make("/edit")}" method="POST" name="form">
- <table cellpadding="0" border="0" style="margin-top: 1em;" class="siroka">
-  <tr>
-   <td class="required">Jméno</td>
-   <td>
-    <input type="text" name="name" value="${PARAMS.name!}" size="30" maxlength="30" tabindex="1">
-    <div class="error">${ERRORS.name!}</div>
-   </td>
-  </tr>
-  <tr>
-   <td class="required">Kategorie</td>
-   <td>
-    <select name="category" tabindex="2">
-     <#assign selected = PARAMS.category?default("NONE")>
-     ${PARAMS.category!}
-     <#list CATEGORIES as category>
-      <option value="${category.key}"
-       <#if category.key=selected>selected</#if> >
-       ${category.name}
-      </option>
-     </#list>
-    </select>
-   </td>
-  </tr>
-  <tr>
-   <td class="required">Verze</td>
-   <td>
-    <input type="text" name="version" value="${PARAMS.version!}" size="30" tabindex="2">
-    <div class="error">${ERRORS.version!}</div>
-   </td>
-  </tr>
-  <tr>
-   <td class="required">URL</td>
-   <td>
-    <input type="text" name="url" value="${PARAMS.url?default("http://")?html}" size="70" tabindex="4">
-    <div class="error">${ERRORS.url!}</div>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" class="required">Poznámka</td>
-  </tr>
-  <tr>
-   <td colspan="2">
-    <@lib.showError key="note"/>
-    <@lib.showRTEControls "note"/>
-    <textarea name="note" class="siroka" rows="20" tabindex="5">${PARAMS.note!?html}</textarea>
-   </td>
-  </tr>
-  <tr>
-    <td>
-        Popis změny
-        <a class="info" href="#">?<span class="tooltip">Text bude zobrazen v historii dokumentu</span></a>
-    </td>
-   <td>
-    <input tabindex="6" type="text" name="rev_descr" size="40" value="${PARAMS.rev_descr!?html}">
-    <div class="error">${ERRORS.rev_descr!}</div>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" align="center">
-    <input type="submit" name="preview" value="Náhled">
-    <input type="submit" name="submit" value="Dokonči">
-   </td>
-  </tr>
- </table>
- <input type="hidden" name="action" value="edit2">
- <input type="hidden" name="rid" value="${RELATION.id}">
-</form>
+<@lib.addForm URL.make("/edit"), "name='form'">
+    <@lib.addInput true, "name", "Jméno", 30 />
+    <@lib.addSelect true, "category", "Kategorie">
+        <#list CATEGORIES as cat>
+            <@lib.addOption "category", category.name, category.key />
+        </#list>
+    </@lib.addSelect>
+    <@lib.addInput true, "version", "Verze" />
+    <@lib.addInput true, "url", "URL", 70, "", "http://" />
+    <@lib.addTextArea true, "note", "Poznámka", 20>
+        <@lib.showRTEControls "note"/>
+    </@lib.addTextArea>
 
+    <@lib.addFormField false, "Popis změny", "Text bude zobrazen v historii dokumentu">
+        <@lib.addInputBare "rev_descr" />
+    </@lib.addFormField>
+
+    <@lib.addFormField>
+        <@lib.addSubmitBare "Náhled", "preview" />
+        <@lib.addSubmitBare "Dokonči", "finish" />
+    </@lib.addFormField>
+
+    <@lib.addHidden "action", "edit2" />
+    <@lib.addHidden "rid", RELATION.id />
+</@lib.addForm>
 
 <#include "../footer.ftl">

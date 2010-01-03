@@ -11,43 +11,19 @@
     můžete upravit jen titulek a popis. Desktop je možné smazat, jen dokud pod ním nejsou cizí komentáře.
 </p>
 
-<form action="${URL.make("/desktopy/edit")}" method="POST" name="form">
-    <table cellpadding="0" border="0" class="siroka">
-        <tr>
-            <td class="required">Titulek</td>
-            <td>
-                <input type="text" name="name" value="${PARAMS.name!}" size="40" tabindex="1">
-                <@lib.showError key="name"/>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                URL tématu
-                <@lib.showHelp>Adresa tématu nebo pozadí použitého v desktopu.</@lib.showHelp>
+<@lib.addForm URL.make("/desktopy/edit"), "name='form'">
+    <@lib.addInput true, "name", "Titulek", 40 />
+    <@lib.addFormField false, "URL tématu", "Adresa tématu nebo pozadí použitého v desktopu.">
+        <@lib.addInputBare "theme" />
+    </@lib.addFormField>
 
-            </td>
-            <td>
-                <input type="text" name="theme" value="${PARAMS.theme!}" size="40" tabindex="2">
-                <@lib.showError key="theme"/>
-            </td>
-        </tr>
-        <tr>
-            <td>Popis</td>
-            <td>
-                <@lib.showError key="desc"/>
-                <@lib.showRTEControls "desc"/>
-                <textarea name="desc" class="siroka" rows="20" tabindex="3">${PARAMS.desc!?html}</textarea>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <input type="submit" name="submit" value="Dokonči" tabindex="4" class="button">
-            </td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="edit2">
-    <input type="hidden" name="rid" value="${RELATION.id}">
-</form>
+    <@lib.addTextArea false, "desc", "Popis", 20>
+        <@lib.showRTEControls "desc"/>
+    </@lib.addTextArea>
 
+    <@lib.addSubmit "Dokonči" />
+    <@lib.addHidden "action", "edit2" />
+    <@lib.addHidden "rid", RELATION.id />
+</@lib.addForm>
 
 <#include "../footer.ftl">

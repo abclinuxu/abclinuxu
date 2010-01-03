@@ -18,8 +18,8 @@
  */
 package cz.abclinuxu.servlets.html.edit;
 
+import cz.abclinuxu.AbcException;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
@@ -29,11 +29,13 @@ import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.XMLHandler;
+import cz.abclinuxu.security.ActionCheck;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
 
+import cz.abclinuxu.servlets.AbcAutoAction;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -46,14 +48,8 @@ import org.dom4j.*;
 /**
  * Serves for manipulating of surveys.
  */
-public class EditSurvey implements AbcAction {
+public class EditSurvey extends AbcAutoAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditSurvey.class);
-
-    public static final String ACTION_ADD = "add";
-    public static final String ACTION_ADD_STEP2 = "add2";
-    public static final String ACTION_EDIT = "edit";
-    public static final String ACTION_EDIT2 = "edit2";
-    public static final String ACTION_LIST = "list";
 
     public static final String PARAM_SURVEY = "surveyId";
     public static final String PARAM_TITLE = "title";
@@ -62,54 +58,25 @@ public class EditSurvey implements AbcAction {
 
     public static final String VAR_SURVEYS = "SURVEYS";
 
-
-    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
-        String action = (String) params.get(PARAM_ACTION);
-
-        if (ServletUtils.handleMaintainance(request, env)) {
-            response.sendRedirect(response.encodeRedirectURL("/"));
-            return null;
-        }
-
-        if ( user == null )
-            return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if ( !user.hasRole(Roles.SURVEY_ADMIN) )
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-        if ( ACTION_LIST.equals(action) )
-            return actionList(request, env);
-        if ( ACTION_ADD.equals(action) )
-            return FMTemplateSelector.select("EditSurvey", "add", env, request);
-        if ( ACTION_ADD_STEP2.equals(action) ) {
-            ActionProtector.ensureContract(request, EditSurvey.class, true, true, true, false);
-            return actionAddStep2(request, response, env);
-        }
-
+    private Item getSurvey() throws AbcException {
         Persistence persistence = PersistenceFactory.getPersistence();
         Item item = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY, Item.class, params, request);
         if ( item == null )
-            return ServletUtils.showErrorPage("Chybí parametr surveyId!",env,request);
+            throw new AbcException("Chybí parametr surveyId!");
 
         persistence.synchronize(item);
+        
         if ( item.getType() != Item.SURVEY )
-            return ServletUtils.showErrorPage("Tato položka není anketa!", env, request);
+            throw new AbcException("Tato položka není anketa!");
 
-        if ( ACTION_EDIT.equals(action) )
-            return actionEditStep1(request, item, env);
-        else if ( ACTION_EDIT2.equals(action) ) {
-            ActionProtector.ensureContract(request, EditSurvey.class, true, true, true, false);
-            return actionEditStep2(request, response, item, env);
-        }
-
-        return FMTemplateSelector.select("EditSurvey", "add", env, request);
+        return item;
     }
 
     /**
      * Lists existing surveys
      */
-    protected String actionList(HttpServletRequest request, Map env) throws Exception {
+    @ActionCheck(permittedRoles = {Roles.SURVEY_ADMIN})
+    public String actionList() throws Exception {
         SQLTool sqlTool = SQLTool.getInstance();
         List items = sqlTool.findItemsWithType(Item.SURVEY, 0, 10000);
         env.put(VAR_SURVEYS, items);
@@ -117,13 +84,16 @@ public class EditSurvey implements AbcAction {
         return FMTemplateSelector.select("EditSurvey", "list", env, request);
     }
 
+    @ActionCheck(permittedRoles = {Roles.SURVEY_ADMIN})
+    public String actionAdd() throws Exception {
+        return FMTemplateSelector.select("EditSurvey", "add", env, request);
+    }
+
     /**
      * Creates new survey
      */
-    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
-
+    @ActionCheck(permittedRoles = {Roles.SURVEY_ADMIN}, checkPost = true, checkReferer = true)
+    public String actionAdd2() throws Exception {
         Item survey = new Item();
         survey.setType(Item.SURVEY);
         survey.setOwner(user.getId());
@@ -149,9 +119,18 @@ public class EditSurvey implements AbcAction {
         return null;
     }
 
-    protected String actionEditStep1(HttpServletRequest request, Item survey, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Document document = (Document) survey.getData().clone();
+    @ActionCheck(permittedRoles = {Roles.SURVEY_ADMIN})
+    public String actionEdit() throws Exception {
+        Item survey;
+        Document document;
+
+        try {
+            survey = getSurvey();
+        } catch (AbcException e) {
+            return ServletUtils.showErrorPage(e.getMessage(), env, request);
+        }
+
+        document = (Document) survey.getData().clone();
 
         params.put(PARAM_TITLE, survey.getTitle());
 
@@ -174,8 +153,17 @@ public class EditSurvey implements AbcAction {
         return FMTemplateSelector.select("EditSurvey", "edit", env, request);
     }
 
-    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Item survey, Map env) throws Exception {
+    @ActionCheck(permittedRoles = {Roles.SURVEY_ADMIN}, checkPost = true, checkReferer = true)
+    public String actionEdit2() throws Exception {
         boolean canContinue = true;
+        Item survey;
+
+        try {
+            survey = getSurvey();
+        } catch (AbcException e) {
+            return ServletUtils.showErrorPage(e.getMessage(), env, request);
+        }
+        
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         canContinue &= setDefinition(params, survey, env);
         canContinue &= setTitle(params, survey, env);

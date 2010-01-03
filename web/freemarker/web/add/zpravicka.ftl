@@ -54,43 +54,23 @@ s vysvětlením. Teprve po schválení bude zprávička zveřejněna.</p>
  </ul>
 </#if>
 
-<form action="${URL.make("/edit")}" method="POST" name="newsForm">
-    <p>
-        <span class="required">Titulek</span><br>
-        <input tabindex="1" type="text" name="title" size="40" maxlength="50" value="${PARAMS.title!?html}">
-        <div class="error">${ERRORS.title!}</div>
-
-        <span class="required">Obsah</span>
+<@lib.addForm URL.make("/edit"), "name='newsForm'">
+    <@lib.addInput true, "title", "Titulek", 40 />
+    <@lib.addTextArea true, "content", "Obsah", 10, "cols='60'">
         <@lib.showRTEControls "content"/>
-        <textarea tabindex="2" name="content" id="content" class="siroka" rows="10" tabindex="1">${PARAMS.content!?html}</textarea>
-        <div class="error">${ERRORS.content!}</div>
-    </p>
+    </@lib.addTextArea>
 
     <#if USER?? && USER.hasRole("news admin")>
-        <table>
-        <tr>
-            <td>Datum zveřejnění:</td>
-            <td>
-                <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish!}">
-                <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
-                Formát 2005-01-25 07:12
-                <div class="error">${ERRORS.publish!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td>Vydat pod UID</td>
-            <td>
-                <input type="text" size="5" name="uid" value="${PARAMS.uid!}">
-                <div class="error">${ERRORS.uid!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td>&nbsp;</td>
-            <td>
-                <label><input type="checkbox" name="forbidDiscussions" value="yes" <#if PARAMS.forbidDiscussions??>checked</#if>/>Zakázat diskuzi</label>
-            </td>
-        </tr>
-        </table>
+        <@lib.addInput false, "publish", "Datum zveřejnění", 16>
+            <input type="button" id="datetime_btn" value="...">
+            <script type="text/javascript">
+                Calendar.setup({inputField:"publish",ifFormat:"%Y-%m-%d %H:%M",showsTime:true,button:"datetime_btn",singleClick:false,step:1,firstDay:1});
+            </script>
+            Formát 2005-01-25 07:12
+        </@lib.addInput>
+
+        <@lib.addInput false, "uid", "Vydat pod UID", 5 />
+        <@lib.addCheckbox "forbidDiscussions", "Zakázat diskuzi" />
     </#if>
 
     <h3>Kategorie</h3>
@@ -105,12 +85,10 @@ s vysvětlením. Teprve po schválení bude zprávička zveřejněna.</p>
             <dd>${category.desc}</dd>
         </#list>
     </dl>
-    <p>
-        <input tabindex="3" name="preview" type="submit" value="Náhled">
-        <input tabindex="4" type="submit" value="Dokonči">
-        <input type="hidden" name="action" value="add2">
-    </p>
-</form>
 
+    <@lib.addSubmit "Náhled", "preview" />
+    <@lib.addSubmit "Dokonči" />
+    <@lib.addHidden "action", "add2" />
+</@lib.addForm>
 
 <#include "../footer.ftl">

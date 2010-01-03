@@ -23,22 +23,20 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.versioning.Versioning;
 import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.scheduler.VariableFetcher;
-import cz.abclinuxu.security.ActionProtector;
+import cz.abclinuxu.security.ActionCheck;
 import cz.abclinuxu.security.Permissions;
 import cz.abclinuxu.security.Roles;
-import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.AbcAutoAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
@@ -55,8 +53,6 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -67,8 +63,7 @@ import org.dom4j.Node;
  *
  * @author lubos
  */
-public class EditSubportal implements AbcAction {
-	public static final String PARAM_RELATION_SHORT = "rid";
+public class EditSubportal extends AbcAutoAction {
 	public static final String PARAM_ADMIN = "admin";
 	public static final String PARAM_TITLE = "title";
 	public static final String PARAM_DESCRIPTION = "desc";
@@ -78,80 +73,16 @@ public class EditSubportal implements AbcAction {
 	public static final String PARAM_REMOVE_ICON = "removeIcon";
     public static final String PARAM_HIDE_FORUM = "hideForum";
 
-	public static final String VAR_RELATION = "RELATION";
-
-	public static final String ACTION_TOGGLE_MEMBER = "toggleMember";
-	public static final String ACTION_ADD = "add";
-    public static final String ACTION_ADD_STEP2 = "add2";
-    public static final String ACTION_EDIT = "edit";
-    public static final String ACTION_EDIT_STEP2 = "edit2";
-    public static final String ACTION_LIST_RSS = "listRSS";
-
 	private Persistence persistence = PersistenceFactory.getPersistence();
 	static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditSubportal.class);
 
-	public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-		Map params = (Map) env.get(Constants.VAR_PARAMS);
-		User user = (User) env.get(Constants.VAR_USER);
-        String action = (String) params.get(PARAM_ACTION);
+    @ActionCheck(requireCreateRight = true)
+    public String actionAdd() throws Exception {
+        return FMTemplateSelector.select("EditSubportal", "add", env, request);
+    }
 
-        if (ServletUtils.handleMaintainance(request, env)) {
-            response.sendRedirect(response.encodeRedirectURL("/"));
-            return null;
-        }
-
-		// check permissions
-        if ( user==null )
-            return FMTemplateSelector.select("ViewUser", "login", env, request);
-
-		Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
-
-		if (relation != null) {
-			Tools.sync(relation);
-			env.put(VAR_RELATION, relation);
-		}
-
-		if (ACTION_ADD.equals(action)) {
-			if (!Tools.permissionsFor(user, relation).canCreate())
-				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			return FMTemplateSelector.select("EditSubportal", "add", env, request);
-		}
-
-		if (ACTION_ADD_STEP2.equals(action)) {
-			if (!Tools.permissionsFor(user, relation).canCreate())
-				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			ActionProtector.ensureContract(request, EditSubportal.class, true, true, true, false);
-			return actionAddStep2(request, response, env);
-		}
-
-		if (ACTION_TOGGLE_MEMBER.equals(action)) {
-			ActionProtector.ensureContract(request, EditSubportal.class, true, false, false, true);
-			return actionToggleMember(response, env);
-		}
-
-		if (relation == null)
-			throw new MissingArgumentException("Chybí parametr rid!");
-
-		if (!Tools.permissionsFor(user, relation).canModify())
-				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-		if (ACTION_EDIT.equals(action))
-			return actionEditStep1(request, env);
-
-		if (ACTION_EDIT_STEP2.equals(action)) {
-			ActionProtector.ensureContract(request, EditSubportal.class, true, true, true, false);
-			return actionEditStep2(request, response, env);
-		}
-
-        if (ACTION_LIST_RSS.equals(action))
-            return actionListRSS(request, response, env);
-
-		throw new MissingArgumentException("Chybí parametr action!");
-	}
-
-	protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-		Map params = (Map) env.get(Constants.VAR_PARAMS);
-		User user = (User) env.get(Constants.VAR_USER);
+    @ActionCheck(requireCreateRight = true, checkReferer = true, checkPost = true)
+	public String actionAddStep2() throws Exception {
 		Category category = new Category();
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
@@ -159,12 +90,12 @@ public class EditSubportal implements AbcAction {
 		category.setType(Category.SUBPORTAL);
 
 		boolean canContinue = true;
-		Relation relation = new Relation(new Category(Constants.CAT_SUBPORTALS), category, Constants.REL_SUBPORTALS);
+		Relation newRelation = new Relation(new Category(Constants.CAT_SUBPORTALS), category, Constants.REL_SUBPORTALS);
 
 		canContinue &= setTitle(params, category, env);
         canContinue &= setShortDescription(params, root, env);
 		canContinue &= setDescription(params, root, env);
-		canContinue &= setUrl(params, relation, env);
+		canContinue &= setUrl(params, newRelation, env);
         canContinue &= checkImage(params, env);
 
         if (user.hasRole(Roles.ROOT))
@@ -178,21 +109,21 @@ public class EditSubportal implements AbcAction {
 		addUserToGroup(params, gid, category);
 
 		persistence.create(category);
-		persistence.create(relation);
-		relation.getParent().addChildRelation(relation);
+		persistence.create(newRelation);
+		newRelation.getParent().addChildRelation(newRelation);
 
-		setIcon(params, relation, root, env);
+		setIcon(params, newRelation, root, env);
 
         Relation forum;
 
         // a wiki page
-		createContent(env, root, relation);
+		createContent(env, root, newRelation);
         // a section for articles
-		createSection(env, root, relation, "Články", "articles", "/clanky", Category.SECTION);
+		createSection(env, root, newRelation, "Články", "articles", "/clanky", Category.SECTION);
         // waiting articles
-		createSection(env, root, relation, "Čekající články", "article_pool", null, 0);
+		createSection(env, root, newRelation, "Čekající články", "article_pool", null, 0);
         // a discussion forum
-		forum = createSection(env, root, relation, "Poradna", "forum", "/poradna", Category.FORUM);
+		forum = createSection(env, root, newRelation, "Poradna", "forum", "/poradna", Category.FORUM);
 
         FeedGenerator.findSubportalForums();
         FeedGenerator.updateForum(forum.getId());
@@ -201,7 +132,7 @@ public class EditSubportal implements AbcAction {
         Category catEvents;
 
         // a section for events
-        events = createSection(env, root, relation, "Akce", "events", "/akce", Category.EVENT); // a section for events
+        events = createSection(env, root, newRelation, "Akce", "events", "/akce", Category.EVENT); // a section for events
 
         catEvents = (Category) events.getChild();
         // give everybody the right to create events in the pool
@@ -212,23 +143,22 @@ public class EditSubportal implements AbcAction {
         persistence.update(catEvents);
 		persistence.update(category);
 
-        VariableFetcher.getInstance().refreshSubportalSizes(relation);
+        VariableFetcher.getInstance().refreshSubportalSizes(newRelation);
         VariableFetcher.getInstance().refreshLatestSubportalChanges();
 
 		UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, relation.getUrl());
+        urlUtils.redirect(response, newRelation.getUrl());
 
 		return null;
 	}
 
-    private String actionListRSS(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String actionListRSS() throws Exception {
         return null;
     }
 
-	private String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
-		Relation relation = (Relation) env.get(VAR_RELATION);
+    @ActionCheck(requireModifyRight = true)
+	public String actionEdit1() throws Exception {
 		Category cat = (Category) relation.getChild();
-		Map params = (Map) env.get(Constants.VAR_PARAMS);
 
 		params.put(PARAM_TITLE, cat.getTitle());
 
@@ -247,11 +177,9 @@ public class EditSubportal implements AbcAction {
 		return FMTemplateSelector.select("EditSubportal", "edit", env, request);
 	}
 
-	private String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-		Relation relation = (Relation) env.get(VAR_RELATION);
+    @ActionCheck(requireModifyRight = true, checkPost = true, checkReferer = true)
+	public String actionEdit2() throws Exception {
 		Category category = (Category) relation.getChild().clone();
-		Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
 
 		boolean canContinue = true;
         Element root = category.getData().getRootElement();
@@ -276,10 +204,9 @@ public class EditSubportal implements AbcAction {
 		return null;
 	}
 
-	private String actionToggleMember(HttpServletResponse response, Map env) throws Exception {
-		Relation relation = (Relation) env.get(VAR_RELATION);
+    @ActionCheck(checkTicket = true)
+	public String actionToggleMember() throws Exception {
         Category cat = (Category) relation.getChild();
-        User user = (User) env.get(Constants.VAR_USER);
         Set<String> users = cat.getProperty(Constants.PROPERTY_MEMBER);
 
         // see whether user wants to remove or add himself
@@ -324,7 +251,6 @@ public class EditSubportal implements AbcAction {
 
 	private void createContent(Map env, Element root, Relation rel) {
 		Category cat = (Category) rel.getChild();
-		User user = (User) env.get(Constants.VAR_USER);
 
 		Item content = new Item(0, Item.CONTENT);
         Item toc = new Item(0, Item.TOC);
@@ -367,7 +293,6 @@ public class EditSubportal implements AbcAction {
 	private Relation createSection(Map env, Element root, Relation rel, String title, String id, String url, int type) {
 		Category category = new Category();
 		Category parent = (Category) rel.getChild();
-		User user = (User) env.get(Constants.VAR_USER);
 
 		category.setTitle(title);
 		category.setGroup(parent.getGroup());

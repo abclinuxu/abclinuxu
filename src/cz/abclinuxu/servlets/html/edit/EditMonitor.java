@@ -8,6 +8,7 @@ import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.AbcAutoAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ViewUser;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -25,7 +26,7 @@ import java.util.Map;
 /**
  * This class is used to manipulate with monitors that user has set up.
  */
-public class EditMonitor implements AbcAction {
+public class EditMonitor extends AbcAutoAction {
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_REDIRECT = "redirect";
     public static final String PARAM_USER = "uid";

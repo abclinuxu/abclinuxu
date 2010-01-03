@@ -1086,3 +1086,148 @@
  --></#list><#--
  -->)
 </#macro>
+
+
+<#macro addFormField required = false, description = "&nbsp;", tooltip = "">
+    <tr <#if required>class="required"</#if>>
+        <td>${description}
+            <#if tooltip != "">
+                <a class="info" href="#">?<span class="tooltip">${tooltip?html}</span></a>
+            </#if>
+        </td>
+        <td><#nested></td>
+    </tr>
+</#macro>
+
+<#macro addInput required, name, description, size = 40, extraAttributes = "", defaultValue = "">
+    <@addFormField required, description>
+        <@addInputBare name, size, extraAttributes, defaultValue>
+            <#nested>
+        </@addInputBare>
+    </@addFormField>
+</#macro>
+
+<#macro addInputBare name, size = 40, extraAttributes = "", defaultValue = "">
+    <input type="text" id="${name?html}" size="${size}" name="${name?html}" value="${(PARAMS.get(name)!defaultValue)?html}" ${extraAttributes}>
+    <#nested>
+    <div class="error" id="${name?html}Error">${ERRORS.get(name)!}</div>
+</#macro>
+
+<#macro addPassword required, name, description, size = 40, extraAttributes = "">
+    <@addFormField required, description>
+        <@addPasswordBare name, description, size, extraAttributes>
+            <#nested>
+        </@addPasswordBare>
+    </@addFormField>
+</#macro>
+
+<#macro addPasswordBare name, description, size = 40, extraAttributes = "">
+    <input type="password" id="${name?html}" size="${size}" name="${name?html}" ${extraAttributes}>
+    <#nested>
+    <div class="error" id="${name?html}Error">${ERRORS.get(name)!}</div>
+</#macro>
+
+<#macro addTextArea required, name, description, rows = 15, extraAttributes = "">
+    <@addFormField required, description>
+        <#nested>
+        <@addTextAreaBare name, rows, extraAttributes />
+    </@addFormField>
+</#macro>
+
+<#macro addTextAreaBare name, rows = 15, extraAttributes = "">
+    <textarea name="${name?html}" class="siroka" rows="${rows}">${PARAMS.get(name)!?html}</textarea>
+</#macro>
+
+<#macro addTextAreaEditor name>
+    <div class="form-edit">
+            <div class="form-edit">
+                    <a href="javascript:insertAtCursor(document.getElementById('${name?html}'), '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vložit značku tučně"><b>B</b></a>
+                    <a href="javascript:insertAtCursor(document.getElementById('${name?html}'), '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="Vložit značku kurzíva"><i>I</i></a>
+                    <a href="javascript:insertAtCursor(document.getElementById('${name?html}'), '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="Vložit značku odkazu">&lt;a&gt;</a>
+                    <a href="javascript:insertAtCursor(document.getElementById('${name?html}'), '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="Vložit značku odstavce">&lt;p&gt;</a>
+                    <a href="javascript:insertAtCursor(document.getElementById('${name?html}'), '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="Vložit značku formátovaného textu. Vhodné pro konfigurační soubory či výpisy.">&lt;pre&gt;</a>
+                    <a href="javascript:insertAtCursor(document.getElementById('${name?html}'), '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
+                    <a href="javascript:insertAtCursor(document.getElementById('${name?html}'), '&amp;lt;', '');" id="mono" title="Vložit písmeno &lt;">&lt;</a>
+                    <a href="javascript:insertAtCursor(document.getElementById('${name?html}'), '&amp;gt;', '');" id="mono" title="Vložit písmeno &gt;">&gt;</a>
+                    <#nested>
+                </div>
+        </div>
+</#macro>
+
+<#macro addSubmit description, name = "">
+    <@addFormField>
+        <@addSubmitBare description, name />
+    </@addFormField>
+</#macro>
+
+<#macro addSubmitBare description, name = "">
+    <input type="submit" <#if name!="">name="${name?html}"</#if> value="${description?html}" />
+</#macro>
+
+<#macro addHidden name, value>
+    <input type="hidden" name="${name?html}" value="${value?html}" />
+</#macro>
+
+<#macro addCheckbox name, description, value="yes">
+    <@addFormField false, "&nbsp;">
+        <@addCheckboxBare name, description, value><#nested></@addCheckboxBare>
+    </@addFormField>
+</#macro>
+
+<#macro addCheckboxBare name, description, value="yes">
+    <#nested>
+    <label><input type="checkbox" name="${name?html}" value="${value?html}" <#if (PARAMS.get(name)!) == value>checked="checked"</#if> />
+    ${description?html}</label>
+</#macro>
+
+<#macro addForm action, extraAttributes = "", multipart = false, method = "post">
+    <form action="${action?html}" method="${method}" <#if multipart>enctype="multipart/form-data"</#if> ${extraAttributes}>
+        <@addFakeForm>
+            <#nested>
+        </@addFakeForm>
+    </form>
+</#macro>
+
+<#macro addFakeForm>
+    <table cellpadding="5" border="0" class="siroka">
+        <#nested>
+    </table>
+</#macro>
+
+<#macro addSelect required, name, description, multipleChoice = false>
+    <@addFormField required, description>
+        <select name="${name}" <#if multipleChoice>multiple="multiple"</#if>>
+            <#nested>
+        </select>
+    </@addFormField>
+</#macro>
+
+<#macro addOption selectName, optionName, value=optionName, isDefault = false>
+    <option value="${value}" <#if (PARAMS.get(selectName)! == value) || (isDefault && !PARAMS.containsKey(selectName))>selected="selected"</#if> >${optionName}</option>
+</#macro>
+
+<#macro addFile required, name, description>
+    <@addFormField required, description>
+        <@addFileBare name>
+            <#nested>
+        </@addFileBare>
+    </@addFormField>
+</#macro>
+
+<#macro addFileBare name>
+    <input type="file" name="${name?html}" size="20">
+    <#nested>
+    <div class="error" id="${name?html}Error">${ERRORS.get(name)!}</div>
+</#macro>
+
+<#macro addDescriptionLine>
+    <tr><td colspan="2"><#nested></td></tr>
+</#macro>
+
+<#macro addGroup description>
+    <h2 style="margin-bottom: 1em">${description?html}</h2>
+</#macro>
+
+<#macro addRadioChoice name, description, value, isDefault = false>
+    <label><input type="radio" name="${name?html}" value="${value}" <#if (PARAMS.get(selectName)! == value) || (isDefault && !PARAMS.containsKey(selectName))>checked="checked"</#if> />${description}</label>
+</#macro>

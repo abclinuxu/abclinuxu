@@ -34,73 +34,44 @@ a vygeneruje se z něj URL.</p>
 
     <@lib.showNews RELATION />
 
-<form action="${URL.make("/edit")}" method="POST" name="newsForm">
-    <table cellpadding="5" border="0" class="siroka">
-        <tr>
-            <td class="required">Titulek</td>
-            <td>
-                <input type="text" name="title" size="40" maxlength="50" value="${PARAMS.title!?html}">
-                <div class="error">${ERRORS.title!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td class="required">Obsah</td>
-            <td>
-                <@lib.showRTEControls "content"/>
-                <textarea name="content" id="content" class="siroka" rows="15" tabindex="1">${PARAMS.content!?html}</textarea>
-                <div class="error">${ERRORS.content!}</div>
-            </td>
-        </tr>
-        <#if USER?? && USER.hasRole("news admin")>
-        <tr>
-            <td>Datum zveřejnění:</td>
-            <td>
-                <input type="text" size="16" name="publish" id="datetime_input" value="${PARAMS.publish!}">
-                <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
-                Formát 2005-01-25 07:12
-                <div class="error">${ERRORS.publish!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td>Vydat pod UID</td>
-            <td>
-                <input type="text" size="5" name="uid" value="${PARAMS.uid!}">
-                <div class="error">${ERRORS.uid!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td>&nbsp;</td>
-            <td>
-                <label><input type="checkbox" name="forbidDiscussions" value="yes" <#if PARAMS.forbidDiscussions??>checked</#if>/>Zakázat diskuzi</label>
-            </td>
-        </tr>
-        </#if>
-        <tr>
-            <td>Kategorie</td>
-            <td>
-                <#assign selected = PARAMS.category!>
-                <dl>
-                    <#list CATEGORIES as category>
-                        <dt>
-                            <input type="radio" name="category" value="${category.key}"<#if category.key=selected> checked</#if>>
-                            <b>${category.name}</b>
-                        </dt>
-                        <dd>${category.desc}</dd>
-                    </#list>
-                </dl>
-            </td>
-        </tr>
-        <tr>
-            <td>&nbsp;</td>
-            <td>
-                <input name="preview" type="submit" value="Náhled">
-                <input type="submit" value="Uložit">
-            </td>
-        </tr>
-    </table>
-    <input type="hidden" name="action" value="edit2">
-    <input type="hidden" name="rid" value="${RELATION.id}">
-</form>
+<@lib.addForm URL.make("/edit")>
+    <@lib.addInput true, "title", "Titulek", 40, "maxlength='50'" />
+    <@lib.addTextArea true, "content", "Obsah", 15>
+        <@lib.showRTEControls "content"/>
+    </@lib.addTextArea>
 
+    <#if USER?? && USER.hasRole("news admin")>
+        <@lib.addInput false, "publish", "Datum zveřejnění", 15 >
+            <input type="button" id="datetime_btn" value="...">
+            <script type="text/javascript">
+                Calendar.setup({inputField:"publish",ifFormat:"%Y-%m-%d %H:%M",showsTime:true,button:"datetime_btn",singleClick:false,step:1,firstDay:1});
+            </script>
+            Formát 2005-01-25 07:12
+        </@lib.addInput>
+        <@lib.addInput false, "uid", "Vydat pod UID", 5 />
+        <@lib.addCheckBox "forbidDiscussion", "Zakázat diskuzi" />
+    </#if>
+
+    <@lib.addFormField true, "Kategorie">
+        <#assign selected = PARAMS.category!>
+        <dl>
+            <#list CATEGORIES as category>
+                <dt>
+                    <input type="radio" name="category" value="${category.key}"<#if category.key=selected> checked</#if>>
+                    <b>${category.name}</b>
+                </dt>
+                <dd>${category.desc}</dd>
+            </#list>
+        </dl>
+    </@lib.addFormField>
+
+    <@lib.addFormField>
+        <@lib.addSubmitBare "Náhled", "preview" />
+        <@lib.addSubmitBare "Uložit" />
+
+        <@lib.addHidden "action", "edit2" />
+        <@lib.addHidden "rid", RELATION.id />
+    </@lib.addFormField>
+</@lib.addForm>
 
 <#include "../footer.ftl">

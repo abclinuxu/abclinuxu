@@ -45,7 +45,6 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.security.Roles;
-import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -455,7 +454,7 @@ public class EditAttachment implements AbcAction {
         String name = Tools.childName(tmpRel);
         // todo these checks are already in PathGeneratorImpl
         name = Misc.filterDangerousCharacters(name);
-        name = DiacriticRemover.getInstance().removeDiacritics(name);
+        name = Misc.removeDiacritics(name);
         name = name.toLowerCase();
         // TODO more checks like in URLManager.normalizeCharacters()
         return name;

@@ -18,7 +18,6 @@
  */
 package cz.abclinuxu.servlets.html.edit;
 
-import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.URLManager;
@@ -30,6 +29,8 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.security.ActionCheck;
+import cz.abclinuxu.servlets.AbcAutoAction;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Sorters2;
@@ -50,7 +51,7 @@ import org.dom4j.Node;
  * This class is responsible for managing article series.
  * Date: 5.1.2007
  */
-public class EditSeries implements AbcAction {
+public class EditSeries extends AbcAutoAction {
     public static final String PARAM_RELATION = "rid";
     public static final String PARAM_ARTICLE_RELATION = "articleRid";
     public static final String PARAM_NAME = "name";
@@ -58,148 +59,62 @@ public class EditSeries implements AbcAction {
     public static final String PARAM_ICON = "icon";
     public static final String PARAM_URL = "url";
 
-    public static final String VAR_RELATION = "RELATION";
     public static final String VAR_EDIT_MODE = "EDIT_MODE";
     public static final String VAR_SERIES_LIST = "SERIES";
 
-    public static final String ACTION_ADD = "add";
-    public static final String ACTION_ADD_STEP2 = "add2";
-    public static final String ACTION_EDIT = "edit";
-    public static final String ACTION_EDIT_STEP2 = "edit2";
-    public static final String ACTION_REMOVE = "rm";
-    public static final String ACTION_ADD_ARTICLE = "addArticle";
-    public static final String ACTION_ADD_ARTICLE_STEP2 = "addArticle2";
-    public static final String ACTION_ADD_ARTICLES_URLS = "addArticlesUrls";
-    public static final String ACTION_ADD_ARTICLES_URLS_STEP2 = "addArticlesUrls2";
-    public static final String ACTION_REMOVE_ARTICLE = "rmArticle";
-
+    @Override
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistence();
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
-        String action = (String) params.get(PARAM_ACTION);
-		Relation parent = new Relation(Constants.REL_SERIES);
+        init(request, response, env);
 
-        if (action == null)
-            throw new MissingArgumentException("Chybí parametr action!");
-
-        // check permissions
-        if (user == null)
-            return FMTemplateSelector.select("ViewUser", "login", env, request);
-		
-        if (action.equals(ACTION_ADD_ARTICLE))
-            return actionAttachArticleStep1(request, env);
-
-        if (action.equals(ACTION_ADD)) {
-			if (!Tools.permissionsFor(user, parent).canCreate())
-				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
-            return actionAddStep1(request, env);
-		}
-
-        if (action.equals(ACTION_ADD_STEP2)) {
-			if (!Tools.permissionsFor(user, parent).canCreate())
-				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
-            ActionProtector.ensureContract(request, EditSeries.class, true, true, true, false);
-            return actionAddStep2(request, response, env, true);
+        if (relation == null) {
+            relation = new Relation(Constants.REL_SERIES);
+            Tools.sync(relation);
         }
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
-        if ( relation==null )
-            throw new MissingArgumentException("Chybí parametr relationId!");
-
-        persistence.synchronize(relation);
-        persistence.synchronize(relation.getChild());
-        env.put(VAR_RELATION,relation);
-
-		if (action.equals(ACTION_REMOVE)) {
-			if (!Tools.permissionsFor(user, relation).canDelete())
-				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-			
-            ActionProtector.ensureContract(request, EditSeries.class, true, false, false, true);
-            return actionRemove(response, env);
-        }
-		
-		if (!Tools.permissionsFor(user, relation).canModify())
-			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-		
-        if (action.equals(ACTION_EDIT))
-            return actionEditStep1(request, env);
-
-        if (action.equals(ACTION_EDIT_STEP2)) {
-            ActionProtector.ensureContract(request, EditSeries.class, true, true, true, false);
-            return actionEditStep2(request, response, env);
-        }
-
-        if (action.equals(ACTION_ADD_ARTICLE_STEP2)) {
-            ActionProtector.ensureContract(request, EditSeries.class, true, true, true, false);
-            return actionAttachArticleStep2(request, response, env, false);
-        }
-
-        if (action.equals(ACTION_ADD_ARTICLES_URLS))
-            return actionAttachArticlesUrlsStep1(request, env);
-
-        if (action.equals(ACTION_ADD_ARTICLES_URLS_STEP2)) {
-            ActionProtector.ensureContract(request, EditSeries.class, true, true, true, false);
-            return actionAttachArticlesUrlsStep2(request, response, env);
-        }
-
-        if (action.equals(ACTION_REMOVE_ARTICLE)) {
-            ActionProtector.ensureContract(request, EditSeries.class, true, false, false, true);
-            return actionRemoveArticle(response, env);
-        }
-
-        return null;
+        return invokeAction();
     }
 
-    public String actionAddStep1(HttpServletRequest request, Map env) throws Exception {
+    @ActionCheck(requireCreateRight = true)
+    public String actionAdd() throws Exception {
         return FMTemplateSelector.select("EditSeries", "add", env, request);
     }
 
-    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+    @ActionCheck(requireCreateRight = true, checkPost = true, checkReferer = true)
+    public String actionAdd2() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-        User user = (User) env.get(Constants.VAR_USER);
-		Relation parent = new Relation(Constants.REL_SERIES);
-		
-		Tools.sync(parent);
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         Item item = new Item(0, Item.SERIES);
         item.setData(document);
         item.setOwner(user.getId());
-		item.setGroup( ((Category) parent.getChild()).getGroup() );
+		item.setGroup( ((Category) relation.getChild()).getGroup() );
 		
-        Relation relation = new Relation(parent.getChild(), null, parent.getId());
+        Relation newRelation = new Relation(relation.getChild(), null, relation.getId());
 
         boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root);
         canContinue &= setIcon(params, root);
-        canContinue &= setUrl(params, relation, env);
+        canContinue &= setUrl(params, newRelation, env);
 
         if (!canContinue )
             return FMTemplateSelector.select("EditSeries", "add", env, request);
 
         persistence.create(item);
 
-        relation.setChild(item);
-        persistence.create(relation);
-        relation.getParent().addChildRelation(relation);
+        newRelation.setChild(item);
+        persistence.create(newRelation);
+        newRelation.getParent().addChildRelation(newRelation);
         TagTool.assignDetectedTags(item, user);
 
-        if (redirect) {
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
-        } else
-            env.put(VAR_RELATION, relation);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(newRelation));
+
         return null;
     }
 
-    protected String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) env.get(VAR_RELATION);
+    @ActionCheck(requireModifyRight = true, itemType = Item.SERIES)
+    public String actionEdit() throws Exception {
         Item item = (Item) relation.getChild();
         Element root = item.getData().getRootElement();
 
@@ -215,10 +130,9 @@ public class EditSeries implements AbcAction {
         return FMTemplateSelector.select("EditSeries", "edit", env, request);
     }
 
-    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+    @ActionCheck(requireModifyRight = true, itemType = Item.SERIES, checkReferer = true, checkPost = true)
+    public String actionEdit2() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Relation relation = (Relation) env.get(VAR_RELATION);
 
         Item item = (Item) relation.getChild().clone();
         Element root = item.getData().getRootElement();
@@ -238,11 +152,11 @@ public class EditSeries implements AbcAction {
         return null;
     }
 
-    protected String actionRemove(HttpServletResponse response, Map env) throws Exception {
+    @ActionCheck(requireDeleteRight = true, itemType = Item.SERIES, checkTicket = true)
+    public String actionRemove() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Relation seriesRelation = (Relation) env.get(VAR_RELATION);
 
-        Item seriesItem = (Item) seriesRelation.getChild().clone();
+        Item seriesItem = (Item) relation.getChild().clone();
         Element seriesRoot = seriesItem.getData().getRootElement();
         List articles = seriesRoot.elements("article");
 
@@ -259,15 +173,16 @@ public class EditSeries implements AbcAction {
             persistence.update(articleItem);
         }
 
-        persistence.remove(seriesRelation);
-        seriesRelation.getParent().removeChildRelation(seriesRelation);
+        persistence.remove(relation);
+        relation.getParent().removeChildRelation(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, UrlUtils.PREFIX_SERIES);
         return null;
     }
 
-    private String actionAttachArticleStep1(HttpServletRequest request, Map env) {
+    @ActionCheck(requireModifyRight = true, itemType = Item.SERIES)
+    public String actionAddArticle() {
         Persistence persistence = PersistenceFactory.getPersistence();
         Category category = (Category) persistence.findById(new Category(Constants.CAT_SERIES));
         List<Relation> series = category.getChildren();
@@ -276,17 +191,15 @@ public class EditSeries implements AbcAction {
         return FMTemplateSelector.select("EditSeries", "addArticle", env, request);
     }
 
-    public static String actionAttachArticleStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean noRedirect) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+    @ActionCheck(requireModifyRight = true, itemType = Item.SERIES, checkPost = true, checkReferer = true)
+    public String actionAddArticle2() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Relation seriesRelation = (Relation) env.get(VAR_RELATION);
-		User user = (User) env.get(Constants.VAR_USER);
 
-        Item seriesItem = (Item) seriesRelation.getChild().clone();
+        Item seriesItem = (Item) relation.getChild().clone();
         Element seriesRoot = seriesItem.getData().getRootElement();
         List articles = seriesRoot.elements("article");
 		
-		if (!Tools.permissionsFor(user, seriesRelation).canModify())
+		if (!Tools.permissionsFor(user, relation).canModify())
 			return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         List articleRelations = Tools.asList(params.get(PARAM_ARTICLE_RELATION));
@@ -311,16 +224,15 @@ public class EditSeries implements AbcAction {
             }
 
             addArticleToSeries(articleItem, articleRelation, articles);
-            articleRoot.addElement("series_rid").setText(Integer.toString(seriesRelation.getId()));
+            articleRoot.addElement("series_rid").setText(Integer.toString(relation.getId()));
             persistence.update(articleItem);
         }
 
         persistence.update(seriesItem);
 
-        if (! noRedirect) {
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, urlUtils.getRelationUrl(seriesRelation));
-        }
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+
         return null;
     }
 
@@ -354,12 +266,13 @@ public class EditSeries implements AbcAction {
             articles.add(seriesArticle);
     }
 
-    private String actionAttachArticlesUrlsStep1(HttpServletRequest request, Map env) {
+    @ActionCheck(requireModifyRight = true, itemType = Item.SERIES)
+    public String actionAddArticlesUrls() {
         return FMTemplateSelector.select("EditSeries", "addArticlesUrls", env, request);
     }
 
-    public String actionAttachArticlesUrlsStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+    @ActionCheck(requireModifyRight = true, itemType = Item.SERIES, checkReferer = true, checkPost = true)
+    public String actionAddArticlesUrls2() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         List articleRelations = new ArrayList();
 
@@ -379,19 +292,19 @@ public class EditSeries implements AbcAction {
                 return FMTemplateSelector.select("EditSeries", "addArticlesUrls", env, request);
             }
 
-            Relation relation = URLMapper.loadRelationFromUrl(url);
-            if (relation == null) {
+            Relation relArticle = URLMapper.loadRelationFromUrl(url);
+            if (relArticle == null) {
                 ServletUtils.addError(PARAM_URL, "URL "+url+" nebylo nalezeno!", env, null);
                 return FMTemplateSelector.select("EditSeries", "addArticlesUrls", env, request);
             }
 
-            GenericObject obj = persistence.findById(relation.getChild());
+            GenericObject obj = persistence.findById(relArticle.getChild());
             if ( !(obj instanceof Item) || ((Item)obj).getType() != Item.ARTICLE) {
                 ServletUtils.addError(PARAM_URL, "URL "+url+" nepatří článku!", env, null);
                 return FMTemplateSelector.select("EditSeries", "addArticlesUrls", env, request);
             }
 
-            articleRelations.add(Integer.toString(relation.getId()));
+            articleRelations.add(Integer.toString(relArticle.getId()));
         }
 
         if (articleRelations.size() == 0) {
@@ -400,15 +313,14 @@ public class EditSeries implements AbcAction {
         }
 
         params.put(PARAM_ARTICLE_RELATION, articleRelations);
-        return actionAttachArticleStep2(request, response, env, false);
+        return actionAddArticle2();
     }
 
-    private String actionRemoveArticle(HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+    @ActionCheck(requireModifyRight = true, itemType = Item.SERIES, checkTicket = true)
+    public String actionRmArticle() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Relation seriesRelation = (Relation) env.get(VAR_RELATION);
 
-        Item seriesItem = (Item) seriesRelation.getChild().clone();
+        Item seriesItem = (Item) relation.getChild().clone();
         Element seriesRoot = seriesItem.getData().getRootElement();
 
         String ridString = (String) params.get(PARAM_ARTICLE_RELATION);
@@ -440,7 +352,7 @@ public class EditSeries implements AbcAction {
         persistence.update(seriesItem);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, urlUtils.getRelationUrl(seriesRelation));
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
     }
 

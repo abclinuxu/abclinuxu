@@ -51,6 +51,7 @@ import java.util.regex.Pattern;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.Normalizer;
 
 /**
  * Miscallenous utilities.
@@ -558,5 +559,9 @@ public class Misc {
 
         Link lastLink = links.get(links.size() - 1);
         return lastLink.getUrl() + "/";
+    }
+
+    public static String removeDiacritics(String text) {
+        return Normalizer.normalize(text, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]","");
     }
 }

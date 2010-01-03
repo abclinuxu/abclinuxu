@@ -7,6 +7,15 @@
     heslo a pak dvakrát nové heslo. Heslo musí mít nejméně čtyři znaky.
 </p>
 
+<@lib.addForm URL.noPrefix("/EditUser")>
+    <@lib.addPassword true, "PASSWORD", "Současné heslo", 16 />
+    <@lib.addPassword true, "password", "Nové heslo", 16 />
+    <@lib.addPassword true, "password2", "Zopakujte nové heslo", 16 />
+    <@lib.addSubmit "Dokonči" />
+    <@lib.addHidden "action", "changePassword2" />
+    <@lib.addHidden "uid", MANAGED.id />
+</@lib.addForm>
+
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
     <table width="100%" border=0 cellpadding=5>
         <tr>

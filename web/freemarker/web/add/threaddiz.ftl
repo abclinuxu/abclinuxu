@@ -11,13 +11,13 @@ Zvláště dávejte pozor, pokud přesouváte vlákno z diskuse
 ke článku, a ihned novou diskusi přesuňte do diskusního fóra.
 Také byste měli opravit titulek/text generovaného komentáře.</p>
 
-<form action="${URL.make("/EditDiscussion")}" method="POST">
- <input type="submit" value="Přesuň">
- <input type="hidden" name="action" value="toQuestion2">
- <input type="hidden" name="rid" value="${RELATION.id}">
- <input type="hidden" name="dizId" value="${PARAMS.dizId}">
- <input type="hidden" name="threadId" value="${PARAMS.threadId}">
-</form>
+<@lib.addForm URL.make("/EditDiscussion")>
+    <@lib.addSubmit "Přesuň" />
+    <@lib.addHidden "action", "toQuestion2" />
+    <@lib.addHidden "rid", RELATION.id />
+    <@lib.addHidden "dizId", PARAMS.dizId />
+    <@lib.addHidden "threadId", PARAMS.threadId />
+</@lib.addForm>
 
 <#include "../footer.ftl">
 

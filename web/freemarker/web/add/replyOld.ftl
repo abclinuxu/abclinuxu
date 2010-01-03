@@ -4,7 +4,7 @@
 
 <h1>Nový komentář ke staré diskusi</h1>
 
-<form action="${URL.make("/EditDiscussion")}" method="GET" name="replyForm">
+<@lib.addForm URL.make("/EditDiscussion"), "name='replyForm'">
     <#if TOOL.isQuestion(DISCUSSION)>
         <p>
             Pozor, chystáte se komentovat ${AGE} dní starý dotaz. Pokud se nechystáte vložit či doplnit řešení tohoto dotazu,
@@ -16,18 +16,17 @@
         </p>
     </#if>
 
-    <input type="submit" name="confirmOld" value="Pokračovat">
+    <@lib.addSubmit "Pokračovat", "confirmOld" />
     <input type="button" value="Zpět" onclick="javascript: history.go(-1)">
-
-    <input type="hidden" name="action" value="add">
-    <input type="hidden" name="rid" value="${RELATION.id}">
-    <input type="hidden" name="dizId" value="${DISCUSSION.id}">
+    <@lib.addHidden "action", "add" />
+    <@lib.addHidden "rid", RELATION.id />
+    <@lib.addHidden "dizId", DISCUSSION.id />
     <#if PARAMS.threadId??>
-        <input type="hidden" name="threadId" value="${PARAMS.threadId}">
+        <@lib.addHidden "threadId", PARAMS.threadId />
     </#if>
     <#if PARAMS.url??>
-        <input type="hidden" name="url" value="${PARAMS.url}">
+        <@lib.addHidden "url", PARAMS.url />
     </#if>
-</form>
+</@lib.addForm>
 
 <#include "../footer.ftl">

@@ -17,14 +17,10 @@ nezáleží. Například pojmenujete-li si blog snehulak, jeho
 adresa bude www.abclinuxu.cz/blog/snehulak. Jméno
 blogu můžete později změnit, přestane-li vám vyhovovat.</p>
 
-<form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST">
-    <p>
-        <span class="required">Jméno</span>
-        <input type="text" name="blogName" size="40" maxlength="70" value="${PARAMS.blogName!?html}">
-        <input type="submit" name="finish" value="Dokonči">
-    </p>
-    <div class="error">${ERRORS.blogName!}</div>
-    <input type="hidden" name="action" value="rename2">
-</form>
+<@lib.addForm URL.make("/blog/edit/"+REL_BLOG.id)>
+    <@lib.addInput true, "blogname", "Jméno", 40 />
+    <@lib.addSubmit "Dokonči", "finish" />
+    <@lib.addHidden "action", "rename2" />
+</@lib.addForm>
 
 <#include "../footer.ftl">

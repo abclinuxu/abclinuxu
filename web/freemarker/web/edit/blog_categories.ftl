@@ -9,8 +9,6 @@ není dostupné. <a href="/blog/${BLOG.subType}">Zpět na váš blog</a>.</p>
 
 <h2>Kategorie</h2>
 
-<form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST" name="form">
-
 <table border="0">
     <#list CATEGORIES as category>
         <tr>
@@ -24,14 +22,12 @@ není dostupné. <a href="/blog/${BLOG.subType}">Zpět na váš blog</a>.</p>
             <td><a href="${URL.make("/blog/edit/"+REL_BLOG.id+"?cid="+category.id+"&amp;action=editCategory")}">upravit</a></td>
         </tr>
     </#list>
-    <tr>
-        <td><input type="text" name="category" size="20"></td>
-        <td><input type="submit" name="finish" value="Vytvořit"></td>
-    </tr>
 </table>
 
-<input type="hidden" name="action" value="addCategory">
-</form>
-
+<@lib.addForm URL.make("/blog/edit/"+REL_BLOG.id), "name='form'">
+    <@lib.addInput true, "category", "Název", 20 />
+    <@lib.addSubmit "Vytvořit", "finish" />
+    <@lib.addHidden "action", "addCategory" />
+</@lib.addForm>
 
 <#include "../footer.ftl">

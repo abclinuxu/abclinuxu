@@ -8,44 +8,18 @@
 
 <h2>Anketa</h2>
 
-<form action="${URL.make("/EditSurvey")}" method="POST">
-    <table class="siroka" border=0 cellpadding=5>
-        <tr>
-            <td class="required">Jméno ankety</td>
-            <td>
-                <input type="text" name="title" value="${PARAMS.title!}" size="40" tabindex="1">
-                <div class="error">${ERRORS.title!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td align="middle">Volby</td>
-            <td>
-                <p>Zde napište jména všech radio buttonů a check boxů z formulářů.
-                   Každé jméno dejte na samostatný řádek.</p>
-                <textarea name="choices" cols="40" rows="4" tabindex="2">${PARAMS.choices!}</textarea>
-                <div class="error">${ERRORS.choices!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td class="required" align="middle">XML definice</td>
-            <td>
-                <textarea name="definition" class="siroka" rows="20" tabindex="3">${PARAMS.definition!?html}</textarea>
-                <div class="error">${ERRORS.definition!}</div>
-            </td>
-        </tr>
-        <tr>
-            <td>&nbsp;</td>
-            <td><input type="submit" VALUE="Pokračuj" tabindex="4"></td>
-        </tr>
-    </table>
+<@lib.addForm URL.make("/EditSurvey")>
+    <@lib.addInput true, "title", "Jméno ankety", 40 />
+    <@lib.addTextArea false, "choices", "Volby", 4, "cols='40'" />
+    <@lib.addTextArea true, "definition", "XML definice", 20, "class='siroka'" />
+    <@lib.addSubmit "Pokračuj" />
 
     <#if PARAMS.surveyId??>
-        <input type="hidden" name="action" value="edit2">
-        <input type="hidden" name="surveyId" value="${PARAMS.surveyId}">
+        <@lib.addHidden "action", "edit2" />
+        <@lib.addHidden "surveyId", PARAMS.surveyId />
     <#else>
-        <input type="hidden" name="action" value="add2">
+        <@lib.addHidden "action", "add2" />
     </#if>
-</form>
-
+</@lib.addForm>
 
 <#include "../footer.ftl">

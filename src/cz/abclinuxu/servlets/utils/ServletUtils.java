@@ -18,57 +18,48 @@
  */
 package cz.abclinuxu.servlets.utils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.prefs.Preferences;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.EditionRole;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.ldap.LdapUserManager;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.config.Configurator;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
+import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.exceptions.InvalidInputException;
+import cz.abclinuxu.security.ActionProtector;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.scheduler.UserSync;
+import org.apache.log4j.Logger;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.FileUploadBase;
+import org.dom4j.Node;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.DocumentHelper;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadBase;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.prefs.Preferences;
+import java.net.URL;
+import java.net.MalformedURLException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.log4j.Logger;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Node;
-
-import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.data.User;
-import cz.abclinuxu.data.EditionRole;
-import cz.abclinuxu.exceptions.InvalidInputException;
-import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.persistence.SQLTool;
-import cz.abclinuxu.persistence.ldap.LdapUserManager;
-import cz.abclinuxu.scheduler.UserSync;
-import cz.abclinuxu.security.ActionProtector;
-import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.config.Configurator;
-import cz.abclinuxu.utils.config.impl.AbcConfig;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 /**
  * Class to hold useful methods related to servlets
@@ -102,7 +93,7 @@ public class ServletUtils implements Configurable {
 
     public static final String VAR_ERROR_MESSAGE = "ERROR";
 
-    private static FileItemFactory uploadFactory;
+    private static DiskFileItemFactory uploadFactory;
     private static int uploadSizeLimit;
     private static LdapUserManager ldapManager = LdapUserManager.getInstance();
 
@@ -120,7 +111,7 @@ public class ServletUtils implements Configurable {
         else
             map = new HashMap();
 
-        if (ServletFileUpload.isMultipartContent(request) ) {
+        if ( ServletFileUpload.isMultipartContent(request) ) {
             ServletFileUpload uploader = new ServletFileUpload(uploadFactory);
             uploader.setSizeMax(uploadSizeLimit);
             try {
@@ -130,7 +121,7 @@ public class ServletUtils implements Configurable {
 					Object value;
 
                     if ( fileItem.isFormField() )
-                        value = fileItem.getString("UTF-8");
+                        value = fileItem.getString();
                     else
 						value = fileItem;
 
@@ -150,8 +141,6 @@ public class ServletUtils implements Configurable {
                 throw new InvalidInputException("Zvolený soubor je příliš veliký!");
             } catch (FileUploadException e) {
                 throw new InvalidInputException("Chyba při čtení dat.");
-            } catch (UnsupportedEncodingException e) {
-                log.fatal("End of the world - UTF is not supported!");
             }
         } else {
             Enumeration names = request.getParameterNames();
@@ -296,33 +285,6 @@ public class ServletUtils implements Configurable {
     }
 
     /**
-     * Finds role in edition administration for given user. If the role has been already set (in session),
-     * it will be reused, otherwise user's participation in predefined groups is searched and result is stored
-     * in the session.
-     * @param user existing and initialized user instance
-     * @param request current http request
-     * @return enum describing user's role
-     */
-    public static EditionRole getEditionRole(User user, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        EditionRole role = (EditionRole) session.getAttribute(Constants.VAR_EDITION_ROLE);
-        if (role != null)
-            return role;
-
-        if (user.isMemberOf(Constants.GROUP_EDITORS_IN_CHIEF))
-            role = EditionRole.EDITOR_IN_CHIEF;
-        else if (user.isMemberOf(Constants.GROUP_EDITORS))
-            role = EditionRole.EDITOR;
-        else if (Tools.isAuthor(user.getId()))
-            role = EditionRole.AUTHOR;
-        else
-            role = EditionRole.NONE;
-
-        session.setAttribute(Constants.VAR_EDITION_ROLE, role);
-        return role;
-    }
-
-    /**
      * Adds cookie. This method must not be called, if header was written to response already.
      * @param cookie
      * @param response
@@ -454,29 +416,6 @@ public class ServletUtils implements Configurable {
         return servletPath.concat(pathInfo);
 
     }
-    
-    /**
-     * Checks whether servlet path of request begins with given prefix 
-     * @param request Request done on server path
-     * @param prefix Prefix to be beginning of path
-     * @return {@code true} if constructed path matched with prefix, {@code false} otherwise
-     */
-    public static boolean pathBeginsWith(HttpServletRequest request, String prefix) {
-    	String path = combinePaths(request.getServletPath(), request.getPathInfo());
-    	return path != null && path.startsWith(prefix); 
-    }
-    
-    /**
-     * Checks whether either action is defined or element with the same name
-     * as action is present within HTTP passed parameters
-     * @param params HTTP context
-     * @param testAction Value of desired action or name of element which must be present 
-     * @return {@code true} if testAction should be triggered, {@code false} otherwise
-     */
-    public static boolean determineAction(Map params, String testAction) {
-		String action = (String) params.get(AbcAction.PARAM_ACTION);
-		return testAction.equals(action) || (Misc.empty(action) && !Misc.empty((String) params.get(testAction)));
-	}
 
     /**
      * Handles situation, when user logs in. It checks his
@@ -607,7 +546,7 @@ public class ServletUtils implements Configurable {
         uploadSizeLimit = prefs.getInt(PREF_MAX_UPLOAD_SIZE, DEFAULT_MAX_UPLOAD_SIZE);
         File file = new File(uploadPath);
         file.mkdirs();
-        uploadFactory = new DiskFileItemFactory(1024000, file);
+        uploadFactory = new DiskFileItemFactory(1024,file);
     }
 
     /**
@@ -680,4 +619,54 @@ public class ServletUtils implements Configurable {
             return Integer.parseInt(sid);
         }
     }
+
+    /**
+     * Finds role in edition administration for given user. If the role has been already set (in session),
+     * it will be reused, otherwise user's participation in predefined groups is searched and result is stored
+     * in the session.
+     * @param user existing and initialized user instance
+     * @param request current http request
+     * @return enum describing user's role
+     */
+    public static EditionRole getEditionRole(User user, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        EditionRole role = (EditionRole) session.getAttribute(Constants.VAR_EDITION_ROLE);
+        if (role != null)
+            return role;
+
+        if (user.isMemberOf(Constants.GROUP_EDITORS_IN_CHIEF))
+            role = EditionRole.EDITOR_IN_CHIEF;
+        else if (user.isMemberOf(Constants.GROUP_EDITORS))
+            role = EditionRole.EDITOR;
+        else if (Tools.isAuthor(user.getId()))
+            role = EditionRole.AUTHOR;
+        else
+            role = EditionRole.NONE;
+
+        session.setAttribute(Constants.VAR_EDITION_ROLE, role);
+        return role;
+    }
+    
+    /**
+     * Checks whether servlet path of request begins with given prefix 
+     * @param request Request done on server path
+     * @param prefix Prefix to be beginning of path
+     * @return {@code true} if constructed path matched with prefix, {@code false} otherwise
+     */
+    public static boolean pathBeginsWith(HttpServletRequest request, String prefix) {
+    	String path = combinePaths(request.getServletPath(), request.getPathInfo());
+    	return path != null && path.startsWith(prefix); 
+    }
+    
+    /**
+     * Checks whether either action is defined or element with the same name
+     * as action is present within HTTP passed parameters
+     * @param params HTTP context
+     * @param testAction Value of desired action or name of element which must be present 
+     * @return {@code true} if testAction should be triggered, {@code false} otherwise
+     */
+    public static boolean determineAction(Map params, String testAction) {
+		String action = (String) params.get(AbcAction.PARAM_ACTION);
+		return testAction.equals(action) || (Misc.empty(action) && !Misc.empty((String) params.get(testAction)));
+	}
 }

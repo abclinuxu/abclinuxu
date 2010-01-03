@@ -146,15 +146,15 @@
     </form>
 
     <#if directory!="/">
-    <form action="${URL.noPrefix("/EditBookmarks/"+MANAGED.id)}" method="POST">
-    <p>
-        Smazat aktuální adresář včetně obsahu:
-        <input type="submit" value="Smazat adresář">
-        <input type="hidden" name="ticket" value="${USER.getSingleProperty('ticket')}">
-        <input type="hidden" name="path" value="${PARAMS.path!}">
-        <input type="hidden" name="action" value="removeDirectory">
-    </p>
-    </form>
+        <form action="${URL.noPrefix("/EditBookmarks/"+MANAGED.id)}" method="POST">
+        <p>
+            Smazat aktuální adresář včetně obsahu:
+            <input type="submit" value="Smazat adresář">
+            <input type="hidden" name="ticket" value="${USER.getSingleProperty('ticket')}">
+            <input type="hidden" name="path" value="${PARAMS.path!}">
+            <input type="hidden" name="action" value="removeDirectory">
+        </p>
+        </form>
     </#if>
 </#if>
 

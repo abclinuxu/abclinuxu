@@ -19,6 +19,7 @@ import java.util.prefs.Preferences;
  * Author: Lukas Zapletal [lzap at root.cz]
  * Date: 2.3.2003
  */
+@Deprecated
 public class DiacriticRemover implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(DiacriticRemover.class);
 

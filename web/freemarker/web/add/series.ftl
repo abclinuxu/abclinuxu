@@ -10,53 +10,22 @@
     všech seriálů, a zadat URL obrázku, který se zobrazí na stránce seriálu.
 </p>
 
-<form action="${URL.noPrefix("/serialy/edit")}" method="POST">
-    <table class="siroka" border=0 cellpadding=5>
-        <tr>
-            <td class="required">Jméno</td>
-            <td>
-                <input type="text" name="name" value="${PARAMS.name!?html}" size="40" tabindex="1">
-                <div class="error">${ERRORS.name!}<div>
-            </td>
-        </tr>
-
-        <#if ! EDIT_MODE!false>
-        <tr>
-            <td class="required">URL seriálu</td>
-            <td>
-                <input type="text" name="url" value="${PARAMS.url?default("/serialy/")}" size="40" tabindex="2">
-                <div class="error">${ERRORS.url!}</div>
-            </td>
-        </tr>
-        </#if>
-
-        <tr>
-            <td>Popis</td>
-            <td>
-                <textarea name="desc" class="siroka" tabindex="3">${PARAMS.desc!?html}</textarea>
-                <div class="error">${ERRORS.desc!}</div>
-            </td>
-        </tr>
-
-        <tr>
-            <td>URL obrázku</td>
-            <td>
-                <input type="text" name="icon" value="${PARAMS.icon!}" size="40" tabindex="4">
-                <div class="error">${ERRORS.icon!}</div>
-            </td>
-        </tr>
-
-        <tr>
-            <td>&nbsp;</td>
-            <td><input type="submit" value="Dokonči" tabindex="5"></td>
-        </tr>
-    </table>
-    <#if EDIT_MODE!false>
-        <input type="hidden" name="action" value="edit2">
-        <input type="hidden" name="rid" value="${RELATION.id}">
-    <#else>
-        <input type="hidden" name="action" value="add2">
+<@lib.addForm URL.noPrefix("/serialy/edit")>
+    <@lib.addInput true, "name", "Jméno", 40 />
+    <#if ! EDIT_MODE!false>
+        <@lib.addInput true, "url", "URL seriálu", 40, "", "/serialy/" />
     </#if>
-</form>
+
+    <@lib.addTextArea false, "desc", "Popis", "class='siroka'" />
+    <@lib.addInput  false, "icon", "URL obrázku", 40 />
+    <@lib.addSubmit "Dokonči" />
+
+    <#if EDIT_MODE!false>
+        <@lib.addHidden "action", "edit2" />
+        <@lib.addHidden "rid", RELATION.id />
+    <#else>
+        <@lib.addHidden "action", "add2" />
+    </#if>
+</@lib.addForm>
 
 <#include "../footer.ftl">

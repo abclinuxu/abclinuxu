@@ -30,7 +30,7 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.scheduler.UpdateStatistics;
-import cz.finesoft.socd.analyzer.DiacriticRemover;
+import cz.abclinuxu.utils.Misc;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -118,7 +118,7 @@ public class EmailSender implements Configurable {
             AbcEmail message = new AbcEmail(session);
             message.setSubject((String) params.get(KEY_SUBJECT));
             if (senderName!=null) {
-                senderName = DiacriticRemover.getInstance().removeDiacritics(senderName);
+                senderName = Misc.removeDiacritics(senderName);
                 message.setFrom(new InternetAddress(from, senderName));
             } else
                 message.setFrom(new InternetAddress(from));
@@ -218,7 +218,7 @@ public class EmailSender implements Configurable {
             if (from instanceof Address)
                 sender = (Address) from;
             else if(senderName != null) {
-                senderName = DiacriticRemover.getInstance().removeDiacritics(senderName);
+                senderName = Misc.removeDiacritics(senderName);
                 message.setFrom(new InternetAddress((String)from, senderName));
             } else
                 sender = new InternetAddress((String) from);

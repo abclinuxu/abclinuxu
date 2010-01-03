@@ -24,8 +24,8 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.data.Relation;
-import cz.finesoft.socd.analyzer.DiacriticRemover;
 
+import cz.abclinuxu.utils.Misc;
 import java.util.prefs.Preferences;
 import java.util.List;
 import java.util.ArrayList;
@@ -128,7 +128,7 @@ public class URLManager implements Configurable {
      * @return normalized URL, it may have zero length.
      */
     private static String normalizeCharacters(String url, boolean absoluteURL) {
-        String fixedURL = DiacriticRemover.getInstance().removeDiacritics(url);
+        String fixedURL = Misc.removeDiacritics(url);
         fixedURL = new RE(rePlus, RE.REPLACE_ALL).subst(fixedURL, "plus"); // e.g. c++
         if (absoluteURL)
             fixedURL = new RE(reInvalidCharactersAbsolute, RE.REPLACE_ALL).subst(fixedURL, "-");

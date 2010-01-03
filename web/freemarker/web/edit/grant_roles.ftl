@@ -4,27 +4,13 @@
 
 <h2>Přiřazení práv uživateli</h2>
 
-<form action="${URL.noPrefix("/EditUser")}" method="POST">
- <table width="100%" border=0 cellpadding=5>
-  <tr>
-   <td class="required" width="100">Vaše heslo</td>
-   <td>
-    <input type="password" name="PASSWORD" size="16" tabindex="1">
-    <div class="error">${ERRORS.PASSWORD!}</div>
-   </td>
-  </tr>
-  <tr>
-   <td class="required" width="100">Uživatel</td>
-   <td>
-    ${MANAGED.name}
-    <div class="error">${ERRORS.uid!}</div>
-   </td>
-  </tr>
-
-  <tr>
-   <td class="required" width="100">Jeho role</td>
-   <td>
-       <@lib.showOption "roles", "root", "Root", "checkbox" /><br>
+<@lib.addForm URL.noPrefix("/EditUser")>
+    <@lib.addPassword true, "PASSWORD", "Vaše heslo", 16 />
+    <@lib.addFormField true, "Uživatel">
+       ${MANAGED.name}
+    </@lib.addFormField>
+    <@lib.addFormField true, "Jeho role">
+        <@lib.showOption "roles", "root", "Root", "checkbox" /><br>
        <@lib.showOption "roles", "poll admin", "Administrátor anket", "checkbox" /><br>
        <@lib.showOption "roles", "survey admin", "Administrátor anket/průzkumů", "checkbox" /><br>
        <@lib.showOption "roles", "blog digest admin", "Administrátor blog digestu", "checkbox" /><br>
@@ -35,16 +21,11 @@
        <@lib.showOption "roles", "news admin", "Administrátor zpráviček", "checkbox" /><br>
        <@lib.showOption "roles", "advertisement admin", "Administrátor reklamních pozic", "checkbox" /><br>
        <@lib.showOption "roles", "email invalidator", "Smí invalidovat emaily", "checkbox" /><br>
-   </td>
-  </tr>
-  <tr>
-   <td width="100">&nbsp;</td>
-   <td><input type="submit" value="Dokonči" tabindex="3"></td>
-  </tr>
- </table>
- <input type="hidden" name="uid" value="${PARAMS.uid}">
- <input type="hidden" name="action" value="grant3">
-</form>
+    </@lib.addFormField>
 
+    <@lib.addSubmit "Dokonči" />
+    <@lib.addHidden "uid", PARAMS.uid />
+    <@lib.addHidden "action", "grant3" />
+</@lib.addForm>
 
 <#include "../footer.ftl">
