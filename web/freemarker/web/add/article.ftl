@@ -24,10 +24,12 @@
 
     <#if AUTHORS??>
         <@lib.addSelect true, "authors", "Autor", true>
-            <#assign author=relation.child>
-            <option value="${relation.id}"<@selected relation.id/>>
-                ${TOOL.childName(author)}
-            </option>
+            <#list AUTHORS as relation>
+                <#assign author=relation.child>
+                <option value="${relation.id}"<@selected relation.id/>>
+                    ${TOOL.childName(author)}
+                </option>
+            </#list>
         </@lib.addSelect>
     </#if>
 
