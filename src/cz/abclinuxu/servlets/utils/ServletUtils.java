@@ -54,6 +54,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.prefs.Preferences;
 import java.net.URL;
@@ -121,7 +122,7 @@ public class ServletUtils implements Configurable {
 					Object value;
 
                     if ( fileItem.isFormField() )
-                        value = fileItem.getString();
+                        value = fileItem.getString("UTF-8");
                     else
 						value = fileItem;
 
@@ -141,6 +142,8 @@ public class ServletUtils implements Configurable {
                 throw new InvalidInputException("Zvolený soubor je příliš veliký!");
             } catch (FileUploadException e) {
                 throw new InvalidInputException("Chyba při čtení dat.");
+            } catch (UnsupportedEncodingException e) {
+                log.fatal("End of the world - UTF is not supported!");
             }
         } else {
             Enumeration names = request.getParameterNames();
