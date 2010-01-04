@@ -275,6 +275,7 @@ public class EditRequest extends AbcAutoAction implements Configurable {
      * Displays several options that user or admin can do with comment or question.
      * Relation id parameter must be set, comment id is optional.
      */
+    @ActionCheck(relationRequired = true)
     public String actionComment() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
 
