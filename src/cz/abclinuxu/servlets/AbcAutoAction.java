@@ -152,7 +152,7 @@ public class AbcAutoAction implements AbcAction {
                         throw new SecurityException("Nepovolený typ položky!");
                 }
 
-                if (ch.itemOwnerOrRole() != null) {
+                if (ch.itemOwnerOrRole() != null && ch.itemOwnerOrRole().length() > 0) {
                     Item child = (Item) relation.getChild();
                     String role = ch.itemOwnerOrRole();
 
