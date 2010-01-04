@@ -1202,6 +1202,13 @@
     </@addFormField>
 </#macro>
 
+<#macro addSelectBare name, multipleChoice = false>
+    <select name="${name}" <#if multipleChoice>multiple="multiple"</#if>>
+            <#nested>
+    </select>
+</#macro>
+
+
 <#macro addOption selectName, optionName, value=optionName, isDefault = false>
     <option value="${value}" <#if (PARAMS.get(selectName)! == value) || (isDefault && !PARAMS.containsKey(selectName))>selected="selected"</#if> >${optionName}</option>
 </#macro>
