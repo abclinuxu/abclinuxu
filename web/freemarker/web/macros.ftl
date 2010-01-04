@@ -1135,6 +1135,7 @@
 </#macro>
 
 <#macro addTextAreaBare name, rows = 15, extraAttributes = "">
+    <div class="error" id="${name?html}Error">${ERRORS.get(name)!}</div>
     <textarea name="${name?html}" id="${name?html}" class="siroka" rows="${rows}">${PARAMS.get(name)!?html}</textarea>
 </#macro>
 
