@@ -38,10 +38,7 @@ GRANT ALL ON *.* TO $MYSQL_USER@$MYSQL_HOST IDENTIFIED BY '$MYSQL_PASSWORD' WITH
 FLUSH PRIVILEGES;
 EOF
 
-echo "Vytvarim MYSQL schema"
-mysql -u $MYSQL_USER --password=$MYSQL_PASSWORD --default-character-set=utf8 $MYSQL_DB < $MYSQL_SCHEME
-
-echo "Naplnuji databazi vzorovymi daty"
+echo "Naplnuji databazi schematem a vzorovymi daty"
 bzcat $MYSQL_DATA | mysql -u $MYSQL_USER --password=$MYSQL_PASSWORD --default-character-set=utf8 $MYSQL_DB
 
 Ujistete se, ze databaze je pristupna pres TCP/IP, v defaultnim
