@@ -90,6 +90,13 @@
         (nepovinné; je-li ponecháno prázdné, systém vygeneruje URL podle názvu článku)
     </@lib.addFormField>
 
+    <@lib.addTextArea false, "thumbnail", "Ikonka", 2, "class='siroka'">
+        <div>
+                Pokud chcete, aby se ve výpise článků zobrazovala ikonka, vložte zde její HTML kód.
+                Nedávejte zde formátování, to se řeší v šabloně. Jen definici tagu IMG.
+        </div>
+    </@lib.addTextArea>
+
     <@lib.addSubmit "Dokonči" />
 
     <#if PARAMS.action=="add" || PARAMS.action="add2" >
