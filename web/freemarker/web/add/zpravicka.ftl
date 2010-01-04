@@ -73,7 +73,7 @@ s vysvětlením. Teprve po schválení bude zprávička zveřejněna.</p>
         <@lib.addCheckbox "forbidDiscussions", "Zakázat diskuzi" />
     </#if>
 
-    <h3>Kategorie</h3>
+    <@lib.addFormField true, "Kategorie">
     <#assign selected = PARAMS.category!"RELEASE">
     <dl>
         <#list CATEGORIES as category>
@@ -85,6 +85,7 @@ s vysvětlením. Teprve po schválení bude zprávička zveřejněna.</p>
             <dd>${category.desc}</dd>
         </#list>
     </dl>
+    </@lib.addFormField>
 
     <@lib.addSubmit "Náhled", "preview" />
     <@lib.addSubmit "Dokonči" />
