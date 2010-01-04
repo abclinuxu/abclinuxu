@@ -87,9 +87,13 @@ s vysvětlením. Teprve po schválení bude zprávička zveřejněna.</p>
     </dl>
     </@lib.addFormField>
 
-    <@lib.addSubmit "Náhled", "preview" />
-    <@lib.addSubmit "Dokonči" />
-    <@lib.addHidden "action", "add2" />
+    <@lib.addFormField>
+        <@lib.addSubmitBare "Náhled", "preview" />
+        <@lib.addSubmitBare "Dokonči" />
+
+        <@lib.addHidden "action", "add2" />
+    </@lib.addFormField>
+
 </@lib.addForm>
 
 <#include "../footer.ftl">
