@@ -66,7 +66,7 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
     </#if>
 
     <#if STORY.child.type==15 || PARAMS.publish??>
-        <@lib.addInput "publish", "Datum zveřejnění", 16>
+        <@lib.addInput false, "publish", "Datum zveřejnění", 16>
             <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDateTime()</script>
             Formát 2005-01-25 07:12
         </@lib.addInput>
