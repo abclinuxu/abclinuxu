@@ -169,6 +169,7 @@ public class EditNews extends AbcAutoAction {
         Element element = (Element) item.getData().selectSingleNode("/data/content");
         params.put(PARAM_CONTENT,element.getText());
         params.put(PARAM_CATEGORY,item.getSubType());
+        params.put(PARAM_UID,item.getOwner());
 
         element = (Element) item.getData().selectSingleNode("/data/forbid_discussions");
         if (element != null)
