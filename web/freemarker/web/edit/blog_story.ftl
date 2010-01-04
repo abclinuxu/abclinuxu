@@ -61,7 +61,7 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
             <#list CATEGORIES as category>
                 <@lib.addOption "cid", category.name, category.id />
             </#list>
-        </@lib.addSelect>
+        </@lib.addSelectBare>
     </#if>
 
     <#if STORY.child.type==15 || PARAMS.publish??>

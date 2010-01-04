@@ -87,7 +87,7 @@ v pravém sloupci v části nadepsané <b>Správa zápisku</b>.</p>
         <#if PREVIEW??>
             <@lib.addSubmitBare "Zopakuj náhled", "preview" />
             <@lib.addSubmitBare "Publikuj", "finish" />
-            <@lib.addSubmitBare "Do konceptů, "delay" />
+            <@lib.addSubmitBare "Do konceptů", "delay" />
         <#else>
             <@lib.addSubmitBare "Náhled", "preview" />
             <@lib.addSubmitBare "Do konceptů", "delay" />
