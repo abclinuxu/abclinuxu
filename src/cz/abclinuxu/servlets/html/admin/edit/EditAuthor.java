@@ -103,7 +103,7 @@ public class EditAuthor implements AbcAction {
             navigator = new PwdNavigator(env, PageNavigation.EDITION_PORTAL);
 
         if (ACTION_ADD.equals(action)) {
-            if (editor)
+            if (! editor)
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
             return actionAddStep1(request, env, navigator);
