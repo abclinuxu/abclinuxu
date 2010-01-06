@@ -734,7 +734,7 @@
             <var name="TITLE" value="Stránka nebyla nalezena"/>
         </action>
         <action name="poll" content="/show/anketa.ftl">
-            <var name="TITLE" value="${ITEM.title}"/>
+            <var name="TITLE" value="Anketa"/>
         </action>
         <action name="question" content="/show/question.ftl">
             <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
