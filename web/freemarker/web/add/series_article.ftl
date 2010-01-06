@@ -14,6 +14,6 @@
     <@lib.addSubmit "Dokonči" />
     <@lib.addHidden "action", "addArticle2" />
     <@lib.addHidden "articleRid", PARAMS.articleRid />
-</form>
+</@lib.addForm>
 
 <#include "../footer.ftl">
