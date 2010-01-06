@@ -24,7 +24,7 @@
     <@lib.addFormField true, "Login", "Přihlašovací jméno (login) musí být unikátní a mít nejméně tři znaky. Povolené znaky "+
                 "jsou písmena A až Z, číslice, pomlčka, tečka a podtržítko. Login se nedá změnit, je součástí Jabber "+
                 "účtu a adresy vaši stránky /lide/vas-login.">
-         <@lib.addInputBare "login", 24" />
+         <@lib.addInputBare "login", 24 />
          <script type="text/javascript">
             $(document).ready(function() {
                $("#login").change(function() {
@@ -40,7 +40,7 @@
     <@lib.addPassword true, "password2", "Zopakujte heslo", 24 />
 
     <@lib.addFormField false, "Přezdívka", "Přezdívka musí být unikátní">
-         <@lib.addInputBare "nick", 24" />
+         <@lib.addInputBare "nick", 24 />
          <script type="text/javascript">
             $(document).ready(function() {
                $("#nick").change(function() {
