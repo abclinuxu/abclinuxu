@@ -181,7 +181,6 @@ public class EditSeries extends AbcAutoAction {
         return null;
     }
 
-    @ActionCheck(requireModifyRight = true, itemType = Item.SERIES)
     public String actionAddArticle() {
         Persistence persistence = PersistenceFactory.getPersistence();
         Category category = (Category) persistence.findById(new Category(Constants.CAT_SERIES));
