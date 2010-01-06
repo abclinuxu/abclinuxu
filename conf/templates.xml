@@ -734,7 +734,7 @@
             <var name="TITLE" value="Stránka nebyla nalezena"/>
         </action>
         <action name="poll" content="/show/anketa.ftl">
-            <var name="TITLE" value="Anketa"/>
+            <var name="TITLE" value="${ITEM.title}"/>
         </action>
         <action name="question" content="/show/question.ftl">
             <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
@@ -892,7 +892,7 @@
 
 	<servlet name="ViewIndex">
 		<action name="show" content="/show/index.ftl">
-			<var name="TITLE" value="abclinuxu.cz - Linux na stříbrném podnose" />
+			<var name="TITLE" value="AbcLinuxu.cz - Linux na stříbrném podnose" />
 			<var name="IS_INDEX" value="true" type="boolean" />
 		</action>
 	</servlet>
