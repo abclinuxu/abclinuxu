@@ -44,7 +44,7 @@
     <@lib.addSubmit "Dokonči" />
     <@lib.addHidden "action", "editProfile2" />
     <@lib.addHidden "uid", MANAGED.id />
-</lib.addForm>
+</@lib.addForm>
 
 <#include "/include/napoveda-k-auto-formatovani.txt">
 
