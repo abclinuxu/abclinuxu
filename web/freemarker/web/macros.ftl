@@ -1177,7 +1177,7 @@
 
 <#macro addCheckboxBare name, description, value="yes">
     <#nested>
-    <label><input type="checkbox" name="${name?html}" value="${value?html}" <#if (PARAMS.get(name)!) == value>checked="checked"</#if> />
+    <label><input type="checkbox" name="${name?html}" value="${value?html}" <#if PARAMS.containsKey(name)>checked="checked"</#if> />
     ${description?html}</label>
 </#macro>
 
