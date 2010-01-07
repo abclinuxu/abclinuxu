@@ -23,7 +23,7 @@
 
     <@lib.addFormField true, "Login", "Přihlašovací jméno (login) musí být unikátní a mít nejméně tři znaky. Povolené znaky "+
                 "jsou písmena A až Z, číslice, pomlčka, tečka a podtržítko. Login se nedá změnit, je součástí Jabber "+
-                "účtu a adresy vaši stránky /lide/vas-login.">
+                "účtu a adresy vaši stránky www.abclinuux.cz/lide/vas-login.">
          <@lib.addInputBare "login", 24 />
          <script type="text/javascript">
             $(document).ready(function() {
