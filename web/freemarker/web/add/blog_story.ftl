@@ -59,13 +59,15 @@ v pravém sloupci v části nadepsané <b>Správa zápisku</b>.</p>
     <#if (CATEGORIES?size>0)>
         <@lib.addFormField false, "Kategorie zápisu", "Zde nastavíte kategorii vašeho zápisu. Můžete tak členit zápisy do různých kategorií.">
             <@lib.addSelectBare "cid">
-                <@lib.addOption "cid", category.name, category.id />
+                <#list CATEGORIES as category>
+                    <@lib.addOption "cid", category.name, category.id />
+                </#list>
             </@lib.addSelectBare>
         </@lib.addFormField>
     </#if>
 
     <@lib.addFormField false, "Aktivovat sledování diskuse", "Zde můžete aktivovat sledování diskuse k tomuto zápisu. Komentáře čtenářů vám budou chodit emailem.">
-        <@lib.addCheckboxBare "watchDiz" />
+        <@lib.addCheckboxBare "watchDiz" ""/>
     </@lib.addFormField>
     <@lib.addInput false, "publish", "Datum zveřejnění", 16>
         <input type="button" id="datetime_btn" value="...">
@@ -79,7 +81,7 @@ v pravém sloupci v části nadepsané <b>Správa zápisku</b>.</p>
         Ze souboru <@lib.addFileBare "contentFile" /><@lib.addSubmitBare "Načti", "upload" />
 
         <@lib.addTextAreaBare "content", 30, "class='siroka'">
-                <@lib.showRTEControls "content"/>
+            <@lib.showRTEControls "content"/>
         </@lib.addTextAreaBare>
     </@lib.addFormField>
 
