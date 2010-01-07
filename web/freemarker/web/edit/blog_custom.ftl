@@ -22,7 +22,7 @@ přidat obrázek, odkazy na své přátelé nebo blogy, které čtete.
     <@lib.addFormField false, "Titulek blogu", "Zde nastavíte titulek celé stránky">
         <@lib.addInputBare "title", 40 />
     </@lib.addFormField>
-    <@lib.addTextArea false, "intro", "Popis blogu", 20">
+    <@lib.addTextArea false, "intro", "Popis blogu", 20>
         <@lib.showRTEControls "intro"/>
     </@lib.addTextArea>
 
