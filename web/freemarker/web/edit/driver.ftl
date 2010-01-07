@@ -44,7 +44,7 @@
 <@lib.addForm URL.make("/edit"), "name='form'">
     <@lib.addInput true, "name", "Jméno", 30 />
     <@lib.addSelect true, "category", "Kategorie">
-        <#list CATEGORIES as cat>
+        <#list CATEGORIES as category>
             <@lib.addOption "category", category.name, category.key />
         </#list>
     </@lib.addSelect>

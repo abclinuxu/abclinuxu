@@ -30,7 +30,7 @@
             </tr>
         </#if>
 
-        <#assign hwurl = TOOL.xpath(hardware,"data/driver_url")?default("UNDEFINED")>
+        <#assign hwurl = TOOL.xpath(hardware,"data/driver_url")!"UNDEFINED">
         <#if (hwurl!="UNDEFINED")>
             <tr>
                 <td><b>Adresa ovladače:</b></td>
