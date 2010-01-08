@@ -72,7 +72,7 @@
             obrázky. Vypnutím získáte zanedbatelný nárůst rychlosti.
         </@lib.addDescriptionLine>
 
-        <@lib.addFormField true, "Záložkové služby">
+        <@lib.addFormField true, "Skrýt záložkové služby">
             <@lib.showOption "social_bookmarks", "yes", "ano", "radio", "" />
             <@lib.showOption "social_bookmarks", "no", "ne", "radio", "" />
         </@lib.addFormField>
@@ -214,12 +214,12 @@
     </@lib.addGroup>
 
     <@lib.addGroup "Počet dokumentů jinde">
-        <@lib.addInput "defaultPageSize", "Obecná velikost stránky", 3 />
+        <@lib.addInput false "defaultPageSize", "Obecná velikost stránky", 3 />
         <@lib.addDescriptionLine>
             Počet zobrazených dokumentů na jedné stránce.
         </@lib.addDescriptionLine>
 
-        <@lib.addInput "search", "Velikost stránky při hledání", 3 />
+        <@lib.addInput false "search", "Velikost stránky při hledání", 3 />
         <@lib.addDescriptionLine>
             Počet nalezených dokumentů zobrazených na jedné stránce.
         </@lib.addDescriptionLine>

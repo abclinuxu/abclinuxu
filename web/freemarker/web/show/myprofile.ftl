@@ -115,7 +115,7 @@
     </tr>
     <tr>
         <td align="right" valign="top">
-            <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editBookmarks")}">upravit</a>
+            <a href="${URL.noPrefix("/lide/"+PROFILE.login+"/zalozky")}">upravit</a>
         </td>
         <td>
             seznam záložek

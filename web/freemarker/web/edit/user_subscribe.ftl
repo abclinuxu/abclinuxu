@@ -31,10 +31,6 @@
 </dl>
 
 <p>
-    Další službou je  portálu AbcLinuxu.cz.
-</p>
-
-<p>
     Pro vaši ochranu nejdříve zadejte současné heslo.
 </p>
 

@@ -1089,13 +1089,15 @@
 
 
 <#macro addFormField required = false, description = "&nbsp;", tooltip = "">
-    <tr <#if required>class="required"</#if>>
-        <td>${description}
+    <tr>
+        <td <#if required>class="required"</#if>>${description}
             <#if tooltip != "">
-                <a class="info" href="#">?<span class="tooltip">${tooltip?html}</span></a>
+                <@showHelp>${tooltip?html}</@showHelp>
             </#if>
         </td>
-        <td><#nested></td>
+        <td>
+            <#nested>
+        </td>
     </tr>
 </#macro>
 
@@ -1140,6 +1142,7 @@
     <textarea name="${name?html}" id="${name?html}" class="siroka" rows="${rows}">${PARAMS.get(name)!?html}</textarea>
 </#macro>
 
+<#-- todo prechod na  <@showRTEControls name/> -->
 <#macro addTextAreaEditor name>
     <div class="form-edit">
             <div class="form-edit">
@@ -1234,7 +1237,10 @@
 </#macro>
 
 <#macro addGroup description>
-    <h2 style="margin-bottom: 1em">${description?html}</h2>
+    <tr><td colspan="2">
+        <h2 style="margin-bottom: 1em">${description?html}</h2>
+    </td></tr>
+    <#nested>
 </#macro>
 
 <#macro addRadioChoice name, description, value, isDefault = false>
