@@ -25,40 +25,33 @@
 
 <h2>Otázky v diskusi</h2>
 
-<#list QUESTIONS.entrySet() as forums>
-    <#assign FORUM=TOOL.analyzeDiscussions(forums.value)>
-    <#assign rid=forums.key>
-    <#if forums.value.size() gt 0>
-      <table class="ds" id="forum_table_${forums.key}">
+<#list QUESTIONS.entrySet() as forum>
+    <#assign relation=TOOL.createRelation(forum.key)>
+    <table class="ds">
         <thead>
-          <tr>
-            <td class="td-nazev">
-              <#if rid gt 0>
-                  <#assign relation=TOOL.createRelation(forums.key)>
-                  <span class="st_nadpis"><a href="${relation.url}" title="${TOOL.childName(relation)}">${TOOL.childName(relation)}</a></span>
-              <#elseif rid==0>
-                  <span class="st_nadpis"><a href="/poradna" title="Poradna">Poradna</a></span>
-              <#elseif rid==-1>
-                  <span class="st_nadpis"><a href="/skupiny" title="Poradny ze skupin">Poradny ze skupin</a></span>
-              </#if>
-            </td>
-            <td class="td-meta">Reakcí</td>
-            <td class="td-datum">
-                Poslední
-            </td>
-          </tr>
+            <tr>
+                <td class="td-nazev">
+                    <#if TOOL.sync(relation.parent).type == 7>
+                        <#assign title = "Poradna skupiny "  + TOOL.childName(relation.upper)>
+                    <#else>
+                        <#assign title = TOOL.childName(relation)>
+                    </#if>
+                    <span class="st_nadpis"><a href="${relation.url}">${title}</a></span>
+                </td>
+                <td class="td-meta">Reakcí</td>
+                <td class="td-datum">Poslední</td>
+            </tr>
         </thead>
-        <tbody id="forum_tbody_${forums.key}">
-         <#list FORUM as diz>
-          <tr>
-            <td><a href="${diz.url}">${diz.title}</a></td>
-            <td class="td-meta">${diz.responseCount}</td>
-            <td class="td-datum">${DATE.show(diz.updated,"SMART")}</td>
-          </tr>
-         </#list>
+        <tbody>
+            <#list forum.value as diz>
+                <tr>
+                    <td><a href="${diz.url}">${diz.title}</a></td>
+                    <td class="td-meta">${diz.responseCount}</td>
+                    <td class="td-datum">${DATE.show(diz.updated,"SMART")}</td>
+                </tr>
+            </#list>
         </tbody>
-      </table>
-      </#if>
+    </table>
 </#list>
 
 <h2>Nabídky zaměstnání</h2>

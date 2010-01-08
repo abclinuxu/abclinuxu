@@ -21,9 +21,9 @@ package cz.abclinuxu.scheduler;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.view.Article;
 import cz.abclinuxu.data.view.News;
+import cz.abclinuxu.data.view.DiscussionHeader;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
@@ -112,8 +112,10 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             }
             params.put(PARAM_CONTENT, content);
 
+            // article will be scheduled
             EditArticle editArticle = new EditArticle();
             editArticle.actionAddStep2(null, null, map, false, true);
+            relation = (Relation) map.get(EditArticle.VAR_RELATION);
             log.debug("Weekly summary article finished");
         } catch (Exception e) {
             log.error("WhatHappened generation failed!", e);
@@ -150,7 +152,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
         String title, content;
 
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
-        List relations = sqlTool.findArticleRelationsWithinPeriod(from, to, qualifiers);
+        List<Relation> relations = sqlTool.findArticleRelationsWithinPeriod(from, to, qualifiers);
         Tools.syncList(relations);
         List articles = new ArrayList(relations.size());
 
@@ -198,25 +200,16 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
         qualifiers = new Qualifier[]{fromCondition, toCondition, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
         relations = sqlTool.findDiscussionRelations(qualifiers);
         Tools.syncList(relations);
-        Map<Integer, List<Relation>> map;
-        Category subportals = new Category(Constants.CAT_SUBPORTALS);
-        List<Relation> children = Tools.syncList(subportals.getChildren());
 
-        int[] forums = {49490,192836,222493,192820,222492};    //z nejakeho duvodu nejde nacist ze systemPrefs.xml
-
-        map = new HashMap<Integer, List<Relation>>(children.size()+forums.length);
-
-        for (Relation rel : children) {
-                int rid = Misc.parseInt(Tools.xpath(rel.getChild(), "/data/forum"), 0);
-                List<Relation> dizs = sqlTool.findDiscussionRelationsWithParent(rid, qualifiers);
-                Tools.syncList(dizs);
-                map.put(rid, dizs);
-        }
-
-        for (Integer rel : forums) {
-                List<Relation> dizs = sqlTool.findDiscussionRelationsWithParent(rel, qualifiers);
-                Tools.syncList(dizs);
-                map.put(rel, dizs);
+        Map<Integer, List<DiscussionHeader>> map = new HashMap<Integer, List<DiscussionHeader>>();
+        for (Relation question : relations) {
+            DiscussionHeader diz = Tools.analyzeDiscussion(question);
+            List<DiscussionHeader> dizs = map.get(question.getUpper());
+            if (dizs == null) {
+                dizs = new ArrayList<DiscussionHeader>();
+                map.put((question.getUpper()), dizs);
+            }
+            dizs.add(diz);
         }
 
         params.put(VAR_QUESTIONS, map);
