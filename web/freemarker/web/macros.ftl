@@ -464,7 +464,7 @@
  --></#if>
 </#macro>
 
-<#macro showPoll (relation url=relation.url?default("/ankety/show/"+relation.id))>
+<#macro showPoll (relation url=relation.url!("/ankety/show/"+relation.id))>
     <#assign anketa = relation.child, total = anketa.totalVoters>
     <#if anketa.multiChoice><#assign type = "checkbox"><#else><#assign type = "radio"></#if>
     <div>
@@ -1129,17 +1129,17 @@
     <div class="error" id="${name?html}Error">${ERRORS.get(name)!}</div>
 </#macro>
 
-<#macro addTextArea required, name, description, rows = 15, extraAttributes = "">
+<#macro addTextArea required, name, description, rows = 15, extraAttributes = "", value=PARAMS[name]!>
     <@addFormField required, description>
         <#nested>
-        <@addTextAreaBare name, rows, extraAttributes />
+        <@addTextAreaBare name, rows, extraAttributes, value />
     </@addFormField>
 </#macro>
 
-<#macro addTextAreaBare name, rows = 15, extraAttributes = "">
+<#macro addTextAreaBare name, rows = 15, extraAttributes = "", value=PARAMS[name]!>
     <div class="error" id="${name?html}Error">${ERRORS.get(name)!}</div>
     <#nested>
-    <textarea name="${name?html}" id="${name?html}" class="siroka" rows="${rows}">${PARAMS.get(name)!?html}</textarea>
+    <textarea name="${name?html}" id="${name?html}" class="siroka" rows="${rows}" ${extraAttributes}>${value?html}</textarea>
 </#macro>
 
 <#-- todo prechod na  <@showRTEControls name/> -->

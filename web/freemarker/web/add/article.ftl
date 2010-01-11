@@ -48,8 +48,8 @@
         </@lib.addSelect>
     </#if>
 
-    <@lib.addTextArea true, "perex", "Perex", 4, "class='siroka'" />
-    <@lib.addTextArea true, "content", "Obsah", 40, "class='siroka'">
+    <@lib.addTextArea true, "perex", "Perex", 4 />
+    <@lib.addTextArea true, "content", "Obsah">
         <p>
             Rozdělit článek na více podstránek můžete pomocí následující direktivy: <br>
             <i>&lt;page title="Nastavení programu LILO"&gt;</i> <br>
@@ -61,7 +61,7 @@
         </@lib.addTextAreaEditor>
     </@lib.addTextArea>
 
-    <@lib.addTextArea false, "related", "Související články", 5, "class='siroka'">
+    <@lib.addTextArea false, "related", "Související články", 5>
         <div>
             Zde můžete zadat související články z našeho portálu. Na první řádek vložte
             relativní URL odkazu, na druhý jeho popis. Liché řádky jsou URL, sudé popisy. Popis může obsahovat
@@ -69,7 +69,7 @@
         </div>
     </@lib.addTextArea>
 
-    <@lib.addTextArea false, "resources", "Zdroje a odkazy", 5, "class='siroka'">
+    <@lib.addTextArea false, "resources", "Zdroje a odkazy", 5>
         <div>
             Zde můžete zadat odkazy a zdroje. Místní URL vkládejte jako relativní! Na první řádek vložte
             URL odkazu, na druhý jeho popis. Liché řádky jsou URL, sudé popisy. Popis může obsahovat
@@ -90,7 +90,7 @@
         (nepovinné; je-li ponecháno prázdné, systém vygeneruje URL podle názvu článku)
     </@lib.addFormField>
 
-    <@lib.addTextArea false, "thumbnail", "Ikonka", 2, "class='siroka'">
+    <@lib.addTextArea false, "thumbnail", "Ikonka", 2>
         <div>
                 Pokud chcete, aby se ve výpise článků zobrazovala ikonka, vložte zde její HTML kód.
                 Nedávejte zde formátování, to se řeší v šabloně. Jen definici tagu IMG.

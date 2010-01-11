@@ -72,7 +72,7 @@ Systém zlom vyžaduje až od limitu stopadesáti slov.
         </@lib.addInput>
     </#if>
 
-    <@lib.addTextArea true, "content", "Obsah zápisu", 30, "class='siroka'">
+    <@lib.addTextArea true, "content", "Obsah zápisu", 30>
         <@lib.showRTEControls "content"/>
     </@lib.addTextArea>
 

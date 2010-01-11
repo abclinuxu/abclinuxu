@@ -89,12 +89,12 @@ public class EditArticle implements AbcAction {
     public static final String VAR_SECTIONS = "SECTIONS";
     public static final String VAR_AUTHORS = "AUTHORS";
     public static final String VAR_SERIES_LIST = "SERIES";
+    public static final String VAR_PARENTS = "PARENTS";
 
     public static final String ACTION_ADD_ITEM = "add";
     public static final String ACTION_ADD_ITEM_STEP2 = "add2";
     public static final String ACTION_EDIT_ITEM = "edit";
     public static final String ACTION_EDIT_ITEM_STEP2 = "edit2";
-    public static final String ACTION_DOCBOOK = "docbook";
     public static final String ACTION_SHOW_TALK = "showTalk";
     public static final String ACTION_TALK_EMAILS = "talkEmails";
     public static final String ACTION_TALK_EMAILS_STEP2 = "talkEmails2";
@@ -184,8 +184,8 @@ public class EditArticle implements AbcAction {
             return actionShowTalk(request, env);
 
         if (ACTION_ADD_QUESTION.equals(action)) {
-            ActionProtector.ensureContract(request, EditArticle.class, true, true, false, true);
-            return actionAddQuestion(request, response, env);
+            ActionProtector.ensureContract(request, EditArticle.class, true, true, true, false);
+            return actionAddQuestion(response, env);
         }
 
         if (ACTION_SEND_QUESTION.equals(action)) {
@@ -202,8 +202,8 @@ public class EditArticle implements AbcAction {
         }
 
         if (ACTION_REMOVE_QUESTION.equals(action)) {
-            ActionProtector.ensureContract(request, EditArticle.class, true, true, true, false);
-            return actionRemoveQuestion(request, response, env);
+            ActionProtector.ensureContract(request, EditArticle.class, true, true, false, true);
+            return actionRemoveQuestion(response, env);
         }
 
         if (ACTION_TALK_EMAILS.equals(action))
@@ -211,7 +211,7 @@ public class EditArticle implements AbcAction {
 
         if (ACTION_TALK_EMAILS_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditArticle.class, true, true, true, false);
-            return actionSetTalkAddressesStep2(request, response, env);
+            return actionSetTalkAddressesStep2(response, env);
         }
 
 		if (ACTION_TOGGLE_HP.equals(action)) {
@@ -446,8 +446,7 @@ public class EditArticle implements AbcAction {
         Relation child = InstanceUtils.findFirstChildRecordOfType(item, Record.ARTICLE);
         Record record = (Record) child.getChild();
 
-        boolean canContinue = true;
-        canContinue &= setTitle(params, item, env);
+        boolean canContinue = setTitle(params, item, env);
 
 		if (upperCat.getType() != Category.SUBPORTAL) {
 			canContinue &= setAuthors(params, item, env);
@@ -506,10 +505,14 @@ public class EditArticle implements AbcAction {
 
         Element talk = (Element) document.selectSingleNode("/data/talk");
         if (talk == null) {
-            talk = DocumentHelper.makeElement(document, "/data/talk");
+            DocumentHelper.makeElement(document, "/data/talk");
             PersistenceFactory.getPersistence().update(item);
         }
         env.put(VAR_TALK_XML, NodeModel.wrap((new DOMWriter().write(document))));
+
+        Persistence persistence = PersistenceFactory.getPersistence();
+        List parents = persistence.findParents(relation);
+        env.put(VAR_PARENTS, parents);
 
         return FMTemplateSelector.select("EditArticle", "talk", env, request);
     }
@@ -541,7 +544,7 @@ public class EditArticle implements AbcAction {
     /**
      * Sets email addresses for this talk.
      */
-    protected String actionSetTalkAddressesStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String actionSetTalkAddressesStep2(HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
@@ -551,14 +554,14 @@ public class EditArticle implements AbcAction {
             PersistenceFactory.getPersistence().update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/edit/" + relation.getId()+"?action=showTalk");
+        urlUtils.redirect(response, "/clanky/edit/" + relation.getId()+"?action=showTalk");
         return null;
     }
 
     /**
      * Adds new question.
      */
-    protected String actionAddQuestion(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String actionAddQuestion(HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
@@ -568,14 +571,14 @@ public class EditArticle implements AbcAction {
             PersistenceFactory.getPersistence().update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/edit/" + relation.getId()+"?action=showTalk");
+        urlUtils.redirect(response, "/clanky/edit/" + relation.getId()+"?action=showTalk");
         return null;
     }
 
     /**
      * Removes existing question.
      */
-    protected String actionRemoveQuestion(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String actionRemoveQuestion(HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
@@ -590,7 +593,7 @@ public class EditArticle implements AbcAction {
         }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/edit/" + relation.getId()+"?action=showTalk");
+        urlUtils.redirect(response, "/clanky/edit/" + relation.getId()+"?action=showTalk");
         return null;
     }
 
@@ -633,7 +636,7 @@ public class EditArticle implements AbcAction {
             EmailSender.sendEmail(email);
         }
 
-        urlUtils.redirect(response, "/edit/" + relation.getId()+"?action=showTalk");
+        urlUtils.redirect(response, "/clanky/edit/" + relation.getId()+"?action=showTalk");
         return null;
     }
 
@@ -723,7 +726,7 @@ public class EditArticle implements AbcAction {
         persistence.update(record);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
+        urlUtils.redirect(response, "/clanky/edit/" + relation.getId() + "?action=showTalk");
         return null;
     }
 
@@ -894,7 +897,7 @@ public class EditArticle implements AbcAction {
      */
     private boolean setPublishDate(Map params, Item item, Map env) {
         try {
-            Date publish = null;
+            Date publish;
             synchronized (Constants.isoFormat) {
                 publish = Constants.isoFormat.parse((String) params.get(PARAM_PUBLISHED));
             }

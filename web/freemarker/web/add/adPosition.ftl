@@ -24,7 +24,7 @@
 <@lib.addForm URL.noPrefix("/EditAdvertisement"), "name='form'">
     <@lib.addInput true, "name", "Jméno", 60 />
     <@lib.addInput true, "newIdentifier", "Identifikátor", 60 />
-    <@lib.addTextArea false, "desc", "Popis", 3, "class='siroka'" />
+    <@lib.addTextArea false, "desc", "Popis", 3 />
     <@lib.addSubmit "Dokonči", "finish" />
 
     <@lib.addHidden "action", "addPosition2" />

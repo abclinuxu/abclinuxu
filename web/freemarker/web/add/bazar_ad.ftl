@@ -48,15 +48,15 @@
 <@lib.addForm URL.make("/edit")>
     <@lib.addInput true, "title", "Titulek", 40 />
     <@lib.addFormField true, "Typ inzerátu">
-        <@lib.showOption "type", "sell", "Prodej", "radio", "tabindex='2'" />
-        <@lib.showOption "type", "buy", "Koupě", "radio", "tabindex='3'" />
+        <@lib.showOption "type", "sell", "Prodej", "radio" />
+        <@lib.showOption "type", "buy", "Koupě", "radio" />
         <div class="error">${ERRORS.type!}</div>
     </@lib.addFormField>
 
     <@lib.addInput false, "price", "Cena", 40 />
     <@lib.addInput false, "contact", "Kontakt", 40 />
 
-    <@lib.addTextArea true, "text", "Obsah inzerátu", 20, "class='siroka'">
+    <@lib.addTextArea true, "text", "Obsah inzerátu", 20>
         <@lib.addTextAreaEditor "text" />
     </@lib.addTextArea>
 

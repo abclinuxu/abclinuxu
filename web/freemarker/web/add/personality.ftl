@@ -38,7 +38,7 @@
     <@lib.addInput true, "firstname", "Jméno" />
     <@lib.addInput true, "surname", "Příjmení" />
 
-    <@lib.addTextArea true, "desc", "Popis", 20, "class='siroka'">
+    <@lib.addTextArea true, "desc", "Popis", 20>
         <@lib.showRTEControls "desc"/>
     </@lib.addTextArea>
 

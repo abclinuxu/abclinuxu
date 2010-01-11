@@ -31,7 +31,7 @@
         </#list>
     </@lib.addFormField>
 
-    <@lib.addTextArea false, "note", "Poznámka", 15, "class='siroka'">
+    <@lib.addTextArea false, "note", "Poznámka", 15>
         <@lib.showRTEControls "note"/>
     </@lib.addTextArea>
 

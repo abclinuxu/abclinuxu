@@ -54,7 +54,6 @@ public class EditPoll implements AbcAction {
 
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_RELATION_SHORT = "rid";
-    public static final String PARAM_POLL = "pollId";
     public static final String PARAM_QUESTION = "question";
     public static final String PARAM_MULTICHOICE = "multichoice";
     public static final String PARAM_CLOSED = "closed";
@@ -71,6 +70,7 @@ public class EditPoll implements AbcAction {
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_POLL = "POLL";
+    public static final String VAR_PREVIEW = "PREVIEW";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -170,7 +170,7 @@ public class EditPoll implements AbcAction {
             if (! canContinue)
                 params.remove(PARAM_PREVIEW);
             else
-                env.put(VAR_POLL, new Relation(upperRelation.getChild(), poll, upperRelation.getId()));
+                env.put(VAR_PREVIEW, new Relation(upperRelation.getChild(), poll, upperRelation.getId()));
             return FMTemplateSelector.select("EditPoll","add",env,request);
         }
 
@@ -209,32 +209,40 @@ public class EditPoll implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
         Poll poll = (Poll) env.get(VAR_POLL);
 
-        boolean canContinue = true;
-        canContinue &= setQuestion(params, poll, env);
+        boolean canContinue = setQuestion(params, poll, env);
         canContinue &= setMultichoice(params, poll);
         canContinue &= setClosed(params, poll);
 
-        if (! canContinue)
-            return FMTemplateSelector.select("EditPoll", "edit", env, request);
+        List paramChoices = (List) params.get(PARAM_CHOICES);
+        List choicesList = new ArrayList(Arrays.asList(poll.getChoices()));
+        for ( int i = 0; i < 10 && i<paramChoices.size(); i++ ) {
+            String tmp = (String) paramChoices.get(i);
+            if (tmp == null || tmp.length() == 0) {
+                if (i < choicesList.size())
+                    choicesList.remove(i);
+                else
+                    continue;
+            }
 
-        List choices = (List) params.get(PARAM_CHOICES);
-        List choicesList = Arrays.asList(poll.getChoices());
-        for ( int i = 0; i < 10 && i<choices.size(); i++ ) {
-            String tmp = (String) choices.get(i);
-            if (tmp == null || tmp.length() == 0)
-                continue;
-
-            PollChoice choice = (PollChoice) choicesList.get(i);
-            if (choice == null) {
-                choice = new PollChoice(tmp);
+            if (i < choicesList.size()) {
+                PollChoice choice = (PollChoice) choicesList.get(i);
+                choice.setText(tmp);
+            } else {
+                PollChoice choice = new PollChoice(tmp);
                 choice.setPoll(poll.getId());
                 choice.setId(i);
                 choicesList.add(choice);
             }
-            else
-                choice.setText(tmp);
         }
         poll.setChoices(choicesList);
+
+        if (!canContinue || params.get(PARAM_PREVIEW) != null) {
+            if (!canContinue)
+                params.remove(PARAM_PREVIEW);
+            else
+                env.put(VAR_PREVIEW, relation);
+            return FMTemplateSelector.select("EditPoll", "edit", env, request);
+        }
 
         Persistence persistence = PersistenceFactory.getPersistence();
         persistence.update(poll);

@@ -90,7 +90,6 @@
 
         <a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+RELATION.id)}">Vytvoř anketu</a>
 
-        <a href="${URL.make("/"+RELATION.id+".docb")}">Docbook</a>
         <a href="${URL.make("/edit/"+RELATION.id+"?action=showTalk")}">Rozhovor</a>
         <a href="${URL.make("/inset/"+RELATION.id+"?action=addFile")}">Přidat soubory</a>
         <a href="${URL.noPrefix("/videa/edit/"+RELATION.id+"?action=add&amp;redirect="+RELATION.url?default("/clanky/show/"+RELATION.id))}">Přidat video</a>

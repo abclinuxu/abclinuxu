@@ -11,60 +11,48 @@
 
 <@lib.showMessages/>
 
-<form action="${URL.make("/EditPoll")}" method="POST">
- <table class="siroka" border=0 cellpadding=5>
-  <tr>
-   <td class="required">Otázka</td>
-   <td>
-    <textarea name="question" class="siroka" rows="3" tabindex="1">${POLL.text?html}</textarea>
-   </td>
-  </tr>
-  <tr>
-   <td class="required">Více možností</td>
-   <td>
-    <select name="multichoice" tabindex="2">
-     <#assign multi=POLL.multiChoice>
-     <option value="yes"<#if multi> SELECTED</#if>>Ano</option>
-     <option value="no"<#if ! multi> SELECTED</#if>>Ne</option>
-    </select>
-   </td>
-  </tr>
-  <tr>
-   <td class="required">Uzavřená</td>
-   <td>
-    <select name="closed" tabindex="3">
-     <#assign closed=POLL.isClosed()>
-     <option value="yes"<#if closed> SELECTED</#if>>Ano</option>
-     <option value="no"<#if ! closed> SELECTED</#if>>Ne</option>
-    </select>
-   </td>
-  </tr>
-  <#list POLL.choices as choice>
-   <tr>
-    <td class="required">Volba ${choice_index+1}</td>
-    <td>
-     <input type="text" name="choices" size="60" maxlength="255" value="${choice.text?html}">
-    </td>
-   </tr>
-  </#list>
-  <#list [POLL.choices?size..10] as index>
-    <tr>
-     <td>Volba ${index+1}</td>
-     <td>
-      <input type="text" name="choices" size="60" maxlength="255" value="">
-     </td>
-    </tr>
-  </#list>
-  <tr>
-   <td>&nbsp;</td>
-   <td><input type="submit" value="Dokonči"></td>
-  </tr>
- </table>
+<#if PREVIEW??>
+    <fieldset>
+    <legend>Náhled</legend>
+        <@lib.showPoll PREVIEW/>
+    </fieldset>
+</#if>
 
- <input type="hidden" name="action" value="edit2">
- <input type="hidden" name="rid" value="${RELATION.id}">
- <input type="hidden" name="pollId" value="${POLL.id}">
-</form>
+<@lib.addForm URL.make("/EditPoll")>
+    <@lib.addTextArea true, "question", "Otázka", 3, "", POLL.text />
 
+    <@lib.addSelect true, "multichoice", "Více možností">
+        <@lib.addOption "multichoice", "Ano", "yes", POLL.multiChoice />
+        <@lib.addOption "multichoice", "Ne", "no", ! POLL.multiChoice />
+    </@lib.addSelect>
+
+    <@lib.addSelect true, "closed", "Uzavřená">
+        <@lib.addOption "closed", "Ano", "yes", POLL.closed />
+        <@lib.addOption "closed", "Ne", "no", ! POLL.closed />
+    </@lib.addSelect>
+
+    <#list POLL.choices as choice>
+        <@lib.addFormField (choice_index+1 < 3), "Volba " + choice_index>
+            <input type="text" name="choices" size="60" maxlength="255" value="${choice.text?html}">
+            <#if choice_index == 1>
+                <@lib.showError "choices" />
+            </#if>
+        </@lib.addFormField>
+    </#list>
+
+    <#list (POLL.choices?size+1)..10 as i>
+        <@lib.addFormField false, "Volba "+i>
+            <input type="text" name="choices" size="60" maxlength="255" value="">
+        </@lib.addFormField>
+    </#list>
+
+    <@lib.addFormField>
+        <@lib.addSubmitBare "Náhled", "preview" />
+        <@lib.addSubmitBare "Dokonči" />
+    </@lib.addFormField>
+
+    <@lib.addHidden "action", "edit2" />
+    <@lib.addHidden "rid", RELATION.id />
+</@lib.addForm>
 
 <#include "../footer.ftl">

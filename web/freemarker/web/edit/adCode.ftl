@@ -23,7 +23,7 @@
         <select id="regexp-select" onchange="changeRegexp(this)"></select>
         <@lib.addInputBare "regexp", 60 />
     </@lib.addFormField>
-    <@lib.addTextArea false, "desc", "Popis", 3, "class='siroka'" />
+    <@lib.addTextArea false, "desc", "Popis", 3 />
     <@lib.addSubmit "Dokonči", "finish" />
 
     <@lib.addHidden "action", "editCode2" />

@@ -11,13 +11,13 @@ Při vytváření skupiny dojde k vytvoření podportálu, který má vlastní s
 <@lib.addForm URL.make("/skupiny/edit"), "name='portalForm'", true>
     <@lib.addInput true, "title", "Název", 40 />
     <@lib.addFormField true, "Stručný popis", "Text, který bude zobrazen na v postraním sloupci na jednotlivých stránkách skupiny.">
-        <@lib.addTextAreaBare "descShort", 15, "class='siroka'">
+        <@lib.addTextAreaBare "descShort", 15>
             <@lib.addTextAreaEditor "descShort" />
         </@lib.addTextAreaBare>
     </@lib.addFormField>
 
     <@lib.addFormField true, "Popis", "Text, který bude zobrazen na úvodní stránce skupiny a ve výpisu skupin.">
-        <@lib.addTextAreaBare "desc", 15, "class='siroka'">
+        <@lib.addTextAreaBare "desc", 15>
             <@lib.addTextAreaEditor "desc" />
         </@lib.addTextAreaBare>
     </@lib.addFormField>

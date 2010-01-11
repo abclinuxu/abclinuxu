@@ -14,7 +14,7 @@ včetně správných odpovědí. Vyplňte prosím všechna políčka.</p>
 
 <@lib.addForm URL.noPrefix("/EditTrivia")>
     <@lib.addInput true, "title", "Jméno", 40 />
-    <@lib.addTextArea true, "desc", "Popis", 4, "class='siroka'" />
+    <@lib.addTextArea true, "desc", "Popis", 4 />
     <@lib.addFormField true, "Složitost">
         <@lib.showOption "difficulty", "simple", "jednoduchá", "radio"/>
         <@lib.showOption "difficulty", "normal", "normální", "radio"/>

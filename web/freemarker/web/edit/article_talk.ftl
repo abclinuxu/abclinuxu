@@ -24,12 +24,13 @@ otázku do článku.</p>
 <h3>Nová otázka</h3>
 
 <form action="${URL.make("/edit/"+RELATION.id)}" method="POST">
-    Jméno tazatele: <input type="text" name="name" value="${PARAMS.name!}" size=40 tabindex=1><br>
+    Jméno tazatele: <input type="text" name="name" value="${PARAMS.name!}" size="40"><br>
     Otázka<br>
-    <textarea name="content" cols="80" rows="4" tabindex="2">${PARAMS.content!?html}</textarea>
-    <div class="error">${ERRORS.name!}${ERRORS.content!}</div>
+    <textarea name="content" cols="80" rows="4">${PARAMS.content!?html}</textarea>
+    <@lib.showError "name"/>
+    <@lib.showError "content" />
     <input type="hidden" name="action" value="addQuestion">
-    <input type="submit" value="Ulož" tabindex="3">
+    <input type="submit" value="Ulož">
 </form>
 
 <#list XML.data.talk.question! as question>

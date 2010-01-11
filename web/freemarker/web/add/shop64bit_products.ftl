@@ -11,7 +11,7 @@
 </p>
 
 <@lib.addForm URL.noPrefix("/EditAdvertisement")>
-    <@lib.addTextArea true, "urls", "Adresy", 30, "class='siroka'" />
+    <@lib.addTextArea true, "urls", "Adresy", 30/>
     <@lib.addSubmit "Dokonči", "finish" />
     <@lib.addHidden "action", "set64Bit2" />
 </@lib.addForm>

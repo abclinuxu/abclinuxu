@@ -28,7 +28,7 @@ varianta se stejnými parametry.
         </div>
     </@lib.addFormField>
 
-    <@lib.addTextArea true, "htmlCode", "Kód", 15, "class='siroka'" />
+    <@lib.addTextArea true, "htmlCode", "Kód", 15 />
     <@lib.addCheckbox "dynamic", "Dynamický kód" />
 
     <@lib.addSubmit "Dokonči", "finish" />

@@ -14,7 +14,7 @@
 <@lib.addForm URL.make("/videa/edit"), "", true>
     <@lib.addInput true, "title", "Titulek", 40 />
     <@lib.addInput true, "url", "Link na video", 40 />
-    <@lib.addTextArea false, "description", 5, "class='siroka'" />
+    <@lib.addTextArea false, "description", "Popis", 5 />
     <@lib.addSubmit "Dokonči" />
     <@lib.addHidden "action", "add2" />
     <@lib.addHidden "rid", PARAMS.rid />

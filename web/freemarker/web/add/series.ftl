@@ -16,7 +16,7 @@
         <@lib.addInput true, "url", "URL seriálu", 40, "", "/serialy/" />
     </#if>
 
-    <@lib.addTextArea false, "desc", "Popis", "class='siroka'" />
+    <@lib.addTextArea false, "desc", "Popis" />
     <@lib.addInput  false, "icon", "URL obrázku", 40 />
     <@lib.addSubmit "Dokonči" />
 

@@ -305,10 +305,6 @@
             <action>cz.abclinuxu.servlets.html.edit.EditAdvertisement</action>
         </mapping>
         <mapping>
-            <pattern>.docb</pattern>
-            <action>cz.abclinuxu.servlets.html.view.ShowDocbook</action>
-        </mapping>
-        <mapping>
             <pattern>/whatHappened</pattern>
             <action>cz.abclinuxu.scheduler.WhatHappened</action>
         </mapping>

@@ -8,7 +8,9 @@
             <ul>
                 <#list VARS.mostVotedOnPolls.entrySet() as rel>
                     <#if rel_index gt 2><#break></#if>
-                    <li><a href="${rel.key.url?default("/ankety/show/"+rel.key.id)}">${TOOL.childName(rel.key)}</a></li>
+                    <li>
+                        <a href="${rel.key.url!("/ankety/show/"+rel.key.id)}">${TOOL.childName(rel.key)}</a>
+                    </li>
                 </#list>
             </ul>
         </#if>
@@ -18,7 +20,9 @@
             <ul>
                 <#list VARS.mostCommentedPolls.entrySet() as rel>
                     <#if rel_index gt 2><#break></#if>
-                    <li><a href="${rel.key.url?default("/ankety/show/"+rel.key.id)}">${TOOL.childName(rel.key)}</a></li>
+                    <li>
+                        <a href="${rel.key.url!("/ankety/show/"+rel.key.id)}">${TOOL.childName(rel.key)}</a>
+                    </li>
                 </#list>
             </ul>
         </#if>
@@ -34,7 +38,7 @@
 
 <#if USER?? && USER.hasRole("poll admin")>
  <p>
-  <a href="${URL.noPrefix("/EditPoll/"+RELATION.id+"?action=edit&amp;pollId="+POLL.id)}">Upravit</a>
+    <a href="${URL.noPrefix("/EditPoll/"+RELATION.id+"?action=edit")}">Upravit</a>
  </p>
 </#if>
 
@@ -64,7 +68,7 @@ Vytvořeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
 <#if CHILDREN.discussion??>
     <h3>Komentáře</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>
-<#elseif forbidDiscussion?default("yes") != "yes">
+<#elseif forbidDiscussion!"yes" != "yes">
     <h3>Diskuse k tomuto článku</h3>
     <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vložit první komentář</a>
 </#if>

@@ -50,7 +50,7 @@
     </#if>
 
     <@lib.addInput true, "title", "Titulek", 60 />
-    <@lib.addTextArea true, "text", "Váš komentář", 20, "class='siroka'">
+    <@lib.addTextArea true, "text", "Váš komentář", 20>
         <@lib.showRTEControls "text"/>
     </@lib.addTextArea>
 

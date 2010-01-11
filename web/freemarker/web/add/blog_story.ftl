@@ -80,7 +80,7 @@ v pravém sloupci v části nadepsané <b>Správa zápisku</b>.</p>
     <@lib.addFormField true, "Obsah zápisku">
         Ze souboru <@lib.addFileBare "contentFile" /><@lib.addSubmitBare "Načti", "upload" />
 
-        <@lib.addTextAreaBare "content", 30, "class='siroka'">
+        <@lib.addTextAreaBare "content", 30>
             <@lib.showRTEControls "content"/>
         </@lib.addTextAreaBare>
     </@lib.addFormField>

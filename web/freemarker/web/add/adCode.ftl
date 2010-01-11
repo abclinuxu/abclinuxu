@@ -32,9 +32,9 @@
         <select id="regexp-select" onchange="changeRegexp(this)"></select>
         <@lib.addInputBare "regexp", 60 />
     </@lib.addFormField>
-    <@lib.addTextArea false, "desc", "Popis", 3, "class='siroka'" />
+    <@lib.addTextArea false, "desc", "Popis", 3 />
 
-    <@lib.addTextArea true, "htmlCode", "Výchozí reklamní kód", 15, "class='siroka'" />
+    <@lib.addTextArea true, "htmlCode", "Výchozí reklamní kód", 15 />
     <@lib.addCheckbox "dynamic", "Dynamický kód" />
 
     <@lib.addSubmit "Dokonči", "finish" />

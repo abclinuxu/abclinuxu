@@ -9,15 +9,16 @@
     může vybrat více voleb, nebo si musí zvolit jednu jedinou.
 </p>
 
-<#if POLL??>
+<#if PREVIEW??>
     <fieldset>
     <legend>Náhled</legend>
-        <@lib.showPoll POLL/>
+        <@lib.showPoll PREVIEW/>
     </fieldset>
 </#if>
 
 <@lib.addForm URL.make("/EditPoll")>
-    <@lib.addTextArea true, "question", "Otázka", 3, "class='siroka'" />
+    <#assign choices=PARAMS.choices!>
+    <@lib.addTextArea true, "question", "Otázka", 3 />
 
     <#if RELATION.id==250>
         <@lib.addFormField false, "URL">
@@ -32,11 +33,11 @@
 
     <#list 1..10 as i>
         <@lib.addFormField (i < 3), "Volba "+i>
-            <input type="text" name="choices" size="60" maxlength="255" tabindex="4"
+            <input type="text" name="choices" size="60" maxlength="255"
             value="<#if choices?size gt (i-1)>${choices[i-1]}</#if>">
 
             <#if i == 1>
-                <div class="error">${ERRORS.choices!}</div>
+                <@lib.showError "choices" />
             </#if>
         </@lib.addFormField>
     </#list>
