@@ -125,8 +125,7 @@ public class EditSoftware extends AbcAutoAction implements Configurable {
 		item.setGroup(cat.getGroup());
 		item.setPermissions(cat.getPermissions());
 
-        boolean canContinue = true;
-        canContinue &= setName(params, item, env);
+        boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setUserInterface(params, item);
         canContinue &= setApplicationAlternatives(params, item, env);
@@ -214,8 +213,7 @@ public class EditSoftware extends AbcAutoAction implements Configurable {
         item.setOwner(user.getId());
         Element root = item.getData().getRootElement();
 
-        boolean canContinue = true;
-        canContinue &= setName(params, item, env);
+        boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setUserInterface(params, item);
         canContinue &= setApplicationAlternatives(params, item, env);
@@ -423,7 +421,7 @@ public class EditSoftware extends AbcAutoAction implements Configurable {
         dynamicConfig = (Item) dynamicConfig.clone();
         Element configRoot = dynamicConfig.getData().getRootElement();
         Element configRss = (Element) configRoot.selectSingleNode("/data/feeds/feed[@relation='" + relationId + "']");
-        Element itemRoot = (Element) item.getData().getRootElement();
+        Element itemRoot = item.getData().getRootElement();
         Element rssElement = (Element) itemRoot.selectSingleNode("/data/url[@useType='rss']");
 
         String url = (String) params.get(PARAM_RSS_URL);

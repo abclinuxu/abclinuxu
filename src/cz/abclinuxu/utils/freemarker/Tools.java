@@ -2210,8 +2210,10 @@ public class Tools implements Configurable {
             Relation relation = (Relation) iter.next();
             Data data = (Data) relation.getChild();
             Element element = (Element) data.getData().selectSingleNode("/data/object");
-            Map map = new HashMap(2, 1.0f);
+
+            Map map = new HashMap(2, 4.0f);
             map.put("path", element.attributeValue("path"));
+
             Element thumbnail = element.element("thumbnail");
             if (thumbnail != null)
                 map.put("thumbnailPath", thumbnail.attributeValue("path"));
@@ -2221,9 +2223,7 @@ public class Tools implements Configurable {
 				map.put("originalFilename", origName.getText());
 
 			if ("true".equals(element.attributeValue("hidden")))
-				map.put("hidden", Boolean.TRUE);
-			else
-				map.put("hidden", Boolean.FALSE);
+				continue;
 
             result.add(map);
         }

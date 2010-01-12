@@ -137,7 +137,7 @@ public class EditBazaar implements AbcAction {
 
         if (ACTION_REMOVE_STEP2.equals(action)) {
             ActionProtector.ensureContract(request, EditBazaar.class, true, true, true, false);
-            return actionRemoveStep2(request, response, env);
+            return actionRemoveStep2(response, env);
         }
 
         throw new MissingArgumentException("Chybí parametr action!");
@@ -273,7 +273,7 @@ public class EditBazaar implements AbcAction {
         return null;
     }
 
-    protected String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String actionRemoveStep2(HttpServletResponse response, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);

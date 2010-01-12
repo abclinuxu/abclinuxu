@@ -353,6 +353,7 @@ public class EditAttachment implements AbcAction {
             String path = Tools.xpath(dataRelation.getChild(), "/data/object/@path");
 
             if (!Misc.empty(path))
+                //noinspection ResultOfMethodCallIgnored
                 new File(path).delete();
 
             if (comment != null) {
@@ -378,9 +379,7 @@ public class EditAttachment implements AbcAction {
         Map childrenMap = Tools.groupByType(discussion.getChildren(), "Record");
         List<Relation> recordRelations = (List<Relation>) childrenMap.get(Constants.TYPE_RECORD);
         Relation relation = recordRelations.get(0);
-        Record record = (Record) persistence.findById(relation.getChild());
-
-        return record;
+        return (Record) persistence.findById(relation.getChild());
     }
 
     /**

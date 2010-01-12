@@ -216,7 +216,8 @@ public class EditSeries extends AbcAutoAction {
             Element articleRoot = articleItem.getData().getRootElement();
 
             if (articleRoot.element("series_rid") != null) {
-                ServletUtils.addError(Constants.ERROR_GENERIC, "Článek "+rid+" už je přiřazen k nějakému seriálu!", env, request.getSession());
+                ServletUtils.addError(Constants.ERROR_GENERIC, "Článek '" + Tools.childName(articleRelation) +
+                        "' už je přiřazen k nějakému seriálu!", env, request.getSession());
                 continue;
             }
 

@@ -86,6 +86,9 @@ public class EditionPortal implements AbcAction {
     }
 
     private String actionShowAuthorsDashboard(HttpServletRequest request, Map env, PwdNavigator navigator) {
+        User user = (User) env.get(Constants.VAR_USER);
+        env.put(VAR_IS_EDITOR, user.isMemberOf(Constants.GROUP_EDITORS));
+        env.put(VAR_IS_EDITOR_IN_CHIEF, user.isMemberOf(Constants.GROUP_EDITORS_IN_CHIEF));
         List<Link> parents = navigator.navigate();
         env.put(Constants.VAR_PARENTS, parents);
 

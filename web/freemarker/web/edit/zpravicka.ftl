@@ -49,7 +49,7 @@ a vygeneruje se z něj URL.</p>
             Formát 2005-01-25 07:12
         </@lib.addInput>
         <@lib.addInput false, "uid", "Vydat pod UID", 5 />
-        <@lib.addCheckBox "forbidDiscussion", "Zakázat diskuzi" />
+        <@lib.addCheckbox "forbidDiscussions", "Zakázat diskuzi" />
     </#if>
 
     <@lib.addFormField true, "Kategorie">

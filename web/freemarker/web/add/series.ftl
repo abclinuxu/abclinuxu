@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1><#if EDIT_MODE!>Úprava seriálu<#else>Vytvoření seriálu</#if></h1>
+<h1><#if EDIT_MODE!true>Úprava seriálu<#else>Vytvoření seriálu</#if></h1>
 
 <p>
     Seriál má své jméno a adresu. Adresa musí začínat prefixem <tt>/serialy</tt> a být unikátní.

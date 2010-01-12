@@ -120,7 +120,6 @@ public class EditNews extends AbcAutoAction {
             return actionAdd();
         }
 
-
         persistence.create(item);
 
         Relation newRelation = new Relation(new Category(Constants.CAT_NEWS_POOL),item,Constants.REL_NEWS_POOL);
@@ -255,7 +254,7 @@ public class EditNews extends AbcAutoAction {
         Map<String,List<Relation>> children = Tools.groupByType(item.getChildren());
 
         if (children.containsKey(Constants.TYPE_DISCUSSION)) {
-            Relation disc = (Relation) children.get(Constants.TYPE_DISCUSSION).get(0);
+            Relation disc = children.get(Constants.TYPE_DISCUSSION).get(0);
 
             String urldisc = url + "/diskuse";
             urldisc = URLManager.protectFromDuplicates(urldisc);

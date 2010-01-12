@@ -61,7 +61,7 @@ public class ViewPersonality implements AbcAction {
     public static final String VAR_NEXT = "NEXT";
     public static final String VAR_PREVIOUS = "PREV";
 
-    private final int PREFIX_LENGTH = UrlUtils.PREFIX_DICTIONARY.length() + 1;
+    private final int PREFIX_LENGTH = UrlUtils.PREFIX_PERSONALITIES.length() + 1;
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -87,8 +87,15 @@ public class ViewPersonality implements AbcAction {
                     return null;
                 }
 
-                String name = url.substring(PREFIX_LENGTH);
-                params.put(EditPersonality.PARAM_SURNAME, name);
+                String key = url.substring(PREFIX_LENGTH);
+                int position = key.indexOf('-');
+                if (position != -1) {
+                    params.put(EditPersonality.PARAM_FIRSTNAME, key.substring(0, position));
+                    params.put(EditPersonality.PARAM_SURNAME, key.substring(position + 1));
+                } else
+                    params.put(EditPersonality.PARAM_SURNAME, key);
+                params.put(EditPersonality.PARAM_ACTION, EditPersonality.ACTION_ADD);
+
                 ServletUtils.addMessage("Tato osobnost v naší databázi zatím není. V tomto formuláři o ní můžete napsat jako první.", env, null);
                 return FMTemplateSelector.select("EditPersonality", "add", env, request);
             }
