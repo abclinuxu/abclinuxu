@@ -639,7 +639,7 @@
 </#macro>
 
 <#macro showError key>
-    <#if ERRORS[key]??><div class="error">${ERRORS[key]}</div></#if>
+    <#if ERRORS[key]??><div class="error" id="${key}Error">${ERRORS[key]}</div></#if>
 </#macro>
 
 <#macro initRTE>
@@ -1112,7 +1112,7 @@
 <#macro addInputBare name, size = 40, extraAttributes = "", defaultValue = "">
     <input type="text" id="${name?html}" size="${size}" name="${name?html}" value="${(PARAMS.get(name)!defaultValue)?html}" ${extraAttributes}>
     <#nested>
-    <div class="error" id="${name?html}Error">${ERRORS.get(name)!}</div>
+    <@showError name />
 </#macro>
 
 <#macro addPassword required, name, description, size = 40, extraAttributes = "">
@@ -1126,7 +1126,7 @@
 <#macro addPasswordBare name, description, size = 40, extraAttributes = "">
     <input type="password" id="${name?html}" size="${size}" name="${name?html}" ${extraAttributes}>
     <#nested>
-    <div class="error" id="${name?html}Error">${ERRORS.get(name)!}</div>
+    <@showError name />
 </#macro>
 
 <#macro addTextArea required, name, description, rows = 15, extraAttributes = "", value=PARAMS[name]!>
@@ -1137,7 +1137,7 @@
 </#macro>
 
 <#macro addTextAreaBare name, rows = 15, extraAttributes = "", value=PARAMS[name]!>
-    <div class="error" id="${name?html}Error">${ERRORS.get(name)!}</div>
+    <@showError name />
     <#nested>
     <textarea name="${name?html}" id="${name?html}" class="siroka" rows="${rows}" ${extraAttributes}>${value?html}</textarea>
 </#macro>
@@ -1209,13 +1209,14 @@
 
 <#macro addSelectBare name, multipleChoice = false>
     <select name="${name}" <#if multipleChoice>multiple="multiple"</#if>>
-            <#nested>
+        <#nested>
     </select>
+    <@showError name />
 </#macro>
 
 
 <#macro addOption selectName, optionName, value=optionName, isDefault = false>
-    <option value="${value}" <#if (PARAMS.get(selectName)! == value) || (isDefault && !PARAMS.containsKey(selectName))>selected="selected"</#if> >${optionName}</option>
+    <option value="${value}" <#if ((PARAMS.get(selectName)!"") == value) || (isDefault && !PARAMS.containsKey(selectName))>selected="selected"</#if> >${optionName}</option>
 </#macro>
 
 <#macro addFile required, name, description>
@@ -1229,7 +1230,7 @@
 <#macro addFileBare name>
     <input type="file" name="${name?html}" size="20">
     <#nested>
-    <div class="error" id="${name?html}Error">${ERRORS.get(name)!}</div>
+    <@showError name />
 </#macro>
 
 <#macro addDescriptionLine>

@@ -5,13 +5,14 @@
 <h2>Vytvoření skupiny</h2>
 
 <p>
-Při vytváření skupiny dojde k vytvoření podportálu, který má vlastní sekci pro články, vlastní wiki, poradnu a sekci pro akce. Má vlastní administrátorskou skupinu, jejíž členové mohou definovat ostatní adminy.
+    Při vytváření skupiny dojde k vytvoření podportálu, který má vlastní sekci pro články, vlastní wiki, poradnu
+    a sekci pro akce. Má vlastní administrátorskou skupinu, jejíž členové mohou definovat ostatní adminy.
 </p>
 
 <@lib.addForm URL.make("/skupiny/edit"), "name='portalForm'", true>
     <@lib.addInput true, "title", "Název", 40 />
     <@lib.addFormField true, "Stručný popis", "Text, který bude zobrazen na v postraním sloupci na jednotlivých stránkách skupiny.">
-        <@lib.addTextAreaBare "descShort", 15>
+        <@lib.addTextAreaBare "descShort", 10>
             <@lib.addTextAreaEditor "descShort" />
         </@lib.addTextAreaBare>
     </@lib.addFormField>

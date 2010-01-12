@@ -43,7 +43,7 @@
     <#if SECTIONS??>
         <@lib.addSelect true, "section", "Rubrika">
             <#list SECTIONS as section>
-                <@lib.addOption "section", TOOL.childName(section), section.id />
+                <@lib.addOption "section", TOOL.childName(section), ""+section.id />
             </#list>
         </@lib.addSelect>
     </#if>

@@ -15,17 +15,11 @@
 <@lib.addForm URL.make("/videa/edit"), "", true>
     <@lib.addInput true, "title", "Titulek" />
     <@lib.addInput true, "url", "Link na video" />
-    <@lib.addTextArea true, "description", Popis" />
+    <@lib.addTextArea true, "description", "Popis" />
     <@lib.addSubmit "Dokonči" />
 
-    <#if PARAMS.action == "add" || PARAMS.action == "add2">
-        <@lib.addHidden "action", "add2" />
-        <@lib.addHidden "redirect", PARAMS.redirect! />
-    <#else>
-        <@lib.addHidden "action", "edit2" />
-        <@lib.addHidden "rid", PARAMS.rid />
-    </#if>
-
+    <@lib.addHidden "action", "edit2" />
+    <@lib.addHidden "rid", PARAMS.rid />
 </@lib.addForm>
 
 <#include "../footer.ftl">

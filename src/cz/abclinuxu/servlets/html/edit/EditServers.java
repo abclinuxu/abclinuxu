@@ -59,8 +59,8 @@ public class EditServers extends AbcAutoAction {
 
     public static final String DEFAULT_ACTION = "list";
 
-    @ActionCheck(requireModifyRight = true)
-    public String actionList(HttpServletRequest request, Map env, Relation relation) {
+    @ActionCheck(relationRequired = true, requireModifyRight = true)
+    public String actionList() {
         SQLTool sqlTool = SQLTool.getInstance();
 
         List servers = sqlTool.findServerRelationsInCategory(relation.getChild().getId());
@@ -89,7 +89,7 @@ public class EditServers extends AbcAutoAction {
         return null;
     }
 
-    @ActionCheck(requireModifyRight = true)
+    @ActionCheck(relationRequired = true, requireModifyRight = true)
     public String actionEdit() throws Exception {
         Server server = (Server) relation.getChild();
 
@@ -101,7 +101,7 @@ public class EditServers extends AbcAutoAction {
         return FMTemplateSelector.select("EditServers", "edit", env, request);
     }
 
-    @ActionCheck(requireModifyRight = true, checkReferer = true, checkPost = true)
+    @ActionCheck(relationRequired = true, requireModifyRight = true, checkReferer = true, checkPost = true)
     public String actionEdit2() throws Exception {
         Server server = (Server) relation.getChild().clone();
         Persistence persistence = PersistenceFactory.getPersistence();
@@ -125,12 +125,12 @@ public class EditServers extends AbcAutoAction {
         return null;
     }
 
-    @ActionCheck(requireCreateRight = true)
+    @ActionCheck(relationRequired = true, requireCreateRight = true)
     public String actionAdd() {
         return FMTemplateSelector.select("EditServers", "add", env, request);
     }
 
-    @ActionCheck(requireCreateRight = true, checkReferer = true, checkPost = true)
+    @ActionCheck(relationRequired = true, requireCreateRight = true, checkReferer = true, checkPost = true)
     public String actionAdd2() throws Exception {
         Server server = new Server();
         Persistence persistence = PersistenceFactory.getPersistence();

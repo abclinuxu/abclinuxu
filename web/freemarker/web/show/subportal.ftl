@@ -18,7 +18,7 @@
         <li><a href="/clanky/edit/${articles_rid}?action=add">Napsat článek</a></li>
         <li><a href="/clanky/dir/${articles_rid}">Čekající články</a> <span>(${counter.WAITING_ARTICLES!"?"})</span></li>
         <li><a href="${events.url}?mode=unpublished">Čekající akce</a> <span>(${counter.WAITING_EVENTS!"?"})</span></li>
-        <li><a href="${URL.make("/EditServers/"+RELATION.id)}">Servery rozcestníku</a></li>
+        <li><a href="${URL.make("/EditServers/"+RELATION.id+"?action=list")}">Servery rozcestníku</a></li>
     </ul>
     </div>
     </#if>

@@ -31,7 +31,7 @@ Systém zlom vyžaduje až od limitu stopadesáti slov. Do úvodní části záp
 ani prázdné odstavce.</p>
 
 <p>Pokud nechcete příspěvek ihned publikovat, použijte tlačítko
-<b>Odlož</b>. Můžete se k příspěvku kdykoliv vrátit a vydat jej, až budete
+<b>Do konceptů</b>. Můžete se k příspěvku kdykoliv vrátit a vydat jej, až budete
 spokojeni. Příkaz pro publikování odloženého zápisku najdete
 v pravém sloupci v části nadepsané <b>Správa zápisku</b>.</p>
 

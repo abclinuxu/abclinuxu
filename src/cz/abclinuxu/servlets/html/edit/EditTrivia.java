@@ -104,8 +104,7 @@ public class EditTrivia extends AbcAutoAction {
 		item.setGroup(cat.getGroup());
 		item.setPermissions(cat.getPermissions());
 
-        boolean canContinue = true;
-        canContinue &= setName(params, item, env);
+        boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setDifficulty(params, root, env);
         canContinue &= setQuestions(params, root, env);
@@ -138,7 +137,7 @@ public class EditTrivia extends AbcAutoAction {
     }
 
     @ActionCheck(requireModifyRight = true, itemType = Item.TRIVIA)
-    public String actionEdit1() throws Exception {
+    public String actionEdit() throws Exception {
         Item item = (Item) relation.getChild();
         Element root = item.getData().getRootElement();
 
@@ -185,8 +184,7 @@ public class EditTrivia extends AbcAutoAction {
         item.setOwner(user.getId());
         Element root = item.getData().getRootElement();
 
-        boolean canContinue = true;
-        canContinue &= setName(params, item, env);
+        boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setDifficulty(params, root, env);
         canContinue &= setQuestions(params, root, env);

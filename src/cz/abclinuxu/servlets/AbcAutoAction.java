@@ -96,15 +96,15 @@ public class AbcAutoAction implements AbcAction {
         String methodName = "action" + Character.toUpperCase(action.charAt(0)) + action.substring(1);
         try {
             Method method = getClass().getDeclaredMethod(methodName);
-            ActionCheck ch = method.<ActionCheck>getAnnotation(ActionCheck.class);
+            ActionCheck check = method.getAnnotation(ActionCheck.class);
 
-            if (ch != null) {
-                boolean userRequired = ch.userRequired();
-                if (ch.permittedRoles().length > 0)
+            if (check != null) {
+                boolean userRequired = check.userRequired();
+                if (check.permittedRoles().length > 0)
                     userRequired = true;
-                if (!Misc.empty(ch.itemOwnerOrRole()))
+                if (!Misc.empty(check.itemOwnerOrRole()))
                     userRequired = true;
-                if (ch.requireCreateRight() || ch.requireDeleteRight() || ch.requireModifyRight())
+                if (check.requireCreateRight() || check.requireDeleteRight() || check.requireModifyRight())
                     userRequired = true;
 
                 if (userRequired) {
@@ -113,12 +113,12 @@ public class AbcAutoAction implements AbcAction {
                         return FMTemplateSelector.select("ViewUser", "login", env, request);
                 }
 
-                ActionProtector.ensureContract(request, getClass(), userRequired, ch.checkReferer(), ch.checkPost(), ch.checkTicket());
+                ActionProtector.ensureContract(request, getClass(), userRequired, check.checkReferer(), check.checkPost(), check.checkTicket());
 
-                boolean relationRequired = ch.relationRequired();
-                if (ch.itemType() != 0)
+                boolean relationRequired = check.relationRequired();
+                if (check.itemType() != 0)
                     relationRequired = true;
-                if (!Misc.empty(ch.itemOwnerOrRole()))
+                if (!Misc.empty(check.itemOwnerOrRole()))
                     relationRequired = true;
 
                 if (relationRequired) {
@@ -131,7 +131,7 @@ public class AbcAutoAction implements AbcAction {
                     env.put(VAR_RELATION, relation);
                 }
 
-                String[] permittedRoles = ch.permittedRoles();
+                String[] permittedRoles = check.permittedRoles();
                 if (permittedRoles.length > 0) {
                     boolean ok = false;
                     for (String role : permittedRoles) {
@@ -146,15 +146,15 @@ public class AbcAutoAction implements AbcAction {
                     }
                 }
 
-                if (ch.itemType() != 0) {
+                if (check.itemType() != 0) {
                     Item child = (Item) relation.getChild();
-                    if (child.getType() != ch.itemType())
+                    if (child.getType() != check.itemType())
                         throw new SecurityException("Nepovolený typ položky!");
                 }
 
-                if (ch.itemOwnerOrRole() != null && ch.itemOwnerOrRole().length() > 0) {
+                if (check.itemOwnerOrRole() != null && check.itemOwnerOrRole().length() > 0) {
                     Item child = (Item) relation.getChild();
-                    String role = ch.itemOwnerOrRole();
+                    String role = check.itemOwnerOrRole();
 
                     if (!user.hasRole(role)) {
                         if (child.getOwner() != user.getId())
@@ -162,13 +162,13 @@ public class AbcAutoAction implements AbcAction {
                     }
                 }
 
-                if (ch.requireCreateRight() || ch.requireDeleteRight() || ch.requireModifyRight()) {
+                if (check.requireCreateRight() || check.requireDeleteRight() || check.requireModifyRight()) {
                     Permissions perm = Tools.permissionsFor(user, relation);
-                    if (ch.requireCreateRight() && !perm.canCreate())
+                    if (check.requireCreateRight() && !perm.canCreate())
                         return returnForbidden();
-                    if (ch.requireDeleteRight() && !perm.canDelete())
+                    if (check.requireDeleteRight() && !perm.canDelete())
                         return returnForbidden();
-                    if (ch.requireModifyRight() && !perm.canModify())
+                    if (check.requireModifyRight() && !perm.canModify())
                         return returnForbidden();
                 }
             }

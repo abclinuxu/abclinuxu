@@ -89,10 +89,9 @@ public class EditSubportal extends AbcAutoAction {
         category.setData(document);
 		category.setType(Category.SUBPORTAL);
 
-		boolean canContinue = true;
 		Relation newRelation = new Relation(new Category(Constants.CAT_SUBPORTALS), category, Constants.REL_SUBPORTALS);
 
-		canContinue &= setTitle(params, category, env);
+        boolean canContinue = setTitle(params, category, env);
         canContinue &= setShortDescription(params, root, env);
 		canContinue &= setDescription(params, root, env);
 		canContinue &= setUrl(params, newRelation, env);
@@ -117,13 +116,13 @@ public class EditSubportal extends AbcAutoAction {
         Relation forum;
 
         // a wiki page
-		createContent(env, root, newRelation);
+		createContent(root, newRelation);
         // a section for articles
-		createSection(env, root, newRelation, "Články", "articles", "/clanky", Category.SECTION);
+		createSection(root, newRelation, "Články", "articles", "/clanky", Category.SECTION);
         // waiting articles
-		createSection(env, root, newRelation, "Čekající články", "article_pool", null, 0);
+		createSection(root, newRelation, "Čekající články", "article_pool", null, 0);
         // a discussion forum
-		forum = createSection(env, root, newRelation, "Poradna", "forum", "/poradna", Category.FORUM);
+		forum = createSection(root, newRelation, "Poradna", "forum", "/poradna", Category.FORUM);
 
         FeedGenerator.findSubportalForums();
         FeedGenerator.updateForum(forum.getId());
@@ -132,7 +131,7 @@ public class EditSubportal extends AbcAutoAction {
         Category catEvents;
 
         // a section for events
-        events = createSection(env, root, newRelation, "Akce", "events", "/akce", Category.EVENT); // a section for events
+        events = createSection(root, newRelation, "Akce", "events", "/akce", Category.EVENT); // a section for events
 
         catEvents = (Category) events.getChild();
         // give everybody the right to create events in the pool
@@ -156,8 +155,8 @@ public class EditSubportal extends AbcAutoAction {
         return null;
     }
 
-    @ActionCheck(requireModifyRight = true)
-	public String actionEdit1() throws Exception {
+    @ActionCheck(relationRequired = true, requireModifyRight = true)
+	public String actionEdit() throws Exception {
 		Category cat = (Category) relation.getChild();
 
 		params.put(PARAM_TITLE, cat.getTitle());
@@ -177,14 +176,13 @@ public class EditSubportal extends AbcAutoAction {
 		return FMTemplateSelector.select("EditSubportal", "edit", env, request);
 	}
 
-    @ActionCheck(requireModifyRight = true, checkPost = true, checkReferer = true)
+    @ActionCheck(relationRequired = true, requireModifyRight = true, checkPost = true, checkReferer = true)
 	public String actionEdit2() throws Exception {
 		Category category = (Category) relation.getChild().clone();
 
-		boolean canContinue = true;
         Element root = category.getData().getRootElement();
 
-		canContinue &= setTitle(params, category, env);
+		boolean canContinue = setTitle(params, category, env);
         canContinue &= setDescription(params, root, env);
 		canContinue &= setShortDescription(params, root, env);
         canContinue &= checkImage(params, env);
@@ -204,7 +202,7 @@ public class EditSubportal extends AbcAutoAction {
 		return null;
 	}
 
-    @ActionCheck(checkTicket = true)
+    @ActionCheck(relationRequired = true, checkTicket = true)
 	public String actionToggleMember() throws Exception {
         Category cat = (Category) relation.getChild();
         Set<String> users = cat.getProperty(Constants.PROPERTY_MEMBER);
@@ -249,7 +247,7 @@ public class EditSubportal extends AbcAutoAction {
 		return group.getId();
 	}
 
-	private void createContent(Map env, Element root, Relation rel) {
+	private void createContent(Element root, Relation rel) {
 		Category cat = (Category) rel.getChild();
 
 		Item content = new Item(0, Item.CONTENT);
@@ -290,7 +288,7 @@ public class EditSubportal extends AbcAutoAction {
 		DocumentHelper.makeElement(root, "wiki").setText(String.valueOf(subrel.getId()));
 	}
 
-	private Relation createSection(Map env, Element root, Relation rel, String title, String id, String url, int type) {
+	private Relation createSection(Element root, Relation rel, String title, String id, String url, int type) {
 		Category category = new Category();
 		Category parent = (Category) rel.getChild();
 
