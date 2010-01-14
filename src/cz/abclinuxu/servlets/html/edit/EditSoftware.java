@@ -21,8 +21,6 @@ package cz.abclinuxu.servlets.html.edit;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.User;
-import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
@@ -34,7 +32,6 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
@@ -49,15 +46,12 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.parser.clean.HtmlChecker;
 import cz.abclinuxu.utils.parser.clean.Rules;
-import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.AbcAutoAction;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -253,7 +247,7 @@ public class EditSoftware extends AbcAutoAction implements Configurable {
         return null;
     }
 
-    @ActionCheck(itemType = Item.SOFTWARE, checkTicket = true)
+    @ActionCheck(userRequired = true, itemType = Item.SOFTWARE, checkTicket = true)
     public String actionUser_of() throws Exception {
         Item item = (Item) relation.getChild();
         Persistence persistence = PersistenceFactory.getPersistence();
