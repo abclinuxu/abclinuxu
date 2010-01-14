@@ -34,7 +34,7 @@ a vygeneruje se z něj URL.</p>
 
     <@lib.showNews RELATION />
 
-<@lib.addForm URL.make("/edit")>
+<@lib.addForm URL.make("/edit"), "name='newsForm'">
     <@lib.addInput true, "title", "Titulek", 40, "maxlength='50'" />
     <@lib.addTextArea true, "content", "Obsah", 15>
         <@lib.showRTEControls "content"/>
