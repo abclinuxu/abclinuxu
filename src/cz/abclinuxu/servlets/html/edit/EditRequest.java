@@ -91,6 +91,7 @@ public class EditRequest extends AbcAutoAction implements Configurable {
             if (relation != null)
                 env.put(VAR_REQUEST_RELATION,relation);
         }
+        user = (User) env.get(Constants.VAR_USER);
 
         return invokeAction();
     }
@@ -349,7 +350,7 @@ public class EditRequest extends AbcAutoAction implements Configurable {
 
         Relation discussion = (Relation) persistence.findById(new Relation(relationId));
         String dizName = Tools.childName(discussion);
-        String forumName = Tools.childName(new Integer(forumId));
+        String forumName = Tools.childName(forumId);
         params.put(PARAM_CATEGORY, "Přesun diskuse");
         String url = urlUtils.getRelationUrl(discussion);
         params.put(PARAM_URL, url);

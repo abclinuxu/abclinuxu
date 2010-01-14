@@ -16,7 +16,7 @@
 <#if USER?? && USER.hasRole("discussion admin")>
     <fieldset>
         <legend>Nástroje pro adminy</legend>
-        <#assign author_ip = TOOL.xpath(COMMENT.data, "//author_ip")?default("UNDEFINED")>
+        <#assign author_ip = TOOL.xpath(COMMENT.data, "//author_ip")!"UNDEFINED">
         <#if author_ip!="UNDEFINED">${author_ip}</#if>
         <a href="${URL.make("/EditDiscussion/"+relId+"?action=edit&dizId="+dizId+"&threadId="+COMMENT.id)}">Upravit</a>
         <#if (COMMENT.id>0)>
@@ -113,14 +113,6 @@
             </td>
         </tr>
     </#if>
-  <!--<tr>
-    <td class="required">Jméno tohoto serveru</td>
-    <td>
-        <input type="text" name="antispam" value="${antispam!}" size="20" tabindex="3">
-        (antispamová kontrola)
-        <div class="error">${ERRORS.antispam!}</div>
-    </td>
-  </tr>-->
   <tr>
     <td>Typ požadavku</td>
     <td>
@@ -145,7 +137,7 @@
    </td>
   </tr>
  </table>
- <input type="hidden" name="action" value="complaint">
+ <input type="hidden" name="action" value="submitComplaint">
  <input type="hidden" name="rid" value="${RELATION.id}">
  <input type="hidden" name="threadId" value="${COMMENT.id}">
 </form>
