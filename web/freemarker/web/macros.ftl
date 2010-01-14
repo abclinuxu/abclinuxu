@@ -1027,8 +1027,6 @@
             </#list>
         </p>
     </#if>
-</div>
-
 </#macro>
 
 <#macro showNewsFromFeed feedUrl feedLinks>
