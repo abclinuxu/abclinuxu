@@ -48,20 +48,7 @@
 
 <@lib.showRelated ITEM/>
 
-<#assign images = TOOL.screenshotsFor(ITEM)>
-<#if (images?size > 0)>
-    <h3>Obrázky</h3>
-
-    <p class="galerie">
-        <#list images as image>
-            <#if image.thumbnailPath??>
-                <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${ITEM.title}" border="0"></a>
-            <#else>
-                <img src="${image.path}" alt="${ITEM.title}">
-            </#if>
-        </#list>
-    </p>
-</#if>
+<@lib.showGallery ITEM />
 </div>
 
 <@lib.showRevisions RELATION, REVISIONS/>

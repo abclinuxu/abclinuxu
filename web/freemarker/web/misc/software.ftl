@@ -94,19 +94,6 @@
     </table>
 
     <#if showGallery>
-        <#local images = TOOL.screenshotsFor(software)>
-        <#if (images?size > 0)>
-            <h3>Galerie</h3>
-
-            <p class="galerie">
-                <#list images as image>
-                    <#if image.thumbnailPath??>
-                        <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${software.title!}" border="0"></a>
-                    <#else>
-                        <img src="${image.path}" alt="${software.title!}">
-                    </#if>
-                </#list>
-            </p>
-        </#if>
+        <@lib.showGallery ITEM "Galerie"/>
     </#if>
 </#macro>

@@ -27,20 +27,7 @@
 <div class="bazar">
 <@bazarlib.showBazaarAd ITEM, who />
 
-<#assign images = TOOL.screenshotsFor(ITEM)>
-<#if (images?size > 0)>
-    <h3>Obrázky</h3>
-
-    <p class="galerie">
-        <#list images as image>
-            <#if image.thumbnailPath??>
-                <a href="${image.path}"><img src="${image.thumbnailPath}" alt="Obrázek ${image_index}" border="0"></a>
-            <#else>
-                <img src="${image.path}" alt="Obrázek ${image_index}">
-            </#if>
-        </#list>
-    </p>
-</#if>
+<@lib.showGallery ITEM />    
 </div> <!-- bazar -->
 
 <@lib.showPageTools RELATION />

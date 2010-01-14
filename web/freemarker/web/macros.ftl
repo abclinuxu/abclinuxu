@@ -1011,6 +1011,26 @@
         </a></p>
 </#macro>
 
+<#macro showGallery item title="Obrázky">
+    <#assign images = TOOL.screenshotsFor(item)>
+    <#if (images?size > 0)>
+        <h3>${title}</h3>
+
+        <p class="galerie">
+            <#list images as image>
+                <#assign alt = item.title + ", obrázek " + (image_index + 1)>
+                <#if image.thumbnailPath??>
+                    <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${alt}" border="0"></a>
+                <#else>
+                    <img src="${image.path}" alt="${alt}">
+                </#if>
+            </#list>
+        </p>
+    </#if>
+</div>
+
+</#macro>
+
 <#macro showNewsFromFeed feedUrl feedLinks>
     <h3>
         Aktuality

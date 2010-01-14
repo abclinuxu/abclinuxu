@@ -233,24 +233,7 @@ ${TOOL.render(STORY.content,USER!)}
 </#list>
 
 <#if (STORY.images > 0)>
-    <#assign images = TOOL.screenshotsFor(ITEM)>
-    <#assign wrote_section=false>
-
-        <#list images as image>
-            <#if !image.hidden>
-                <#if !wrote_section><h3>Obrázky</h3><p class="galerie"><#assign wrote_section=true></#if>
-
-                <#if image.thumbnailPath??>
-                    <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${ITEM.title}, obrázek ${image_index}" border="0"></a>
-                <#else>
-                    <img src="${image.path}" alt="${ITEM.title}, obrázek ${image_index}">
-                </#if>
-            <#elseif USER?? && (USER.id==BLOG.owner || TOOL.permissionsFor(USER, RELATION).canModify())>
-                <#if !wrote_section><h3>Obrázky</h3><p class="galerie"><#assign wrote_section=true></#if>
-                <li><a href="${image.path}">${image.originalFilename}</a> <#if image.thumbnailPath??>(<a href="${image.thumbnailPath}">náhled</a>)</#if></li>
-            </#if>
-        </#list>
-    <#if wrote_section></p></#if>
+    <@lib.showGallery ITEM />
 </#if>
 
 <#if CHILDREN.video??>
