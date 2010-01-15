@@ -196,8 +196,7 @@ public class EditContent implements AbcAction {
         relation.setParent(parentRelation.getChild());
         relation.setUpper(parentRelation.getId());
 
-        boolean canContinue = true;
-        canContinue &= setTitle(params, item, env);
+        boolean canContinue = setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setURL(params, relation, env);
 
@@ -278,8 +277,7 @@ public class EditContent implements AbcAction {
             }
         }
 
-        boolean canContinue = true;
-        canContinue &= setTitle(params, item, env);
+        boolean canContinue = setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setDerivedURL(item, relation, parentRelation);
         String changesDescription = Misc.getRevisionString(params, env);
@@ -356,8 +354,7 @@ public class EditContent implements AbcAction {
         Item origItem = (Item) item.clone();
         item.setOwner(user.getId());
 
-        boolean canContinue = true;
-        canContinue &= setTitle(params, item, env);
+        boolean canContinue = setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= checkStartTime(params, item, env);
         if (canContinue)
@@ -409,7 +406,8 @@ public class EditContent implements AbcAction {
         Element element = (Element) document.selectSingleNode("/data/content");
     	if (element != null) {
             params.put(PARAM_CONTENT, element.getText());
-            params.put(PARAM_EXECUTE_AS_TEMPLATE, element.attributeValue("execute"));
+            if ("yes".equals(element.attributeValue("execute")))
+                params.put(PARAM_EXECUTE_AS_TEMPLATE, "yes");
         }
         element = (Element) document.selectSingleNode("/data/java_class");
         if (element!=null)
@@ -430,8 +428,7 @@ public class EditContent implements AbcAction {
         Item origItem = (Item) item.clone();
         item.setOwner(user.getId());
 
-        boolean canContinue = true;
-        canContinue &= setTitle(params, item, env);
+        boolean canContinue = setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setURL(params, relation, env);
         if (user.hasRole(Roles.ROOT))
