@@ -77,70 +77,69 @@
 </#if>
 
 <form action="${URL.make("/EditRequest")}" method="POST">
- <table border=0 cellpadding=5 style="padding-top: 10px">
-  <tr>
-   <td class="required">Vaše jméno</td>
-   <#if PARAMS.author??>
-    <#assign author=PARAMS.author>
-   <#elseif USER??>
-    <#assign author=USER.name>
-   </#if>
-   <td align="left">
-    <input type="text" name="author" value="${author!}" size="20" tabindex="1">
-    <span class="error">${ERRORS.author!}</span>
-   </td>
-  </tr>
-  <tr>
-    <td class="required">Váš email</td>
-   <#if PARAMS.email??>
-    <#assign email=PARAMS.email>
-   <#elseif USER??>
-    <#assign email=USER.email>
-   </#if>
-   <td align="left">
-    <input type="text" name="email" value="${email!}" size="20" tabindex="2">
-    <span class="error">${ERRORS.email!}</span>
-   </td>
-  </tr>
-    <#if ! (USER?? || USER_VERIFIED!false)>
+    <table border=0 cellpadding=5 style="padding-top: 10px">
         <tr>
-            <td class="required">Aktuální rok</td>
-            <td>
-                <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}">
-                <a class="info" href="#">?<span class="tooltip">Vložte aktuální rok. Jedná se o ochranu před spamboty.
-                Po úspěšném ověření se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.</span></a>
-                <span class="error">${ERRORS.antispam!}</span>
+            <td class="required">Vaše jméno</td>
+            <#if PARAMS.author??>
+                <#assign author=PARAMS.author>
+            <#elseif USER??>
+                <#assign author=USER.name>
+            </#if>
+            <td align="left">
+                <input type="text" name="author" value="${author!}" size="20">
+                <span class="error">${ERRORS.author!}</span>
             </td>
         </tr>
-    </#if>
-  <tr>
-    <td>Typ požadavku</td>
-    <td>
-        <select name="category">
-            <#list ["Offtopic diskuse","Duplicitní diskuse","Návrh na cenzuru","Návrh na smazání komentáře","Oprava formátování"] as choice>
-                <option<#if PARAMS.category! == choice> selected</#if>>${choice}</option>
-            </#list>
-        </select>
-    </td>
-  </tr>
-  <tr>
-   <td colspan="2">
-    Slovní popis<br>
-    <textarea name="text" cols="60" rows="15" tabindex="4">${PARAMS.text!?html}</textarea>
-    <span class="error">${ERRORS.text!}</span>
-  </td>
-  </tr>
-  <tr>
-   <td colspan="2" align="center">
-       <input type="submit" value="OK" tabindex="5">
-       <input type="submit" name="preview" value="Náhled" tabindex="6">
-   </td>
-  </tr>
- </table>
- <input type="hidden" name="action" value="submitComplaint">
- <input type="hidden" name="rid" value="${RELATION.id}">
- <input type="hidden" name="threadId" value="${COMMENT.id}">
+        <tr>
+            <td class="required">Váš email</td>
+            <#if PARAMS.email??>
+                <#assign email=PARAMS.email>
+            <#elseif USER??>
+                <#assign email=USER.email>
+            </#if>
+            <td align="left">
+                <input type="text" name="email" value="${email!}" size="20">
+                <span class="error">${ERRORS.email!}</span>
+            </td>
+        </tr>
+        <tr>
+            <td>Typ požadavku</td>
+            <td>
+                <select name="category">
+                    <#list ["Offtopic diskuse","Duplicitní diskuse","Návrh na cenzuru","Návrh na smazání komentáře","Oprava formátování"] as choice>
+                        <option<#if PARAMS.category! == choice> selected</#if>>${choice}</option>
+                    </#list>
+                </select>
+            </td>
+        </tr>
+        <#if ! (USER?? || USER_VERIFIED!false)>
+            <tr>
+                <td class="required">Aktuální rok</td>
+                <td>
+                    <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}">
+                    <a class="info" href="#">?<span class="tooltip">Vložte aktuální rok. Jedná se o ochranu před spamboty.
+                    Po úspěšném ověření se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.</span></a>
+                    <span class="error">${ERRORS.antispam!}</span>
+                </td>
+            </tr>
+        </#if>
+        <tr>
+            <td colspan="2">
+                Slovní popis<br>
+                <div class="error">${ERRORS.text!}</div>
+                <textarea name="text" cols="60" rows="15">${PARAMS.text!?html}</textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input type="submit" name="preview" value="Náhled">
+                <input type="submit" value="Odeslat">
+            </td>
+        </tr>
+    </table>
+    <input type="hidden" name="action" value="submitComplaint">
+    <input type="hidden" name="rid" value="${RELATION.id}">
+    <input type="hidden" name="threadId" value="${COMMENT.id}">
 </form>
-
 
 <#include "../footer.ftl">
