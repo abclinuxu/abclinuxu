@@ -1262,6 +1262,6 @@
     <#nested>
 </#macro>
 
-<#macro addRadioChoice name, description, value, isDefault = false>
+<#macro addRadioChoice name, value, description, isDefault = false>
     <label><input type="radio" name="${name?html}" value="${value}" <#if (PARAMS.get(selectName)! == value) || (isDefault && !PARAMS.containsKey(selectName))>checked="checked"</#if> />${description}</label>
 </#macro>

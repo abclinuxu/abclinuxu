@@ -64,12 +64,15 @@ public class EditContent implements AbcAction {
     public static final String PARAM_CLASS = "java_class";
     public static final String PARAM_EXECUTE_AS_TEMPLATE = "execute";
     public static final String PARAM_RELATION_SHORT = "rid";
+    public static final String PARAM_LAYOUT = "layout";
     public static final String PARAM_PREVIEW = "preview";
     public static final String PARAM_START_TIME = "startTime";
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_PREVIEW = "PREVIEW";
     public static final String VAR_START_TIME = "START_TIME";
+
+    public static final String VALUE_LAYOUT_DEFAULT = "default";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -107,11 +110,6 @@ public class EditContent implements AbcAction {
         }
 
 		Permissions perms = Tools.permissionsFor(user, relation);
-        //boolean manager = user.hasRole(Roles.CONTENT_ADMIN);
-        //boolean canDerive = user.hasRole(Roles.CAN_DERIVE_CONTENT);
-        //boolean publicContent = false;
-        //if (relation.getChild() instanceof Item)
-        //    publicContent = TYPE_PUBLIC_CONTENT.equals(((Item) relation.getChild()).getSubType());
 
         if (ACTION_ADD_DERIVED_PAGE.equals(action)) {
             if (perms.canCreate())
@@ -175,7 +173,7 @@ public class EditContent implements AbcAction {
 
         if ( action.equals(ACTION_ALTER_PUBLIC) ) {
             ActionProtector.ensureContract(request, EditContent.class, true, false, false, true);
-            return actionAlterPublic(request, response, env);
+            return actionAlterPublic(response, env);
         }
 
         throw new MissingArgumentException("Chybí parametr action!");
@@ -266,7 +264,6 @@ public class EditContent implements AbcAction {
             Item parentItem = ((Item)parent);
 
             if (parentItem.getType()==Item.CONTENT) {
-
                 Element element = (Element) parentItem.getData().selectSingleNode("/data/toc");
                 if (element != null) {
                     int id = Misc.parseInt(element.getText(), -1);
@@ -383,7 +380,6 @@ public class EditContent implements AbcAction {
         MonitorPool.scheduleMonitorAction(action);
 
         Relation sp = Tools.getParentSubportal(relation);
-
         if (sp != null) {
             VariableFetcher.getInstance().refreshSubportalWikiPages(sp);
             Category cat = (Category) sp.getChild();
@@ -409,10 +405,17 @@ public class EditContent implements AbcAction {
             if ("yes".equals(element.attributeValue("execute")))
                 params.put(PARAM_EXECUTE_AS_TEMPLATE, "yes");
         }
+
         element = (Element) document.selectSingleNode("/data/java_class");
         if (element!=null)
             params.put(PARAM_CLASS, element.getText());
+
         params.put(PARAM_URL, relation.getUrl());
+
+        String layout = item.getSubType();
+        if (layout == null)
+            layout = VALUE_LAYOUT_DEFAULT;
+        params.put(PARAM_LAYOUT, layout);
 
         env.put(VAR_START_TIME, System.currentTimeMillis());
         return FMTemplateSelector.select("EditContent", "edit", env, request);
@@ -431,11 +434,13 @@ public class EditContent implements AbcAction {
         boolean canContinue = setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setURL(params, relation, env);
-        if (user.hasRole(Roles.ROOT))
+        if (user.hasRole(Roles.ROOT)) {
             canContinue &= setClass(params, item);
+            canContinue &= setLayout(params, item);
+        }
         canContinue &= checkStartTime(params, item, env);
         if (canContinue)
-            canContinue &= ServletUtils.checkNoChange(item, origItem, env);
+            canContinue = ServletUtils.checkNoChange(item, origItem, env);
         String changesDescription = Misc.getRevisionString(params, env);
         canContinue &= !Constants.ERROR.equals(changesDescription);
 
@@ -476,7 +481,7 @@ public class EditContent implements AbcAction {
     /**
      * Reverts public flag state for this document.
      */
-    protected String actionAlterPublic(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String actionAlterPublic(HttpServletResponse response, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item content = (Item) persistence.findById(relation.getChild());
@@ -500,7 +505,7 @@ public class EditContent implements AbcAction {
     /**
      * Updates title from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param item article to be updated
+     * @param item item to be updated
      * @param env environment
      * @return false, if there is a major error.
      */
@@ -516,9 +521,21 @@ public class EditContent implements AbcAction {
     }
 
     /**
+     * Updates layout from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param item item to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setLayout(Map params, Item item) {
+        String name = (String) params.get(PARAM_LAYOUT);
+        item.setSubType(name);
+        return true;
+    }
+
+    /**
      * Updates content from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param item article  to be updated
+     * @param item item  to be updated
      * @return false, if there is a major error.
      */
     private boolean setContent(Map params, Item item, Map env) {
@@ -623,7 +640,7 @@ public class EditContent implements AbcAction {
     /**
      * Updates title from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
-     * @param item article to be updated
+     * @param item item to be updated
      * @return false, if there is a major error.
      */
     private boolean setClass(Map params, Item item) {

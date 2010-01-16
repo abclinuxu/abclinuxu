@@ -53,8 +53,8 @@
     </@lib.addSelect>
     <@lib.addInput false, "driverUrl", "Adresa ovladače", 60 />
     <@lib.addFormField false, "Zastaralý">
-        <@lib.addRadioChoice "outdated", "ano", "yes" />
-        <@lib.addRadioChoice "outdated", "no", "", true />
+        <@lib.addRadioChoice "outdated", "yes", "ano" />
+        <@lib.addRadioChoice "outdated", "", "ne", true />
     </@lib.addFormField>
 
     <@lib.addTextArea false, "identification", "Identifikace pod Linuxem", 15>

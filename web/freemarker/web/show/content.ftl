@@ -18,7 +18,13 @@
       </div>
     </#assign>
 </#if>
-<#include "../header.ftl">
+
+<#if ITEM.subType == "no_columns">
+    <#include "../header-no-columns.ftl">
+<#else>
+    <#include "../header.ftl">
+</#if>
+
 <#if USER??>
     <p>
         <#assign public=TOOL.permissionsFor(null, RELATION).canModify()>
@@ -40,9 +46,9 @@
 
 <#assign exec=TOOL.xpath(ITEM,"/data/content/@execute")!"no", content=TOOL.xpath(ITEM,"/data/content")>
 <#if exec!="yes">
-${content}
+    ${content}
 <#else>
-<@content?interpret />
+    <@content?interpret />
 </#if>
 
 <#if TOC??>

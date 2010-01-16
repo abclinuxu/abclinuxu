@@ -25,14 +25,14 @@ pak však potřebuje podporu programátora, který připraví data.</p>
     <@lib.addInput true, "title", "Titulek stránky" />
     <@lib.addInput true, "url", "Adresa stránky", "Zadejte absolutní, ale lokální URL." />
     <#if USER.hasRole("root")>
-        <@lib.addInput false, "java_class", "Java FQCN", "Jméno třídy controlleru, který připraví data pro tuto stránku." />
-        <@lib.addCheckbox "execute", "Zpracovat freemarkerem">
-            <p>
-                Pokud zaškrtnete tuto volbu, systém obsah článku zpracuje skrze
-                <a href="http://freemarker.sourceforge.net/">Freemarker</a>.
-                Užitečné pro dynamický obsah.
-            </p>
-        </@lib.addCheckbox>
+        <@lib.addFormField false, "Layout", "Vyberte rozvržení stránky pro tento dokument">
+            <@lib.addRadioChoice "layout", "default", "standardní"/>
+            <@lib.addRadioChoice "layout", "no_columns", "bez sloupců"/>
+        </@lib.addFormField>
+        <@lib.addFormField false, "Dynamický obsah", "Zaškrtněte, pokud se má obsah zpracovat šablonovacím jazykem Freemarker">
+            <@lib.addCheckboxBare "execute", ""/>
+        </@lib.addFormField>
+        <#--<@lib.addInput false, "java_class", "Java FQCN", "Jméno třídy controlleru, který připraví data pro tuto stránku." />-->
     </#if>
     <@lib.addTextArea true, "content", "Obsah stránky", 30>
         <p>Všechna URL na články, obrázky a soubory z našeho serveru musí být relativní!</p>
