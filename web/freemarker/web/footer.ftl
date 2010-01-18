@@ -8,7 +8,7 @@
             <a href="/doc/podminky-pouziti">Podmínky použití</a> |
             <a href="/doc/osobni-udaje">Osobní údaje</a>
         </div>
-		&copy; 1999-2009 <a href="http://www.stickfish.com">Stickfish, s. r. o.</a> Všechna práva vyhrazena.
+		&copy; 1999-2010 <a href="http://www.stickfish.com">Stickfish, s. r. o.</a> Všechna práva vyhrazena.
 	</div>
 
 </div> <!-- obal -->
