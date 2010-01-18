@@ -26,20 +26,18 @@
 </#if>
 
 <#if USER??>
-    <p>
-        <#assign public=TOOL.permissionsFor(null, RELATION).canModify()>
-        <#if TOOL.permissionsFor(USER, RELATION.upper).canModify()>
-            <a href="${URL.make("/editContent/"+RELATION.id+"?action=edit")}">Uprav vše</a> &#8226;
-            <a href="${URL.make("/editContent/"+RELATION.id+"?action=alterPublic"+TOOL.ticket(USER!, false))}">
-                <#if public>Zruš<#else>Nastav</#if> veřejnou editovatelnost</a> &#8226;
-        </#if>
-        <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
-            <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/doc")}">Smaž</a>
-        </#if>
-        <#if TOOL.permissionsFor(USER, RELATION).canCreate()>
-            &#8226; <a href="${URL.make("/editContent/"+RELATION.id+"?action=addDerivedPage")}">Vytvoř podstránku</a>
-        </#if>
-    </p>
+    <#assign public=TOOL.permissionsFor(null, RELATION).canModify()>
+    <#if TOOL.permissionsFor(USER, RELATION.upper).canModify()>
+        <a href="${URL.make("/editContent/"+RELATION.id+"?action=edit")}">Uprav vše</a> &#8226;
+        <a href="${URL.make("/editContent/"+RELATION.id+"?action=alterPublic"+TOOL.ticket(USER!, false))}">
+            <#if public>Zruš<#else>Nastav</#if> veřejnou editovatelnost</a> &#8226;
+    </#if>
+    <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
+        <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/doc")}">Smaž</a>
+    </#if>
+    <#if TOOL.permissionsFor(USER, RELATION).canCreate()>
+        &#8226; <a href="${URL.make("/editContent/"+RELATION.id+"?action=addDerivedPage")}">Vytvoř podstránku</a>
+    </#if>
 </#if>
 
 <@lib.advertisement id="arbo-sq" />
