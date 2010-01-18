@@ -19,7 +19,7 @@
     </#assign>
 </#if>
 
-<#if ITEM.subType == "no_columns">
+<#if ITEM.subType! == "no_columns">
     <#include "../header-no-columns.ftl">
 <#else>
     <#include "../header.ftl">
