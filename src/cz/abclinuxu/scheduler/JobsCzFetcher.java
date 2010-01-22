@@ -50,7 +50,7 @@ public class JobsCzFetcher extends TimerTask implements Configurable {
         VariableFetcher.getInstance().refreshJobsCz(uriPage, uriHP);
         
         // create include file
-        List<JobsCzItem> result = VariableFetcher.getInstance().getFreshJobsCz(null);
+        List<JobsCzItem> result = VariableFetcher.getInstance().getFreshJobsCz();
         Map env = new HashMap();
         env.put("ITEMS", result);
         String file = AbcConfig.calculateDeployedPath(fileName);

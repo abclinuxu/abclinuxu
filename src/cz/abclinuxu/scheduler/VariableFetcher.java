@@ -37,7 +37,6 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.TagTool;
-import cz.abclinuxu.utils.XmlUtils;
 import cz.abclinuxu.utils.TagTool.ListOrder;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -95,7 +94,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     List<Relation> freshHardware, freshSoftware, freshDrivers, freshStories, freshDigestStories, freshArticles;
     List<Relation> freshQuestions, freshFaqs, freshDictionary, freshBazaarAds, freshPersonalities, freshNews;
-    List<Relation> freshTrivias, freshEvents, freshVideos, freshHPSubportalArticles;
+    List<Relation> freshTrivias, freshEvents, freshVideos;
     List<Relation> topSubportals;
     List<Map> latestSubportalChanges;
     Map<Integer, List<Relation>> freshSubportalArticles, freshForumQuestions, freshSubportalWikiPages;
@@ -300,14 +299,6 @@ public class VariableFetcher extends TimerTask implements Configurable {
     }
 
     /**
-     * List of the freshest subportal article relations according to user preference or system setting.
-     */
-    public List<Relation> getFreshHPSubportalArticles(Object user) {
-        int userLimit = getObjectCountForUser(user, KEY_SUBPORTAL_ARTICLE, null);
-        return getSubList(freshHPSubportalArticles, userLimit);
-    }
-
-    /**
      * List of the most fresh article relations from a subportal
      * according to user preference or system setting.
      */
@@ -455,9 +446,11 @@ public class VariableFetcher extends TimerTask implements Configurable {
         return getSubList(freshVideos, userLimit);
     }
 
-    public List<JobsCzItem> getFreshJobsCz(Object user) {
-        int userLimit = getObjectCountForUser(user, KEY_JOBSCZ, null);
-        return getSubList(jobsCzHolderHP.getJobsList(), userLimit);
+    public List<JobsCzItem> getFreshJobsCz() {
+        List<JobsCzItem> items = jobsCzHolderHP.getJobsList();
+        Collections.shuffle(items, new Random(System.currentTimeMillis()));
+        int size = (items.size() > 6) ? 6 : items.size();
+        return items.subList(0, size);
     }
 
     public List<CloudTag> getFreshCloudTags(Object user) {
@@ -901,18 +894,6 @@ public class VariableFetcher extends TimerTask implements Configurable {
             topSubportals = list;
         } catch (Exception e) {
             log.error("Selhalo nacitani nej skupin", e);
-        }
-    }
-
-    public void refreshHPSubportalArticles() {
-        try {
-            int maximum = maxSizes.get(KEY_SUBPORTAL_ARTICLE);
-            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List<Relation> articles = sqlTool.findHPSubportalArticles(qualifiers);
-            Tools.syncList(articles);
-            freshHPSubportalArticles = articles;
-        } catch (Exception e) {
-            log.error("Selhalo nacitani clanku ze skupin pro HP", e);
         }
     }
 
@@ -1704,7 +1685,6 @@ public class VariableFetcher extends TimerTask implements Configurable {
         defaultSizes.put(KEY_SUBPORTAL_ARTICLE, size);
         size = prefs.getInt(PREF_MAX + KEY_SUBPORTAL_ARTICLE, 5);
         maxSizes.put(KEY_SUBPORTAL_ARTICLE, size);
-        freshHPSubportalArticles = Collections.emptyList();
 
         indexFeeds = prefs.get(PREF_INDEX_FEEDS, "");
         templateFeeds = prefs.get(PREF_TEMPLATE_FEEDS, "");
