@@ -123,50 +123,26 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateForumAll() {
         try {
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - aktuální diskuse");
-            
-            feed.setLink("http://www.abclinuxu.cz/poradna");
-            feed.setUri("http://www.abclinuxu.cz/poradna");
-            feed.setDescription("Seznam aktuálních diskusí v poradnách na portálu www.abclinuxu.cz");
+            SyndFeed feed = createSyndFeed("abclinuxu - aktuální diskuse", "/poradna",
+                    "Seznam aktuálních diskusí v poradnách na portálu www.abclinuxu.cz");
+
             List entries = new ArrayList();
             feed.setEntries(entries);
 
-            SyndEntry entry;
-            SyndContent description;
-            String question, title;
-
             Qualifier[] qualifiers = new Qualifier[]{new CompareCondition(Field.SUBTYPE, Operation.EQUAL, "question"),
                     Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, highFrequencyFeedLength)};
-            List list = SQLTool.getInstance().findDiscussionRelations(qualifiers);
+            List<Relation> list = SQLTool.getInstance().findDiscussionRelations(qualifiers);
             Tools.syncList(list);
             
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation rel = (Relation) iter.next();
-                DiscussionHeader diz = Tools.analyzeDiscussion(rel);
-                
-                entry = new SyndEntryImpl();
-                entry.setLink("http://www.abclinuxu.cz" + Tools.getUrlForDiscussion(rel));
-                title = diz.getTitle();
-                title = title.concat(", odpovědí: " + diz.getResponseCount());
-                entry.setTitle(title);
-                entry.setPublishedDate(diz.getUpdated());
-                description = new SyndContentImpl();
-                description.setType("text/plain");
-                question = Tools.xpath(diz.getDiscussion(), "data/text");
-                question = Tools.removeTags(question);
-                question = Tools.limit(question, 500, "...");
-                description.setValue(question);
-                entry.setDescription(description);
+            for (Relation relation : list) {
+                SyndEntry entry = createQuestionEntry(relation);
                 entries.add(entry);
             }
 
             String path = AbcConfig.calculateDeployedPath(getForumFeedUrl().substring(1));
-            
             File dir = new File(path).getParentFile();
             if (!dir.exists())
+                //noinspection ResultOfMethodCallIgnored
                 dir.mkdirs();
             
             Writer writer = getWriter(path);
@@ -177,7 +153,7 @@ public class FeedGenerator implements Configurable {
             log.error("Chyba pri generovani RSS pro poradny", e);
         }
     }
-    
+
     /**
      * Generates RSS feed for a discussion forum
      */
@@ -190,56 +166,30 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateForum(int relationId, String file) {
         try {
-            Relation relation = new Relation(relationId);
-            Category cat;
-            
-            Tools.sync(relation);
-            cat = (Category) relation.getChild();
-            
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - "+cat.getTitle());
-            
-            feed.setLink("http://www.abclinuxu.cz" + relation.getUrl());
-            feed.setUri("http://www.abclinuxu.cz" + relation.getUrl());
-            feed.setDescription("Seznam aktuálních diskusí v \"" + cat.getTitle() + "\" na portálu www.abclinuxu.cz");
+            Relation forum = new Relation(relationId);
+            Tools.sync(forum);
+            Category cat = (Category) forum.getChild();
+
+            SyndFeed feed = createSyndFeed("abclinuxu - " + cat.getTitle(), forum.getUrl(),
+                    "Seznam aktuálních diskusí v \"" + cat.getTitle() + "\" na portálu www.abclinuxu.cz");
+
             List entries = new ArrayList();
             feed.setEntries(entries);
 
-            SyndEntry entry;
-            SyndContent description;
-            String question, title;
-
             Qualifier[] qualifiers = new Qualifier[]{new CompareCondition(Field.UPPER, Operation.EQUAL, relationId),
                     Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, highFrequencyFeedLength)};
-            List list = SQLTool.getInstance().findDiscussionRelations(qualifiers);
+            List<Relation> list = SQLTool.getInstance().findDiscussionRelations(qualifiers);
             Tools.syncList(list);
-            
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation rel = (Relation) iter.next();
-                DiscussionHeader diz = Tools.analyzeDiscussion(rel);
-                
-                entry = new SyndEntryImpl();
-                entry.setLink("http://www.abclinuxu.cz" + Tools.getUrlForDiscussion(rel));
-                title = diz.getTitle();
-                title = title.concat(", odpovědí: " + diz.getResponseCount());
-                entry.setTitle(title);
-                entry.setPublishedDate(diz.getUpdated());
-                description = new SyndContentImpl();
-                description.setType("text/plain");
-                question = Tools.xpath(diz.getDiscussion(), "data/text");
-                question = Tools.removeTags(question);
-                question = Tools.limit(question, 500, "...");
-                description.setValue(question);
-                entry.setDescription(description);
+
+            for (Relation relation : list) {
+                SyndEntry entry = createQuestionEntry(relation);
                 entries.add(entry);
             }
 
             String path = AbcConfig.calculateDeployedPath(file);
-            
             File dir = new File(path).getParentFile();
             if (!dir.exists())
+                //noinspection ResultOfMethodCallIgnored
                 dir.mkdirs();
             
             Writer writer = getWriter(path);
@@ -256,32 +206,19 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateDrivers() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistence();
+            SyndFeed feed = createSyndFeed("abclinuxu - databáze ovladačů", "/ovladace",
+                    "Seznam čerstvých záznamů do databáze linuxových ovladačů na portálu www.abclinuxu.cz");
 
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setEncoding("UTF-8");
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setTitle("abclinuxu - databáze ovladačů");
-            feed.setLink("http://www.abclinuxu.cz/ovladace");
-            feed.setUri("http://www.abclinuxu.cz/ovladace");
-            feed.setDescription("Seznam čerstvých záznamů do databáze linuxových ovladačů na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
-            SyndEntry entry;
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
-            List list = SQLTool.getInstance().findItemRelationsWithType(Item.DRIVER, qualifiers);
+            List<Relation> list = SQLTool.getInstance().findItemRelationsWithType(Item.DRIVER, qualifiers);
             Tools.syncList(list);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation found = (Relation) iter.next();
+            for (Relation found : list) {
                 Item item = (Item) found.getChild();
-                User author = (User) persistence.findById(new User(item.getOwner()));
-
-                entry = new SyndEntryImpl();
-                entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
-                entry.setTitle(item.getTitle());
-                entry.setPublishedDate(item.getUpdated());
-                entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
+                SyndEntry entry = createSyndEntry(found.getUrl(), item.getTitle(), null, item.getUpdated());
+                setAuthor(item, entry);
                 entries.add(entry);
             }
 
@@ -300,32 +237,19 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateDictionary() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistence();
+            SyndFeed feed = createSyndFeed("abclinuxu - výkladový slovník", "/slovnik",
+                    "Výkladový slovník na portálu www.abclinuxu.cz");
 
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setEncoding("UTF-8");
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setTitle("abclinuxu - výkladový slovník");
-            feed.setLink("http://www.abclinuxu.cz/slovnik");
-            feed.setUri("http://www.abclinuxu.cz/slovnik");
-            feed.setDescription("Výkladový slovník na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
-            SyndEntry entry;
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
-            List list = SQLTool.getInstance().findItemRelationsWithType(Item.DICTIONARY, qualifiers);
+            List<Relation> list = SQLTool.getInstance().findItemRelationsWithType(Item.DICTIONARY, qualifiers);
             Tools.syncList(list);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation found = (Relation) iter.next();
+            for (Relation found : list) {
                 Item item = (Item) found.getChild();
-                User author = (User) persistence.findById(new User(item.getOwner()));
-
-                entry = new SyndEntryImpl();
-                entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
-                entry.setTitle(item.getTitle());
-                entry.setPublishedDate(item.getUpdated());
-                entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
+                SyndEntry entry = createSyndEntry(found.getUrl(), item.getTitle(), null, item.getUpdated());
+                setAuthor(item, entry);
                 entries.add(entry);
             }
 
@@ -344,32 +268,19 @@ public class FeedGenerator implements Configurable {
      */
     public static void updatePersonalities() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistence();
+            SyndFeed feed = createSyndFeed("abclinuxu - osobnosti", "/kdo-je",
+                    "Osobnosti na portálu www.abclinuxu.cz");
 
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setEncoding("UTF-8");
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setTitle("abclinuxu - osobnosti");
-            feed.setLink("http://www.abclinuxu.cz/kdo-je");
-            feed.setUri("http://www.abclinuxu.cz/kdo-je");
-            feed.setDescription("Osobnosti na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
-            SyndEntry entry;
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
-            List list = SQLTool.getInstance().findItemRelationsWithType(Item.PERSONALITY, qualifiers);
+            List<Relation> list = SQLTool.getInstance().findItemRelationsWithType(Item.PERSONALITY, qualifiers);
             Tools.syncList(list);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation found = (Relation) iter.next();
+            for (Relation found : list) {
                 Item item = (Item) found.getChild();
-                User author = (User) persistence.findById(new User(item.getOwner()));
-
-                entry = new SyndEntryImpl();
-                entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
-                entry.setTitle(item.getTitle());
-                entry.setPublishedDate(item.getUpdated());
-                entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
+                SyndEntry entry = createSyndEntry(found.getUrl(), item.getTitle(), null, item.getUpdated());
+                setAuthor(item, entry);
                 entries.add(entry);
             }
 
@@ -388,36 +299,19 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateHardware() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistence();
+            SyndFeed feed = createSyndFeed("abclinuxu - databáze hardwaru", "/hardware",
+                    "Seznam čerstvých záznamů do databáze hardwarových poznatků na portálu www.abclinuxu.cz");
 
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - databáze hardwaru");
-            feed.setLink("http://www.abclinuxu.cz/hardware");
-            feed.setUri("http://www.abclinuxu.cz/hardware");
-            feed.setDescription("Seznam čerstvých záznamů do databáze hardwarových poznatků na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
-            SyndEntry entry;
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0,feedLength)};
-            List list = SQLTool.getInstance().findItemRelationsWithType(Item.HARDWARE, qualifiers);
+            List<Relation> list = SQLTool.getInstance().findItemRelationsWithType(Item.HARDWARE, qualifiers);
             Tools.syncList(list);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation found = (Relation) iter.next();
+            for (Relation found : list) {
                 Item item = (Item) found.getChild();
-                User author = (User) persistence.findById(new User(item.getOwner()));
-
-                entry = new SyndEntryImpl();
-                String url = found.getUrl();
-                if (url==null)
-                    url = "/hardware/show/" + found.getId();
-                url = "http://"+AbcConfig.getHostname() + url;
-                entry.setLink(url);
-                entry.setTitle(item.getTitle());
-                entry.setPublishedDate(item.getUpdated());
-                entry.setAuthor((author.getNick()!=null) ? author.getNick() : author.getName());
+                SyndEntry entry = createSyndEntry(found.getUrl(), item.getTitle(), null, item.getUpdated());
+                setAuthor(item, entry);
                 entries.add(entry);
             }
 
@@ -436,43 +330,27 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateSoftware() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistence();
+            SyndFeed feed = createSyndFeed("abclinuxu - katalog softwaru", "/software",
+                    "Seznam čerstvých záznamů do softwarového katalogu na portálu www.abclinuxu.cz");
 
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - katalog softwaru");
-            feed.setLink("http://www.abclinuxu.cz/software");
-            feed.setUri("http://www.abclinuxu.cz/software");
-            feed.setDescription("Seznam čerstvých záznamů do softwarového katalogu na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
-            SyndEntry entry;
-            SyndContent description;
+            SyndContent description = null;
             Node node;
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0,feedLength)};
-            List list = SQLTool.getInstance().findItemRelationsWithType(Item.SOFTWARE, qualifiers);
+            List<Relation> list = SQLTool.getInstance().findItemRelationsWithType(Item.SOFTWARE, qualifiers);
             Tools.syncList(list);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation found = (Relation) iter.next();
+            for (Relation found : list) {
                 Item item = (Item) found.getChild();
-                User author = (User) persistence.findById(new User(item.getOwner()));
-
-                entry = new SyndEntryImpl();
-                String url = found.getUrl();
-                url = "http://"+AbcConfig.getHostname() + url;
-                entry.setLink(url);
-                entry.setTitle(item.getTitle());
-                entry.setPublishedDate(item.getUpdated());
-                entry.setAuthor((author.getNick()!=null) ? author.getNick() : author.getName());
                 node = item.getData().selectSingleNode("/data/intro");
                 if (node != null) {
                     description = new SyndContentImpl();
                     description.setType("text/plain");
                     description.setValue(node.getText());
-                    entry.setDescription(description);
                 }
+                SyndEntry entry = createSyndEntry(found.getUrl(), item.getTitle(), description, item.getUpdated());
+                setAuthor(item, entry);
                 entries.add(entry);
             }
 
@@ -491,34 +369,19 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateDesktops() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistence();
+            SyndFeed feed = createSyndFeed("abclinuxu - desktopy", "/desktopy",
+                    "Seznam čerstvých desktopů na portálu www.abclinuxu.cz");
 
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - desktopy");
-            feed.setLink("http://www.abclinuxu.cz/desktopy");
-            feed.setUri("http://www.abclinuxu.cz/desktopy");
-            feed.setDescription("Seznam čerstvých desktopů na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
-            SyndEntry entry;
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0,feedLength)};
-            List list = SQLTool.getInstance().findItemRelationsWithType(Item.DESKTOP, qualifiers);
+            List<Relation> list = SQLTool.getInstance().findItemRelationsWithType(Item.DESKTOP, qualifiers);
             Tools.syncList(list);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation found = (Relation) iter.next();
+            for (Relation found : list) {
                 Item item = (Item) found.getChild();
-                User author = (User) persistence.findById(new User(item.getOwner()));
-
-                entry = new SyndEntryImpl();
-                String url = found.getUrl();
-                url = "http://"+AbcConfig.getHostname() + url;
-                entry.setLink(url);
-                entry.setTitle(item.getTitle());
-                entry.setPublishedDate(item.getCreated());
-                entry.setAuthor((author.getNick()!=null) ? author.getNick() : author.getName());
+                SyndEntry entry = createSyndEntry(found.getUrl(), item.getTitle(), null, item.getUpdated());
+                setAuthor(item, entry);
                 entries.add(entry);
             }
 
@@ -539,19 +402,11 @@ public class FeedGenerator implements Configurable {
         try {
             for (Map.Entry<Integer, String> e : filesArticleSeries.entrySet()) {
                 Relation relation = new Relation(e.getKey());
-                SyndFeed feed = new SyndFeedImpl();
-                GenericDataObject series;
-                String url;
-
                 Tools.sync(relation);
-                series = (GenericDataObject) relation.getChild();
-                url = "http://" + AbcConfig.getHostname() + relation.getUrl();
+                GenericDataObject series = (GenericDataObject) relation.getChild();
+                String url = "http://" + AbcConfig.getHostname() + relation.getUrl();
 
-                feed.setFeedType(TYPE_RSS_1_0);
-                feed.setEncoding("UTF-8");
-                feed.setUri(url);
-                feed.setLink(url);
-                feed.setTitle("abclinuxu - " + series.getTitle());
+                SyndFeed feed = createSyndFeed("abclinuxu - " + series.getTitle(), url, null);
 
                 if (series instanceof Category)
                     createSectionEntries((Category) series, feed, feedLength);
@@ -586,9 +441,9 @@ public class FeedGenerator implements Configurable {
         feed.setEntries(entries);
 
         SyndEntry entry;
-        for (Relation r : articles) {
-            Tools.sync(r);
-            entry = createArticleEntry(r);
+        for (Relation relation : articles) {
+            Tools.sync(relation);
+            entry = createArticleEntry(relation);
             entries.add(entry);
         }
     }
@@ -614,43 +469,11 @@ public class FeedGenerator implements Configurable {
         for (Iterator iter = articlesElements.iterator(); iter.hasNext();) {
             Element article = (Element) iter.next();
             int rid = Misc.parseInt(article.getText(), 0);
-            Relation r = new Relation(rid);
-            Tools.sync(r);
-            entry = createArticleEntry(r);
+            Relation relation = new Relation(rid);
+            Tools.sync(relation);
+            entry = createArticleEntry(relation);
             entries.add(entry);
         }
-    }
-
-    /**
-     * Creates an RSS entry for specified article.
-     * @param r Relation of the article
-     * @return RSS entry object
-     */
-    protected static SyndEntry createArticleEntry(Relation r) {
-        SyndContent description;
-        Item item = (Item) r.getChild();
-        Set authors = item.getProperty(Constants.PROPERTY_AUTHOR);
-        String firstId = (String) authors.iterator().next();
-        Relation authorRelation = (Relation) Tools.sync(new Relation(Misc.parseInt(firstId, 0)));
-        Item author = (Item) authorRelation.getChild();
-        Document document = item.getData();
-
-        SyndEntry entry = new SyndEntryImpl();
-        
-        if (r.getUrl() != null)
-            entry.setLink("http://"+AbcConfig.getHostname() + r.getUrl());
-        else
-            entry.setLink("http://"+AbcConfig.getHostname() + UrlUtils.PREFIX_CLANKY + "/show/" + r.getId());
-        entry.setTitle(item.getTitle());
-        entry.setPublishedDate(item.getCreated());
-        entry.setAuthor(Tools.childName(author));
-        description = new SyndContentImpl();
-        description.setType("text/plain");
-        Node node = document.selectSingleNode("/data/perex");
-        description.setValue(node.getText());
-        entry.setDescription(description);
-
-        return entry;
     }
 
     /**
@@ -660,13 +483,9 @@ public class FeedGenerator implements Configurable {
         try {
             SQLTool sqlTool = SQLTool.getInstance();
 
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - aktuální články");
-            feed.setLink("http://www.abclinuxu.cz/clanky");
-            feed.setUri("http://www.abclinuxu.cz/clanky");
-            feed.setDescription("Seznam čerstvých článků na portálu www.abclinuxu.cz");
+            SyndFeed feed = createSyndFeed("abclinuxu - aktuální články", "/clanky",
+                    "Seznam čerstvých článků na portálu www.abclinuxu.cz");
+
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
@@ -674,10 +493,9 @@ public class FeedGenerator implements Configurable {
             Map defaultSizes = VariableFetcher.getInstance().getDefaultSizes();
             int countArticles = (Integer) defaultSizes.get(VariableFetcher.KEY_ARTICLE);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, countArticles)};
-            List articles = sqlTool.findIndexArticlesRelations(qualifiers);
+            List<Relation> articles = sqlTool.findIndexArticlesRelations(qualifiers);
             Tools.syncList(articles);
-            for (Iterator iter = articles.iterator(); iter.hasNext();) {
-                Relation found = (Relation) iter.next();
+            for (Relation found : articles) {
                 entry = createArticleEntry(found);
                 entries.add(entry);
             }
@@ -718,13 +536,9 @@ public class FeedGenerator implements Configurable {
 
             if (blog!=null) {
                 User author = (User) persistence.findById(new User(blog.getOwner()));
-                SyndFeed feed = new SyndFeedImpl();
-                feed.setFeedType(TYPE_RSS_1_0);
-                feed.setEncoding("UTF-8");
-                feed.setTitle(Tools.limit(blog.getTitle(), 40, "..."));
-                feed.setLink("http://www.abclinuxu.cz/blog/"+blog.getSubType()+"/");
-                feed.setUri("http://www.abclinuxu.cz/blog/"+blog.getSubType()+"/");
-                feed.setDescription("Seznam čerstvých zápisů uživatele "+author.getName());
+                SyndFeed feed = createSyndFeed(Tools.limit(blog.getTitle(), 40, "..."), blog.getSubType() + "/",
+                        "Seznam čerstvých zápisů uživatele " + author.getName());
+
                 List entries = new ArrayList();
                 feed.setEntries(entries);
                 SyndEntry entry;
@@ -736,11 +550,10 @@ public class FeedGenerator implements Configurable {
                 qualifiers.add(Qualifier.ORDER_DESCENDING);
                 qualifiers.add(new LimitQualifier(0, feedLength));
                 Qualifier[] qa = new Qualifier[qualifiers.size()];
-                List stories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+                List<Relation> stories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
                 Tools.syncList(stories);
-                for (Iterator iter = stories.iterator(); iter.hasNext();) {
-                    Relation found = (Relation) iter.next();
-                    entry = getStorySyndicate(blog, found, author);
+                for (Relation found : stories) {
+                    entry = createStoryEntry(found, author);
                     entries.add(entry);
                 }
 
@@ -751,12 +564,9 @@ public class FeedGenerator implements Configurable {
                 writer.close();
             }
 
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setTitle("abclinuxu - blogy");
-            feed.setLink("http://www.abclinuxu.cz/blog/");
-            feed.setUri("http://www.abclinuxu.cz/blog/");
-            feed.setDescription("Seznam čerstvých zápisů uživatelů www.abclinuxu.cz");
+            SyndFeed feed = createSyndFeed("abclinuxu - blogy", "/blog/",
+                    "Seznam čerstvých zápisů uživatelů www.abclinuxu.cz");
+
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
@@ -781,7 +591,7 @@ public class FeedGenerator implements Configurable {
                 Item story = (Item) found.getChild();
                 if(story.getSingleProperty(Constants.PROPERTY_BANNED_BLOG) == null) {
                     User author = (User) persistence.findById(new User(blog.getOwner()));
-                    entry = getStorySyndicate(blog, found, author);
+                    entry = createStoryEntry(found, author);
                     entries.add(entry);
                 }
             }
@@ -804,12 +614,9 @@ public class FeedGenerator implements Configurable {
             SQLTool sqlTool = SQLTool.getInstance();
             Persistence persistence = PersistenceFactory.getPersistence();
 
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setTitle("abclinuxu - výběr z blogů");
-            feed.setLink("http://www.abclinuxu.cz/blog/");
-            feed.setUri("http://www.abclinuxu.cz/blog/");
-            feed.setDescription("Seznam pečlivě vybraných zápisů uživatelů www.abclinuxu.cz");
+            SyndFeed feed = createSyndFeed("abclinuxu - výběr z blogů", "/blog/",
+                    "Seznam pečlivě vybraných zápisů uživatelů www.abclinuxu.cz");
+
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
@@ -818,19 +625,19 @@ public class FeedGenerator implements Configurable {
             Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_BLOG_DIGEST, values);
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, highFrequencyFeedLength)};
-            List stories = sqlTool.findItemRelationsWithTypeWithFilters(Item.BLOG, qualifiers, filters);
+            List<Relation> stories = sqlTool.findItemRelationsWithTypeWithFilters(Item.BLOG, qualifiers, filters);
             Tools.syncList(stories);
+
             List blogs = new ArrayList();
-            for (Iterator iter = stories.iterator(); iter.hasNext();) {
-                Relation found = (Relation) iter.next();
+            for (Relation found : stories) {
                 blogs.add(found.getParent());
             }
             Tools.syncList(blogs);
-            for (Iterator iter = stories.iterator(); iter.hasNext();) {
-                Relation found = (Relation) iter.next();
+
+            for (Relation found : stories) {
                 Category blog = (Category) persistence.findById(found.getParent());
                 User author = (User) persistence.findById(new User(blog.getOwner()));
-                entry = getStorySyndicate(blog, found, author);
+                entry = createStoryEntry(found, author);
                 entries.add(entry);
             }
 
@@ -849,47 +656,26 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateNews() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistence();
-            String title;
+            SyndFeed feed = createSyndFeed("abclinuxu - čerstvé zprávičky", "/zpravicky",
+                    "Seznam čerstvých zpráviček na portálu www.abclinuxu.cz");
 
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - čerstvé zprávičky");
-            feed.setLink("http://www.abclinuxu.cz/zpravicky");
-            feed.setUri("http://www.abclinuxu.cz/zpravicky");
-            feed.setDescription("Seznam čerstvých zpráviček na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
-            SyndEntry entry;
             SyndContent description;
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
-            List list = SQLTool.getInstance().findNewsRelations(qualifiers);
+            List<Relation> list = SQLTool.getInstance().findNewsRelations(qualifiers);
             Tools.syncList(list);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation found = (Relation) iter.next();
+            for (Relation found : list) {
                 Item item = (Item) found.getChild();
-                User author = (User) persistence.findById(new User(item.getOwner()));
 
-                String url = found.getUrl();
                 String content = Tools.xpath(item, "data/content");
                 String withoutTags = Tools.removeTags(content);
-                title = item.getTitle();
-                
-                if (url == null)
-                    url = UrlUtils.PREFIX_NEWS+"/show/"+found.getId();
-
-                entry = new SyndEntryImpl();
-                entry.setLink("http://"+AbcConfig.getHostname() + url);
-                entry.setTitle(title);
                 description = new SyndContentImpl();
                 description.setType("text/plain");
+
                 description.setValue(withoutTags);
-//                description.setValue(Tools.limitWords(withoutTags, newsWordLimit, " ..."));
-                entry.setDescription(description);
-                entry.setPublishedDate(item.getCreated());
-                entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
+                SyndEntry entry = createSyndEntry(found.getUrl(), item.getTitle(), null, item.getUpdated());
                 entries.add(entry);
             }
 
@@ -908,41 +694,27 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateFAQ() {
         try {
-            Persistence persistence = PersistenceFactory.getPersistence();
-            String title, content, withoutTags;
+            SyndFeed feed = createSyndFeed("abclinuxu - často kladené otázky", "/faq",
+                    "Seznam aktualizovaných otázek s odpověďmi na portálu www.abclinuxu.cz");
 
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - často kladené otázky");
-            feed.setLink("http://www.abclinuxu.cz/faq");
-            feed.setUri("http://www.abclinuxu.cz/faq");
-            feed.setDescription("Seznam aktualizovaných otázek s odpověďmi na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
-            SyndEntry entry;
             SyndContent description;
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
-            List list = SQLTool.getInstance().findItemRelationsWithType(Item.FAQ, qualifiers);
+            List<Relation> list = SQLTool.getInstance().findItemRelationsWithType(Item.FAQ, qualifiers);
             Tools.syncList(list);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation found = (Relation) iter.next();
+            for (Relation found : list) {
                 Item item = (Item) found.getChild();
-                User author = (User) persistence.findById(new User(item.getOwner()));
-                content = Tools.xpath(item, "data/text");
-                withoutTags = Tools.removeTags(content);
-                title = item.getTitle();
+                String content = Tools.xpath(item, "data/text");
+                String withoutTags = Tools.removeTags(content);
 
-                entry = new SyndEntryImpl();
-                entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
-                entry.setTitle(title);
                 description = new SyndContentImpl();
                 description.setType("text/plain");
                 description.setValue(Tools.limitWords(withoutTags, newsWordLimit, " ..."));
-                entry.setDescription(description);
-                entry.setPublishedDate(item.getUpdated());
-                entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
+
+                SyndEntry entry = createSyndEntry(found.getUrl(), item.getTitle(), description, item.getUpdated());
+                setAuthor(item, entry);
                 entries.add(entry);
             }
 
@@ -961,34 +733,19 @@ public class FeedGenerator implements Configurable {
      */
     public static void updatePolls() {
         try {
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - ankety");
-            feed.setLink("http://www.abclinuxu.cz/ankety");
-            feed.setUri("http://www.abclinuxu.cz/ankety");
-            feed.setDescription("Seznam anket na portálu www.abclinuxu.cz");
+            SyndFeed feed = createSyndFeed("abclinuxu - ankety", "/ankety",
+                    "Seznam anket na portálu www.abclinuxu.cz");
+
             List entries = new ArrayList();
             feed.setEntries(entries);
 
-            SyndEntry entry;
-            String title;
-
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
-            List list = SQLTool.getInstance().findStandalonePollRelations(qualifiers);
+            List<Relation> list = SQLTool.getInstance().findStandalonePollRelations(qualifiers);
             Tools.syncList(list);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation relation = (Relation) iter.next();
-                entry = new SyndEntryImpl();
-                String url = relation.getUrl();
-                if (url==null)
-                    url = UrlUtils.PREFIX_POLLS+"/show/"+relation.getId();
-                entry.setLink("http://"+AbcConfig.getHostname() + url);
-
+            for (Relation relation : list) {
                 Poll poll = (Poll) relation.getChild();
-                title = Tools.removeTags(poll.getText());
-                entry.setTitle(title);
-                entry.setPublishedDate(poll.getCreated());
+                String title = Tools.removeTags(poll.getText());
+                SyndEntry entry = createSyndEntry(relation.getUrl(), title, null, poll.getCreated());
                 entries.add(entry);
             }
 
@@ -1004,34 +761,22 @@ public class FeedGenerator implements Configurable {
 
     public static void updateBazaar() {
         try {
-            SyndFeed feed = new SyndFeedImpl();
-            feed.setFeedType(TYPE_RSS_1_0);
-            feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - bazar");
-            feed.setLink("http://www.abclinuxu.cz/bazar");
-            feed.setUri("http://www.abclinuxu.cz/bazar");
-            feed.setDescription("Seznam inzerátů z bazaru na portálu www.abclinuxu.cz");
+            SyndFeed feed = createSyndFeed("abclinuxu - bazar", "/bazar", "Seznam inzerátů z bazaru na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
 
-            SyndEntry entry;
-            String title;
-
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
-            List list = SQLTool.getInstance().findItemRelationsWithType(Item.BAZAAR, qualifiers);
+            List<Relation> list = SQLTool.getInstance().findItemRelationsWithType(Item.BAZAAR, qualifiers);
             Tools.syncList(list);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation relation = (Relation) iter.next();
-                entry = new SyndEntryImpl();
+            for (Relation relation : list) {
+                Item item = (Item) relation.getChild();
+
                 String url = relation.getUrl();
                 if (url == null)
                     url = UrlUtils.PREFIX_BAZAAR + "/show/" + relation.getId();
-                entry.setLink("http://"+AbcConfig.getHostname() + url);
 
-                Item item = (Item) relation.getChild();
-                title = Tools.removeTags(item.getTitle());
-                entry.setTitle(title);
-                entry.setPublishedDate(item.getCreated());
+                SyndEntry entry = createSyndEntry(url, item.getTitle(), null, item.getCreated());
+                setAuthor(item, entry);
                 entries.add(entry);
             }
 
@@ -1046,32 +791,114 @@ public class FeedGenerator implements Configurable {
     }
 
     /**
+     * Creates SyndFeed instance and initializes some properties.
+     * @param title       title
+     * @param url         required URI, it must be absolute, but local (starting with slash)
+     * @param description description
+     * @return
+     */
+    protected static SyndFeed createSyndFeed(String title, String url, String description) {
+        SyndFeed feed = new SyndFeedImpl();
+        feed.setFeedType(TYPE_RSS_1_0);
+        feed.setEncoding("UTF-8");
+        feed.setTitle(title);
+        url = AbcConfig.getAbsoluteUrl() + url;
+        feed.setLink(url);
+        feed.setUri(url);
+        feed.setDescription(description);
+        return feed;
+    }
+
+    /**
+     * Creates new entry from parameters.
+     * @param url         required URI, it must be absolute, but local (starting with slash)
+     * @param title       required title for this entry
+     * @param description optional description
+     * @param published   optional time, when the content was published
+     * @return new SyndEntry
+     */
+    protected static SyndEntry createSyndEntry(String url, String title, SyndContent description, Date published) {
+        SyndEntry entry = new SyndEntryImpl();
+        entry.setTitle(title);
+        url = AbcConfig.getAbsoluteUrl() + url;
+        entry.setLink(url);
+        entry.setUri(url);
+        if (published != null)
+            entry.setPublishedDate(published);
+        if (description != null)
+            entry.setDescription(description);
+        return entry;
+    }
+
+    /**
+     * Sets item owner as entry's author.
+     * @param item item
+     * @param entry entry
+     */
+    protected static void setAuthor(Item item, SyndEntry entry) {
+        Persistence persistence = PersistenceFactory.getPersistence();
+        User author = (User) persistence.findById(new User(item.getOwner()));
+        entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
+    }
+
+    /**
      * Create SyndEntry from blog story.
      * @return SyndEntry with link to selected story.
      */
-    private static SyndEntry getStorySyndicate(Category blog, Relation found, User author) {
-        SyndEntry entry;
-        SyndContent description;
-        Item item = (Item) found.getChild();
+    private static SyndEntry createStoryEntry(Relation relation, User author) {
+        Item item = (Item) relation.getChild();
         Document document = item.getData();
 
-        entry = new SyndEntryImpl();
-
-        String url = "http://"+AbcConfig.getHostname() + Tools.getUrlForBlogStory(found);
-
-        entry.setLink(url);
-        entry.setTitle(item.getTitle());
-        entry.setPublishedDate(item.getCreated());
-        entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
-        description = new SyndContentImpl();
-        description.setType("text/html");
+        SyndContent description = null;
         Node node = document.selectSingleNode("/data/perex");
-        if (node!=null) {
+        if (node != null) {
+            description = new SyndContentImpl();
+            description.setType("text/html");
             String text = node.getText();
             text = Tools.limit(text, 500, "...");
             description.setValue(text);
-            entry.setDescription(description);
         }
+
+        SyndEntry entry = createSyndEntry(Tools.getUrlForBlogStory(relation), item.getTitle(), description, item.getCreated());
+        entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
+        return entry;
+    }
+
+    protected static SyndEntry createQuestionEntry(Relation relation) {
+        DiscussionHeader diz = Tools.analyzeDiscussion(relation);
+        String url = Tools.getUrlForDiscussion(relation);
+        String title = diz.getTitle() + ", odpovědí: " + diz.getResponseCount();
+
+        SyndContent description = new SyndContentImpl();
+        description.setType("text/plain");
+        String question = Tools.xpath(diz.getDiscussion(), "data/text");
+        question = Tools.removeTags(question);
+        question = Tools.limit(question, 500, "...");
+        description.setValue(question);
+
+        return createSyndEntry(url, title, description, diz.getUpdated());
+    }
+
+    /**
+     * Creates an RSS entry for specified article.
+     * @param relation Relation of the article
+     * @return RSS entry object
+     */
+    protected static SyndEntry createArticleEntry(Relation relation) {
+        Item item = (Item) relation.getChild();
+        Set authors = item.getProperty(Constants.PROPERTY_AUTHOR);
+        String firstId = (String) authors.iterator().next();
+        Relation authorRelation = (Relation) Tools.sync(new Relation(Misc.parseInt(firstId, 0)));
+        Item author = (Item) authorRelation.getChild();
+        Document document = item.getData();
+
+        SyndContent description = new SyndContentImpl();
+        description.setType("text/plain");
+        Node node = document.selectSingleNode("/data/perex");
+        description.setValue(node.getText());
+
+        SyndEntry entry = createSyndEntry(relation.getUrl(), item.getTitle(), description, item.getCreated());
+        entry.setAuthor(Tools.childName(author));
         return entry;
     }
 
@@ -1255,18 +1082,20 @@ public class FeedGenerator implements Configurable {
 
     public static void main(String[] args) {
         if (args==null || args.length==0) {
-            System.out.println("Enter one of hardware, software, articles, blog, blogs, drivers, news, faq, " +
-                               "polls, bazaar, dictionary, desktops or forum as an argument!");
+            System.out.println("Enter one of all, hardware, software, articles, blog, blogs, drivers, news, faq, " +
+                               "polls, bazaar, dictionary, desktops, whoiswho or forum as an argument!");
             System.exit(1);
         }
+
         Arrays.sort(args);
-        if (Arrays.binarySearch(args, "articles")>=0)
+        boolean all = Arrays.binarySearch(args, "all") >= 0;
+        if (all || Arrays.binarySearch(args, "articles") >= 0)
             updateArticles();
-        if (Arrays.binarySearch(args, "blog") >= 0)
+        if (all || Arrays.binarySearch(args, "blog") >= 0)
             updateBlog(null);
-        if (Arrays.binarySearch(args, "bazaar") >= 0)
+        if (all || Arrays.binarySearch(args, "bazaar") >= 0)
             updateBazaar();
-        if (Arrays.binarySearch(args, "blogs") >= 0) {
+        if (all || Arrays.binarySearch(args, "blogs") >= 0) {
             Persistence persistence = PersistenceFactory.getPersistence();
             Relation top = (Relation) persistence.findById(new Relation(Constants.REL_BLOGS));
             List blogs = top.getChild().getChildren();
@@ -1276,23 +1105,25 @@ public class FeedGenerator implements Configurable {
                 updateBlog(blog);
             }
         }
-        if (Arrays.binarySearch(args, "dictionary") >= 0)
-            updateDictionary();
-        if (Arrays.binarySearch(args, "drivers")>=0)
-            updateDrivers();
-        if (Arrays.binarySearch(args, "faq") >= 0)
-            updateFAQ();
-        if (Arrays.binarySearch(args, "forum")>=0)
-            updateForum();
-        if (Arrays.binarySearch(args, "hardware") >= 0)
-            updateHardware();
-        if (Arrays.binarySearch(args, "news")>=0)
-            updateNews();
-        if (Arrays.binarySearch(args, "polls")>=0)
-            updatePolls();
-        if (Arrays.binarySearch(args, "software") >= 0)
-            updateSoftware();
-        if (Arrays.binarySearch(args, "desktops") >= 0)
+        if (all || Arrays.binarySearch(args, "desktops") >= 0)
             updateDesktops();
+        if (all || Arrays.binarySearch(args, "dictionary") >= 0)
+            updateDictionary();
+        if (all || Arrays.binarySearch(args, "drivers") >= 0)
+            updateDrivers();
+        if (all || Arrays.binarySearch(args, "faq") >= 0)
+            updateFAQ();
+        if (all || Arrays.binarySearch(args, "forum") >= 0)
+            updateForum();
+        if (all || Arrays.binarySearch(args, "hardware") >= 0)
+            updateHardware();
+        if (all || Arrays.binarySearch(args, "news") >= 0)
+            updateNews();
+        if (all || Arrays.binarySearch(args, "polls") >= 0)
+            updatePolls();
+        if (all || Arrays.binarySearch(args, "software") >= 0)
+            updateSoftware();
+        if (all || Arrays.binarySearch(args, "whoiswho") >= 0)
+            updatePersonalities();
     }
 }
