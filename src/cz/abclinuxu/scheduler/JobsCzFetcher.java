@@ -18,13 +18,11 @@
  */
 package cz.abclinuxu.scheduler;
 
-import cz.abclinuxu.data.view.JobsCzItem;
+import cz.abclinuxu.data.view.JobsCzHolder;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
-import cz.abclinuxu.utils.config.impl.AbcConfig;
-import cz.abclinuxu.utils.freemarker.FMUtils;
 
 import java.util.*;
 import java.io.*;
@@ -38,29 +36,21 @@ import org.apache.log4j.Logger;
 public class JobsCzFetcher extends TimerTask implements Configurable {
     static Logger log = Logger.getLogger(JobsCzFetcher.class);
 
-    static final String PREF_FILE = "file";
-    static final String PREF_URI_PAGE = "uriPage";
-	static final String PREF_URI_HP = "uriHP";
+	static final String PREF_URI = "uri";
 
-    String fileName, uriPage, uriHP;
+    String uri;
 
     public void run() {
         // refresh list
         log.debug("Refreshing list for jobs.cz server");
-        VariableFetcher.getInstance().refreshJobsCz(uriPage, uriHP);
-        
-        // create include file
-        List<JobsCzItem> result = VariableFetcher.getInstance().getFreshJobsCz();
-        Map env = new HashMap();
-        env.put("ITEMS", result);
-        String file = AbcConfig.calculateDeployedPath(fileName);
         try {
-            FMUtils.executeTemplate("/include/misc/generate_jobscz.ftl", env, new File(file));
-            log.debug("Jobs.cz include file generated");
+            JobsCzHolder newHolder = new JobsCzHolder();
+            newHolder.fetch(uri);
+            VariableFetcher.getInstance().setJobsCzHolder(newHolder);
         } catch (IOException e) {
-            log.error("IO problems for " + uriHP + ": " + e.getMessage());
+            log.error("IO problems for " + uri + ": " + e.getMessage());
         } catch (Exception e) {
-            log.error("Cannot parse links from " + uriHP, e);
+            log.error("Selhalo nacitani pracovnich pozic serveru jobs.cz", e);
         }
     }
 
@@ -73,9 +63,7 @@ public class JobsCzFetcher extends TimerTask implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        uriPage = prefs.get(PREF_URI_PAGE, null);
-		uriHP = prefs.get(PREF_URI_HP, null);
-        fileName = prefs.get(PREF_FILE, null);
+		uri = prefs.get(PREF_URI, null);
     }
 
     public static void main(String[] args) throws Exception {

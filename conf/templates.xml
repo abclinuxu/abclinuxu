@@ -897,12 +897,6 @@
 		</action>
 	</servlet>
 
-	<servlet name="ViewJobsCz">
-		<action name="show" content="/show/jobscz.ftl">
-			<var name="TITLE" value="Výpis volných pracovních pozic jobs.cz" />
-		</action>
-	</servlet>
-
 	<servlet name="ViewPersonality">
 		<action name="view" content="/show/personality.ftl">
 			<var name="TITLE" value='${TOOL.childName(ITEM)}' type="Lazy" />

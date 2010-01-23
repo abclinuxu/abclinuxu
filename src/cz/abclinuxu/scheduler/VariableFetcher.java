@@ -124,7 +124,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     Relation currentPoll;
     int sectionCacheFrequency;
     HostingServer hostingServer;
-    JobsCzHolder jobsCzHolderHP, jobsCzHolderPage;
+    JobsCzHolder jobsCzHolder;
     Map<String, ShopProduct> shopProducts;
 
     SQLTool sqlTool;
@@ -447,10 +447,15 @@ public class VariableFetcher extends TimerTask implements Configurable {
     }
 
     public List<JobsCzItem> getFreshJobsCz() {
-        List<JobsCzItem> items = jobsCzHolderHP.getJobsList();
+        List<JobsCzItem> items = jobsCzHolder.getJobsList();
         Collections.shuffle(items, new Random(System.currentTimeMillis()));
-        int size = (items.size() > 6) ? 6 : items.size();
+        Integer maximum = defaultSizes.get(KEY_JOBSCZ);
+        int size = (items.size() > maximum) ? maximum : items.size();
         return items.subList(0, size);
+    }
+
+    public void setJobsCzHolder(JobsCzHolder jobsCzHolder) {
+        this.jobsCzHolder = jobsCzHolder;
     }
 
     public List<CloudTag> getFreshCloudTags(Object user) {
@@ -673,13 +678,6 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public HostingServer getHostingServer() {
         return hostingServer;
     }
-
-    /**
-     * @return Jobs.cz holder
-     */
-     public JobsCzHolder getJobsCzHolder() {
-         return jobsCzHolderPage;
-     }
 
     /**
      * Stores shop products.
@@ -1357,25 +1355,6 @@ public class VariableFetcher extends TimerTask implements Configurable {
         }
     }
 
-    /**
-     * Fetches jobs from available XML file, if
-     * fetching fails, do not change current holder
-     * @param uriPage URI of XML to be parsed
-     */
-    public void refreshJobsCz(String uriPage, String uriHP) {
-        try {
-            JobsCzHolder newHolder = new JobsCzHolder();
-            newHolder.fetch(uriPage);
-            jobsCzHolderPage = newHolder;
-
-            newHolder = new JobsCzHolder();
-            newHolder.fetch(uriHP);
-            jobsCzHolderHP = newHolder;
-        } catch (Exception e) {
-            log.error("Selhalo nacitani pracovnich pozic serveru jobs.cz", e);
-        }
-    }
-
     public void refreshTopStatistics() {
         try {
             Qualifier[] qualifiers = new Qualifier[]{ new LimitQualifier(0, 10) };
@@ -1669,7 +1648,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
         size = prefs.getInt(PREF_DEFAULT + KEY_JOBSCZ, 10);
         defaultSizes.put(KEY_JOBSCZ, size);
-        jobsCzHolderHP = jobsCzHolderPage = JobsCzHolder.EMPTY_HOLDER;
+        jobsCzHolder = JobsCzHolder.EMPTY_HOLDER;
 
         size = prefs.getInt(PREF_DEFAULT + KEY_TAGCLOUD, 20);
         defaultSizes.put(KEY_TAGCLOUD, size);

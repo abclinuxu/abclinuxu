@@ -67,10 +67,6 @@
             <action>cz.abclinuxu.servlets.html.view.ViewUser</action>
         </mapping>
         <mapping>
-            <pattern>^/jobs</pattern>
-            <action>cz.abclinuxu.servlets.html.view.ViewJobsCz</action>
-        </mapping>
-        <mapping>
             <pattern>^/Profile</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewUser</action>
         </mapping>
@@ -407,6 +403,11 @@
             <pattern input="path">^/drivers</pattern>
             <regexp>/drivers</regexp>
             <replacement>/ovladace</replacement>
+        </mapping>
+        <mapping>
+            <pattern input="path">^/jobs</pattern>
+            <regexp>/jobs</regexp>
+            <replacement>/</replacement>
         </mapping>
         <mapping>
             <pattern input="path">ViewRelation</pattern>

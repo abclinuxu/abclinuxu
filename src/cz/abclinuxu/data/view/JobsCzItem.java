@@ -24,9 +24,7 @@ package cz.abclinuxu.data.view;
  * @author kapy
  */
 public class JobsCzItem {
-    
-    private String url, positionName, companyName, createDate;
-    private String[] skills, localities;
+        private String url, positionName;
 
     /**
      * Gets URL address of current item
@@ -59,69 +57,4 @@ public class JobsCzItem {
     public void setPositionName(String positionName) {
         this.positionName = positionName;
     }
-
-    /**
-     * Gets name of company which provides the job
-     * @return Name of company
-     */
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    /**
-     * Sets name of company
-     * @param companyName
-     */
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
-    /**
-     * Gets skills required to take position
-     * @return Required skills
-     */
-    public String[] getSkills() {
-        return skills;
-    }
-
-    /**
-     * Sets skills required to take position
-     * @param skills Required skills
-     */
-    public void setSkills(String[] skills) {
-        this.skills = skills;
-    }
-
-    /**
-     * Gets localities of job
-     * @return Job's localities
-     */
-    public String[] getLocalities() {
-        return localities;
-    }
-
-    /**
-     * Sets localities of job
-     * @param localities Job's localities
-     */
-    public void setLocalities(String[] localities) {
-        this.localities = localities;
-    }
-
-    /**
-     * Gets date when job place offert was created
-     * @return Created date
-     */
-    public String getCreateDate() {
-        return createDate;
-    }
-
-    /**
-     * Sets date when job place offert was created
-     * @param createDate Day when job was created
-     */
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
-    }
-    
 }
