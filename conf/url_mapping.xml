@@ -410,6 +410,11 @@
             <replacement>/</replacement>
         </mapping>
         <mapping>
+            <pattern input="path">/dir/4731</pattern>
+            <regexp>.*</regexp>
+            <replacement>/clanky/casopis-abicko</replacement>
+        </mapping>
+        <mapping>
             <pattern input="path">ViewRelation</pattern>
             <regexp>ViewRelation.+(relationId|rid)=([\d]+).*</regexp>
             <replacement>show/$2</replacement>
