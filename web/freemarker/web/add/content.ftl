@@ -10,13 +10,14 @@ o obyčejný text, který má pevné, hezké URL. Například nápověda,
 podmínky užití či reklama. Obsah ale může být i dynamický,
 pak však potřebuje podporu programátora, který připraví data.</p>
 
-<#if PREVIEW??>
+<#assign content = TOOL.xpath(PREVIEW,"/data/content")!"UNDEFINED">
+<#if PREVIEW?? && content != "UNDEFINED">
     <fieldset>
         <legend>Náhled</legend>
         <#if (PARAMS.execute!"no")!="yes">
-            ${TOOL.xpath(PREVIEW,"/data/content")}
+            ${content}
         <#else>
-            <@TOOL.xpath(PREVIEW,"/data/content")?interpret />
+            ${content?interpret}
         </#if>
     </fieldset>
 </#if>

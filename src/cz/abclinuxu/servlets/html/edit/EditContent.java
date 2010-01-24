@@ -187,6 +187,7 @@ public class EditContent implements AbcAction {
 
         Item item = new Item(0, Item.CONTENT);
         Document document = DocumentHelper.createDocument();
+        document.addElement("data");
         item.setData(document);
         item.setOwner(user.getId());
 
