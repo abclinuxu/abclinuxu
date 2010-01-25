@@ -114,17 +114,20 @@ html > body .jobs-ad-logo {
 	position: relative;
 }
 
-#jobs-lst li{
+#jobs-lst li {
 	list-style-type: none;
 	padding: 5px 0 3px 10px;
 	margin: 0 0 0 17px;
 	background: url("/images/bannery/jobs-li.png") no-repeat left 1em;
 }
 
-#jobs-lst li a{
+#jobs-lst li a {
 	color: #000;
 	position: relative;
-	
+	text-decoration: underline;
+}
+#jobs-lst li a:hover {
+	text-decoration: none;
 }
 
 .jobs-ad-more {
@@ -135,6 +138,3 @@ html > body .jobs-ad-logo {
 	margin: 0 8px 8px 0;
 	position: relative;
 }
-.jobs-ad-more { text-decoration: none; }
-.jobs-ad-more:hover { text-decoration: underline; }
-
