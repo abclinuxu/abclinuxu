@@ -21,7 +21,7 @@
     <@lib.addInput false, "country", "Země" />
 
     <@lib.addSubmit "Dokonči" />
-    <@lib.addHidden "action", "editProfile2" />
+    <@lib.addHidden "action", "editPersonal2" />
     <@lib.addHidden "uid", MANAGED.id />
 </@lib.addForm>
 
