@@ -415,6 +415,10 @@ public class EditHardware implements AbcAction {
             Element element = DocumentHelper.makeElement(root, "setup");
             tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
+        } else {
+            Element element = root.element("setup");
+            if (element != null)
+                element.detach();
         }
         return true;
     }
@@ -439,6 +443,10 @@ public class EditHardware implements AbcAction {
             Element element = DocumentHelper.makeElement(root, "params");
             tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
+        } else {
+            Element element = root.element("params");
+            if (element != null)
+                element.detach();
         }
         return true;
     }
@@ -463,6 +471,10 @@ public class EditHardware implements AbcAction {
             Element element = DocumentHelper.makeElement(root, "identification");
             tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
+        } else {
+            Element element = root.element("identification");
+            if (element != null)
+                element.detach();
         }
         return true;
     }
@@ -476,7 +488,7 @@ public class EditHardware implements AbcAction {
     private boolean setNote(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_NOTE);
         tmp = Misc.filterDangerousCharacters(tmp);
-        if ( tmp!=null && tmp.length()>0 ) {
+        if (tmp != null && tmp.length() > 0) {
             try {
                 tmp = HtmlPurifier.clean(tmp);
                 HtmlChecker.check(Rules.DEFAULT, tmp);
@@ -484,9 +496,14 @@ public class EditHardware implements AbcAction {
                 ServletUtils.addError(PARAM_NOTE, e.getMessage(), env, null);
                 return false;
             }
+
             Element element = DocumentHelper.makeElement(root, "note");
             tmp = Tools.processLocalLinks(tmp, null);
             element.setText(tmp);
+        } else {
+            Element element = root.element("note");
+            if (element != null)
+                element.detach();
         }
         return true;
     }
