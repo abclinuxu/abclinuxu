@@ -112,8 +112,7 @@
                                 <entry key="RE_VLNKA" value="((^|\s)\w)\s+(\S+)"/>
                                 <entry key="REPLACEMENT_VLNKA" value="$1&amp;nbsp;$3"/>
                                 <entry key="RE_AMPERSAND" value="&amp;(?!#?[a-zA-Z0-9]+;)" />
-                                <entry key="RE_ARTICLE_OBJECT" value='&lt;inline type="([^"]+)" id="(\d+)"&gt;' />
-                                <!--<entry key="RE_INLINE_OBJECT" value='&lt;inline type="([^"]+)" id="(\d+)"&gt;'/>-->
+                                <entry key="RE_INLINE_OBJECT" value='&lt;inline type="([^"]+)" id="(\d+)"&gt;'/>
                                 <entry key="story.reserve.percents" value="25" />
                                 <entry key="news.letter.limit.soft" value="375" />
                                 <entry key="news.letter.limit.hard" value="475" />
@@ -492,7 +491,6 @@
                             <entry key="find.subportal.membership" value="select R.cislo from vlastnost V, kategorie K, relace R where K.cislo=V.predek and V.typ_predka='K' and V.typ='member' and R.typ_potomka='K' and R.potomek=K.cislo and K.typ=7 and V.hodnota = ?" />
                             <entry key="valid.servers" value="select cislo from server where rss is not null"/>
                             <entry key="server.relations.in.category" value="select R.cislo from relace R where R.typ_potomka='S' and R.predek = ?"/>
-                            <entry key="find.hp.subportal.articles" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and P.podtyp='SUBPORTAL' and not exists (select * from vlastnost where predek=P.cislo and typ_predka='P' and typ='banned_article')"/><!-- todo smazat -->
                             <entry key="max.subportal.reads" value="select max(C.soucet) from citac C, kategorie K where C.typ='K' and C.cislo=K.cislo and K.typ=7 and C.druh='read'"/>
                             <entry key="find.advertisement.by.string" value="select cislo from polozka where typ = 29 and string1 = ?"/>
                             <entry key="insert.monitor" value="INSERT INTO monitor (typ,cislo,uzivatel) VALUES (?,?,?)"/>
@@ -570,11 +568,11 @@
                             <entry key="template" value="/mail/weekly.ftl"/>
                         </map>
                     </node>
-                    <!--<node name="PoolMonitor">todo-->
-                        <!--<map>-->
-                            <!--<entry key="event.notification.subject" value="Upozorneni: "/>-->
-                        <!--</map>-->
-                    <!--</node>-->
+                    <node name="PoolMonitor">
+                        <map>
+                            <entry key="event.notification.subject" value="Upozorneni: "/>
+                        </map>
+                    </node>
                     <node name="WhatHappened">
                         <map>
                             <entry key="title" value="Událo se v týdnu {0}/{1,number,#}"/>
@@ -832,6 +830,7 @@
                                     <entry key="regexp.invalid.characters.relative.url" value="[^a-zA-Z0-9.]+"/>
                                     <entry key="regexp.invalid.characters.absolute.url" value="[^a-zA-Z0-9/.]+"/>
                                     <entry key="forbidden.extensions" value=".tgz,.tar.gz,.tar.bz2" />
+                                    <entry key="use.article.prefix" value="true"/>
                                 </map>
                             </node>
                             <node name="CustomURLCache">
