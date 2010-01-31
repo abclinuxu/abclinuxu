@@ -675,7 +675,8 @@ public class FeedGenerator implements Configurable {
                 description.setType("text/plain");
 
                 description.setValue(withoutTags);
-                SyndEntry entry = createSyndEntry(found.getUrl(), item.getTitle(), null, item.getUpdated());
+                SyndEntry entry = createSyndEntry(found.getUrl(), item.getTitle(), description, item.getUpdated());
+                setAuthor(item, entry);
                 entries.add(entry);
             }
 
