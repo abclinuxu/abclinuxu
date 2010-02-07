@@ -563,7 +563,7 @@
                     <map/>
                     <node name="WeeklyEmail">
                         <map>
-                            <entry key="subject" value="abclinuxu.cz: tydenni souhrn"/>
+                            <entry key="subject" value="AbcLinuxu.cz: Týdenní souhrn"/>
                         </map>
                     </node>
                     <!--<node name="PoolMonitor">todo-->
