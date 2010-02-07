@@ -22,9 +22,11 @@ import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.servlets.html.view.ViewUser;
 import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -33,6 +35,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
@@ -152,5 +156,19 @@ public class InstanceUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Creates instances of users and initializes them.
+     * @param identifiers list of ids
+     * @return initialized User instances
+     */
+    public static List<User> createUsers(List<Integer> identifiers) {
+        List<User> userObjects = new ArrayList<User>(identifiers.size());
+        for (Integer id : identifiers) {
+            userObjects.add(new User(id));
+        }
+        Tools.syncList(userObjects);
+        return userObjects;
     }
 }

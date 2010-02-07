@@ -99,8 +99,6 @@ public final class SQLTool implements Configurable {
     public static final String WIKI_RELATIONS_BY_USER = "relations.wiki.by.user";
     public static final String COUNT_WIKI_RELATIONS_BY_USER = "count.relations.wiki.by.user";
     public static final String RELATIONS_WITH_TAGS = "relations.with.tag";
-    public static final String USERS_WITH_WEEKLY_EMAIL = "users.with.weekly.email";
-    public static final String USERS_WITH_FORUM_BY_EMAIL = "users.with.forum.by.email";
     public static final String USERS_WITH_ROLES = "users.with.roles";
     public static final String USERS_IN_GROUP = "users.in.group";
     public static final String USERS_WITH_LOGIN = "users.with.login";
@@ -1277,15 +1275,28 @@ public final class SQLTool implements Configurable {
 
     /**
      * Finds users, that have active email and have subscribed weekly email.
-     * Use Qualifiers to set additional parameters.
      * @return list of Integers of user ids.
      */
-    public List<Integer> findUsersWithWeeklyEmail(Qualifier[] qualifiers) {
-        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder(sql.get(USERS_WITH_WEEKLY_EMAIL));
+    public List<Integer> findUsersWithWeeklyEmail() {
+        StringBuilder sb = new StringBuilder("select cislo from uzivatel where ");
+        CompareCondition condition = new CompareCondition(Field.DATA, Operation.LIKE, "%<communication><email valid=\"yes\"%<weekly_summary>yes%</email>%");
+        Qualifier[] qualifiers = new Qualifier[]{condition};
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadUsers(sb.toString(), params);
+    }
+
+    /**
+     * Count users, that have active email and have subscribed weekly email.
+     * @return list of Integers of user ids.
+     */
+    public Integer countUsersWithWeeklyEmail() {
+        StringBuilder sb = new StringBuilder("select count(*) from uzivatel where ");
+        CompareCondition condition = new CompareCondition(Field.DATA, Operation.LIKE, "%<communication><email valid=\"yes\"%<weekly_summary>yes%</email>%");
+        Qualifier[] qualifiers = new Qualifier[]{condition};
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -1293,9 +1304,10 @@ public final class SQLTool implements Configurable {
      * Use Qualifiers to set additional parameters.
      * @return list of Integers of user ids.
      */
-    public List<Integer> findUsersWithForumByEmail(Qualifier[] qualifiers) {
-        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder(sql.get(USERS_WITH_FORUM_BY_EMAIL));
+    public List<Integer> findUsersWithForumByEmail() {
+        StringBuilder sb = new StringBuilder("select cislo from uzivatel where ");
+        CompareCondition condition = new CompareCondition(Field.DATA, Operation.LIKE, "%<communication><email valid=\"yes\"%<forum>yes%</email>%");
+        Qualifier[] qualifiers = new Qualifier[]{condition};
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadUsers(sb.toString(), params);
@@ -2840,8 +2852,6 @@ public final class SQLTool implements Configurable {
         store(COMMENT_RELATIONS_BY_USER, prefs);
         store(STANDALONE_POLL_RELATIONS, prefs);
         store(RELATION_BY_URL, prefs);
-        store(USERS_WITH_WEEKLY_EMAIL, prefs);
-        store(USERS_WITH_FORUM_BY_EMAIL, prefs);
         store(USERS_WITH_ROLES, prefs);
         store(USERS_WITH_LOGIN, prefs);
         store(USERS_WITH_NICK, prefs);

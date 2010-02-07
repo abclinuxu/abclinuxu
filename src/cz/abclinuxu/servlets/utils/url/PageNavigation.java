@@ -44,6 +44,18 @@ public enum PageNavigation {
     },
 
     /**
+     * Link for editing of weekly summary mailing.
+     */
+    WEEKLY_SUMMARY_EMAIL {
+        @Override
+        public List<Link> getLinks(User user, UrlUtils urlUtils, List<Link> links) {
+            links = ADMINISTRATION.getLinks(user, urlUtils, links);
+            links.add(new Link("Víkendový email", urlUtils.make("/mailing/vikend", UrlUtils.PREFIX_ADMINISTRATION), "Víkendový email"));
+            return links;
+        }
+    },
+
+    /**
      * Author or editor main portal
      */
     EDITION_PORTAL {

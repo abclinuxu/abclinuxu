@@ -38,6 +38,12 @@ public class ParameterChecker {
     Map<String,Object> params;
     boolean failed;
 
+    /*
+        Rozhodnout, co s touto tridou. Nevim, jak moc ve skutecnosti zjednodusuje praci, protoze nijak neresi
+        predavani chyboveho stavu volajicimu. Uzivatel sice dostane zpravu, ale volajici metoda stejne musi
+        nejak zjistit, ze nastala chyba a nema smysl pokracovat.
+     */
+
     public ParameterChecker(Map<String,Object> env) {
         this.env = env;
         params = (Map<String,Object>) env.get(Constants.VAR_PARAMS);
@@ -124,8 +130,7 @@ public class ParameterChecker {
         }
 
         try {
-            int ivalue = Integer.parseInt(value);
-            return ivalue;
+            return Integer.parseInt(value);
         } catch (Exception e) {
             addError(field, "Zadejte číslo!");
             return 0;
@@ -165,8 +170,12 @@ public class ParameterChecker {
      */
     public Date getDate(String field, boolean allowEmpty) {
         String value = getString(field, true);
-        if (value.isEmpty())
+        if (value.isEmpty()) {
+            if (!allowEmpty)
+                addError(field, "Zadejte datum!");
+
             return null;
+        }
 
         try {
             Date date;

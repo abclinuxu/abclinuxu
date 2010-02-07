@@ -977,7 +977,7 @@ public class Tools implements Configurable {
      * is aware of list's limits, so IndexOutOfBounds is never
      * thrown.
      */
-    public static List<?> sublist(List<?> list, int start, int count) {
+    public static <T> List<T> sublist(List<T> list, int start, int count) {
         if (list == null)
             return null;
         if (start >= list.size())
@@ -994,7 +994,7 @@ public class Tools implements Configurable {
      * is aware of list's limits, so IndexOutOfBounds is never
      * thrown.
      */
-    public static List<?> sublist(Set<?> list, int start, int count) {
+    public static <T> List<T> sublist(Collection<T> list, int start, int count) {
         if (list == null)
             return null;
         if (start >= list.size())

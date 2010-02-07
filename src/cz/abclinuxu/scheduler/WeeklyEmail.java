@@ -22,21 +22,35 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.email.EmailSender;
-import cz.abclinuxu.utils.DateTool;
+import cz.abclinuxu.utils.email.MailSession;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.format.HtmlToTextFormatter;
+import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.extra.JobOfferManager;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.News;
 import cz.abclinuxu.data.view.Article;
 import cz.abclinuxu.servlets.Constants;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.prefs.Preferences;
+import java.net.URL;
+import java.io.IOException;
+
+import org.apache.commons.mail.HtmlEmail;
+import org.dom4j.Element;
+
+import javax.mail.internet.MimeMessage;
+import javax.mail.Session;
+
+import freemarker.template.TemplateException;
 
 /**
  * Sends weekly email to every user, who has subscribed this channel.
@@ -54,8 +68,10 @@ public class WeeklyEmail extends TimerTask implements Configurable {
     public static final String VAR_WEEK = "WEEK";
     public static final String VAR_YEAR = "YEAR";
 
-    String subject, sender, template;
-    private int count;
+    Pattern inlinePattern = Pattern.compile("(" + Constants.INLINE_PREFIX + "([^\"]+))");
+
+    String subject;
+    int count;
 
     /**
      * Default constructor.
@@ -67,54 +83,112 @@ public class WeeklyEmail extends TimerTask implements Configurable {
     public void run() {
         try {
             log.info("Time to send weekly emails. Let's find subscribed users first.");
-            Calendar calendar = Calendar.getInstance();
+            Calendar calendar = getWeekStart();
             int week = calendar.get(Calendar.WEEK_OF_YEAR);
             int year = calendar.get(Calendar.YEAR);
 
             Map params = new HashMap();
-            params.put(EmailSender.KEY_FROM, sender);
             params.put(EmailSender.KEY_SUBJECT, subject + " " + week + "/" + year);
-            params.put(EmailSender.KEY_TEMPLATE, template);
             params.put(EmailSender.KEY_STATS_KEY, Constants.EMAIL_WEEKLY);
+
             params.put(Constants.VAR_TOOL, new Tools());
             params.put(Constants.VAR_DATE_TOOL, new DateTool());
-            params.put(VAR_WEEK, week);
-            params.put(VAR_YEAR, year);
 
-            pushData(params);
+            prepareData(params, calendar);
 
-            List users = SQLTool.getInstance().findUsersWithWeeklyEmail(null);
-            log.info("Weekly emails have subscribed "+users.size()+" users.");
-            count = EmailSender.sendEmailToUsers(params,users);
-            log.info("Weekly email sucessfully sent to "+count+" addressses.");
+//            List<Integer> users = SQLTool.getInstance().findUsersWithWeeklyEmail(), workingSet;
+            List<Integer> users = new ArrayList<Integer>(), workingSet;users.add(1);EmailSender.setSmtpServer("smtp.upcmail.cz");
+            List<MimeMessage> messages = new ArrayList<MimeMessage>(50);
+            log.info("Weekly emails have been subscribed by " + users.size() + " users.");
+            MailSession mailSession = EmailSender.openSession();
+
+            for (int i = 0, total = users.size(); i < total;) {
+                workingSet = Tools.sublist(users, i, 50);
+                i += workingSet.size();
+                List<User> userObjects = InstanceUtils.createUsers(workingSet);
+                for (User user : userObjects) {
+                    try {
+                        MimeMessage message = generateMessage(user, params, mailSession.getSession());
+                        messages.add(message);
+                    } catch (Exception e) {
+                        log.error("Failed to create the message for user " + user.getLogin(), e);
+                    }
+                }
+
+                count = EmailSender.sendEmailToUsers(messages, params, mailSession);
+                messages.clear();
+            }
+
+            EmailSender.closeSession(mailSession);
+            log.info("Weekly email sucessfully sent to " + count + " addressses.");
         } catch (Exception e) {
             log.warn("Cannot sent weekly emails!",e);
         }
     }
 
+    public MimeMessage generateMessage(User user, Map params, Session session) throws Exception {
+        params.put(Constants.VAR_USER, user);
+
+        HtmlEmail email = new HtmlEmail();
+        email.setMailSession(session);
+        email.setCharset("UTF-8");
+        email.setFrom(EmailSender.getDefaultFrom());
+        email.addTo(user.getEmail());
+
+        Persistence persistence = PersistenceFactory.getPersistence();
+        Item item = (Item) persistence.findById(new Item(Constants.ITEM_WEEKLY_SUMMARY_EMAIL));
+        Element root = item.getData().getRootElement();
+
+        params.put(Constants.VAR_USER, user);
+        String textVariant = processPlainTextVariant(root, params);
+        email.setTextMsg(textVariant);
+
+        String htmlVariant = processHtmlVariant(root, params);
+
+        // embed the image and get the content id
+        URL url = new URL("http://www.abclinuxu.cz/images/clanky/watzke/unixove-nastroje-logo.png");
+        String cid = email.embed(url, "Apache logo");
+        email.setHtmlMsg("<html>žluťoučký kůň - <img src=\"cid:" + cid + "\"></html>");
+
+        email.setHtmlMsg(htmlVariant);
+
+        email.buildMimeMessage();
+        return email.getMimeMessage();
+    }
+
+    public static String processHtmlVariant(Element root, Map env) throws IOException, TemplateException {
+        String fmCode = root.elementText("html");
+        if (fmCode == null)
+            return "";
+        else
+            return FMUtils.executeCode(fmCode, env);
+    }
+
+    public static String processPlainTextVariant(Element root, Map env) throws IOException, TemplateException {
+        String fmCode = root.elementText("text");
+        if (fmCode == null)
+            return "";
+        else
+            return FMUtils.executeCode(fmCode, env);
+    }
+
     /**
      * Stores articles and news in params.
      */
-    private void pushData(Map params) {
+    public static void prepareData(Map params, Calendar startDate) {
         SQLTool sqlTool = SQLTool.getInstance();
-        HtmlToTextFormatter formatter = new HtmlToTextFormatter();
         Item item;
         String title, content;
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
-        calendar.set(Calendar.HOUR_OF_DAY,0);
-        calendar.set(Calendar.MINUTE,0);
-        Date from = calendar.getTime();
-        Date until = new Date();
+        Date from = startDate.getTime(), until = new Date();
+        int week = startDate.get(Calendar.WEEK_OF_YEAR);
+        int year = startDate.get(Calendar.YEAR);
 
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
-        List relations = sqlTool.findArticleRelationsWithinPeriod(from, until, qualifiers);
+        List<Relation> relations = sqlTool.findArticleRelationsWithinPeriod(from, until, qualifiers);
         Tools.syncList(relations);
         List articles = new ArrayList(relations.size());
 
-        for (Iterator iter = relations.iterator(); iter.hasNext();) {
-            Relation relation = (Relation) iter.next();
+        for (Relation relation : relations) {
             item = (Item) relation.getChild();
             title = item.getTitle();
             Article article = new Article(title, item.getCreated(), relation.getUrl());
@@ -133,23 +207,29 @@ public class WeeklyEmail extends TimerTask implements Configurable {
         Tools.syncList(relations);
         List news = new ArrayList(relations.size());
 
-        for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
-            Relation relation = (Relation) iter.next();
+        for (Relation relation : relations) {
             item = (Item) relation.getChild();
             title = item.getTitle();
             content = Tools.xpath(item, "data/content");
-            content = formatter.format(content);
             News newz = new News(title, content, item.getCreated(), relation.getUrl());
             newz.setAuthor(Tools.createUser(item.getOwner()).getName());
             newz.setComments(Tools.findComments(item).getResponseCount());
             news.add(newz);
         }
 
-        List offers = JobOfferManager.getOffersAfter(from);
-
+        params.put(VAR_WEEK, week);
+        params.put(VAR_YEAR, year);
         params.put(VAR_ARTICLES, articles);
         params.put(VAR_NEWS, news);
-        params.put(VAR_JOBS, offers);
+        params.put(VAR_JOBS, JobOfferManager.getOffersAfter(from));
+    }
+
+    private Calendar getWeekStart() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
+        calendar.set(Calendar.HOUR_OF_DAY,0);
+        calendar.set(Calendar.MINUTE,0);
+        return calendar;
     }
 
     /**
@@ -157,8 +237,6 @@ public class WeeklyEmail extends TimerTask implements Configurable {
      */
     public void configure(Preferences prefs) throws ConfigurationException {
         subject = prefs.get(PREF_SUBJECT, null);
-        sender = prefs.get(PREF_SENDER, null);
-        template = prefs.get(PREF_TEMPLATE, null);
     }
 
     /**

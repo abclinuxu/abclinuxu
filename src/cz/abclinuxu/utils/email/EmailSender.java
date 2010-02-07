@@ -20,20 +20,22 @@ package cz.abclinuxu.utils.email;
 
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.exceptions.InternalException;
 import cz.abclinuxu.utils.freemarker.FMUtils;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.scheduler.UpdateStatistics;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.InstanceUtils;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.util.*;
 import java.util.prefs.Preferences;
 import java.io.UnsupportedEncodingException;
@@ -90,11 +92,42 @@ public class EmailSender implements Configurable {
     /** the uid of the recepient */
     public static final String KEY_RECEPIENT_UID = "RECEPIENT";
     /** SMTP header with id of the recepient */
-    public static final String HEADER_RECEPIENT = "X-ABC-Recepient";
+    public static final String HEADER_ABC_RECEPIENT = "X-ABC-Recepient";
 
     static String smtpServer, defaultFrom;
     static boolean debugSMTP;
     private static final UpdateStatistics stats = UpdateStatistics.getInstance();
+
+    /**
+     * Opens new mail session and SMTP transport. The caller is responsible for closing this session.
+     * @param properties optional
+     * @return instance holding the session and the transport
+     * @throws InternalException mail session cannot be opened
+     */
+    public static MailSession openSession() throws InternalException {
+        try {
+            Session session = Session.getDefaultInstance(new Properties(), null);
+            session.setDebug(debugSMTP);
+            Transport transport = session.getTransport("smtp");
+            transport.connect(smtpServer, null, null);
+            return new MailSession(session, transport);
+        } catch (MessagingException e) {
+            throw new InternalException("Failed to open email session!", e);
+        }
+    }
+
+    /**
+     * Closes the transport from the mailSession.
+     * @param mailSession bean containing the session and the transport to be closed
+     * @throws InternalException
+     */
+    public static void closeSession(MailSession mailSession) throws InternalException {
+        try {
+            mailSession.getTransport().close();
+        } catch (MessagingException e) {
+            throw new InternalException("Failed to close email session!", e);
+        }
+    }
 
     /**
      * Sends an email. Params shall hold neccessary atributes like
@@ -102,61 +135,26 @@ public class EmailSender implements Configurable {
      * @return true, when message has been successfully sent.
      */
     public static boolean sendEmail(Map params) {
-        Properties props = new Properties();
-        String from = (String) params.get(KEY_FROM);
-        String senderName = (String) params.get(KEY_SENDER_NAME);
-        String to = (String) params.get(KEY_TO);
-        String cc = (String) params.get(KEY_CC);
-        String bcc = (String) params.get(KEY_BCC);
-        if ( from==null || from.length()==0 )
-            from = defaultFrom;
-
-        Session session = Session.getDefaultInstance(props,null);
-        session.setDebug(debugSMTP);
-
+        MailSession mailSession = openSession();
+        AbcEmail message = null;
         try {
-            AbcEmail message = new AbcEmail(session);
-            message.setSubject((String) params.get(KEY_SUBJECT));
-            if (senderName!=null) {
-                senderName = Misc.removeDiacritics(senderName);
-                message.setFrom(new InternetAddress(from, senderName));
-            } else
-                message.setFrom(new InternetAddress(from));
-            message.setRecipient(Message.RecipientType.TO,new InternetAddress(to));
-            if (cc!=null)
-                message.setRecipient(Message.RecipientType.CC,new InternetAddress(cc));
-            if (bcc!=null)
-                message.setRecipient(Message.RecipientType.BCC,new InternetAddress(bcc));
+            message = new AbcEmail(mailSession.getSession());
+            setMessageProperties(message, params);
             message.setText(getEmailBody(params));
-            Date sentDate = getSentDate(params);
-            message.setSentDate(sentDate);
-            message.setMessageId((String) params.get(KEY_MESSAGE_ID));
-            message.setReferences((String) params.get(KEY_REFERENCES));
 
-            String recepient = (String) params.get(KEY_RECEPIENT_UID);
-            if (recepient != null)
-                message.setHeader(HEADER_RECEPIENT, recepient);
-
-            Transport transport = session.getTransport("smtp");
-            transport.connect(smtpServer,null,null);
             message.saveChanges();
-            transport.sendMessage(message,message.getAllRecipients());
-            transport.close();
+            mailSession.getTransport().sendMessage(message,message.getAllRecipients());
+            closeSession(mailSession);
 
-            if ( log.isDebugEnabled() )
-                log.debug("Email sent from "+from+" to "+to+".");
+            if (log.isDebugEnabled())
+                log.debug("Email sent " + message);
 
-            String statsKey = (String) params.get(KEY_STATS_KEY);
-            if (statsKey == null)
-                statsKey = Constants.EMAIL_UNKNOWN;
+            String statsKey = getStatisticsType(params);
             stats.recordView(statsKey, 1);
 
             return true;
         } catch (MessagingException e) {
-            log.error("Cannot send email sent from "+from+" to "+to+".",e);
-            return false;
-        } catch (UnsupportedEncodingException e) {
-            log.debug("Setting sender name failed on '"+senderName+"'", e);
+            log.error("Cannot send email " + message, e);
             return false;
         }
     }
@@ -170,11 +168,11 @@ public class EmailSender implements Configurable {
      * @return true, if message has been sent successfully
      */
     public static boolean sendEmail(String from, String to, String subject, String content) {
-        Map map = new HashMap(4);
-        map.put(KEY_FROM,from);
-        map.put(KEY_TO,to);
-        map.put(KEY_SUBJECT,subject);
-        map.put(KEY_BODY,content);
+        Map map = new HashMap();
+        map.put(KEY_FROM, from);
+        map.put(KEY_TO, to);
+        map.put(KEY_SUBJECT, subject);
+        map.put(KEY_BODY, content);
         return sendEmail(map);
     }
 
@@ -185,91 +183,158 @@ public class EmailSender implements Configurable {
      * @param users list of Integers - ids of users.
      * @return number of sent emails.
      */
-    public synchronized static int sendEmailToUsers(Map params, Collection users) {
-        if ( users.size()==0 )
+    public synchronized static int sendEmailToUsers(Map params, Collection<Integer> users) {
+        if (users.isEmpty())
             return 0;
 
-        Persistence persistence = PersistenceFactory.getPersistence();
-        String subject = (String) params.get(KEY_SUBJECT);
-        Address sender = null;
-        String senderName = (String) params.get(KEY_SENDER_NAME);
-        Object from = params.get(KEY_FROM);
-        if (from==null )
-            from = defaultFrom;
-
-        Session session = Session.getDefaultInstance(new Properties(), null);
-        session.setDebug(debugSMTP);
-
         int count = 0, total = users.size();
-        User user = new User();
+        if (log.isDebugEnabled())
+            log.debug("Sending email to " + total + " users");
 
-        if (log.isDebugEnabled()) {
-            log.debug("Sending email to " + total + " users.");
-            log.debug("Email header: from="+from+", subject="+subject);
-        }
-
+        List<Integer> workingSet;
+        MailSession mailSession = openSession();
         try {
-            Transport transport = session.getTransport("smtp");
-            transport.connect(smtpServer, null, null);
+            for (int i = 0; i < total;) {
+                workingSet = Tools.sublist(users, i, 50);
+                i += workingSet.size();
+                List<User> userObjects = InstanceUtils.createUsers(workingSet);
+                for (User user : userObjects) {
+                    try {
+                        // check, that user has valid email
+                        Element tagEmail = (Element) user.getData().selectSingleNode("/data/communication/email");
+                        if (!"yes".equals(tagEmail.attribute("valid").getText())) {
+                            log.debug("Skipping user " + user.getId() + ", his email is set as invalid.");
+                            continue;
+                        }
 
-            AbcEmail message = new AbcEmail(session);
-            message.setSubject(subject);
+                        AbcEmail message = new AbcEmail(mailSession.getSession());
+                        params.put(KEY_TO, user.getEmail());
+                        setMessageProperties(message, params);
+                        params.put(Constants.VAR_USER, user);
+                        message.setText(getEmailBody(params));
 
-            if (from instanceof Address)
-                sender = (Address) from;
-            else if(senderName != null) {
-                senderName = Misc.removeDiacritics(senderName);
-                message.setFrom(new InternetAddress((String)from, senderName));
-            } else
-                sender = new InternetAddress((String) from);
-            message.setFrom(sender);
-
-            message.setMessageId((String) params.get(KEY_MESSAGE_ID));
-            message.setReferences((String) params.get(KEY_REFERENCES));
-
-            for ( Iterator iter = users.iterator(); iter.hasNext(); ) {
-                try {
-                    user.setId((Integer) iter.next());
-                    user = (User) persistence.findById(user);
-
-                    // check, that user has valid email
-                    Element tagEmail = (Element) user.getData().selectSingleNode("/data/communication/email");
-                    if ( ! "yes".equals(tagEmail.attribute("valid").getText()) ) {
-                        log.debug("Skipping user "+user.getId()+", his email is set as invalid.");
-                        continue;
+                        message.saveChanges();
+                        mailSession.getTransport().sendMessage(message, message.getAllRecipients());
+                        count++;
+                        if (log.isDebugEnabled())
+                            log.debug("Sent email " + count + " / " + total);
+                    } catch (Exception e) {
+                        log.warn("Cannot send email to user " + user.getId() + ", TO=" + user.getEmail(), e);
                     }
-
-                    params.put(Constants.VAR_USER, user);
-                    String to = user.getEmail();
-
-                    message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
-                    message.setText(getEmailBody(params));
-                    Date sentDate = getSentDate(params);
-                    message.setSentDate(sentDate);
-                    message.setHeader(HEADER_RECEPIENT, Integer.toString(user.getId()));
-                    message.saveChanges();
-
-                    transport.sendMessage(message, message.getAllRecipients());
-                    count++;
-                    if ( log.isDebugEnabled() )
-                        log.debug("Email "+count+" of "+total+" sent to "+to);
-                } catch (Exception e) {
-                    log.warn("Cannot send email to user "+user.getId()+", TO="+user.getEmail(),e);
                 }
             }
-            transport.close();
 
-            String statsKey = (String) params.get(KEY_STATS_KEY);
-            if (statsKey == null)
-                statsKey = Constants.EMAIL_UNKNOWN;
+            closeSession(mailSession);
+
+            String statsKey = getStatisticsType(params);
             stats.recordView(statsKey, count);
-        } catch (MessagingException e) {
-            log.error("Error - is JavaMail set up correctly?", e);
-        } catch (UnsupportedEncodingException e) {
-            log.debug("Setting sender name failed on '" + senderName + "'", e);
+        } catch (Exception e) {
+            log.error("Exception while sending bulk emails", e);
         }
 
         return count;
+    }
+
+    /**
+     * Sends email from given list. MailSession is not closed in this call.
+     * @param messages prepared messages
+     * @param params map with parameters
+     * @param mailSession initialized MailSession
+     * @return number of sent emails
+     */
+    public synchronized static int sendEmailToUsers(List<MimeMessage> messages, Map params, MailSession mailSession) {
+        if (messages.isEmpty())
+            return 0;
+
+        int count = 0, total = messages.size();
+        if (log.isDebugEnabled())
+            log.debug("Sending " + total + " emails");
+
+        try {
+            AbcEmail message = null;
+            for (MimeMessage mimeMessage : messages) {
+                try {
+                    message = new AbcEmail(mimeMessage);
+                    setMessageProperties(message, params);
+
+                    message.saveChanges();
+                    mailSession.getTransport().sendMessage(message, message.getAllRecipients());
+                    count++;
+                    if (log.isDebugEnabled())
+                        log.debug("Sent email " + count + " / " + total);
+                } catch (Exception e) {
+                    log.warn("Cannot send email " + message, e);
+                }
+            }
+
+            String statsKey = getStatisticsType(params);
+            stats.recordView(statsKey, count);
+        } catch (Exception e) {
+            log.error("Exception while sending bulk emails", e);
+        }
+
+        return count;
+    }
+
+    private static String getStatisticsType(Map params) {
+        String statsKey = (String) params.get(KEY_STATS_KEY);
+        if (statsKey == null)
+            statsKey = Constants.EMAIL_UNKNOWN;
+        return statsKey;
+    }
+
+    private static void setMessageProperties(AbcEmail message, Map params) throws MessagingException {
+        if (message.getFrom() != null) {
+            Object from = params.get(KEY_FROM);
+            if (from instanceof Address)
+                message.setFrom((Address) from);
+            else {
+                if (from == null || ((String) from).length() == 0)
+                    from = defaultFrom;
+                String senderName = (String) params.get(KEY_SENDER_NAME);
+                if (senderName != null) {
+                    senderName = Misc.removeDiacritics(senderName);
+                    try {
+                        message.setFrom(new InternetAddress((String) from, senderName));
+                    } catch (UnsupportedEncodingException e) {
+                        log.debug("Setting sender name failed on '" + senderName + "'", e);
+                    }
+                } else
+                    message.setFrom(new InternetAddress((String) from));
+            }
+        }
+
+        String to = (String) params.get(KEY_TO);
+        if (to != null)
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+
+        String cc = (String) params.get(KEY_CC);
+        if (cc != null)
+            message.setRecipient(Message.RecipientType.CC, new InternetAddress(cc));
+
+        String bcc = (String) params.get(KEY_BCC);
+        if (bcc != null)
+            message.setRecipient(Message.RecipientType.BCC, new InternetAddress(bcc));
+
+        String subject = (String) params.get(KEY_SUBJECT);
+        if (subject != null)
+            message.setSubject(subject);
+
+        Date date = getSentDate(params);
+        if (date != null)
+            message.setSentDate(date);
+
+        String messageId = (String) params.get(KEY_MESSAGE_ID);
+        if (messageId != null)
+            message.setMessageId(messageId);
+
+        String references = (String) params.get(KEY_REFERENCES);
+        if (references != null)
+            message.setReferences(references);
+
+        String recepient = (String) params.get(KEY_RECEPIENT_UID);
+        if (recepient != null)
+            message.setHeader(HEADER_ABC_RECEPIENT, recepient);
     }
 
     /**
@@ -285,17 +350,27 @@ public class EmailSender implements Configurable {
      */
     private static String getEmailBody(Map params) throws MissingArgumentException, NotFoundException {
         String body = (String) params.get(KEY_BODY);
-        if ( body!=null && body.length()>0 )
+        if (body != null && body.length() > 0)
             return body;
+
         String template = (String) params.get(KEY_TEMPLATE);
         try {
             body = FMUtils.executeTemplate(template,params);
         } catch (Exception e) {
-            throw new NotFoundException("Nemohu zpracovat šablonu "+template,e);
+            throw new NotFoundException("Nemohu zpracovat šablonu " + template, e);
         }
-        if ( body!=null && body.length()>0 )
+
+        if (body != null && body.length() > 0)
             return body;
         throw new MissingArgumentException("Email content is missing in map!");
+    }
+
+    public static void setSmtpServer(String smtpServer) {
+        EmailSender.smtpServer = smtpServer;
+    }
+
+    public static String getDefaultFrom() {
+        return defaultFrom;
     }
 
     /**

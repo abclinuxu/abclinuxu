@@ -161,6 +161,11 @@
 <!ATTLIST code description (#PCDATA)> <!-- description of this code -->
 <!ATTLIST code dynamic (yes,no) #OPTIONAL)> <!-- boolean, determines whether this code must be preprocessed with freemarker, defaults to false -->
 
+<!-- Item.id==Constants.ITEM_WEEKLY_SUMMARY_EMAIL -->
+<!ELEMENT data (html, text)>
+<!ELEMENT html (#PCDATA)> <!-- freemarker code to generate HTML variant -->
+<!ELEMENT text (#PCDATA)> <!-- freemarker code to generate plain text variant -->
+
 <!-- Item.ADVERTISEMENT -->
 <!ELEMENT data (active,description?,codes?)>
 <!ELEMENT description (#PCDATA)> <!-- description of this position -->

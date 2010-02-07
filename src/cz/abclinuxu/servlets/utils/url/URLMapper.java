@@ -372,7 +372,7 @@ public final class URLMapper implements Configurable {
      */
     private static void readDeprecated(List nodes, URLMapper instance) {
         List<PatternRegexpReplacement> deprecated = new ArrayList<PatternRegexpReplacement>(10);
-        String pattern = null, replacement;
+        String pattern, replacement;
         Element element;
         RE regexp, regexp2;
         InputType inputType;

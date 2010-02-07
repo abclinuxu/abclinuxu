@@ -23,9 +23,8 @@ import org.apache.log4j.Logger;
 import java.util.*;
 
 import cz.abclinuxu.persistence.SQLTool;
-import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.utils.InstanceUtils;
 
 /**
  * Holder of subscribed users.
@@ -56,8 +55,7 @@ public final class SubscribedUsers {
      * todo call this, when email is activated and forum is subscribed
      */
     public synchronized void addUser(int id, String email) {
-        Integer key = new Integer(id);
-        users.put(key, new Subscription(key,email));
+        users.put(id, new Subscription(id,email));
     }
 
     /**
@@ -66,8 +64,7 @@ public final class SubscribedUsers {
      * todo call this, when email is deactived
      */
     public synchronized void removeUser(int id) {
-        Integer key = new Integer(id);
-        users.remove(key);
+        users.remove(id);
     }
 
     /**
@@ -94,18 +91,17 @@ public final class SubscribedUsers {
      */
     private void init() {
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistence persistence = PersistenceFactory.getPersistence();
-        User user;
 
         log.info("Loading list of users, that subscribed email gate to forum.");
-        List subscribed = sqlTool.findUsersWithForumByEmail(null);
-        for ( Iterator iter = subscribed.iterator(); iter.hasNext(); ) {
-            Integer id = (Integer) iter.next();
-            user = (User) persistence.findById(new User(id.intValue()));
+        List<Integer> subscribed = sqlTool.findUsersWithForumByEmail();
+        List<User> userObjects = InstanceUtils.createUsers(subscribed);
+
+        for (User user : userObjects) {
+            int id = user.getId();
             if (log.isDebugEnabled())
-                log.debug("Inserting user "+id+" "+user.getName());
+                log.debug("Inserting user " + id + " " + user.getName());
             users.put(id, new Subscription(id, user.getEmail()));
         }
-        log.info("done");
+        log.info("done (" + users.size() + ")");
     }
 }

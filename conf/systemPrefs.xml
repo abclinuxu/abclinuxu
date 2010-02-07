@@ -451,8 +451,6 @@
                             <entry key="users.count.digest.stories" value="select S.pridal,count(R.cislo) from relace R JOIN polozka P ON R.typ_potomka='P' and R.potomek=P.cislo and P.typ=12 JOIN spolecne S ON S.cislo = P.cislo AND S.typ='P' JOIN vlastnost V ON V.predek=S.cislo and V.typ_predka='P' and V.typ='digest' group by S.pridal" />
                             <entry key="users.count.wiki.records" value="select kdo,count(distinct cislo,typ) from verze group by kdo" />
                             <entry key="users.count.news" value="select pridal,count(*) from polozka P, spolecne S where P.typ=7 and S.typ='P' and S.cislo=P.cislo group by S.pridal" />
-                            <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;%&lt;weekly_summary>yes%'"/>
-                            <entry key="users.with.forum.by.email" value="select cislo from uzivatel where data like '%&lt;email valid=&quot;yes&quot;%&lt;forum&gt;yes%&lt;/email%'"/>
                             <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'"/>
                             <entry key="users.with.login" value="select cislo from uzivatel where login = ?"/>
                             <entry key="users.with.nick" value="select cislo from uzivatel where prezdivka = ?"/>
@@ -566,8 +564,6 @@
                     <node name="WeeklyEmail">
                         <map>
                             <entry key="subject" value="abclinuxu.cz: tydenni souhrn"/>
-                            <entry key="from" value="robot@abclinuxu.cz"/>
-                            <entry key="template" value="/mail/weekly.ftl"/>
                         </map>
                     </node>
                     <!--<node name="PoolMonitor">todo-->
@@ -764,6 +760,7 @@
                             <entry key="CAT_CONTRACTS" value="2399"/>
                             <entry key="ITEM_DIZ_TODO" value="11606"/>
                             <entry key="ITEM_DYNAMIC_CONFIGURATION" value="59516"/>
+                            <entry key="ITEM_WEEKLY_SUMMARY_EMAIL" value="151808" />
                             <entry key="REC_DIZ_TODO" value="38280"/>
                             <entry key="REL_POLLS" value="250"/>
                             <entry key="REL_REKLAMA" value="308"/>
@@ -809,6 +806,7 @@
                             <entry key="REL_ADVERTISEMENTS" value="243515"/>
                             <entry key="REL_TOPICS" value="279001"/>
                             <entry key="REL_CONTRACTS" value="279002"/>
+                            <entry key="REL_WEEKLY_SUMMARY_EMAIL" value="293171"/>
                             <entry key="GROUP_ADMINI" value="11246"/>
                             <entry key="GROUP_AUTORI" value="11247"/>
                             <entry key="GROUP_STICKFISH" value="12651"/>

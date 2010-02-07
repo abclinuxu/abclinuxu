@@ -240,7 +240,7 @@ public class EditArticle implements AbcAction {
 		persistence.update(item);
         SQLTool.getInstance().setUpdatedTimestamp(item, originalUpdated);
 
-		VariableFetcher.getInstance().refreshHPSubportalArticles();
+//		VariableFetcher.getInstance().refreshHPSubportalArticles();
 
 		return null;
 	}

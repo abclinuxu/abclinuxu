@@ -18,6 +18,8 @@
  */
 package cz.abclinuxu.data.view;
 
+import cz.abclinuxu.utils.format.HtmlToTextFormatter;
+
 import java.util.Date;
 
 /**
@@ -57,6 +59,10 @@ public class News {
 
     public String getContent() {
         return content;
+    }
+
+    public String getPlainTextContent() {
+        return HtmlToTextFormatter.format(this.content);
     }
 
     public String getTitle() {

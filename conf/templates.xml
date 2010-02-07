@@ -571,6 +571,15 @@
 		</action>
 	</servlet>
 
+	<servlet name="EditWeeklySummaryEmail">
+		<action name="show" content="/show/administration/weekly_email.ftl">
+			<var name="TITLE" value="Víkendový souhrnný email" />
+		</action>
+		<action name="edit" content="/edit/administration/weekly_email.ftl">
+			<var name="TITLE" value="Upravit víkendový souhrnný email" />
+		</action>
+	</servlet>
+
 	<servlet name="ForgottenPassword">
 		<action name="step1" content="/misc/forgotten.ftl">
 			<var name="TITLE" value="Zaslání zapomenutého hesla" />

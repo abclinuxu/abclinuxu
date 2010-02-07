@@ -76,6 +76,12 @@
     </servlet>
 
     <servlet>
+        <servlet-name>WeeklyHtmlEmail</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.ajax.WeeklyHtmlEmail</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>ProxoolAdmin</servlet-name>
         <servlet-class>org.logicalcobwebs.proxool.admin.servlet.AdminServlet</servlet-class>
         <load-on-startup>3</load-on-startup>
@@ -104,6 +110,11 @@
     <servlet-mapping>
         <servlet-name>SuggestSearch</servlet-name>
         <url-pattern>/ajax/suggest</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>WeeklyHtmlEmail</servlet-name>
+        <url-pattern>/sprava/mailing/vikend/html</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

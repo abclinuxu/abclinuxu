@@ -81,6 +81,7 @@ public class Constants implements Configurable {
     public static int ITEM_DIZ_TODO;
     /** item holding dynamic configuration */
     public static int ITEM_DYNAMIC_CONFIGURATION;
+    public static int ITEM_WEEKLY_SUMMARY_EMAIL;
 
     public static int REC_DIZ_TODO;
 
@@ -128,6 +129,7 @@ public class Constants implements Configurable {
     public static int REL_ADVERTISEMENTS;
     public static int REL_CONTRACTS;
     public static int REL_TOPICS;
+    public static int REL_WEEKLY_SUMMARY_EMAIL;
 
     public static List<Integer> SYSTEM_RELATIONS;
 
@@ -394,6 +396,9 @@ public class Constants implements Configurable {
     public static final String COUNTER_VISIT = "visit";
     public static final String COUNTER_PLAY = "play";
     public static final String COUNTER_LINK = "link";
+
+    /** prefix for URLs in HTML emails, which shall be embedded */
+    public static final String INLINE_PREFIX = "inline://";
 
     public static final long DAY_DURATION = 24*60*60*1000;
 

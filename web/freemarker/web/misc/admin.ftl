@@ -42,6 +42,7 @@
                 <li><a href="${URL.noPrefix("/EditPoll?action=add&amp;rid=250")}">vytvoř anketu</a></li>
                 <li><a href="${URL.noPrefix("/EditRelation?action=setURL")}">nastav URL relaci</a></li>
                 <li><a href="${URL.noPrefix("/EditAdvertisement")}">správa reklamních pozic</a></li>
+                <li><a href="${URL.noPrefix("/sprava/mailing/vikend")}">víkendový email</a></li>
                 <li><a href="${URL.noPrefix("/clanky/dir/66948")}">seznam dokumentů</a></li>
                 <li><a href="${URL.noPrefix("/EditSurvey?action=list")}">seznam velkých anket</a></li>
                 <li><a href="${URL.noPrefix("/sprava?action=refreshRss"+TOOL.ticket(USER, false))}">přegeneruj RSS soubory</a></li>

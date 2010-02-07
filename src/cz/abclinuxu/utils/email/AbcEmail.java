@@ -36,6 +36,10 @@ public class AbcEmail extends MimeMessage {
         super(session);
     }
 
+    public AbcEmail(MimeMessage mimeMessage) throws MessagingException {
+        super(mimeMessage);
+    }
+
     /**
      * Set Message-ID for the email. You dont need to surround it with braces,
      * it is done automatically.
