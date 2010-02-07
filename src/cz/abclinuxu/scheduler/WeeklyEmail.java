@@ -39,9 +39,7 @@ import cz.abclinuxu.data.view.Article;
 import cz.abclinuxu.servlets.Constants;
 
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.prefs.Preferences;
-import java.net.URL;
 import java.io.IOException;
 
 import org.apache.commons.mail.HtmlEmail;
@@ -67,8 +65,6 @@ public class WeeklyEmail extends TimerTask implements Configurable {
     public static final String VAR_JOBS = "JOBS";
     public static final String VAR_WEEK = "WEEK";
     public static final String VAR_YEAR = "YEAR";
-
-    Pattern inlinePattern = Pattern.compile("(" + Constants.INLINE_PREFIX + "([^\"]+))");
 
     String subject;
     int count;
@@ -96,8 +92,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
 
             prepareData(params, calendar);
 
-//            List<Integer> users = SQLTool.getInstance().findUsersWithWeeklyEmail(), workingSet;
-            List<Integer> users = new ArrayList<Integer>(), workingSet;users.add(1);EmailSender.setSmtpServer("smtp.upcmail.cz");
+            List<Integer> users = SQLTool.getInstance().findUsersWithWeeklyEmail(), workingSet;
             List<MimeMessage> messages = new ArrayList<MimeMessage>(50);
             log.info("Weekly emails have been subscribed by " + users.size() + " users.");
             MailSession mailSession = EmailSender.openSession();
@@ -144,14 +139,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
         email.setTextMsg(textVariant);
 
         String htmlVariant = processHtmlVariant(root, params);
-
-        // embed the image and get the content id
-        URL url = new URL("http://www.abclinuxu.cz/images/clanky/watzke/unixove-nastroje-logo.png");
-        String cid = email.embed(url, "Apache logo");
-        email.setHtmlMsg("<html>žluťoučký kůň - <img src=\"cid:" + cid + "\"></html>");
-
-        email.setHtmlMsg(htmlVariant);
-
+        EmailSender.processHtmlEmail(email, htmlVariant);
         email.buildMimeMessage();
         return email.getMimeMessage();
     }

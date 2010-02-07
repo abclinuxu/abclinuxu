@@ -37,10 +37,17 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.prefs.Preferences;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.io.FilenameUtils;
 import org.dom4j.Element;
 
 /**
@@ -57,6 +64,8 @@ public class EmailSender implements Configurable {
     /** if from is missing, this will be default sender of emails */
     public static final String PREF_ADMIN_EMAIL_ADDRESS = "admin.address";
     public static final String PREF_DEBUG_SMTP = "debug.smtp";
+
+    static Pattern inlinePattern = Pattern.compile("(" + Constants.INLINE_PREFIX + "([^\"]+))");
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
@@ -274,6 +283,34 @@ public class EmailSender implements Configurable {
         }
 
         return count;
+    }
+
+    /**
+     * Processes HTML email and embedds all attachments that are enclosed in HREF or SRC attribute and starts with
+     * @see cz.abclinuxu.servlets.Constants.INLINE_PREFIX. Finally it sets content as HTML message into the email.
+     * @param email email to be updated
+     * @param content HTML content
+     * @throws EmailException embedding failed
+     * @throws MalformedURLException URL to be embedded is not valid
+     */
+    public static void processHtmlEmail(HtmlEmail email, String content) throws EmailException, MalformedURLException {
+        StringBuilder sb = new StringBuilder();
+        Matcher matcher = inlinePattern.matcher(content);
+        int contentStart = 0;
+        while (matcher.find()) {
+            String part = matcher.group(1);
+            sb.append(content.substring(contentStart, matcher.start()));
+            contentStart = matcher.end();
+
+            String url = part.substring(Constants.INLINE_PREFIX.length());
+            String cid = email.embed(new URL(url), FilenameUtils.getName(url));
+            sb.append("cid:").append(cid);
+        }
+
+        if (contentStart < content.length())
+            sb.append(content.substring(contentStart));
+
+        email.setHtmlMsg(sb.toString());
     }
 
     private static String getStatisticsType(Map params) {
