@@ -321,7 +321,7 @@ public class EmailSender implements Configurable {
     }
 
     private static void setMessageProperties(AbcEmail message, Map params) throws MessagingException {
-        if (message.getFrom() != null) {
+        if (message.getFrom() == null) {
             Object from = params.get(KEY_FROM);
             if (from instanceof Address)
                 message.setFrom((Address) from);
