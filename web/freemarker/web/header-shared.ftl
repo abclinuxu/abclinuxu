@@ -5,7 +5,7 @@
         <!-- Sablona: ${TEMPLATE!"neznama"} -->
     </#if>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name=”Robots” content=”index,follow” />
+    <meta name="Robots" content="index,follow" />
     <title>${PARAMS.TITLE!TITLE!'www.abclinuxu.cz'}</title>
     <link rel="stylesheet" type="text/css" href="/jquery-theme/ui.all.css" />
     <link rel="stylesheet" type="text/css" href="${CSS_URI!}">
@@ -87,7 +87,6 @@
             Page.ticket = "${TOOL.ticketValue(USER)}";
 	    </#if>
     </script>
-    <script type="text/javascript" src="/data/site/impact.js"></script>
     <#if html_header??>
         ${html_header}
     </#if>
