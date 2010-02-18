@@ -1,4 +1,4 @@
-<@lib.addRTE textAreaId="note" formId="form" menu="wiki" /
+<@lib.addRTE textAreaId="note" formId="form" menu="wiki" />
 <#include "../header.ftl">
 
 <@lib.showMessages/>
