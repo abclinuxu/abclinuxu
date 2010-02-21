@@ -39,6 +39,7 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditNews;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
@@ -108,6 +109,7 @@ public class ShowObject implements AbcAction {
         if (relation.getChild() instanceof Record)
             relation = (Relation) persistence.findById(new Relation(relation.getUpper()));
         env.put(VAR_RELATION,relation);
+        env.put(Constants.VAR_CANONICAL_URL, UrlUtils.getCanonicalUrl(relation, env));
 
         List parents = persistence.findParents(relation);
         env.put(Constants.VAR_PARENTS, parents);
@@ -138,13 +140,12 @@ public class ShowObject implements AbcAction {
     public static String processItem(HttpServletRequest request, Map env, Relation relation) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Item item = (Item) relation.getChild();
-        Relation upper = relation;
 
         Tools.sync(item);
         env.put(VAR_ITEM, item);
         Map children = Tools.groupByType(item.getChildren());
         env.put(VAR_CHILDREN_MAP, children);
-        Tools.sync(upper);
+        Tools.sync(relation);
 
         // all these documents supports tags
         env.put(Constants.VAR_ASSIGNED_TAGS, TagTool.getAssignedTags(item));

@@ -34,6 +34,7 @@ import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
@@ -65,19 +66,19 @@ public class ViewVideo implements AbcAction {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation == null)
             throw new MissingArgumentException("Parametr relationId je prázdný!");
-        relation = (Relation) persistence.findById(relation);
+        env.put(Constants.VAR_CANONICAL_URL, UrlUtils.getCanonicalUrl(relation, env));
         env.put(ShowObject.VAR_RELATION,relation);
         
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
         
         if (relation.getId() == Constants.REL_VIDEOS)
-            return processSection(request, response, relation, env);
+            return processSection(request, relation, env);
         else
             return processItem(request, relation, env);
     }
     
-    public static String processSection(HttpServletRequest request, HttpServletResponse response, Relation relation, Map env) {
+    public static String processSection(HttpServletRequest request, Relation relation, Map env) {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
 

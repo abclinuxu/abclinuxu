@@ -21,6 +21,7 @@ package cz.abclinuxu.servlets.html.view;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
@@ -70,8 +71,8 @@ public class ViewFaq implements AbcAction {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID, Relation.class, params, request);
         if (relation==null)
             throw new NotFoundException("Stránka nebyla nalezena.");
-        Tools.sync(relation);
         env.put(ShowObject.VAR_RELATION, relation);
+        env.put(Constants.VAR_CANONICAL_URL, UrlUtils.getCanonicalUrl(relation, env));
 
         if (relation.getChild() instanceof Category) {
             if (relation.getId()==Constants.REL_FAQ)

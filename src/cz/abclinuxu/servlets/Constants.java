@@ -194,6 +194,7 @@ public class Constants implements Configurable {
     public static final String VAR_ABCLINUXU = "ABCLINUXU";
     /** holds category Reklama */
     public static final String VAR_REKLAMA = "REKLAMA";
+    public static final String VAR_CANONICAL_URL = "CANONICAL_URL";
     /** holds category Links */
     public static final String VAR_LINKS = "LINKS";
     /** holds current user instance */

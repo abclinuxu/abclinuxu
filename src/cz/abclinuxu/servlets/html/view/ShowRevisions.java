@@ -26,8 +26,8 @@ import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.freemarker.Tools;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,8 +57,8 @@ public class ShowRevisions implements AbcAction {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if (relation == null)
             throw new MissingArgumentException("Parametr rid je prázdný!");
-        Tools.sync(relation);
         env.put(VAR_RELATION, relation);
+        env.put(Constants.VAR_CANONICAL_URL, UrlUtils.getCanonicalUrl(relation, env));
 
         Versioning versioning = VersioningFactory.getVersioning();
         List history = versioning.getHistory((GenericDataObject) relation.getChild());

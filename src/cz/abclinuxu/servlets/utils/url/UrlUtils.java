@@ -24,7 +24,9 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -286,6 +288,28 @@ public class UrlUtils {
      */
     public String getRelationUrl(Relation relation) {
         return getRelationUrl(relation, prefix);
+    }
+
+    /**
+     * Returns URL to be used by search engines for given relation. All other variants (print), schemes (https)
+     * or layouts (pda) shall be ignored as duplicates.
+     * @param relation relation for which we need url
+     * @param env
+     * @return absolute url
+     */
+    public static String getCanonicalUrl(Relation relation, Map env) {
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        return AbcConfig.getAbsoluteUrl() + urlUtils.getRelationUrl(relation);
+    }
+
+    /**
+     * Returns URL to be used by search engines for given relation. All other variants (print), schemes (https)
+     * or layouts (pda) shall be ignored as duplicates.
+     * @param url local url starting with slash
+     * @return absolute url
+     */
+    public static String getCanonicalUrl(String url) {
+        return AbcConfig.getAbsoluteUrl() + url;
     }
 
     /**

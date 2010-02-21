@@ -21,6 +21,7 @@ package cz.abclinuxu.servlets.html.view;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Poll;
 import cz.abclinuxu.persistence.Persistence;
@@ -59,8 +60,8 @@ public class ViewPolls implements AbcAction {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params, request);
         if (relation == null)
             throw new MissingArgumentException("Parametr rid je prázdný!");
+        env.put(Constants.VAR_CANONICAL_URL, UrlUtils.getCanonicalUrl(relation, env));
 
-        Tools.sync(relation);
         if (relation.getId()==Constants.REL_POLLS)
             return processPolls(env, request);
         else

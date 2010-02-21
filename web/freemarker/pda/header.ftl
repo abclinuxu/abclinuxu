@@ -2,6 +2,7 @@
  <head>
   <title>${TITLE}</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+     <#if CANONICAL_URL??><link rel=”canonical” href="${CANONICAL_URL}" ></#if>
   <meta name="robots" content="noindex,nofollow">
   <meta name="author" content="Leos Literak">
     <#if html_header??>

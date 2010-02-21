@@ -101,7 +101,7 @@ public class ViewPersonality implements AbcAction {
             }
         }
 
-        Tools.sync(relation);
+        env.put(Constants.VAR_CANONICAL_URL, UrlUtils.getCanonicalUrl(relation, env));
         env.put(VAR_RELATION, relation);
 
         List parents = persistence.findParents(relation);

@@ -21,6 +21,7 @@ package cz.abclinuxu.servlets.html.view;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.view.BlogStory;
@@ -72,6 +73,7 @@ public class ViewIndex implements AbcAction {
             blogStories.add(blogStory);
         }
         env.put(VAR_STORIES, blogStories);
+        env.put(Constants.VAR_CANONICAL_URL, UrlUtils.getCanonicalUrl("/"));
 
         return FMTemplateSelector.select("ViewIndex","show",env, request);
     }

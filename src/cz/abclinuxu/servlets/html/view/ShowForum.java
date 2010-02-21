@@ -35,6 +35,8 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import cz.abclinuxu.persistence.extra.tags.TagExpression;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -64,12 +66,12 @@ public class ShowForum implements AbcAction {
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params, request);
-        if ( relation==null ) {
+        if ( relation==null )
             throw new MissingArgumentException("Parametr rid je prázdný!");
-        }
-
-        Tools.sync(relation);
         env.put(ShowObject.VAR_RELATION, relation);
+        env.put(Constants.VAR_CANONICAL_URL, UrlUtils.getCanonicalUrl(relation, env));
+
+
         env.put(VAR_CATEGORY, relation.getChild());
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);

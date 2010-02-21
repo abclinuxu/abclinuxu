@@ -116,6 +116,8 @@ public class ViewCategory implements AbcAction {
             throw new MissingArgumentException("Parametr relationId je prázdný!");
         relation = (Relation) persistence.findById(relation);
         env.put(ShowObject.VAR_RELATION,relation);
+        env.put(Constants.VAR_CANONICAL_URL, UrlUtils.getCanonicalUrl(relation, env));
+
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS,parents);
         Relation subportal = Tools.getParentSubportal(parents);
@@ -210,7 +212,7 @@ public class ViewCategory implements AbcAction {
 		else if (rid == Constants.REL_EVENTS)
             return ViewEvent.processSection(request, response, relation, env);
         else if (rid == Constants.REL_VIDEOS)
-            return ViewVideo.processSection(request, response, relation, env);
+            return ViewVideo.processSection(request, relation, env);
 
         if ( category.getId()==Constants.CAT_ARTICLES ) {
             env.put(Constants.VAR_RSS, FeedGenerator.getArticlesFeedUrl());

@@ -21,6 +21,7 @@ package cz.abclinuxu.servlets.html.view;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.*;
 import cz.abclinuxu.utils.InstanceUtils;
@@ -37,7 +38,6 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
-import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -77,8 +77,7 @@ public class ShowArticle implements AbcAction {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params, request);
         if ( relation==null )
             throw new MissingArgumentException("Parametr relationId je prázdný!");
-
-        Tools.sync(relation);
+        env.put(Constants.VAR_CANONICAL_URL, UrlUtils.getCanonicalUrl(relation, env));
         env.put(VAR_RELATION, relation);
 
         List parents = persistence.findParents(relation);

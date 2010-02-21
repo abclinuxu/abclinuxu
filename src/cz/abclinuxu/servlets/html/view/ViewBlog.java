@@ -22,6 +22,7 @@ import cz.abclinuxu.servlets.html.edit.EditBlog;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.view.Link;
 import cz.abclinuxu.data.*;
@@ -245,6 +246,7 @@ public class ViewBlog implements AbcAction, Configurable {
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
     public static String processStory(HttpServletRequest request, Relation relation, Map env) throws Exception {
+        env.put(Constants.VAR_CANONICAL_URL, UrlUtils.getCanonicalUrl(relation, env));
         Persistence persistence = PersistenceFactory.getPersistence();
         Category blog = (Category) persistence.findById(relation.getParent());
         BlogStory blogStory = Tools.analyzeBlogStory(relation, true, true);
