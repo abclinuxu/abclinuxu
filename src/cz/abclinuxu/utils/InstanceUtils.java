@@ -99,22 +99,29 @@ public class InstanceUtils {
     }
 
     /**
+     * Creates new list with initialized objects only.
+     * @return list with initialized objects
+     */
+    public static <T extends GenericObject> List<T> skipMissing(List<T> objects) {
+        List<T> list = new ArrayList<T>(objects.size());
+        for (T object : objects) {
+            if (object.isInitialized())
+                list.add(object);
+        }
+        return list;
+    }
+
+    /**
      * Verifies, that given object is derived of specific class and optionally
      * is specific type.
      */
     public static boolean checkType(GenericObject obj, Class aClass, int type) {
         if ( ! obj.getClass().isAssignableFrom(aClass) )
             return false;
-        if ( obj instanceof Item ) {
-            if ( ((Item)obj).getType()!=type )
-               return false;
-            return true;
-        }
-        if ( obj instanceof Record ) {
-            if ( ((Record)obj).getType()!=type )
-               return false;
-            return true;
-        }
+        if ( obj instanceof Item )
+            return ((Item) obj).getType() == type;
+        if ( obj instanceof Record )
+            return ((Record) obj).getType() == type;
         return true;
     }
 
@@ -125,7 +132,7 @@ public class InstanceUtils {
      */
     public static Relation findFirstChildRecordOfType(Item item, int recordType) {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Record record = null;
+        Record record;
         for (Iterator iter = item.getChildren().iterator(); iter.hasNext();) {
             Relation rel = (Relation) iter.next();
             if ( rel.getChild() instanceof Record ) {
@@ -145,7 +152,7 @@ public class InstanceUtils {
      */
     public static Relation findFirstChildItemOfType(GenericObject obj, int itemType) {
         Persistence persistence = PersistenceFactory.getPersistence();
-        Item item = null;
+        Item item;
         for (Iterator iter = obj.getChildren().iterator(); iter.hasNext();) {
             Relation rel = (Relation) iter.next();
             if ( rel.getChild() instanceof Item ) {

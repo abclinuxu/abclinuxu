@@ -533,8 +533,9 @@ public class Misc {
         }
 
         PersistenceFactory.getPersistence().synchronizeList(users, true);
-        Collections.sort(users, new UserNameComparator());
-        return users;
+        List<User> existingUsers = InstanceUtils.skipMissing(users);
+        Collections.sort(existingUsers, new UserNameComparator());
+        return existingUsers;
     }
 
     /**

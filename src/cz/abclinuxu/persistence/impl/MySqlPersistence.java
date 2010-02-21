@@ -1177,16 +1177,29 @@ public class MySqlPersistence implements Persistence {
             }
             rs = statement.executeQuery();
 
+            SyncState state = SyncState.FETCH_FROM_DB;
             for (Iterator iter = users.iterator(); iter.hasNext();) {
                 user = (User) iter.next();
-                if (! rs.next() || rs.getInt(1) != user.getId()) {
-                    if (!ignoreMissing)
+                if (state == SyncState.FETCH_FROM_DB) {
+                    if (! rs.next()) {
+                        if (! ignoreMissing)
+                            throw new NotFoundException("Uživatel " + user.getId() + " nebyl nalezen!");
+                        else
+                            break;
+                    }
+                }
+
+                if (rs.getInt(1) != user.getId()) {
+                    if (! ignoreMissing)
                         throw new NotFoundException("Uživatel " + user.getId() + " nebyl nalezen!");
-                    else
+                    else {
+                        state = SyncState.ITERATE_USERS;
                         continue;
+                    }
                 }
 
                 syncUserFromRS(user, rs);
+                state = SyncState.FETCH_FROM_DB;
             }
 
             loadCommonObjectsProperties(objects, PersistenceMapping.TREE_USER);
@@ -2573,5 +2586,9 @@ public class MySqlPersistence implements Persistence {
     public static String insertEncoding(String xml) {
         if ( xml==null || xml.startsWith("<?xml") ) return xml;
         return "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"+xml;
+    }
+
+    enum SyncState {
+        FETCH_FROM_DB, ITERATE_USERS
     }
 }
