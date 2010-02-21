@@ -48,6 +48,7 @@ import org.dom4j.Node;
 /**
  * This class is responsible for managing article series.
  * Date: 5.1.2007
+ * todo predelat ukladani clanku z XML do samostatnych radku tabulky
  */
 public class EditSeries extends AbcAutoAction {
     public static final String PARAM_RELATION = "rid";
@@ -221,6 +222,7 @@ public class EditSeries extends AbcAutoAction {
                 continue;
             }
 
+            // todo pozor na duplicity
             addArticleToSeries(articleItem, articleRelation, articles);
             articleRoot.addElement("series_rid").setText(Integer.toString(relation.getId()));
             persistence.update(articleItem);

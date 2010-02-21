@@ -605,40 +605,58 @@ public class MySqlPersistence implements Persistence {
             }
 
             if (obj instanceof Relation) {
-                if (relations==null) relations = new TreeSet(new IdComparator());
-                relations.add(obj);
+                if (relations == null)
+                    relations = new TreeSet(new IdComparator());
+                if (! relations.add(obj))
+                    iter.remove();
                 type = "relation";
             } else if (obj instanceof Item) {
-                if (items == null) items = new TreeSet(new IdComparator());
-                items.add(obj);
+                if (items == null)
+                    items = new TreeSet(new IdComparator());
+                if (! items.add(obj))
+                    iter.remove();
                 type = "item";
             } else if (obj instanceof Category) {
-                if (categories == null) categories = new TreeSet(new IdComparator());
-                categories.add(obj);
+                if (categories == null)
+                    categories = new TreeSet(new IdComparator());
+                if (! categories.add(obj))
+                    iter.remove();
                 type = "category";
             } else if (obj instanceof Record) {
-                if (records == null) records = new TreeSet(new IdComparator());
-                records.add(obj);
+                if (records == null)
+                    records = new TreeSet(new IdComparator());
+                if (! records.add(obj))
+                    iter.remove();
                 type = "record";
             } else if (obj instanceof Link) {
-                if (links == null) links = new TreeSet(new IdComparator());
-                links.add(obj);
+                if (links == null)
+                    links = new TreeSet(new IdComparator());
+                if (! links.add(obj))
+                    iter.remove();
                 type = "link";
             } else if (obj instanceof Server) {
-                if (servers == null) servers = new TreeSet(new IdComparator());
-                servers.add(obj);
+                if (servers == null)
+                    servers = new TreeSet(new IdComparator());
+                if (! servers.add(obj))
+                    iter.remove();
                 type = "server";
             } else if (obj instanceof User) {
-                if (users == null) users = new TreeSet(new IdComparator());
-                users.add(obj);
+                if (users == null)
+                    users = new TreeSet(new IdComparator());
+                if (! users.add(obj))
+                    iter.remove();
                 type = "user";
             } else if (obj instanceof Poll) {
-                if (polls == null) polls = new TreeSet(new IdComparator());
-                polls.add(obj);
+                if (polls == null)
+                    polls = new TreeSet(new IdComparator());
+                if (! polls.add(obj))
+                    iter.remove();
                 type = "poll";
             } else if (obj instanceof Data) {
-                if (data == null) data = new TreeSet(new IdComparator());
-                data.add(obj);
+                if (data == null)
+                    data = new TreeSet(new IdComparator());
+                if (! data.add(obj))
+                    iter.remove();
                 type = "data";
             }
         }

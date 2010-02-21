@@ -2239,7 +2239,7 @@ public class Tools implements Configurable {
             return Collections.emptyList();
 
         Map<String, List<Relation>> byType = groupByType(obj.getChildren(), "Data");
-        List objs = (List) byType.get(Constants.TYPE_DATA);
+        List objs = byType.get(Constants.TYPE_DATA);
         if (objs == null)
             return Collections.emptyList();
 
