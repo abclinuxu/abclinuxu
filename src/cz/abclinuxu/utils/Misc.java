@@ -156,7 +156,7 @@ public class Misc {
             throw new InvalidInputException("Řetězec '"+str+"' nemůže být převeden na číslo!");
         if (str.length()!=last)
             str = str.substring(0,last);
-        return Integer.parseInt(str);
+        return (int) Long.parseLong(str);
     }
 
     /**
