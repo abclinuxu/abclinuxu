@@ -264,6 +264,8 @@ public class UpdateLinks extends TimerTask implements Configurable {
             log.warn("Invalid content in feed "+rssUrl+": "+e.getMessage());
         } catch (IOException e) {
             log.warn("IO problems for "+rssUrl+": "+e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.warn("Cannot read " + rssUrl + ": " + e.getMessage());
         }  catch (Exception e) {
             log.error("Cannot parse links from "+rssUrl, e);
         }
