@@ -64,15 +64,20 @@ public class RemoveDiacriticsReader extends FilterReader {
         synchronized (lock) {
             if ( len<0 )
                 throw new IndexOutOfBoundsException("Length = "+len);
-            if ( off<0 || off>cbuf.length )
+            if (off < 0 || off > cbuf.length)
                 throw new IndexOutOfBoundsException("Offset = "+len);
             int copied = 0, c;
-            while ( len>0 ) {
+            while (len > 0) {
                 c = super.read();
                 if ( c==-1 )
                     return ( copied==0 )? -1 : copied;
 
-                cbuf[off+copied] = Misc.removeDiacritics(Character.toString((char) c)).charAt(0);
+                String normalized = Misc.removeDiacritics(Character.toString((char) c));
+                if (normalized.length() == 1) {
+                    char c2 = normalized.charAt(0);
+                    cbuf[off + copied] = c2;
+                }
+
                 copied++; len--;
             }
             return copied;
