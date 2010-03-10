@@ -250,7 +250,7 @@ public class EditDiscussion implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Relation relChild = InstanceUtils.findFirstChildItemOfType(relation.getChild(),Item.DISCUSSION);
+        Relation relChild = InstanceUtils.getFirstItemRelation(relation.getChild(),Item.DISCUSSION);
         if ( relChild==null )
             relChild = createEmptyDiscussion(relation, user, persistence);
         Item discussion = (Item) relChild.getChild();

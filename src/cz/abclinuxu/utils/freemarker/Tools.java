@@ -87,7 +87,7 @@ public class Tools implements Configurable {
     public static final String PREF_REPLACEMENT_VLNKA = "REPLACEMENT_VLNKA";
     public static final String PREF_REGEXP_AMPERSAND = "RE_AMPERSAND";
     public static final String PREF_REGEXP_REMOVE_PARAGRAPHS = "RE_REMOVE_PARAGRAPHS";
-    public static final String PREF_REGEXP_ARTICLE_OBJECT = "RE_ARTICLE_OBJECT";
+    public static final String PREF_REGEXP_INLINE_OBJECT = "RE_INLINE_OBJECT";
     public static final String PREF_STORY_RESERVE_PERCENTS = "story.reserve.percents";
     public static final String PREF_NEWS_LETTER_LIMIT_SOFT = "news.letter.limit.soft";
     public static final String PREF_NEWS_LETTER_LIMIT_HARD = "news.letter.limit.hard";
@@ -96,7 +96,7 @@ public class Tools implements Configurable {
 
     static Persistence persistence = PersistenceFactory.getPersistence();
     // TODO replace with java regexp
-    static REProgram reRemoveTags, reVlnka, lineBreak, reRemoveParagraphs, rePollTag, reDetectLink;
+    static REProgram reRemoveTags, reVlnka, lineBreak, reRemoveParagraphs, reInlineObject, reDetectLink;
     static Pattern reAmpersand;
     static String vlnkaReplacement;
     static int storyReservePercents;
@@ -130,9 +130,8 @@ public class Tools implements Configurable {
             reAmpersand = Pattern.compile(pref);
             pref = prefs.get(PREF_REGEXP_REMOVE_PARAGRAPHS, null);
             reRemoveParagraphs = reCompiler.compile(pref);
-            pref = prefs.get(PREF_REGEXP_ARTICLE_OBJECT, null);
-            rePollTag = reCompiler.compile(pref);
-
+            pref = prefs.get(PREF_REGEXP_INLINE_OBJECT, null);
+            reInlineObject = reCompiler.compile(pref); 
             storyReservePercents = prefs.getInt(PREF_STORY_RESERVE_PERCENTS, 50);
             newsLetterSoftLimit = prefs.getInt(PREF_NEWS_LETTER_LIMIT_SOFT, 400);
             newsLetterHardLimit = prefs.getInt(PREF_NEWS_LETTER_LIMIT_HARD, 500);
@@ -601,28 +600,37 @@ public class Tools implements Configurable {
         }
         return result;
     }
+
+    /**
+     * Tests given object if it is a subportal root category.
+     * @param obj object, it can be uninitialized
+     * @return true if obj is a root category for some portal
+     */
+    public static boolean isSubportal(GenericObject obj) {
+        if (obj instanceof Category) {
+            Category category = (Category) sync(obj);
+            return (category.getType() == Category.SUBPORTAL);
+        }
+
+        return false;
+    }
+
     /**
      * Checks whether one of the parents is a subportal
      * @param parents A list of parents
      * @return A relation of a subportal, if any
      */
-    static public Relation getParentSubportal(List parents) {
-        for ( Iterator iter = parents.iterator(); iter.hasNext(); ) {
-            Object next = iter.next();
-
-            if (next instanceof Relation && ((Relation) next).getChild() instanceof Category) {
-                Category cat = (Category) sync( ((Relation) next).getChild() );
-
-                if (cat.getType() == Category.SUBPORTAL)
-                    return (Relation) next;
-            }
+    public static Relation getParentSubportal(List<Relation> parents) {
+        for (Relation parent : parents) {
+            if (isSubportal(parent.getChild()))
+                return parent;
         }
 
         return null;
     }
 
-    static public Relation getParentSubportal(Relation rel) {
-        List parents = persistence.findParents(rel);
+    public static Relation getParentSubportal(Relation relation) {
+        List parents = persistence.findParents(relation);
         return getParentSubportal(parents);
     }
 
@@ -632,21 +640,15 @@ public class Tools implements Configurable {
      * @param relation
      * @return Null, if the relation doesn't belong to a subportal
      */
-    static public Relation getParentSubportalSection(Relation relation) {
-        List parents = persistence.findParents(relation);
-        Object last = null;
+    public static Relation getParentSubportalSection(Relation relation) {
+        List<Relation> parents = persistence.findParents(relation);
+        Relation last = null;
 
-        for ( Iterator iter = parents.iterator(); iter.hasNext(); ) {
-            Object next = iter.next();
+        for (Relation parent : parents) {
+            if (isSubportal(parent.getChild()))
+                return last;
 
-            if (next instanceof Relation && ((Relation) next).getChild() instanceof Category) {
-                Category cat = (Category) sync( ((Relation) next).getChild() );
-
-                if (cat.getType() == Category.SUBPORTAL)
-                    return (Relation) last;
-            }
-
-            last = next;
+            last = parent;
         }
 
         return null;
@@ -1155,8 +1157,7 @@ public class Tools implements Configurable {
      * @return synchronized relation
      */
     public static Relation createRelation(int id) {
-        Relation relation = (Relation) sync(new Relation(id));
-        return relation;
+        return (Relation) sync(new Relation(id));
     }
 
     /**
@@ -1166,6 +1167,22 @@ public class Tools implements Configurable {
     public static Relation createRelation(String id) {
         int i = Integer.parseInt(id);
         return createRelation(i);
+    }
+
+    /**
+     * Converts list of relation ids to list of initialized relations.
+     * @param ids list of relation id
+     * @return list of initialized Relations
+     */
+    public static List<Relation> createRelations(List<Integer> ids) {
+        if (ids == null || ids.isEmpty())
+            return Collections.emptyList();
+        List<Relation> relations = new ArrayList<Relation>();
+        for (Integer id : ids) {
+            relations.add(new Relation(id));
+        }
+        syncList(relations);
+        return relations;
     }
 
     /**
@@ -2537,7 +2554,7 @@ public class Tools implements Configurable {
      * @return list of maps with keys "type" and "value"
      */
     public static List<Map> processArticle(String text) {
-        RE regexpPolls = new RE(rePollTag, RE.MATCH_MULTILINE);
+        RE regexpPolls = new RE(reInlineObject, RE.MATCH_MULTILINE);
         int pos = 0;
         List<Map> items = new ArrayList<Map>(3);
 
@@ -2554,7 +2571,6 @@ public class Tools implements Configurable {
                 pos = regexpPolls.getParenEnd(0);
 
                 String type = regexpPolls.getParen(1);
-
                 if ("poll".equals(type) || "video".equals(type)) {
                     // add a poll or video
                     map = new HashMap<String, String>(2);

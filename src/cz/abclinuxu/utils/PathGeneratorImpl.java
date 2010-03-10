@@ -20,18 +20,15 @@ package cz.abclinuxu.utils;
 
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.exceptions.InternalException;
-import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.servlets.html.edit.EditArticle;
+import cz.abclinuxu.servlets.utils.url.URLManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.regex.Matcher;
-import org.dom4j.Element;
 
 /**
  * Default implementation
@@ -81,24 +78,13 @@ public class PathGeneratorImpl implements PathGenerator {
 		else if (Type.ARTICLE_ATTACHMENT.equals(usage)) {
 			sb.append("data");
 			
-			Relation rel = (Relation) obj;
-			String url = rel.getUrl();
-			
-			if(url == null) {
-				Item item = (Item) rel.getChild();
-				Element element = (Element) item.getData().selectSingleNode("/data/section_rid");
-				if (element == null)
-					return null;
-				int section_rid = Misc.parseInt(element.getText(), 0);
-				if (section_rid == 0)
-					return null;
-				
-				url = EditArticle.getUrl(item, section_rid, PersistenceFactory.getPersistence());
-			}
-			
+			Relation relation = (Relation) obj;
+			String url = relation.getUrl();
+            if (url == null)
+				url = URLManager.generateArticleUrl(relation);
+
 			sb.append(url);
-		}
-        else
+		} else
             throw new InternalException("Type " + usage + "not implemented!");
 
 		if (!Type.ARTICLE_ATTACHMENT.equals(usage))

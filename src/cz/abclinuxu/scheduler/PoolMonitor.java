@@ -30,11 +30,15 @@ import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.html.edit.EditArticle;
 import cz.abclinuxu.servlets.html.edit.EditSeries;
 import cz.abclinuxu.servlets.html.edit.EditDiscussion;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.email.monitor.MonitorAction;
 import cz.abclinuxu.utils.email.monitor.MonitorPool;
@@ -46,11 +50,11 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Iterator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimerTask;
+import java.util.prefs.Preferences;
 
 import org.dom4j.Element;
 import org.dom4j.Document;
@@ -61,14 +65,18 @@ import org.dom4j.Node;
  * the object pools and publishing objects waiting
  * for publication.
  */
-public class PoolMonitor extends TimerTask {
+public class PoolMonitor extends TimerTask implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(PoolMonitor.class);
+
+    public static final String PREF_EVENT_NOTIFICATION_SUBJECT = "event.notification.subject";
 
     Category newsPool = new Category(Constants.CAT_NEWS_POOL);
 	List<Relation> articlePools;
+    String eventNotificationSubject;
 
     public PoolMonitor() {
 		gatherArticlePools();
+        ConfigurationManager.getConfigurator().configureAndRememberMe(this);
     }
 
     /**
@@ -81,52 +89,45 @@ public class PoolMonitor extends TimerTask {
             Date now = new Date();
             boolean articlesUpdated = false, newsUpdated = false;
 
-			for(Relation rel : articlePools) {
-                Category articlePool = (Category) rel.getChild();
-                
-				List children = articlePool.getChildren();
-				for (Iterator iter = children.iterator(); iter.hasNext();) {
-					Relation relation = (Relation) iter.next();
-					if ( ! (relation.getChild() instanceof Item) )
+			for (Relation poolRelation : articlePools) {
+                Category articlePool = (Category) poolRelation.getChild();
+				for (Relation relation : articlePool.getChildren()) {
+                    Tools.sync(relation);
+                    if (! InstanceUtils.checkType(relation.getChild(), Item.class, Item.ARTICLE))
 						continue;
 					Item item = (Item) relation.getChild();
 					persistence.synchronize(item);
 					if ( item.getType() != Item.ARTICLE)
 						continue;
 
-					if ( now.after(item.getCreated()) ) {
-						Document document = item.getData();
+                    if (now.after(item.getCreated())) {
+                        Document document = item.getData();
 						// move article to selected article section
-						Element element = (Element) document.selectSingleNode("/data/section_rid");
-						if (element == null)
-							continue;
-						int section_rid = Misc.parseInt(element.getText(), 0);
-						if (section_rid == 0) {
-							log.error("bug", new Exception());
-							continue;
-						}
+						Relation section;
+                        if (relation.getUpper() == Constants.REL_ARTICLEPOOL)
+                            section = new Relation(Constants.REL_ARTICLES);
+                        else {
+                            Relation subportal = (Relation) Tools.sync(new Relation(relation.getUpper()));
+                            section = InstanceUtils.getFirstCategoryRelation(subportal.getChild(), Category.SECTION);
+                        }
 
-						Relation section = (Relation) persistence.findById(new Relation(section_rid));
-						element.detach();
-						persistence.update(item);
+                        relation.getParent().removeChildRelation(relation);
+                        relation.setParent(section.getChild());
+                        relation.setUpper(section.getId());
 
-						if (relation.getUrl() == null) {
-							String url = EditArticle.getUrl(item, section.getId(), persistence);
-							if (url != null) {
+                        if (relation.getUrl() == null) {
+							String url = URLManager.generateArticleUrl(relation);
+							if (url != null)
 								relation.setUrl(url);
-								persistence.update(relation);
-							}
 						}
 
-						// link article to article series, if it is set
-						element = (Element) document.selectSingleNode("/data/series_rid");
+                        persistence.update(relation);
+                        relation.getParent().addChildRelation(relation);
+
+                        // link article to article series, if it is set
+						Element element = (Element) document.selectSingleNode("/data/series_rid");
 						if (element != null) {
 							int series_rid = Misc.parseInt(element.getText(), 0);
-							if (series_rid == 0) {
-								log.error("bug", new Exception());
-								continue;
-							}
-
 							Relation seriesRelation = (Relation) persistence.findById(new Relation(series_rid));
 							Item series = (Item) persistence.findById(seriesRelation.getChild());
 							List articles = series.getData().getRootElement().elements("article");
@@ -134,15 +135,9 @@ public class PoolMonitor extends TimerTask {
 							persistence.update(series);
 						}
 
-						relation.getParent().removeChildRelation(relation);
-						relation.setParent(section.getChild());
-						relation.setUpper(section.getId());
-						persistence.update(relation);
-						relation.getParent().addChildRelation(relation);
-
 						if (item.getData().selectSingleNode("/data/forbid_discussions") == null) {
                             Map<String,List<Relation>> archildren = Tools.groupByType(item.getChildren());
-        
+
                             if (archildren.containsKey(Constants.TYPE_DISCUSSION)) {
                                 Relation disc = archildren.get(Constants.TYPE_DISCUSSION).get(0);
 
@@ -153,12 +148,12 @@ public class PoolMonitor extends TimerTask {
                             } else
                                 EditDiscussion.createEmptyDiscussion(relation, new User(Constants.USER_REDAKCE), persistence);
                         }
-                        
-                        String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
+
+                        String absoluteUrl = AbcConfig.getAbsoluteUrl() + relation.getUrl();
                         MonitorAction action = new MonitorAction("", UserAction.ADD, ObjectType.ARTICLE, relation, absoluteUrl);
                         MonitorPool.scheduleMonitorAction(action);
-                        
-                        if (Tools.getParentSubportal(rel) != null) {
+
+                        if (Tools.getParentSubportal(poolRelation) != null) {
                             articlePool.setUpdated(new Date());
                             persistence.update(articlePool);
                         }
@@ -168,14 +163,11 @@ public class PoolMonitor extends TimerTask {
 				}
 			}
 
-            List children = newsPool.getChildren();
-            for (Iterator iter = children.iterator(); iter.hasNext();) {
-                Relation relation = (Relation) iter.next();
-                if ( ! (relation.getChild() instanceof Item) )
+            for (Relation relation : newsPool.getChildren()) {
+                Tools.sync(relation);
+                if (! InstanceUtils.checkType(relation.getChild(), Item.class, Item.NEWS))
                     continue;
-                Item item = (Item) persistence.findById(relation.getChild());
-                if ( item.getType() != Item.NEWS)
-                    continue;
+                Item item = (Item) relation.getChild();
                 Element element = (Element) item.getData().selectSingleNode("/data/approved_by");
                 if (element == null)
                     continue;
@@ -206,31 +198,29 @@ public class PoolMonitor extends TimerTask {
             log.error("Object pool monitor failed!", e);
         }
     }
-	
+
+    /**
+     *
+     */
 	public void gatherArticlePools() {
-		Category subportals = new Category(Constants.CAT_SUBPORTALS);
-		List<Relation> portals = subportals.getChildren();
-		
+		List<Relation> portals = new Category(Constants.CAT_SUBPORTALS).getChildren();
 		articlePools = new ArrayList(portals.size()+1);
-		
-		Tools.syncList(portals);
-		
+
+        Relation relation = new Relation(Constants.REL_ARTICLEPOOL);
+        Tools.sync(relation);
+        articlePools.add(relation);
+
+        Tools.syncList(portals);
 		for (Relation portal : portals) {
 			Category cat = (Category) portal.getChild();
-			int poolid = Misc.parseInt(Tools.xpath(cat, "/data/article_pool"), 0);
-			
-			if (poolid == 0)
+			int rid = Misc.parseInt(Tools.xpath(cat, "/data/article_pool"), 0);
+			if (rid == 0)
 				continue;
 			
-			Relation r = new Relation(poolid);
-			Tools.sync(r);
-			
-			articlePools.add(r);
+			relation = new Relation(rid);
+			Tools.sync(relation);
+			articlePools.add(relation);
 		}
-		
-        Relation r = new Relation(Constants.REL_ARTICLEPOOL);
-        Tools.sync(r);
-		articlePools.add(r);
 	}
     
     private void sendEventNotifications() {
@@ -253,7 +243,6 @@ public class PoolMonitor extends TimerTask {
         Tools.syncList(list);
         
         Map map = new HashMap();
-        map.put(EmailSender.KEY_FROM, "robot@abclinuxu.cz");
         map.put(EmailSender.KEY_TEMPLATE, "/mail/akce.ftl");
         
         // all upcoming events
@@ -261,8 +250,8 @@ public class PoolMonitor extends TimerTask {
             Item item = (Item) rel.getChild();
             if ("yes".equals(item.getSingleProperty(Constants.PROPERTY_NOTIFIED)))
                 continue;
-            
-            map.put(EmailSender.KEY_SUBJECT, "Upominka: "+item.getTitle());
+
+            map.put(EmailSender.KEY_SUBJECT, eventNotificationSubject + item.getTitle());
             map.put("RELATION", rel);
             map.put("ITEM", item);
             
@@ -288,6 +277,11 @@ public class PoolMonitor extends TimerTask {
             persistence.update(item);
             SQLTool.getInstance().setUpdatedTimestamp(item, originalUpdated);
         }
+    }
+
+    @Override
+    public void configure(Preferences prefs) throws ConfigurationException {
+        eventNotificationSubject = prefs.get(PREF_EVENT_NOTIFICATION_SUBJECT, "Upozorneni: ");
     }
 
     private String getJobName() {

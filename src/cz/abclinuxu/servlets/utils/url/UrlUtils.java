@@ -313,6 +313,16 @@ public class UrlUtils {
     }
 
     /**
+     * Creates url for relation. If relation url is set, it will be used, otherwise
+     * it will be constructed from prefix and relation id.
+     * @param relation relation for which we need url
+     * @return url to display this relation
+     */
+    public String url(Relation relation) {
+        return getRelationUrl(relation, prefix);
+    }
+
+    /**
      * @return true, if HTTPS shouldn't be used
      */
     public boolean getEnforceHttp() {

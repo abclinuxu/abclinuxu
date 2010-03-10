@@ -8,7 +8,7 @@
             <#if TOOL.permissionsFor(USER, RELATION).canCreate()>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=add")}">Vložit novou položku</a></li>
             </#if>
-            <li><a href="/pozadavky?url=${URL.getRelationUrl(RELATION)?url}&categoryPosition=4#form">Požádat o vytvoření podsekce</a></li>
+            <li><a href="/pozadavky?url=${URL.url(RELATION)?url}&categoryPosition=4#form">Požádat o vytvoření podsekce</a></li>
             <li><a href="/software/alternativy">Alternativy k aplikacím z Windows</a></li>
             <li>
                 <@lib.showMonitor RELATION "Zašle upozornění na váš email při nové položce v této a v podřazených sekcích."/>

@@ -540,7 +540,7 @@ public class CreateIndex implements Configurable {
 
         for (Iterator iter = sections.iterator(); iter.hasNext();) {
             Relation sectionRelation = (Relation) iter.next();
-            int sectionId = sectionRelation.getChild().getId();
+            int sectionId = sectionRelation.getId();
             total = sqlTool.countArticleRelations(sectionId);
 
             for (i = 0; i < total;) {

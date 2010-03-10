@@ -69,6 +69,7 @@ public class ShowArticle implements AbcAction {
     public static final String VAR_ARTICLES_IN_SAME_SECTION = "SAME_SECTION_ARTICLES";
     public static final String VAR_SERIES = "SERIES";
     public static final String VAR_TITLE = "TITLE";
+    public static final String VAR_SECTIONS = "SECTIONS";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -101,6 +102,9 @@ public class ShowArticle implements AbcAction {
             children = Tools.groupByType(item.getChildren());
             env.put(VAR_CHILDREN_MAP, children);
         }
+
+        List<Relation> sections = Tools.createRelations((List<Integer>) item.getCustom());
+        env.put(VAR_SECTIONS, sections);
 
         List records = (List) children.get(Constants.TYPE_RECORD);
         if ( records == null || records.size() == 0 )
@@ -210,12 +214,11 @@ public class ShowArticle implements AbcAction {
 
         List parents = (List) env.get(VAR_PARENTS);
         if ( parents.size() > 1 ) {
-            Relation relation = (Relation) parents.get(parents.size() - 2);
+            Relation relation = (Relation) parents.get(parents.size() - 2); // TODO
             if (relation.getChild() instanceof Category) {
-                Category section = (Category) relation.getChild();
                 int max = AbcConfig.getArticleSectionArticlesCount();
                 Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, max)};
-                List articles = sqlTool.findArticleRelations(qualifiers, section.getId());
+                List articles = sqlTool.findArticleRelations(qualifiers, relation.getId());
                 Tools.syncList(articles);
                 env.put(VAR_ARTICLES_IN_SAME_SECTION, articles);
             }

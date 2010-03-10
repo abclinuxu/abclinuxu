@@ -15,8 +15,8 @@
 
 <@lib.showMessages/>
 
-<#macro selected id><#t>
-    <#list PARAMS.authors! as author><#if id?string==author> selected</#if></#list><#t>
+<#macro selected id key><#t>
+    <#list PARAMS(key)! as value><#if id==value?string> selected="selected"</#if></#list><#t>
 </#macro>
 
 <@lib.addForm URL.make("/edit"), "name='theForm'">
@@ -26,7 +26,7 @@
         <@lib.addSelect true, "authors", "Autor", true>
             <#list AUTHORS as relation>
                 <#assign author=relation.child>
-                <option value="${relation.id}"<@selected relation.id/>>
+                <option value="${relation.id}"<@selected relation.id?string "authors"/>>
                     ${TOOL.childName(author)}
                 </option>
             </#list>
@@ -41,9 +41,11 @@
     </@lib.addInput>
 
     <#if SECTIONS??>
-        <@lib.addSelect true, "section", "Rubrika">
+        <@lib.addSelect true, "section", "Rubrika", true>
             <#list SECTIONS as section>
-                <@lib.addOption "section", TOOL.childName(section), ""+section.id />
+                <option value="${section.id}"<@selected section.id?string "section"/>>
+                    ${TOOL.childName(section)}
+                </option>
             </#list>
         </@lib.addSelect>
     </#if>
@@ -86,7 +88,7 @@
     </#if>
 
     <@lib.addFormField false, "URL">
-        /clanky/nejaka-sekce/<@lib.addInputBare "url" />
+        /clanky/<@lib.addInputBare "url" />
         (nepovinné; je-li ponecháno prázdné, systém vygeneruje URL podle názvu článku)
     </@lib.addFormField>
 

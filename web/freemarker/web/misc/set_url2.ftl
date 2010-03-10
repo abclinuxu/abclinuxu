@@ -22,18 +22,18 @@
     <table>
         <tr>
             <td>Dokument</td>
-            <td><a href="${URL.getRelationUrl(CURRENT)}">${TOOL.childName(CURRENT)}</a></td>
+            <td><a href="${URL.url(CURRENT)}">${TOOL.childName(CURRENT)}</a></td>
         </tr>
         <tr>
             <td>URL dokumentu</td>
-            <td>${CURRENT.url?default("nedefinováno")}</td>
+            <td>${CURRENT.url!"nedefinováno"}</td>
         </tr>
         <tr>
             <td>URL nadřazené relace</td>
             <td>
                 <#if (CURRENT.upper > 0)>
                     <#assign upper = TOOL.createRelation(CURRENT.upper)>
-                    ${upper.url?default("nedefinováno")}
+                    ${upper.url!"nedefinováno"}
                 <#else>
                     nedefinováno
                 </#if>

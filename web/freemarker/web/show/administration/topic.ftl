@@ -60,7 +60,7 @@
         <td>Asociovaný článek</td>
         <td>
             <#if TOPIC.article??>
-                <a href="${URL.getRelationUrl(TOPIC.article)}">${TOOL.childName(TOPIC.article)}</a>
+                <a href="${URL.url(TOPIC.article)}">${TOOL.childName(TOPIC.article)}</a>
             <#else>
                 žádný
             </#if>

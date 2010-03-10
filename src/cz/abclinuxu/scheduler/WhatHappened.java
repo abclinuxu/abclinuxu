@@ -106,7 +106,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             params.put(PARAM_TITLE, map.get(VAR_TITLE));
             params.put(EditArticle.PARAM_AUTHORS, Integer.toString(author));
             params.put(PARAM_PEREX, map.get(PREF_PEREX));
-            params.put(EditArticle.PARAM_DESIGNATED_SECTION, Integer.toString(sectionRid));
+            params.put(EditArticle.PARAM_SECTION, Integer.toString(sectionRid));
             synchronized (Constants.isoFormat) {
                 params.put(EditArticle.PARAM_PUBLISHED, Constants.isoFormat.format(new Date()));
             }

@@ -51,7 +51,7 @@
 <#global READ_COUNTER = TOOL.getRelationCountersValue(ARTICLES,"read")/>
 <#if (ARTICLES?size>0) >
     <#list ARTICLES as rel>
-        <@lib.showArticle rel, "CZ_DM", "CZ_SHORT"/>
+        <@lib.showArticle rel, "SMART_DMY", "SMART"/>
         <hr />
     </#list>
 

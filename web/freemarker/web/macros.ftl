@@ -13,11 +13,11 @@
         autors=TOOL.createAuthorsForArticle(clanek),
         thumbnail=TOOL.xpath(clanek,"/data/thumbnail")!"UNDEF",
         tmp=TOOL.groupByType(clanek.children, "Item"),
-        url=relation.url!("/clanky/show/"+relation.id), displayWithPerex = settings[1]!true
+        displayWithPerex = settings[1]!true
     >
     <#if tmp.discussion??><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
     <#if displayWithPerex && thumbnail!="UNDEF"><div class="cl_thumbnail">${thumbnail}</div></#if>
-    <h2 class="${settings[2]!"st_nadpis"}"><a href="${url}">${clanek.title}</a></h2>
+    <h2 class="${settings[2]!"st_nadpis"}"><a href="${URL.url(relation)}">${clanek.title}</a></h2>
     <#if displayWithPerex><p class="st_perex">${TOOL.xpath(clanek,"/data/perex")}</p></#if>
     <p class="meta-vypis">
         ${DATE.show(clanek.created, dateFormat)} |
@@ -28,10 +28,12 @@
         <#else>
             <@showUserFromId clanek.owner/>
         </#if>
-        |
-        Přečteno: <@showCounter clanek, "read" />&times;
+        <#list TOOL.createRelations(clanek.custom) as rubrika>
+            <#if rubrika_index == 0> | </#if>
+            <a href="${URL.url(rubrika)}">${TOOL.childName(rubrika)}</a>
+            <#if rubrika_has_next> | </#if>
+        </#list>
         <#if diz??>| <@showCommentsInListing diz, settings[0]!dateFormat, "/clanky" /></#if>
-        <@showShortRating relation, "| " />
     </p>
 </#macro>
 
@@ -1054,7 +1056,7 @@
 
 <#macro showPageTools relation>
     <p class="page_tools">
-        <a href="${URL.getRelationUrl(relation)}?varianta=print" rel="nofollow" class="bez-slovniku">Tiskni</a>
+        <a href="${URL.url(relation)}?varianta=print" rel="nofollow" class="bez-slovniku">Tiskni</a>
         <#if TOOL.displaySocialBookmarks(USER!)>
             <span id="bookmarks">
                 Sdílej:
@@ -1217,9 +1219,9 @@
     </table>
 </#macro>
 
-<#macro addSelect required, name, description, multipleChoice = false>
+<#macro addSelect required, name, description, multipleChoice = false, size = 6>
     <@addFormField required, description>
-        <select name="${name}" <#if multipleChoice>multiple="multiple"</#if>>
+        <select name="${name}" <#if multipleChoice>multiple="multiple"</#if> size="${size}">
             <#nested>
         </select>
     </@addFormField>

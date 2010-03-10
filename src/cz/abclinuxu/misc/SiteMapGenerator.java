@@ -204,7 +204,7 @@ public class SiteMapGenerator implements Configurable {
         String url;
 
         for (Relation sectionRelation : sections) {
-            int sectionId = sectionRelation.getChild().getId();
+            int sectionId = sectionRelation.getId();
             total = sqlTool.countArticleRelations(sectionId);
 
             for (i = 0; i < total;) {

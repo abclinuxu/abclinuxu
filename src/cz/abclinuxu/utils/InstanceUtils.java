@@ -22,9 +22,8 @@ import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.servlets.html.view.ViewUser;
@@ -33,7 +32,6 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
-import java.util.Iterator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
@@ -118,48 +116,63 @@ public class InstanceUtils {
     public static boolean checkType(GenericObject obj, Class aClass, int type) {
         if ( ! obj.getClass().isAssignableFrom(aClass) )
             return false;
-        if ( obj instanceof Item )
+        if (obj instanceof Item)
             return ((Item) obj).getType() == type;
-        if ( obj instanceof Record )
+        if (obj instanceof Record)
             return ((Record) obj).getType() == type;
+
         return true;
     }
 
     /**
-     * Finds first child of item, that is Record and has type recordType.
-     * If there is no such child, null is returned. As side efect, child
-     * is initialized.
+     * Finds first child of item, that is Record and has specified type.
+     * If there is no such child, null is returned.
+     * @return initialized relation to Record of specified type or null
      */
-    public static Relation findFirstChildRecordOfType(Item item, int recordType) {
-        Persistence persistence = PersistenceFactory.getPersistence();
+    public static Relation getFirstChildRecordRelation(Item item, int type) {
         Record record;
-        for (Iterator iter = item.getChildren().iterator(); iter.hasNext();) {
-            Relation rel = (Relation) iter.next();
-            if ( rel.getChild() instanceof Record ) {
-                persistence.synchronize(rel.getChild());
-                record = (Record) rel.getChild();
-                if ( record.getType()==recordType )
-                    return rel;
+        for (Relation relation : item.getChildren()) {
+            if (relation.getChild() instanceof Record) {
+                Tools.sync(relation);
+                record = (Record) relation.getChild();
+                if (record.getType() == type)
+                    return relation;
             }
         }
         return null;
     }
 
     /**
-     * Finds first child of item, that is Item and has type itemType.
-     * If there is no such child, null is returned. As side efect, child
-     * is initialized.
+     * Finds first child of obj, that is Item and has specified type.
+     * If there is no such child, null is returned.
+     * @return initialized relation to Item of specified type or null
      */
-    public static Relation findFirstChildItemOfType(GenericObject obj, int itemType) {
-        Persistence persistence = PersistenceFactory.getPersistence();
+    public static Relation getFirstItemRelation(GenericObject obj, int type) {
         Item item;
-        for (Iterator iter = obj.getChildren().iterator(); iter.hasNext();) {
-            Relation rel = (Relation) iter.next();
-            if ( rel.getChild() instanceof Item ) {
-                persistence.synchronize(rel.getChild());
-                item = (Item) rel.getChild();
-                if ( item.getType()==itemType )
-                    return rel;
+        for (Relation relation : obj.getChildren()) {
+            if (relation.getChild() instanceof Item) {
+                Tools.sync(relation);
+                item = (Item) relation.getChild();
+                if (item.getType() == type)
+                    return relation;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds first child, that is Category and has specified type.
+     * If there is no such child, null is returned.
+     * @return initialized relation to category of specified type or null
+     */
+    public static Relation getFirstCategoryRelation(GenericObject obj, int type) {
+        Category category;
+        for (Relation relation : obj.getChildren()) {
+            if (relation.getChild() instanceof Category) {
+                Tools.sync(relation);
+                category = (Category) relation.getChild();
+                if (category.getType() == type)
+                    return relation;
             }
         }
         return null;
@@ -167,6 +180,7 @@ public class InstanceUtils {
 
     /**
      * Creates instances of users and initializes them.
+     *
      * @param identifiers list of ids
      * @return initialized User instances
      */

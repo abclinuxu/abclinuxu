@@ -67,6 +67,7 @@ public class Constants implements Configurable {
     public static int CAT_TRIVIA;
     public static int CAT_HANGMAN;
     public static int CAT_DESKTOPS;
+    public static int CAT_SECTIONS;
     public static int CAT_SERIES;
     public static int CAT_SURVEY;
     public static int CAT_PERSONALITIES;
@@ -120,6 +121,7 @@ public class Constants implements Configurable {
     public static int REL_TRIVIA;
     public static int REL_HANGMAN;
     public static int REL_DESKTOPS;
+    public static int REL_SECTIONS;
     public static int REL_SERIES;
     public static int REL_SURVEY;
     public static int REL_PERSONALITIES;
@@ -368,7 +370,6 @@ public class Constants implements Configurable {
     public static final String PROPERTY_LICENSE = "license";
     public static final String PROPERTY_BLOG_DIGEST = "digest";
     public static final String PROPERTY_BANNED_BLOG = "banned_blog";
-    public static final String PROPERTY_BANNED_ARTICLE = "banned_article";
     public static final String PROPERTY_AUTHOR = "author";
     public static final String PROPERTY_SCORE = "score";
     public static final String PROPERTY_TICKET = "ticket";

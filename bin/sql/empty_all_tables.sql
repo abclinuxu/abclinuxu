@@ -13,6 +13,7 @@ delete from posledni_komentar;
 delete from pravo;
 delete from relace;
 delete from reseni;
+delete from rubrika;
 delete from spolecne;
 delete from server;
 delete from stara_adresa;

@@ -151,6 +151,15 @@ ALTER TABLE spolecne ADD INDEX in_vytvoreno (vytvoreno);
 ALTER TABLE spolecne ADD INDEX in_zmeneno (zmeneno);
 ALTER TABLE spolecne ADD INDEX in_pridal (pridal);
 
+-- tabulka obsahujici prirazeni clanku k rubrika
+CREATE TABLE rubrika (
+ clanek INT NOT NULL,                             -- cislo polozky clanku
+ rubrika INT NOT NULL,                            -- cislo relace rubriky
+ poradi INT(2) NOT NULL                           -- hlavni rubrika ma cislo 0, ostatni vyssi
+);
+ALTER TABLE rubrika ADD INDEX in_clanek (clanek);
+ALTER TABLE rubrika ADD INDEX in_rubrika (rubrika);
+
 
 -- tabulka s definicemi serveru, kterym zobrazujeme odkazy
 CREATE TABLE server (

@@ -409,7 +409,7 @@ public class FeedGenerator implements Configurable {
                 SyndFeed feed = createSyndFeed("abclinuxu - " + series.getTitle(), url, null);
 
                 if (series instanceof Category)
-                    createSectionEntries((Category) series, feed, feedLength);
+                    createSectionEntries(relation, feed, feedLength);
                 else if (series instanceof Item)
                     createSeriesEntries((Item) series, feed, feedLength);
                 else
@@ -432,9 +432,10 @@ public class FeedGenerator implements Configurable {
      * @param feed RSS feed
      * @param maxArticles Maximum amount of RSS entries
      */
-    public static void createSectionEntries(Category cat, SyndFeed feed, int maxArticles) {
+    public static void createSectionEntries(Relation categoryRelation, SyndFeed feed, int maxArticles) {
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maxArticles)};
-        List<Relation> articles = SQLTool.getInstance().findArticleRelations(qualifiers, cat.getId());
+        List<Relation> articles = SQLTool.getInstance().findArticleRelations(qualifiers, categoryRelation.getId());
+        Category cat = (Category) categoryRelation.getChild();
 
         List<SyndEntry> entries = new ArrayList<SyndEntry>();
         feed.setDescription(Tools.xpath(cat, "/data/note"));

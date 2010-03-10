@@ -126,7 +126,7 @@
                     <#if topic.articleState == "NONE">
                         žádný
                     <#else>
-                        <a href="${URL.getRelationUrl(topic.article)}">
+                        <a href="${URL.url(topic.article)}">
                         <#switch topic.articleState>
                             <#case "DRAFT">rozepsaný<#break>
                             <#case "SUBMITTED">odeslaný<#break>

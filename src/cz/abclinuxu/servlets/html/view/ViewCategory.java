@@ -262,22 +262,14 @@ public class ViewCategory implements AbcAction {
     }
 
     public static String processArticleSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
-        Category section = (Category) relation.getChild();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int count = AbcConfig.getSectionArticleCount();
 
         SQLTool sqlTool = SQLTool.getInstance();
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
-        List<Relation> articles = sqlTool.findArticleRelations(qualifiers, section.getId());
-
-        SectionTreeCache faqTree = VariableFetcher.getInstance().getArticleTree();
-        SectionNode sectionNode = faqTree.getByRelation(relation.getId());
-        int total = -1;
-        if (sectionNode != null)
-            total = sectionNode.getSize();
-        if (total == -1)
-            total = sqlTool.countArticleRelations(section.getId());
+        List<Relation> articles = sqlTool.findArticleRelations(qualifiers, relation.getId());
+        int total = sqlTool.countArticleRelations(relation.getId());
 
         Tools.syncList(articles);
         Tools.initializeDiscussionsTo(articles);

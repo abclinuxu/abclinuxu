@@ -7,7 +7,7 @@
 
 <#include "../header.ftl">
 
-<#assign autors=TOOL.createAuthorsForArticle(RELATION.getChild()),
+<#assign autors=TOOL.createAuthorsForArticle(ITEM),
          forbidRating=TOOL.xpath(ITEM, "//forbid_rating" )!"UNDEF",
          forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions" )!"UNDEF",
          inPool=RELATION.upper==8082>
@@ -26,11 +26,14 @@
       <#list autors as autor>
           <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
       </#list>
-      <#assign subportal_article=false>
     <#else>
         <@lib.showUserFromId ITEM.owner/>
-        <#assign subportal_article=true>
     </#if>
+    <#if (SECTIONS?size > 0)> | </#if>
+    <#list SECTIONS as rubrika>
+        <a href="${URL.url(rubrika)}">${TOOL.childName(rubrika)}</a>
+        <#if rubrika_has_next> | </#if>
+    </#list>
     | <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times;
 </p>
 
@@ -42,7 +45,6 @@
         <#else>
             ${TOOL.childName(section)}
         </#if>
-        </b>
     </h2>
 </#if>
 
@@ -50,7 +52,7 @@
     <p>
         <a href="${URL.noPrefix("/clanky/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
 
-        <#if autors?size gt 0>
+        <#if (ITEM.subType!"") != "SUBPORTAL">
             <#if SERIES??>
                 <#if ! inPool>
                     <a href="${URL.noPrefix("/serialy/edit/"+SERIES.series.id+"?action=rmArticle&amp;articleRid="+RELATION.id+TOOL.ticket(USER, false))}">Vyřadit ze seriálu</a>
@@ -70,34 +72,20 @@
                     <a href="${URL.make("/honorare/"+honorar.id+"?action=edit")}">Upravit honorář</a>
                 </#list>
             </#if>
-            <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&amp;url=/EditRelation&action=move&amp;rid="+RELATION.id)}">Přesunout</a>
-            <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
-                <a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=/clanky&amp;rid="+RELATION.id)}">Smazat</a>
-            </#if>
-        <#else>
-            <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
-                <a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=&amp;rid="+RELATION.id)}">Smazat</a>
-            </#if>
-            <#if USER.hasRole("root") && subportal_article>
-                <#if (ITEM.getProperty("banned_article")?size > 0)>
-                        <#assign banMsg='Není nevhodný pro HP'>
-                    <#else>
-                        <#assign banMsg='Nevhodný pro HP'>
-                </#if>
-                <a href="${URL.noPrefix("/clanky/edit/"+RELATION.id+"?action=toggleHP")}">${banMsg}</a>
-            </#if>
         </#if>
 
         <a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+RELATION.id)}">Vytvoř anketu</a>
-
-        <a href="${URL.make("/edit/"+RELATION.id+"?action=showTalk")}">Rozhovor</a>
         <a href="${URL.make("/inset/"+RELATION.id+"?action=addFile")}">Přidat soubory</a>
-        <a href="${URL.noPrefix("/videa/edit/"+RELATION.id+"?action=add&amp;redirect="+RELATION.url?default("/clanky/show/"+RELATION.id))}">Přidat video</a>
+        <a href="${URL.noPrefix("/videa/edit/"+RELATION.id+"?action=add&amp;redirect="+URL.url(RELATION))}">Přidat video</a>
         <a href="${URL.make("/inset/"+RELATION.id+"?action=manage")}">Správa příloh</a>
+        <a href="${URL.make("/edit/"+RELATION.id+"?action=showTalk")}">Rozhovor</a>
+        <#if TOOL.permissionsFor(USER, RELATION).canDelete()>
+            <a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=&amp;rid="+RELATION.id)}">Smazat</a>
+        </#if>
     </p>
 </#if>
 
-<#if ( PAGE?default(0) == 0) >
+<#if ( (PAGE!0) == 0) >
     <div class="cl_perex">${TOOL.xpath(ITEM,"/data/perex")}</div>
 </#if>
 
@@ -109,7 +97,7 @@
     <#elseif item.type == "poll">
         <#assign index = item.value?eval>
         <a id="inlinepoll-${index}"></a>
-        <#assign url = RELATION.url?default("/clanky/show/"+RELATION.id)>
+        <#assign url = URL.url(RELATION)>
         <#if PAGE??><#assign url=url+"?page="+PAGE></#if>
         <@lib.showPoll CHILDREN.poll[index], url+"#inlinepoll-"+index />
         <#assign dummy=CHILDREN.poll.set(index, "UNDEF")>
@@ -157,17 +145,18 @@
 </#if>
 
 <#if PAGES??>
+    <#if (PAGE + 1 < PAGES?size)>
+        <div class="cl-pokracovani">
+            <a href="${URL.url(RELATION)}?page=${PAGE+1}">pokračování článku&nbsp;&hellip;</a>
+        </div>
+    </#if>
     <div class="cl_perex souvisejici">
-        <h3>Jednotlivé podstránky článku</h3>
+        <h3>Kapitoly článku</h3>
         <div class="s_sekce">
             <ol>
                 <#list PAGES as page>
-                    <li>
-                        <#if page_index==PAGE>
-                            ${page}
-                        <#else>
-                            <a href="${RELATION.url?default("/clanky/show/"+RELATION.id)}?page=${page_index}">${page}</a>
-                        </#if>
+                    <li<#if page_index==PAGE> class="cl-stranka"</#if>>
+                        <a href="${URL.url(RELATION)}?page=${page_index}">${page}</a>
                     </li>
                 </#list>
             </ol>
@@ -221,7 +210,7 @@
     <#if SAME_SECTION_ARTICLES??>
         <h3>Další články z této rubriky</h3>
         <#list SAME_SECTION_ARTICLES as relation>
-            <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.childName(relation)}</a>
+            <a href="${relation.url!("/clanky/show/"+relation.id)}">${TOOL.childName(relation)}</a>
             <#if relation_index==SAME_SECTION_ARTICLES?size-1><br style="clear:right" /><#else><br /></#if>
         </#list>
     </#if>
@@ -232,7 +221,7 @@
     <#assign wrote_div=false>
 
         <#list attachments as attachment>
-            <#assign hidden=TOOL.xpath(attachment.child, "/data/object/@hidden")?default("false")>
+            <#assign hidden=TOOL.xpath(attachment.child, "/data/object/@hidden")!"false">
             <#if hidden=="false" || TOOL.permissionsFor(USER, RELATION).canModify()>
                 <#if !wrote_div>
                     <div class="ds_attachments"><span>Přílohy:</span><ul>
@@ -252,8 +241,9 @@
     <@lib.showRating RELATION/>
 </#if>
 
-<p><b>Nástroje</b>:
-<a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print&amp;noDiz">Tisk bez diskuse</a>
+<p>
+    <b>Nástroje</b>:
+    <a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print&amp;noDiz">Tisk bez diskuse</a>
 </p>
 
 </div> <!-- class="clanek" -->
@@ -267,7 +257,7 @@
     <@lib.showDiscussion CHILDREN.discussion[0]/>
 <#elseif forbidDiscussion!="yes">
     <h3>Diskuse k tomuto článku</h3>
-    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vložit první komentář</a>
+    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}" rel="nofollow">Vložit první komentář</a>
 </#if>
 
 <@lib.advertisement id="arbo-full" />

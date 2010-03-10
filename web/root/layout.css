@@ -389,6 +389,14 @@ pre {
 	border-style: solid;
 }
 
+.cl-pokracovani {
+    margin-top: 0.5em;
+}
+
+.cl-stranka {
+    font-style: italic;
+}
+
 .serial-nadpis {
 	padding: 0.1em 0.5em 0.5em 0.5em;
 	margin-bottom: 0.5em;

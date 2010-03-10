@@ -2,7 +2,4 @@
 (zmenit z abc na devel)
 mysql < create_mysql_scheme.sql
 
-2\
-mysql devel < init_devel_database.sql
-
-3) ../runJava.sh cz.abclinuxu.misc.GenerateDevelDatabase
+2) ../runJava.sh cz.abclinuxu.misc.GenerateDevelDatabase

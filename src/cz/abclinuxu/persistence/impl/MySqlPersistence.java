@@ -158,6 +158,11 @@ public class MySqlPersistence implements Persistence {
                 }
             }
 
+            if (obj instanceof Item && ((Item) obj).getType() == Item.ARTICLE) {
+                statement.close();
+                statement = storeSections(obj, con, statement);
+            }
+
             if ( log.isDebugEnabled() ) log.debug("Objekt ["+obj+"] uložen");
         } catch ( SQLException e ) {
             if ( e.getErrorCode()==1062 ) {
@@ -168,6 +173,22 @@ public class MySqlPersistence implements Persistence {
         } finally {
             PersistenceFactory.releaseSQLResources(con,statement,null);
         }
+    }
+
+    private PreparedStatement storeSections(GenericObject obj, Connection con, PreparedStatement statement) throws SQLException {
+        statement = con.prepareStatement("INSERT INTO rubrika (clanek,rubrika,poradi) VALUES (?,?,?)");
+
+        List<Integer> sections = (List<Integer>) ((Item)obj).getCustom();
+        if (sections != null) {
+            int i = 0;
+            for (int section : sections) {
+                statement.setInt(1, obj.getId());
+                statement.setInt(2, section);
+                statement.setInt(3, i++);
+                statement.executeUpdate();
+            }
+        }
+        return statement;
     }
 
     /**
@@ -513,7 +534,12 @@ public class MySqlPersistence implements Persistence {
 
                     // remove comments, they are not referenced via relation table
                     if (obj instanceof Record) {
-                        Record record = (Record) findById(obj);
+                        Record record;
+                        if (obj.isInitialized())
+                            record = (Record) obj;
+                        else
+                            record = (Record) findById(obj);
+
                         if (record.getType() == Record.DISCUSSION) {
                             statement.close();
                             statement = con.prepareStatement("DELETE FROM komentar WHERE zaznam=?");
@@ -524,6 +550,20 @@ public class MySqlPersistence implements Persistence {
                             statement = con.prepareStatement("DELETE FROM reseni WHERE zaznam=?");
                             statement.setInt(1, obj.getId());
                             statement.executeUpdate();
+                        }
+                    }
+
+                    // remove comments, they are not referenced via relation table
+                    if (obj instanceof Item) {
+                        Item item;
+                        if (obj.isInitialized())
+                            item = (Item) obj;
+                        else
+                            item = (Item) findById(obj);
+
+                        if (item.getType() == Item.ARTICLE) {
+                            statement.close();
+                            statement = deleteSections(obj, con, statement);
                         }
                     }
                 }
@@ -568,6 +608,13 @@ public class MySqlPersistence implements Persistence {
         } finally {
             PersistenceFactory.releaseSQLResources(con,statement,resultSet);
         }
+    }
+
+    private PreparedStatement deleteSections(GenericObject obj, Connection con, PreparedStatement statement) throws SQLException {
+        statement = con.prepareStatement("DELETE FROM rubrika WHERE clanek=?");
+        statement.setInt(1, obj.getId());
+        statement.executeUpdate();
+        return statement;
     }
 
     public void synchronizeList(List list) {
@@ -1258,6 +1305,8 @@ public class MySqlPersistence implements Persistence {
 
             if (data instanceof Record && data.getType() == Record.DISCUSSION)
                 loadComments((Record)data);
+            if (data instanceof Item && data.getType() == Item.ARTICLE)
+                loadSections((Item)data);
 
             loadCommonObjectProperties(data);
 
@@ -1314,6 +1363,8 @@ public class MySqlPersistence implements Persistence {
                 syncGenericDataObjectFromRS(obj, rs);
                 if (obj instanceof Record && obj.getType() == Record.DISCUSSION)
                     loadComments((Record) obj); // todo read it in single query
+                if (obj instanceof Item && obj.getType() == Item.ARTICLE)
+                    loadSections((Item) obj);
 
                 if ( ! PropertiesConfig.isSupported(obj))
                     objects.remove(id);
@@ -1442,6 +1493,34 @@ public class MySqlPersistence implements Persistence {
             diz.setTotalComments(count);
             diz.setMaxCommentId(max);
             record.setCustom(diz);
+        } finally {
+            PersistenceFactory.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Loads section relations id for given Item and sets them as custom object.
+     * @param item item of type Article
+     * @throws SQLException
+     */
+    private void loadSections(Item item) throws SQLException {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("SELECT rubrika FROM rubrika WHERE clanek=? ORDER BY clanek asc");
+            statement.setInt(1, item.getId());
+            resultSet = statement.executeQuery();
+
+            List<Integer> sections = new ArrayList<Integer>();
+            while (resultSet.next()) {
+                sections.add(resultSet.getInt(1));
+            }
+
+            if (! sections.isEmpty())
+                item.setCustom(sections);
         } finally {
             PersistenceFactory.releaseSQLResources(con, statement, resultSet);
         }
@@ -1935,6 +2014,8 @@ public class MySqlPersistence implements Persistence {
 
             if (obj instanceof Record && obj.getType() == Record.DISCUSSION)
                 updateComments((DiscussionRecord) obj.getCustom(), obj.getId(), con);
+            if (obj instanceof Item && obj.getType() == Item.ARTICLE)
+                updateSections((Item) obj, con);
 
             saveCommonObjectProperties(obj, obj.getProperties(), true);
 
@@ -2001,6 +2082,20 @@ public class MySqlPersistence implements Persistence {
             }
         } finally {
             PersistenceFactory.releaseSQLResources(null, new Statement[] {statement1, statement2, statement3}, null);
+        }
+    }
+
+    /**
+     * Synchronizes sections for article item.
+     * @param discussion
+     */
+    private void updateSections(Item item, Connection con) throws SQLException {
+        PreparedStatement statement1 = null, statement2 = null;
+        try {
+            deleteSections(item, con, statement1);
+            storeSections(item, con, statement2);
+        } finally {
+            PersistenceFactory.releaseSQLResources(null, new Statement[] {statement1, statement2}, null);
         }
     }
 

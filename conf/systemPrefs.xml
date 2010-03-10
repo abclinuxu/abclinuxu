@@ -112,8 +112,7 @@
                                 <entry key="RE_VLNKA" value="((^|\s)\w)\s+(\S+)"/>
                                 <entry key="REPLACEMENT_VLNKA" value="$1&amp;nbsp;$3"/>
                                 <entry key="RE_AMPERSAND" value="&amp;(?!#?[a-zA-Z0-9]+;)" />
-                                <entry key="RE_ARTICLE_OBJECT" value='&lt;inline type="([^"]+)" id="(\d+)"&gt;' />
-                                <!--<entry key="RE_INLINE_OBJECT" value='&lt;inline type="([^"]+)" id="(\d+)"&gt;'/>-->
+                                <entry key="RE_INLINE_OBJECT" value='&lt;inline type="([^"]+)" id="(\d+)"&gt;'/>
                                 <entry key="story.reserve.percents" value="25" />
                                 <entry key="news.letter.limit.soft" value="375" />
                                 <entry key="news.letter.limit.hard" value="475" />
@@ -402,7 +401,8 @@
                             <entry key="relations.discussion.in.section" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek, spolecne S where R.predchozi=? and P.typ=3 and S.cislo=R.potomek and S.typ='P'"/>
                             <entry key="relations.discussion.last.seen.by.user" value="select R.cislo from relace R, posledni_komentar K, spolecne S where R.typ_potomka='P' and R.potomek=K.diskuse and S.typ='P' and S.cislo=K.diskuse and K.kdo=?" />
                             <entry key="relations.article" value="select R.cislo from polozka P, relace R, kategorie K, spolecne S where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&lt;now()"/>
-                            <entry key="relations.article.on.index" value="select R.cislo from polozka P, relace R, kategorie K, spolecne S where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and ((P.podtyp!='NOTONINDEX' and P.podtyp!='SUBPORTAL') or P.podtyp is null) and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&lt;now()"/>
+                            <entry key="relations.article.on.index" value="SELECT R.cislo FROM polozka P JOIN relace R ON R.typ_potomka='P' AND P.cislo=R.potomek AND P.typ=2 JOIN spolecne S ON S.typ='P' AND R.potomek=S.cislo WHERE ((P.podtyp!='NOTONINDEX' AND P.podtyp!='SUBPORTAL') OR P.podtyp IS NULL) AND S.vytvoreno&lt;now()"/>
+                            <entry key="relations.article.in.section" value="SELECT R.cislo FROM polozka P JOIN relace R ON R.typ_potomka='P' AND P.cislo=R.potomek AND P.typ=2 JOIN spolecne S ON S.typ='P' AND R.potomek=S.cislo JOIN rubrika RU ON RU.clanek=R.potomek WHERE (P.podtyp!='SUBPORTAL' OR P.podtyp IS NULL) AND S.vytvoreno&lt;now() AND RU.rubrika=?"/>
                             <entry key="relations.article.within.period" value="select R.cislo from polozka P, relace R, kategorie K, spolecne S where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&gt;? and S.vytvoreno&lt;?"/>
                             <entry key="relations.article.by.author" value="select R.cislo from relace R, polozka P, vlastnost V, kategorie K, spolecne S where R.typ_potomka='P' and R.potomek=P.cislo and P.typ=2 and V.typ_predka='P' and P.cislo=V.predek and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and V.typ='author' and V.hodnota=? and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&lt;now()"/>
                             <entry key="relations.news" value="select R.cislo from polozka P, relace R, spolecne S where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek and S.typ='P' and S.cislo=P.cislo"/>
@@ -490,7 +490,6 @@
                             <entry key="find.subportal.membership" value="select R.cislo from vlastnost V, kategorie K, relace R where K.cislo=V.predek and V.typ_predka='K' and V.typ='member' and R.typ_potomka='K' and R.potomek=K.cislo and K.typ=7 and V.hodnota = ?" />
                             <entry key="valid.servers" value="select cislo from server where rss is not null"/>
                             <entry key="server.relations.in.category" value="select R.cislo from relace R where R.typ_potomka='S' and R.predek = ?"/>
-                            <entry key="find.hp.subportal.articles" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and P.podtyp='SUBPORTAL' and not exists (select * from vlastnost where predek=P.cislo and typ_predka='P' and typ='banned_article')"/><!-- todo smazat -->
                             <entry key="max.subportal.reads" value="select max(C.soucet) from citac C, kategorie K where C.typ='K' and C.cislo=K.cislo and K.typ=7 and C.druh='read'"/>
                             <entry key="find.advertisement.by.string" value="select cislo from polozka where typ = 29 and string1 = ?"/>
                             <entry key="insert.monitor" value="INSERT INTO monitor (typ,cislo,uzivatel) VALUES (?,?,?)"/>
@@ -566,11 +565,11 @@
                             <entry key="subject" value="AbcLinuxu.cz: Týdenní souhrn"/>
                         </map>
                     </node>
-                    <!--<node name="PoolMonitor">todo-->
-                        <!--<map>-->
-                            <!--<entry key="event.notification.subject" value="Upozorneni: "/>-->
-                        <!--</map>-->
-                    <!--</node>-->
+                    <node name="PoolMonitor">
+                        <map>
+                            <entry key="event.notification.subject" value="Upozorneni: "/>
+                        </map>
+                    </node>
                     <node name="WhatHappened">
                         <map>
                             <entry key="title" value="Událo se v týdnu {0}/{1,number,#}"/>
@@ -748,6 +747,7 @@
                             <entry key="CAT_TRIVIA" value="1605"/>
                             <entry key="CAT_HANGMAN" value="1606"/>
                             <entry key="CAT_DESKTOPS" value="1949"/>
+                            <entry key="CAT_SECTIONS" value="2483"/>
                             <entry key="CAT_SERIES" value="1647"/>
                             <entry key="CAT_SURVEY" value="1679"/>
                             <entry key="CAT_PERSONALITIES" value="1863"/>
@@ -795,6 +795,7 @@
                             <entry key="REL_TRIVIA" value="156666"/>
                             <entry key="REL_HANGMAN" value="156667"/>
                             <entry key="REL_DESKTOPS" value="200506"/>
+                            <entry key="REL_SECTIONS" value="296555"/>
                             <entry key="REL_SERIES" value="164193"/>
                             <entry key="REL_SURVEY" value="168884"/>
                             <entry key="REL_PERSONALITIES" value="190499"/>
@@ -830,6 +831,7 @@
                                     <entry key="regexp.invalid.characters.relative.url" value="[^a-zA-Z0-9.]+"/>
                                     <entry key="regexp.invalid.characters.absolute.url" value="[^a-zA-Z0-9/.]+"/>
                                     <entry key="forbidden.extensions" value=".tgz,.tar.gz,.tar.bz2" />
+                                    <entry key="use.article.prefix" value="true"/>
                                 </map>
                             </node>
                             <node name="CustomURLCache">

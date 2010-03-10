@@ -26,6 +26,7 @@ import cz.abclinuxu.utils.email.MailSession;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.DateTool;
+import cz.abclinuxu.utils.format.HtmlToTextFormatter;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.persistence.*;
@@ -199,6 +200,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
             item = (Item) relation.getChild();
             title = item.getTitle();
             content = Tools.xpath(item, "data/content");
+            content = HtmlToTextFormatter.format(content);
             News newz = new News(title, content, item.getCreated(), relation.getUrl());
             newz.setAuthor(Tools.createUser(item.getOwner()).getName());
             newz.setComments(Tools.findComments(item).getResponseCount());

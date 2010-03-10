@@ -24,6 +24,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.Item;
 
 import cz.abclinuxu.utils.Misc;
 import java.util.prefs.Preferences;
@@ -35,6 +36,7 @@ import java.util.Iterator;
 import org.apache.regexp.RE;
 import org.apache.regexp.REProgram;
 import org.apache.regexp.RECompiler;
+import org.dom4j.Node;
 
 /**
  * This class is responsible for enforcing rules
@@ -46,9 +48,11 @@ public class URLManager implements Configurable {
     public static final String PREF_INVALID_CHARACTERS_RELATIVE = "regexp.invalid.characters.relative.url";
     public static final String PREF_INVALID_CHARACTERS_ABSOLUTE = "regexp.invalid.characters.absolute.url";
     public static final String PREF_FORBIDDEN_EXTENSIONS = "forbidden.extensions";
+    public static final String PREF_USE_ARTICLE_PREFIX = "use.article.prefix";
 
     private static REProgram reInvalidCharactersRelative, reInvalidCharactersAbsolute, rePlus;
     private static List forbiddenExtensions;
+    private static boolean useArticlePrefix;
 
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new URLManager());
@@ -198,9 +202,30 @@ public class URLManager implements Configurable {
             return true;
         if (relationId == 0)
             return true;
-        if (relationId != existingRelation.getId())
-            return false;
-        return true;
+        return relationId == existingRelation.getId();
+    }
+
+    /**
+     * Generates text URL from relation containing an article item. The URL is taken either
+     * from XML property (set by user) or generated from article title. The relation is not
+     * modified during this method.
+     * @param relation completely initialized relation
+     * @return absolute url (starting with /)
+     */
+    public static String generateArticleUrl(Relation relation) {
+        Item item = (Item) relation.getChild();
+        Node node = item.getData().selectSingleNode("/data/url");
+
+        String lastPart;
+        if (node != null && !Misc.empty(node.getText()))
+            lastPart = node.getText();
+        else
+            lastPart = item.getTitle();
+
+        String url = useArticlePrefix ? UrlUtils.PREFIX_CLANKY : "";
+        url = url + URLManager.enforceRelativeURL(lastPart);
+        url = URLManager.protectFromDuplicates(url);
+        return url;
     }
 
     /**
@@ -214,6 +239,8 @@ public class URLManager implements Configurable {
 
         tmp = prefs.get(PREF_INVALID_CHARACTERS_ABSOLUTE, null);
         reInvalidCharactersAbsolute = new RECompiler().compile(tmp);
+
+        useArticlePrefix = prefs.getBoolean(PREF_USE_ARTICLE_PREFIX, true);
 
         List tmpList = new ArrayList();
         tmp = prefs.get(PREF_FORBIDDEN_EXTENSIONS, null);

@@ -54,7 +54,7 @@ public abstract class AbstractCache implements TransparentCache {
     }
 
     public GenericObject load(GenericObject obj) {
-        GenericObject result = (GenericObject) loadObject(obj);
+        GenericObject result = loadObject(obj);
         if (result == null)
             return null;
 

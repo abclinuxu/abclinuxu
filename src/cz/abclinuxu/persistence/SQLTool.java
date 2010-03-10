@@ -85,6 +85,7 @@ public final class SQLTool implements Configurable {
     public static final String LAST_SEEN_DISCUSSION_RELATIONS_BY_USER = "relations.discussion.last.seen.by.user";
     public static final String ARTICLE_RELATIONS = "relations.article";
     public static final String ARTICLES_ON_INDEX_RELATIONS = "relations.article.on.index";
+    public static final String ARTICLES_IN_SECTION_RELATIONS = "relations.article.in.section";
     // todo calculate it dynamically with findqualifier
     public static final String ARTICLE_RELATIONS_WITHIN_PERIOD = "relations.article.within.period";
     public static final String UNSIGNED_CONTRACT_RELATIONS = "relations.unsigned.contract";
@@ -172,7 +173,6 @@ public final class SQLTool implements Configurable {
     public static final String VALID_SERVERS = "valid.servers";
     public static final String SERVER_RELATIONS_IN_CATEGORY = "server.relations.in.category";
     public static final String FIND_SUBPORTAL_MEMBERSHIP  = "find.subportal.membership";
-    public static final String FIND_HP_SUBPORTAL_ARTICLES = "find.hp.subportal.articles";
 
     public static final String MAX_SUBPORTAL_READS = "max.subportal.reads";
     public static final String FIND_ADVERTISEMENT_BY_STRING = "find.advertisement.by.string";
@@ -932,19 +932,34 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Finds articles from subportals that are supposed to be shown on the HP.
-     * @param qualifiers
-     * @return
+     * Finds relations, where child is published article item.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List<Relation> findHPSubportalArticles(Qualifier[] qualifiers) {
-        StringBuilder sb = new StringBuilder(sql.get(FIND_HP_SUBPORTAL_ARTICLES));
+    public List<Relation> findArticleRelations(Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuilder sb = new StringBuilder(sql.get(ARTICLE_RELATIONS));
         List params = new ArrayList();
+        Map<Field, String> fieldMapping = new HashMap<Field, String>();
+        fieldMapping.put(Field.UPPER, "R");
+        appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadRelations(sb.toString(), params);
     }
 
     /**
-     * Finds relations, where child is article item.
-     * Items with property created set to future and outside of typical columns are skipped.
+     * Counts relations, where child is published article item.
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public int countArticleRelations() {
+        StringBuilder sb = new StringBuilder(sql.get(ARTICLE_RELATIONS));
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is published article item within concrete section.
      * Use Qualifiers to set additional parameters.
      * @param section id of section to be searched. If equal to 0, than all sections will be searched
      * @return List of initialized relations
@@ -952,12 +967,9 @@ public final class SQLTool implements Configurable {
      */
     public List<Relation> findArticleRelations(Qualifier[] qualifiers, int section) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuilder sb = new StringBuilder(sql.get(ARTICLE_RELATIONS));
+        StringBuilder sb = new StringBuilder(sql.get(ARTICLES_IN_SECTION_RELATIONS));
         List params = new ArrayList();
-        if (section>0) {
-            params.add(section);
-            sb.append(" and K.cislo=?");
-        }
+        params.add(section);
         Map<Field, String> fieldMapping = new HashMap<Field, String>();
         fieldMapping.put(Field.UPPER, "R");
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
@@ -971,13 +983,10 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
     public int countArticleRelations(int section) {
-        StringBuilder sb = new StringBuilder(sql.get(ARTICLE_RELATIONS));
+        StringBuilder sb = new StringBuilder(sql.get(ARTICLES_IN_SECTION_RELATIONS));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        if (section > 0) {
-            params.add(section);
-            sb.append(" and K.cislo=?");
-        }
+        params.add(section);
         return loadNumber(sb.toString(), params);
     }
 
@@ -2841,6 +2850,7 @@ public final class SQLTool implements Configurable {
         store(ARTICLE_RELATIONS, prefs);
         store(ARTICLE_RELATIONS_WITHIN_PERIOD, prefs);
         store(ARTICLES_ON_INDEX_RELATIONS, prefs);
+        store(ARTICLES_IN_SECTION_RELATIONS, prefs);
         store(UNSIGNED_CONTRACT_RELATIONS, prefs);
         store(NEWS_RELATIONS, prefs);
         store(NEWS_RELATIONS_WITHIN_PERIOD, prefs);
@@ -2917,7 +2927,6 @@ public final class SQLTool implements Configurable {
         store(VALID_SERVERS, prefs);
         store(SERVER_RELATIONS_IN_CATEGORY, prefs);
         store(FIND_SUBPORTAL_MEMBERSHIP, prefs);
-        store(FIND_HP_SUBPORTAL_ARTICLES, prefs);
         store(MAX_SUBPORTAL_READS, prefs);
         store(MOST_COMMENTED_POLLS, prefs);
         store(MOST_VOTED_POLLS, prefs);

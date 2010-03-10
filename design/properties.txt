@@ -45,11 +45,6 @@ value: id of relation to article's author
 mapping: 1:n
 purpose: defines author(s) of that article
 
-name: banned_article
-value: yes
-mapping: 1:1
-purpose: indicates that the article was marked as inappropriate for home page
-
 ITEM.SCREENSHOT
 ============
 

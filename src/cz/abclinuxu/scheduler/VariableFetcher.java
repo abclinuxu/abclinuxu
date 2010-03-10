@@ -120,7 +120,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     Map<Relation, Map<String, Integer>> subportalCounter;
     Map<Server, List<Link>> feedLinks;
     Map<Integer, Map<Server, List<Link>>> feedSubportalLinks;
-    SectionTreeCache faqTree, softwareTree, hardwareTree, articleTree;
+    SectionTreeCache faqTree, softwareTree, hardwareTree;
     Relation currentPoll;
     int sectionCacheFrequency;
     HostingServer hostingServer;
@@ -147,10 +147,6 @@ public class VariableFetcher extends TimerTask implements Configurable {
         hardwareTree = new SectionTreeCache(UrlUtils.PREFIX_HARDWARE, Constants.CAT_HARDWARE);
         hardwareTree.setLoadDescriptions(false);
         hardwareTree.setCacheSize(400);
-        articleTree = new SectionTreeCache(UrlUtils.PREFIX_CLANKY, Constants.CAT_ARTICLES);
-        articleTree.setLoadDescriptions(false);
-        articleTree.setCacheSize(20);
-//        articleTree.setLoadLastItem(true); todo - konfigurace, zda posledni je zmeneno nebo vytvoreno
     }
 
     /**
@@ -666,13 +662,6 @@ public class VariableFetcher extends TimerTask implements Configurable {
     }
 
     /**
-     * @return cache of Article sections
-     */
-    public SectionTreeCache getArticleTree() {
-        return articleTree;
-    }
-
-    /**
      * @return server from abchost offering, it may be null!
      */
     public HostingServer getHostingServer() {
@@ -809,14 +798,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
                 //forumTree.initialize();
                 softwareTree.initialize();
                 hardwareTree.initialize();
-                articleTree.initialize();
             }
 
             faqTree.refresh();
             //forumTree.refresh();
             softwareTree.refresh();
             hardwareTree.refresh();
-            articleTree.refresh();
 
             if (log.isDebugEnabled()) {
                 long end = System.currentTimeMillis();
@@ -1005,7 +992,6 @@ public class VariableFetcher extends TimerTask implements Configurable {
             List<Relation> children;
             Map<Integer, List<Relation>> map;
             int maximum = maxSizes.get(KEY_ARTICLE);
-            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
 
             // get a list of subportals
             if (where == null) {
@@ -1021,11 +1007,13 @@ public class VariableFetcher extends TimerTask implements Configurable {
             for (Relation rel : children) {
                 // get the rid of the article section of that subportal
                 int rid = Misc.parseInt(Tools.xpath(rel.getChild(), "/data/articles"), 0);
-                Relation r = new Relation(rid);
-                Tools.sync(r);
+                Relation relation = new Relation(rid);
+                Tools.sync(relation);
 
                 // get the articles
-                List<Relation> articles = sqlTool.findArticleRelations(qualifiers, r.getChild().getId());
+                CompareCondition parentCondition = new CompareCondition(Field.PARENT, Operation.EQUAL, relation.getChild().getId());
+                Qualifier[] qualifiers = new Qualifier[]{parentCondition, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
+                List<Relation> articles = sqlTool.findArticleRelations(qualifiers);
                 Tools.syncList(articles);
 
                 map.put(rid, articles);

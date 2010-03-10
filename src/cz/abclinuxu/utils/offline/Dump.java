@@ -320,7 +320,7 @@ public class Dump implements Configurable {
             List parents = persistence.findParents(sectionRelation);
             env.put(ShowObject.VAR_PARENTS, parents);
 
-            int sectionId = sectionRelation.getChild().getId();
+            int sectionId = sectionRelation.getId();
             total = sqlTool.countArticleRelations(sectionId);
 
             for (i = 0; i < total;) {

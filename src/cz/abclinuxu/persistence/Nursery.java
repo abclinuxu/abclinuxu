@@ -77,11 +77,11 @@ public class Nursery implements Configurable {
         if (isChildrenLoadingForbidden(parent))
             return;
 
-        List<Integer> list = (List<Integer>) cache.get(parent);
+        List<Integer> list = cache.get(parent);
         if ( list == null ) {
             List<Relation> found = persistence.findChildren(parent);
             storeChildren(parent, found);
-            list = (List<Integer>) cache.get(parent);
+            list = cache.get(parent);
         }
 
         if (list == null) {
@@ -89,9 +89,7 @@ public class Nursery implements Configurable {
             cache.put(parent.makeLightClone(), list);
         }
 
-        if (list.contains(relation.getId()))
-            return;
-        else
+        if (! list.contains(relation.getId()))
             list.add(relation.getId());
     }
 
@@ -129,7 +127,7 @@ public class Nursery implements Configurable {
         if (isChildrenLoadingForbidden(object))
             return Collections.emptyList();
 
-        List<Integer> list = (List<Integer>) cache.get(object);
+        List<Integer> list = cache.get(object);
         if (list != null) { // children of this object are already cached
             if (list.size() == 0)
                 return Collections.emptyList();
@@ -178,7 +176,7 @@ public class Nursery implements Configurable {
         Map<GenericObject, List<Relation>> fetchedChildren = persistence.findChildren(objects);
         for (Iterator iter = fetchedChildren.keySet().iterator(); iter.hasNext();) {
             GenericObject obj = (GenericObject) iter.next();
-            storeChildren(obj, (List<Relation>) fetchedChildren.get(obj));
+            storeChildren(obj, fetchedChildren.get(obj));
         }
     }
 
@@ -217,9 +215,7 @@ public class Nursery implements Configurable {
                     return true;
             }
         }
-        if (noChildren.get(object) != null)
-            return true;
-        return false;
+        return noChildren.get(object) != null;
     }
 
     /**
@@ -254,7 +250,6 @@ public class Nursery implements Configurable {
 
         // content of these sections shall not be loaded!
         noChildren = new HashMap();
-        Category category = null;
         String tmp = prefs.get(PREF_IGNORE_SECTION, "");
         StringTokenizer stk = new StringTokenizer(tmp, ",");
         while ( stk.hasMoreTokens() ) {
@@ -263,7 +258,7 @@ public class Nursery implements Configurable {
 
             StringTokenizer stk2 = new StringTokenizer(values, ",");
             while ( stk2.hasMoreTokens() ) {
-                category = new Category(Misc.parseInt(stk2.nextToken(), 0));
+                Category category = new Category(Misc.parseInt(stk2.nextToken(), 0));
                 noChildren.put(category, Boolean.TRUE);
             }
         }

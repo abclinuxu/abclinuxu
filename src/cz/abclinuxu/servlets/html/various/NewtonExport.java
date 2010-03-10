@@ -58,7 +58,7 @@ public class NewtonExport implements AbcAction {
         CompareCondition conditionFrom = new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, from);
         CompareCondition conditionTo = new CompareCondition(Field.CREATED, Operation.SMALLER, to);
         Qualifier[] qualifiers = new Qualifier[] {conditionFrom, conditionTo};
-        List<Relation> articles = sqlTool.findArticleRelations(qualifiers, 0);
+        List<Relation> articles = sqlTool.findArticleRelations(qualifiers);
 
         Tools.syncList(articles);
         List sections = new ArrayList(articles.size());
