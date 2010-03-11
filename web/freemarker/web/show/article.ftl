@@ -37,17 +37,6 @@
     | <#assign reads = TOOL.getCounterValue(ITEM,"read")>${reads}&times;
 </p>
 
-<#if inPool>
-    <h2>Rubrika:
-        <#assign section=TOOL.xpath(ITEM, "/data/section_rid")!"UNDEFINED">
-        <#if section=="UNDEFINED">
-            nezadána
-        <#else>
-            ${TOOL.childName(section)}
-        </#if>
-    </h2>
-</#if>
-
 <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
     <p>
         <a href="${URL.noPrefix("/clanky/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>

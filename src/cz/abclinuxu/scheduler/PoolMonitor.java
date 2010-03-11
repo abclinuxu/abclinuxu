@@ -105,7 +105,7 @@ public class PoolMonitor extends TimerTask implements Configurable {
 						// move article to selected article section
 						Relation section;
                         if (relation.getUpper() == Constants.REL_ARTICLEPOOL)
-                            section = new Relation(Constants.REL_ARTICLES);
+                            section = (Relation) persistence.findById(new Relation(Constants.REL_ARTICLES));
                         else {
                             Relation subportal = (Relation) Tools.sync(new Relation(relation.getUpper()));
                             section = InstanceUtils.getFirstCategoryRelation(subportal.getChild(), Category.SECTION);

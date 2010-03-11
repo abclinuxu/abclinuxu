@@ -223,7 +223,7 @@ public class URLManager implements Configurable {
             lastPart = item.getTitle();
 
         String url = useArticlePrefix ? UrlUtils.PREFIX_CLANKY : "";
-        url = url + URLManager.enforceRelativeURL(lastPart);
+        url = url + "/" + URLManager.enforceRelativeURL(lastPart);
         url = URLManager.protectFromDuplicates(url);
         return url;
     }

@@ -29,11 +29,12 @@
             <@showUserFromId clanek.owner/>
         </#if>
         <#list TOOL.createRelations(clanek.custom) as rubrika>
-            <#if rubrika_index == 0> | </#if>
-            <a href="${URL.url(rubrika)}">${TOOL.childName(rubrika)}</a>
-            <#if rubrika_has_next> | </#if>
+             | ${TOOL.childName(rubrika)}
         </#list>
         <#if diz??>| <@showCommentsInListing diz, settings[0]!dateFormat, "/clanky" /></#if>
+        <#if USER?? && TOOL.permissionsFor(USER, relation).canModify()>
+            | Přečteno: <@showCounter clanek, "read" />&times;
+        </#if>
     </p>
 </#macro>
 
