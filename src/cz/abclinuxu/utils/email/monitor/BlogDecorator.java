@@ -70,7 +70,7 @@ public class BlogDecorator implements Decorator, Configurable {
         String name = (String) action.getProperty(PROPERTY_NAME);
         if ( name==null ) {
             Persistence persistence = PersistenceFactory.getPersistence();
-            Item blog = (Item) persistence.findById(action.relation.getChild());
+            Item blog = (Item) persistence.findById(action.object);
             name = blog.getTitle();
         }
         env.put(VAR_NAME, name);

@@ -168,8 +168,6 @@
                             <node name="DiscussionDecorator">
                                 <map>
                                     <entry key="subject" value="AbcMonitor: zmena v diskusi"/>
-                                    <entry key="action.add" value="polozil dotaz"/>
-                                    <entry key="action.reply" value="pridal komentar"/>
                                     <entry key="action.remove" value="smazal diskusi"/>
                                     <entry key="action.censore" value="uvalil cenzuru na komentar"/>
                                 </map>
@@ -221,11 +219,6 @@
                         </node>
                         <node name="forum">
                             <map/>
-                            <node name="CommentSender">
-                                <map>
-                                    <entry key="sleep" value="30"/>
-                                </map>
-                            </node>
                             <node name="CommentDecorator">
                                 <map>
                                     <entry key="sender.address" value="robot@abclinuxu.cz"/>
@@ -878,7 +871,6 @@
                                 <entry key="pool.monitor.delay" value="60"/>
                                 <entry key="pool.monitor.period" value="180"/>
                                 <entry key="start.abc.monitor" value="@START.ABC.MONITOR@"/>
-                                <entry key="start.forum.mail.gateway" value="@START.FORUM.GATEWAY@"/>
                                 <entry key="start.weekly.emails" value="@START.WEEKLY.EMAILS@"/>
                                 <entry key="start.weekly.summary" value="@START.WEEKLY.SUMMARY@"/>
                                 <entry key="start.datetool.service" value="@START_UPDATE_DATETOOL@"/>

@@ -51,7 +51,7 @@ public class DiscussionDecorator implements Decorator, Configurable {
      */
     public Map getEnvironment(MonitorAction action) {
         Map env = new HashMap();
-        if (action.url!=null)
+        if (action.url != null)
             env.put(VAR_URL, action.url);
         env.put(VAR_ACTOR, action.actor);
         env.put(VAR_PERFORMED, action.performed);
@@ -65,20 +65,15 @@ public class DiscussionDecorator implements Decorator, Configurable {
 
         String changeMessage = "";
         switch (action.action) {
-            case ADD:
-                changeMessage = actionAdd; break;
             case REMOVE:
                 changeMessage = actionRemove; break;
-            case REPLY:
-                changeMessage = actionReply; break;
             case CENSORE:
                 changeMessage = actionCensore;
         }
 
         env.put(VAR_ACTION,changeMessage);
-//        env.put(EmailSender.KEY_SENDER_NAME, action.actor);
         env.put(EmailSender.KEY_SENT_DATE, action.performed);
-        env.put(EmailSender.KEY_SUBJECT, (String) action.getProperty(PROPERTY_NAME));
+        env.put(EmailSender.KEY_SUBJECT, action.getProperty(PROPERTY_NAME));
         env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_discussion.ftl");
         env.put(EmailSender.KEY_STATS_KEY, Constants.EMAIL_MONITOR_DISCUSSION);
 

@@ -21,27 +21,7 @@ package cz.abclinuxu.utils.email.monitor;
 /**
  * Enumaration of available objects, that can be monitored.
  */
-public class ObjectType {
-    private final String name;
-
-    public static final ObjectType DISCUSSION = new ObjectType("discussion");
-    public static final ObjectType DRIVER = new ObjectType("driver");
-    public static final ObjectType ITEM = new ObjectType("item");
-    public static final ObjectType DICTIONARY = new ObjectType("dictionary");
-    public static final ObjectType FAQ = new ObjectType("faq");
-    public static final ObjectType CONTENT = new ObjectType("content");
-    public static final ObjectType BAZAAR = new ObjectType("bazaar");
-    public static final ObjectType PERSONALITY = new ObjectType("personality");
-    public static final ObjectType BLOG = new ObjectType("blog"); // a blog story
-    public static final ObjectType SOFTWARE = new ObjectType("software"); // a software item
-    public static final ObjectType HARDWARE = new ObjectType("hardware"); // a hardware item
-    public static final ObjectType ARTICLE = new ObjectType("article"); // a hardware item
-
-    private ObjectType(String name) {
-        this.name = name;
-    }
-
-    public String toString() {
-        return name;
-    }
+public enum ObjectType {
+    ARTICLE, BAZAAR, BLOG, CONTENT, COMMENT, DICTIONARY, DISCUSSION, DRIVER, FAQ,
+    HARDWARE, ITEM,  PERSONALITY, SOFTWARE
 }

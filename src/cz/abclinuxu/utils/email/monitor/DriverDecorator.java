@@ -73,7 +73,7 @@ public class DriverDecorator implements Decorator, Configurable {
         String name = (String) action.getProperty(PROPERTY_NAME);
         if ( name==null ) {
             Persistence persistence = PersistenceFactory.getPersistence();
-            Item driver = (Item) persistence.findById(action.relation.getChild());
+            Item driver = (Item) persistence.findById(action.object);
             name = driver.getTitle();
         }
         env.put(VAR_NAME, name);

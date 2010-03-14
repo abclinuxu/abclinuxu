@@ -23,9 +23,10 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.extra.JobOfferManager;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.*;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.utils.email.monitor.Decorator;
+import cz.abclinuxu.utils.email.monitor.MonitorAction;
 import cz.abclinuxu.utils.format.HtmlToTextFormatter;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.Configurable;
@@ -47,7 +48,7 @@ import javax.mail.internet.InternetAddress;
 /**
  * Loads a comment and creates environment from it.
  */
-public class CommentDecorator implements Configurable {
+public class CommentDecorator implements Decorator, Configurable {
     public static final String PREF_SENDER = "sender.address";
 
     public static final String VAR_CONTENT = "CONTENT";
@@ -70,13 +71,12 @@ public class CommentDecorator implements Configurable {
      * render the email.
      * @return environment
      */
-    public static Map getEnvironment(Comment comment) {
+    public Map getEnvironment(CommentNotification comment) {
         HashMap env = new HashMap();
         Persistence persistence = PersistenceFactory.getPersistence();
-        HtmlToTextFormatter formatter = new HtmlToTextFormatter();
         Element root;
-        String authorName = null;
-        cz.abclinuxu.data.view.Comment dizComment;
+        String authorName = comment.getActor();
+        Comment dizComment;
 
         if (comment.recordId == 0) {
             Item item = (Item) persistence.findById(new Item(comment.discussionId));
@@ -86,22 +86,15 @@ public class CommentDecorator implements Configurable {
             Record record = (Record) persistence.findById(new Record(comment.recordId));
             DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
             dizComment = dizRecord.getComment(comment.threadId);
-            root = (Element) dizComment.getData().getRootElement();
+            root = dizComment.getData().getRootElement();
         }
 
         Integer parent = dizComment.getParent();
         if (parent == null)
-            parent = new Integer(0);
+            parent = 0;
         String text = root.elementText("text");
-        text = formatter.format(text);
+        text = HtmlToTextFormatter.format(text);
 
-        authorName = dizComment.getAnonymName();
-        if (authorName == null) {
-            User user = (User) persistence.findById(new User(dizComment.getAuthor().intValue()));
-            authorName = user.getNick();
-            if (authorName == null)
-                authorName = user.getName();
-        }
         authorName = Misc.removeDiacritics(authorName);
 
         env.put(VAR_CONTENT, text);
@@ -125,6 +118,11 @@ public class CommentDecorator implements Configurable {
         env.put(VAR_JOB_OFFER, offer);
 
         return env;
+    }
+
+    @Override
+    public Map getEnvironment(MonitorAction action) {
+        return getEnvironment((CommentNotification) action);
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {

@@ -18,14 +18,11 @@
  */
 package cz.abclinuxu.utils.email.monitor;
 
-import org.dom4j.Element;
-
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Date;
 import java.util.Collections;
 
-import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.GenericObject;
 
@@ -40,37 +37,13 @@ public class MonitorPool {
         singleton = new MonitorPool();
     }
 
-    List pool;
+    List<MonitorAction> pool;
 
     /**
      * Default constructor.
      */
     private MonitorPool() {
-        pool = Collections.synchronizedList(new LinkedList());
-    }
-
-    /**
-     * Gives access to singleton.
-     */
-    public static MonitorPool getInstance() {
-        return singleton;
-    }
-
-    /**
-     * Finds out, whether the pool is empty.
-     * @return true, if the pool doesn't contain any unprocessed MonitorAction.
-     */
-    public boolean isEmpty() {
-        return pool.size()==0;
-    }
-
-    /**
-     * Extracts the first MonitorAction from the queue.
-     * @return first MonitorAction
-     * @throws java.lang.IndexOutOfBoundsException If there is no element in the pool.
-     */
-    public MonitorAction getFirst() {
-        return (MonitorAction) pool.remove(0);
+        pool = Collections.synchronizedList(new LinkedList<MonitorAction>());
     }
 
     /**
@@ -93,5 +66,32 @@ public class MonitorPool {
         action.gatherRecipients();
 
         singleton.pool.add(action);
+    }
+
+    /**
+     * Gives access to singleton.
+     */
+    public static MonitorPool getInstance() {
+        return singleton;
+    }
+
+    /**
+     * Finds out, whether the pool is empty.
+     *
+     * @return true, if the pool doesn't contain any unprocessed MonitorAction.
+     */
+    public boolean isEmpty() {
+        return pool.isEmpty();
+    }
+
+    /**
+     * Extracts the first MonitorAction from the queue.
+     *
+     * @return first MonitorAction
+     * @throws java.lang.IndexOutOfBoundsException
+     *          If there is no element in the pool.
+     */
+    public MonitorAction getFirst() {
+        return pool.remove(0);
     }
 }

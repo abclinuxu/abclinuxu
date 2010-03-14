@@ -23,7 +23,8 @@ import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
-import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 
 import java.util.*;
 
@@ -34,16 +35,16 @@ import java.util.*;
 public class MonitorAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(MonitorAction.class);
     /** user, whose action triggered this action */
-    String actor;
-    Integer actorId;
-    UserAction action;
-    ObjectType type;
-    String url;
-    GenericDataObject object;
-    Relation relation;
-    Date performed;
-    Map map;
-    Set<Integer> recipients;
+    protected String actor;
+    protected Integer actorId;
+    protected UserAction action;
+    protected ObjectType type;
+    protected String url;
+    protected GenericDataObject object;
+    protected Relation relation;
+    protected Date performed;
+    protected Map<String, Object> map;
+    protected Set<Integer> recipients = new HashSet<Integer>();
 
     /**
      * Creates new instance of MonitorAction.
@@ -54,7 +55,7 @@ public class MonitorAction {
      * @param relation Parent of the affected GenericObject.
      */
     public MonitorAction(User user, UserAction action, ObjectType type, Relation relation, String url) {
-        this.actor = user.getNick()!=null ? user.getNick():user.getName();
+        this.actor = user.getNick() != null ? user.getNick() : user.getName();
         this.actorId = user.getId();
         this.action = action;
         this.type = type;
@@ -79,8 +80,63 @@ public class MonitorAction {
         this.relation = relation;
     }
 
+    /**
+     * Sets value identified by key as property.
+     * @param key name of property
+     * @param value property
+     */
+    public void setProperty(String key, Object value) {
+        if (map == null)
+            map = new HashMap<String, Object>(3, 1.0f);
+        map.put(key,value);
+    }
+
+    /**
+     * Gets value of property identified by key.
+     * @param key name of property
+     * @return property
+     */
+    public Object getProperty(String key) {
+        if (map == null)
+            return null;
+        return map.get(key);
+    }
+
+    /**
+     * Generates a list of notification's recipients by walking through the Relation tree.
+     * User, who performed this action, will be skipped.
+     */
+    public void gatherRecipients() {
+        Persistence persistence = PersistenceFactory.getPersistence();
+        GenericDataObject obj = (GenericDataObject) persistence.findById(this.object);
+
+        Relation rel = this.relation;
+        do {
+            recipients.addAll(MonitorTool.get(obj));
+
+            int upper = rel.getUpper();
+            if (upper == 0)
+                break;
+
+            rel = (Relation) persistence.findById(new Relation(upper));
+            GenericObject genobj = rel.getChild();
+            if (!(genobj instanceof GenericDataObject))
+                break;
+
+            obj = (GenericDataObject) persistence.findById(genobj);
+
+            // send discussion changes only to people watching the discussion
+            // or whole forum
+            if (this.type == ObjectType.COMMENT || this.type == ObjectType.DISCUSSION)
+                if (!(obj instanceof Category) || obj.getType() != Category.FORUM)
+                    break;
+        } while (true);
+
+        recipients.remove(this.actorId);
+    }
+
     public String toString() {
-        return actor+": "+action+" on "+type+" "+relation;
+        return actor + ": " + action + " on " + type + " " + relation;
     }
 
     public String getActor() {
@@ -117,64 +173,5 @@ public class MonitorAction {
 
     public Set<Integer> getRecipients() {
         return recipients;
-    }
-
-    /**
-     * Sets value identified by key as property.
-     * @param key name of property
-     * @param value property
-     */
-    public void setProperty(String key, Object value) {
-        if (map == null)
-            map = new HashMap(3,1.0f);
-        map.put(key,value);
-    }
-
-    /**
-     * Gets value of property identified by key.
-     * @param key name of property
-     * @return property
-     */
-    public Object getProperty(String key) {
-        if (map == null)
-            return null;
-        return map.get(key);
-    }
-
-    /**
-     * Generates a list of notification's recipients by walking through the Relation tree.
-     * User, who performed this action, will be skipped.
-     */
-    public void gatherRecipients() {
-        Relation rel = this.relation;
-        GenericDataObject obj = this.object;
-        Tools.sync(obj);
-
-        recipients = new HashSet();
-        do {
-            recipients.addAll(MonitorTool.get(obj));
-
-            int upper = rel.getUpper();
-            if ( upper == 0)
-                break;
-
-            rel = new Relation(upper);
-            Tools.sync(rel);
-
-            GenericObject genobj = rel.getChild();
-            if (!(genobj instanceof GenericDataObject))
-                break;
-
-            obj = (GenericDataObject) genobj;
-
-            // send discussion changes only to people watching the discussion
-            // or whole forum
-            if (ObjectType.DISCUSSION.equals(this.type)) {
-                if (!(obj instanceof Category) || obj.getType() != Category.FORUM)
-                    rel = null;
-            }
-        } while (rel != null);
-
-        recipients.remove(this.actorId);
     }
 }

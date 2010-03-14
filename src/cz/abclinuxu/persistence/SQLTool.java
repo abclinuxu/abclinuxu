@@ -1315,7 +1315,7 @@ public final class SQLTool implements Configurable {
      */
     public List<Integer> findUsersWithForumByEmail() {
         StringBuilder sb = new StringBuilder("select cislo from uzivatel where ");
-        CompareCondition condition = new CompareCondition(Field.DATA, Operation.LIKE, "%<communication><email valid=\"yes\"%<forum>yes%</email>%");
+        CompareCondition condition = new CompareCondition(Field.DATA, Operation.LIKE, "%<communication>%<email valid=\"yes\"%<forum>yes%</email>%");
         Qualifier[] qualifiers = new Qualifier[]{condition};
         List params = new ArrayList();
         appendQualifiers(sb, qualifiers, params, null, null);

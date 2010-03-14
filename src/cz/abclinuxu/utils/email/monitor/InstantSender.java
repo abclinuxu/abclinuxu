@@ -22,6 +22,7 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.utils.email.forum.CommentDecorator;
 
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +39,7 @@ public class InstantSender extends Thread implements Configurable {
     public static final String PREF_SLEEP_INTERVAL = "sleep";
 
     static InstantSender singleton = new InstantSender();
+    static Decorator commentDecorator = new CommentDecorator();
     static Decorator discussionDecorator = new DiscussionDecorator();
     static Decorator faqDecorator = new FaqDecorator();
     static Decorator driverDecorator = new DriverDecorator();
@@ -66,13 +68,20 @@ public class InstantSender extends Thread implements Configurable {
     public void run() {
         log.info("starting");
         MonitorPool pool = MonitorPool.getInstance();
-        MonitorAction action = null;
+        MonitorAction action;
 
+        //noinspection InfiniteLoopStatement
         while (true) {
             try {
-                while ( pool.isEmpty()) {
-                    try { sleep(waitInterval); } catch (InterruptedException e) { log.error("interrupted!");}
+                if (pool.isEmpty()) {
+                    try {
+                        sleep(waitInterval);
+                    } catch (InterruptedException e) {
+                        log.error("interrupted!");
+                    }
+                    continue;
                 }
+
                 action = pool.getFirst();
 
                 if (log.isDebugEnabled())
@@ -80,7 +89,7 @@ public class InstantSender extends Thread implements Configurable {
 
                 Map env = chooseDecorator(action).getEnvironment(action);
                 Set<Integer> users = action.getRecipients();
-                if (users.size()>0)
+                if (! users.isEmpty())
                     EmailSender.sendEmailToUsers(env, users);
             } catch (Exception e) {
                 log.error("Unknown exception!", e);
@@ -93,26 +102,32 @@ public class InstantSender extends Thread implements Configurable {
      * @return Decorator
      */
     private Decorator chooseDecorator(MonitorAction action) {
-        if (ObjectType.DRIVER.equals(action.type) )
-            return driverDecorator;
-        if (ObjectType.DICTIONARY.equals(action.type) )
-            return dictDecorator;
-        if (ObjectType.SOFTWARE.equals(action.type) )
-            return swDecorator;
-        if (ObjectType.HARDWARE.equals(action.type) )
-            return hwDecorator;
-        if (ObjectType.PERSONALITY.equals(action.type) )
-            return persDecorator;
-        if (ObjectType.DISCUSSION.equals(action.type) )
-            return discussionDecorator;
-        if (ObjectType.ITEM.equals(action.type) || ObjectType.CONTENT.equals(action.type))
-            return itemDecorator;
-        if (ObjectType.FAQ.equals(action.type) )
-            return faqDecorator;
-        if (ObjectType.BLOG.equals(action.type) )
-            return blogDecorator;
-        if (ObjectType.ARTICLE.equals(action.type))
-            return articleDecorator;
+        switch (action.type) {
+            case ARTICLE:
+                return articleDecorator;
+            case BLOG:
+                return blogDecorator;
+            case COMMENT:
+                return commentDecorator;
+            case CONTENT:
+                return itemDecorator;
+            case DICTIONARY:
+                return dictDecorator;
+            case DISCUSSION:
+                return discussionDecorator;
+            case DRIVER:
+                return driverDecorator;
+            case FAQ:
+                return faqDecorator;
+            case ITEM:
+                return itemDecorator;
+            case HARDWARE:
+                return hwDecorator;
+            case PERSONALITY:
+                return persDecorator;
+            case SOFTWARE:
+                return swDecorator;
+        }
         return null;
     }
 

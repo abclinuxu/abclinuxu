@@ -50,6 +50,7 @@ import org.dom4j.Element;
  * This class generates various feeds for objects in the portal.
  * User: literakl
  * Date: 16.1.2005
+ * TODO calls from servlets must be asynchronous, non-blocking for current user!
  */
 public class FeedGenerator implements Configurable {
     private static Logger log = Logger.getLogger(FeedGenerator.class);

@@ -4,7 +4,7 @@ Kdo:   ${ACTOR}
 Akce:  ${ACTION}
 Titulek: ${NAME}
 Datum: ${DATE.show(PERFORMED,"CZ_FULL",false)}
-URL:   ${URL?default("neni dostupne")}
+URL:   ${URL!"neni dostupne"}
 
 <#if CONTENT??>Obsah:
 

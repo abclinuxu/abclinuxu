@@ -72,7 +72,7 @@ public class PersonalityDecorator implements Decorator, Configurable {
         String name = (String) action.getProperty(PROPERTY_NAME);
         if ( name==null ) {
             Persistence persistence = PersistenceFactory.getPersistence();
-            Item obj = (Item) persistence.findById(action.relation.getChild());
+            Item obj = (Item) persistence.findById(action.object);
             name = Tools.childName(obj);
         }
         env.put(VAR_NAME, name);

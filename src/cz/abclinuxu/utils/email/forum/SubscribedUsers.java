@@ -37,10 +37,10 @@ public final class SubscribedUsers {
         singleton = new SubscribedUsers();
     }
 
-    HashMap users;
+    HashMap<Integer, Subscription> users;
 
     private SubscribedUsers() {
-        users = new HashMap();
+        users = new HashMap<Integer, Subscription>();
         init();
     }
 
@@ -74,16 +74,16 @@ public final class SubscribedUsers {
      * todo call it, when someone changes his email
      */
     public synchronized void replaceEmail(int id, String email) {
-        Subscription subscription = (Subscription) users.get(new Integer(id));
-        if (subscription!=null)
+        Subscription subscription = users.get(new Integer(id));
+        if (subscription != null)
             subscription.setEmail(email);
     }
 
     /**
      * @return currently available Subscriptions.
      */
-    public synchronized List getSubscriptions() {
-        return new ArrayList(users.values());
+    public synchronized List<Subscription> getSubscriptions() {
+        return new ArrayList<Subscription>(users.values());
     }
 
     /**

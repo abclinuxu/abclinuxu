@@ -35,7 +35,6 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.email.monitor.InstantSender;
-import cz.abclinuxu.utils.email.forum.CommentSender;
 import cz.abclinuxu.persistence.extra.JobOfferManager;
 import cz.abclinuxu.data.view.PropertySet;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
@@ -69,7 +68,6 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_VARIABLE_FETCHER = "variable.fetcher";
     public static final String PREF_POOL_MONITOR = "pool.monitor";
     public static final String PREF_ABC_MONITOR = "abc.monitor";
-    public static final String PREF_FORUM_MAIL_GATEWAY = "forum.mail.gateway";
     public static final String PREF_WEEKLY_EMAILS = "weekly.emails";
     public static final String PREF_WEEKLY_SUMMARY = "weekly.summary";
     public static final String PREF_UPDATE_DATETOOL = "datetool.service";
@@ -163,7 +161,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         startSendingWeeklyEmails();
         startWeeklySummary();
         startObjectMonitor();
-        startForumSender();
         startCalculateUserScoreService();
         startCalculateSubportalScoreService();
         startDateToolUpdateService();
@@ -356,18 +353,6 @@ public class AbcInit extends HttpServlet implements Configurable {
     }
 
     /**
-     * Sends notifications, when monitored object is changed.
-     */
-    protected void startForumSender() {
-        if ( !isSet(PREF_FORUM_MAIL_GATEWAY) ) {
-            log.info("Forum email gateway configured not to run");
-            return;
-        }
-        CommentSender sender = CommentSender.getInstance();
-        sender.start();
-    }
-
-    /**
      * Send weekly emails each saturday noon.
      */
     private void startSendingWeeklyEmails() {
@@ -525,7 +510,6 @@ public class AbcInit extends HttpServlet implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         services.put(PREF_ABC_MONITOR, prefs.getBoolean(PREF_START + PREF_ABC_MONITOR, true));
         services.put(PREF_POOL_MONITOR, prefs.getBoolean(PREF_START + PREF_POOL_MONITOR, true));
-        services.put(PREF_FORUM_MAIL_GATEWAY, prefs.getBoolean(PREF_START + PREF_FORUM_MAIL_GATEWAY, true));
         services.put(PREF_RSS_GENERATOR, prefs.getBoolean(PREF_START + PREF_RSS_GENERATOR, true));
         services.put(PREF_RSS_MONITOR, prefs.getBoolean(PREF_START + PREF_RSS_MONITOR, true));
         services.put(PREF_VARIABLE_FETCHER, prefs.getBoolean(PREF_START + PREF_VARIABLE_FETCHER, true));

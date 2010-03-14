@@ -45,7 +45,7 @@ import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.parser.clean.HtmlChecker;
 import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.utils.email.monitor.*;
-import cz.abclinuxu.utils.email.forum.ForumPool;
+import cz.abclinuxu.utils.email.forum.CommentNotification;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.security.Roles;
@@ -323,13 +323,11 @@ public class EditDiscussion implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
 
-        Relation relation = (Relation) env.get(VAR_RELATION);
+        Relation parentRelation = (Relation) env.get(VAR_RELATION);
+        Tools.sync(parentRelation);
+
         Item discussion = new Item(0,Item.DISCUSSION);
-
-		Tools.sync(relation);
-
 		discussion.setSubType(Constants.SUBTYPE_QUESTION);
-
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         root.addElement("comments").setText("0");
@@ -346,45 +344,41 @@ public class EditDiscussion implements AbcAction {
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
             comment.setCreated(new Date());
             if (user != null)
-                comment.setAuthor(new Integer(user.getId()));
+                comment.setAuthor(user.getId());
             env.put(VAR_PREVIEW, comment);
             return FMTemplateSelector.select("EditDiscussion","ask_confirm",env,request);
         }
 
         persistence.create(discussion);
-        Relation rel2 = new Relation(relation.getChild(),discussion,relation.getId());
-        persistence.create(rel2);
-        rel2.getParent().addChildRelation(rel2);
+        Relation relation = new Relation(parentRelation.getChild(),discussion,parentRelation.getId());
+        persistence.create(relation);
+        relation.getParent().addChildRelation(relation);
 
-        storeAttachments(rel2, discussion, comment, env, request);
+        storeAttachments(relation, discussion, comment, env, request);
 
         TagTool.assignDetectedTags(discussion, user);
 
-        // run monitor
-        String url = AbcConfig.getAbsoluteUrl() + Tools.getUrlForDiscussion(rel2);
-        MonitorAction action;
-        if (user!=null)
-            action = new MonitorAction(user, UserAction.ADD, ObjectType.DISCUSSION, relation, url);
-        else {
-            String author = (String) params.get(PARAM_AUTHOR);
-            action = new MonitorAction(author, UserAction.ADD, ObjectType.DISCUSSION, relation, url);
-        }
-        action.setProperty(DiscussionDecorator.PROPERTY_NAME, comment.getTitle());
-        String content = root.elementText("text");
-        action.setProperty(DiscussionDecorator.PROPERTY_CONTENT, content);
-        MonitorPool.scheduleMonitorAction(action);
+        String url = Tools.getUrlForDiscussion(relation);
+        String completeUrl = AbcConfig.getAbsoluteUrl() + url;
 
-        // run email forum and refresh RSS
-        ForumPool.submitComment(rel2, discussion.getId(), 0, 0);
-        FeedGenerator.updateForum(relation.getId());
+        // run monitor
+        CommentNotification commentNotification;
+        if (comment.getAuthor() != null) {
+            commentNotification = new CommentNotification(user, parentRelation, comment, completeUrl, true);
+        } else
+            commentNotification = new CommentNotification(comment.getAnonymName(), parentRelation, comment, completeUrl, true);
+        MonitorPool.scheduleMonitorAction(commentNotification);
+
+        // refresh RSS and caches
+        FeedGenerator.updateForum(parentRelation.getId());
         FeedGenerator.updateForumAll();
         VariableFetcher.getInstance().refreshQuestions();
-        VariableFetcher.getInstance().refreshForumQuestions(relation.getId());
+        VariableFetcher.getInstance().refreshForumQuestions(parentRelation.getId());
 
         if (redirect) {
-            urlUtils.redirect(response, Tools.getUrlForDiscussion(rel2));
+            urlUtils.redirect(response, url);
         } else
-            env.put(VAR_RELATION, rel2);
+            env.put(VAR_RELATION, relation);
 
         return null;
     }
@@ -454,13 +448,12 @@ public class EditDiscussion implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
-        if ( discussion==null )
+        if (discussion == null)
             throw new MissingArgumentException("Chybí parametr dizId!");
         discussion = (Item) persistence.findById(discussion).clone();
 
-        String xpath = "/data/frozen";
-        Element element = (Element) discussion.getData().selectSingleNode(xpath);
-        if ( element!=null )
+        Element element = (Element) discussion.getData().selectSingleNode("/data/frozen");
+        if (element != null)
             return ServletUtils.showErrorPage("Diskuse byla zmrazena - není možné přidat další komentář!", env, request);
 
         Record record;
@@ -536,26 +529,12 @@ public class EditDiscussion implements AbcAction {
         setCommentsCount(itemRoot, dizRecord);
         persistence.update(discussion);
 
-        // run monitor
-        String url = AbcConfig.getAbsoluteUrl() + Tools.getUrlForDiscussion(relation);
-        url += "#" + comment.getId();
-        MonitorAction action;
-        if (user!=null)
-            action = new MonitorAction(user, UserAction.REPLY, ObjectType.DISCUSSION, relation, url);
-        else {
-            String author = (String) params.get(PARAM_AUTHOR);
-            action = new MonitorAction(author, UserAction.REPLY, ObjectType.DISCUSSION, relation, url);
-        }
-        action.setProperty(DiscussionDecorator.PROPERTY_NAME, comment.getTitle());
-        String content = root.elementText("text");
-        action.setProperty(DiscussionDecorator.PROPERTY_CONTENT, content);
-        MonitorPool.scheduleMonitorAction(action);
-
-        // run email forum and update RSS
+        // refresh RSS and caches
+        boolean forum = false;
         if (relation.getParent() instanceof Category) {
             Category parent = (Category) persistence.findById(relation.getParent());
             if (parent.getType() == Category.FORUM) {
-                ForumPool.submitComment(relation, discussion.getId(), record.getId(), comment.getId());
+                forum = true;
                 FeedGenerator.updateForum(relation.getUpper());
                 FeedGenerator.updateForumAll();
                 VariableFetcher.getInstance().refreshQuestions();
@@ -563,11 +542,21 @@ public class EditDiscussion implements AbcAction {
             }
         }
 
+        String url = (String) params.get(PARAM_URL);
+        if (url == null)
+            url = Tools.getUrlForDiscussion(relation);
+        url += "#" + comment.getId();
+        String completeUrl = AbcConfig.getAbsoluteUrl() + url;
+
+        // run monitor
+        CommentNotification commentNotification;
+        if (comment.getAuthor() != null) {
+            commentNotification = new CommentNotification(user, relation, comment, completeUrl, forum);
+        } else
+            commentNotification = new CommentNotification(comment.getAnonymName(), relation, comment, completeUrl, forum);
+        MonitorPool.scheduleMonitorAction(commentNotification);
+
         if (redirect) {
-            url = (String) params.get(PARAM_URL);
-            if (url==null)
-                url = Tools.getUrlForDiscussion(relation);
-            url += "#"+comment.getId();
             urlUtils.redirect(response, url, false);
         }
         return null;
@@ -640,21 +629,6 @@ public class EditDiscussion implements AbcAction {
         return null;
     }
 
-    private static Comment getDiscussionComment(Item item, int thread) {
-        Map<String, List<Relation>> childrenMap = Tools.groupByType(item.getChildren());
-
-        List recordRelations = childrenMap.get(Constants.TYPE_RECORD);
-        if (recordRelations == null)
-            return null;
-
-        Relation child = (Relation) recordRelations.get(0);
-        Record record = (Record) child.getChild();
-        record = (Record) PersistenceFactory.getPersistence().findById(record);
-
-        DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
-        return dizRecord.getComment(thread);
-    }
-
     /**
      * Changes censore flag on given thread.
      */
@@ -665,7 +639,7 @@ public class EditDiscussion implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
-        if ( discussion==null )
+        if (discussion == null)
             throw new MissingArgumentException("Chybí parametr dizId!");
         discussion = (Item) persistence.findById(discussion).clone();
         env.put(VAR_DISCUSSION, discussion);
@@ -673,7 +647,7 @@ public class EditDiscussion implements AbcAction {
         Relation relation;
         int id = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
         List children = discussion.getChildren();
-        if (id == 0 || children.size() == 0) {
+        if (id == 0 || children.isEmpty()) {
             ServletUtils.addError(Constants.ERROR_GENERIC,"Nejde cenzurovat otázku!",env,request.getSession());
             relation = (Relation) env.get(VAR_RELATION);
             urlUtils.redirect(response, "/show/"+relation.getId());
@@ -684,40 +658,37 @@ public class EditDiscussion implements AbcAction {
         relation = (Relation) env.get(VAR_RELATION);
         DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
         RowComment comment = (RowComment) dizRecord.getComment(id);
-        if (comment != null) {
-            Element root = comment.getData().getRootElement();
-            Node node = root.selectSingleNode("censored");
-            if (node!=null) {
-                ActionProtector.ensureContract(request, EditDiscussion.class, true, false, false, true);
-                node.detach();
+        String url = Tools.getUrlForDiscussion(relation) + "#" + comment.getId();
+
+        Element root = comment.getData().getRootElement();
+        Node node = root.selectSingleNode("censored");
+        if (node != null) {
+            ActionProtector.ensureContract(request, EditDiscussion.class, true, false, false, true);
+            node.detach();
+            comment.set_dirty(true);
+            AdminLogger.logEvent(user, "odstranena cenzura na vlakno " + id + " diskuse " + discussion.getId() + ", relace " + relation.getId());
+        } else {
+            String action = (String) params.get(PARAM_ACTION);
+            if (ACTION_CENSORE_COMMENT_STEP2.equals(action)) {
+                Element censored = root.addElement("censored");
+                censored.addAttribute("admin", Integer.toString(user.getId()));
+                censored.setText((String) params.get(PARAM_TEXT));
                 comment.set_dirty(true);
-                AdminLogger.logEvent(user,"odstranena cenzura na vlakno "+id+" diskuse "+discussion.getId()+", relace "+relation.getId());
+                persistence.update(record);
+
+                // run monitor
+                String completeUrl = AbcConfig.getAbsoluteUrl() + url;
+                MonitorAction monitor = new MonitorAction(user, UserAction.CENSORE, ObjectType.DISCUSSION, relation, completeUrl);
+                monitor.setProperty(DiscussionDecorator.PROPERTY_NAME, comment.getTitle());
+                MonitorPool.scheduleMonitorAction(monitor);
+
+                AdminLogger.logEvent(user, "uvalil cenzuru na vlakno " + id + " diskuse " + discussion.getId() + ", relace " + relation.getId());
             } else {
-                String action = (String) params.get(PARAM_ACTION);
-                if ( ACTION_CENSORE_COMMENT_STEP2.equals(action) ) {
-                    Element censored = root.addElement("censored");
-                    censored.addAttribute("admin", Integer.toString(user.getId()));
-                    censored.setText((String) params.get(PARAM_TEXT));
-                    comment.set_dirty(true);
-
-                    // run monitor
-                    String url = AbcConfig.getAbsoluteUrl()+urlUtils.getPrefix()+"/show/"+relation.getId();
-                    MonitorAction monitor = new MonitorAction(user, UserAction.CENSORE, ObjectType.DISCUSSION, relation, url);
-                    monitor.setProperty(DiscussionDecorator.PROPERTY_NAME, comment.getTitle());
-                    MonitorPool.scheduleMonitorAction(monitor);
-
-                    AdminLogger.logEvent(user, "uvalil cenzuru na vlakno "+id+" diskuse "+discussion.getId()+", relace "+relation.getId());
-                } else {
-                    env.put(VAR_THREAD, getUnthreadedComment(comment));
-                    return FMTemplateSelector.select("EditDiscussion", "censore", env, request);
-                }
+                env.put(VAR_THREAD, getUnthreadedComment(comment));
+                return FMTemplateSelector.select("EditDiscussion", "censore", env, request);
             }
         }
-        persistence.update(record);
 
-        String url = relation.getUrl();
-        if (url == null)
-            url = urlUtils.getPrefix() + "/show/" + relation.getId();
         urlUtils.redirect(response, url, false);
         return null;
     }
@@ -798,10 +769,8 @@ public class EditDiscussion implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
         AdminLogger.logEvent(user, "upravil vlakno "+threadId+" diskuse "+discussion.getId()+", relace "+relation.getId());
 
+        String url = Tools.getUrlForDiscussion(relation) + "#" + comment.getId();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        String url = relation.getUrl();
-        if (url == null)
-            url = urlUtils.getPrefix() + "/show/" + relation.getId();
         urlUtils.redirect(response, url, false);
         return null;
     }
@@ -898,17 +867,13 @@ public class EditDiscussion implements AbcAction {
         SQLTool.getInstance().setUpdatedTimestamp(discussion, lastUpdate);
 
         // run monitor
-        String url = mainRelation.getUrl();
-        if (url == null)
-            url = AbcConfig.getAbsoluteUrl() + urlUtils.getPrefix() + "/show/" + mainRelation.getId();
-        MonitorAction action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DISCUSSION, mainRelation, url);
+        String url = Tools.getUrlForDiscussion(relation) + "#" + comment.getId();
+        String completeUrl = AbcConfig.getAbsoluteUrl() + url;
+        MonitorAction action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DISCUSSION, mainRelation, completeUrl);
         action.setProperty(DiscussionDecorator.PROPERTY_NAME, title);
         action.setProperty(DiscussionDecorator.PROPERTY_CONTENT, content);
         MonitorPool.scheduleMonitorAction(action);
 
-        url = mainRelation.getUrl();
-        if (url == null)
-            url = urlUtils.getPrefix() + "/show/" + mainRelation.getId();
         urlUtils.redirect(response, url, false);
         return null;
     }
@@ -936,9 +901,7 @@ public class EditDiscussion implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "zmrazil diskusi "+discussion.getId()+", relace "+relation.getId());
 
-        String url = relation.getUrl();
-        if (url == null)
-            url = Tools.getUrlForDiscussion(relation);
+        String url = Tools.getUrlForDiscussion(relation);
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);
         return null;
@@ -949,7 +912,7 @@ public class EditDiscussion implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
-        if ( discussion==null )
+        if (discussion == null)
             throw new MissingArgumentException("Chybí parametr dizId!");
         discussion = (Item) persistence.findById(discussion);
         env.put(VAR_DISCUSSION, discussion);
@@ -965,12 +928,12 @@ public class EditDiscussion implements AbcAction {
 
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
-        if ( threadId==0 )
+        if (threadId == 0)
             throw new MissingArgumentException("Chybí parametr threadId!");
         int parentId = Misc.parseInt((String) params.get(PARAM_PARENT_THREAD), -1);
-        if ( parentId==-1 )
+        if (parentId == -1)
             throw new MissingArgumentException("Chybí parametr parentId!");
-        if ( parentId==threadId ) {
+        if (parentId == threadId) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Pokoušíte se vytvořit smyčku ve stromě!", env, null);
             return actionMoveThread(request, env);
         }
@@ -1006,8 +969,9 @@ public class EditDiscussion implements AbcAction {
         persistence.update(record);
         AdminLogger.logEvent(user, "presunul vlakno "+threadId+", puvodni predek="+originalParentId+", novy predek="+parentId+", relace "+relation.getId());
 
+        String url = Tools.getUrlForDiscussion(relation) + "#" + comment.getId();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+relation.getId());
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -1022,7 +986,7 @@ public class EditDiscussion implements AbcAction {
 
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
-        if ( threadId==0 )
+        if (threadId == 0)
             throw new MissingArgumentException("Chybí parametr threadId!");
 
         Record record = (Record) ((Relation) discussion.getChildren().get(0)).getChild();
@@ -1050,8 +1014,9 @@ public class EditDiscussion implements AbcAction {
             AdminLogger.logEvent(user, "presunul vlakno "+threadId+" o uroven vys, relace "+relation.getId());
         }
 
+        String url = Tools.getUrlForDiscussion(relation) + "#" + comment.getId();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+relation.getId());
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -1066,7 +1031,7 @@ public class EditDiscussion implements AbcAction {
 
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
-        if ( threadId==0 )
+        if (threadId == 0)
             throw new MissingArgumentException("Chybí parametr threadId!");
 
         Comment comment = dizRecord.getComment(threadId);
@@ -1087,7 +1052,7 @@ public class EditDiscussion implements AbcAction {
 
         Relation currentDizRelation = (Relation) env.get(VAR_RELATION), newDizRelation;
         Item currentDiz = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
-        if ( currentDiz==null )
+        if (currentDiz == null)
             throw new MissingArgumentException("Chybí parametr dizId!");
         currentDiz = (Item) persistence.findById(currentDiz).clone();
         Element currentItemRoot = currentDiz.getData().getRootElement();
@@ -1120,9 +1085,7 @@ public class EditDiscussion implements AbcAction {
         // otazka nove diskuse
         Map newParams = new HashMap();
         newParams.put(PARAM_TITLE, movedComment.getTitle());
-        String url = currentDizRelation.getUrl();
-        if (url == null)
-            url = urlUtils.getPrefix()+"/show/"+currentDizRelation.getId();
+        String url = Tools.getUrlForDiscussion(currentDizRelation);
         newParams.put(PARAM_TEXT, "<p class=\"threadMoved\">Diskuse vznikla z vlákna <a href=\""+url+"\">této</a> diskuse.</p>");
         setTitle(newParams, newDiz, env);
         setTextNoHTMLCheck(newParams, newItemRoot, env);
@@ -1147,7 +1110,7 @@ public class EditDiscussion implements AbcAction {
         // presun vsechny potomky (cele vlakno)
         LinkedList stack = new LinkedList();
         stack.add(movedComment);
-        while (stack.size() > 0) {
+        while (! stack.isEmpty()) {
             RowComment comment = (RowComment) stack.removeFirst();
             comment.setRowId(0);
             comment.setRecord(0);
@@ -1171,7 +1134,7 @@ public class EditDiscussion implements AbcAction {
         newRecordRelation.getParent().addChildRelation(newRecordRelation);
 
         // v puvodni diskusi ponechat vysvetlujici text
-        url = urlUtils.getPrefix()+"/show/"+newDizRelation.getId();
+        url = Tools.getUrlForDiscussion(newRecordRelation);
         newParams.put(PARAM_TEXT, "<p class=\"threadMoved\">Vlákno bylo přesunuto do <a href=\""+url+"\">samostatné</a> diskuse.</p>");
         setTextNoHTMLCheck(newParams, originalComment.getData().getRootElement(), env);
         originalComment.set_dirty(true);
@@ -1179,7 +1142,7 @@ public class EditDiscussion implements AbcAction {
 
         AdminLogger.logEvent(user, "presunul vlakno "+threadId+" diskuse rid="+currentDizRelation.getId()+" do nove diskuse rid="+newDizRelation);
 
-        urlUtils.redirect(response, "/show/"+newDizRelation.getId());
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -1342,7 +1305,7 @@ public class EditDiscussion implements AbcAction {
         if ( previousAuthor!=null )
             previousAuthor.detach();
 
-        if ( user!=null ) {
+        if (user != null) {
             comment.setAuthor(user.getId());
         } else {
             String tmp = Misc.getString(params, PARAM_AUTHOR_ID);

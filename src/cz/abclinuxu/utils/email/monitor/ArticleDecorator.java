@@ -62,7 +62,7 @@ public class ArticleDecorator implements Decorator, Configurable {
         env.put(EmailSender.KEY_SENT_DATE, action.performed);
 
         Persistence persistence = PersistenceFactory.getPersistence();
-        Item article = (Item) persistence.findById(action.relation.getChild());
+        Item article = (Item) persistence.findById(action.object);
             
         String name = (String) action.getProperty(PROPERTY_NAME);
         if ( name==null )
