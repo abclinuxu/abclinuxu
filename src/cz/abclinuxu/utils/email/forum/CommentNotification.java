@@ -22,7 +22,6 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.RowComment;
-import cz.abclinuxu.data.view.ItemComment;
 import cz.abclinuxu.utils.email.monitor.MonitorAction;
 import cz.abclinuxu.utils.email.monitor.ObjectType;
 import cz.abclinuxu.utils.email.monitor.UserAction;
@@ -60,6 +59,7 @@ public class CommentNotification extends MonitorAction {
     }
 
     private void setValues(Relation relation, Comment comment, boolean forum) {
+        this.relationId = relation.getId();
         this.discussionId = relation.getChild().getId();
         this.threadId = comment.getId();
         this.forum = forum;

@@ -55,6 +55,7 @@ public class CommentDecorator implements Decorator, Configurable {
     public static final String VAR_RELATION_ID = "RELATION_ID";
     public static final String VAR_DISCUSSION_ID = "DISCUSSION_ID";
     public static final String VAR_THREAD_ID = "THREAD_ID";
+    public static final String VAR_URL = "URL";
     public static final String VAR_JOB_OFFER = "JOB";
 
     static int counter;
@@ -101,6 +102,7 @@ public class CommentDecorator implements Decorator, Configurable {
         env.put(VAR_RELATION_ID, Integer.toString(comment.relationId));
         env.put(VAR_DISCUSSION_ID, Integer.toString(comment.discussionId));
         env.put(VAR_THREAD_ID, Integer.toString(comment.threadId));
+        env.put(VAR_URL, comment.getUrl());
         env.put(EmailSender.KEY_SUBJECT, dizComment.getTitle());
         try {
             Address from = new InternetAddress(sender, authorName);

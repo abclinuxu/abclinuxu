@@ -1,6 +1,6 @@
 ${CONTENT}
 
-Zobrazit: http://www.abclinuxu.cz/forum/show/${RELATION_ID}#${THREAD_ID}
+Zobrazit: ${URL}
 
 <#if JOB??>Reklama: ${JOB.title}
 ${JOB.region}, ${JOB.category}<#if JOB.itJob>, IT</#if><#if JOB.linuxJob>, Linux</#if>
