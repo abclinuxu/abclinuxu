@@ -746,7 +746,7 @@
             <var name="TITLE" value="Anketa"/>
         </action>
         <action name="question" content="/show/question.ftl">
-            <var name="TITLE" value='${ITEM.title}' type="Lazy"/>
+            <var name="TITLE" value='${ITEM.title}&lt;#if ((ITEM.numeric1!0) &gt; 0)&gt; (vyřešeno)&lt;/#if&gt;' type="Lazy"/>
         </action>
     </servlet>
 
