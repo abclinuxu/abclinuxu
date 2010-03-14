@@ -112,8 +112,8 @@ public class EditNews extends AbcAutoAction {
                 item.setCreated(date);
         }
 
-        if ( ch.isFailed() || params.get(PARAM_PREVIEW)!=null) {
-            Relation emptyRelation = new Relation(null,item,0);
+        if (ch.isFailed() || params.get(PARAM_PREVIEW) != null) {
+            Relation emptyRelation = new Relation(null, item, 0);
             item.setInitialized(true);
             item.setCreated(new Date());
             env.put(VAR_RELATION, emptyRelation);
@@ -201,7 +201,8 @@ public class EditNews extends AbcAutoAction {
                 item.setCreated(date);
         }
 
-        if ( ch.isFailed() || params.get(PARAM_PREVIEW)!=null) {
+        if (ch.isFailed() || params.get(PARAM_PREVIEW) != null) {
+            relation.setChild(item);
             env.put(VAR_RELATION, relation);
             env.put(VAR_CATEGORIES, NewsCategories.getAllCategories());
             return FMTemplateSelector.select("EditNews", "edit", env, request);
