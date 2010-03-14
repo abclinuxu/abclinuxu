@@ -36,22 +36,10 @@
 
 <@lib.addForm URL.noPrefix("/EditUser")>
     <@lib.addPassword true, "PASSWORD", "Heslo" />
-    <@lib.addSelect true, "weekly", "Týdenní souhrn">
-        <@lib.addOption "weekly", "ano", "yes" />
-        <@lib.addOption "weekly", "ne", "no" />
-    </@lib.addSelect>
-    <@lib.addSelect true, "monthly", "Měsíční zpravodaj">
-        <@lib.addOption "monthly", "ano", "yes" />
-        <@lib.addOption "monthly", "ne", "no" />
-    </@lib.addSelect>
-    <@lib.addSelect true, "ad", "Reklamní email">
-        <@lib.addOption "ad", "ano", "yes" />
-        <@lib.addOption "ad", "ne", "no" />
-    </@lib.addSelect>
-    <@lib.addSelect true, "forum", "Diskusní fórum">
-        <@lib.addOption "forum", "ano", "yes" />
-        <@lib.addOption "forum", "ne", "no" />
-    </@lib.addSelect>
+    <@lib.addCheckbox "weekly", "Týdenní souhrn" />
+    <@lib.addCheckbox "monthly", "Měsíční zpravodaj" />
+    <@lib.addCheckbox "ad", "Reklamní email" />
+    <@lib.addCheckbox "forum", "Diskusní fórum" />
     <@lib.addSubmit "Dokonči" />
     <@lib.addHidden "action", "subscribe2" />
     <@lib.addHidden "uid", MANAGED.id />

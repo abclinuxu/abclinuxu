@@ -49,11 +49,11 @@ verzi.
 
 <@lib.addForm URL.make("/edit"), "name='form'">
     <@lib.addInput true, "name", "Jméno", 30 />
-    <@lib.addSelect true, "category", "Kategorie">
+    <@lib.addFormField true, "Kategorie">
         <#list CATEGORIES as category>
-            <@lib.addOption "category", category.name, category.key />
+            <@lib.addRadioChoice "category", category.key, category.name />
         </#list>
-    </@lib.addSelect>
+    </@lib.addFormField>
     <@lib.addInput true, "version", "Verze" />
     <@lib.addInput true, "url", "URL", 70, "", "http://" />
     <@lib.addTextArea true, "note", "Poznámka", 20>

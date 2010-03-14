@@ -39,18 +39,18 @@
 
 <@lib.addForm URL.make("/edit"), "name='form'">
     <@lib.addInput true, "name", "Jméno", 40 />
-    <@lib.addSelect true, "support", "Podpora pod Linuxem">
-        <@lib.addOption "support", "kompletní", "complete" />
-        <@lib.addOption "support", "částečná", "partial" />
-        <@lib.addOption "support", "žádná", "none" />
-    </@lib.addSelect>
-    <@lib.addSelect true, "driver", "Ovladač je dodáván">
-        <@lib.addOption "driver", "v jádře", "kernel" />
-        <@lib.addOption "driver", "v X.Org/XFree86", "xfree" />
-        <@lib.addOption "driver", "výrobcem", "maker" />
-        <@lib.addOption "driver", "někým jiným", "other" />
-        <@lib.addOption "driver", "neexistuje", "none" />
-    </@lib.addSelect>
+    <@lib.addFormField true, "Podpora pod Linuxem">
+        <@lib.addRadioChoice "support", "complete", "kompletní" />
+        <@lib.addRadioChoice "support", "partial", "částečná" />
+        <@lib.addRadioChoice "support", "none", "žádná" />
+    </@lib.addFormField>
+    <@lib.addFormField true, "Ovladač je dodáván">
+        <@lib.addRadioChoice "driver", "kernel", "v jádře" />
+        <@lib.addRadioChoice "driver", "xfree", "v X.Org/XFree86" />
+        <@lib.addRadioChoice "driver", "maker", "výrobcem" />
+        <@lib.addRadioChoice "driver", "other", "někým jiným" />
+        <@lib.addRadioChoice "driver", "none", "neexistuje" />
+    </@lib.addFormField>
     <@lib.addInput false, "driverUrl", "Adresa ovladače", 60 />
     <@lib.addFormField false, "Zastaralý">
         <@lib.addRadioChoice "outdated", "yes", "ano" />

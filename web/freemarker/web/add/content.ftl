@@ -40,7 +40,7 @@ pak však potřebuje podporu programátora, který připraví data.</p>
         <@lib.showRTEControls "content"/>
     </@lib.addTextArea>
 
-    <#if PARAMS.action=="edit" || PARAMS.action="edit2" >
+    <#if PARAMS.action=="edit" || PARAMS.action=="edit2" >
         <@lib.addFormField false, "Popis změny", "Text bude zobrazen v historii dokumentu">
             <@lib.addInputBare "rev_descr" />
         </@lib.addFormField>
