@@ -330,23 +330,26 @@ public class EditSeries extends AbcAutoAction {
         int articleRid = Misc.parseInt(ridString, 0);
         Relation articleRelation = (Relation) persistence.findById(new Relation(articleRid));
         persistence.synchronize(articleRelation.getChild());
+
         Item articleItem = (Item) articleRelation.getChild().clone();
         Element articleRoot = articleItem.getData().getRootElement();
+        Element seriesElement = articleRoot.element("series_rid");
+        if (seriesElement != null) {
+            seriesElement.detach();
+            persistence.update(articleItem);
+        }
 
+        Element articleElement = null;
         Object obj = seriesRoot.selectObject("article[text()='"+articleRid+"']");
-        Element articleElement;
-
-        if (obj instanceof List)
-            articleElement = (Element) ((List) obj).get(0);
-        else
+        if (obj instanceof List) {
+            List list = (List) obj;
+            if (! list.isEmpty())
+                articleElement = (Element) list.get(0);
+        } else
             articleElement = (Element) obj;
 
         if (articleElement == null)
             throw new MissingArgumentException("Seriál neobsahuje článek "+articleRid+"!");
-
-        Element seriesElement = articleRoot.element("series_rid");
-        seriesElement.detach();
-        persistence.update(articleItem);
 
         articleElement.detach();
         persistence.update(seriesItem);

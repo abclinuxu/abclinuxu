@@ -212,16 +212,13 @@ public class ShowArticle implements AbcAction {
             env.put(VAR_SERIES, series);
         }
 
-        List parents = (List) env.get(VAR_PARENTS);
-        if ( parents.size() > 1 ) {
-            Relation relation = (Relation) parents.get(parents.size() - 2); // TODO
-            if (relation.getChild() instanceof Category) {
-                int max = AbcConfig.getArticleSectionArticlesCount();
-                Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, max)};
-                List articles = sqlTool.findArticleRelations(qualifiers, relation.getId());
-                Tools.syncList(articles);
-                env.put(VAR_ARTICLES_IN_SAME_SECTION, articles);
-            }
+        if ( ! sections.isEmpty() ) {
+            Relation mainSection = sections.get(0);
+            int max = AbcConfig.getArticleSectionArticlesCount();
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, max)};
+            List articles = sqlTool.findArticleRelations(qualifiers, mainSection.getId());
+            Tools.syncList(articles);
+            env.put(VAR_ARTICLES_IN_SAME_SECTION, articles);
         }
 
         User user = (User) env.get(Constants.VAR_USER);

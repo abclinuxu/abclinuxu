@@ -196,7 +196,7 @@
             <a href="${link.url}" rel="nofollow">${link.title}</a> ${link.description!}<br />
         </#list>
     </#if>
-    <#if SAME_SECTION_ARTICLES??>
+    <#if SAME_SECTION_ARTICLES?has_content>
         <h3>Další články z této rubriky</h3>
         <#list SAME_SECTION_ARTICLES as relation>
             <a href="${relation.url!("/clanky/show/"+relation.id)}">${TOOL.childName(relation)}</a>
