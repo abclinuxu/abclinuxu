@@ -7,7 +7,7 @@
          approved = TOOL.xpath(ITEM, "//approved_by")??,
          forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")!"UNDEF">
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <h1>${title}</h1>
 
@@ -66,6 +66,6 @@
    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vložit první komentář</a>
 </#if>
 
-<@lib.advertisement id="arbo-full" />
+<@lib.advertisement id="fullbanner" />
 
 <#include "../footer.ftl">

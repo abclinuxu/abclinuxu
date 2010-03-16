@@ -1,7 +1,7 @@
 <#include "../header.ftl">
 <#assign CATEGORY=RELATION.child>
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <h1>${CATEGORY.title} - často kladené otázky</h1>
 

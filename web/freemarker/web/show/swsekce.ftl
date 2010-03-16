@@ -138,8 +138,8 @@
 
 </div>
 
-<@lib.advertisement id="arbo-sq" />
-<div style="float:right; clear:right;"><@lib.advertisement id="arbo-full" /></div>
+<@lib.advertisement id="square" />
+<div style="float:right; clear:right;"><@lib.advertisement id="fullbanner" /></div>
 
 <@lib.showPageTools RELATION />
 

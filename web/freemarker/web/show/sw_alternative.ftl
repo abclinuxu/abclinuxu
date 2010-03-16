@@ -8,7 +8,7 @@
 
 <#include "../header.ftl">
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <h1>Alternativy pro ${SOFTWARE}</h1>
 

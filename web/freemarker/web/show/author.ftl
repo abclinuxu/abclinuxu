@@ -7,7 +7,7 @@
          nickname = AUTHOR.nickname!"UNDEFINED",
          uid = AUTHOR.uid!0>
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <h1>
     Autor

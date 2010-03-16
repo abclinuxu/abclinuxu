@@ -10,7 +10,7 @@
 
 <@lib.advertisement id="gg-ds-obsah" />
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <@lib.showMessages/>
 
@@ -46,7 +46,7 @@
 </#if>
 
 <@lib.advertisement id="obsah-box" />
-<@lib.advertisement id="arbo-full" />
+<@lib.advertisement id="fullbanner" />
 
 <@lib.showPageTools RELATION />
 

@@ -1,6 +1,6 @@
 <#include "../header.ftl">
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <h1>Účastníci akce ${TOOL.childName(ITEM)}</h1>
 

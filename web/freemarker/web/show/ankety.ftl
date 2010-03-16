@@ -28,7 +28,7 @@
 
 <@lib.showMessages/>
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <h1>Archiv anket</h1>
 

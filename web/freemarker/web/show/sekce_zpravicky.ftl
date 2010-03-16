@@ -1,6 +1,6 @@
 <#include "../header.ftl">
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <#if USER?? && USER.hasRole("category admin")>
  <p>

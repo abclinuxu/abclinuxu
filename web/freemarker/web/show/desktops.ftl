@@ -20,7 +20,7 @@
         <#list TOOL.sublist(VARS.recentMostPopularDesktops.keySet(), 0, 3) as rel>
             <@lib.showTopDesktop rel />
             <#if rel_index == 0>
-                 <@lib.advertisement id="arbo-sq" />
+                 <@lib.advertisement id="square" />
             </#if>
         </#list>
     </div>

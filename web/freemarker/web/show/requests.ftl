@@ -1,7 +1,7 @@
 <#include "../header.ftl">
 <@lib.showMessages/>
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <h1>Administrativní požadavky</h1>
 

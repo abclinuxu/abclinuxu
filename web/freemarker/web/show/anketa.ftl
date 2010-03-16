@@ -34,7 +34,7 @@
 
 <@lib.showMessages/>
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <#if USER?? && USER.hasRole("poll admin")>
  <p>
@@ -73,6 +73,6 @@ Vytvořeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
     <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vložit první komentář</a>
 </#if>
 
-<@lib.advertisement id="arbo-full" />
+<@lib.advertisement id="fullbanner" />
 
 <#include "../footer.ftl">

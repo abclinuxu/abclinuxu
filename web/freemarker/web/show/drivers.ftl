@@ -51,6 +51,6 @@
     <#if wrote_hdr></table></#if>
 </#list>
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <#include "../footer.ftl">

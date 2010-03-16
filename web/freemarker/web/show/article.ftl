@@ -78,7 +78,7 @@
     <div class="cl_perex">${TOOL.xpath(ITEM,"/data/perex")}</div>
 </#if>
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <#assign items = TOOL.processArticle( TOOL.render(TEXT,USER!) )>
 <#list items as item>
@@ -249,6 +249,6 @@
     <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}" rel="nofollow">Vložit první komentář</a>
 </#if>
 
-<@lib.advertisement id="arbo-full" />
+<@lib.advertisement id="fullbanner" />
 
 <#include "../footer.ftl">

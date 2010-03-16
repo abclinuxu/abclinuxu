@@ -34,7 +34,7 @@
          </ul>
     </div>
 
-    <@lib.advertisement id="arbo-sq" />
+    <@lib.advertisement id="square" />
 </#assign>
 
 

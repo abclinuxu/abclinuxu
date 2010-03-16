@@ -101,7 +101,7 @@
 
 <@lib.advertisement id="sf-lista" />
 
-<@lib.advertisement id="arbo-lb" />
+<@lib.advertisement id="leaderboard" />
 
 <div id="zh-kont">
     <div id="zh-text" class="zh-box">

@@ -40,7 +40,7 @@
     </#if>
 </#if>
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <#assign exec=TOOL.xpath(ITEM,"/data/content/@execute")!"no", content=TOOL.xpath(ITEM,"/data/content")>
 <#if exec!="yes">

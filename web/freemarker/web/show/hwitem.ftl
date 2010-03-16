@@ -40,7 +40,7 @@
 <#import "../misc/hardware.ftl" as hwlib>
 
 <div class="hw">
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <@lib.advertisement id="gg-hw-item" />
 
@@ -53,7 +53,7 @@
 
 <@lib.showRevisions RELATION, REVISIONS/>
 
-<div style="float:right; clear:right;"><@lib.advertisement id="arbo-full" /></div>
+<div style="float:right; clear:right;"><@lib.advertisement id="fullbanner" /></div>
 
 <@lib.showPageTools RELATION />
 

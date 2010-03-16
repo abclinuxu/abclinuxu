@@ -54,7 +54,7 @@
                 <a href="/zpravicky" title="zprávičky">Zprávičky</a>
             </div>
 
-            <@lib.advertisement id="arbo-hyper" />
+            <@lib.advertisement id="hypertext1" />
 
             <div class="s_sekce">
                 <div class="ls_zpr">
@@ -63,8 +63,8 @@
                          <@lib.advertisement id="sl-box" />
                     </#if>
                     <#if relation_index==4>
-                         <@lib.advertisement id="arbo-sky" />
-                         <@lib.advertisement id="arbo-double-sky" />
+                         <@lib.advertisement id="skyscraper" />
+                         <@lib.advertisement id="double-sky" />
                          <@lib.advertisement id="sl-mini" />
                     </#if>
                     <@lib.showTemplateNews relation/>

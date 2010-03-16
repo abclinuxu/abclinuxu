@@ -43,7 +43,7 @@
                 </#list>
             </ul>
         </#if>
-        <@lib.advertisement id="arbo-sq" />
+        <@lib.advertisement id="square" />
 
         <#if VARS.recentMostCommentedStories??>
             <b>Nejkomentovanější za poslední měsíc</b>

@@ -39,7 +39,7 @@
 <#include "../header.ftl">
 <#import "../misc/personality.ftl" as perslib>
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <@lib.showMessages/>
 

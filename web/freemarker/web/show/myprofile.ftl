@@ -16,7 +16,7 @@
     </p>
 </#if>
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <h1>Nastavení účtu</h1>
 

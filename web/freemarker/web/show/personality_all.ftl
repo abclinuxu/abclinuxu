@@ -69,7 +69,7 @@
     <#if (CURRENT_PREFIX?default('a')==letter)> class="selected"</#if><#rt>
 </#macro>
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <#include "../footer.ftl">
 

@@ -174,7 +174,7 @@
 <#include "../header.ftl">
 <@lib.showMessages/>
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <h1>Archiv</h1>
 

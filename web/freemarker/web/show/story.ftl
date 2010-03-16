@@ -187,8 +187,8 @@
             </ul>
         </#if>
     </div>
-  <hr id="arbo-sq-cara" />
-  <@lib.advertisement id="arbo-sq" />
+  <hr id="sq-cara" />
+  <@lib.advertisement id="square" />
   <@lib.advertisement id="gg-sq-blog" />
 
 </#assign>

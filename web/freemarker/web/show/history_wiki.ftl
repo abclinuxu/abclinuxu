@@ -88,6 +88,6 @@ ${FOUND.thisPage.row}-${FOUND.thisPage.row+FOUND.thisPage.size}
 <#else>&gt;&gt; ${FOUND.total}
 </#if>
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <#include "../footer.ftl">

@@ -20,7 +20,7 @@
 <#include "../header.ftl">
 <#import "../misc/lib-bazar.ftl" as bazarlib>
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <@lib.showMessages/>
 

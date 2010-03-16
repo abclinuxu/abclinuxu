@@ -24,7 +24,7 @@
 
 <#include "../header.ftl">
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <@lib.showMessages/>
 

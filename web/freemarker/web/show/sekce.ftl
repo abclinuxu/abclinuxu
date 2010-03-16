@@ -21,7 +21,7 @@
 
 <#include "../header.ftl">
 
-<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="square" />
 
 <h1>Sekce ${CATEGORY.title}</h1>
 

@@ -13,7 +13,7 @@
 
 </div> <!-- obal -->
 
-<@lib.advertisement id="arbo-init" />
+<@lib.advertisement id="init" />
 
 <!-- impact: reklamy -->
 <@lib.advertisement id="ad-end" />
