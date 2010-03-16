@@ -13,12 +13,8 @@
 
 </div> <!-- obal -->
 
-<@lib.advertisement id="init" />
-
-<!-- impact: reklamy -->
+<@lib.advertisement id="gg-anal" />
 <@lib.advertisement id="ad-end" />
 
-<@lib.advertisement id="gg-anal" />
 </body>
-
 </html>
