@@ -28,14 +28,12 @@
         </ul>
     </div>
 
-    <@adLib.advertisement id="sq" />
+    <@adLib.advertisement id="square" />
     <@adLib.advertisement id="ps-boxik2" />
     <@adLib.advertisement id="ps-boxik3" />
     <@adLib.advertisement id="ps-boxik4" />
     <@adLib.advertisement id="ps-boxik5" />
     <@adLib.advertisement id="cvonline" />
-
-    <#--<center><@adLib.advertisement id="sq" /></center>-->
 
 </#assign>
 
