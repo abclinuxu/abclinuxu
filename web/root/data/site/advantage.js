@@ -1,32 +1,35 @@
 //
 // adVANTAGE AS Interface Toolkit
-// 2004 - 2008 (c) Via Aurea, s.r.o.
+// 2004 - 2010 (c) Via Aurea, s.r.o.
 // 
 // http://www.viaaurea.cz/
 // http://www.advantage.as/
 //
-var AV_VER = '0.79'; //November 2007
-var AV_STOP = false; //umoÅ¾Åˆuje vypnutÃ­ reklamy
+var AV_VER = '0.80'; //October 2009
+var AV_STOP = false; //umoòuje vypnutí reklamy
 var AV_DEBUG = false;
-var AV_CONTEXT_AD = true; //umoÅ¾Åˆuje vypnutÃ­/zapnutÃ­ kontextovÃ© reklamy
+var AV_CONTEXT_AD = true; //umoòuje vypnutí/zapnutí kontextové reklamy
 
-var AV_ERR_CONCAT = "\nV pÅ™Ã­padÄ› problÃ©mÅ¯ prosÃ­m kontaktujte admin@advantage.as.";
-var AV_ERR_NOID = 'AV_Chyba: funkce AV_print() volÃ¡ neexistujÃ­cÃ­ ID pozice.' + AV_ERR_CONCAT;
-var AV_ERR_IDPAGE = 'AV_Chyba: funkce AV_init() musÃ­ mÃ­t v parametru ID strÃ¡nky. ' + AV_ERR_CONCAT;
+var AV_ERR_CONCAT = "\nV pøípadì problémù prosím kontaktujte admin@advantage.as.";
+var AV_ERR_NOID = 'AV_Chyba: funkce AV_print() volá neexistující ID pozice.' + AV_ERR_CONCAT;
+var AV_ERR_IDPAGE = 'AV_Chyba: funkce AV_init() musí mít v parametru ID stránky. ' + AV_ERR_CONCAT;
+var AV_ERR_QUERY = 'AV_Chyba: snaha o znovu naètení reklamy AV_reload() bez pøedchozí inicializace AV_init(). ' + AV_ERR_CONCAT;
+var AV_ERR_HTTP = 'AV_Chyba: nelze otevøít HTTP spojení pomocí funkce AV_reload(). ' + AV_ERR_CONCAT;
 	
 var AV_PROT = "http://";
 var AV_URL = "stf.advantage.as"
 var AV_SCRIPT = "/if/imshow.php"; 
 
 var AV_JSLoaded = false;
-var AV_preLoaded = false; //urÄuje, jestli se kreativa natahuje pÅ™ed zobrazenÃ­m
-var AV_adverLoaded = false; //urÄuje, jestli se ze serveru naÄetla reklama
+var AV_preLoaded = false; //urèuje, jestli se kreativa natahuje pøed zobrazením
+var AV_adverLoaded = false; //urèuje, jestli se ze serveru naèetla reklama
 AV_konfigurace = new Array();
 AV_poziceArr = new Array();
-AV_poziceCalledArr = new Array(); //seznam volanÃ½ch pozic ve funkci AV_pozice();
+AV_poziceCalledArr = new Array(); //seznam volanıch pozic ve funkci AV_pozice();
 AV_reklamyArr = new Array();
 AV_cileni = new Array();
 AV_stranka = null;
+AV_query = null;
 
 AV_posHTMLArr = new Array();
 AV_advHTMLArr = new Array();
@@ -36,7 +39,7 @@ AV_advHTMLArr = new Array();
 //
 if (typeof(IMFV) == 'undefined'){
 	IMFV=0;
-	FLASH_MAX=15; // do kterÃ© verze se majÃ­ provÃ¡dÄ›t testy
+	FLASH_MAX=15; // do které verze se mají provádìt testy
 	plugin = (navigator.mimeTypes && navigator.mimeTypes["application/x-shockwave-flash"]) ? navigator.mimeTypes["application/x-shockwave-flash"].enabledPlugin : 0;
 	if ( plugin ) {
 		var words = navigator.plugins["Shockwave Flash"].description.split(" ");
@@ -60,13 +63,13 @@ if (typeof(IMFV) == 'undefined'){
 }
 
 //
-// Funkce, kterÃ¡ naÄte kÃ³dy reklamy ze serveru.
+// Funkce, která naète kódy reklamy ze serveru.
 //
 function AV_init(page){
 	
-	// pokud se jednÃ¡ o volÃ¡nÃ­ funkce po naÄtenÃ­ dat ze serveru (IF1 Float)
+	// pokud se jedná o volání funkce po naètení dat ze serveru (IF1 Float)
 	if(AV_adverLoaded){
-		// Pokud server poslal nÄ›jakou hlÃ¡Å¡ku, vypÃ­Å¡e ji
+		// Pokud server poslal nìjakou hlášku, vypíše ji
 		if(typeof(AV_checkMsg) != 'undefined') alert(AV_checkMsg);
 		if(AV_DEBUG) AV_poziceMissAlert(AV_poziceCheck());
 	}
@@ -74,18 +77,18 @@ function AV_init(page){
 	if(AV_STOP || AV_adverLoaded) return;
 	
 	//
-	// OvÄ›Å™enÃ­ sprÃ¡vnosti vstupÅ¯.
+	// Ovìøení správnosti vstupù.
 	//
 	if (typeof(page) != "number"){
 		if (AV_stranka) page = AV_stranka;
 	}
 	if (AV_DEBUG){
-		window.setTimeout('window.status = "Debug on! - reklamnÃ­ systÃ©m adVANTAGE"',2000); //zobrazÃ­ upozornÄ›nÃ­ na debug mod
+		window.setTimeout('window.status = "Debug on! - reklamní systém adVANTAGE"',2000); //zobrazí upozornìní na debug mod
 		if (typeof(page) != "number")	alert(AV_ERR_IDPAGE);
 	}
 
 	//
-	// NaÄtenÃ­ informacÃ­ z prohlÃ­Å¾eÄe uÅ¾ivatele.
+	// Naètení informací z prohlíeèe uivatele.
 	//
 	AV_konfigurace['ver'] = AV_VER;
 	AV_konfigurace['ref'] = this.location.href;
@@ -101,13 +104,12 @@ function AV_init(page){
 		}
 	}
 		
-	var query = "";		
-	if(page != null) query += (query ? "&" : "?") + AV_toGET(page, 'pg');
-	query += (query ? "&" : "?") + AV_toGET(AV_poziceArr, 'ps');
-	query += (query ? "&" : "?") + AV_toGET(AV_reklamyArr, 'ad');
-	query += (query ? "&" : "?") + AV_toGET(AV_cileni, 'tg');
-	query += (query ? "&" : "?") + AV_toGET(AV_konfigurace, 'cf');
-	query += (query ? "&" : "?") + AV_toGET(Math.random(), 'rnd');
+	AV_query = "";		
+	if(page != null) AV_query += (AV_query ? "&" : "?") + AV_toGET(page, 'pg');
+	AV_query += (AV_query ? "&" : "?") + AV_toGET(AV_poziceArr, 'ps');
+	AV_query += (AV_query ? "&" : "?") + AV_toGET(AV_reklamyArr, 'ad');
+	AV_query += (AV_query ? "&" : "?") + AV_toGET(AV_cileni, 'tg');
+	AV_query += (AV_query ? "&" : "?") + AV_toGET(AV_konfigurace, 'cf');
 	
 	AV_advantageArr = AV_urlParams('advantage');
 	if (AV_DEBUG){
@@ -115,14 +117,14 @@ function AV_init(page){
 		else AV_advantageArr.push('debug');
 	}
 	if (AV_advantageArr){
-		query += (query ? "&" : "?") + AV_toGET(AV_advantageArr, 'advantage');
+		AV_query += (AV_query ? "&" : "?") + AV_toGET(AV_advantageArr, 'advantage');
 	}
-	
-	document.write('<scr'+'ipt src="' + AV_PROT + AV_URL + AV_SCRIPT + query + '" type="text/javascript" charset="windows-1250"></scr'+'ipt>');
+	AV_query =  AV_PROT + AV_URL + AV_SCRIPT + AV_query;
+	document.write('<scr'+'ipt src="' + AV_query + AV_toGET(Math.random(), 'rnd') + '" type="text/javascript" charset="windows-1250"></scr'+'ipt>');
 }
 
 //
-// Funkce kterÃ¡ naÄte kÃ³dy reklamy podle ID reklamy (nenÃ­ tÅ™eba znÃ¡t strÃ¡nku).
+// Funkce která naète kódy reklamy podle ID reklamy (není tøeba znát stránku).
 //
 function AV_initRekl(){
 	AV_init(null);
@@ -138,13 +140,13 @@ function AV_preloadRekl(){
 }
 
 //
-// Funkce pÅ™evÃ¡dÃ­ promÄ›nou variable do parametru GETu. Parametr variableName oznaÄuje nÃ¡zev.
+// Funkce pøevádí promìnou variable do parametru GETu. Parametr variableName oznaèuje název.
 //
 function AV_toGET(variable, variableName){
 	if (typeof(variable) == "object"){			
 		var buff = "";
 		for(var i in variable){
-			if (typeof(variable[i]) == 'function' || typeof(variable[i]) == 'object') continue; //nÄ›kterÃ½ server pÅ™edefinovÃ¡va bÃ¡zovou tÅ™Ã­du Array a pÅ™Ã­dÃ¡vÃ¡ jÃ­ vlastnost / metody
+			if (typeof(variable[i]) == 'function' || typeof(variable[i]) == 'object') continue; //nìkterı server pøedefinováva bázovou tøídu Array a pøídává jí vlastnost / metody
 			buff += ((buff == "")?"":"&") + variableName + AV_urlEncode("[" + i + "]") + 
 				"=" + AV_urlEncode(variable[i]);
 		}
@@ -157,13 +159,13 @@ function AV_toGET(variable, variableName){
 }
 
 //
-// Funkce zoborazÃ­ reklamy, je volÃ¡na ve skritu vrÃ¡cenÃ©m ze serveru.
+// Funkce zoborazí reklamy, je volána ve skritu vráceném ze serveru.
 //
 function AV_print(){
 	if(AV_preLoaded || AV_STOP) return;
-	var pos;
+	var pos;	
 	for (var i in AV_posArr){
-		if (typeof(AV_posArr[i]) == 'function' || typeof(AV_posArr[i]) == 'object') continue; 
+		if (typeof(AV_posArr[i]) == 'function' || typeof(AV_posArr[i]) == 'object' && isNaN(i)) continue; 
 		if (AV_posArr[i]['html'] != "" && (pos = document.getElementById('AV_pos' + i))){
 		  pos.innerHTML = AV_posHTMLArr[i]['head'] + AV_recoding(AV_posArr[i]['html']) + AV_posHTMLArr[i]['foot'];
 		}else if(AV_DEBUG){
@@ -171,7 +173,7 @@ function AV_print(){
 		}
 	}
 	for (var i in AV_advArr){
-		if (typeof(AV_advArr[i]) == 'function' || typeof(AV_advArr[i]) == 'object') continue; 
+		if (typeof(AV_advArr[i]) == 'function' || typeof(AV_advArr[i]) == 'object' && isNaN(i)) continue; 
 		if (AV_advArr[i]['html'] != "" && (pos = document.getElementById('AV_adv' + i))){
 		  pos.innerHTML = AV_advHTMLArr[i]['head'] +  AV_recoding(AV_advArr[i]['html']) + AV_advHTMLArr[i]['foot'];
 		}else if(AV_DEBUG){
@@ -181,7 +183,7 @@ function AV_print(){
 }
 
 //
-// Funkce umÃ­stÃ­ reklamu do strÃ¡nky podle ID reklamy.
+// Funkce umístí reklamu do stránky podle ID reklamy.
 //
 function AV_reklama(id, advHead, advFoot){
 	if(AV_STOP) return;
@@ -203,7 +205,7 @@ function AV_reklama(id, advHead, advFoot){
 }
 
 //
-// Funkce umÃ­stÃ­ reklamu do strÃ¡nky podle ID pozice.
+// Funkce umístí reklamu do stránky podle ID pozice.
 //
 function AV_pozice(id, posHead, posFoot){
 	AV_poziceCalledArr.push(id);
@@ -227,7 +229,7 @@ function AV_pozice(id, posHead, posFoot){
 
 
 //
-// Funkce ovÄ›Å™Ã­, jestli byly volÃ¡ny pro vÅ¡echny pozice funkce AV_pozice(). Ty kterÃ© nebyly, vrÃ¡ti v poli.
+// Funkce ovìøí, jestli byly volány pro všechny pozice funkce AV_pozice(). Ty které nebyly, vráti v poli.
 //
 function AV_poziceCheck(){
 	var missing = new Array();
@@ -251,7 +253,7 @@ function AV_poziceMissAlert(missing){
 		tmpStr +=  "\r\n" + (typeof(AV_poziceNameArr) != "undefined" && AV_poziceNameArr[missing[i]] ? AV_poziceNameArr[missing[i]] + " (" + missing[i] + ")" : missing[i]);
 	}
 	if (tmpStr){
-		alert("OvÄ›Å™enÃ­ korektnÃ­ho nasazenÃ­ reklmanÃ­ho systÃ©mu adVANTAGE.\r\n\r\nPro nÃ¡sledujÃ­cÃ­ pozice nebyla ve strÃ¡nce volÃ¡na fuknce AV_pozice():" + tmpStr);
+		alert("Ovìøení korektního nasazení reklmaního systému adVANTAGE.\r\n\r\nPro následující pozice nebyla ve stránce volána fuknce AV_pozice():" + tmpStr);
 	}
 }
 
@@ -264,7 +266,7 @@ function AV_cookieTest(){
 }
 
 //
-// Funkce zjistÃ­ kÃ³dovÃ¡nÃ­ strÃ¡nky.
+// Funkce zjistí kódování stránky.
 //
 function AV_getCharset(){
 	var charsetRe = /charset=([a-zA-Z0-9\-]+)/i;
@@ -281,11 +283,11 @@ function AV_getCharset(){
 }
 
 //
-// Funkce pro pÅ™evod znakovÃ© sady win1250 a iso-8859-2.
+// Funkce pro pøevod znakové sady win1250 a iso-8859-2.
 //
 function AV_win2iso(str, fromCharset){
-	var conv1250 = "Ä½Å Å¤ÃÅ½Ä¾Å¡Å¥Å¾";
-	var convISO = "Ä„Â©Â«ÃÂ®ÂµÄ…Â»Ä¾";
+	var conv1250 = "¼Šİ¾š";
+	var convISO = "¥©«İ®µ¹»¾";
 	var buffer = "";
 	
 	if (fromCharset == "iso"){
@@ -316,11 +318,11 @@ function AV_recoding(str){
 }
 
 //
-// Funkce zakÃ³duje Å™etÄ›zec do formÃ¡tu, kterÃ½ nenÃ­ konfliktnÃ­ pro pÅ™enos v URL (GETu)
+// Funkce zakóduje øetìzec do formátu, kterı není konfliktní pro pøenos v URL (GETu)
 //
 function AV_urlEncode(str){
 	str = escape(str);
-	// nahradi znaky *@+/ pÅ™Ã­sluÅ¡nÃ½mi entitami
+	// nahradi znaky *@+/ pøíslušnımi entitami
 	str = str.replace(/([*@+\/])/g, 
 		function (str, foundChar) {
 			switch (foundChar){
@@ -335,7 +337,7 @@ function AV_urlEncode(str){
 }
 
 //
-// Funkce se podÃ­vÃ¡ do URL strÃ¡nky a vyhledÃ¡ vÅ¡echny parametry, napÅ™. 'advantage', kterÃ© vrÃ¡tÃ­ jako pole
+// Funkce se podívá do URL stránky a vyhledá všechny parametry, napø. 'advantage', které vrátí jako pole
 //
 function AV_urlParams(param){
 	try {
@@ -359,7 +361,7 @@ function AV_urlParams(param){
 }
 
 //
-// Funkce pro obejitÃ­ aktivace flash v IE
+// Funkce pro obejití aktivace flash v IE
 //
 function AV_write(string){
 	document.write(string);
@@ -380,7 +382,7 @@ function AV_objectRewriteById(id){
 }
 
 //
-// Funkce urÄenÃ© pro integraci kontextovÃ© reklamy
+// Funkce urèené pro integraci kontextové reklamy
 //
 function AV_context(server, url, css){
 	if (!AV_CONTEXT_AD) return false;
@@ -391,9 +393,9 @@ function AV_context(server, url, css){
 }
 
 //
-// Funkce slouÅ¾Ã­cÃ­ jako interface pro eTarget.
-// Parametr server nese ID serveru v adVANTAGE, promÄ›nnÃ¡ serverArr je pole
-// promÄ›nnÃ½ch systÃ©mu eTarget o struktuÅ™e array(ID_serveru, ID_country).
+// Funkce slouící jako interface pro eTarget.
+// Parametr server nese ID serveru v adVANTAGE, promìnná serverArr je pole
+// promìnnıch systému eTarget o struktuøe array(ID_serveru, ID_country).
 //
 function AV_eTarget(server, url){
 	serverArr = AV_advantage2eTarget(server);
@@ -402,8 +404,8 @@ function AV_eTarget(server, url){
 }
 
 //
-// Funkce slouÅ¾Ã­cÃ­ jako interface pro adFox.
-// Parametr server nese ID serveru v adVANTAGE, promÄ›nnÃ¡ servernt je ID v adFox.
+// Funkce slouící jako interface pro adFox.
+// Parametr server nese ID serveru v adVANTAGE, promìnná servernt je ID v adFox.
 //
 function AV_adFox(server, url){
 	serverInt = AV_advantage2adFox(server);
@@ -412,8 +414,8 @@ function AV_adFox(server, url){
 }
 
 //
-// Funkce pÅ™evÃ¡dÃ­ ID serveru na adVANTAGE na ID serveru a ID zemÄ› eTargetu.
-// Funkce je speciÃ¡lnÄ› pro instanci IM.
+// Funkce pøevádí ID serveru na adVANTAGE na ID serveru a ID zemì eTargetu.
+// Funkce je speciálnì pro instanci IM.
 //
 function AV_advantage2eTarget(id){
 	idConverArr = new Array();
@@ -422,8 +424,8 @@ function AV_advantage2eTarget(id){
 }
 
 //
-// Funkce pÅ™evÃ¡dÃ­ ID serveru na adVANTAGE na ID serveru systÃ©mu adFox.
-// Funkce je speciÃ¡lnÄ› pro instanci IM.
+// Funkce pøevádí ID serveru na adVANTAGE na ID serveru systému adFox.
+// Funkce je speciálnì pro instanci IM.
 //
 function AV_advantage2adFox(id){
 	idConverArr = new Array();
