@@ -63,6 +63,8 @@
 
 <#flush>
 
+<@adLib.advertisement id="fullbanner" />
+
 <#assign single_mode=false>
 <#if USER??>
     <#if (TOOL.xpath(USER, "/data/profile/forum_mode")!"") == "single">
@@ -165,7 +167,6 @@
     <a href="${map.relation.url}">${map.relation.child.title}</a>
 </#macro>
 
-<div style="float:right"><@lib.advertisement id="fullbanner" /></div>
 
 <h2 style="clear:right">Služby</h2>
 
