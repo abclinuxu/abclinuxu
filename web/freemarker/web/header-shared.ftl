@@ -9,7 +9,7 @@
     <title>${PARAMS.TITLE!TITLE!'www.abclinuxu.cz'}</title>
     <link rel="stylesheet" type="text/css" href="/jquery-theme/ui.all.css" />
     <link rel="stylesheet" type="text/css" href="${CSS_URI!}">
-    <#if CANONICAL_URL??><link rel=”canonical” href="${CANONICAL_URL}" ></#if>
+    <#if CANONICAL_URL??><link rel="canonical" href="${CANONICAL_URL}" ></#if>
     <#if INLINE_CSS??>
         <style type="text/css">
             ${INLINE_CSS}
