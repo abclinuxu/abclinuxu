@@ -71,7 +71,7 @@ public class EditTag extends AbcAutoAction {
     }
 
     @ActionCheck(permittedRoles = {Roles.TAG_ADMIN})
-    protected String actionEdit(HttpServletRequest request, Map env) throws Exception {
+    public String actionEdit(HttpServletRequest request, Map env) throws Exception {
         String id = (String) params.get(PARAM_ID);
         Tag tag = TagTool.getById(id);
         if (tag == null)
@@ -83,7 +83,7 @@ public class EditTag extends AbcAutoAction {
     }
 
     @ActionCheck(permittedRoles = {Roles.TAG_ADMIN}, checkReferer = true, checkPost = true)
-    protected String actionEdit2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String actionEdit2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         String ipAddress = ServletUtils.getClientIPAddress(request);
 
         String id = (String) params.get(PARAM_ID);
@@ -110,7 +110,7 @@ public class EditTag extends AbcAutoAction {
      * @return page to be rendered
      */
     @ActionCheck(permittedRoles = {Roles.TAG_ADMIN}, checkReferer = true, checkTicket = true)
-    protected String actionRm2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String actionRm2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         String ipAddress = ServletUtils.getClientIPAddress(request);
 
         String id = (String) params.get(PARAM_ID);
