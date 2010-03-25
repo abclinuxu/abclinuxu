@@ -21,7 +21,6 @@ package cz.abclinuxu.persistence.ldap;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.exceptions.LdapException;
@@ -51,6 +50,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.prefs.Preferences;
@@ -122,6 +122,8 @@ public class LdapUserManager implements Configurable {
 
     public static final String SERVER_ABCLINUXU = "www.abclinuxu.cz";
     public static final String SERVER_64BIT = "www.64bit.cz";
+    public static final String SERVER_ITBIZ = "www.itbiz.cz";
+    public static final String SERVER_LINKBOX = "www.stickfish.cz/linkbox";
 
     public static final String SF_USER_ALL_ATTRIBUTES[] = {
         ATTRIB_CITY, ATTRIB_COUNTRY, ATTRIB_DELIVERY_ADDRESS_CITY, ATTRIB_DELIVERY_ADDRESS_COUNTRY,
@@ -142,9 +144,7 @@ public class LdapUserManager implements Configurable {
     private static final Set<String> MODIFIABLE_ATTRIBUTES = new HashSet<String>();
 
     static {
-        for (String attr : SF_USER_ALL_ATTRIBUTES) {
-            MODIFIABLE_ATTRIBUTES.add(attr);
-        }
+        MODIFIABLE_ATTRIBUTES.addAll(Arrays.asList(SF_USER_ALL_ATTRIBUTES));
         MODIFIABLE_ATTRIBUTES.remove(ATTRIB_LOGIN);
 //        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_LAST_LOGIN_DATE);
 //        MODIFIABLE_ATTRIBUTES.remove(ATTRIB_REGISTRATION_DATE);
@@ -748,7 +748,7 @@ public class LdapUserManager implements Configurable {
             portals.add(stk.nextToken().toLowerCase());
 
         String sCount = prefs.get(PREF_CONNECTION_PROPERTIES + PREF_PROPERTY_COUNT, "0");
-        int count = Misc.parseInt(sCount, 0);
+        int count = Integer.parseInt(sCount, 0);
         for (int i = 1; i <= count; i++) {
             String key = prefs.get(PREF_CONNECTION_PROPERTIES + i + "." + PREF_PROPERTY_KEY, null);
             String value = prefs.get(PREF_CONNECTION_PROPERTIES + i + "." + PREF_PROPERTY_VALUE, null);
