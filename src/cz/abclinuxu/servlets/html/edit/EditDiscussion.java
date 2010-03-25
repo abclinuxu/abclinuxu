@@ -364,9 +364,9 @@ public class EditDiscussion implements AbcAction {
         // run monitor
         CommentNotification commentNotification;
         if (comment.getAuthor() != null) {
-            commentNotification = new CommentNotification(user, parentRelation, comment, completeUrl, true);
+            commentNotification = new CommentNotification(user, relation, comment, completeUrl, true);
         } else
-            commentNotification = new CommentNotification(comment.getAnonymName(), parentRelation, comment, completeUrl, true);
+            commentNotification = new CommentNotification(comment.getAnonymName(), relation, comment, completeUrl, true);
         MonitorPool.scheduleMonitorAction(commentNotification);
 
         // refresh RSS and caches
