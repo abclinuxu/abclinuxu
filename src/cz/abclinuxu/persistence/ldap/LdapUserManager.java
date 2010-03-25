@@ -748,7 +748,7 @@ public class LdapUserManager implements Configurable {
             portals.add(stk.nextToken().toLowerCase());
 
         String sCount = prefs.get(PREF_CONNECTION_PROPERTIES + PREF_PROPERTY_COUNT, "0");
-        int count = Integer.parseInt(sCount, 0);
+        int count = Integer.parseInt(sCount);
         for (int i = 1; i <= count; i++) {
             String key = prefs.get(PREF_CONNECTION_PROPERTIES + i + "." + PREF_PROPERTY_KEY, null);
             String value = prefs.get(PREF_CONNECTION_PROPERTIES + i + "." + PREF_PROPERTY_VALUE, null);
