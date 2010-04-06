@@ -610,7 +610,7 @@ public class EditEvent implements AbcAction {
                 ServletUtils.addError(PARAM_LOGO, "Animované obrázky nejsou povoleny!", env, null);
                 return false;
             }
-            if (reader.getHeight(0) > 100 || reader.getWidth(0) > 100) {
+            if (reader.getHeight(0) > 200 || reader.getWidth(0) > 250) {
                 ServletUtils.addError(PARAM_LOGO, "Ikonka přesahuje povolené maximální rozměry!", env, null);
                 return false;
             }

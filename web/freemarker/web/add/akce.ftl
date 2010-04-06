@@ -89,7 +89,7 @@ Ať už plánujete posezení v hospodě, installfest či nějakou velkou akci, z
 
     <@lib.addFormField false, "Logo", "Pokud má vaše organizace/firma/parta nějaké (malé) logo, můžete jej nechat vložit.">
         <@lib.addFileBare "logo">
-            Rozměry maximálně 100&times;100.
+            Rozměry maximálně 250&times;200.
         </@lib.addFileBare>
     </@lib.addFormField>
 
