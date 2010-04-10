@@ -41,6 +41,7 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Advertisement;
 import cz.abclinuxu.utils.TagTool;
 import cz.abclinuxu.utils.BeanFetcher;
+import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.email.monitor.MonitorTool;
 import cz.abclinuxu.utils.forms.RichTextEditor;
 import cz.abclinuxu.scheduler.EnsureWatchedDiscussionsLimit;
@@ -885,6 +886,40 @@ public class Tools implements Configurable {
             list.add(server);
         }
         return list;
+    }
+
+    /**
+     * Finds all links for given servers identified by ids. Links are sorted by date in descending order.
+     * @param seq list of integers
+     * @return map with Servers and their Links
+     * @throws TemplateModelException
+     * todo use in VariableFetcher instead of UpdateLinks.getFeeds() (without freemarker dependancy)
+     */
+    public Map<Server, List<Link>> getFeeds(SimpleSequence seq) throws TemplateModelException {
+        int size = seq.size();
+        Map<Server, List<Link>> feeds = new HashMap(size);
+        List<Link> allLinks = new ArrayList<Link>(size * 5);
+        for (int i = 0; i < size; i++) {
+            TemplateNumberModel a = (TemplateNumberModel) seq.get(i);
+            int id = a.getAsNumber().intValue();
+            Server server = (Server) persistence.findById(new Server(id));
+            List children = server.getChildren();
+            List links = new ArrayList(children.size());
+
+            for (Iterator iter2 = children.iterator(); iter2.hasNext();) {
+                Relation relation = (Relation) iter2.next();
+                Link link = (Link) relation.getChild();
+                links.add(link);
+                allLinks.add(link);
+            }
+            feeds.put(server, links);
+        }
+
+        Tools.syncList(allLinks);
+        for (List links : feeds.values()) {
+            Sorters2.byDate(links, Sorters2.DESCENDING);
+        }
+        return feeds;
     }
 
     /**
