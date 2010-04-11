@@ -6,6 +6,17 @@
         <div class="s">
             <@lib.advertisement id="vip" />
             <@lib.advertisement id="vip-text" />
+            <@lib.advertisement id="itbiz" />
+
+            <!-- ZPRÁVIČKY -->
+            <#assign news=VARS.getFreshNews(USER!)>
+            <div class="s_nadpis">
+                <a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/edit?action=add")}">napište &raquo;</a>
+                <#if USER?? && USER.hasRole("news admin")>
+                    <a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/dir/37672")}" title="Počet neschválených a čekajících zpráviček">(${VARS.counter.WAITING_NEWS},${VARS.counter.SLEEPING_NEWS})&nbsp;</a>
+                </#if>
+                <a href="/zpravicky" title="zprávičky">Zprávičky</a>
+            </div>
 
             <!-- ANKETA -->
             <#if VARS.currentPoll??>
@@ -43,16 +54,6 @@
                   <@lib.advertisement id="anketa" />
                 </div>
             </#if>
-
-            <!-- ZPRÁVIČKY -->
-            <#assign news=VARS.getFreshNews(USER!)>
-            <div class="s_nadpis">
-                <a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/edit?action=add")}">napište &raquo;</a>
-                <#if USER?? && USER.hasRole("news admin")>
-                    <a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/dir/37672")}" title="Počet neschválených a čekajících zpráviček">(${VARS.counter.WAITING_NEWS},${VARS.counter.SLEEPING_NEWS})&nbsp;</a>
-                </#if>
-                <a href="/zpravicky" title="zprávičky">Zprávičky</a>
-            </div>
 
             <@lib.advertisement id="hypertext1" />
 
