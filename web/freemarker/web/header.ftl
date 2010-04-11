@@ -18,6 +18,30 @@
                 <a href="/zpravicky" title="zprávičky">Zprávičky</a>
             </div>
 
+            <@lib.advertisement id="hypertext1" />
+
+            <div class="s_sekce">
+                <div class="ls_zpr">
+                <#list news as relation>
+                    <#if relation_index==2>
+                         <@lib.advertisement id="sl-box" />
+                    </#if>
+                    <#if relation_index==4>
+                         <@lib.advertisement id="skyscraper" />
+                         <@lib.advertisement id="double-sky" />
+                         <@lib.advertisement id="sl-mini" />
+                    </#if>
+                    <@lib.showTemplateNews relation/>
+                    <hr>
+                </#list>
+                </div>
+                <div class="s_odkaz">
+                    <a href="/zpravicky">Centrum</a> |
+                    <a href="${URL.make("/zpravicky/edit?action=add")}" rel="nofollow">Napsat</a> |
+                    <a href="/History?type=news&amp;from=${news?size}&amp;count=15">Starší</a>
+                </div>
+            </div>
+
             <!-- ANKETA -->
             <#if VARS.currentPoll??>
                 <#assign relAnketa = VARS.currentPoll, anketa = relAnketa.child, total = anketa.totalVoters,
@@ -54,30 +78,6 @@
                   <@lib.advertisement id="anketa" />
                 </div>
             </#if>
-
-            <@lib.advertisement id="hypertext1" />
-
-            <div class="s_sekce">
-                <div class="ls_zpr">
-                <#list news as relation>
-                    <#if relation_index==2>
-                         <@lib.advertisement id="sl-box" />
-                    </#if>
-                    <#if relation_index==4>
-                         <@lib.advertisement id="skyscraper" />
-                         <@lib.advertisement id="double-sky" />
-                         <@lib.advertisement id="sl-mini" />
-                    </#if>
-                    <@lib.showTemplateNews relation/>
-                    <hr>
-                </#list>
-                </div>
-                <div class="s_odkaz">
-                    <a href="/zpravicky">Centrum</a> |
-                    <a href="${URL.make("/zpravicky/edit?action=add")}" rel="nofollow">Napsat</a> |
-                    <a href="/History?type=news&amp;from=${news?size}&amp;count=15">Starší</a>
-                </div>
-            </div>
 
             <@lib.advertisement id="sl-jobscz" />
             <@lib.advertisement id="sl-abcprace" />
