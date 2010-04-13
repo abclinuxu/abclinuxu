@@ -2,19 +2,15 @@
 
 <@lib.showMessages/>
 
+<div style="width:250px; float:right; padding:0.5em; margin:0.5em; font-size:small; border-left:1px solid silver">
+<img src="/images/site2/sf-login.gif" width="100" height="40" alt="Stickfish login" style="float:right; margin:0.5em;">
+<p>Děkujeme, že jste se rozhodli registrovat na rodině portálů AbcLinuxu.cz, <a href="http://www.itbiz.cz/">ITBiz.cz</a>, <a href="http://www.abcprace.cz/">AbcPráce.cz</a> a <a href="http://www.64bit.eu/">64bit.eu</a>. S jediným účtem se budete moci přihlásit na všech těchto serverech. Snažili jsme se, aby byla registrace co nejjednodušší. Další informace a nastavení si následně můžete upravit v uživatelském profilu.</p>
+
+<p>Registrace vám přinese mnoho výhod oproti neregistrovaným uživatelům. Můžete snadno sledovat navštívené diskuse, najít vaše dotazy v poradně, monitorovat e-mailem zvolené dokumenty, upravit si vzhled a chování portálu a mnoho dalšího.</p>
+</div>
+
+
 <h1>Registrace</h1>
-
-<p>
-    Děkujeme, že jste se rozhodli registrovat na rodině portálů abclinuxu.cz, itbiz.cz, abcprace.cz, abchost.cz a 64bit.cz.
-    S jediným účtem se budete moci přihlásit na všech těchto serverech. Snažili jsme se registraci učinit co nejjednodušší,
-    další informace a nastavení se následně můžete upravit v nastavení.
-</p>
-
-<p>
-    Registrace vám přinese mnoho výhod oproti neregistrovaným uživatelům. Můžete snadno sledovat navštívené diskuse,
-    najít vaše dotazy v poradně, monitorovat emailem zvolené dokumenty, upravit si vzhled a chování portálu a mnoho
-    dalšího.
-</p>
 
 <@lib.addForm URL.noPrefix("/EditUser")>
     <@lib.addFormField true, "Jméno", "Jméno musí mít nejméně tři znaky.">
@@ -23,7 +19,7 @@
 
     <@lib.addFormField true, "Login", "Přihlašovací jméno (login) musí být unikátní a mít nejméně tři znaky. Povolené znaky "+
                 "jsou písmena A až Z, číslice, pomlčka, tečka a podtržítko. Login se nedá změnit, je součástí Jabber "+
-                "účtu a adresy vaši stránky www.abclinuux.cz/lide/vas-login.">
+                "účtu a adresy vaší stránky www.abclinuxu.cz/lide/vas-login.">
          <@lib.addInputBare "login", 24 />
          <script type="text/javascript">
             $(document).ready(function() {
@@ -37,9 +33,9 @@
     <@lib.addFormField true, "Heslo", "Heslo musí mít nejméně čtyři znaky.">
         <@lib.addPasswordBare "password", 24 />
     </@lib.addFormField>
-    <@lib.addPassword true, "password2", "Zopakujte heslo", 24 />
+    <@lib.addPassword true, "password2", "Zopakujte heslo.", 24 />
 
-    <@lib.addFormField false, "Přezdívka", "Přezdívka musí být unikátní">
+    <@lib.addFormField false, "Přezdívka", "Přezdívka musí být unikátní.">
          <@lib.addInputBare "nick", 24 />
          <script type="text/javascript">
             $(document).ready(function() {
