@@ -1,20 +1,17 @@
 <#include "../header.ftl">
 
 <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
-    <@lib.showSignPost "Rozcestník">
-    <ul>
-       <li>
-           <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=edit")}">Uprav seriál</a>
-       </li>
-       <li>
-           <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=addArticlesUrls")}">Přidej články</a>
-       </li>
-       <li>
-           <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=remove"+TOOL.ticket(USER, false))}"
-              onclick="return confirm('Opravdu chcete smazat tento seriál?')">Smaž seriál</a>
-       </li>
-    </ul>
-    </@lib.showSignPost>
+    <#assign plovouci_sloupec>
+      <div class="s_nadpis">Nástroje</div>
+      <div class="s_sekce">
+        <ul>
+            <li><a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=edit")}">Uprav seriál</a></li>
+            <li><a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=addArticlesUrls")}">Přidej články</a></li>
+            <li><a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=remove"+TOOL.ticket(USER, false))}"
+              onclick="return confirm('Opravdu chcete smazat tento seriál?')">Smaž seriál</a></li>
+        </ul>
+      </div>
+    </#assign>
 </#if>
 
 <div class="no-col-ad">
@@ -35,7 +32,7 @@
 <h1>Seriál: ${TOOL.childName(RELATION)}</h1>
 
 <#if desc != "UNDEFINED">
-    <p>${desc}</p>
+    <p class="cl_perex">${desc}</p>
 </#if>
 </div>
 
