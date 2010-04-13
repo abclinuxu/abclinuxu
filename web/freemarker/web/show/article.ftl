@@ -17,6 +17,14 @@
 
 <div class="clanek">
 
+<#if ! plovouci_sloupec??>
+    <div class="no-col-ad">
+        <@lib.advertisement id="hypertext2nahore" />
+        <@lib.advertisement id="square" />
+        <@lib.advertisement id="hypertext2dole" />
+    </div>
+</#if>
+
 <#if PAGES?? && PAGE??>
     <h1>${PAGES[PAGE]}</h1>
 <#else>
@@ -78,15 +86,7 @@
 </#if>
 
 <#if ( (PAGE!0) == 0) >
-    <div class="cl_perex">${TOOL.xpath(ITEM,"/data/perex")}</div>
-</#if>
-
-<#if ! plovouci_sloupec??>
-    <div class="no-col-ad">
-        <@lib.advertisement id="hypertext2nahore" />
-        <@lib.advertisement id="square" />
-        <@lib.advertisement id="hypertext2dole" />
-    </div>
+    <div class="cl_perex perex-horni">${TOOL.xpath(ITEM,"/data/perex")}</div>
 </#if>
 
 <#assign items = TOOL.processArticle( TOOL.render(TEXT,USER!) )>
@@ -178,6 +178,9 @@
                     <a href="${rel.key.url}">${TOOL.childName(rel.key)}</a><br />
                 </#list>
             &nbsp; <a href="/nej">všechny statistiky &raquo;</a>
+            <#if SUBPORTAL??>
+                <br style="clear:right" />
+            </#if>
         </#if>
     </div>
 
