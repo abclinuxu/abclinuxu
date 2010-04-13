@@ -46,7 +46,7 @@
     | Poslední změna: ${DATE.show(cat.updated,"CZ_DMY")}
     <#if score != -1>| Skóre: ${score}</#if>
     </p>
-    <hr style="clear:right" />
+    <hr />
 </#list>
 
 <form action="/skupiny">
