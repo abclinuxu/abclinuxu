@@ -1,6 +1,9 @@
 <#import "../macros.ftl" as lib>
 <#if (USER?? && TOOL.permissionsFor(USER, RELATION).canModify()) || SUBPORTAL??>
     <#assign plovouci_sloupec>
+
+      <@lib.advertisement id="hypertext2nahore" />
+
       <#if SUBPORTAL??><@lib.showSubportal SUBPORTAL, true/></#if>
       <div class="s_nadpis">Nástroje</div>
       <div class="s_sekce">
@@ -16,6 +19,9 @@
         </#if>
        </ul>
       </div>
+      <@lib.advertisement id="square" />
+      <@lib.advertisement id="hypertext2dole" />
+
     </#assign>
 </#if>
 
@@ -40,7 +46,13 @@
     </#if>
 </#if>
 
-<@lib.advertisement id="square" />
+<#if ! (ITEM.subType! == "no_columns" || ! plovouci_sloupec??)>
+    <div class="no-col-ad">
+        <@lib.advertisement id="hypertext2nahore" />
+        <@lib.advertisement id="square" />
+        <@lib.advertisement id="hypertext2dole" />
+    </div>
+</#if>
 
 <#assign exec=TOOL.xpath(ITEM,"/data/content/@execute")!"no", content=TOOL.xpath(ITEM,"/data/content")>
 <#if exec!="yes">

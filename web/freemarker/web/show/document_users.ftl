@@ -14,7 +14,7 @@
         <td>
             <@lib.showUser user/>
             <#assign score=user.getIntProperty("score")!(-1)>
-            <#if score != -1> | sk√≥re: ${score}</#if>
+            <#if score != -1> | sk®Ære: ${score}</#if>
             <#assign city=TOOL.xpath(user,"//personal/city")!"UNDEF">
             <#if city!="UNDEF"> | ${city}</#if>
         </td>
@@ -22,6 +22,10 @@
     </#list>
 </table>
 
-<@lib.advertisement id="square" />
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
 
 <#include "../footer.ftl">

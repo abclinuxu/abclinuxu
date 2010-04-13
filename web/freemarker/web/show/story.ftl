@@ -1,8 +1,10 @@
 <#assign intro=TOOL.xpath(BLOG,"//custom/intro")!"UNDEF", owner=TOOL.createUser(BLOG.owner), ITEM=STORY.relation.child,
         CHILDREN=TOOL.groupByType(ITEM.children)>
 
-
 <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
     <div class="s_nadpis">
         <@lib.showUser owner/>
         <#if BLOG.title??> - <a href="/blog/${BLOG.subType}">${BLOG.title}</a></#if>
@@ -121,6 +123,8 @@
         </ul>
     </div>
 
+    <@lib.advertisement id="square" />
+
     <#assign links = BLOG_XML.data.custom.links.link>
     <#if links?size!=0>
         <div class="s_nadpis">
@@ -187,9 +191,8 @@
             </ul>
         </#if>
     </div>
-  <hr id="sq-cara" />
-  <@lib.advertisement id="square" />
-  <@lib.advertisement id="gg-sq-blog" />
+
+    <@lib.advertisement id="hypertext2dole" />
 
 </#assign>
 
@@ -259,6 +262,5 @@ ${TOOL.render(STORY.content,USER!)}
        <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+STORY.id)}">Vložit první komentář</a>
     </#if>
 </#if>
-
 
 <#include "../footer.ftl">

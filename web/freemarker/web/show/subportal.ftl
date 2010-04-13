@@ -5,11 +5,12 @@
         events=TOOL.createRelation(TOOL.xpath(ITEM,"/data/events"))>
 
 <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
     <@lib.showSubportal RELATION, true />
     <#if USER?? && (USER.hasRole("root") || TOOL.permissionsFor(USER, RELATION).canModify())>
-    <div class="s_nadpis">
-        Správa skupiny
-    </div>
+    <div class="s_nadpis">Správa skupiny</div>
     <div class="s_sekce">
     <ul>
         <#assign articles_rid=TOOL.xpath(ITEM,"/data/article_pool"), counter=VARS.getSubportalCounter(RELATION)>
@@ -35,8 +36,9 @@
     </div>
 
     <@lib.advertisement id="square" />
-</#assign>
+    <@lib.advertisement id="hypertext2dole" />
 
+</#assign>
 
 <#include "../header.ftl">
 
@@ -63,7 +65,7 @@
 
 <#assign wiki_rel=TOOL.createRelation(TOOL.xpath(ITEM,"/data/wiki"))>
 <#assign exec=TOOL.xpath(wiki_rel.child,"/data/content/@execute")!"no", content=TOOL.xpath(wiki_rel.child,"/data/content")>
-<h1 class="st_nadpis"><a href="${wiki_rel.url}">Wiki</a></h1>
+<h2><a href="${wiki_rel.url}">Wiki</a></h2>
 
 <#if exec!="yes">
     ${content}
@@ -75,7 +77,7 @@
 
 <#assign event=VARS.getFreshSubportalEvent(events.id)!"UNDEF">
 <#if event!="UNDEF">
-    <h1 class="st_nadpis">Nadcházející akce</h1>
+    <h2>Nadcházející akce</h2>
     <@lib.showEvent event, false, false/>
 
     <div class="st_vpravo">

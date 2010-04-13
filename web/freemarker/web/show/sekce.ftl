@@ -1,4 +1,5 @@
 <#assign plovouci_sloupec>
+    <@lib.advertisement id="hypertext2nahore" />
     <div class="s_sekce">
         <ul>
             <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify() >
@@ -12,11 +13,15 @@
                     <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=setURL2")}">url</a>,
                     <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;url=/EditRelation&amp;action=add&amp;prefix="+URL.prefix)}">link</a>
                 </li>
-                <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">P艡esunout</a></li>
-                <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=moveAll&amp;prefix="+URL.prefix)}">P艡esu艌 obsah</a></li>
+                <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Přesunout</a></li>
+                <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=moveAll&amp;prefix="+URL.prefix)}">Přesuň obsah</a></li>
             </#if>
         </ul>
     </div>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">
@@ -33,9 +38,9 @@
             <th align="left">Typ</th>
             <td>
                 <#switch CATEGORY.type>
-                    <#case 0>nedefinov谩n <#break>
+                    <#case 0>nedefinován <#break>
                     <#case 1>sekce hardware <#break>
-                    <#case 2>f贸rum <#break>
+                    <#case 2>fórum <#break>
                     <#case 3>blog <#break>
                     <#case 4>rubrika <#break>
                     <#case 5>sekce FAQ <#break>
@@ -52,11 +57,11 @@
             <td><@lib.showUserFromId CATEGORY.owner!1 /></td>
         </tr>
         <tr>
-            <th align="left">Vytvo艡eno</th>
+            <th align="left">Vytvořeno</th>
             <td>${DATE.show(CATEGORY.created, "SMART")}</td>
         </tr>
         <tr>
-            <th align="left">Posledn铆 zm臎na</th>
+            <th align="left">Poslední změna</th>
             <td>${DATE.show(CATEGORY.created, "SMART")}</td>
         </tr>
         <#if GROUP??>

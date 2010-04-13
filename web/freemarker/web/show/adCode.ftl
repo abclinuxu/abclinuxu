@@ -15,17 +15,9 @@
 
 <h1>Reklamní kód</h1>
 
-<p>
-Na této stránce je možné spravovat reklamní kód vybrané pozice a jeho varianty. Kód je platný
-pro všechny stránky s URL, které splňuje jeho kritéria definovaná pomocí regulárního výrazu.
-Kód může být platný například pro všechny stránky, pro jednu konkrétní stránku nebo pro
-stránky, jejichž URL začíná stejným výrazem.
-</p>
-<p>
-Kód má jednu či více variant. Pokud jsou varianty stejné (neliší se štítky), pak jen jedna z nich
-může být aktivní. Varianty jsou kromě míření na štítky vhodné pro archivování starších
-reklamních kódů, které mohou být v budoucnu opět aktivovány.
-</p>
+<p>Na této stránce je možné spravovat reklamní kód vybrané pozice a jeho varianty. Kód je platný pro všechny stránky s URL, které splňuje jeho kritéria definovaná pomocí regulárního výrazu. Kód může být platný například pro všechny stránky, pro jednu konkrétní stránku nebo pro stránky, jejichž URL začíná stejným výrazem.</p>
+
+<p>Kód má jednu či více variant. Pokud jsou varianty stejné (neliší se štítky), pak jen jedna z nich může být aktivní. Varianty jsou kromě míření na štítky vhodné pro archivování starších reklamních kódů, které mohou být v budoucnu opět aktivovány.</p>
 
 <h1>${CODE.name!}</h1>
 <table>

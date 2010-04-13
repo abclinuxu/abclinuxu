@@ -1,4 +1,7 @@
 <#assign plovouci_sloupec>
+
+  <@lib.advertisement id="hypertext2nahore" />
+
   <div class="s_nadpis">
     <a class="info" href="#">?<span class="tooltip">Vlastní blog si po přihlášení můžete založit v nastavení svého profilu.</span></a>
     <a href="/blog">Seznam všech blogů</a>
@@ -14,6 +17,8 @@
           <li><a href="/auto/blog.rss">RSS kanál</a></li>
         </ul>
     </div>
+
+    <@lib.advertisement id="square" />
 
     <div class="s_nadpis"><a href="/nej">Nej blogů na AbcLinuxu</a></div>
     <div class="s_sekce">
@@ -37,11 +42,13 @@
             </ul>
         </#if>
     </div>
+
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">
 
-<@lib.advertisement id="square" />
 
 <table>
   <thead>

@@ -3,6 +3,10 @@
     <script type="text/javascript" src="/data/site/treemenu.js"></script>
 </#assign>
 <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
+    <div class="s_nadpis">Nástroje</div>
     <div class="s_sekce">
         <ul>
             <#if TOOL.permissionsFor(USER, RELATION).canCreate()>
@@ -96,8 +100,12 @@
 
         <input type="submit" value="Nastavit" class="button">
         <input type="hidden" name="action" value="filter">
-	</form>
+        </form>
     </div>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">
@@ -138,8 +146,9 @@
 
 </div>
 
-<@lib.advertisement id="square" />
-<div style="float:right; clear:right;"><@lib.advertisement id="fullbanner" /></div>
+<div class="no-col-ad">
+    <@lib.advertisement id="fullbanner" />
+</div>
 
 <@lib.showPageTools RELATION />
 

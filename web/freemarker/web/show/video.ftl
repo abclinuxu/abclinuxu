@@ -17,7 +17,11 @@
 <#include "../header.ftl">
 <@lib.showMessages/>
 
-<@lib.advertisement id="square" />
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
 
 <h1>${ITEM.title}</h1>
 <p class="meta-vypis">Vytvořeno: ${DATE.show(ITEM.created,"SMART")}

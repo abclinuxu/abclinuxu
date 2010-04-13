@@ -1,6 +1,9 @@
 <#import "../macros.ftl" as lib>
 <#assign who=TOOL.createUser(ITEM.owner)>
 <#assign plovouci_sloupec>
+
+   <@lib.advertisement id="hypertext2nahore" />
+
     <div class="s_sekce">
         <ul>
             <#if PARAMS.revize??>
@@ -34,6 +37,10 @@
             </#if>
         </ul>
     </div>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">

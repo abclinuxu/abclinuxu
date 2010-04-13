@@ -7,28 +7,36 @@
          approved = TOOL.xpath(ITEM, "//approved_by")??,
          forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")!"UNDEF">
 
-<@lib.advertisement id="square" />
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
+
 
 <h1>${title}</h1>
 
-<p>
-    <b>Autor:</b> <@lib.showUser autor/><br>
+<p class="zpravicka">${TOOL.xpath(ITEM,"data/content")}</p>
+
+<p class="meta-vypis">
+    ${DATE.show(ITEM.created,"SMART")} |
+    <@lib.showUser autor/> |
     <#if CATEGORY??>
-        <b>Kategorie:</b> ${CATEGORY.name}<br>
+        <b>Kategorie:</b> ${CATEGORY.name} |
     </#if>
-    <b>Datum:</b> ${DATE.show(ITEM.created,"SMART")}<br>
     <#if RELATION.upper=37672>
-        <b>Stav:</b> čeká na
+        <br /><b>Stav:</b> čeká na
         <#if approved>
             čas publikování
         <#else>
             schválení
         </#if>
         <#if USER?? && USER.id=RELATION.child.owner>
-        - <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
+            - <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
         </#if>
-        <br>
     </#if>
+</p>
+<p>
     <#if USER?? && USER.hasRole("news admin")>
         <#assign shortened=TOOL.xpath(ITEM,"data/perex")?default("UNDEFINED")>
         <#if shortened != "UNDEFINED" && RELATION.upper=37672>
@@ -47,11 +55,8 @@
                 <a href="${URL.make("/edit?action=mail&amp;rid="+RELATION.id)}">Poslat email autorovi</a>
                 <a href="${URL.make("/edit?action=lock&amp;rid="+RELATION.id+TOOL.ticket(USER, false))}">Zamknout</a>
         </#if>
-        <br>
     </#if>
 </p>
-
-<p class="zpravicka">${TOOL.xpath(ITEM,"data/content")}</p>
 
 <br />
 <@lib.advertisement id="gg-zpravicka" />
@@ -66,6 +71,7 @@
    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vložit první komentář</a>
 </#if>
 
+<br />
 <@lib.advertisement id="fullbanner" />
 
 <#include "../footer.ftl">

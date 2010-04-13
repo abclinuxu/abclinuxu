@@ -2,18 +2,16 @@
 
 <div class="bazar">
 
-<@lib.advertisement id="square" />
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
+
 
 <h1>Bazar</h1>
 
-<p>
-    Bazar je bezplatná služba portálu www.abclinuxu.cz, která umožňuje čtenářům
-    prodat, darovat či koupit <a href="/hardware">hardware</a>, spotřební
-    elektroniku, <a href="/software">software</a>, odbornou literaturu
-    nebo předměty s FOSS tématikou (například plyšoví tučňáci, trička). Bazar
-    není určen pro výdělečnou činnost; komerční inzeráty (OSVČ, firmy) jsou
-    bez předchozího schválení provozovatelem zakázány.
-</p>
+<p>Bazar je bezplatná služba portálu AbcLinuxu.cz, která umožňuje čtenářům prodat, darovat či koupit <a href="/hardware">hardware</a>, spotřební elektroniku, <a href="/software">software</a>, odbornou literaturu nebo předměty s FOSS tématikou (například plyšoví tučňáci, trička). Bazar není určen pro výdělečnou činnost; komerční inzeráty (OSVČ, firmy) jsou bez předchozího schválení provozovatelem zakázány.</p>
 
 <table class="bazar-polozky">
   <thead>

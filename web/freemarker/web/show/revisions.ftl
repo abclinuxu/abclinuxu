@@ -2,14 +2,17 @@
 
 <@lib.showMessages/>
 
-<@lib.advertisement id="square" />
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
+
 
 <h1>Historie</h1>
 
 <p>Nacházíte se na stránce obsahující historii objektu
-${TOOL.childName(RELATION)}. Pokud si chcete prohlédnout starší verzi, zvolte odkaz
-v prvním sloupečku.
-</p>
+${TOOL.childName(RELATION)}. Pokud si chcete prohlédnout starší verzi, zvolte odkaz v prvním sloupečku.</p>
 
 <#if HISTORY?size==0>
     <p class="error">Tento objekt nemá zaznamenanou žádnou historii!</p>

@@ -1,5 +1,9 @@
 <#import "../macros.ftl" as lib>
 <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
+    <div class="s_nadpis">Nástroje</div>
     <div class="s_sekce">
         <ul>
             <#if USER?? && TOOL.permissionsFor(USER, RELATION).canCreate()>
@@ -23,7 +27,12 @@
             </#if>
         </ul>
     </div>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
+
 <#assign html_header>
     <script type="text/javascript" src="/data/site/treemenu.js"></script>
 </#assign>
@@ -104,8 +113,9 @@
 
 </div>
 
-<@lib.advertisement id="square" />
-<div style="float:right; clear:right;"><@lib.advertisement id="fullbanner" /></div>
+<div class="no-col-ad">
+    <@lib.advertisement id="fullbanner" />
+</div>
 
 <@lib.showPageTools RELATION />
 

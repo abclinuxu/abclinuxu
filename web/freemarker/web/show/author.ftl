@@ -7,7 +7,12 @@
          nickname = AUTHOR.nickname!"UNDEFINED",
          uid = AUTHOR.uid!0>
 
-<@lib.advertisement id="square" />
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
+
 
 <h1>
     Autor
@@ -19,7 +24,7 @@
 <p>
 <#if uid != 0>
     <#assign uauthor=TOOL.createUser(uid)>
-    <a href="/lide/${uauthor.login}" title="${name!""} ${surname!""}">Profil autora na abclinuxu</a>
+    Profil autora <a href="/lide/${uauthor.login}" title="${name!""} ${surname!""}">${name!""} ${surname!""}</a> na AbcLinuxu.cz.
 </#if>
 </p>
 

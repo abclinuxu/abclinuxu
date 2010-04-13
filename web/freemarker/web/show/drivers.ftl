@@ -1,5 +1,9 @@
 <#import "../macros.ftl" as lib>
 <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
+    <div class="s_nadpis">Nástroje</div>
     <div class="s_sekce">
         <ul>
             <li>
@@ -10,6 +14,10 @@
             </li>
         </ul>
     </div>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">
@@ -17,12 +25,7 @@
 
 <h1>Ovladače</h1>
 
-<p>
-    Databáze Ovladačů slouží pro shromažďování informací ohledně ovladačů,
-    které nejsou standardní součástí jádra. Typicky jde buď o Open Source
-    projekty, v rámci kterých se nadšenci snaží vytvořit podporu pro daný
-    hardware nebo obvykle proprietární binární ovladače přímo od výrobce.
-</p>
+<p>Databáze Ovladačů slouží pro shromažďování informací ohledně ovladačů, které nejsou standardní součástí jádra. Typicky jde buď o Open Source projekty, v rámci kterých se nadšenci snaží vytvořit podporu pro daný hardware nebo obvykle proprietární binární ovladače přímo od výrobce.</p>
 
 <#assign sorted=SORT.byName(CHILDREN,"ASCENDING")>
 <#list CATEGORIES as category>
@@ -50,7 +53,5 @@
     </#list>
     <#if wrote_hdr></table></#if>
 </#list>
-
-<@lib.advertisement id="square" />
 
 <#include "../footer.ftl">

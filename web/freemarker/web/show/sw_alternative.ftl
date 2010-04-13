@@ -8,18 +8,21 @@
 
 <#include "../header.ftl">
 
-<@lib.advertisement id="square" />
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
 
-<h1>Alternativy pro ${SOFTWARE}</h1>
+
+<h1>Alternativy pro „${SOFTWARE}“</h1>
 
 <div class="sw">
 
 <#if ITEMS??>
     <@lib.showSoftwareList ITEMS />
 <#else>
-    <p>
-        Litujeme, ale pro tento software nejsou v systému definovány žádné alternativy.
-    </p>
+    <p>Litujeme, ale pro tento software nejsou v systému definovány žádné alternativy.</p>
 </#if>
 
 </div>

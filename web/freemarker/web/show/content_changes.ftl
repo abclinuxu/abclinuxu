@@ -1,16 +1,20 @@
 <#include "../header.ftl">
 
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
+
+
 <h1>Přehled stránek</h1>
 
-<p>Na této stránce najdete přehledný seznam dokumentů,
-jejich adres a datumu poslední úpravy. </p>
+<p>Na této stránce najdete přehledný seznam dokumentů, jejich adres a datumu poslední úpravy.</p>
 
 <#if ! DATA?has_content>
-    <p>
-        Pod touto stránkou nejsou žádné podstránky.
-    </p>
+    <p>Pod touto stránkou nejsou žádné podstránky.</p>
 <#else>
-    <table width="100%">
+    <table class="wiki-historie">
         <tr>
             <th align="center"><a href="<@sortUrl column="url"/>">URL</a></th>
             <th align="right"><a href="<@sortUrl column="date"/>">Poslední změna</a></th>

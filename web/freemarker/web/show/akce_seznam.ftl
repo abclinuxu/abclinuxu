@@ -1,5 +1,8 @@
 <#import "../macros.ftl" as lib>
 <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
     <#if SUBPORTAL??>
         <@lib.showSubportal SUBPORTAL, true/>
         <#assign counter=VARS.getSubportalCounter(SUBPORTAL)>
@@ -79,6 +82,8 @@
             </table>
         </div>
 
+        <@lib.advertisement id="square" />
+
         <div class="s_nadpis">Časová osa</div>
         <div class="s_sekce">
         <ul class="event_time">
@@ -120,11 +125,12 @@
             </ul>
         </div>
     </#if>
+
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">
-
-<@lib.advertisement id="square" />
 
 <@lib.showMessages/>
 

@@ -1,6 +1,13 @@
 <#include "../header.ftl">
 
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
+
 <@lib.showMessages/>
+
 
 <h1>Autoři</h1>
 <#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
@@ -9,7 +16,7 @@
 
 <p><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Jak se stát autorem</a></p>
 
-<table>
+<table class="autori">
     <tr>
         <td>Jméno</td>
         <td>Počet článků</td>

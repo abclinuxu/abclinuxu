@@ -2,6 +2,10 @@
 <#assign who=TOOL.createUser(ITEM.owner)>
 <#assign permissions = TOOL.permissionsFor(USER!, RELATION)>
 <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
+    <div class="s_nadpis">Nástroje</div>
     <div class="s_sekce">
         <ul>
             <#if USER?? && permissions.canModify()>
@@ -25,11 +29,14 @@
             </#if>
         </ul>
     </div>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">
 
-<@lib.advertisement id="square" />
 
 <h1>${ITEM.title}</h1>
 

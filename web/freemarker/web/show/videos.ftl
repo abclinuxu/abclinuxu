@@ -1,5 +1,6 @@
 <#if USER?? && TOOL.permissionsFor(USER, RELATION).canCreate()>
     <#assign plovouci_sloupec>
+        <div class="s_nadpis">Nástroje</div>
         <div class="s_sekce">
         <ul>
             <li><a href="${URL.make("/edit/"+RELATION.id+"?action=add")}">Přidat video</a></li>
@@ -10,9 +11,14 @@
 
 <#include "../header.ftl">
 
-<@lib.advertisement id="square" />
-
 <@lib.showMessages/>
+
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
+
 
 <h1>Videa</h1>
 
@@ -33,20 +39,16 @@
         | Zhlédnuto: <@lib.showCounter item, "read" />&times;
         <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
     </p>
-    <hr style="clear:right" />
+    <hr />
 </#list>
 
 <#if (ITEMS.currentPage.row > 0) >
     <#assign start=ITEMS.currentPage.row-ITEMS.pageSize><#if (start<0)><#assign start=0></#if>
-    <li>
-        <a href="/videa?from=${start}&amp;count=${ITEMS.pageSize}">Novější videa</a>
-    </li>
+    <li><a href="/videa?from=${start}&amp;count=${ITEMS.pageSize}">Novější videa</a>    </li>
 </#if>
 <#assign start=ITEMS.currentPage.row + ITEMS.pageSize>
 <#if (start < ITEMS.total) >
-    <li>
-        <a href="/videa?from=${start}&amp;count=${ITEMS.pageSize}">Starší videa</a>
-    </li>
+    <li><a href="/videa?from=${start}&amp;count=${ITEMS.pageSize}">Starší videa</a></li>
 </#if>
 
 <#include "../footer.ftl">

@@ -1,19 +1,17 @@
 <#include "../header.ftl">
 
-<@lib.advertisement id="square" />
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
+
 
 <h1>Poradna</h1>
 
-<p>Poradna slouží jako místo, kde mohou nováčci i zkušení
-uživatelé Linuxu vzájemně komunikovat a pomáhat si. Pro každou oblast
-jsme vytvořili jedno fórum, abyste snáze nalezli hledané informace.</p>
+<p>Poradna slouží jako místo, kde mohou nováčci i zkušení uživatelé Linuxu vzájemně komunikovat a pomáhat si. Pro každou oblast jsme vytvořili jedno fórum, abyste snáze nalezli hledané informace.</p>
 
-<p>Chcete-li se na něco zeptat, musíte si nejdříve zvolit diskusním fórum.
-Fóra jsou logicky členěna do několika sekcí; rozmyslete se, kam asi
-dotaz patří. Když otevřete fórum, najdete v něm odkaz na položení dotazu.
-Nejdříve si ale fórum prohlédněte, zda už se někdo před vámi na totéž
-neptal. Prvním krokem k vyřešení problému je hledání v naší obrovské databázi.
-Teprve když neuspějete, položte nový dotaz.</p>
+<p>Chcete-li se na něco zeptat, nejdříve si ale fórum prohlédněte, zda už se někdo před vámi na totéž neptal. Prvním krokem k vyřešení problému je hledání v naší obrovské databázi. Teprve když neuspějete, položte nový dotaz.</p>
 
 <ul>
     <li>

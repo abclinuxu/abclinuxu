@@ -18,13 +18,11 @@
 
 <@lib.showMessages/>
 
+
 <h1>Nej portálu</h1>
 
-<p>
-    Na této stránce najdete tabulky a žebříčky, které ukazují ten nej obsah tohoto portálu. Většina údajů
-    je k dispozici buď za celou dobu nebo jen dokumenty vytvořené za poslední měsíc. Údaje jsou aktualizovány
-    každou noc.
-</p>
+<p>Na této stránce najdete tabulky a žebříčky, které ukazují ten nej obsah tohoto portálu. Většina údajů je k dispozici buď za celou dobu, nebo jen dokumenty vytvořené za poslední měsíc. Údaje jsou aktualizovány každou noc.</p>
+
 
 <h2>Články</h2>
 
@@ -95,6 +93,48 @@
             <#if VARS.recentMostCommentedStories!?has_content>
                 <h3>Nejkomentovanější nové zápisky</h3>
                 <@displayTable VARS.recentMostCommentedStories, ""/>
+            </#if>
+        </td>
+    </tr>
+</table>
+
+<br /><hr />
+
+<h2>Zprávičky</h2>
+
+<table border="0" style="font-size:small; width:99%;">
+    <tr>
+        <td style="width:45%; vertical-align:top;">
+            <#if VARS.mostCommentedNews!?has_content>
+                <h3>Nejkomentovanější zprávičky</h3>
+                <@displayTable VARS.mostCommentedNews, ""/>
+            </#if>
+        </td>
+        <td style="width:45%; vertical-align:top; padding-left:1em;">
+            <#if VARS.recentMostCommentedNews!?has_content>
+                <h3>Nejkomentovanější nové zprávičky</h3>
+                <@displayTable VARS.recentMostCommentedNews, ""/>
+            </#if>
+        </td>
+    </tr>
+</table>
+
+<br /><hr />
+
+<h2>Ankety</h2>
+
+<table border="0" style="font-size:small; width:99%;">
+    <tr>
+        <td style="width:45%; vertical-align:top;">
+            <#if VARS.mostVotedOnPolls!?has_content>
+                <h3>Ankety s nejvíce hlasy</h3>
+                <@displayTable VARS.mostVotedOnPolls, ""/>
+            </#if>
+        </td>
+        <td style="width:45%; vertical-align:top; padding-left:1em;">
+            <#if VARS.mostCommentedPolls!?has_content>
+                <h3>Nejkomentovanější ankety</h3>
+                <@displayTable VARS.mostCommentedPolls, ""/>
             </#if>
         </td>
     </tr>
@@ -188,48 +228,6 @@
             <#if VARS.recentMostVisitedSoftware!?has_content>
                 <h3>Nejnavštěvovanější nové aplikace</h3>
                 <@displayTable VARS.recentMostVisitedSoftware, "&times;"/>
-            </#if>
-        </td>
-    </tr>
-</table>
-
-<br /><hr />
-
-<h2>Zprávičky</h2>
-
-<table border="0" style="font-size:small; width:99%;">
-    <tr>
-        <td style="width:45%; vertical-align:top;">
-            <#if VARS.mostCommentedNews!?has_content>
-                <h3>Nejkomentovanější zprávičky</h3>
-                <@displayTable VARS.mostCommentedNews, ""/>
-            </#if>
-        </td>
-        <td style="width:45%; vertical-align:top; padding-left:1em;">
-            <#if VARS.recentMostCommentedNews!?has_content>
-                <h3>Nejkomentovanější nové zprávičky</h3>
-                <@displayTable VARS.recentMostCommentedNews, ""/>
-            </#if>
-        </td>
-    </tr>
-</table>
-
-<br /><hr />
-
-<h2>Ankety</h2>
-
-<table border="0" style="font-size:small; width:99%;">
-    <tr>
-        <td style="width:45%; vertical-align:top;">
-            <#if VARS.mostVotedOnPolls!?has_content>
-                <h3>Ankety s nejvíce hlasy</h3>
-                <@displayTable VARS.mostVotedOnPolls, ""/>
-            </#if>
-        </td>
-        <td style="width:45%; vertical-align:top; padding-left:1em;">
-            <#if VARS.mostCommentedPolls!?has_content>
-                <h3>Nejkomentovanější ankety</h3>
-                <@displayTable VARS.mostCommentedPolls, ""/>
             </#if>
         </td>
     </tr>

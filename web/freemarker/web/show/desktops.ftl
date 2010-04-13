@@ -2,6 +2,8 @@
 
 <#assign plovouci_sloupec>
 
+    <@lib.advertisement id="hypertext2nahore" />
+
     <div class="s_nadpis">
       <a class="info" href="#">?<span class="tooltip">Sbírka uživatelských desktopů. Pochlubte se, jak vypadá vaše pracovní prostředí.</span></a>
       <a href="/desktopy">Desktopy</a>
@@ -38,6 +40,9 @@
     </div>
 
     &nbsp;<a href="/nej">další&nbsp;&raquo;</a>
+
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">

@@ -1,22 +1,32 @@
 <#import "../macros.ftl" as lib>
 
-<#if USER?? && USER.hasRole("root")>
-    <#assign plovouci_sloupec>
+<#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
+    <div class="s_nadpis">Skupiny</div>
     <div class="s_sekce">
-    <ul>
-        <li><a href="/skupiny/edit?action=add">Vytvořit nový</a></li>
-    </ul>
+        ${TOOL.xpath(RELATION.child,"/data/note")}
     </div>
-    </#assign>
-</#if>
+
+    <#if USER?? && USER.hasRole("root")>
+        <div class="s_nadpis">Nástroje</div>
+        <div class="s_sekce">
+            <ul>
+                <li><a href="/skupiny/edit?action=add">Vytvořit novou</a></li>
+            </ul>
+        </div>
+    </#if>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
+</#assign>
 
 <#include "../header.ftl">
 
-<@lib.advertisement id="square" />
 
 <h1>Seznam skupin</h1>
-
-${TOOL.xpath(RELATION.child,"/data/note")}
 
 <hr />
 

@@ -1,20 +1,35 @@
-<#include "../header.ftl">
+<#import "../macros.ftl" as lib>
+<#assign plovouci_sloupec>
 
-<@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2nahore" />
+
+    <div class="s_nadpis">Hry</div>
+    <div class="s_sekce">
+        <p>Chcete se pobavit, zjistit úroveň svých znalostí či se zábavnou formou naučit něčemu novému? Zahrajte si naše hry. Nejde o žádné ceny či žebříčky, jen o legraci.</p>
+
+        <p>Pokud jste nalezli v některém kvízu chybu, vložte prosím informace do diskuze. Chcete-li se podílet na přípravě dalších kvízů, pošlete e-mail na <a href="mailto:redakce@abclinuxu.cz">redakce@abclinuxu.cz</a>. Za každý kvíz, který redakce přijme, získáte finanční odměnu.</p>
+    </div>
+
+    <#if USER?? && TOOL.permissionsFor(USER, RELATION).canCreate()>
+        <div class="s_nadpis">Nástroje</div>
+        <div class="s_sekce">
+            <ul>
+                <li><a href="/EditTrivia?action=add">Přidat kvíz</a></li>
+            </ul>
+        </div>
+    </#if>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
+</#assign>
+
+<#include "../header.ftl">
 
 <@lib.showMessages/>
 
+
 <h1>Hry</h1>
-
-<p>
-    Chcete se pobavit, zjistit úroveň svých znalostí či se zábavnou formou
-    naučit něčemu novému? Zahrajte si naše hry. Nejde o žádné ceny či žebříčky,
-    jen o legraci.
-</p>
-
-<#if USER?? && TOOL.permissionsFor(USER, RELATION).canCreate()>
-    <a href="/EditTrivia?action=add">Přidat kvíz</a>
-</#if>
 
 <#list TRIVIA_GAMES as relation>
     <#assign trivia=relation.child, dif=TOOL.xpath(trivia, "/data/difficulty"),
@@ -36,12 +51,5 @@
     </p>
     <hr />
 </#list>
-
-<p>
-    Pokud jste nalezli v některém kvízu chybu, vložte prosím informace do diskuze.
-    Chcete-li se podílet na přípravě dalších kvízů, pošlete e-mail na
-    <a href="mailto:redakce@abclinuxu.cz">redakce@abclinuxu.cz</a>. Za každý kvíz,
-    který redakce přijme, získáte finanční odměnu.
-</p>
 
 <#include "../footer.ftl">

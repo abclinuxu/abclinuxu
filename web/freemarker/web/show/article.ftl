@@ -1,7 +1,10 @@
 <#import "../macros.ftl" as lib>
 <#if SUBPORTAL??>
     <#assign plovouci_sloupec>
+        <@lib.advertisement id="hypertext2nahore" />
         <@lib.showSubportal SUBPORTAL, true/>
+        <@lib.advertisement id="square" />
+        <@lib.advertisement id="hypertext2dole" />
     </#assign>
 </#if>
 
@@ -78,7 +81,13 @@
     <div class="cl_perex">${TOOL.xpath(ITEM,"/data/perex")}</div>
 </#if>
 
-<@lib.advertisement id="square" />
+<#if ! plovouci_sloupec??>
+    <div class="no-col-ad">
+        <@lib.advertisement id="hypertext2nahore" />
+        <@lib.advertisement id="square" />
+        <@lib.advertisement id="hypertext2dole" />
+    </div>
+</#if>
 
 <#assign items = TOOL.processArticle( TOOL.render(TEXT,USER!) )>
 <#list items as item>

@@ -3,7 +3,7 @@
 <#include "../header.ftl">
 
 <#assign cat=RELATION.child>
-<h1>Členové skupiny ${cat.title}</h1>
+<h1>Členové skupiny „${cat.title}“</h1>
 
 <#assign members = cat.getProperty("member")>
 <form action="${"/skupiny/edit/"+RELATION.id}" method="post" style="float: right">

@@ -1,14 +1,21 @@
 <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
+    <div class="s_nadpis">Nástroje</div>
     <div class="s_sekce">
         <a href="${URL.make("/edit/?action=add")}">Vytvořit štítek</a>
     </div>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">
 
 <@lib.showMessages/>
 
-<@lib.advertisement id="square" />
 
 <h1>Štítky</h1>
 

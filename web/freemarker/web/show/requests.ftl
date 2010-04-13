@@ -16,31 +16,11 @@
         ${TOOL.render(PARAMS.text,USER!)}
     </fieldset>
 <#else>
-    <p>
-        Tato stránka slouží pro zadávání <b>administrativních</b> požadavků
-        na správce portálu www.abclinuxu.cz. Pokud potřebujete založit novou sekci,
-        zapomněli jste přihlašovací údaje a podobně, použijte tento formulář.
-        Pokud máte námět na vylepšení, nebo jste našli chybu, pište do
-        <a href="http://bugzilla.abclinuxu.cz">bugzilly</a>,
-        ušetříte nám tak práci a budete mít přehled o vyřízení vaši žádosti.
-        V bugzille sdílí uživatelské učty s tímto portálem, takže můžete použít
-        přihlašovací údaje z AbcLinuxu.
-    </p>
+    <p>Tato stránka slouží pro zadávání <b>administrativních</b> požadavků na správce portálu www.abclinuxu.cz. Pokud potřebujete založit novou sekci, zapomněli jste přihlašovací údaje a podobně, použijte tento formulář. Pokud máte námět na vylepšení nebo jste našli chybu, pište do <a href="http://bugzilla.abclinuxu.cz">bugzilly</a>, ušetříte nám tak práci a budete mít přehled o vyřízení vaši žádosti. Bugzilla sdílí uživatelské učty s tímto portálem, takže můžete použít přihlašovací údaje z AbcLinuxu.</p>
 
-    <p>
-        Jedná-li se o námět na novou anketu, považujte jeho smazání za jeho vyřízení.
-        Neznamená to, že bychom ho ignorovali, ale že jsme ho zařadili do seznamu
-        dalších námětů. Ne všechny náměty se stanou anketami, protože námětů je prostě
-        moc. Z vašich návrhů vybíráme ty nejzajímavější.
-    </p>
+    <p>Jedná-li se o námět na novou anketu, považujte jeho smazání za jeho vyřízení. Neznamená to, že bychom ho ignorovali, ale že jsme ho zařadili do seznamu dalších námětů. Ne všechny náměty se stanou anketami, protože námětů je prostě moc. Z vašich návrhů vybíráme ty nejzajímavější.</p>
 
-    <p>
-        Potřebujete-li poradit s Linuxem, zkuste si nejdříve
-        <a href="/hledani">najít</a> odpověď sami a nenajdete-li řešení,
-        požádejte o pomoc v <a href="/poradna">poradně</a>.
-        Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
-        <u>smažeme</u> jakékoliv požadavky, které nesouvisí s chodem portálu.
-    </p>
+    <p>Potřebujete-li poradit s Linuxem, zkuste si nejdříve <a href="/hledani">najít</a> odpověď sami a nenajdete-li řešení, požádejte o pomoc v <a href="/poradna">poradně</a>. Tento formulář však pro tyto účely neslouží, a proto bez odpovědi <i>smažeme</i> jakékoliv požadavky, které nesouvisí s chodem portálu.</p>
 
     <#if CHILDREN?? && CHILDREN?size gt 0>
         <h2>Nevyřízené požadavky</h2>
@@ -73,9 +53,7 @@
     </#if>
 </#if>
 
-<p>
-    Aplikační chyby prosím hlaste do <a href="http://bugzilla.abclinuxu.cz">bugzilly</a>.
-</p>
+<p>Aplikační chyby prosím hlaste do <a href="http://bugzilla.abclinuxu.cz">bugzilly</a></p>
 
 <a name="form"></a>
 <form action="${URL.make("/EditRequest")}" method="POST">
@@ -124,8 +102,7 @@
                 <td class="required">Aktuální rok</td>
                 <td>
                     <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}">
-                    <a class="info" href="#">?<span class="tooltip">Vložte aktuální rok. Jedná se o ochranu před spamboty.
-                    Po úspěšném ověření se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.</span></a>
+                    <a class="info" href="#">?<span class="tooltip">Vložte aktuální rok. Jedná se o ochranu před spamboty. Po úspěšném ověření se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.</span></a>
                     <span class="error">${ERRORS.antispam!}</span>
                 </td>
             </tr>

@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1> ${GROUP.title}</h1>
+<h1>${GROUP.title}</h1>
 
 <p>${TOOL.xpath(GROUP.data,"/data/desc")}</p>
 
@@ -35,9 +35,7 @@
 
 </#if>
 
-<p>
-<a href="${URL.noPrefix("/SelectUser?sAction=form&url=/EditUser&action=addToGroup&gid="+GROUP.id)}">Přidej
-dalšího člena</a>
-</p>
+<p><a href="${URL.noPrefix("/SelectUser?sAction=form&url=/EditUser&action=addToGroup&gid="+GROUP.id)}">Přidej
+dalšího člena</a></p>
 
 <#include "../footer.ftl">

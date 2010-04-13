@@ -1,4 +1,7 @@
 <#assign plovouci_sloupec>
+
+  <@lib.advertisement id="hypertext2nahore" />
+
   <div class="s_nadpis">
     <a class="info" href="#">?<span class="tooltip">Vlastní blog si po přihlášení můžete založit v nastavení svého profilu.</span></a>
     <a href="/blog">Blogy na AbcLinuxu</a>
@@ -8,8 +11,7 @@
         <#if DIGEST??>
             Výběr zápisků, které se týkají Linuxu, Open Source či IT. Žádná politika.
         <#else>
-            Přehled zápisů ze všech blogů našich uživatelů. Blog si může založit registrovaný uživatel
-            ve svém profilu.
+            Přehled zápisů ze všech blogů našich uživatelů. Blog si může založit registrovaný uživatel ve svém profilu.
         </#if>
         <ul>
             <#if DIGEST??>
@@ -32,6 +34,8 @@
         </ul>
     </div>
 
+    <@lib.advertisement id="square" />
+
     <div class="s_nadpis"><a href="/nej">Nej blogů na AbcLinuxu</a></div>
     <div class="s_sekce">
         <#if VARS.recentMostReadStories??>
@@ -43,7 +47,6 @@
                 </#list>
             </ul>
         </#if>
-        <@lib.advertisement id="square" />
 
         <#if VARS.recentMostCommentedStories??>
             <b>Nejkomentovanější za poslední měsíc</b>
@@ -56,7 +59,7 @@
         </#if>
     </div>
 
-    <@lib.advertisement id="gg-sq-blog" />
+    <@lib.advertisement id="hypertext2dole" />
 
 </#assign>
 

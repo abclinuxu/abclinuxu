@@ -1,6 +1,6 @@
 <#include "../header.ftl">
 
-<h1 class="st_nadpis">Sekce ${CATEGORY.title}</h1>
+<h1>Sekce ${CATEGORY.title}</h1>
 
 <@lib.showMessages/>
 

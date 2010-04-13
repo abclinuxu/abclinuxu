@@ -6,20 +6,15 @@
 
 <p>
     <#if (SCORE == 0)>
-        Ouvej, ani jedna správná odpověď? Jak se vám to povedlo? Projděte si správné
-        odpovědi a u dalšího kvízu vybírejte odpovědi náhodně, hůře už skončit nemůžete&nbsp;:-).
+        Ouvej, ani jedna správná odpověď? Jak se vám to povedlo? Projděte si správné odpovědi a u dalšího kvízu vybírejte odpovědi náhodně, hůře už skončit nemůžete&nbsp;:-).
     <#elseif (SCORE < 4)>
-        No, nic moc. Pozorně si prohlédněte správné odpovědi a zkuste jiný kvíz. Třeba
-        budete mít lepší mušku.
+        No, nic moc. Pozorně si prohlédněte správné odpovědi a zkuste jiný kvíz. Třeba budete mít lepší mušku.
     <#elseif (SCORE <= 8)>
-        Zlatý průměr, ale na pochvalu to není. Schválně se podívejte na vaše chyby.
-        Prostor ke zlepšování zde je, jiný kvíz vám může vyjít lépe.
+        Zlatý průměr, ale na pochvalu to není. Schválně se podívejte na vaše chyby. Prostor ke zlepšování zde je, jiný kvíz vám může vyjít lépe.
     <#elseif (SCORE == 9)>
-        Výborně, jediná chybička vás dělila od dokonalosti. Která otázka vás dostala?
-        U příštího kvízu už tolik smůly mít nemusíte, vysněná desítka na vás čeká...
+        Výborně, jediná chybička vás dělila od dokonalosti. Která otázka vás dostala? U příštího kvízu už tolik smůly mít nemusíte, vysněná desítka na vás čeká...
     <#else>
-        Uctivost, vašnosti. Vše správně, jste nejlepší. Aspoň v tomhle kvízu. Dokážete
-        úspěch zopakovat i u dalšího kvízu?
+        Uctivost, vašnosti. Vše správně, jste nejlepší. Aspoň v tomhle kvízu. Dokážete úspěch zopakovat i u dalšího kvízu?
     </#if>
 </p>
 

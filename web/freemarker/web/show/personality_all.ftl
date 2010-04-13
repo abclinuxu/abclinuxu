@@ -1,5 +1,8 @@
 <#import "../macros.ftl" as lib>
 <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
     <div class="s_sekce">
         <ul>
             <li>
@@ -10,7 +13,12 @@
             </li>
         </ul>
     </div>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
+
 <#include "../header.ftl">
 
 <h1>Kdo je</h1>

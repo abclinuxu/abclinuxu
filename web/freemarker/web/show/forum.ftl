@@ -1,5 +1,9 @@
 <#import "../macros.ftl" as lib>
 <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
+    <div class="s_nadpis">Nástroje</div>
     <div class="s_sekce">
         <ul>
             <li>
@@ -14,6 +18,10 @@
         <#import "../macros.ftl" as lib>
         <@lib.showSubportal SUBPORTAL, true/>
     </#if>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">
@@ -112,7 +120,5 @@
    <li><a href="${RELATION.url?default("/forum/dir/"+RELATION.id)}?from=${start}&amp;count=${DIZS.pageSize}&amp;tags=${tags}">Starší dotazy</a>
   </#if>
  </ul>
-
-<@lib.advertisement id="square" />
 
 <#include "../footer.ftl">

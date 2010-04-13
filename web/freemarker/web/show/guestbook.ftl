@@ -5,17 +5,9 @@
 <#if (ENTRIES.currentPage.row == 0) >
     <h1>Kniha návštěv</h1>
 
-    <p>Kniha návštěv je určena návštěvníkům, kteří chtějí zanechat
-    vzkaz či zprávu provozovatelům a administrátorům portálu. Jedná
-    se o obdobu návštěvních knih, jaké vídáte na hradech a zámcích,
-    prostě napište zde, jak se vám na našem portále líbilo či nelíbilo.
-    Pro hlášení chyb či námětů na vylepšení je určena
-    <a href="${URL.noPrefix("/pozadavky")}">tato</a> stránka.
-    </p>
+    <p>Kniha návštěv je určena návštěvníkům, kteří chtějí zanechat vzkaz či zprávu provozovatelům a administrátorům portálu. Jedná se o obdobu návštěvních knih, jaké vídáte na hradech a zámcích, prostě napište zde, jak se vám na našem portále líbilo, či nelíbilo. Pro hlášení chyb či námětů na vylepšení je určena <a href="${URL.noPrefix("/pozadavky")}">tato</a> stránka.</p>
 
-    <p>
-        <a href="${URL.noPrefix("/kniha_navstev/edit")}">Přidat vzkaz</a>
-    </p>
+    <p><a href="${URL.noPrefix("/kniha_navstev/edit")}">Přidat vzkaz</a></p>
 </#if>
 
 <#list ENTRIES.data as relation>
@@ -41,6 +33,5 @@
    <a href="/kniha_navstev?from=${start}&amp;count=${ENTRIES.pageSize}">Starší vzkazy</a>
   </#if>
 </p>
-
 
 <#include "../footer.ftl">

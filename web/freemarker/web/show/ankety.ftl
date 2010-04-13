@@ -1,5 +1,8 @@
 <#import "../macros.ftl" as lib>
 <#assign plovouci_sloupec>
+
+<@lib.advertisement id="hypertext2nahore" />
+
 <div class="s_nadpis"><a href="/nej">Nej anket na AbcLinuxu</a></div>
 <div class="s_sekce">
     <#if VARS.mostVotedOnPolls??>
@@ -22,13 +25,16 @@
         </ul>
     </#if>
 </div>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">
 
 <@lib.showMessages/>
 
-<@lib.advertisement id="square" />
 
 <h1>Archiv anket</h1>
 

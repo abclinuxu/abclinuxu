@@ -4,6 +4,9 @@
 <#assign owner=TOOL.createUser(BLOG.owner)>
 
 <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
     <div class="s_nadpis">
         <@lib.showUser owner/>
     	<#if title!="UNDEF"> - <a href="/blog/${BLOG.subType}">${title}</a></#if>
@@ -153,6 +156,8 @@
         </ul>
     </div>
 
+    <@lib.advertisement id="square" />
+
     <div class="s_nadpis"><a href="/nej">Nej blogů na AbcLinuxu</a></div>
     <div class="s_sekce">
         <#if VARS.recentMostReadStories??>
@@ -176,9 +181,7 @@
         </#if>
     </div>
 
-  <hr id="sq-cara" />
-  <@lib.advertisement id="square" />
-  <@lib.advertisement id="gg-sq-blog" />
+    <@lib.advertisement id="hypertext2dole" />
 
 </#assign>
 

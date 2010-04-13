@@ -1,6 +1,10 @@
 <#import "../macros.ftl" as lib>
 <#assign who=TOOL.createUser(ITEM.owner)>
 <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
+    <div class="s_nadpis">Nástroje</div>
     <div class="s_sekce">
         <ul>
             <#if PARAMS.revize??>
@@ -27,6 +31,10 @@
             </#if>
         </ul>
     </div>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">
@@ -37,7 +45,6 @@
 <div class="sw">
 
     <@lib.advertisement id="gg-sw-item" />
-    <@lib.advertisement id="square" />
 
     <@swlib.showSoftware ITEM, true />
 
@@ -51,7 +58,9 @@
 
 <@lib.showRevisions RELATION, REVISIONS/>
 
-<div style="float:right; clear:right;"><@lib.advertisement id="fullbanner" /></div>
+<div class="no-col-ad">
+    <@lib.advertisement id="fullbanner" />
+</div>
 
 <@lib.showPageTools RELATION />
 

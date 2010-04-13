@@ -1,13 +1,21 @@
 <#if SUBPORTAL??>
     <#import "../macros.ftl" as lib>
     <#assign plovouci_sloupec>
+      <@lib.advertisement id="hypertext2nahore" />
       <@lib.showSubportal SUBPORTAL, true/>
+      <@lib.advertisement id="square" />
+      <@lib.advertisement id="hypertext2dole" />
     </#assign>
 </#if>
 
 <#include "../header.ftl">
 
-<@lib.advertisement id="square" />
+<#if ! plovouci_sloupec??>
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</#if>
+
 
 <h1>Obsah</h1>
 

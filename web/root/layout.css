@@ -670,6 +670,7 @@ a.info:hover span.tooltip {
 .ds,
 .boxy,
 .ramec,
+.autor,
 .ls_zpr span,
 .st .anketa,
 .st .rozc table,
@@ -864,10 +865,10 @@ a,
 	margin: 0.2em 0.1em;
 }
 
-.hw-sloupec .obal_ps,
+/*.hw-sloupec .obal_ps,
 .sw-sloupec .obal_ps {
 	width: 200px;
-}
+}*/
 
 .rozc td,
 .boxy td,
@@ -916,6 +917,12 @@ a,
 	padding: 0.2em 0.5em 0.5em 0.5em;
 	margin: 0.5em;
 	font-size: small;
+}
+
+.no-col-ad {
+	clear: right;
+	float: right;
+	margin-left: 0.5em;
 }
 
 .form-edit {

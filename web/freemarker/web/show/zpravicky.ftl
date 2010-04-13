@@ -14,7 +14,12 @@
     }
 </script>
 
-<@lib.advertisement id="square" />
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
+
 
 <h1>Zprávičky</h1>
 
@@ -27,7 +32,7 @@
 <a href="${URL.make("/zpravicky/edit?action=add")}">Přidat zprávičku</a>
 </p>
 
-<div align="center"><img src="/images/site/wap.gif" width="181" height="52" alt="wap.abclinuxu.cz"><br><br></div>
+<br />
 
 <form action="/zpravicky/hledani" method="POST">
  <input type="text" name="dotaz" size="30" tabindex="1">

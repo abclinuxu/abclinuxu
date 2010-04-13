@@ -2,20 +2,19 @@
 
 <@lib.showMessages/>
 
-<@lib.advertisement id="square" />
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
+
 
 <h1>Seznam sledovaných dokumentů</h1>
 
-<p>
-    Na této stránce najdete seznam dokumentů, které jste nechali sledovat. Pokud je chcete přestat sledovat všechny
-    najednou, zvolte tlačítko <code>Odstranit vše</code>. Tato operace je nevratná.
-</p>
+<p>Na této stránce najdete seznam dokumentů, které jste nechali sledovat. Pokud je chcete přestat sledovat všechny najednou, zvolte tlačítko <code>Odstranit vše</code>. Tato operace je nevratná.</p>
 
 <#if (MONITORED.getTotal() == 0)>
-    <p>
-        Nesledujete žádné dokumenty. Monitor můžete zapnout u dokumentu (například diskuse) v liště <code>Nástroje</code>
-        pomocí odkazu <code>Začni sledovat</code>.
-    </p>
+    <p>Nesledujete žádné dokumenty. Monitor můžete zapnout u dokumentu (například diskuse) v liště <code>Nástroje</code> pomocí odkazu <code>Začni sledovat</code>.</p>
 <#else>
     <form action="/EditMonitor" method="POST">
         <input type="hidden" name="action" value="removeAll" />

@@ -12,6 +12,9 @@
 </#if>
 
 <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
     <#if SUBPORTAL??>
         <@lib.showSubportal SUBPORTAL, true/>
         <#assign counter=VARS.getSubportalCounter(SUBPORTAL)>
@@ -64,11 +67,14 @@
             </ul>
         </div>
     </#if>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">
 
-<@lib.advertisement id="square" />
 
 <h1>${TOOL.childName(ITEM)}</h1>
 

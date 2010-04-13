@@ -1,7 +1,12 @@
 <#include "../header.ftl">
 <#assign CATEGORY=RELATION.child>
 
-<@lib.advertisement id="square" />
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
+
 
 <h1>${CATEGORY.title} - často kladené otázky</h1>
 
@@ -10,9 +15,7 @@
 </#if>
 
 <#if QUESTIONS.total==0>
-    <p>
-        V této sekci nejsou zatím žádné otázky.
-    </p>
+    <p>V této sekci nejsou zatím žádné otázky.</p>
 <#else>
     <ul>
     <#list QUESTIONS.data as relation>

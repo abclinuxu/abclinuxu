@@ -1,6 +1,11 @@
 <#include "../header.ftl">
 
-<@lib.advertisement id="square" />
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
+
 
 <h1>Účastníci akce ${TOOL.childName(ITEM)}</h1>
 

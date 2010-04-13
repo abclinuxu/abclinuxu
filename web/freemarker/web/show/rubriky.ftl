@@ -23,7 +23,12 @@
  <p class="note">${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER!)}</p>
 </#if>
 
-<@lib.advertisement id="square" />
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
+
 
 <h1>Seznam rubrik</h1>
 

@@ -9,16 +9,11 @@
 
 <@lib.showMessages/>
 
-<h1>Produkty z 64bit.cz</h1>
+<h1>Produkty z 64bit.eu</h1>
 
-<p>
-    Na této stránce najdete seznam produktů z eshopu 64bit.cz, jejichž cena se automaticky a pravidelně
-    načítá do databáze portálu. Vložte vybrané níže vygenerované makro do reklamní pozice a systém
-    sám zobrazí aktuální cenu. Jméno produktu je jen informační a nikde jinde se nezobrazuje (je zde problém
-    s kódováním českých znaků v databázi).
-</p>
+<p>Na této stránce najdete seznam produktů z eshopu 64bit.eu, jejichž cena se automaticky a pravidelně načítá do databáze portálu. Vložte vybrané níže vygenerované makro do reklamní pozice a systém sám zobrazí aktuální cenu. Jméno produktu je jen informační a nikde jinde se nezobrazuje (je zde problém s kódováním českých znaků v databázi).</p>
 
-<table class="siroka">
+<table>
     <tr>
         <th>Produkt</th>
         <th>Cena</th>

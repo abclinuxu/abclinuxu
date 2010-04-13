@@ -9,6 +9,7 @@
 
 <#if USER?? && USER.hasRole("tag admin")>
     <#assign plovouci_sloupec>
+        <div class="s_nadpis">Nástroje</div>
         <div class="s_sekce">
             <ul>
                 <li>
@@ -24,11 +25,15 @@
 
 <#include "../header.ftl">
 
-<@lib.advertisement id="square" />
+<div class="no-col-ad">
+    <@lib.advertisement id="hypertext2nahore" />
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+</div>
 
 <@lib.showMessages/>
 
-<h1>Štítek ${TAG.title}</h1>
+<h1>Štítek „${TAG.title}“</h1>
 
 <p>
     Autor štítku:

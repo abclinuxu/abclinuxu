@@ -1,5 +1,9 @@
 <#import "../macros.ftl" as lib>
 <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
+    <div class="s_nadpis">Nástroje</div>
     <div class="s_sekce">
         <ul>
             <li>
@@ -10,40 +14,22 @@
             </li>
         </ul>
     </div>
+
+    <@lib.advertisement id="square" />
+    <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">
 
-<@lib.advertisement id="square" />
 
 <h1>Výkladový slovník</h1>
 
-<p>
-    Výkladový slovník našeho portálu je projekt, jenž se snaží českým
-    a slovenským uživatelům přiblížit Linux. Málokterý nováček se začne
-    s tímto operačním systémem seznamovat tak, že si o něm nejdříve přečte
-    <a href="/hledani?dotaz=recenze+kniha+cena&advancedMode=true&type=clanek">nějakou knihu</a>
-    nebo <a href="/ucebnice">učebnici</a>. Pokud nemá žádné zkušenosti
-    s jinými operačními systémy odvozenými od Unixu, velmi rychle si připadá ztracený,
-    protože se všude používají pojmy a slova, která nechápe.
-</p>
+<p>Výkladový slovník našeho portálu je projekt, jenž se snaží českým a slovenským uživatelům přiblížit Linux. Málokterý nováček se začne s tímto operačním systémem seznamovat tak, že si o něm nejdříve přečte <a href="/hledani?dotaz=recenze+kniha+cena&advancedMode=true&type=clanek">nějakou knihu</a> nebo <a href="/ucebnice">učebnici</a>. Pokud nemá žádné zkušenosti s jinými operačními systémy odvozenými od Unixu, velmi rychle si připadá ztracený, protože se všude používají pojmy a slova, která nechápe.</p>
 
-<p>
-    Výkladový slovník je pokus, jak tento problém zmenšit. Jak je našim dobrým zvykem,
-    jedná se o otevřený komunitní projekt, do něhož může přispět každý. Jeho cílem je popsat
-    všechny základní pojmy, které se v Linuxu běžně objevují. Pokud se chcete zapojit
-    do tvorby této databáze, můžete
-    <a class="bez-slovniku" href="${URL.make("/slovnik/edit?action=add")}">vysvětlit
-    nový pojem</a>.
-</p>
+<p>Výkladový slovník je pokus, jak tento problém zmenšit. Jak je našim dobrým zvykem, jedná se o otevřený komunitní projekt, do něhož může přispět každý. Jeho cílem je popsat všechny základní pojmy, které se v Linuxu běžně objevují. Pokud se chcete zapojit do tvorby této databáze, můžete <a class="bez-slovniku" href="${URL.make("/slovnik/edit?action=add")}">vysvětlit nový pojem</a>.</p>
 
-<p>
-    Pokud nenajdete některý pojem v našem slovníku a rozumíte anglicky, zkuste
-    <a href="http://en.wikipedia.org/wiki/Category:Computing">Wikipedii</a>
-    nebo <a href="http://www.acronymdictionary.co.uk">seznam akronymů</a>. K dispozici
-    existuje i <a href="http://www.ucc.ie/cgi-bin/acronym">hledání</a> akronymů.
-</p>
-
+<p>Pokud nenajdete některý pojem v našem slovníku a rozumíte anglicky, zkuste <a href="http://en.wikipedia.org/wiki/Category:Computing">Wikipedii</a> nebo <a href="http://www.acronymdictionary.co.uk">seznam akronymů</a>. K dispozici existuje i <a href="http://www.ucc.ie/cgi-bin/acronym">hledání</a> akronymů.</p>
 
 <form action="/hledani" method="GET">
     <input type="text" name="dotaz" size="30" tabindex="1">

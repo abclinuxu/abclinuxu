@@ -1,5 +1,9 @@
 <#assign who=TOOL.createUser(ITEM.owner)>
 <#assign plovouci_sloupec>
+
+  <@lib.advertisement id="hypertext2nahore" />
+
+  <div class="s_nadpis">Nástroje</div>
   <div class="s_sekce">
     <ul>
     <#if USER??>
@@ -14,20 +18,22 @@
     </#if>
     </ul>
 
-    <@lib.advertisement id="gg-bazar" />
   </div>
+
+  <@lib.advertisement id="square" />
+  <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
+
 <#include "../header.ftl">
 <#import "../misc/lib-bazar.ftl" as bazarlib>
-
-<@lib.advertisement id="square" />
 
 <@lib.showMessages/>
 
 <div class="bazar">
 <@bazarlib.showBazaarAd ITEM, who />
 
-<@lib.showGallery ITEM />    
+<@lib.showGallery ITEM />
 </div> <!-- bazar -->
 
 <@lib.showPageTools RELATION />

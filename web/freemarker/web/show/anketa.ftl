@@ -1,6 +1,9 @@
 <#import "../macros.ftl" as lib>
 <#if RELATION.upper==250>
     <#assign plovouci_sloupec>
+
+    <@lib.advertisement id="hypertext2nahore" />
+
     <div class="s_nadpis"><a href="/nej">Nej anket na AbcLinuxu</a></div>
     <div class="s_sekce">
         <#if VARS.mostVotedOnPolls??>
@@ -27,6 +30,9 @@
             </ul>
         </#if>
     </div>
+
+    <@lib.advertisement id="square" />
+
     </#assign>
 </#if>
 
@@ -34,7 +40,6 @@
 
 <@lib.showMessages/>
 
-<@lib.advertisement id="square" />
 
 <#if USER?? && USER.hasRole("poll admin")>
  <p>

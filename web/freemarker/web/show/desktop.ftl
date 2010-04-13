@@ -1,6 +1,9 @@
 <#import "../macros.ftl" as lib>
 
 <#assign plovouci_sloupec>
+
+  <@lib.advertisement id="hypertext2nahore" />
+
   <#if USER??>
     <#assign permissions = TOOL.permissionsFor(USER, RELATION)>
     <#if USER.id==ITEM.owner || permissions.canModify()>
@@ -37,6 +40,9 @@
     </#list>
   </div>
   &nbsp;<a href="/nej">další&nbsp;&raquo;</a>
+
+  <@lib.advertisement id="hypertext2dole" />
+
 </#assign>
 
 <#include "../header.ftl">

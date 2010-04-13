@@ -2,7 +2,7 @@
 
 <#include "../header.ftl">
 
-<h1>Administrátoři skupiny ${TOOL.childName(RELATION)}</h1>
+<h1>Administrátoři skupiny „${TOOL.childName(RELATION)}“</h1>
 
 <ul>
     <#list ADMINS as admin>
