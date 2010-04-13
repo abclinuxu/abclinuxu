@@ -655,10 +655,10 @@
                             <entry key="max.personalities" value="10"/>
                             <entry key="default.bazaar" value="3"/>
                             <entry key="max.bazaar" value="10"/>
-                            <entry key="feeds.for.index" value="15,16,42" />
+                            <entry key="feeds.for.index" value="15,42" />
                             <entry key="default.links.in.index" value="3" />
                             <entry key="max.links.in.index" value="5" />
-                            <entry key="feeds.for.template" value="7,16,20" />
+                            <entry key="feeds.for.template" value="7,42" />
                             <entry key="default.links.in.template" value="2"/>
                             <entry key="max.links.in.template" value="5" />
                             <entry key="default.tagcloud" value="30" />
