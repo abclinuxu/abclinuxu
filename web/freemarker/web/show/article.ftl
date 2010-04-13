@@ -86,7 +86,7 @@
 </#if>
 
 <#if ( (PAGE!0) == 0) >
-    <div class="cl_perex perex-horni">${TOOL.xpath(ITEM,"/data/perex")}</div>
+    <div class="cl_perex" style="margin-right:260px">${TOOL.xpath(ITEM,"/data/perex")}</div>
 </#if>
 
 <#assign items = TOOL.processArticle( TOOL.render(TEXT,USER!) )>
@@ -178,9 +178,6 @@
                     <a href="${rel.key.url}">${TOOL.childName(rel.key)}</a><br />
                 </#list>
             &nbsp; <a href="/nej">všechny statistiky &raquo;</a>
-            <#if SUBPORTAL??>
-                <br style="clear:right" />
-            </#if>
         </#if>
     </div>
 
