@@ -1,19 +1,5 @@
 <#include "../header.ftl">
 
-<#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
-    <#assign plovouci_sloupec>
-      <div class="s_nadpis">Nástroje</div>
-      <div class="s_sekce">
-        <ul>
-            <li><a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=edit")}">Uprav seriál</a></li>
-            <li><a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=addArticlesUrls")}">Přidej články</a></li>
-            <li><a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=remove"+TOOL.ticket(USER, false))}"
-              onclick="return confirm('Opravdu chcete smazat tento seriál?')">Smaž seriál</a></li>
-        </ul>
-      </div>
-    </#assign>
-</#if>
-
 <div class="no-col-ad">
     <@lib.advertisement id="hypertext2nahore" />
     <@lib.advertisement id="square" />
@@ -35,6 +21,15 @@
     <p class="cl_perex">${desc}</p>
 </#if>
 </div>
+
+<#if USER?? && TOOL.permissionsFor(USER, RELATION).canModify()>
+    <p>
+        <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=edit")}">Uprav seriál</a>
+        <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=addArticlesUrls")}">Přidej články</a>
+        <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=rm"+TOOL.ticket(USER, false))}"
+           onclick="return confirm('Opravdu chcete smazat tento seriál?')">Smaž seriál</a>
+    </p>
+</#if>
 
 <#list ARTICLES.data as relation>
     <@lib.showArticle relation, "SMART_DMY" />
