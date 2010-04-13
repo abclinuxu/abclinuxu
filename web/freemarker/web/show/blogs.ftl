@@ -1,11 +1,11 @@
 <#assign plovouci_sloupec>
 
-  <@lib.advertisement id="hypertext2nahore" />
+   <@lib.advertisement id="hypertext2nahore" />
 
-  <div class="s_nadpis">
-    <a class="info" href="#">?<span class="tooltip">Vlastní blog si po přihlášení můžete založit v nastavení svého profilu.</span></a>
-    <a href="/blog">Seznam všech blogů</a>
-  </div>
+   <div class="s_nadpis">
+        <a class="info" href="#">?<span class="tooltip">Vlastní blog si po přihlášení můžete založit v nastavení svého profilu.</span></a>
+        <a href="/blog">Seznam všech blogů</a>
+    </div>
 
     <div class="s_sekce">
         <p>Chcete-li také psát svůj blog, přihlašte se a v nastavení
