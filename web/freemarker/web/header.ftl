@@ -23,8 +23,11 @@
             <div class="s_sekce">
                 <div class="ls_zpr">
                 <#list news as relation>
+                    <#if relation_index==1>
+                         <@lib.advertisement id="sl-box1" />
+                    </#if>
                     <#if relation_index==2>
-                         <@lib.advertisement id="sl-box" />
+                         <@lib.advertisement id="sl-box2" />
                     </#if>
                     <#if relation_index==4>
                          <@lib.advertisement id="skyscraper" />
