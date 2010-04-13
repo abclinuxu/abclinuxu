@@ -1122,7 +1122,7 @@
     </tr>
 </#macro>
 
-<#macro addInput required, name, description, size = 40, extraAttributes = "", defaultValue = "">
+<#macro addInput required, name, description, size = 24, extraAttributes = "", defaultValue = "">
     <@addFormField required, description>
         <@addInputBare name, size, extraAttributes, defaultValue>
             <#nested>
@@ -1130,13 +1130,13 @@
     </@addFormField>
 </#macro>
 
-<#macro addInputBare name, size = 40, extraAttributes = "", defaultValue = "">
+<#macro addInputBare name, size = 24, extraAttributes = "", defaultValue = "">
     <input type="text" id="${name?html}" size="${size}" name="${name?html}" value="${(PARAMS.get(name)!defaultValue)?html}" ${extraAttributes}>
     <#nested>
     <@showError name />
 </#macro>
 
-<#macro addPassword required, name, description, size = 40, extraAttributes = "">
+<#macro addPassword required, name, description, size = 24, extraAttributes = "">
     <@addFormField required, description>
         <@addPasswordBare name, description, size, extraAttributes>
             <#nested>
@@ -1144,7 +1144,7 @@
     </@addFormField>
 </#macro>
 
-<#macro addPasswordBare name, description, size = 40, extraAttributes = "">
+<#macro addPasswordBare name, description, size = 24, extraAttributes = "">
     <input type="password" id="${name?html}" size="${size}" name="${name?html}" ${extraAttributes}>
     <#nested>
     <@showError name />
