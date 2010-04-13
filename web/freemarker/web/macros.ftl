@@ -1215,7 +1215,7 @@
 </#macro>
 
 <#macro addFakeForm>
-    <table cellpadding="5" border="0" class="siroka">
+    <table cellpadding="5" border="0">
         <#nested>
     </table>
 </#macro>
