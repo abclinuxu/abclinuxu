@@ -56,9 +56,7 @@
         </#if>
     </#list>
 
-    <div class="st_vpravo">
-        <a href="/History?type=articles&amp;from=${ARTICLES?size}&amp;count=${SYSTEM_CONFIG.getSectionArticleCount()}">Starší články</a>
-    </div>
+    <p><a href="/History?type=articles&amp;from=${ARTICLES?size}&amp;count=${SYSTEM_CONFIG.getSectionArticleCount()}">Starší články</a></p>
 </#if>
 
 <#flush>
