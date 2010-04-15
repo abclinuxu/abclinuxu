@@ -20,9 +20,9 @@
 
 <p class="meta-vypis">
     ${DATE.show(ITEM.created,"SMART")} |
-    <@lib.showUser autor/> |
+    <@lib.showUser autor/>
     <#if CATEGORY??>
-        <b>Kategorie:</b> ${CATEGORY.name} |
+        | ${CATEGORY.name}
     </#if>
     <#if RELATION.upper=37672>
         <br /><b>Stav:</b> čeká na
