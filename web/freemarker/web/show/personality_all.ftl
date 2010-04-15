@@ -65,7 +65,7 @@
     <a href="/kdo-je?prefix=z"<@highlight 'z'/>>Z</a>
 </p>
 
-<table border="0" class="siroka bez-slovniku">
+<table border="0" class="bez-slovniku">
  <#list FOUND.data as rel>
   <#if rel_index % 3 == 0><tr></#if>
    <td><a href="${rel.url}">${TOOL.childName(rel.child)}</a></td>
@@ -76,8 +76,6 @@
 <#macro highlight(letter)>
     <#if (CURRENT_PREFIX?default('a')==letter)> class="selected"</#if><#rt>
 </#macro>
-
-<@lib.advertisement id="square" />
 
 <#include "../footer.ftl">
 

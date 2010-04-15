@@ -46,8 +46,6 @@
 <#include "../header.ftl">
 <#import "../misc/personality.ftl" as perslib>
 
-<@lib.advertisement id="square" />
-
 <@lib.showMessages/>
 
 <div class="personality">
