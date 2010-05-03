@@ -1160,7 +1160,7 @@
 <#macro addTextAreaBare name, rows = 15, extraAttributes = "", value=PARAMS[name]!>
     <@showError name />
     <#nested>
-    <textarea name="${name?html}" id="${name?html}" class="siroka" rows="${rows}" ${extraAttributes}>${value?html}</textarea>
+    <textarea name="${name?html}" id="${name?html}" rows="${rows}" ${extraAttributes}>${value?html}</textarea>
 </#macro>
 
 <#-- todo prechod na  <@showRTEControls name/> -->
@@ -1215,7 +1215,7 @@
 </#macro>
 
 <#macro addFakeForm>
-    <table cellpadding="5" border="0">
+    <table cellpadding="5" border="0" class="siroka">
         <#nested>
     </table>
 </#macro>
