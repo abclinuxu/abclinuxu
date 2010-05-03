@@ -51,10 +51,10 @@
     </#if>
 
     <@lib.addTextArea true, "perex", "Perex", 4 />
-    <@lib.addTextArea true, "content", "Obsah">
+    <@lib.addTextArea true, "content", "Obsah", 40 />
         <p>
             Rozdělit článek na více podstránek můžete pomocí následující direktivy: <br>
-            <i>&lt;page title="Nastavení programu LILO"&gt;</i> <br>
+            <tt>&lt;page title="Nastavení programu LILO"&gt;</tt><br />
             Pokud použijete tuto funkci, pojmenujte i první stránku, text před první značkou bude ignorován!
         </p>
         <@lib.addTextAreaEditor "content">
@@ -65,9 +65,7 @@
 
     <@lib.addTextArea false, "related", "Související články", 5>
         <div>
-            Zde můžete zadat související články z našeho portálu. Na první řádek vložte
-            relativní URL odkazu, na druhý jeho popis. Liché řádky jsou URL, sudé popisy. Popis může obsahovat
-            znak |, zbytek textu řádky bude sloužit jako komentář, nebude součástí odkazu.
+            Zde můžete zadat související články z našeho portálu. Na první řádek vložte relativní URL odkazu, na druhý jeho popis. Liché řádky jsou URL, sudé popisy. Popis může obsahovat znak |, zbytek textu řádky bude sloužit jako komentář, nebude součástí odkazu.
         </div>
     </@lib.addTextArea>
 
