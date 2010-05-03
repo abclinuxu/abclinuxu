@@ -51,7 +51,7 @@
     </#if>
 
     <@lib.addTextArea true, "perex", "Perex", 4 />
-    <@lib.addTextArea true, "content", "Obsah", 40 />
+    <@lib.addTextArea true, "content", "Obsah", 40>
         <p>
             Rozdělit článek na více podstránek můžete pomocí následující direktivy: <br>
             <tt>&lt;page title="Nastavení programu LILO"&gt;</tt><br />
