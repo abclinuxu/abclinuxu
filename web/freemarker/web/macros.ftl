@@ -1160,7 +1160,7 @@
 <#macro addTextAreaBare name, rows = 15, extraAttributes = "", value=PARAMS[name]!>
     <@showError name />
     <#nested>
-    <textarea name="${name?html}" id="${name?html}" rows="${rows}" ${extraAttributes}>${value?html}</textarea>
+    <textarea name="${name?html}" id="${name?html}" rows="${rows}" class="siroka" ${extraAttributes}>${value?html}</textarea>
 </#macro>
 
 <#-- todo prechod na  <@showRTEControls name/> -->
