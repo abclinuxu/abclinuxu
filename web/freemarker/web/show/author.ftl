@@ -73,8 +73,8 @@
       <td class="td-datum">Datum vydání</td>
       <td class="td-meta">Přečteno</td>
       <td class="td-meta">Komentářů</td>
-      <td class="td-meta">Hodnocení</td>
-      <td class="td-meta">Hlasů</td>
+      <#--<td class="td-meta">Hodnocení</td>
+      <td class="td-meta">Hlasů</td>-->
     </tr>
   </thead>
   <tbody>
@@ -94,8 +94,10 @@
               </#if>
           </#if>
         </td>
+        <#--
         <td class="td-meta"><#if rating!="UNDEF">${rating.percent} %</#if></td>
         <td class="td-meta td-right"><#if rating!="UNDEF">${rating.count}</#if></td>
+        -->
       </tr>
     </#list>
   </tbody>
