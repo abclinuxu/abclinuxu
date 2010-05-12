@@ -46,7 +46,7 @@
     </#if>
 </#if>
 
-<#if (ITEM.subType! == "no_columns" || ! plovouci_sloupec??)>
+<#if (ITEM.subType! == "no_columns" || plovouci_sloupec??)>
     <div class="no-col-ad">
         <@lib.advertisement id="hypertext2nahore" />
         <@lib.advertisement id="square" />
