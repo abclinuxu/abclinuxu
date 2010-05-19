@@ -265,8 +265,10 @@ public class ServletUtils implements Configurable {
                 return;
 
             LoginCookie loginCookie = new LoginCookie(cookie);
+            int hash;
             try {
                 user = (User) persistence.findById(new User(loginCookie.getId()));
+                hash = loginCookie.getHash();
             } catch (Exception e) {
                 deleteCookie(cookie, response);
                 log.warn("Nalezena cookie s neznámým uživatelem!");
@@ -274,7 +276,7 @@ public class ServletUtils implements Configurable {
                 return;
             }
 
-            if (!ldapManager.loginWithPasswordHash(login, loginCookie.getHash(), LdapUserManager.SERVER_ABCLINUXU)) {
+            if (!ldapManager.loginWithPasswordHash(login, hash, LdapUserManager.SERVER_ABCLINUXU)) {
                 deleteCookie(cookie, response);
                 log.warn("Nalezena cookie se špatným heslem!");
                 addError(Constants.ERROR_GENERIC, "Nalezena cookie se špatným heslem!", env, null);
