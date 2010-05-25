@@ -145,7 +145,7 @@
 <#if PAGES??>
     <#if (PAGE + 1 < PAGES?size)>
         <div class="cl-pokracovani">
-            <a href="${URL.url(RELATION)}?page=${PAGE+1}">pokračování článku&nbsp;&hellip;</a>
+            <a href="${URL.url(RELATION)}?page=${PAGE+1}">další strana článku&hellip;</a>
         </div>
     </#if>
     <div class="cl_perex souvisejici">
