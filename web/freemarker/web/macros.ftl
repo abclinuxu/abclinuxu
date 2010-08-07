@@ -809,9 +809,13 @@
        <#if USER??></form></#if>
         <#if showAJAXControls>
             <tfoot id="forum_tfoot_${rid}">
-                <script type="text/javascript"><!--
-                new Forum(${rid}, ${FORUM?size}, ${VARS.maxSizes.question});
-                //--></script>
+              <tr><td>
+                <script type="text/javascript">
+                  //<![CDATA[
+                  new Forum(${rid}, ${FORUM?size}, ${VARS.maxSizes.question});
+                  //]]>
+                </script>
+              </td></tr>
             </tfoot>
         </#if>
         <tbody id="forum_tbody_${rid}">
