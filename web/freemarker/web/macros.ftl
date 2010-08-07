@@ -786,7 +786,7 @@
             <td class="td-datum">
                 Poslední
                 <#if feed!="UNDEF">
-                   &nbsp;<a href="${feed}"><img src="/images/site2/feed12.png" width="12" height="12" border="0" alt="<#if rid!=0>${TOOL.childName(relation)}, </#if>RSS feed"></a>
+                   &nbsp;<a href="${feed}"><img src="/images/site2/feed12.png" width="12" height="12" alt="<#if rid!=0>${TOOL.childName(relation)}, </#if>RSS feed"></a>
                 </#if>
                 <#if USER?? && rid!=0 && !singleMode>
                     <#if !onHP>
@@ -807,6 +807,13 @@
           </tr>
         </thead>
        <#if USER??></form></#if>
+        <#if showAJAXControls>
+            <tfoot id="forum_tfoot_${rid}">
+                <script type="text/javascript"><!--
+                new Forum(${rid}, ${FORUM?size}, ${VARS.maxSizes.question});
+                //--></script>
+            </tfoot>
+        </#if>
         <tbody id="forum_tbody_${rid}">
          <#list FORUM as diz>
           <tr>
@@ -817,13 +824,6 @@
           </tr>
          </#list>
         </tbody>
-        <#if showAJAXControls>
-            <tfoot id="forum_tfoot_${rid}">
-                <script type="text/javascript"><!--
-                new Forum(${rid}, ${FORUM?size}, ${VARS.maxSizes.question});
-                //--></script>
-            </tfoot>
-        </#if>
       </table>
 
       <#--<#if showAdvertisement>

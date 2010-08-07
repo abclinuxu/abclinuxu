@@ -71,7 +71,7 @@
 
 <#list STORIES.data as blogStory>
     <@lib.showStoryInListing blogStory, false, SUMMARY!false />
-    <hr />
+    <hr>
 </#list>
 
 <p>

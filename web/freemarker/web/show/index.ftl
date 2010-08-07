@@ -50,7 +50,7 @@
         <#else>
             <@lib.showArticle rel, "CZ_DM", "CZ_SHORT", false/>
         </#if>
-        <hr />
+        <hr>
         <#if rel_index==1>
           <@adLib.advertisement id="itbiz-box" />
         </#if>
@@ -343,7 +343,7 @@
         <a href="/desktopy">Vaše desktopy</a>
       </div>
       <div class="s_sekce" style="text-align:center;">
-        <table align="center">
+        <table style="margin:0 auto">
           <tr>
             <#list DESKTOPS as desktop>
               <td>

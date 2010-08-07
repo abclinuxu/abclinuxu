@@ -47,14 +47,14 @@
 <div>${TOOL.render(desc,USER!)}</div>
 </div>
 
-<hr />
+<hr>
 
 <#assign ARTICLES=VARS.getFreshSubportalArticles(USER!, articles.id)>
 <#global READ_COUNTER = TOOL.getRelationCountersValue(ARTICLES,"read")/>
 <#if (ARTICLES?size>0) >
     <#list ARTICLES as rel>
         <@lib.showArticle rel, "SMART_DMY", "SMART"/>
-        <hr />
+        <hr>
     </#list>
 
     <div class="st_vpravo">
@@ -73,7 +73,7 @@
     <@content?interpret />
 </#if>
 
-<hr />
+<hr>
 
 <#assign event=VARS.getFreshSubportalEvent(events.id)!"UNDEF">
 <#if event!="UNDEF">
@@ -83,7 +83,7 @@
     <div class="st_vpravo">
         <a href="${events.url}">Přehled akcí</a>
     </div>
-    <hr />
+    <hr>
 </#if>
 
 <#if TOOL.xpath(RELATION.child, "/data/forumHidden")!"no" != "yes">

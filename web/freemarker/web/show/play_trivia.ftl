@@ -16,7 +16,7 @@
     <#list CHOICES as choice>
          <label>
              <input type="radio" name="q${POSITION}" value="${choice.id}">&nbsp;${choice.text}
-         </label><br />
+         </label><br>
     </#list>
 </p>
     <input type="hidden" name="position" value="${POSITION}">

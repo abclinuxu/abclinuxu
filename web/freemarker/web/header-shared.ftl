@@ -1,13 +1,13 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd" >
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/1998/REC-html40-19980424/strict.dtd" >
 <html lang="cs">
 <head>
     <#if PARAMS.debug??>
         <!-- Sablona: ${TEMPLATE!"neznama"} -->
     </#if>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="Robots" content="index,follow" />
+    <meta name="Robots" content="index,follow">
     <title>${PARAMS.TITLE!TITLE!'www.abclinuxu.cz'}</title>
-    <link rel="stylesheet" type="text/css" href="/jquery-theme/ui.all.css" />
+    <link rel="stylesheet" type="text/css" href="/jquery-theme/ui.all.css">
     <link rel="stylesheet" type="text/css" href="${CSS_URI!}">
     <#if CANONICAL_URL??><link rel="canonical" href="${CANONICAL_URL}" ></#if>
     <#if INLINE_CSS??>

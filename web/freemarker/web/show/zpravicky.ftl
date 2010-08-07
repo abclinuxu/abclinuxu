@@ -24,7 +24,7 @@
 <h1>Zprávičky</h1>
 
 <#list NEWS as rel>
- <@lib.showNews rel /><hr />
+ <@lib.showNews rel /><hr>
 </#list>
 
 <p>
