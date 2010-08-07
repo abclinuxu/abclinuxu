@@ -56,7 +56,7 @@
 
 <div>
     <a href="${desktop.imageUrl}" title="${desktop.title?html}" class="thumb">
-        <img src="${desktop.thumbnailDetailUrl}" alt="${desktop.title?html}" border="0">
+        <img src="${desktop.thumbnailDetailUrl}" alt="${desktop.title?html}">
     </a>
 </div>
 

@@ -1000,7 +1000,7 @@
     <div class="desktop">
         <p title="${desktop.title}">${TOOL.limit(desktop.title, 28, "..")}</p>
         <a href="${desktop.url}" class="thumb">
-            <img width="200" src="${desktop.thumbnailListingUrl}" alt="${desktop.title}" border="0">
+            <img width="200" src="${desktop.thumbnailListingUrl}" alt="${desktop.title}">
         </a>
         <p class="meta-vypis" style="text-align: left">
             ${DATE.show(item.created, "SMART")} | <@showUserFromId item.owner/><br>
@@ -1014,7 +1014,7 @@
     <#assign topDesktop = TOOL.createScreenshot(relation)>
     <p>${topDesktop.title}<br />
         <a href="${topDesktop.url}" title="${topDesktop.title}" class="thumb">
-            <img src="${topDesktop.thumbnailListingUrl}" alt="${topDesktop.title}" border="0">
+            <img src="${topDesktop.thumbnailListingUrl}" alt="${topDesktop.title}">
         </a></p>
 </#macro>
 

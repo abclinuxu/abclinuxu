@@ -62,7 +62,7 @@
 
     <div>
         <a href="${desktop.url}" title="${desktop.title}" class="thumb">
-            <img src="${desktop.thumbnailListingUrl}" alt="${desktop.title}" border="0">
+            <img src="${desktop.thumbnailListingUrl}" alt="${desktop.title}">
         </a>
     </div>
 
