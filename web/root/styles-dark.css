@@ -472,3 +472,6 @@ a.selected:hover {
   border-color: #4B4B4B;
   background-color: black;
 }
+
+.linkbox table a:hover { background: transparent; }
+.linkbox .nazev_clanku a:hover { background: #80BBCA; }

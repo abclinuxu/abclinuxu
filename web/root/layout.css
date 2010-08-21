@@ -1252,3 +1252,25 @@ img.floatright {float:right; margin: 0 0 0 5px; border: none;}
 .clear-float {
 	display: table;
 }
+
+
+.linkbox {
+    width: 800px;
+    margin: 0.5em auto;
+}
+
+.linkbox td {
+    width: 200px;
+    font-size: small;
+    font-weight: bold;
+    vertical-align: top;
+}
+
+.linkbox table img {
+    text-align: center;
+    border: none;
+}
+
+.linkbox table a { text-decoration: none; }
+.linkbox .nazev_clanku { margin: 0.3em 0.3em 0 0.3em; }
+.linkbox .nazev_clanku a:hover { text-decoration: underline; }
