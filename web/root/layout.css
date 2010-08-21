@@ -1260,12 +1260,12 @@ img.floatright {float:right; margin: 0 0 0 5px; border: none;}
 }
 
 .linkbox {
-    width: 800px;
+    width: 765px;
     margin: 0.5em auto;
 }
 
 .linkbox td {
-    width: 200px;
+    width: 190px;
     font-size: small;
     font-weight: bold;
     vertical-align: top;
