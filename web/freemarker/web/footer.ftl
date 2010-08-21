@@ -1,5 +1,8 @@
 	</div> <!-- st -->
 
+    <div class="s_nadpis linkbox_nadpis">Píšeme jinde</div>
+    <#include "include/linkbox.txt">
+
     <div class="dl">
 		<div class="dl_vlevo">ISSN 1214-1267 &nbsp; Powered by
 			<a href="http://sun.cz" rel="nofollow"><img style="margin-bottom:-3px" width="38" height="14" src="/images/site2/sun14.png" alt="Powered by Sun"></a>
