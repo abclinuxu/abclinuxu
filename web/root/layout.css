@@ -1254,6 +1254,8 @@ img.floatright {float:right; margin: 0 0 0 5px; border: none;}
 }
 
 
+.linkbox_nadpis { font-size: small; }
+
 .linkbox {
     width: 800px;
     margin: 0.5em auto;
