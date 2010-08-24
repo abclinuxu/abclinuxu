@@ -381,12 +381,16 @@ pre {
 }
 
 .cl-tabulka {
+	border-width: 1px 0 0 1px;
+	border-style: solid;
 	border-collapse: collapse;
 	margin: 0 auto;
 }
-.cl-tabulka td {
+.cl-tabulka td,
+.cl-tabulka th {
 	border-width: 0 1px 1px 0;
 	border-style: solid;
+	padding: 0.1em 0.2em;
 }
 
 .cl-pokracovani {
