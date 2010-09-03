@@ -1,7 +1,7 @@
 	</div> <!-- st -->
 
     <div class="s_nadpis linkbox_nadpis">Píšeme jinde</div>
-    <#include "../include/linkbox.txt">
+    <#include "../include/linkbox5.txt">
 
     <div class="dl noext">
 		<div class="dl_vlevo">ISSN 1214-1267 &nbsp; Powered by
