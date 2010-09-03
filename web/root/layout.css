@@ -1264,12 +1264,15 @@ img.floatright {float:right; margin: 0 0 0 5px; border: none;}
 }
 
 .linkbox {
-    width: 95%;
+    width: 99%;
     overflow: auto;
     margin: 0.5em auto;
 }
 
-.linkbox table { margin: 0 auto; }
+.linkbox table {
+    margin: 0 auto;
+    width: 955px;
+}
 
 .linkbox td {
     width: 190px;
