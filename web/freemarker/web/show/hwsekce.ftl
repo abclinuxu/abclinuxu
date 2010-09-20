@@ -104,7 +104,7 @@
                     </#switch>
 		        </td>
                 <td class="td-meta"><#if TOOL.xpath(polozka.child,"/data/outdated")??>ano</#if></td>
-                <td class="td-datum">${DATE.show(polozka.child.updated,"CZ_FULL")}</td>
+                <td class="td-datum">${DATE.show(polozka.child.updated,"CZ_DMY2")}</td>
             </tr>
         </#list>
       </tbody>
