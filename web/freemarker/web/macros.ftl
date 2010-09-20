@@ -72,7 +72,7 @@
       <td class="td-meta"><@showShortRating software, "", false /></td>
       <td class="td-meta">${software.child.getProperty("used_by")?size}</td>
       <td class="td-meta"><@showCounter software.child, "visit" />&times;</td>
-      <td class="td-datum">${DATE.show(software.child.updated, "SMART")}</td>
+      <td class="td-datum">${DATE.show(software.child.updated, "CZ_DMY2")}</td>
     </tr>
    </#list>
   </tbody>
