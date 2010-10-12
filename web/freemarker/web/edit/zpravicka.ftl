@@ -17,9 +17,7 @@
 <p>Zprávička je krátký text, který upozorňuje naše čtenáře
 na zajímavou informaci, stránky či událost ve světě Linuxu,
 Open Source, hnutí Free Software či obecně IT. Zprávičky
-neslouží pro soukromou inzerci či oznámení, firemní oznámení
-schvaluje i maže pouze <a href="/Profile/1">Leoš Literák</a>.
-</p>
+neslouží pro soukromou inzerci či oznámení.</p>
 
 <h2>Jak ji mám napsat?</h2>
 
