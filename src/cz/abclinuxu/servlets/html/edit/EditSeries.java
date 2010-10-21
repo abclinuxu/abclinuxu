@@ -82,6 +82,9 @@ public class EditSeries extends AbcAutoAction {
     public String actionAdd2() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Relation parent = new Relation(Constants.REL_SERIES);
+
+        Tools.sync(parent);
+
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         Item item = new Item(0, Item.SERIES);
