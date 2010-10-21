@@ -1162,7 +1162,7 @@ function shortenLongOutputs() {
     var shdivs = document.getElementsByTagName("div");
     var regex = new RegExp("\\bsyntaxhighlighter.*");
     for (var j = 0; j < shdivs.length; j++) {
-        if (regex.test(shdivs[j].className) && countHighlightedLines(shdivs[j]) > 15) {
+        if (regex.test(shdivs[j].className) && countHighlightedLines(shdivs[j]) > 25) {
                 new ShortenedPre(shdivs[j]);
         }
     }
