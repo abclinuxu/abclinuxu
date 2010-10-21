@@ -1,6 +1,6 @@
 @import url("layout.css");
-@import url("/data/shl/styles/shCore.css");
-@import url("/data/shl/styles/shThemeRDark.css");
+@import url("/data/syntaxhighlighter/styles/shCore.css");
+@import url("/data/syntaxhighlighter/styles/shThemeRDark.css");
 
 body {
 	background-color: black;

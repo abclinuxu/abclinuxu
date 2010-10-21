@@ -69,13 +69,11 @@
         <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushPerl.js"></script>
         <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushPhp.js"></script>
         <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushPlain.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushPowerShell.js"></script>
         <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushPython.js"></script>
         <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushRuby.js"></script>
         <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushSql.js"></script>
         <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushVb.js"></script>
         <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushXml.js"></script>
-        <script type="text/javascript">$(document).ready(function () {SyntaxHighlighter.all();});</script>
     </#if>
     <@lib.initRTE />
     <script type="text/javascript">
