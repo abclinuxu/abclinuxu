@@ -81,15 +81,15 @@ public class EditSeries extends AbcAutoAction {
     @ActionCheck(requireCreateRight = true, checkPost = true, checkReferer = true)
     public String actionAdd2() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
-
+        Relation parent = new Relation(Constants.REL_SERIES);
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         Item item = new Item(0, Item.SERIES);
         item.setData(document);
         item.setOwner(user.getId());
-		item.setGroup( ((Category) relation.getChild()).getGroup() );
+		item.setGroup( ((Category) parent.getChild()).getGroup() );
 		
-        Relation newRelation = new Relation(relation.getChild(), null, relation.getId());
+        Relation newRelation = new Relation(parent.getChild(), null, parent.getId());
 
         boolean canContinue = setName(params, item, env);
         canContinue &= setDescription(params, root);
