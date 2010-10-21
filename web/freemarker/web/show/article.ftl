@@ -212,7 +212,7 @@
             <#if relation_index==SAME_SECTION_ARTICLES?size-1><br style="clear:right" /><#else><br /></#if>
         </#list>
     </#if>
-    <div style="clean:right"></div>
+    <div style="clear:right"></div>
 </div>
 
 <#assign attachments=TOOL.attachmentsFor(ITEM)>
