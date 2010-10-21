@@ -1142,11 +1142,29 @@ function countOccurences(str, character) {
     return count;
 }
 
+function countHighlightedLines(div) {
+    var count = 0;
+    var regex = new RegExp("\\bline number\\d+.*");
+    var divs = div.getElementsByTagName("div");
+    for (var i = 0; i < divs.length; i++){
+        if (regex.test(divs[i].className))
+            count++;
+    }
+    return count;
+}
+
 function shortenLongOutputs() {
     var pres = document.getElementsByTagName("pre");
     for (var i = 0; i < pres.length; i++) {
         if (countOccurences(pres[i].innerHTML, "\n") > 15)
           new ShortenedPre(pres[i]);
+    }
+    var shdivs = document.getElementsByTagName("div");
+    var regex = new RegExp("\\bsyntaxhighlighter.*");
+    for (var j = 0; j < shdivs.length; j++) {
+        if (regex.test(shdivs[j].className) && countHighlightedLines(shdivs[j]) > 15) {
+                new ShortenedPre(shdivs[j]);
+        }
     }
 }
 
@@ -1169,6 +1187,9 @@ function init(event, gecko) {
 		}
 		prepareCommentNext();
 	}
+
+        SyntaxHighlighter.highlight();
+        
         if (document.getElementsByTagName) {
             shortenLongOutputs();
         }
