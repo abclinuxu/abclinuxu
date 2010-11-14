@@ -256,7 +256,9 @@
             <#local blog=TOOL.getUserBlogAnchor(who, "blog")!"UNDEF"><#if blog!="UNDEF"> | blog: ${blog}</#if>
             <#local city=TOOL.xpath(who,"//personal/city")!"UNDEF"><#if city!="UNDEF"> | ${city}</#if>
         <#else>
-            ${comment.anonymName!}
+            <#if !TOOL.xpath(comment.data,"//censored")??>
+               ${comment.anonymName!}
+            </#if>
         </#if>
 
         <br>
