@@ -19,6 +19,7 @@
 package cz.abclinuxu.servlets.html.edit;
 
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.html.view.SendEmail;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
@@ -27,6 +28,7 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
@@ -39,9 +41,9 @@ import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.parser.clean.HtmlChecker;
 import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.AbcException;
 
-import cz.abclinuxu.security.ActionCheck;
-import cz.abclinuxu.servlets.AbcAutoAction;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 
@@ -53,7 +55,7 @@ import java.util.prefs.Preferences;
 
 import freemarker.template.SimpleHash;
 
-public class EditRequest extends AbcAutoAction implements Configurable {
+public class EditRequest implements AbcAction, Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditRequest.class);
     static org.apache.log4j.Logger logRequests = org.apache.log4j.Logger.getLogger("requests");
 
@@ -62,6 +64,7 @@ public class EditRequest extends AbcAutoAction implements Configurable {
     public static final String PARAM_TEXT = "text";
     public static final String PARAM_URL = "url";
     public static final String PARAM_REQUEST = "requestId";
+    public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_FORUM_ID = "forumId";
     public static final String PARAM_CATEGORY = "category";
     public static final String PARAM_PREVIEW = "preview";
@@ -69,9 +72,19 @@ public class EditRequest extends AbcAutoAction implements Configurable {
     public static final String VAR_REQUEST_RELATION = "REQUEST";
     public static final String VAR_FORUM_LIST = "FORUMS";
     public static final String VAR_CATEGORIES = "CATEGORIES";
+    public static final String VAR_RELATION = "RELATION";
     public static final String VAR_COMMENT = "COMMENT";
 
-    public static final String PREF_CATEGORIES = "categories";
+    public static final String ACTION_ADD = "add";
+    public static final String ACTION_DELETE = "delete";
+    public static final String ACTION_DELIVER = "deliver";
+    public static final String ACTION_MAIL = "email";
+    public static final String ACTION_COMMENT = "comment";
+    public static final String ACTION_COMPLAINT = "complaint";
+    public static final String ACTION_CHOOSE_RIGHT_FORUM = "chooseRightForum";
+    public static final String ACTION_RIGHT_FORUM = "rightForum";
+
+    public static final String PREF_CATEGORIES = "categories"; 
     public static final String PREF_RESPONSE_SUBJECT= "response.subject";
 
     public static String[] categories;
@@ -82,23 +95,69 @@ public class EditRequest extends AbcAutoAction implements Configurable {
         ConfigurationManager.getConfigurator().configureAndRememberMe(action);
     }
 
-    @Override
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        init(request, response, env);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String action = (String) params.get(PARAM_ACTION);
+        User user = (User) env.get(Constants.VAR_USER);
 
-        if (relation == null) {
-            relation = (Relation) InstanceUtils.instantiateParam(PARAM_REQUEST, Relation.class, params, request);
-            if (relation != null)
-                env.put(VAR_REQUEST_RELATION,relation);
+        if (ServletUtils.handleMaintainance(request, env)) {
+            response.sendRedirect(response.encodeRedirectURL("/"));
+            return null;
         }
-        user = (User) env.get(Constants.VAR_USER);
 
-        return invokeAction();
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_REQUEST, Relation.class, params, request);
+        if ( relation!=null )
+            env.put(VAR_REQUEST_RELATION,relation);
+
+        if ( action==null || action.equals(ACTION_ADD) ) {
+            ActionProtector.ensureContract(request, EditRequest.class, false, false, true, false);
+            return actionAdd(request,response,env);
+        }
+
+        if ( action.equals(ACTION_COMMENT) )
+            return actionCommentTools(request, env);
+
+        if ( action.equals(ACTION_COMPLAINT) ) {
+            ActionProtector.ensureContract(request, EditRequest.class, false, true, true, false);
+            return actionSubmitComplaint(request,response,env);
+        }
+
+        if ( action.equals(ACTION_CHOOSE_RIGHT_FORUM) )
+            return actionChooseForum(request,env);
+
+        if ( action.equals(ACTION_RIGHT_FORUM) ) {
+            ActionProtector.ensureContract(request, EditRequest.class, false, true, true, false);
+            return actionAskForumChange(request,response,env);
+        }
+
+        // check permissions
+        if ( user==null )
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+
+		if ( action.equals(ACTION_DELETE) ) {
+			if ( !Tools.permissionsFor(user, relation).canDelete() )
+				return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+            ActionProtector.ensureContract(request, EditRequest.class, true, false, false, true);
+            return actionDelete(request, response, env);
+        }
+
+        if ( !Tools.permissionsFor(user, relation).canModify() )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        if ( action.equals(ACTION_MAIL) )
+            return actionSendEmail(request, response, env);
+
+        if ( action.equals(ACTION_DELIVER) ) {
+            ActionProtector.ensureContract(request, EditRequest.class, true, false, false, true);
+            return actionDeliver(request, response, env);
+        }
+
+        throw new MissingArgumentException("Chybí parametr action!");
     }
 
-    @ActionCheck(checkPost = true)
-    public String actionAdd() throws Exception {
-        Relation saved = addRequest(null, true, env);
+    protected String actionAdd(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Relation saved = addRequest(request, response, null, true, env);
         if (saved == null) {
             env.put(EditRequest.VAR_CATEGORIES, EditRequest.categories);
             return FMTemplateSelector.select("EditRequest", "view", env, request);
@@ -116,7 +175,10 @@ public class EditRequest extends AbcAutoAction implements Configurable {
      * @param messageRequired when true, message must be specified. If false, prefix must be set.
      * @return relation, when request was successfully saved or null otherwise
      */
-    protected Relation addRequest(String prefix, boolean messageRequired, Map env) throws Exception {
+    protected Relation addRequest(HttpServletRequest request, HttpServletResponse response, String prefix, boolean messageRequired, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+
         String author = Misc.getString(params, PARAM_AUTHOR);
         String email = (String) params.get(PARAM_EMAIL);
         String text = (String) params.get(PARAM_TEXT);
@@ -202,21 +264,21 @@ public class EditRequest extends AbcAutoAction implements Configurable {
 
         Persistence persistence = PersistenceFactory.getPersistence();
         persistence.create(req);
-        Relation newRelation = new Relation(parent.getChild(), req, parent.getId());
-        persistence.create(newRelation);
-        newRelation.getParent().addChildRelation(newRelation);
+        Relation relation = new Relation(parent.getChild(), req, parent.getId());
+        persistence.create(relation);
+        relation.getParent().addChildRelation(relation);
 
-        sendNotification(newRelation);
+        sendNotification(relation);
 
         ServletUtils.addMessage("Váš požadavek byl přijat.",env,request.getSession());
         logRequests.info("Autor: "+author+"("+email+")\n"+text);
-        return newRelation;
+        return relation;
     }
 
-    @ActionCheck(requireDeleteRight = true, itemType = Item.REQUEST, checkTicket = true)
-    public String actionDelete() throws Exception {
+    protected String actionDelete(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
 
+        Relation relation = (Relation) env.get(VAR_REQUEST_RELATION);
         persistence.synchronize(relation);
         persistence.remove(relation);
         relation.getParent().removeChildRelation(relation);
@@ -227,10 +289,11 @@ public class EditRequest extends AbcAutoAction implements Configurable {
         return null;
     }
 
-    @ActionCheck(itemType = Item.REQUEST, requireModifyRight = true, checkTicket = true)
-    public String actionDeliver() throws Exception {
+    protected String actionDeliver(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
         Persistence persistence = PersistenceFactory.getPersistence();
 
+        Relation relation = (Relation) env.get(VAR_REQUEST_RELATION);
         persistence.synchronize(relation);
         Item req = (Item) relation.getChild();
         persistence.synchronize(req);
@@ -256,9 +319,9 @@ public class EditRequest extends AbcAutoAction implements Configurable {
         return null;
     }
 
-    @ActionCheck(itemType = Item.REQUEST, requireModifyRight = true)
-    public String actionEmail() throws Exception {
+    protected String actionSendEmail(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         HttpSession session = request.getSession();
+        Relation relation = (Relation) env.get(VAR_REQUEST_RELATION);
         Tools.sync(relation);
         Item req = (Item) relation.getChild();
 
@@ -276,9 +339,12 @@ public class EditRequest extends AbcAutoAction implements Configurable {
      * Displays several options that user or admin can do with comment or question.
      * Relation id parameter must be set, comment id is optional.
      */
-    @ActionCheck(relationRequired = true)
-    public String actionComment() throws Exception {
+    private String actionCommentTools(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
+        if (relation==null)
+            throw new AbcException("Chybí číslo relace! Prosím kontaktujte nás, ať můžeme problém vyřešit.");
 
         relation = (Relation) persistence.findById(relation);
         Item discussion = (Item) persistence.findById(relation.getChild());
@@ -292,26 +358,28 @@ public class EditRequest extends AbcAutoAction implements Configurable {
     /**
      * Adds user complaint into Requests to admins.
      */
-    @ActionCheck(checkPost = true, checkReferer = true)
-    public String actionSubmitComplaint() throws Exception {
+    private String actionSubmitComplaint(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
 
-        Item discussion = (Item) relation.getChild();
+        relation = (Relation) persistence.findById(relation);
+        Item discussion = (Item) persistence.findById(relation.getChild());
         Comment comment = EditDiscussion.getDiscussedComment(params, discussion, persistence);
         String title = comment.getTitle();
         String url = urlUtils.getRelationUrl(relation) + "#"+comment.getId();
         params.put(PARAM_URL, url);
 
-        Relation saved = addRequest(title, false, env);
+        Relation saved = addRequest(request, response, title, false, env);
         if (saved == null)
-            return actionComment();
+            return actionCommentTools(request, env);
 
         urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)) + "#" + saved.getId(), false);
         return null;
     }
 
-    public String actionChooseRightForum() throws Exception {
+    private String actionChooseForum(HttpServletRequest request, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         Category forum = (Category) persistence.findById(new Category(Constants.CAT_FORUM));
         List content = Tools.syncList(forum.getChildren());
@@ -319,9 +387,9 @@ public class EditRequest extends AbcAutoAction implements Configurable {
         Map forums = new LinkedHashMap();
         content = Sorters2.byName(content);
         for ( Iterator iter = content.iterator(); iter.hasNext(); ) {
-            Relation rel = (Relation) iter.next();
-            String name = Tools.childName(rel);
-            List children = Tools.syncList(rel.getChild().getChildren());
+            Relation relation = (Relation) iter.next();
+            String name = Tools.childName(relation);
+            List children = Tools.syncList(relation.getChild().getChildren());
             children = Sorters2.byName(children);
             forums.put(name, children);
         }
@@ -330,19 +398,19 @@ public class EditRequest extends AbcAutoAction implements Configurable {
         return FMTemplateSelector.select("EditRequest", "chooseRightForum", env, request);
     }
 
-    @ActionCheck(checkPost = true, checkReferer = true)
-    public String actionRightForum() throws Exception {
+    private String actionAskForumChange(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         int forumId = Misc.parseInt((String) params.get(PARAM_FORUM_ID),0);
         int relationId = Misc.parseInt((String) params.get(PARAM_RELATION_SHORT),0);
 
         if (forumId==0) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Vyberte prosím diskusní fórum.", env, null);
-            return actionChooseRightForum();
+            return actionChooseForum(request, env);
         }
 
-        if (relationId == 0) {
+        if (relationId==0) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Parametr rid je prázdný! Napište prosím hlášení chyby.", env, null);
             urlUtils.redirect(response, "/hardware/show/"+Constants.REL_REQUESTS);
             return null;
@@ -350,16 +418,16 @@ public class EditRequest extends AbcAutoAction implements Configurable {
 
         Relation discussion = (Relation) persistence.findById(new Relation(relationId));
         String dizName = Tools.childName(discussion);
-        String forumName = Tools.childName(forumId);
+        String forumName = Tools.childName(new Integer(forumId));
         params.put(PARAM_CATEGORY, "Přesun diskuse");
         String url = urlUtils.getRelationUrl(discussion);
         params.put(PARAM_URL, url);
         String action = "Přesunout diskusi <a href=\"/forum/show/"+relationId+"\">"+dizName+
                         "</a> do fora <a href=\"/forum/dir/"+forumId+"\">"+forumName+"</a> "+forumId;
 
-        Relation saved = addRequest(action, false, env);
+        Relation saved = addRequest(request, response, action, false, env);
         if (saved == null)
-            return actionChooseRightForum();
+            return actionChooseForum(request, env);
 
         urlUtils.redirect(response, urlUtils.getRelationUrl(new Relation(Constants.REL_REQUESTS)) + "#" + saved.getId(), false);
         return null;
