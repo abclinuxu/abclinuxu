@@ -47,4 +47,5 @@ Disallow: /zmeny
 Disallow: /presmeruj
 Disallow: /hledani
 Disallow: /sdilej
+Disallow: /clanky/dir/8082
 Sitemap: http://www.abclinuxu.cz/sitemap.xml.gz
