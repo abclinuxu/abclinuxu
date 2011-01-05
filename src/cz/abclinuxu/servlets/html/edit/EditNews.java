@@ -139,7 +139,7 @@ public class EditNews extends AbcAutoAction {
      * Adds admini mailing list to session and redirects to send email screen.
      */
 
-    @ActionCheck(permittedRoles = {Roles.NEWS_ADMIN})
+    @ActionCheck(permittedRoles = {Roles.NEWS_ADMIN}, relationRequired = true)
     public String actionMail() throws Exception {
         Persistence persistence = PersistenceFactory.getPersistence();
         HttpSession session = request.getSession();

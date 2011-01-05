@@ -127,7 +127,7 @@ public final class URLMapper implements Configurable {
      * @return AbcAction for this URL.
      * @throws NotFoundException if there is no mapping for this URL and there is no URL to redirect to
      */
-    public AbcAction findAction(HttpServletRequest request, HttpServletResponse response, Map env) throws NotFoundException, IOException {
+    public AbcAction findAction(HttpServletRequest request, HttpServletResponse response, Map env) throws NotFoundException, IOException, InstantiationException, IllegalAccessException {
         String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());
         AbcAction action = findAction(url, env);
 
@@ -143,7 +143,7 @@ public final class URLMapper implements Configurable {
         if (action == null)
             throw new NotFoundException("Neznamé URL: " + url + " !");
 
-        return action;
+        return action.getClass().newInstance();
     }
 
     /**
@@ -188,23 +188,29 @@ public final class URLMapper implements Configurable {
             }
         }
 
-        for (Iterator iter = priorityMapping.iterator(); iter.hasNext();) {
-            patternAction = (PatternAction) iter.next();
-            if (patternAction.getRe().match(relativeUrl)) {
-                setActionParams(patternAction, env, params);
-                return patternAction.getAction();
-            }
-        }
+        try {
+                for (Iterator iter = priorityMapping.iterator(); iter.hasNext();) {
+                patternAction = (PatternAction) iter.next();
+                        if (patternAction.getRe().match(relativeUrl)) {
+                                setActionParams(patternAction, env, params);
+                                return patternAction.getAction().getClass().newInstance();
+                        }
+                }
 
-        if (custom)
-            return showObject;
+                if (custom)
+                        return showObject.getClass().newInstance();
 
-        for ( Iterator iter = actionMapping.iterator(); iter.hasNext(); ) {
-            patternAction = (PatternAction) iter.next();
-            if (patternAction.getRe().match(relativeUrl)) {
-                setActionParams(patternAction, env, params);
-                return patternAction.getAction();
-            }
+                for ( Iterator iter = actionMapping.iterator(); iter.hasNext(); ) {
+                        patternAction = (PatternAction) iter.next();
+                        if (patternAction.getRe().match(relativeUrl)) {
+                                setActionParams(patternAction, env, params);
+                                return patternAction.getAction().getClass().newInstance();
+                        }
+                }
+        } catch (java.lang.InstantiationException e) {
+                return null;
+        } catch (java.lang.IllegalAccessException e) {
+                return null;
         }
 
         return null;

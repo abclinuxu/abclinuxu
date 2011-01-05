@@ -129,7 +129,8 @@ public class AbcAutoAction implements AbcAction {
                     
                     Tools.sync(relation);
                     env.put(VAR_RELATION, relation);
-                }
+                } else
+                    relation = null;
 
                 String[] permittedRoles = check.permittedRoles();
                 if (permittedRoles.length > 0) {
