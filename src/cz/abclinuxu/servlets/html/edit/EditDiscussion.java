@@ -441,123 +441,125 @@ public class EditDiscussion implements AbcAction {
      */
     public synchronized String actionAddComment2(HttpServletRequest request, HttpServletResponse response,
                                                  Map env, boolean redirect) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistence();
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        User user = (User) env.get(Constants.VAR_USER);
+        synchronized (persistence) {
+            Map params = (Map) env.get(Constants.VAR_PARAMS);
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            Relation relation = (Relation) env.get(VAR_RELATION);
+            User user = (User) env.get(Constants.VAR_USER);
 
-        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
-        if (discussion == null)
-            throw new MissingArgumentException("Chybí parametr dizId!");
-        discussion = (Item) persistence.findById(discussion).clone();
+            Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
+            if (discussion == null)
+                throw new MissingArgumentException("Chybí parametr dizId!");
+            discussion = (Item) persistence.findById(discussion).clone();
 
-        Element element = (Element) discussion.getData().selectSingleNode("/data/frozen");
-        if (element != null)
-            return ServletUtils.showErrorPage("Diskuse byla zmrazena - není možné přidat další komentář!", env, request);
+            Element element = (Element) discussion.getData().selectSingleNode("/data/frozen");
+            if (element != null)
+                return ServletUtils.showErrorPage("Diskuse byla zmrazena - není možné přidat další komentář!", env, request);
 
-        Record record;
-        DiscussionRecord dizRecord;
-        Element root = DocumentHelper.createElement("data");
-        RowComment comment = new RowComment(root);
+            Record record;
+            DiscussionRecord dizRecord;
+            Element root = DocumentHelper.createElement("data");
+            RowComment comment = new RowComment(root);
 
-        Map childrenMap = Tools.groupByType(discussion.getChildren(), "Record");
-        List<Relation> recordRelations = (List<Relation>) childrenMap.get(Constants.TYPE_RECORD);
-        if (! Misc.empty(recordRelations)) {
-            record = (Record) (recordRelations.get(0)).getChild();
-            record = (Record) persistence.findById(record).clone();
-            dizRecord = (DiscussionRecord) record.getCustom();
-        } else {
-            record = new Record(0, Record.DISCUSSION);
-            Document document = DocumentHelper.createDocument();
-            record.setData(document);
-            document.addElement("data");
-            dizRecord = new DiscussionRecord();
-            record.setCustom(dizRecord);
-        }
-
-        boolean canContinue = setId(dizRecord, comment);
-        canContinue &= setCreated(comment);
-        canContinue &= setParent(params, comment);
-        canContinue &= setCommentAuthor(params, user, comment, root, env);
-        canContinue &= setTitle(params, comment, env);
-        canContinue &= setText(params, root, false, env, relation);
-        canContinue &= setUserIPAddress(root, request);
-        canContinue &= setCommentAttachment(params, env, request);
-        canContinue &= checkSpambot(request, response, params, env, user);
-
-        if (!canContinue || params.get(PARAM_PREVIEW) != null) {
-            env.put(VAR_DISCUSSION, discussion);
-            if (canContinue)
-                env.put(VAR_PREVIEW, comment);
-
-            // display discussed comment, only if it has title
-            Comment thread = getDiscussedComment(params, discussion, persistence);
-            if (Tools.isQuestion(discussion) || thread.getId() != 0)
-                initializeParentComment(env, thread);
-
-            return FMTemplateSelector.select("EditDiscussion", "reply", env, request);
-        }
-
-        // now it is safe to modify XML Document, because data were validated
-        boolean duplicate;
-        if (comment.getParent() == null) {
-            duplicate = dizRecord.findComment(comment) != null;
-            dizRecord.addThread(comment);
-        } else {
-            Comment parent = dizRecord.getComment(comment.getParent());
-            duplicate = parent.findComment(comment) != null;
-            parent.addChild(comment);
-        }
-
-        if (duplicate)
-            return ServletUtils.showErrorPage("Systém detekoval vícenásobné odeslání totožného komentáře.", env, request);
-
-        storeAttachments(relation, discussion, comment, env, request);
-        dizRecord.calculateCommentStatistics();
-
-        if (record.getId() == 0) {
-            persistence.create(record);
-            Relation rel = new Relation(discussion, record, relation.getId());
-            persistence.create(rel);
-            rel.getParent().addChildRelation(rel);
-        } else {
-            persistence.update(record);
-        }
-
-        Element itemRoot = discussion.getData().getRootElement();
-        setCommentsCount(itemRoot, dizRecord);
-        persistence.update(discussion);
-
-        // refresh RSS and caches
-        boolean forum = false;
-        if (relation.getParent() instanceof Category) {
-            Category parent = (Category) persistence.findById(relation.getParent());
-            if (parent.getType() == Category.FORUM) {
-                forum = true;
-                FeedGenerator.updateForum(relation.getUpper());
-                FeedGenerator.updateForumAll();
-                VariableFetcher.getInstance().refreshQuestions();
-                VariableFetcher.getInstance().refreshForumQuestions(relation.getUpper());
+            Map childrenMap = Tools.groupByType(discussion.getChildren(), "Record");
+            List<Relation> recordRelations = (List<Relation>) childrenMap.get(Constants.TYPE_RECORD);
+            if (! Misc.empty(recordRelations)) {
+                record = (Record) (recordRelations.get(0)).getChild();
+                record = (Record) persistence.findById(record).clone();
+                dizRecord = (DiscussionRecord) record.getCustom();
+            } else {
+                record = new Record(0, Record.DISCUSSION);
+                Document document = DocumentHelper.createDocument();
+                record.setData(document);
+                document.addElement("data");
+                dizRecord = new DiscussionRecord();
+                record.setCustom(dizRecord);
             }
-        }
 
-        String url = (String) params.get(PARAM_URL);
-        if (url == null)
-            url = Tools.getUrlForDiscussion(relation);
-        url += "#" + comment.getId();
-        String completeUrl = AbcConfig.getAbsoluteUrl() + url;
+            boolean canContinue = setId(dizRecord, comment);
+            canContinue &= setCreated(comment);
+            canContinue &= setParent(params, comment);
+            canContinue &= setCommentAuthor(params, user, comment, root, env);
+            canContinue &= setTitle(params, comment, env);
+            canContinue &= setText(params, root, false, env, relation);
+            canContinue &= setUserIPAddress(root, request);
+            canContinue &= setCommentAttachment(params, env, request);
+            canContinue &= checkSpambot(request, response, params, env, user);
 
-        // run monitor
-        CommentNotification commentNotification;
-        if (comment.getAuthor() != null) {
-            commentNotification = new CommentNotification(user, relation, comment, completeUrl, forum);
-        } else
-            commentNotification = new CommentNotification(comment.getAnonymName(), relation, comment, completeUrl, forum);
-        MonitorPool.scheduleMonitorAction(commentNotification);
+            if (!canContinue || params.get(PARAM_PREVIEW) != null) {
+                env.put(VAR_DISCUSSION, discussion);
+                if (canContinue)
+                    env.put(VAR_PREVIEW, comment);
 
-        if (redirect) {
-            urlUtils.redirect(response, url, false);
+                // display discussed comment, only if it has title
+                Comment thread = getDiscussedComment(params, discussion, persistence);
+                if (Tools.isQuestion(discussion) || thread.getId() != 0)
+                    initializeParentComment(env, thread);
+
+                return FMTemplateSelector.select("EditDiscussion", "reply", env, request);
+            }
+
+            // now it is safe to modify XML Document, because data were validated
+            boolean duplicate;
+            if (comment.getParent() == null) {
+                duplicate = dizRecord.findComment(comment) != null;
+                dizRecord.addThread(comment);
+            } else {
+                Comment parent = dizRecord.getComment(comment.getParent());
+                duplicate = parent.findComment(comment) != null;
+                parent.addChild(comment);
+            }
+
+            if (duplicate)
+                return ServletUtils.showErrorPage("Systém detekoval vícenásobné odeslání totožného komentáře.", env, request);
+
+            storeAttachments(relation, discussion, comment, env, request);
+            dizRecord.calculateCommentStatistics();
+
+            if (record.getId() == 0) {
+                persistence.create(record);
+                Relation rel = new Relation(discussion, record, relation.getId());
+                persistence.create(rel);
+                rel.getParent().addChildRelation(rel);
+            } else {
+                persistence.update(record);
+            }
+
+            Element itemRoot = discussion.getData().getRootElement();
+            setCommentsCount(itemRoot, dizRecord);
+            persistence.update(discussion);
+
+            // refresh RSS and caches
+            boolean forum = false;
+            if (relation.getParent() instanceof Category) {
+                Category parent = (Category) persistence.findById(relation.getParent());
+                if (parent.getType() == Category.FORUM) {
+                    forum = true;
+                    FeedGenerator.updateForum(relation.getUpper());
+                    FeedGenerator.updateForumAll();
+                    VariableFetcher.getInstance().refreshQuestions();
+                    VariableFetcher.getInstance().refreshForumQuestions(relation.getUpper());
+                }
+            }
+
+            String url = (String) params.get(PARAM_URL);
+            if (url == null)
+                url = Tools.getUrlForDiscussion(relation);
+            url += "#" + comment.getId();
+            String completeUrl = AbcConfig.getAbsoluteUrl() + url;
+
+            // run monitor
+            CommentNotification commentNotification;
+            if (comment.getAuthor() != null) {
+                commentNotification = new CommentNotification(user, relation, comment, completeUrl, forum);
+            } else
+                commentNotification = new CommentNotification(comment.getAnonymName(), relation, comment, completeUrl, forum);
+            MonitorPool.scheduleMonitorAction(commentNotification);
+
+            if (redirect) {
+                urlUtils.redirect(response, url, false);
+            }
         }
         return null;
     }
