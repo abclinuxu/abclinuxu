@@ -34,6 +34,9 @@
                          <@lib.advertisement id="double-sky" />
                          <@lib.advertisement id="sl-mini" />
                     </#if>
+                    <#if relation_index==8>
+                         <@lib.advertisement id="sl-dole" />
+                    </#if>
                     <@lib.showTemplateNews relation/>
                     <hr>
                 </#list>
