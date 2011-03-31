@@ -86,19 +86,6 @@
             Page.ticket = "${TOOL.ticketValue(USER)}";
 	    </#if>
     </script>
-	<script type='text/javascript' src='http://partner.googleadservices.com/gampad/google_service.js'>
-	</script>
-	<script type='text/javascript'>
-		GS_googleAddAdSenseService("ca-pub-1119191813636495");
-		GS_googleEnableAllServices();
-	</script>
-	<script type='text/javascript'>
-		GA_googleAddSlot("ca-pub-1119191813636495", "AbcLinuxu-square-250x250");
-		GA_googleAddSlot("ca-pub-1119191813636495", "AbcLinuxu-VIP");
-	</script>
-	<script type='text/javascript'>
-		GA_googleFetchAds();
-	</script>
     <#if html_header??>
         ${html_header}
     </#if>
