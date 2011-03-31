@@ -11,7 +11,7 @@
             <a href="/doc/podminky-pouziti">Podmínky použití</a> |
             <a href="/doc/osobni-udaje">Osobní údaje</a>
         </div>
-		&copy; 1999-2010 <a href="http://www.argonit.cz">Argonit s. r. o.</a> Všechna práva vyhrazena.
+		&copy; 1999-2011 <a href="http://www.argonit.cz">Argonit s. r. o.</a> Všechna práva vyhrazena.
 	</div>
 
 </div> <!-- obal -->
