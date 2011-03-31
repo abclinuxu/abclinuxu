@@ -409,7 +409,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         calendar.set(Calendar.SECOND, 10);
         calendar.add(Calendar.DAY_OF_YEAR, 1);
 
-        scheduler.scheduleAtFixedRate(new UpdateDateTool(), calendar.getTime(), 24*60*60*1000);
+        scheduler.scheduleAtFixedRate(new UpdateDateTool(), calendar.getTime(), 60*60*1000);
     }
 
     /**
