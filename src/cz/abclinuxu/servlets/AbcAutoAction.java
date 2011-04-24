@@ -107,8 +107,8 @@ public class AbcAutoAction implements AbcAction {
                 if (check.requireCreateRight() || check.requireDeleteRight() || check.requireModifyRight())
                     userRequired = true;
 
+		user = (User) env.get(Constants.VAR_USER);
                 if (userRequired) {
-                    user = (User) env.get(Constants.VAR_USER);
                     if (user == null)
                         return FMTemplateSelector.select("ViewUser", "login", env, request);
                 }

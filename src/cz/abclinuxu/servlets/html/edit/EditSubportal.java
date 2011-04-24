@@ -202,7 +202,7 @@ public class EditSubportal extends AbcAutoAction {
 		return null;
 	}
 
-    @ActionCheck(relationRequired = true, checkTicket = true)
+    @ActionCheck(relationRequired = true, checkTicket = true, userRequired = true)
 	public String actionToggleMember() throws Exception {
         Category cat = (Category) relation.getChild();
         Set<String> users = cat.getProperty(Constants.PROPERTY_MEMBER);
