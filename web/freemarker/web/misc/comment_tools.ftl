@@ -138,7 +138,7 @@
             </td>
         </tr>
     </table>
-    <input type="hidden" name="action" value="submitComplaint">
+    <input type="hidden" name="action" value="complaint">
     <input type="hidden" name="rid" value="${RELATION.id}">
     <input type="hidden" name="threadId" value="${COMMENT.id}">
 </form>
