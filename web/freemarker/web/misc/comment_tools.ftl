@@ -126,7 +126,6 @@
         <tr>
             <td colspan="2">
                 Slovní popis<br>
-<p><b style="color:red">DŮLEŽITÉ:</b> Vložte prosím adresu komentáře do tohoto textového pole. V systému je chyba, která způsobuje, že se automaticky ukládá adresa úplně jiného komentáře, než který nahlašujete. Pokud nevložíte adresu ručně, admini nebudou moci váš požadavek řešit.</p>
                 <div class="error">${ERRORS.text!}</div>
                 <textarea name="text" cols="60" rows="15">${PARAMS.text!?html}</textarea>
             </td>
