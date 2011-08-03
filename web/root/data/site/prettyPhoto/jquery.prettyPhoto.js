@@ -1,4 +1,4 @@
-$(function() { $("p.cl-obrazky a").prettyPhoto(); });
+$(function() { $("p.cl-obrazky a").prettyPhoto({ social_tools: '' }); });
 
 /* ------------------------------------------------------------------------
 	Class: prettyPhoto
