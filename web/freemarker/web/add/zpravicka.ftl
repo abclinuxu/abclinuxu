@@ -30,6 +30,10 @@ jako dotazy, žádosti o pomoc či předem nedomluvené reklamy.
     Povolenými HTML značkami jsou A (odkaz, URL musí být absolutní, tedy začínat na http://),
     ACRONYM, BR a P.
 </p>
+<p>
+	Přečtěte si kompletní <a href="/portal/wiki/pravidla-pro-psani-zpravicek">pravidla pro psaní zpráviček</a>.
+</p>
+
 
 <h2>A co dále?</h2>
 
