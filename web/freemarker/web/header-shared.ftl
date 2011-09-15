@@ -8,6 +8,7 @@
     <meta name="Robots" content="index,follow">
     <title>${PARAMS.TITLE!TITLE!'www.abclinuxu.cz'}</title>
     <link rel="stylesheet" type="text/css" href="/jquery-theme/ui.all.css">
+    <link rel="stylesheet" type="text/css" href="/data/site/prettyPhoto/prettyPhoto.css">
     <link rel="stylesheet" type="text/css" href="${CSS_URI!}">
     <#if CANONICAL_URL??><link rel="canonical" href="${CANONICAL_URL}" ></#if>
     <#if INLINE_CSS??>
@@ -53,27 +54,10 @@
     </#if>
 
     <script type="text/javascript" src="/data/site/jquery/jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="/data/site/prettyPhoto/jquery.prettyPhoto.js"></script>
     <script type="text/javascript" src="/data/site/scripts.js"></script>
     <#if ! IS_INDEX??>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shCore.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushBash.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushCSharp.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushCpp.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushCss.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushDelphi.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushDiff.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushGroovy.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushJScript.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushJava.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushJavaFX.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushPerl.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushPhp.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushPlain.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushPython.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushRuby.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushSql.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushVb.js"></script>
-        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/shBrushXml.js"></script>
+        <script type="text/javascript" src="/data/syntaxhighlighter/scripts/all.js"></script>
     </#if>
     <@lib.initRTE />
     <script type="text/javascript">
