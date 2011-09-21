@@ -1792,11 +1792,8 @@ public class EditUser implements AbcAction {
     public static boolean setEmail(Map params, User user, Map env) {
         String email = (String) params.get(PARAM_EMAIL);
         if (email == null || email.trim().length() == 0) {
-            user.setEmail(null);
-            Element tagEmail = (Element) user.getData().selectSingleNode("/data/communication/email");
-            if (tagEmail != null)
-                tagEmail.detach();
-            return true;
+            ServletUtils.addError(PARAM_EMAIL, "Neplatný email!", env, null);
+            return false;
         }
 
         try {
