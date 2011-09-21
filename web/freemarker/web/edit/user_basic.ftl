@@ -17,7 +17,7 @@
     <@lib.addPassword true, "PASSWORD", "Heslo" />
     <@lib.addInput true, "name", "Jméno", 24 />
     <@lib.addInput true, "nick", "Přezdívka", 24, "onChange=\"new Ajax.Updater('nickError', '/ajax/checkNick', {parameters: { value : $F('nick')}})\"" />
-    <@lib.addInput false, "email", "E-mail", 24 />
+    <@lib.addInput true, "email", "E-mail", 24 />
     <@lib.addSubmit "Dokonči" />
     <@lib.addHidden "action", "editBasic2" />
     <@lib.addHidden "uid", MANAGED.id />
