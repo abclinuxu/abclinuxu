@@ -726,9 +726,12 @@ a.info:hover span.tooltip {
 .obal_ps {
 	border: 1px solid;
 	padding-bottom: 0.2em;
-	width: 270px;
+	/*width: 270px;*/
 	margin: 0.3em;
 }
+
+.obal_ls { width: 270px; }/* temporary */
+.obal_ps { width: 320px; } /* temporary */
 
 .obal_ls {
 	border-left: none;
