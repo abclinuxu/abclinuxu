@@ -445,7 +445,7 @@ public class EditRequest implements AbcAction, Configurable {
         Map map = new HashMap();
         map.put(EmailSender.KEY_TO, AbcConfig.getAdminsEmail());
         map.put(EmailSender.KEY_SUBJECT, item.getData().selectSingleNode("/data/category").getText());
-        map.put(EmailSender.KEY_FROM, "literakl@abclinuxu.cz");
+        map.put(EmailSender.KEY_FROM, "devnull@abclinuxu.cz");
         map.put(EmailSender.KEY_TEMPLATE, "/mail/requests.ftl");
         map.put("URL", requests.getUrl() + "#" + relation.getId());
         map.put("REQUEST", item);
