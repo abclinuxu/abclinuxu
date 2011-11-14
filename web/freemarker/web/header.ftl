@@ -79,7 +79,7 @@
                     </form>
                 </div>
                 <#assign diz=TOOL.findComments(anketa)>
-                <div>&nbsp;<a href="${url}" title="${anketa.text}">Komentářů: ${diz.responseCount}</a><#rt>
+                <div>&nbsp;<a href="${url}">Komentářů: ${diz.responseCount}</a><#rt>
                   <#lt><#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslední ${DATE.show(diz.updated,"CZ_SHORT")}</#if>
                   <@lib.advertisement id="anketa" />
                 </div>
