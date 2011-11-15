@@ -29,10 +29,12 @@
                     <#if relation_index==2>
                          <@lib.advertisement id="sl-box2" />
                     </#if>
+                    <#if relation_index==3>
+                         <@lib.advertisement id="sl-mini" />
+                    </#if>
                     <#if relation_index==4>
                          <@lib.advertisement id="skyscraper" />
                          <@lib.advertisement id="double-sky" />
-                         <@lib.advertisement id="sl-mini" />
                     </#if>
                     <#if relation_index==8>
                          <@lib.advertisement id="sl-dole" />
