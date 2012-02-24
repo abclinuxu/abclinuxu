@@ -9,10 +9,12 @@
 			<a href="http://www.hosting90.cz"><img src="/images/clanky/reklama/hosting90.png" alt="Server hosting" style="vertical-align: bottom; padding-left: 1ex"></a>
         </div>
 		<div class="dl_vpravo">
+            <a href="/redakce">Redakce</a> |
+            <a href="/reklama">Inzerce</a> |
             <a href="/doc/podminky-pouziti">Podmínky použití</a> |
             <a href="/doc/osobni-udaje">Osobní údaje</a>
         </div>
-		&copy; 1999-2011 <a href="http://www.argonit.cz">Argonit s. r. o.</a> Všechna práva vyhrazena.
+		&copy; 1999-2012 <a href="http://www.argonit.cz">Argonit s. r. o.</a> Všechna práva vyhrazena.
 	</div>
 
 </div> <!-- obal -->
