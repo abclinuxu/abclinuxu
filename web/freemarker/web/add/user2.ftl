@@ -11,10 +11,6 @@
 </p>
 
 <dl>
-    <dt>Email</dt>
-    <dd>
-        Email chráníme před spammery a zasíláme vám pouze vámi vyžádané informace, které můžete kdykoliv odhlásit.
-    </dd>
     <dt>Týdenní souhrn</dt>
     <dd>
         Je určen těm, kteří nemají čas denně nás navštěvovat. Pokud si jej přihlásíte,
@@ -34,7 +30,6 @@
 </dl>
 
 <@lib.addForm URL.noPrefix("/EditUser")>
-    <@lib.addInput false, "email", "E-mail", 24 />
     <@lib.addFormField false, "OpenID", "Podpora přihlašování přes openid se připravuje.">
         <@lib.addInputBare "openid", 24>
             <#-- onChange="new Ajax.Updater('openidError', '/ajax/checkOpenId', {parameters: { value : $F('openid')}})" -->

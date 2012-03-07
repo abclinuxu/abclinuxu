@@ -446,6 +446,7 @@ public class EditUser implements AbcAction {
         canContinue &= setPassword(params, managed, env);
         canContinue &= setName(params, managed, env);
         canContinue &= setNick(params, managed, env);
+        canContinue &= setEmail(params, managed, env);
         canContinue &= checkSpambot(params, env, managed);
         managed.addProperty(Constants.PROPERTY_TICKET, generateTicket(managed.getId()));
 
@@ -456,10 +457,24 @@ public class EditUser implements AbcAction {
             ldapManager.registerUser(managed.getLogin(), managed.getPassword(), null,
                                      managed.getName(), LdapUserManager.SERVER_ABCLINUXU);
             persistence.create(managed);
+
+            Map<String, String> changes = new HashMap<String, String>();
+            changes.put(LdapUserManager.ATTRIB_EMAIL_ADRESS, managed.getEmail());
+            changes.put(LdapUserManager.ATTRIB_EMAIL_BLOCKED, "false");
+            changes.put(LdapUserManager.ATTRIB_EMAIL_VERIFIED, "false");
+            ldapManager.updateUser(managed.getLogin(), changes);
         } catch (DuplicateKeyException e) {
             ServletUtils.addError(PARAM_LOGIN, "Přihlašovací jméno nebo přezdívka jsou již používány.", env, null);
             return FMTemplateSelector.select("EditUser", "register", env, request);
         }
+
+        Map data = new HashMap();
+        data.put(Constants.VAR_USER, managed);
+        data.put(EmailSender.KEY_TO, managed.getEmail());
+        data.put(EmailSender.KEY_RECEPIENT_UID, Integer.toString(managed.getId()));
+        data.put(EmailSender.KEY_SUBJECT, "Privitani na portalu www.abclinuxu.cz");
+        data.put(EmailSender.KEY_TEMPLATE, "/mail/registrace.ftl");
+        EmailSender.sendEmail(data);
 
         HttpSession session = request.getSession();
         session.setAttribute(Constants.VAR_USER, managed);
@@ -477,7 +492,6 @@ public class EditUser implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistence();
 
         boolean canContinue = setOpenId(params, managed, env);
-        canContinue &= setEmail(params, managed, env);
         canContinue &= setSex(params, managed);
         canContinue &= setWeeklySummary(params, managed);
         canContinue &= setMonthlySummary(params, managed);
@@ -487,22 +501,6 @@ public class EditUser implements AbcAction {
             return FMTemplateSelector.select("EditUser", "register", env, request);
 
         persistence.update(managed);
-
-        if (managed.getEmail() != null) {
-            Map<String, String> changes = new HashMap<String, String>();
-            changes.put(LdapUserManager.ATTRIB_EMAIL_ADRESS, managed.getEmail());
-            changes.put(LdapUserManager.ATTRIB_EMAIL_BLOCKED, "false");
-            changes.put(LdapUserManager.ATTRIB_EMAIL_VERIFIED, "false");
-            ldapManager.updateUser(managed.getLogin(), changes);
-
-            Map data = new HashMap();
-            data.put(Constants.VAR_USER, managed);
-            data.put(EmailSender.KEY_TO, managed.getEmail());
-            data.put(EmailSender.KEY_RECEPIENT_UID, Integer.toString(managed.getId()));
-            data.put(EmailSender.KEY_SUBJECT, "Privitani na portalu www.abclinuxu.cz");
-            data.put(EmailSender.KEY_TEMPLATE, "/mail/registrace.ftl");
-            EmailSender.sendEmail(data);
-        }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?registrace=true&action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
