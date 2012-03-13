@@ -3,8 +3,7 @@
 <@lib.showMessages/>
 
 <div style="width:250px; float:right; padding:0.5em; margin:0.5em; font-size:small; border-left:1px solid silver">
-<img src="/images/site2/sf-login.gif" width="100" height="40" alt="Stickfish login" style="float:right; margin:0.5em;">
-<p>Děkujeme, že jste se rozhodli registrovat na rodině portálů AbcLinuxu.cz, <a href="http://www.itbiz.cz/">ITBiz.cz</a>, <a href="http://www.abcprace.cz/">AbcPráce.cz</a> a <a href="http://www.64bit.eu/">64bit.eu</a>. S jediným účtem se budete moci přihlásit na všech těchto serverech. Snažili jsme se, aby byla registrace co nejjednodušší. Další informace a nastavení si následně můžete upravit v uživatelském profilu.</p>
+<p>Děkujeme, že jste se rozhodli registrovat na rodině portálů AbcLinuxu.cz, <a href="http://www.itbiz.cz/">ITBiz.cz</a>, <a href="http://www.abcprace.cz/">AbcPráce.cz</a> a <a href="http://www.hdmag.cz/">HDmag.cz</a>. S jediným účtem se budete moci v budoucnu přihlásit na všech těchto serverech. Snažili jsme se, aby byla registrace co nejjednodušší. Další informace a nastavení si následně můžete upravit v uživatelském profilu.</p>
 
 <p>Registrace vám přinese mnoho výhod oproti neregistrovaným uživatelům. Můžete snadno sledovat navštívené diskuse, najít vaše dotazy v poradně, monitorovat e-mailem zvolené dokumenty, upravit si vzhled a chování portálu a mnoho dalšího.</p>
 </div>
@@ -45,6 +44,8 @@
              });
          </script>
     </@lib.addFormField>
+
+    <@lib.addInput false, "email", "E-mail", 24 />
 
     <@lib.addFormField true, "Aktuální rok", "Vložte aktuální rok. Jedná se o ochranu před spamboty.">
         <@lib.addInputBare "antispam", 4 />
