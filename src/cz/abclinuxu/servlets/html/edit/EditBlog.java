@@ -343,7 +343,7 @@ public class EditBlog implements AbcAction, Configurable {
                 regDate = Constants.isoFormat.parse(regDateS);
             }
         
-            if (tenDaysBefore.before(regDate)) {
+            if (tenDaysBefore.getTime().before(regDate)) {
                 ServletUtils.addError(Constants.ERROR_GENERIC, "Blog si můžete založit až 10 dnů po datu registrace", env, request.getSession());
                 UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
                 urlUtils.redirect(response, "/Profile/"+user.getId()+"?action="+ViewUser.ACTION_SHOW_MY_PROFILE);
@@ -352,7 +352,7 @@ public class EditBlog implements AbcAction, Configurable {
         }
 
         Element settings = (Element) user.getData().selectSingleNode("/data/settings");
-        if ( settings.element("blog")!=null ) {
+        if ( settings != null && settings.element("blog")!=null ) {
             ServletUtils.addError(Constants.ERROR_GENERIC,"Chyba: blog již existuje!",env,request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/Profile/"+user.getId()+"?action="+ViewUser.ACTION_SHOW_MY_PROFILE);
