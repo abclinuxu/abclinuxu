@@ -741,7 +741,10 @@ public class EditDiscussion implements AbcAction {
         if ( threadId==0 ) {
             comment = new ItemComment(discussion);
         } else {
-            Relation relation = discussion.getChildren().get(0);
+            Map childrenMap = Tools.groupByType(discussion.getChildren(), "Record");
+            List<Relation> recordRelations = (List<Relation>) childrenMap.get(Constants.TYPE_RECORD);
+            
+            Relation relation = recordRelations.get(0);
             record = (Record) persistence.findById(relation.getChild()).clone();
             dizRecord = (DiscussionRecord) record.getCustom();
             comment = dizRecord.getComment(threadId);
@@ -1257,6 +1260,8 @@ public class EditDiscussion implements AbcAction {
             try {
                 tmp = HtmlPurifier.clean(tmp);
                 HtmlChecker.check(Rules.DEFAULT, tmp);
+		if (tmp.indexOf("<!") != -1)
+                    throw new Exception("HTML komentáře nejsou v textu povoleny");
             } catch (Exception e) {
                 ServletUtils.addError(PARAM_TEXT, e.getMessage(), env, null);
                 return false;
