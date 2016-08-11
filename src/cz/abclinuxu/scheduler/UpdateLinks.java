@@ -41,7 +41,9 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -165,6 +167,9 @@ public class UpdateLinks extends TimerTask implements Configurable {
         List storedLinks = getLinks(parent, persistence);
         List downloaded = parseRSS(rssUrl);
         int updated = 0;
+        
+        if (downloaded == null)
+            return;
 
         if ( downloaded.size() > linksPerFeed )
             downloaded = downloaded.subList(0, linksPerFeed);
@@ -234,7 +239,11 @@ public class UpdateLinks extends TimerTask implements Configurable {
         SyndFeedInput input = new SyndFeedInput();
 
         try {
-            SyndFeed feed = input.build(new XmlReader(new URL(rssUrl)));
+            URLConnection conn = new URL(rssUrl).openConnection();
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
+
+            SyndFeed feed = input.build(new InputStreamReader(conn.getInputStream()));
             List items = feed.getEntries();
             if ( items==null ) return result;
             for (Iterator iter = items.iterator(); iter.hasNext();) {
@@ -262,12 +271,16 @@ public class UpdateLinks extends TimerTask implements Configurable {
             }
         } catch (ParsingFeedException e) {
             log.warn("Invalid content in feed "+rssUrl+": "+e.getMessage());
+            return null;
         } catch (IOException e) {
             log.warn("IO problems for "+rssUrl+": "+e.getMessage());
+            return null;
         } catch (IllegalArgumentException e) {
             log.warn("Cannot read " + rssUrl + ": " + e.getMessage());
+            return null;
         }  catch (Exception e) {
             log.error("Cannot parse links from "+rssUrl, e);
+            return null;
         }
 
         return result;

@@ -59,7 +59,7 @@
 }
 
 #jobs .jobs-ad-header{
-	background: #072450 url("/images/bannery/jobs-grad.png") repeat-x 0 bottom;
+	background: #19325a url("/images/bannery/jobs-new.png") no-repeat 0 bottom;
 	margin: -1px;}
 
 #jobs .jobs-ad-title{
@@ -89,16 +89,36 @@
 .jobs-ad-logo {
 	float: none;
 	display: block;
-	position: relative;
-	top: 5px; left: 17px;
-	text-align:left;}
+	position: absolute;
+	top: 0px; left: 0px;
+	text-align:left;
+	width: 320px;
+	height: 45px;
+}
 
-html > body .jobs-ad-logo {
+.jobs-bottom  {
+	background-color: #19325a;
+	font-size: 12px;
+	text-align: center;
+	color: white;
+	line-height: 35px;
+	font-weight: bold;
+}
+
+.jobs-bottom span {
+	color: orange;
+}
+
+.jobs-bottom a:hover, .jobs-bottom a {
+	color: white;
+}
+
+/*html > body .jobs-ad-logo {
 	float: left;
 	display: block;
 	position: relative;
 	top: 5px; left: 17px;
-	}
+	}*/
 
 .jobs-ad-cb {
 	clear: both;

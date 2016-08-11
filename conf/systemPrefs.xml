@@ -402,7 +402,7 @@
                             <entry key="relations.news.within.period" value="select R.cislo from polozka P, relace R, spolecne S where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek and S.typ='P' and R.potomek=S.cislo and S.vytvoreno&gt;? and S.vytvoreno&lt;?"/>
                             <entry key="relations.news.by.user" value="select R.cislo from polozka P, relace R, spolecne S where S.typ='P' and R.potomek=S.cislo and S.pridal=? and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek"/>
                             <entry key="relations.question.by.user" value="select R.cislo from relace R, polozka P, spolecne S where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and P.typ=3 and S.typ='P' and R.potomek=S.cislo and S.pridal=?"/>
-                            <entry key="relations.comment.by.user" value="select R.predchozi,max(vytvoreno) from relace R, komentar K where R.typ_potomka='Z' and R.potomek=K.zaznam and K.autor=? group by K.zaznam order by 2"/>
+                            <entry key="relations.comment.by.user" value="select R.predchozi,max(vytvoreno) from relace R join komentar K on R.potomek=K.zaznam join relace R2 on R2.cislo=R.predchozi where R.typ_potomka='Z' and K.autor=? group by K.zaznam order by 2"/>
                             <entry key="relations.wiki.by.user" value="select distinct R.cislo from verze V, relace R, spolecne S where kdo=? and R.potomek=V.cislo and R.typ_potomka=V.typ and S.cislo=R.potomek and S.typ=R.typ_potomka"/>
                             <entry key="relations.with.tag" value="select R.cislo from relace R, stitkovani T, spolecne S, polozka P where R.typ_potomka=T.typ and R.potomek=T.cislo and  R.typ_potomka=S.typ and R.potomek=S.cislo and P.cislo = S.cislo and T.stitek=? and R.predchozi&lt;&gt;8082" />
                             <entry key="relations.unsigned.contract" value="select R.cislo from polozka P join relace R on P.cislo=R.potomek and typ_potomka='P' where P.typ=30 and boolean1='0' and boolean2='0' and not exists (select C.cislo from polozka C join spolecne S on S.typ='P' and S.cislo=C.cislo where P.cislo=C.numeric1 and S.pridal=?)"/>
@@ -586,7 +586,7 @@
                     </node>
                     <node name="JobsCzFetcher">
                         <map>
-                            <entry key="uri" value="http://exporter.lmc.cz/export_it.xml"/>
+                            <entry key="uri" value="http://exporter.lmc.cz/telcoit_titulka_xml.exp"/>
                         </map>
                     </node>
                     <node name="JobPilotFetcher">
@@ -845,8 +845,8 @@
                         <node name="AbcInit">
                             <map>
                                 <entry key="start.rss.monitor" value="@START.RSS.MONITOR@"/>
-                                <entry key="rss.monitor.delay" value="600"/>
-                                <entry key="rss.monitor.period" value="10800"/>
+                                <entry key="rss.monitor.delay" value="30"/>
+                                <entry key="rss.monitor.period" value="1800"/>
                                 <entry key="start.rss.generator" value="@START.RSS.GENERATOR@"/>
                                 <entry key="rss.generator.delay" value="30"/>
                                 <entry key="rss.generator.period" value="3600"/>

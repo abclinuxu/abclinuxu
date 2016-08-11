@@ -7,6 +7,6 @@ ${JOB.region}, ${JOB.category}<#if JOB.itJob>, IT</#if><#if JOB.linuxJob>, Linux
 http://www.abcprace.cz/www/detail.php?id=${JOB.id}
 </#if>
 <#if USER.id!=4043>
-Odhlaseni: http://www.abclinuxu.cz/EditUser/${USER.id}?action=myPage
+Odhlaseni: http://www.abclinuxu.cz/Profile/${USER.id}?action=myPage
 Vase prihlasovaci jmeno je ${USER.login}.
 </#if>

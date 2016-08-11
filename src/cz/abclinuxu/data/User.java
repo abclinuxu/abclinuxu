@@ -193,8 +193,6 @@ public class User extends CommonObject implements ImageAssignable<User.UserImage
      * @see cz.abclinuxu.security.Roles
      */
     public boolean hasRole(String role) {
-        if (id == 1)
-            return true;
         if (role == null || role.length() == 0)
             return false;
 

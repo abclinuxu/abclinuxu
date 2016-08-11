@@ -81,7 +81,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_USERS_DEPLOY_PATH = "deploy.path.users";
     public static final String PREF_UPDATE_TOP_STATISTICS = "update.top.statistics";
 
-    Timer scheduler, slowScheduler;
+    Timer scheduler, slowScheduler, linksScheduler;
     VariableFetcher fetcher;
     HtmlChecker htmlChecker;
 
@@ -149,6 +149,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         log.info("Startuji ulohy");
         scheduler = new Timer("scheduler", true);
         slowScheduler = new Timer("slow scheduler", true);
+        linksScheduler = new Timer("links scheduler", true);
         startFetchingVariables();
         startUpdateStatistics();
         startLinksUpdate();
@@ -184,7 +185,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         log.info("Scheduling RSS monitor");
         int delay = getDelay(PREF_RSS_MONITOR);
         int period = getPeriod(PREF_RSS_MONITOR);
-        slowScheduler.schedule(UpdateLinks.getInstance(), delay, period);
+        linksScheduler.schedule(UpdateLinks.getInstance(), delay, period);
     }
 
     /**

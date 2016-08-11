@@ -39,6 +39,8 @@ import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.scheduler.UpdateTopStatistics;
+import cz.abclinuxu.scheduler.UpdateLinks;
+import cz.abclinuxu.scheduler.WeeklyEmail;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.ActionProtector;
@@ -55,6 +57,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.List;
+import java.util.Timer;
 
 import org.logicalcobwebs.proxool.ProxoolFacade;
 import org.logicalcobwebs.proxool.admin.SnapshotIF;
@@ -69,9 +72,11 @@ public class AdminServlet implements AbcAction {
     public static final String ACTION_CLEAR_CACHE = "clearCache";
     public static final String ACTION_PERFORM_CHECK = "performCheck";
     public static final String ACTION_RECREATE_RSS = "refreshRss";
+    public static final String ACTION_UPDATE_LINKS = "updateLinks";
     public static final String ACTION_RESTART_TASKS = "restartTasks";
     public static final String ACTION_SWITCH_MAINTAINANCE = "switchMaintainance";
     public static final String ACTION_SWITCH_USER = "su";
+    public static final String ACTION_WEEKLY_SEND = "weeklySend";
 
     public static final String VAR_DATABASE_STATE = "DATABASE_VALID";
     public static final String VAR_FULLTEXT_STATE = "FULLTEXT_VALID";
@@ -112,6 +117,19 @@ public class AdminServlet implements AbcAction {
             ActionProtector.ensureContract(request, AdminServlet.class, true, false, false, true);
             return switchMaintainance(request, env);
         }
+
+	if (ACTION_UPDATE_LINKS.equals(action)) {
+	    ActionProtector.ensureContract(request, AdminServlet.class, true, false, false, true);
+            UpdateLinks.getInstance().run();
+            return null;
+	}
+	
+	if (ACTION_WEEKLY_SEND.equals(action)) {
+	    ActionProtector.ensureContract(request, AdminServlet.class, true, false, false, true);
+	    new Timer().schedule(new WeeklyEmail(), 100);
+	    
+	    return null;
+	}
 
         if (ACTION_SWITCH_USER.equals(action)) {
             ActionProtector.ensureContract(request, AdminServlet.class, true, true, true, false);

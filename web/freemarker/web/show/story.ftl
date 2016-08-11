@@ -224,7 +224,7 @@
 
 <#if STORY.perex??>${TOOL.render(STORY.perex,USER!)}</#if>
 ${TOOL.render(STORY.content,USER!)}
-
+<!-- -->
 <@lib.showRating STORY.relation/>
 
 <#list CHILDREN.poll! as relation>

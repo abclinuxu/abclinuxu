@@ -38,4 +38,4 @@ Preji vam prijemny den
 
 Za portal www.abclinuxu.cz
 
-    Leos Literak
+    redakce

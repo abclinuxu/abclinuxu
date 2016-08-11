@@ -743,7 +743,8 @@ public class EditBlog implements AbcAction, Configurable {
      * First step of renaming blog.
      */
     protected String actionRemoveStoryStep1(HttpServletRequest request, HttpServletResponse response, Relation story, Category blog, Map env) throws Exception {
-        if (Misc.containsForeignComments((Item) story.getChild())) {
+        User user = (User) env.get(Constants.VAR_USER);
+        if (Misc.containsForeignComments((Item) story.getChild()) && !user.hasRole("root")) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Tento zápis není možné smazat, neboť obsahuje cizí komentáře.", env, request.getSession());
             Item item = (Item) story.getChild();
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -761,7 +762,7 @@ public class EditBlog implements AbcAction, Configurable {
         User user = (User) env.get(Constants.VAR_USER);
         Item item = (Item) story.getChild();
 
-        if (Misc.containsForeignComments((Item) story.getChild())) {
+        if (Misc.containsForeignComments((Item) story.getChild()) && !user.hasRole("root")) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Tento zápis není možné smazat, neboť obsahuje cizí komentáře.", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(), item.getCreated(), story.getId()));

@@ -223,7 +223,8 @@
 
 <#macro showThread(comment level diz showControls extra...)>
     <#if comment.author??><#local who=TOOL.createUser(comment.author)></#if>
-    <#local blacklisted = diz.isBlacklisted(comment), attachments = comment.attachments, mode = extra[0]!"comment">
+    <#local blacklisted = diz.isBlacklisted(comment), attachments = comment.attachments, mode = extra[0]!"comment", globalBlacklist = false>
+    <#-- <#if who?? && who.id == 23060><#local blacklisted = true, globalBlacklist = true></#if> -->
     <#if diz.isUnread(comment)><#local css = "ds_hlavicka_novy"><#else><#local css = "ds_hlavicka"></#if>
     <#if blacklisted><#local css = css + " ds_hlavicka_blacklisted"></#if>
     <#if comment.solution && ITEM?? && comment.voters.contains(ITEM.owner)><#local css = css + " ds_author_approved"></#if>
@@ -295,7 +296,7 @@
                     <#if (comment.parent??)>| <a href="#${comment.parent}" title="Odkaz na komentář o jednu úroveň výše">Výše</a></#if>
                     | <a href="#${comment.id}" title="Přímá adresa na tento komentář">Link</a>
                     <#if comment.author??><#local blockTarget="bUid=" + who.id><#else><#local blockTarget="bName=" + comment.anonymName?url></#if>
-                    <#if blacklisted>
+                    <#if blacklisted && !globalBlacklist>
                         <#local blockUrl="/EditUser?action=fromBlacklist&amp;"+blockTarget, title="Neblokovat", hint="Odstraní autora ze seznamu blokovaných uživatelů">
                     <#else>
                         <#local blockUrl="/EditUser?action=toBlacklist&amp;"+blockTarget, title="Blokovat", hint="Přidá autora na seznam blokovaných uživatelů">

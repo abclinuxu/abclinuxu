@@ -33,7 +33,7 @@ a vygeneruje se z něj URL.</p>
     <@lib.showNews RELATION />
 
 <@lib.addForm URL.make("/edit"), "name='newsForm'">
-    <@lib.addInput true, "title", "Titulek", 40, "maxlength='50'" />
+    <@lib.addInput true, "title", "Titulek", 40, "maxlength='100'" />
     <@lib.addTextArea true, "content", "Obsah", 15>
         <@lib.showRTEControls "content"/>
     </@lib.addTextArea>
