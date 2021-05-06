@@ -149,7 +149,7 @@ public class ServletUtils implements Configurable {
             Enumeration names = request.getParameterNames();
             while ( names.hasMoreElements() ) {
                 String name = (String) names.nextElement();
-                String[] values = request.getParameterValues(name);               
+                String[] values = request.getParameterValues(name);
 
                 if ( values.length==1 ) {
                     String value = values[0];
@@ -609,6 +609,7 @@ public class ServletUtils implements Configurable {
                 sb.append(hash);
             Cookie cookie = new Cookie(Constants.VAR_USER, sb.toString());
             cookie.setPath("/");
+            cookie.setHttpOnly(true);
             return cookie;
         }
 
@@ -651,23 +652,23 @@ public class ServletUtils implements Configurable {
         session.setAttribute(Constants.VAR_EDITION_ROLE, role);
         return role;
     }
-    
+
     /**
-     * Checks whether servlet path of request begins with given prefix 
+     * Checks whether servlet path of request begins with given prefix
      * @param request Request done on server path
      * @param prefix Prefix to be beginning of path
      * @return {@code true} if constructed path matched with prefix, {@code false} otherwise
      */
     public static boolean pathBeginsWith(HttpServletRequest request, String prefix) {
     	String path = combinePaths(request.getServletPath(), request.getPathInfo());
-    	return path != null && path.startsWith(prefix); 
+    	return path != null && path.startsWith(prefix);
     }
-    
+
     /**
      * Checks whether either action is defined or element with the same name
      * as action is present within HTTP passed parameters
      * @param params HTTP context
-     * @param testAction Value of desired action or name of element which must be present 
+     * @param testAction Value of desired action or name of element which must be present
      * @return {@code true} if testAction should be triggered, {@code false} otherwise
      */
     public static boolean determineAction(Map params, String testAction) {
