@@ -3,8 +3,7 @@
 <@lib.showMessages/>
 
 <div style="width:250px; float:right; padding:0.5em; margin:0.5em; font-size:small; border-left:1px solid silver">
-<img src="/images/site2/sf-login.gif" width="100" height="40" alt="Stickfish login" style="float:right; margin:0.5em;">
-    Tento krok vyžaduje, abyste se přihlásil(a). Přihlašovací údaje jsou společné servery AbcLinuxu.cz a <a href="http://www.64bit.eu">64bit.eu</a>. Pokud jste se ještě na žádném z techto serverů nezaregistrovali, využijte <a href="${URL.noPrefix("/EditUser?action=register")}">registrační formulář</a>. Registrace je opravdu jednoduchá, zabere jen okamžik vašeho času a přinese vám mnoho výhod oproti neregistrovaným uživatelům.
+    Tento krok vyžaduje, abyste se přihlásil(a). Pokud jste se ještě nezaregistrovali, využijte <a href="${URL.noPrefix("/EditUser?action=register")}">registrační formulář</a>. Registrace je opravdu jednoduchá, zabere jen okamžik vašeho času a přinese vám mnoho výhod oproti neregistrovaným uživatelům.
 </div>
 
 <h1>Přihlášení</h1>
@@ -55,7 +54,7 @@
 <#if PARAMS.action! == "login">
   <input type="hidden" name="action" value="login2">
 <#else>
-  <input type="hidden" name="action" value="${PARAMS.action!}">
+  <input type="hidden" name="action" value="${PARAMS.action!?html}">
 </#if>
 ${TOOL.saveParams(PARAMS, ["LOGIN","PASSWORD","action","useHttps","noCookie"])}
 </form>
