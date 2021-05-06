@@ -114,6 +114,11 @@
                 <textarea name="text" cols="60" rows="15">${PARAMS.text!?html}</textarea>
             </td>
         </tr>
+        <#if ! USER??>
+        <tr>
+            <div class="g-recaptcha" data-sitekey="${RECAPTCHA.key}" <#if CSS_URI?? && CSS_URI?contains("dark")>data-theme="dark"</#if>></div>
+        </tr>
+        </#if>
         <tr>
             <td colspan="2">
                 <input type="submit" name="preview" value="Náhled">

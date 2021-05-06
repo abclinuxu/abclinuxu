@@ -37,6 +37,7 @@ import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.email.monitor.InstantSender;
 import cz.abclinuxu.persistence.extra.JobOfferManager;
 import cz.abclinuxu.data.view.PropertySet;
+import cz.abclinuxu.security.Recaptcha;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import freemarker.template.Configuration;
 
@@ -492,6 +493,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             cfg.setSharedVariable(Constants.VAR_FEEDS,new FeedGenerator());
             cfg.setSharedVariable(Constants.VAR_DATE_TOOL,new DateTool());
             cfg.setSharedVariable(Constants.VAR_SORTER,new Sorters2());
+            cfg.setSharedVariable(Constants.VAR_RECAPTCHA, Recaptcha.getInstance());
             cfg.setSharedVariable(Constants.VAR_FETCHER, VariableFetcher.getInstance());
             cfg.setSharedVariable(Constants.VAR_CONFIG, AbcConfig.getInstance());
             cfg.setSharedVariable(Constants.VAR_NEWS_CATEGORIES, NewsCategories.getInstance());

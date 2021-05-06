@@ -43,6 +43,7 @@ import cz.abclinuxu.utils.parser.clean.Rules;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.security.Recaptcha;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -187,10 +188,16 @@ public class EditRequest implements AbcAction, Configurable {
         String url = (String) params.get(PARAM_URL);
         boolean error = false;
 
-        if ( ! EditDiscussion.checkSpambot(request, response, params, env, user))
+        try {
+            if (user == null)
+                Recaptcha.getInstance().verifyAccess(request);
+        } catch (SecurityException e) {
             error = true;
+            ServletUtils.addError(Constants.ERROR_GENERIC, e.getMessage(), env, null);
+        }
 
-        if ( author==null || author.length()==0 ) {
+
+        if ( author==null || author.length()==0 || author.indexOf('<') != -1 ) {
             ServletUtils.addError(PARAM_AUTHOR,"Zadejte prosím své jméno.",env,null);
             error = true;
         }
@@ -198,7 +205,7 @@ public class EditRequest implements AbcAction, Configurable {
         if ( email==null || email.length()==0 ) {
             ServletUtils.addError(PARAM_EMAIL,"Zadejte, kam poslat vyrozumění.",env,null);
             error = true;
-        } else if ( email.length()<6 || email.indexOf('@')==-1 || email.indexOf('.')==-1 ) {
+        } else if ( email.length()<6 || email.indexOf('@')==-1 || email.indexOf('.')==-1 || email.indexOf('<') != -1 ) {
             ServletUtils.addError(PARAM_EMAIL,"Neplatný email!.",env,null);
             error = true;
         }

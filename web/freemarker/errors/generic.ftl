@@ -9,6 +9,6 @@
 Chyba byla zalogována, nicméně váš slovní popis může
 být někdy velmi užitečný. Máte-li zájem nám pomoci,
 využijte formulář <a href="/pozadavky">Vzkazy správcům</a>.</p>
-<p>Název chyby: ${EXCEPTION}</p>
+<p>Název chyby: ${EXCEPTION?html}</p>
 </body>
 </html>

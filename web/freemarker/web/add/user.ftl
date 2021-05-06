@@ -47,9 +47,7 @@
 
     <@lib.addInput false, "email", "E-mail", 24 />
 
-    <@lib.addFormField true, "Aktuální rok", "Vložte aktuální rok. Jedná se o ochranu před spamboty.">
-        <@lib.addInputBare "antispam", 4 />
-    </@lib.addFormField>
+    <tr><td></td><td><div class="g-recaptcha" data-sitekey="${RECAPTCHA.key}" <#if CSS_URI?? && CSS_URI?contains("dark")>data-theme="dark"</#if>></div></td></tr>
 
     <@lib.addSubmit "Dokonči" />
     <@lib.addHidden "action", "register2" />

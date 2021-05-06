@@ -1052,6 +1052,12 @@
                             <entry key="block.same.ip.for" value="90" />
                         </map>
                     </node>
+                    <node name="Recaptcha">
+                       <map>
+                            <entry key="recaptcha.key" value="@RECAPTCHA.KEY@" />
+                            <entry key="recaptcha.secret" value="@RECAPTCHA.SECRET@" />
+                       </map>
+                    </node>
                 </node>
                 <node name="data">
                     <map/>

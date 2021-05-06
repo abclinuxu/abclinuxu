@@ -7,6 +7,6 @@
         <h1>Přístup odmítnut</h1>
 
         <p>Akce nebyla zavolána korektním způsobem.</p>
-        <p class="error">${EXCEPTION_MESSAGE}</p>
+        <p class="error">${EXCEPTION_MESSAGE?html}</p>
     </body>
 </html>

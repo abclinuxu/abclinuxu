@@ -24,13 +24,6 @@
         <@lib.addInput true, "author", "Zadejte vaše jméno", 30>
             <br/> nebo <a href="/Profile?action=login">se přihlašte</a>.
         </@lib.addInput>
-
-        <#if ! USER_VERIFIED!false>
-            <@lib.addFormField true, "Zadejte aktuální rok", "Vložte aktuální rok. Jedná se o ochranu před spamboty. Po úspěšném ověření "+
-                "se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.">
-                    <@lib.addInputBare "antispam", 4 />
-            </@lib.addFormField>
-        </#if>
     </#if>
 
     <@lib.addInput true, "title", "Titulek", 60 />
@@ -41,7 +34,7 @@
     <@lib.addFormField true, "Vložení přílohy", "Například výpis logu, konfigurační soubor, snímek obrazovky a podobně.">
         <@lib.addFileBare "attachment" />
     </@lib.addFormField>
-
+    
     <@lib.addSubmit "Náhled dotazu", "preview" />
     <@lib.addHidden "action", "addQuez2" />
     <@lib.addHidden "rid", PARAMS.rid />

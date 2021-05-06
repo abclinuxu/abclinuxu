@@ -39,6 +39,10 @@
         <link rel="alternate" title="abclinuxu.cz: ankety" href="http://www.abclinuxu.cz/auto/ankety.rss" type="application/rss+xml">
         <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
     </#if>
+    <#if META_DESCRIPTION??>
+        <meta name="description" content="${META_DESCRIPTION?html}">
+        <meta property="og:description" content="${META_DESCRIPTION?html}">
+    </#if>
     <#if RSS??>
         <link rel="alternate" title="RSS zdroj aktuální sekce" href="http://www.abclinuxu.cz${RSS}" type="application/rss+xml">
     </#if>
@@ -56,6 +60,7 @@
     <script type="text/javascript" src="/data/site/jquery/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="/data/site/prettyPhoto/jquery.prettyPhoto.js"></script>
     <script type="text/javascript" src="/data/site/scripts.js"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
     <#if ! IS_INDEX??>
         <script type="text/javascript" src="/data/syntaxhighlighter/scripts/all.js"></script>
     </#if>

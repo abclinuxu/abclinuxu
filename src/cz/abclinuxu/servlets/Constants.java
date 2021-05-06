@@ -221,6 +221,8 @@ public class Constants implements Configurable {
     public static final String VAR_VISIT_COUNTERS = "VISIT_COUNTERS";
     /** holds Tools instance */
     public static final String VAR_TOOL = "TOOL";
+    /** holds Recaptcha instance */
+    public static final String VAR_RECAPTCHA = "RECAPTCHA";
     /** holds Sorters2 instance */
     public static final String VAR_SORTER = "SORT";
     /** holds DateTool instance */
@@ -258,6 +260,7 @@ public class Constants implements Configurable {
     public static final String VAR_PARENTS = "PARENTS";
     /** list containing Users */
     public static final String VAR_USERS = "USERS";
+    public static final String VAR_META_DESCRIPTION = "META_DESCRIPTION";
 
     /** parameter holding description of changes */
     public static final String PARAM_REVISION_DESCRIPTION = "rev_descr";

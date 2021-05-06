@@ -7,7 +7,7 @@
 
 <h1>Chyba</h1>
 
-<p>${EXCEPTION_MESSAGE}</p>
+<p>${EXCEPTION_MESSAGE?html}</p>
 
 </body>
 </html>

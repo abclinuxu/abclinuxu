@@ -5,6 +5,6 @@
 </head>
 <body>
 <h1>Objekt nenalezen</h1>
-<p>${EXCEPTION}</p>
+<p>${EXCEPTION?html}</p>
 </body>
 </html>
