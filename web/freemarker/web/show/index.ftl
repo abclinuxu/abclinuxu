@@ -182,7 +182,7 @@
         <div class="s_sekce">
             <ul>
             <#list HARDWARE as rel>
-                 <li><a href="${rel.url!"/hardware/show/"+rel.id}">${rel.child.title}</a></li>
+                 <li><a href="${rel.url!"/hardware/show/"+rel.id}">${rel.child.title?html}</a></li>
             </#list>
             </ul>
             <span class="s_sekce_dalsi"><a href="/History?type=hardware">další&nbsp;&raquo;</a></span>
@@ -199,7 +199,7 @@
         <div class="s_sekce">
             <ul>
             <#list SOFTWARE as rel>
-                 <li><a href="${rel.url}">${rel.child.title}</a></li>
+                 <li><a href="${rel.url}">${rel.child.title?html}</a></li>
             </#list>
             </ul>
             <span class="s_sekce_dalsi"><a href="/History?type=software">další&nbsp;&raquo;</a></span>
@@ -217,7 +217,7 @@
         <ul>
         <#list DRIVERS as rel>
              <li>
-                <a href="${rel.url}">${rel.child.title}</a>
+                <a href="${rel.url}">${rel.child.title?html}</a>
              </li>
         </#list>
         </ul>
@@ -237,7 +237,7 @@
     <div class="s_sekce">
         <ul>
         <#list FAQ as rel>
-             <li><a href="${rel.url}">${rel.child.title}</a></li>
+             <li><a href="${rel.url}">${rel.child.title?html}</a></li>
         </#list>
         </ul>
         <span class="s_sekce_dalsi"><a href="/History?type=faq">další&nbsp;&raquo;</a></span>
@@ -252,7 +252,7 @@
       <div class="s_sekce bez-slovniku">
         <ul>
           <#list DICTIONARY as rel>
-            <li><a href="${rel.url}">${rel.child.title}</a></li>
+            <li><a href="${rel.url}">${rel.child.title?html}</a></li>
           </#list>
         </ul>
         <span class="s_sekce_dalsi"><a href="/History?type=dictionary">další&nbsp;&raquo;</a></span>
@@ -268,7 +268,7 @@
     <div class="s_sekce">
         <ul>
             <#list PERSONALITY as rel>
-                <li><a href="${rel.url}">${rel.child.title}</a></li>
+                <li><a href="${rel.url}">${rel.child.title?html}</a></li>
             </#list>
         </ul>
         <span class="s_sekce_dalsi"><a href="/History?type=personalities">další&nbsp;&raquo;</a></span>
@@ -288,7 +288,7 @@
         <ul>
         <#list BAZAAR as rel>
              <li>
-                <a href="/bazar/show/${rel.id}">${rel.child.title}</a>
+                <a href="/bazar/show/${rel.id}">${rel.child.title?html}</a>
                 <#if rel.child.subType=='sell'>
                     <span class="prodej">(P)</span>
                 <#else>
@@ -310,7 +310,7 @@
       <div class="s_sekce">
         <ul>
         <#list TRIVIAS as rel>
-             <li><a href="${rel.url}">${rel.child.title}</a></li>
+             <li><a href="${rel.url}">${rel.child.title?html}</a></li>
         </#list>
         </ul>
         <span class="s_sekce_dalsi"><a href="/hry">další&nbsp;&raquo;</a></span>
@@ -326,7 +326,7 @@
         <div class="s_sekce">
             <ul>
                 <#list VIDEOS as rel>
-                    <li><a href="${rel.url}">${rel.child.title}</a></li>
+                    <li><a href="${rel.url}">${rel.child.title?html}</a></li>
                 </#list>
             </ul>
             <span class="s_sekce_dalsi"><a href="/videa">další&nbsp;&raquo;</a></span>

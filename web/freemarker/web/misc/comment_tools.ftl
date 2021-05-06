@@ -112,16 +112,8 @@
                 </select>
             </td>
         </tr>
-        <#if ! (USER?? || USER_VERIFIED!false)>
-            <tr>
-                <td class="required">Aktuální rok</td>
-                <td>
-                    <input type="text" size="4" name="antispam" value="${PARAMS.antispam!?html}">
-                    <a class="info" href="#">?<span class="tooltip">Vložte aktuální rok. Jedná se o ochranu před spamboty.
-                    Po úspěšném ověření se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.</span></a>
-                    <span class="error">${ERRORS.antispam!}</span>
-                </td>
-            </tr>
+        <#if ! USER??>
+            <tr><td></td><td><div class="g-recaptcha" data-sitekey="${RECAPTCHA.key}" <#if CSS_URI?? && CSS_URI?contains("dark")>data-theme="dark"</#if>></div></td></tr>
         </#if>
         <tr>
             <td colspan="2">

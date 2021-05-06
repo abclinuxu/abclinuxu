@@ -38,7 +38,7 @@
 <#include "../header.ftl">
 
 
-<h1>${ITEM.title}</h1>
+<h1>${ITEM.title?html}</h1>
 
 <div class="dict-item">
     ${TOOL.render(TOOL.xpath(ITEM,"/data/description"),USER!)}

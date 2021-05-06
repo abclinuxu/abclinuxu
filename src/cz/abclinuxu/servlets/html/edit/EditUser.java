@@ -86,6 +86,7 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.clean.HtmlChecker;
 import cz.abclinuxu.utils.parser.clean.HtmlPurifier;
 import cz.abclinuxu.utils.parser.clean.Rules;
+import cz.abclinuxu.security.Recaptcha;
 
 /**
  * Class for manipulation with User.
@@ -447,7 +448,14 @@ public class EditUser implements AbcAction {
         canContinue &= setName(params, managed, env);
         canContinue &= setNick(params, managed, env);
         canContinue &= setEmail(params, managed, env);
-        canContinue &= checkSpambot(params, env, managed);
+
+       try {
+            Recaptcha.getInstance().verifyAccess(request);
+        } catch (SecurityException e) {
+            canContinue = false;
+            ServletUtils.addError(Constants.ERROR_GENERIC, e.getMessage(), env, null);
+        }
+
         managed.addProperty(Constants.PROPERTY_TICKET, generateTicket(managed.getId()));
 
         if ( !canContinue )
@@ -1607,23 +1615,6 @@ public class EditUser implements AbcAction {
             HtmlChecker.check(rules, text);
         } catch(Exception e) {
             ServletUtils.addError(paramName, e.getMessage(), env, null);
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Performs anti-spambot detection. Logged in user or already verified user is automatically allowed
-     * to submit comment. Other users must enter current year. In such case new cookie is created, which
-     * will hold their name and its existence will show that anti-spambot detection was already successfully
-     * performed for this user.
-     * @return false if anti-spambot rules were not satisfied
-     */
-    public boolean checkSpambot(Map params, Map env, User user) {
-        int year = Calendar.getInstance().get(Calendar.YEAR);
-        String s = (String) params.get(PARAM_ANTISPAM);
-        if (! String.valueOf(year).equals(s)) {
-            ServletUtils.addError(PARAM_ANTISPAM, "Zadejte prosím letošní rok.", env, null);
             return false;
         }
         return true;

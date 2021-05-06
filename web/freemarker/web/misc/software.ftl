@@ -1,5 +1,5 @@
 <#macro showSoftware(software, showGallery)>
-    <h1>${software.title!}</h1>
+    <h1>${(software.title!)?html}</h1>
 
     <div>
         ${TOOL.render(TOOL.element(software.data,"data/description"),USER!)}

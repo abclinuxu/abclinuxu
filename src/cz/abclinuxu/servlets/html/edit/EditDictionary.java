@@ -249,6 +249,11 @@ public class EditDictionary implements AbcAction {
             return false;
         }
 
+        if (name.indexOf('<') != -1) {
+            ServletUtils.addError(PARAM_NAME, "HTML zde není povoleno!", env, null);
+            return false;
+        }
+
         item.setTitle(name);
 
         String normalizedName = Misc.removeDiacritics(name);

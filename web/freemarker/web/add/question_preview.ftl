@@ -40,13 +40,6 @@
         <@lib.addInput true, "author", "Zadejte vaše jméno", 30>
             <br/> nebo <a href="/Profile?action=login">se přihlašte</a>.
         </@lib.addInput>
-
-        <#if ! USER_VERIFIED!false>
-            <@lib.addFormField true, "Zadejte aktuální rok", "Vložte aktuální rok. Jedná se o ochranu před spamboty. Po úspěšném ověření "+
-                "se uloží cookie (včetně vašeho jména) a tato kontrola přestane být prováděna.">
-                    <@lib.addInputBare "antispam", 4 />
-            </@lib.addFormField>
-        </#if>
     </#if>
 
     <@lib.addInput true, "title", "Titulek", 60 />
@@ -64,6 +57,10 @@
             </ul>
         </#if>
     </@lib.addFormField>
+
+    <#if ! USER??>
+        <tr><td></td><td><div class="g-recaptcha" data-sitekey="${RECAPTCHA.key}" <#if CSS_URI?? && CSS_URI?contains("dark")>data-theme="dark"</#if>></div></td></tr>
+    </#if>
 
     <@lib.addFormField>
         <@lib.addSubmitBare "Zopakuj náhled dotazu", "preview" />

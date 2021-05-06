@@ -155,6 +155,11 @@ public class ShowArticle implements AbcAction {
             env.put(VAR_RELATED_RESOURCES,resources);
         }
 
+        Element perex = (Element) item.getData().selectSingleNode("/data/perex");
+        if (perex != null) {
+            env.put(Constants.VAR_META_DESCRIPTION, perex.getText());
+        }
+
         // initialize series view
         Relation seriesRelation = null;
         Element seriesElement = item.getData().getRootElement().element("series_rid");

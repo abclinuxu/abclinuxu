@@ -309,6 +309,10 @@ public class EditHardware implements AbcAction {
         String tmp = (String) params.get(PARAM_NAME);
         tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
+            if (tmp.indexOf('<') != -1) {
+                ServletUtils.addError(PARAM_NAME, "HTML zde není povoleno", env, null);
+                return false;
+            }
             item.setTitle(tmp);
             return true;
         } else {

@@ -64,11 +64,11 @@
 <p class="dalsi_pojmy">
     Další osobnosti:
     <#list PREV?reverse as relation>
-        <a href="${relation.url}">${TOOL.childName(relation.child)}</a> -
+        <a href="${relation.url}">${TOOL.childName(relation.child)?html}</a> -
     </#list>
-    ${TOOL.childName(ITEM)} <#if (NEXT?size>0)>-</#if>
+    ${TOOL.childName(ITEM)?html} <#if (NEXT?size>0)>-</#if>
     <#list NEXT! as relation>
-        <a href="${relation.url}">${TOOL.childName(relation.child)}</a>
+        <a href="${relation.url}">${TOOL.childName(relation.child)?html}</a>
         <#if relation_has_next> - </#if>
     </#list>
 </p>

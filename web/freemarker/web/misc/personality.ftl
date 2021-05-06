@@ -1,6 +1,6 @@
 <#macro showPersonality(personality, showGallery)>
     <h1>
-        ${TOOL.childName(personality)}
+        ${TOOL.childName(personality)?html}
     </h1>
 
     <div class="dict-item">

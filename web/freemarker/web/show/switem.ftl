@@ -20,7 +20,7 @@
                 <li>
                     <@lib.showMonitor RELATION />
                 </li>
-                <form action="/hledani"><input type="text" class="text" name="dotaz" value="${ITEM.title}">
+                <form action="/hledani"><input type="text" class="text" name="dotaz" value="${ITEM.title?html}">
                     <input type="submit" class="button" value="Hledej">
                 </form>
                 <#if USER?? && TOOL.permissionsFor(USER, RELATION).canDelete()>

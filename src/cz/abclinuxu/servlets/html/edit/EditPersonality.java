@@ -302,6 +302,10 @@ public class EditPersonality implements AbcAction {
             ServletUtils.addError(PARAM_FIRSTNAME, "Nezadali jste jméno osobnosti.", env, null);
             return false;
         }
+        if (name.indexOf('<') != -1) {
+            ServletUtils.addError(PARAM_FIRSTNAME, "HTML zde není povoleno", env, null);
+            return false;
+        }
 
         String normalizedName = Misc.removeDiacritics(name);
 
@@ -331,6 +335,11 @@ public class EditPersonality implements AbcAction {
             ServletUtils.addError(PARAM_SURNAME, "Nezadali jste příjmení osobnosti.", env, null);
             return false;
         }
+        if (surname.indexOf('<') != -1) {
+            ServletUtils.addError(PARAM_SURNAME, "HTML zde není povoleno", env, null);
+            return false;
+        }
+
 
         String normalizedSurname = Misc.removeDiacritics(surname);
         if (normalizedSurname.length() == 0) {

@@ -68,7 +68,7 @@
 <table border="0" class="bez-slovniku">
  <#list FOUND.data as rel>
   <#if rel_index % 3 == 0><tr></#if>
-   <td><a href="${rel.url}">${TOOL.childName(rel.child)}</a></td>
+   <td><a href="${rel.url}">${TOOL.childName(rel.child)?html}</a></td>
   <#if rel_index % 3 == 2></tr></#if>
  </#list>
 </table>

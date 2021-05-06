@@ -313,6 +313,10 @@ public class EditDesktop implements AbcAction {
             ServletUtils.addError(PARAM_NAME, "Nezadali jste titulek obrázku.", env, null);
             return false;
         }
+        if (name.indexOf('<') != -1) {
+            ServletUtils.addError(PARAM_NAME, "HTML zde není povoleno.", env, null);
+            return false;
+        }
 
         item.setTitle(name);
         return true;

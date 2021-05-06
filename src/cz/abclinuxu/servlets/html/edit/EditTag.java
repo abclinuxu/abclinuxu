@@ -194,6 +194,10 @@ public class EditTag implements AbcAction {
             ServletUtils.addError(PARAM_TITLE, "Zadejte název štítku!", env, null);
             return false;
         }
+        if (title.indexOf('<') != -1) {
+            ServletUtils.addError(PARAM_TITLE, "HTML zde není povoleno.", env, null);
+            return false;
+        }
 
         String id = null;
         try {

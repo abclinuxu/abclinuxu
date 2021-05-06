@@ -166,7 +166,7 @@
                 <div class="pwd">
                     <a href="/">AbcLinuxu</a>:/
                     <#list TOOL.getParents(PARENTS,USER!,URL) as link>
-                        <a href="${link.url}">${link.title}</a>
+                        <a href="${link.url}">${link.title?html}</a>
                         <#if link_has_next> / </#if>
                     </#list>
                 </div>

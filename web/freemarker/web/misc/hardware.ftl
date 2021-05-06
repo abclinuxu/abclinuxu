@@ -1,5 +1,5 @@
 <#macro showHardware(hardware)>
-    <h1>${hardware.title!}</h1>
+    <h1>${(hardware.title!)?html}</h1>
 
     <table class="hwdetail">
         <#if TOOL.xpath(hardware,"/data/support")??>

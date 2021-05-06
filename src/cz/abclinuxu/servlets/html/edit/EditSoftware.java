@@ -282,6 +282,11 @@ public class EditSoftware extends AbcAutoAction implements Configurable {
     private boolean setName(Map params, Item item, Map env) {
         String tmp = (String) params.get(PARAM_NAME);
         if (tmp != null && tmp.length() > 0) {
+            if (tmp.indexOf('<') != -1) {
+                ServletUtils.addError(PARAM_NAME, "HTML zde není dovoleno!", env, null);
+                return false;
+            }
+
             tmp = Misc.filterDangerousCharacters(tmp);
             item.setTitle(tmp);
             return true;

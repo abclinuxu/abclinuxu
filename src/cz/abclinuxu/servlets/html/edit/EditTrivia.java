@@ -216,6 +216,10 @@ public class EditTrivia extends AbcAutoAction {
     private boolean setName(Map params, Item item, Map env) {
         String tmp = (String) params.get(PARAM_TITLE);
         if (tmp != null && tmp.length() > 0) {
+            if (tmp.indexOf('<') != -1) {
+                ServletUtils.addError(PARAM_TITLE, "HTML zde není povoleno.", env, null);
+                return false;
+            }
             item.setTitle(tmp);
             return true;
         } else {

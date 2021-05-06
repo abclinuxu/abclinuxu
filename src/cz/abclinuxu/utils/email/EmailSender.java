@@ -303,8 +303,12 @@ public class EmailSender implements Configurable {
             contentStart = matcher.end();
 
             String url = part.substring(Constants.INLINE_PREFIX.length());
-            String cid = email.embed(new URL(url), FilenameUtils.getName(url));
-            sb.append("cid:").append(cid);
+            try {
+                String cid = email.embed(new URL(url), FilenameUtils.getName(url));
+                sb.append("cid:").append(cid);
+            } catch (Exception e) {
+                sb.append(url);
+            }
         }
 
         if (contentStart < content.length())
