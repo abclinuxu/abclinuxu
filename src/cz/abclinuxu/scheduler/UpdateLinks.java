@@ -39,6 +39,10 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.freemarker.Tools;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -239,11 +243,17 @@ public class UpdateLinks extends TimerTask implements Configurable {
         SyndFeedInput input = new SyndFeedInput();
 
         try {
-            URLConnection conn = new URL(rssUrl).openConnection();
-            conn.setConnectTimeout(3000);
-            conn.setReadTimeout(3000);
+            HttpClient client = new HttpClient();
+            GetMethod method = new GetMethod(rssUrl);
 
-            SyndFeed feed = input.build(new InputStreamReader(conn.getInputStream()));
+            method.setFollowRedirects(true);
+            method.getParams().setParameter(HttpMethodParams.SO_TIMEOUT, 3000);
+
+            int status = client.executeMethod(method);
+            if (status != HttpStatus.SC_OK)
+                throw new IOException("Failed to get " + rssUrl + ", status: " + status);
+
+            SyndFeed feed = input.build(new InputStreamReader(method.getResponseBodyAsStream()));
             List items = feed.getEntries();
             if ( items==null ) return result;
             for (Iterator iter = items.iterator(); iter.hasNext();) {
