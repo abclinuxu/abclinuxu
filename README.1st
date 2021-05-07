@@ -1,123 +1,19 @@
-Strucny navod
-=============
+Abclinuxu Official repository
+============
 
-1) nainstalujte
-
-* Sun JDK 1.5
-* Jakarta Ant 1.6
-* Mysql 5
-* Jetty 6.1.4 ci novejsi
-
-Ant a jetty najdete v orezane verzi v adresari misc.
-
-2) vytvorte uzivatele $MYSQL_USER, nastavte si databazi $MYSQL_DB, 
-nahrajte jeji schema $MYSQL_SCHEMA a nactete do ni vzorova data $MYSQL_DATA.
-Tento usek kodu lze pouzit jako skript pod /bin/bash
-
-MYSQL_ROOT="root"  # mysql root uzivatel
-MYSQL_ROOTPW="hesloroota" # heslo roota do mysql databaze
-MYSQL_USER="user"  # jmeno uzivatele ktery pristuje do databaze
-MYSQL_HOST="stroj" # jmeno stroje, na kterem bezi databaze
-MYSQL_DB="devel"   # jmeno databaze
-MYSQL_PASSWORD="heslo" # pristupove heslo
-MYSQL_SCHEME="bin/sql/create_mysql_scheme.sql"
-MYSQL_DATA="misc/databaze.sql.bz2"
-
-echo "Vytvarim SQL uzivatele"
-mysql -u $MYSQL_ROOT --password=$MYSQL_ROOTPW --default-character-set=utf8 <<EOF
-CREATE USER $MYSQL_USER IDENTIFIED BY '$MYSQL_PASSWORD';
-EOF
+Official repository of http://abclinuxu.cz portal.
 
 
-echo "Vytvarim SQL databazi"
-mysql -u $MYSQL_ROOT --password=$MYSQL_ROOTPW --default-character-set=utf8 <<EOF 
-DROP DATABASE IF EXISTS $MYSQL_DB;
-CREATE DATABASE $MYSQL_DB default character set utf8 collate utf8_czech_ci;
-USE $MYSQL_DB;
-GRANT ALL ON *.* TO $MYSQL_USER@$MYSQL_HOST IDENTIFIED BY '$MYSQL_PASSWORD' WITH GRANT OPTION;
-FLUSH PRIVILEGES;
-EOF
 
-echo "Naplnuji databazi schematem a vzorovymi daty"
-bzcat $MYSQL_DATA | mysql -u $MYSQL_USER --password=$MYSQL_PASSWORD --default-character-set=utf8 $MYSQL_DB
-
-Ujistete se, ze databaze je pristupna pres TCP/IP, v defaultnim
-nastaveni je to zakazano (skip-networking v konfiguraci ci spoustecim
-skriptu, podrobnosti ve FAQ na abicku).
-
-3) nastavte LDAP
- a) nainstalujte si openldap
- b) cp portal/conf/ldap/stickfish.schema /etc/openldap/schema
- c) pridejte do /etc/slapd.conf tyto radky:
-  include /etc/openldap/schema/stickfish.schema
-  suffix          "dc=stickfish,dc=net"
-  rootdn          "cn=Manager,dc=stickfish,dc=net"
-  rootpw          secret
- d) restartujte openldap
- e) ldapadd -x -D 'cn=manager,dc=stickfish,dc=net' -w secret < portal/misc/init.ldif
-    ldapadd -x -D 'cn=manager,dc=stickfish,dc=net' -w secret < portal/misc/users.ldif
- f) pokud budete reinicializovat LDAP, data smazte pomoci
-    ldapdelete -r -x -D 'cn=manager,dc=stickfish,dc=net' -w secret "dc=stickfish,dc=net"
-
-4) upravte si conf/conf_devel.properties
-
-Dulezite je mit spravne vsechny cesty,
-adresare by mely existovat. Take nastavte
-jmeno databaze, uzivatele a jeho heslo.
-
-Soubor 'conf_devel.properties' zkopirujte o adresar vyse pod jmenem
-'conf_deploy.properties' (Windows) nebo na nej vytvorte symlink.
-
-5) zkompilujte projekt
-
-Spustte ant ve zdrojacich
-$ ant
-
-Pokud provedete pote nejake zmeny do conf_devel.properties,
-ant je neprevede do konfiguracnich souboru. Pak je lepsi
-bud smazat adresar $DEPLOY/WEB-INF nebo touchnout vsechny
-soubory v source/conf.
-
-6) nakonfigurujte jetty
-
-Nastavte spravne promennou $JETTY_HOME v bin/jetty.sh.
-
-7) spustte jetty
-
-cd jetty/bin
-./jetty.sh run
-
-8) otevrete prohlizec, pouzijte port uvedeny v conf_devel.properties (napr. 8080)
-
-http://localhost:8080
-
-Pouzivani IDE Eclipse
-=====================
-Pokud pouzivate Eclipse, nastavte si formatter codu na soubor prilozeny v
-conf/eclipse. Tento by vam mel pomoct udrzovat formatovani kodu konzistentni
-s projektem.
+Documentation
+-------------
+in progress..
 
 
-Slozitejsi veci
-===============
 
-V konfiguraku musite nastavit lokalni domenu,
-pokud chcete, aby se pouzivala detekce sablon
-podle jmena serveru. Napriklad pda.abclinuxu.cz
-znamena, ze se ma pouzit sablona pda.
-
-Je treba nastavit v DNS jmeno stroje dle sablon
-a v konfiguraku pak domenu, kde abicko zrovna bezi.
-Napriklad doma, pak system rozpozna server pda.doma.
-
-Info
-====
-
-Vice informaci najdete na adrese
-http://www.abclinuxu.cz/projekty/zdrojaky
-Uvitam vase pripominky k tomuto navodu,
-co vam delalo potize, co je treba lepe popsat.
-
-Leos Literak
-http://www.abclinuxu.cz/lide/literakl
-
+History
+-------------
+2001 - Project was started by Leoš Literák (chief editor Robert Krátký, developer Leoš Literák)
+2004 - Project was sold to Stickfish company (chief editor Robert Krátký, developer Leoš Literák + Luboš Doležel)
+2010 - Project was sold to Argonit company (chief editor Luboš Doležel, Developer Luboš Doležel)
+2016 - Project was sold to Nitemedia company
