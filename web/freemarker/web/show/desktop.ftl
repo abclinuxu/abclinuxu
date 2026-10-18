@@ -35,9 +35,11 @@
   </#if>
   <div class="s_nadpis">Nejoblíbenější desktopy</div>
   <div class="s_sekce" align="center">
-    <#list TOOL.sublist(VARS.mostPopularDesktops.keySet(), 0, 5) as rel>
+    <#if VARS.mostPopularDesktops?? && VARS.mostPopularDesktops?has_content>
+      <#list TOOL.sublist(VARS.mostPopularDesktops.keySet(), 0, 5) as rel>
         <@lib.showTopDesktop rel />
-    </#list>
+      </#list>
+    </#if>
   </div>
   &nbsp;<a href="/nej">další&nbsp;&raquo;</a>
 
