@@ -28,9 +28,11 @@
     </div>
     <div class="s_nadpis">Nejprohlíženější nové desktopy</div>
     <div class="s_sekce" align="center">
-        <#list TOOL.sublist(VARS.recentMostSeenDesktops.keySet(), 0, 3) as rel>
-            <@lib.showTopDesktop rel />
-        </#list>
+       <#if VARS.recentMostSeenDesktops?? && VARS.recentMostSeenDesktops?has_content>
+         <#list TOOL.sublist(VARS.recentMostSeenDesktops.keySet(), 0, 3) as rel>
+             <@lib.showTopDesktop rel />
+         </#list>
+       </#if>
     </div>
     <div class="s_nadpis">Nejkomentovanější nové desktopy</div>
     <div class="s_sekce" align="center">
