@@ -91,8 +91,8 @@
             <@lib.advertisement id="sl-abcprace" />
 
             <#if ! IS_INDEX??>
-                <#assign FEEDS = VARS.getFeeds(USER!,false)>
-                <#if (FEEDS.size() > 0)>
+                <#assign FEEDS = VARS.getFeeds(USER!, false)!{}>
+                <#if (FEEDS?? && FEEDS?has_content && FEEDS?size > 0)>
                     <!-- ROZCESTNÍK -->
                     <div class="s_nadpis">Rozcestník</div>
                     <div class="s_sekce">
