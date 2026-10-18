@@ -960,21 +960,29 @@
     </div>
 </#macro>
 
-<#macro showVideoPlayer relation width height showLink>
+<#macro showVideoPlayer relation width=640 height=360 showLink=false>
     <#local item=relation.child, code=TOOL.xpath(item,"//code"), desc=TOOL.xpath(item,"//description")!"">
     <#if item.subType=="youtube">
-        <#local player="http://www.youtube.com/v/"+code+"&amp;hl=en&amp;fs=1">
+        <#local player="https://www.youtube-nocookie.com/embed/" + code>
     <#elseif item.subType=="stream">
-        <#local player="http://www.stream.cz/object/" + code>
+        <#local player="https://www.stream.cz/object/" + code>
     <#elseif item.subType=="googlevideo">
-        <#local player="http://video.google.com/googleplayer.swf?docid="+code+"&amp;hl=cs&amp;fs=true">
+        <#local player="https://video.google.com/googleplayer.swf?docid=" + code + "&amp;hl=cs&amp;fs=true">
     </#if>
 
-    <#if showLink>(<a href="${relation.url!("/videa/show/"+relation.id)}">správa videa</a>)</#if><br>
-    <object width="${width}" height="${height}">
-        <param name="movie" value="${player}"></param><param name="allowFullScreen" value="true"></param>
-        <embed src="${player}" type="application/x-shockwave-flash" allowfullscreen="true" width="${width}" height="${height}"></embed>
-    </object>
+    <#if item.subType=="youtube">
+        <iframe width="${width}" height="${height}" src="${player}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <#else>
+        <object width="${width}" height="${height}" data="${player}">
+            <param name="movie" value="${player}" />
+            <embed src="${player}" width="${width}" height="${height}"></embed>
+        </object>
+    </#if>
+
+    <#if showLink?? && showLink && item.subType=="youtube">
+        <p><a href="https://www.youtube.com/watch?v=${code}" target="_blank" rel="noopener noreferrer">Přehrát přímo na YouTube</a></p>
+    </#if>
+
     <#if desc!=""><p>${desc}</p></#if>
 </#macro>
 
