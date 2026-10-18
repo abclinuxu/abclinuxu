@@ -25,7 +25,7 @@
 <#list ITEMS.data as video>
     <#assign item=video.child, tmp=TOOL.groupByType(item.children, "Item"),
         icon=TOOL.xpath(item,"/data/thumbnail")!"UNDEF">
-    <#if tmp.discussion??><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz=null></#if>
+    <#if tmp.discussion?? && tmp.discussion?has_content><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])><#else><#assign diz=''></#if>
 
     <h1 class="st_nadpis"><a href="${video.url!("/videa/show/"+video.id)}">${TOOL.childName(video)}</a></h1>
     <#if icon!="UNDEF">
