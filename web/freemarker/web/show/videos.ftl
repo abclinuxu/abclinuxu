@@ -37,7 +37,7 @@
     <p class="meta-vypis">
         ${DATE.show(item.created, "SMART")} | <@lib.showUser TOOL.createUser(item.owner)/>
         | Zhlédnuto: <@lib.showCounter item, "read" />&times;
-        <#if diz??>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
+        <#if diz?? && diz?is_hash>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/videa" /></#if>
     </p>
     <hr />
 </#list>
