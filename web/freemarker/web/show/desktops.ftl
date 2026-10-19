@@ -36,9 +36,11 @@
     </div>
     <div class="s_nadpis">Nejkomentovanější nové desktopy</div>
     <div class="s_sekce" align="center">
-        <#list TOOL.sublist(VARS.recentMostCommentedDesktops.keySet(), 0, 3) as rel>
+        <#if VARS.recentMostCommentedDesktops?? && VARS.recentMostCommentedDesktops?has_content>
+          <#list TOOL.sublist(VARS.recentMostCommentedDesktops.keySet(), 0, 3) as rel>
             <@lib.showTopDesktop rel />
-        </#list>
+          </#list>
+        </#if>
     </div>
 
     &nbsp;<a href="/nej">další&nbsp;&raquo;</a>
